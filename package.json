@@ -20,9 +20,10 @@
     "verify:responsive": "node scripts/verify/responsive.mjs",
     "verify:a11y": "node scripts/verify/accessibility.mjs",
     "verify:interactions": "node scripts/verify/interactions.mjs",
-    "verify": "npm run verify:responsive && npm run verify:a11y && npm run verify:interactions && npm run verify:lifecycle",
+    "verify": "npm run verify:responsive && npm run verify:a11y && npm run verify:interactions && npm run verify:lifecycle && npm run verify:attack",
     "check": "npm run typecheck && npm run lint && npm test && npm run build",
-    "verify:lifecycle": "node scripts/verify/lifecycle.mjs"
+    "verify:lifecycle": "node scripts/verify/lifecycle.mjs",
+    "verify:attack": "bash scripts/verify/attack.sh"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
