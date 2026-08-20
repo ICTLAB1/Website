@@ -17,6 +17,17 @@ import { NextResponse, type NextRequest } from "next/server";
  */
 
 const SESSION_COOKIE = "ictlab_session";
+const CSRF_COOKIE = "csrf_token";
+
+/** URL-safe random token, using the Web Crypto API available in this runtime. */
+function randomToken(byteLength = 32): string {
+  const bytes = new Uint8Array(byteLength);
+  crypto.getRandomValues(bytes);
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
 
 function buildCsp(nonce: string, isDevelopment: boolean): string {
   const directives: Record<string, string[]> = {
@@ -79,6 +90,22 @@ export function proxy(request: NextRequest) {
   }
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
+
+  /**
+   * Issue the double-submit CSRF token here rather than in a page, because a
+   * Server Component cannot set cookies. The value is deliberately readable by
+   * our own scripts (so it can be echoed in the x-csrf-token header); the
+   * same-origin policy is what stops a third-party page from reading it.
+   */
+  if (!request.cookies.has(CSRF_COOKIE)) {
+    response.cookies.set(CSRF_COOKIE, randomToken(), {
+      httpOnly: false,
+      sameSite: "lax",
+      secure: !isDevelopment,
+      path: "/",
+      maxAge: 60 * 60 * 8,
+    });
+  }
 
   response.headers.set("content-security-policy", csp);
   response.headers.set("x-content-type-options", "nosniff");

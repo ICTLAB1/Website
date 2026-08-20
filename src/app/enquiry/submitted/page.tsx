@@ -1,0 +1,118 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+
+import { ButtonLink } from "@/components/ui/button";
+import { buildMetadata } from "@/lib/seo";
+import { getSiteConfig } from "@/lib/site-config";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Enquiry received",
+  description: "Your enterprise enquiry has been received.",
+  path: "/enquiry/submitted",
+  noIndex: true,
+});
+
+type PageProps = { searchParams: Promise<{ ref?: string | string[] }> };
+
+/**
+ * Confirmation screen.
+ *
+ * Deliberately performs no lookup: it echoes back the reference that was just
+ * issued and nothing else. Because there is no read, a guessed or altered
+ * reference in the URL cannot disclose anybody's enquiry.
+ */
+export default async function EnquirySubmittedPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const raw = Array.isArray(params.ref) ? params.ref[0] : params.ref;
+  const reference =
+    raw && /^ENQ-\d{4}-[A-Z0-9]{6}$/.test(raw) ? raw : null;
+  const config = getSiteConfig();
+
+  return (
+    <div className="container-page flex min-h-[60vh] items-center py-16">
+      <div className="mx-auto max-w-2xl text-center">
+        <span
+          aria-hidden="true"
+          className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-success-50 text-success-700"
+        >
+          <svg width="28" height="28" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8.2 13.6 4.6 10l1.3-1.3 2.3 2.3 5.9-5.9L15.4 6z" />
+          </svg>
+        </span>
+
+        <h1 className="mt-6 text-3xl sm:text-[2.25rem]">Enquiry received</h1>
+
+        {reference ? (
+          <div className="mt-6 inline-block rounded-[--radius-lg] border border-line bg-surface-muted px-6 py-4">
+            <p className="text-[12px] uppercase tracking-wide text-ink-500">Your reference</p>
+            <p className="mt-1 font-mono text-[20px] font-semibold text-navy-900">{reference}</p>
+          </div>
+        ) : null}
+
+        <p className="mt-6 text-[15px] leading-relaxed text-ink-600">
+          Thank you. Our team is reviewing your requirement and will come back with a written,
+          itemised quotation. We have sent a confirmation to the email address you gave us
+          {reference ? " with this reference" : ""}.
+        </p>
+
+        <div className="mt-8 rounded-[--radius-lg] border border-line bg-white p-6 text-left">
+          <h2 className="text-[15px] font-semibold text-navy-900">What happens next</h2>
+          <ol className="mt-4 space-y-3 text-[14px] leading-relaxed text-ink-600">
+            <li className="flex gap-3">
+              <span className="font-semibold text-accent-700">1.</span>
+              We review the products, quantities and any context you provided.
+            </li>
+            <li className="flex gap-3">
+              <span className="font-semibold text-accent-700">2.</span>
+              We check whether a different licensing model would serve you better, and say so
+              if it would.
+            </li>
+            <li className="flex gap-3">
+              <span className="font-semibold text-accent-700">3.</span>
+              You receive one consolidated quotation with every line itemised, the GST
+              position and the delivery timeline stated.
+            </li>
+          </ol>
+        </div>
+
+        {config.email.sales || config.phone.sales ? (
+          <p className="mt-6 text-[14px] text-ink-600">
+            Need it sooner? Contact us
+            {config.phone.sales ? (
+              <>
+                {" on "}
+                <a href={`tel:${config.phone.sales.replace(/\s/g, "")}`} className="font-medium text-accent-700 hover:underline">
+                  {config.phone.sales}
+                </a>
+              </>
+            ) : null}
+            {config.email.sales ? (
+              <>
+                {config.phone.sales ? " or " : " at "}
+                <a href={`mailto:${config.email.sales}`} className="font-medium text-accent-700 hover:underline">
+                  {config.email.sales}
+                </a>
+              </>
+            ) : null}
+            {reference ? " quoting your reference." : "."}
+          </p>
+        ) : null}
+
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <ButtonLink href="/products">Continue browsing</ButtonLink>
+          <ButtonLink href="/account/enquiries" variant="outline">
+            View my enquiries
+          </ButtonLink>
+        </div>
+
+        <p className="mt-6 text-[13px] text-ink-500">
+          Not signed in?{" "}
+          <Link href="/register" className="text-accent-700 hover:underline">
+            Create an account
+          </Link>{" "}
+          to track enquiries, quotes and renewals in one place.
+        </p>
+      </div>
+    </div>
+  );
+}

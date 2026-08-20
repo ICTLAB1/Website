@@ -1,8 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { generateToken, safeEqual } from "@/lib/auth/tokens";
+import { safeEqual } from "@/lib/auth/tokens";
 import { isSameOrigin } from "@/lib/auth/request";
-import { isProduction } from "@/lib/env";
 
 /**
  * Double-submit CSRF protection.
@@ -20,23 +19,11 @@ import { isProduction } from "@/lib/env";
 export const CSRF_COOKIE = "csrf_token";
 export const CSRF_HEADER = "x-csrf-token";
 
-/** Reads the current token, creating one when the visitor has none. */
-export async function ensureCsrfToken(): Promise<string> {
-  const store = await cookies();
-  const existing = store.get(CSRF_COOKIE)?.value;
-  if (existing && existing.length >= 32) return existing;
-
-  const token = generateToken(32);
-  store.set(CSRF_COOKIE, token, {
-    httpOnly: false, // must be readable by our own scripts to be echoed back
-    sameSite: "lax",
-    secure: isProduction,
-    path: "/",
-    maxAge: 60 * 60 * 8,
-  });
-  return token;
-}
-
+/**
+ * The token cookie is issued by the request proxy (src/proxy.ts), because a
+ * Server Component is not permitted to set cookies. This module only reads and
+ * verifies it.
+ */
 export async function readCsrfToken(): Promise<string | null> {
   const store = await cookies();
   return store.get(CSRF_COOKIE)?.value ?? null;
