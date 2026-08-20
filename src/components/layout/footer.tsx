@@ -87,7 +87,7 @@ export function Footer() {
             &copy; {year} {config.entityName}. All rights reserved.
             {config.cin ? <span className="ml-2 font-mono">CIN {config.cin}</span> : null}
           </p>
-          <p className="max-w-2xl text-navy-500">
+          <p className="max-w-2xl text-navy-300">
             Third-party product names and trademarks are the property of their respective
             owners and are used here only to identify the software supplied.
           </p>

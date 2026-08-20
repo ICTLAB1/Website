@@ -31,7 +31,7 @@ function ResultGroup({ heading, results }: { heading: string; results: SearchRes
     <section className="mb-10">
       <h2 className="mb-4 flex items-baseline gap-2 text-[15px] font-semibold text-navy-900">
         {heading}
-        <span className="text-[13px] font-normal text-ink-400">({results.length})</span>
+        <span className="text-[13px] font-normal text-ink-500">({results.length})</span>
       </h2>
       <ul className="divide-y divide-line rounded-[--radius-lg] border border-line bg-white">
         {results.map((result) => (
@@ -72,7 +72,12 @@ export default async function SearchPage({ searchParams }: PageProps) {
           Search products by name or SKU, plus vendors, services, articles and FAQs.
         </p>
         <div className="mt-6">
-          <SearchBox size="lg" autoFocus placeholder="Search products, SKU, vendors or services" />
+          <SearchBox
+            size="lg"
+            autoFocus
+            label="Search the catalogue and site"
+            placeholder="Search products, SKU, vendors or services"
+          />
         </div>
       </header>
 

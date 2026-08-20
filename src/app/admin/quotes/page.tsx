@@ -64,7 +64,7 @@ export default async function AdminQuotesPage() {
                 <Tr key={quote.id}>
                   <Td className="font-mono text-[12px] font-medium text-navy-900">
                     {quote.reference}
-                    <span className="mt-0.5 block text-[11px] font-normal text-ink-400">
+                    <span className="mt-0.5 block text-[11px] font-normal text-ink-500">
                       {formatDate(quote.createdAt)}
                     </span>
                   </Td>

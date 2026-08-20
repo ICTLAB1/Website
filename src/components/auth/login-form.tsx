@@ -44,12 +44,12 @@ export function LoginForm({ next }: { next?: string }) {
         </Button>
 
         <div className="flex flex-wrap items-center justify-between gap-3 pt-1 text-[13px]">
-          <Link href="/forgot-password" className="text-accent-700 hover:underline">
+          <Link href="/forgot-password" className="text-accent-700 underline underline-offset-2">
             Forgot your password?
           </Link>
           <span className="text-ink-500">
             No account?{" "}
-            <Link href="/register" className="text-accent-700 hover:underline">
+            <Link href="/register" className="text-accent-700 underline underline-offset-2">
               Create one
             </Link>
           </span>

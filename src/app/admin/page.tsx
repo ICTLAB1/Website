@@ -110,7 +110,7 @@ export default async function AdminDashboardPage() {
                         >
                           {enquiry.reference}
                         </Link>
-                        <span className="mt-0.5 block text-[11px] text-ink-400">
+                        <span className="mt-0.5 block text-[11px] text-ink-500">
                           {formatDate(enquiry.createdAt)}
                         </span>
                       </Td>

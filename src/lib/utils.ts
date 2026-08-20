@@ -38,12 +38,25 @@ export function formatDateTime(value: Date | string | null | undefined): string 
   }).format(date);
 }
 
+/**
+ * Industry acronyms that must not be title-cased. Without this, a licence type
+ * of CSP renders as "Csp", which reads as a typo on a commercial page.
+ */
+const ACRONYMS = new Set([
+  "CSP", "OEM", "GST", "GSTIN", "SKU", "CAL", "IT", "AEC", "BIM", "CRM",
+  "SLA", "API", "PDF", "HSN", "SAC", "RDS", "PO", "ERP", "SAM", "MSP",
+]);
+
 /** Turns SCREAMING_SNAKE enum values into readable labels. */
 export function humanise(value: string): string {
   return value
-    .toLowerCase()
     .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => {
+      const upper = word.toUpperCase();
+      if (ACRONYMS.has(upper)) return upper;
+      const lower = word.toLowerCase();
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
     .join(" ");
 }
 

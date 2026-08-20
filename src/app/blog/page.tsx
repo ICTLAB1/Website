@@ -59,7 +59,7 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
               )}
             >
               {category.name}
-              <span className="ml-1.5 text-ink-400">{category.count}</span>
+              <span className="ml-1.5 text-ink-500">{category.count}</span>
             </Link>
           ))}
         </div>
@@ -88,7 +88,7 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
               <p className="clamp-3 mt-2 flex-1 text-[13px] leading-relaxed text-ink-600">
                 {post.excerpt}
               </p>
-              <p className="mt-4 text-[12px] text-ink-400">
+              <p className="mt-4 text-[12px] text-ink-500">
                 {formatDate(post.publishedAt)} &middot; {post.readMinutes} min read
               </p>
             </article>

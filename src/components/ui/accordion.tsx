@@ -35,7 +35,7 @@ export function FaqList({
               {item.question}
               <span
                 aria-hidden="true"
-                className="shrink-0 text-ink-400 transition-transform group-open:rotate-45"
+                className="shrink-0 text-ink-500 transition-transform group-open:rotate-45"
               >
                 <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M9 4h2v12H9z" />

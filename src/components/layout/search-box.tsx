@@ -18,11 +18,14 @@ export function SearchBox({
   size = "md",
   autoFocus = false,
   className,
+  /** Distinguishes multiple search landmarks on the same page. */
+  label = "Search products, brands and services",
 }: {
   placeholder?: string;
   size?: "md" | "lg";
   autoFocus?: boolean;
   className?: string;
+  label?: string;
 }) {
   const router = useRouter();
   const listId = useId();
@@ -97,14 +100,14 @@ export function SearchBox({
 
   return (
     <div ref={containerRef} className={cn("relative w-full", className)}>
-      <form role="search" onSubmit={submit}>
+      <form role="search" aria-label={label} onSubmit={submit}>
         <label htmlFor={`${listId}-input`} className="sr-only">
-          Search products, brands and services
+          {label}
         </label>
         <div className="relative">
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400"
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500"
           >
             <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
               <path
@@ -146,7 +149,7 @@ export function SearchBox({
             }}
             className={cn(
               "w-full rounded-[--radius-md] border border-line-strong bg-white pl-10 pr-24 text-ink-900",
-              "placeholder:text-ink-400 hover:border-ink-300 focus:border-accent-600",
+              "placeholder:text-ink-500 hover:border-ink-300 focus:border-accent-600",
               height,
             )}
           />

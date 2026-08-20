@@ -50,14 +50,17 @@ export async function Header() {
 
       {/* Main bar */}
       <div className="container-page">
-        <div className="flex h-16 items-center gap-4 lg:h-[4.5rem]">
-          <Logo name={config.tradingName} className="shrink-0" />
+        <div className="flex h-16 items-center gap-3 lg:h-[4.5rem] lg:gap-4">
+          <Logo name={config.tradingName} className="min-w-0 shrink" />
 
           <div className="ml-auto hidden max-w-md flex-1 lg:block xl:max-w-lg">
-            <SearchBox placeholder="Search software, SKU or solution" />
+            <SearchBox
+              label="Search the site"
+              placeholder="Search software, SKU or solution"
+            />
           </div>
 
-          <div className="ml-auto flex items-center gap-2 lg:ml-0">
+          <div className="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
             <Link
               href="/search"
               className="inline-flex h-10 w-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-navy-900 lg:hidden"
@@ -84,9 +87,14 @@ export async function Header() {
 
             <BasketButton />
 
-            <ButtonLink href="/enquiry" size="sm" className="hidden md:inline-flex">
-              Get Enterprise Quote
-            </ButtonLink>
+            {/* Wrapped rather than given a `hidden md:inline-flex` class: the
+                button's own base `inline-flex` would win over `hidden`, since
+                Tailwind orders utilities by stylesheet position. */}
+            <div className="hidden md:block">
+              <ButtonLink href="/enquiry" size="sm">
+                Get Enterprise Quote
+              </ButtonLink>
+            </div>
 
             <MobileNav signedIn={Boolean(user)} />
           </div>

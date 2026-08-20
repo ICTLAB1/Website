@@ -45,7 +45,7 @@ export function ForgotPasswordForm() {
 
         <p className="pt-1 text-[13px] text-ink-500">
           Remembered it?{" "}
-          <Link href="/login" className="text-accent-700 hover:underline">
+          <Link href="/login" className="text-accent-700 underline underline-offset-2">
             Back to sign in
           </Link>
         </p>
@@ -114,7 +114,7 @@ export function ResetPasswordForm({
         </Button>
 
         <p className="pt-1 text-[13px] text-ink-500">
-          <Link href="/login" className="text-accent-700 hover:underline">
+          <Link href="/login" className="text-accent-700 underline underline-offset-2">
             Go to sign in
           </Link>
         </p>

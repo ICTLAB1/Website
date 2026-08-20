@@ -17,7 +17,7 @@ export function Logo({
   return (
     <Link
       href="/"
-      className={cn("group inline-flex items-center gap-2.5", className)}
+      className={cn("group inline-flex min-w-0 items-center gap-2.5", className)}
       aria-label={`${name} — home`}
     >
       <span
@@ -29,10 +29,10 @@ export function Logo({
       >
         {name.trim().charAt(0).toUpperCase() || "I"}
       </span>
-      <span className="flex flex-col leading-none">
+      <span className="flex min-w-0 flex-col leading-none">
         <span
           className={cn(
-            "text-[17px] font-semibold tracking-tight",
+            "truncate text-[17px] font-semibold tracking-tight",
             onDark ? "text-white" : "text-navy-900",
           )}
         >
@@ -40,7 +40,9 @@ export function Logo({
         </span>
         <span
           className={cn(
-            "mt-0.5 text-[10px] font-medium uppercase tracking-[0.14em]",
+            // Hidden on the narrowest screens: decorative, and it competes
+            // with the header actions for horizontal space.
+            "mt-0.5 hidden truncate text-[10px] font-medium uppercase tracking-[0.14em] min-[420px]:block",
             onDark ? "text-navy-200" : "text-ink-500",
           )}
         >

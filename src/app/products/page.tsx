@@ -76,14 +76,17 @@ export default async function ProductsPage({ searchParams }: PageProps) {
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)]">
-        <aside className="lg:sticky lg:top-32 lg:self-start">
+        <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
           <div className="hidden lg:block">
             <FilterPanel facets={facets} params={params} />
           </div>
           <MobileFilterPanel facets={facets} params={params} />
         </aside>
 
-        <section aria-label="Product results">
+        <section aria-labelledby="results-heading" className="min-w-0">
+          <h2 id="results-heading" className="sr-only">
+            Products
+          </h2>
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
             <p className="text-[13px] text-ink-600" aria-live="polite">
               {total === 0 ? (
@@ -98,9 +101,9 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
             {/* Sort is a set of links so it works without JavaScript and keeps
                 each ordering independently addressable. */}
-            <div className="flex items-center gap-2">
-              <span className="text-[13px] text-ink-500">Sort</span>
-              <div className="scroll-x -mx-1 flex gap-1 px-1">
+            <div className="flex min-w-0 max-w-full items-center gap-2">
+              <span className="shrink-0 text-[13px] text-ink-500">Sort</span>
+              <div className="scroll-x -mx-1 flex min-w-0 gap-1 px-1">
                 {SORT_OPTIONS.map((option) => {
                   const active = (filters.sort ?? "relevance") === option.value;
                   return (
@@ -132,7 +135,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                     className="inline-flex items-center gap-1.5 rounded-[--radius-sm] border border-line-strong bg-white py-1 pl-2.5 pr-2 text-[12px] text-ink-700 hover:border-danger-600 hover:text-danger-700"
                   >
                     {chip.label}
-                    <span aria-hidden="true" className="text-ink-400">
+                    <span aria-hidden="true" className="text-ink-500">
                       ×
                     </span>
                     <span className="sr-only">Remove filter</span>
@@ -144,6 +147,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
           {items.length === 0 ? (
             <EmptyState
+              as="h3"
               title="No products match these filters"
               description="Try removing a filter, searching for a different term, or tell us what you need — we can source products that are not listed in the catalogue."
               action={

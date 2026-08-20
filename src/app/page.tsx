@@ -127,7 +127,11 @@ export default async function HomePage() {
             </div>
 
             <div className="mt-10 max-w-2xl">
-              <SearchBox size="lg" placeholder="What software or solution are you looking for?" />
+              <SearchBox
+                size="lg"
+                label="Search products and solutions"
+                placeholder="What software or solution are you looking for?"
+              />
               <p className="mt-3 text-[13px] text-navy-300">
                 Popular:{" "}
                 {["Microsoft 365", "Acrobat Pro", "AutoCAD", "Zoho CRM", "Windows Server"].map(
@@ -432,7 +436,7 @@ export default async function HomePage() {
                   <p className="clamp-3 mt-2 text-[13px] leading-relaxed text-ink-600">
                     {post.excerpt}
                   </p>
-                  <span className="mt-4 text-[12px] text-ink-400">
+                  <span className="mt-4 text-[12px] text-ink-500">
                     {formatDate(post.publishedAt)} &middot; {post.readMinutes} min read
                   </span>
                 </Link>

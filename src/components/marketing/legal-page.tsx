@@ -91,7 +91,7 @@ export function LegalPage({
             {config.email.support ? (
               <>
                 Contact us at{" "}
-                <a href={`mailto:${config.email.support}`} className="text-accent-700 hover:underline">
+                <a href={`mailto:${config.email.support}`} className="text-accent-700 underline underline-offset-2">
                   {config.email.support}
                 </a>
                 .
@@ -99,7 +99,7 @@ export function LegalPage({
             ) : (
               <>
                 Use the{" "}
-                <Link href="/contact" className="text-accent-700 hover:underline">
+                <Link href="/contact" className="text-accent-700 underline underline-offset-2">
                   contact form
                 </Link>{" "}
                 — a direct contact address has not been configured for this deployment.

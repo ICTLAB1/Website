@@ -30,7 +30,7 @@ export function BrandCard({
         </span>
       ) : null}
       {typeof brand.productCount === "number" ? (
-        <span className="mt-4 text-[12px] font-medium text-ink-400">
+        <span className="mt-4 text-[12px] font-medium text-ink-500">
           {brand.productCount} {brand.productCount === 1 ? "product" : "products"}
         </span>
       ) : null}

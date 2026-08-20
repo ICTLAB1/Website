@@ -62,7 +62,7 @@ export default async function AdminOrdersPage() {
                 <Tr key={order.id}>
                   <Td className="font-mono text-[12px] font-medium text-navy-900">
                     {order.reference}
-                    <span className="mt-0.5 block text-[11px] font-normal text-ink-400">
+                    <span className="mt-0.5 block text-[11px] font-normal text-ink-500">
                       {formatDate(order.placedAt)}
                     </span>
                   </Td>

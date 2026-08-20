@@ -168,7 +168,7 @@ export function EnquiryBasket({
                       </Link>
                     </h3>
                     <p className="mt-1 text-[13px] text-ink-600">{line.variantName}</p>
-                    <p className="mt-1 font-mono text-[11px] text-ink-400">{line.sku}</p>
+                    <p className="mt-1 font-mono text-[11px] text-ink-500">{line.sku}</p>
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -206,7 +206,7 @@ export function EnquiryBasket({
                     <button
                       type="button"
                       onClick={() => remove(line.sku)}
-                      className="rounded-[--radius-sm] p-2 text-ink-400 hover:bg-danger-50 hover:text-danger-700"
+                      className="rounded-[--radius-sm] p-2 text-ink-500 hover:bg-danger-50 hover:text-danger-700"
                     >
                       <span className="sr-only">Remove {line.productName}</span>
                       <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -381,7 +381,7 @@ export function EnquiryBasket({
       </div>
 
       {/* ---------------------------------------------------------- summary */}
-      <aside className="lg:sticky lg:top-32 lg:self-start">
+      <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
         <div className="rounded-[--radius-lg] border border-line bg-white">
           <div className="border-b border-line px-5 py-4">
             <h2 className="text-[15px] font-semibold text-navy-900">Enquiry summary</h2>

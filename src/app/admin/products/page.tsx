@@ -93,7 +93,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
                           <Badge tone="brand">Featured</Badge>
                         </span>
                       ) : null}
-                      <span className="mt-0.5 block font-mono text-[11px] text-ink-400">
+                      <span className="mt-0.5 block font-mono text-[11px] text-ink-500">
                         /{product.slug}
                       </span>
                     </Td>

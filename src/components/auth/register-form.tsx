@@ -82,7 +82,7 @@ export function RegisterForm({ passwordMinLength }: { passwordMinLength: number 
 
         <p className="pt-1 text-[13px] text-ink-500">
           Already have an account?{" "}
-          <Link href="/login" className="text-accent-700 hover:underline">
+          <Link href="/login" className="text-accent-700 underline underline-offset-2">
             Sign in
           </Link>
         </p>

@@ -112,7 +112,7 @@ export default async function ResourcesPage() {
               <p className="clamp-3 mt-2 flex-1 text-[13px] leading-relaxed text-ink-600">
                 {post.excerpt}
               </p>
-              <p className="mt-4 text-[12px] text-ink-400">
+              <p className="mt-4 text-[12px] text-ink-500">
                 {formatDate(post.publishedAt)} &middot; {post.readMinutes} min read
               </p>
             </article>
@@ -130,7 +130,7 @@ export default async function ResourcesPage() {
                 className="inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-[13px] font-medium text-ink-700 hover:border-navy-300 hover:text-navy-900"
               >
                 {category.name}
-                <span className="text-ink-400">{category.count}</span>
+                <span className="text-ink-500">{category.count}</span>
               </Link>
             </li>
           ))}

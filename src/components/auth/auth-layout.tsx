@@ -58,7 +58,7 @@ export function AuthBenefits() {
       </ul>
       <p className="mt-6 border-t border-line pt-5 text-[13px] text-ink-500">
         You can request a quotation without an account.{" "}
-        <Link href="/enquiry" className="text-accent-700 hover:underline">
+        <Link href="/enquiry" className="text-accent-700 underline underline-offset-2">
           Go straight to an enquiry
         </Link>
         .

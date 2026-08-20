@@ -147,7 +147,7 @@ export default async function AboutPage() {
               .filter(([, value]) => Boolean(value))
               .map(([label, value]) => (
                 <div key={label as string}>
-                  <dt className="text-[12px] uppercase tracking-wide text-ink-400">{label}</dt>
+                  <dt className="text-[12px] uppercase tracking-wide text-ink-500">{label}</dt>
                   <dd className="mt-1 break-words text-[14px] text-ink-800">{value}</dd>
                 </div>
               ))}

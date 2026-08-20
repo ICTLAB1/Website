@@ -47,7 +47,7 @@ export function useFieldError(name?: string): string | undefined {
 
 const CONTROL_BASE =
   "w-full rounded-[--radius-md] border bg-white px-3 text-sm text-ink-900 " +
-  "placeholder:text-ink-400 transition-colors " +
+  "placeholder:text-ink-500 transition-colors " +
   "disabled:cursor-not-allowed disabled:bg-surface-sunken disabled:text-ink-500";
 
 const CONTROL_STATE = {
@@ -102,7 +102,7 @@ export function Field({
             *
           </span>
         ) : (
-          <span className="ml-1.5 text-[12px] font-normal text-ink-400">(optional)</span>
+          <span className="ml-1.5 text-[12px] font-normal text-ink-500">(optional)</span>
         )}
       </label>
 

@@ -81,7 +81,7 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
               ["Timeline", humanise(enquiry.timeline)],
             ].map(([label, value]) => (
               <div key={label} className="flex gap-3">
-                <dt className="w-24 shrink-0 text-ink-400">{label}</dt>
+                <dt className="w-24 shrink-0 text-ink-500">{label}</dt>
                 <dd className="min-w-0 break-words text-ink-700">{value || "—"}</dd>
               </div>
             ))}

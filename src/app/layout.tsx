@@ -8,7 +8,6 @@ import { Footer } from "@/components/layout/footer";
 import { BasketProvider } from "@/components/enquiry/basket-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { JsonLd, organizationSchema, websiteSchema } from "@/lib/seo";
-import { getSiteConfig } from "@/lib/site-config";
 import { appUrl } from "@/lib/env";
 
 const inter = Inter({
@@ -38,8 +37,6 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const config = getSiteConfig();
-
   return (
     <html lang="en-IN" className={inter.variable}>
       <body className="flex min-h-dvh flex-col bg-white antialiased">
@@ -63,7 +60,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <JsonLd data={organizationSchema()} />
         <JsonLd data={websiteSchema()} />
-        <span className="sr-only">{config.tradingName}</span>
       </body>
     </html>
   );

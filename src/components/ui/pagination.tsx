@@ -33,14 +33,14 @@ export function Pagination({
           <span className="sr-only sm:hidden">Previous page</span>
         </Link>
       ) : (
-        <span className={cn(linkClass, "border-line bg-surface-muted text-ink-400")} aria-hidden="true">
+        <span className={cn(linkClass, "border-line bg-surface-muted text-ink-500")} aria-hidden="true">
           &larr;
         </span>
       )}
 
       {pages.map((entry, index) =>
         entry === "gap" ? (
-          <span key={`gap-${index}`} className="px-1.5 text-ink-400" aria-hidden="true">
+          <span key={`gap-${index}`} className="px-1.5 text-ink-500" aria-hidden="true">
             …
           </span>
         ) : (
@@ -71,7 +71,7 @@ export function Pagination({
           <span aria-hidden="true">&rarr;</span>
         </Link>
       ) : (
-        <span className={cn(linkClass, "border-line bg-surface-muted text-ink-400")} aria-hidden="true">
+        <span className={cn(linkClass, "border-line bg-surface-muted text-ink-500")} aria-hidden="true">
           &rarr;
         </span>
       )}

@@ -203,7 +203,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                             <li key={variant.sku} className="flex flex-wrap items-baseline gap-x-3 text-[13px]">
                               <span className="font-mono text-[12px] text-ink-500">{variant.sku}</span>
                               <span className="text-ink-700">{variant.name}</span>
-                              <span className="text-ink-400">
+                              <span className="text-ink-500">
                                 {variant.seats > 1 ? `${variant.seats} seats per unit` : "1 seat per unit"}
                               </span>
                             </li>
@@ -220,7 +220,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     <ul className="max-w-3xl space-y-2.5">
                       {product.compatibility.map((entry) => (
                         <li key={entry} className="flex gap-2.5 text-[14px] leading-relaxed text-ink-700">
-                          <span aria-hidden="true" className="mt-1.5 shrink-0 text-ink-400">
+                          <span aria-hidden="true" className="mt-1.5 shrink-0 text-ink-500">
                             <svg width="6" height="6" viewBox="0 0 6 6" fill="currentColor">
                               <circle cx="3" cy="3" r="3" />
                             </svg>
@@ -268,7 +268,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        <aside className="lg:sticky lg:top-32 lg:self-start">
+        <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
           <VariantSelector
             variants={product.variants.map((variant) => ({
               id: variant.id,

@@ -16,7 +16,12 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
-    "db:reset": "prisma migrate reset --force"
+    "db:reset": "prisma migrate reset --force",
+    "verify:responsive": "node scripts/verify/responsive.mjs",
+    "verify:a11y": "node scripts/verify/accessibility.mjs",
+    "verify:interactions": "node scripts/verify/interactions.mjs",
+    "verify": "npm run verify:responsive && npm run verify:a11y && npm run verify:interactions",
+    "check": "npm run typecheck && npm run lint && npm test && npm run build"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -37,8 +42,10 @@
     "@types/nodemailer": "^8.0.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
+    "axe-core": "^4.13.0",
     "eslint": "9.18.0",
     "eslint-config-next": "^16.3.1",
+    "playwright": "^1.62.1",
     "postcss": "8.5.1",
     "prisma": "^6.19.3",
     "tailwindcss": "^4.3.3",

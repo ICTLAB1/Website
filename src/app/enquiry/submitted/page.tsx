@@ -81,7 +81,7 @@ export default async function EnquirySubmittedPage({ searchParams }: PageProps) 
             {config.phone.sales ? (
               <>
                 {" on "}
-                <a href={`tel:${config.phone.sales.replace(/\s/g, "")}`} className="font-medium text-accent-700 hover:underline">
+                <a href={`tel:${config.phone.sales.replace(/\s/g, "")}`} className="font-medium text-accent-700 underline underline-offset-2">
                   {config.phone.sales}
                 </a>
               </>
@@ -89,7 +89,7 @@ export default async function EnquirySubmittedPage({ searchParams }: PageProps) 
             {config.email.sales ? (
               <>
                 {config.phone.sales ? " or " : " at "}
-                <a href={`mailto:${config.email.sales}`} className="font-medium text-accent-700 hover:underline">
+                <a href={`mailto:${config.email.sales}`} className="font-medium text-accent-700 underline underline-offset-2">
                   {config.email.sales}
                 </a>
               </>
@@ -107,7 +107,7 @@ export default async function EnquirySubmittedPage({ searchParams }: PageProps) 
 
         <p className="mt-6 text-[13px] text-ink-500">
           Not signed in?{" "}
-          <Link href="/register" className="text-accent-700 hover:underline">
+          <Link href="/register" className="text-accent-700 underline underline-offset-2">
             Create an account
           </Link>{" "}
           to track enquiries, quotes and renewals in one place.

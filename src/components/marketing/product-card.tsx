@@ -45,15 +45,15 @@ export function ProductCard({ product }: { product: ProductListItem }) {
         {variant ? (
           <dl className="mt-4 space-y-1 text-[12px]">
             <div className="flex gap-2">
-              <dt className="w-20 shrink-0 text-ink-400">SKU</dt>
+              <dt className="w-20 shrink-0 text-ink-500">SKU</dt>
               <dd className="truncate font-mono text-ink-600">{variant.sku}</dd>
             </div>
             <div className="flex gap-2">
-              <dt className="w-20 shrink-0 text-ink-400">Licence</dt>
+              <dt className="w-20 shrink-0 text-ink-500">Licence</dt>
               <dd className="text-ink-600">{humanise(variant.licenceType)}</dd>
             </div>
             <div className="flex gap-2">
-              <dt className="w-20 shrink-0 text-ink-400">Term</dt>
+              <dt className="w-20 shrink-0 text-ink-500">Term</dt>
               <dd className="text-ink-600">{formatTerm(variant.termMonths)}</dd>
             </div>
           </dl>
@@ -73,7 +73,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
                 {formatMoney(price, variant!.currency)}
               </span>
               {saving ? (
-                <span className="text-[13px] text-ink-400 line-through">
+                <span className="text-[13px] text-ink-500 line-through">
                   {formatMoney(variant!.listPriceMinor, variant!.currency)}
                 </span>
               ) : null}

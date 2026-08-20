@@ -6,11 +6,14 @@ export function EmptyState({
   description,
   action,
   className,
+  /** Set to keep the document outline correct where this sits under an h2. */
+  as: Heading = "h2",
 }: {
   title: string;
   description?: string;
   action?: ReactNode;
   className?: string;
+  as?: "h2" | "h3";
 }) {
   return (
     <div
@@ -19,7 +22,7 @@ export function EmptyState({
         className,
       )}
     >
-      <h3 className="text-base font-semibold text-navy-900">{title}</h3>
+      <Heading className="text-base font-semibold text-navy-900">{title}</Heading>
       {description ? (
         <p className="mt-2 max-w-md text-sm text-ink-600">{description}</p>
       ) : null}
@@ -33,15 +36,17 @@ export function ErrorState({
   description,
   correlationId,
   action,
+  as: Heading = "h2",
 }: {
   title?: string;
   description?: string;
   correlationId?: string;
   action?: ReactNode;
+  as?: "h2" | "h3";
 }) {
   return (
     <div className="rounded-[--radius-lg] border border-danger-600/25 bg-danger-50 px-6 py-8 text-center">
-      <h3 className="text-base font-semibold text-danger-700">{title}</h3>
+      <Heading className="text-base font-semibold text-danger-700">{title}</Heading>
       {description ? <p className="mt-2 text-sm text-ink-700">{description}</p> : null}
       {correlationId ? (
         <p className="mt-3 font-mono text-[12px] text-ink-500">

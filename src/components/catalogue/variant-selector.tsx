@@ -84,7 +84,7 @@ export function VariantSelector({
                     <span className="block text-[13px] font-medium text-navy-900">
                       {variant.name}
                     </span>
-                    <span className="mt-0.5 block font-mono text-[11px] text-ink-500">
+                    <span className="mt-0.5 block font-mono text-[11px] text-ink-600">
                       {variant.sku}
                     </span>
                   </span>
@@ -101,19 +101,19 @@ export function VariantSelector({
       <div className="px-5 py-5">
         <dl className="mb-4 grid grid-cols-2 gap-3 text-[13px]">
           <div>
-            <dt className="text-ink-400">SKU</dt>
+            <dt className="text-ink-500">SKU</dt>
             <dd className="mt-0.5 font-mono text-[12px] text-ink-700">{selected.sku}</dd>
           </div>
           <div>
-            <dt className="text-ink-400">Licence type</dt>
+            <dt className="text-ink-500">Licence type</dt>
             <dd className="mt-0.5 text-ink-700">{humanise(selected.licenceType)}</dd>
           </div>
           <div>
-            <dt className="text-ink-400">Duration</dt>
+            <dt className="text-ink-500">Duration</dt>
             <dd className="mt-0.5 text-ink-700">{formatTerm(selected.termMonths)}</dd>
           </div>
           <div>
-            <dt className="text-ink-400">Users included</dt>
+            <dt className="text-ink-500">Users included</dt>
             <dd className="mt-0.5 text-ink-700">
               {selected.seats > 1 ? `${selected.seats} per unit` : "1 per unit"}
             </dd>
@@ -136,7 +136,7 @@ export function VariantSelector({
               </span>
               {saving ? (
                 <>
-                  <span className="text-[15px] text-ink-400 line-through">
+                  <span className="text-[15px] text-ink-500 line-through">
                     {formatMoney(selected.listPriceMinor, selected.currency)}
                   </span>
                   <Badge tone="success">Save {saving}%</Badge>

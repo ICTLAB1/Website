@@ -95,7 +95,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
               <strong className="font-semibold text-navy-900">
                 {indicativeMinor > 0 ? formatMoney(indicativeMinor) : "—"}
               </strong>{" "}
-              <span className="text-ink-400">excl. GST</span>
+              <span className="text-ink-500">excl. GST</span>
             </p>
           </section>
 
@@ -153,7 +153,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
                 ["Account", enquiry.user ? enquiry.user.email : "Not signed in"],
               ].map(([label, value]) => (
                 <div key={label} className="flex gap-3">
-                  <dt className="w-20 shrink-0 text-ink-400">{label}</dt>
+                  <dt className="w-20 shrink-0 text-ink-500">{label}</dt>
                   <dd className="min-w-0 break-words text-ink-700">{value || "—"}</dd>
                 </div>
               ))}

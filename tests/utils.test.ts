@@ -58,3 +58,21 @@ describe("cn", () => {
     expect(cn("a", false, null, undefined, "b")).toBe("a b");
   });
 });
+
+describe("humanise acronyms", () => {
+  it("keeps industry acronyms upper case", () => {
+    expect(humanise("CSP")).toBe("CSP");
+    expect(humanise("OEM")).toBe("OEM");
+    expect(humanise("SUBSCRIPTION_ANNUAL")).toBe("Subscription Annual");
+  });
+
+  it("still title-cases ordinary words of the same length", () => {
+    expect(humanise("NEW")).toBe("New");
+    expect(humanise("WON")).toBe("Won");
+    expect(humanise("BOTH")).toBe("Both");
+  });
+
+  it("handles mixed tokens", () => {
+    expect(humanise("WITHIN_30_DAYS")).toBe("Within 30 Days");
+  });
+});

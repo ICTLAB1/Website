@@ -142,7 +142,7 @@ export default async function BrandPage({ params }: PageProps) {
                         {category.summary}
                       </span>
                     ) : null}
-                    <span className="mt-4 text-[12px] font-medium text-ink-400">
+                    <span className="mt-4 text-[12px] font-medium text-ink-500">
                       {category.count} {category.count === 1 ? "product" : "products"}
                     </span>
                   </Link>

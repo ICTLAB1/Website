@@ -75,7 +75,7 @@ export function MegaMenu() {
                       aria-expanded={isOpen}
                       aria-controls={`megamenu-${index}`}
                       onClick={() => setOpenIndex(isOpen ? null : index)}
-                      className="-ml-2 py-4 pr-1 text-ink-400 hover:text-accent-700"
+                      className="-ml-2 py-4 pr-1 text-ink-500 hover:text-accent-700"
                     >
                       <span className="sr-only">
                         {isOpen ? `Close ${item.label} menu` : `Open ${item.label} menu`}

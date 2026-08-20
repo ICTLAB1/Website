@@ -42,19 +42,19 @@ export default async function AccountProfilePage() {
         <h3 className="text-[15px] font-semibold text-navy-900">Account details</h3>
         <dl className="mt-4 space-y-2.5 text-[13px]">
           <div className="flex gap-3">
-            <dt className="w-32 shrink-0 text-ink-400">Email</dt>
+            <dt className="w-32 shrink-0 text-ink-500">Email</dt>
             <dd className="break-all text-ink-700">{user.email}</dd>
           </div>
           <div className="flex gap-3">
-            <dt className="w-32 shrink-0 text-ink-400">Account type</dt>
+            <dt className="w-32 shrink-0 text-ink-500">Account type</dt>
             <dd className="text-ink-700">{user.role === "CUSTOMER" ? "Customer" : "Staff"}</dd>
           </div>
           <div className="flex gap-3">
-            <dt className="w-32 shrink-0 text-ink-400">Member since</dt>
+            <dt className="w-32 shrink-0 text-ink-500">Member since</dt>
             <dd className="text-ink-700">{formatDate(user.createdAt)}</dd>
           </div>
           <div className="flex gap-3">
-            <dt className="w-32 shrink-0 text-ink-400">Last sign-in</dt>
+            <dt className="w-32 shrink-0 text-ink-500">Last sign-in</dt>
             <dd className="text-ink-700">{formatDate(user.lastLoginAt)}</dd>
           </div>
         </dl>

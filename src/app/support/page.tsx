@@ -72,7 +72,7 @@ export default async function SupportPage() {
               {config.email.support}
             </a>
           ) : (
-            <Link href="#support-form" className="mt-4 inline-block text-[13px] font-medium text-accent-700 hover:underline">
+            <Link href="#support-form" className="mt-4 inline-block text-[13px] font-medium text-accent-700 underline underline-offset-2">
               Go to the form &darr;
             </Link>
           )}

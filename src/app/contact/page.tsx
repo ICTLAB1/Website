@@ -59,7 +59,7 @@ export default function ContactPage() {
           <ContactForm />
         </section>
 
-        <aside className="space-y-4">
+        <aside className="min-w-0 space-y-4">
           {anyChannelConfigured ? (
             channels.map((channel) => (
               <div key={channel.title} className="rounded-[--radius-lg] border border-line bg-white p-5">

@@ -52,7 +52,7 @@ export function CategoryCard({
         </span>
       ) : null}
       {typeof category.count === "number" && category.count > 0 ? (
-        <span className="mt-4 text-[12px] font-medium text-ink-400">
+        <span className="mt-4 text-[12px] font-medium text-ink-500">
           {category.count} {category.count === 1 ? "product" : "products"}
         </span>
       ) : null}

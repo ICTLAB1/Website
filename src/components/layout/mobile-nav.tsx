@@ -122,7 +122,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
             </div>
 
             <div className="border-b border-line px-4 py-3">
-              <SearchBox placeholder="Search software and services" />
+              <SearchBox label="Search from the menu" placeholder="Search software and services" />
             </div>
 
             <nav className="flex-1 overflow-y-auto" aria-label="Mobile navigation">
@@ -144,7 +144,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
                           className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px] font-medium text-navy-900"
                         >
                           {item.label}
-                          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="text-ink-400">
+                          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="text-ink-500">
                             <path d="M7.5 4.5 12 9l-4.5 4.5v-9z" />
                           </svg>
                         </button>
@@ -182,7 +182,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
                 </ul>
               ) : current.kind === "section" ? (
                 <>
-                  <p className="px-4 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-400">
+                  <p className="px-4 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">
                     {current.label}
                   </p>
                   <ul className="divide-y divide-line">
@@ -201,7 +201,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
                           className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px] font-medium text-navy-900"
                         >
                           {column.heading}
-                          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="text-ink-400">
+                          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="text-ink-500">
                             <path d="M7.5 4.5 12 9l-4.5 4.5v-9z" />
                           </svg>
                         </button>
@@ -221,7 +221,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
                 </>
               ) : (
                 <>
-                  <p className="px-4 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-400">
+                  <p className="px-4 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">
                     {current.label}
                   </p>
                   <ul className="divide-y divide-line">

@@ -67,7 +67,6 @@ function FacetLink({
     <li>
       <Link
         href={href}
-        aria-pressed={active}
         className={`flex items-center gap-2.5 rounded-[--radius-sm] px-2 py-1.5 text-[13px] transition-colors ${
           active ? "bg-accent-50 text-accent-800" : "text-ink-700 hover:bg-surface-muted"
         } ${indented ? "ml-3" : ""}`}
@@ -85,8 +84,11 @@ function FacetLink({
           ) : null}
         </span>
         <span className="min-w-0 flex-1 truncate">{label}</span>
+        {/* aria-pressed is invalid on a link, so the state is carried in the
+            accessible name instead. */}
+        <span className="sr-only">{active ? " — filter applied, activate to remove" : " — activate to apply filter"}</span>
         {typeof count === "number" ? (
-          <span className="shrink-0 text-[11px] tabular-nums text-ink-400">{count}</span>
+          <span className="shrink-0 text-[11px] tabular-nums text-ink-500">{count}</span>
         ) : null}
       </Link>
     </li>
@@ -230,7 +232,7 @@ export function MobileFilterPanel(props: Parameters<typeof FilterPanel>[0]) {
     <details className="lg:hidden">
       <summary className="flex h-11 cursor-pointer items-center justify-between rounded-[--radius-md] border border-line-strong bg-white px-4 text-sm font-medium text-navy-900">
         Filters
-        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="text-ink-400">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="text-ink-500">
           <path d="M3 5h14v2H3zM5 9h10v2H5zM8 13h4v2H8z" />
         </svg>
       </summary>
