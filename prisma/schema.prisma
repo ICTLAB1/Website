@@ -1,0 +1,700 @@
+// ---------------------------------------------------------------------------
+// Enterprise technology marketplace - relational schema
+//
+// Conventions
+//   * Monetary values are integers in the currency's minor unit (paise for INR).
+//     Floating point is never used for money.
+//   * Public-facing records expose a human `reference` (ENQ-2026-4F2A9C) rather
+//     than their primary key, so internal identifiers are never enumerable.
+//   * Content-bearing entities use `deletedAt` soft deletion so that historical
+//     enquiries / orders keep referential integrity after an archive.
+// ---------------------------------------------------------------------------
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------ enums --------------------------------------
+
+enum UserRole {
+  CUSTOMER
+  SALES
+  ADMIN
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum Availability {
+  IN_STOCK
+  MADE_TO_ORDER
+  ON_REQUEST
+  DISCONTINUED
+}
+
+enum PurchaseMode {
+  DIRECT
+  ENQUIRY
+  BOTH
+}
+
+enum LicenceType {
+  SUBSCRIPTION_ANNUAL
+  SUBSCRIPTION_MONTHLY
+  PERPETUAL
+  VOLUME
+  CSP
+  OEM
+  EDUCATION
+  MAINTENANCE
+}
+
+enum EnquiryStatus {
+  NEW
+  IN_REVIEW
+  QUOTED
+  WON
+  LOST
+  CLOSED
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROVISIONING
+  FULFILLED
+  CANCELLED
+  REFUNDED
+}
+
+enum LicenceStatus {
+  ACTIVE
+  EXPIRING
+  EXPIRED
+  SUSPENDED
+  CANCELLED
+}
+
+enum RenewalStatus {
+  UPCOMING
+  QUOTED
+  RENEWED
+  LAPSED
+  DECLINED
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_ON_CUSTOMER
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum PurchaseTimeline {
+  IMMEDIATE
+  WITHIN_30_DAYS
+  WITHIN_90_DAYS
+  EXPLORING
+}
+
+// ------------------------------ identity -----------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  phone         String?
+  role          UserRole  @default(CUSTOMER)
+  emailVerified DateTime?
+  lastLoginAt   DateTime?
+  // Counts consecutive failed sign-in attempts; cleared on success.
+  failedLogins  Int       @default(0)
+  lockedUntil   DateTime?
+  companyId     String?
+  company       Company?  @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  deletedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions      Session[]
+  resetTokens   PasswordResetToken[]
+  enquiries     Enquiry[]
+  quotes        Quote[]
+  orders        Order[]
+  licences      Licence[]
+  tickets       SupportTicket[]
+  auditLogs     AuditLog[]
+  authoredPosts BlogPost[]
+
+  @@index([companyId])
+  @@index([role])
+}
+
+model Company {
+  id            String   @id @default(cuid())
+  name          String
+  gstin         String?
+  website       String?
+  addressLine1  String?
+  addressLine2  String?
+  city          String?
+  state         String?
+  postcode      String?
+  country       String   @default("India")
+  employeeCount Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  users     User[]
+  enquiries Enquiry[]
+  quotes    Quote[]
+  orders    Order[]
+  licences  Licence[]
+
+  @@index([name])
+  @@index([gstin])
+}
+
+model Session {
+  id         String    @id @default(cuid())
+  // SHA-256 of the opaque session token. The raw token only ever exists in the
+  // HttpOnly cookie, so a database disclosure does not yield usable sessions.
+  tokenHash  String    @unique
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  ipHash     String?
+  userAgent  String?
+  createdAt  DateTime  @default(now())
+  lastSeenAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ------------------------------ catalogue ----------------------------------
+
+model Brand {
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  name         String
+  tagline      String?
+  summary      String
+  description  String
+  logoText     String
+  accentColor  String    @default("#1e3a8a")
+  website      String?
+  displayOrder Int       @default(100)
+  featured     Boolean   @default(false)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  products   Product[]
+  categories Category[]
+  faqs       Faq[]
+
+  @@index([featured])
+  @@index([deletedAt])
+}
+
+model Category {
+  id           String     @id @default(cuid())
+  slug         String     @unique
+  name         String
+  summary      String?
+  description  String?
+  icon         String?
+  displayOrder Int        @default(100)
+  featured     Boolean    @default(false)
+  // Self-relation models the category -> subcategory hierarchy without a
+  // separate near-identical Subcategory table.
+  parentId     String?
+  parent       Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children     Category[] @relation("CategoryTree")
+  brandId      String?
+  brand        Brand?     @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  deletedAt    DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  products Product[]
+
+  @@index([parentId])
+  @@index([brandId])
+  @@index([featured])
+  @@index([deletedAt])
+}
+
+model Product {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  name             String
+  shortDescription String
+  description      String
+  brandId          String
+  brand            Brand         @relation(fields: [brandId], references: [id])
+  categoryId       String
+  category         Category      @relation(fields: [categoryId], references: [id])
+  status           ProductStatus @default(ACTIVE)
+  availability     Availability  @default(ON_REQUEST)
+  purchaseMode     PurchaseMode  @default(BOTH)
+  featured         Boolean       @default(false)
+  popularity       Int           @default(0)
+
+  // Structured licensing metadata rendered on the product detail page.
+  features       String[]
+  compatibility  String[]
+  keywords       String[]
+  licensingNotes String?
+  deliveryNotes  String?
+  supportNotes   String?
+
+  // Denormalised lowercase haystack (name + sku + brand + keywords) backing
+  // catalogue search without a separate search service.
+  searchText String @default("")
+
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  variants     ProductVariant[]
+  faqs         Faq[]
+  enquiryItems EnquiryItem[]
+  quoteItems   QuoteItem[]
+  orderItems   OrderItem[]
+  licences     Licence[]
+
+  @@index([brandId])
+  @@index([categoryId])
+  @@index([status, deletedAt])
+  @@index([featured])
+  @@index([popularity])
+}
+
+model ProductVariant {
+  id          String      @id @default(cuid())
+  productId   String
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku         String      @unique
+  name        String
+  licenceType LicenceType
+  // Term length in months; null for perpetual licences.
+  termMonths  Int?
+  // Seats included in a single unit of this SKU.
+  seats       Int         @default(1)
+  isDefault   Boolean     @default(false)
+
+  // Current price, denormalised for catalogue queries. Historical changes live
+  // in the Price table.
+  currency       String @default("INR")
+  listPriceMinor Int
+  salePriceMinor Int?
+  gstRatePercent Int    @default(18)
+
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  prices       Price[]
+  enquiryItems EnquiryItem[]
+  quoteItems   QuoteItem[]
+  orderItems   OrderItem[]
+  licences     Licence[]
+
+  @@index([productId])
+  @@index([licenceType])
+  @@index([salePriceMinor])
+  @@index([listPriceMinor])
+}
+
+/// Append-only price history. A row is written every time an administrator
+/// changes a variant's price, giving an auditable pricing trail.
+model Price {
+  id             String         @id @default(cuid())
+  variantId      String
+  variant        ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  currency       String         @default("INR")
+  listPriceMinor Int
+  salePriceMinor Int?
+  gstRatePercent Int            @default(18)
+  effectiveFrom  DateTime       @default(now())
+  changedById    String?
+  note           String?
+
+  @@index([variantId, effectiveFrom])
+}
+
+// ------------------------------ enquiry / quote / order ---------------------
+
+model Enquiry {
+  id        String        @id @default(cuid())
+  reference String        @unique
+  status    EnquiryStatus @default(NEW)
+
+  contactName  String
+  contactEmail String
+  contactPhone String
+  companyName  String
+  gstin        String?
+  country      String           @default("India")
+  city         String?
+  userCount    Int?
+  requirements String?
+  timeline     PurchaseTimeline @default(EXPLORING)
+
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  internalNotes String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  items  EnquiryItem[]
+  quotes Quote[]
+
+  @@index([status])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([contactEmail])
+}
+
+model EnquiryItem {
+  id        String          @id @default(cuid())
+  enquiryId String
+  enquiry   Enquiry         @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  productId String?
+  product   Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  // Snapshot of what was requested, so the enquiry stays readable after a
+  // catalogue change.
+  productName String
+  sku         String
+  quantity    Int
+  note        String?
+
+  @@index([enquiryId])
+  @@index([productId])
+}
+
+model Quote {
+  id        String      @id @default(cuid())
+  reference String      @unique
+  status    QuoteStatus @default(DRAFT)
+  enquiryId String?
+  enquiry   Enquiry?    @relation(fields: [enquiryId], references: [id], onDelete: SetNull)
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  companyId String?
+  company   Company?    @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  currency      String @default("INR")
+  subtotalMinor Int    @default(0)
+  discountMinor Int    @default(0)
+  taxMinor      Int    @default(0)
+  totalMinor    Int    @default(0)
+
+  validUntil DateTime?
+  notes      String?
+  sentAt     DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  items  QuoteItem[]
+  orders Order[]
+
+  @@index([status])
+  @@index([userId])
+  @@index([enquiryId])
+}
+
+model QuoteItem {
+  id        String          @id @default(cuid())
+  quoteId   String
+  quote     Quote           @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  productId String?
+  product   Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  productName    String
+  sku            String
+  quantity       Int
+  unitPriceMinor Int
+  discountMinor  Int    @default(0)
+  gstRatePercent Int    @default(18)
+  lineTotalMinor Int
+
+  @@index([quoteId])
+}
+
+model Order {
+  id        String      @id @default(cuid())
+  reference String      @unique
+  status    OrderStatus @default(PENDING)
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  companyId String?
+  company   Company?    @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  quoteId   String?
+  quote     Quote?      @relation(fields: [quoteId], references: [id], onDelete: SetNull)
+
+  currency      String @default("INR")
+  subtotalMinor Int    @default(0)
+  discountMinor Int    @default(0)
+  taxMinor      Int    @default(0)
+  totalMinor    Int    @default(0)
+
+  poNumber       String?
+  billingGstin   String?
+  billingName    String
+  billingEmail   String
+  billingPhone   String?
+  billingAddress String?
+  internalNotes  String?
+
+  placedAt    DateTime  @default(now())
+  fulfilledAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  items    OrderItem[]
+  licences Licence[]
+
+  @@index([status])
+  @@index([userId])
+  @@index([placedAt])
+}
+
+model OrderItem {
+  id        String          @id @default(cuid())
+  orderId   String
+  order     Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String?
+  product   Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  productName    String
+  sku            String
+  quantity       Int
+  unitPriceMinor Int
+  discountMinor  Int    @default(0)
+  gstRatePercent Int    @default(18)
+  lineTotalMinor Int
+
+  @@index([orderId])
+}
+
+// ------------------------------ post-sale ----------------------------------
+
+model Licence {
+  id        String          @id @default(cuid())
+  reference String          @unique
+  status    LicenceStatus   @default(ACTIVE)
+  userId    String?
+  user      User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  companyId String?
+  company   Company?        @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  orderId   String?
+  order     Order?          @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  productId String?
+  product   Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  productName String
+  sku         String
+  seats       Int       @default(1)
+  startsAt    DateTime
+  expiresAt   DateTime?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  renewals Renewal[]
+
+  @@index([userId])
+  @@index([companyId])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+model Renewal {
+  id          String        @id @default(cuid())
+  reference   String        @unique
+  licenceId   String
+  licence     Licence       @relation(fields: [licenceId], references: [id], onDelete: Cascade)
+  status      RenewalStatus @default(UPCOMING)
+  dueAt       DateTime
+  seats       Int           @default(1)
+  quotedMinor Int?
+  notes       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([licenceId])
+  @@index([dueAt])
+  @@index([status])
+}
+
+model SupportTicket {
+  id        String         @id @default(cuid())
+  reference String         @unique
+  userId    String?
+  user      User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  subject   String
+  category  String
+  message   String
+  status    TicketStatus   @default(OPEN)
+  priority  TicketPriority @default(NORMAL)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+// ------------------------------ content ------------------------------------
+
+model Service {
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  name         String
+  category     String
+  summary      String
+  heroHeadline String
+  problem      String
+  solution     String
+  benefits     String[]
+  process      Json
+  technologies String[]
+  displayOrder Int       @default(100)
+  featured     Boolean   @default(false)
+  published    Boolean   @default(true)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  faqs Faq[]
+
+  @@index([category])
+  @@index([published, deletedAt])
+}
+
+model BlogPost {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  title       String
+  excerpt     String
+  body        String
+  category    String
+  tags        String[]
+  status      PostStatus @default(DRAFT)
+  readMinutes Int        @default(5)
+  authorId    String?
+  author      User?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  publishedAt DateTime?
+  deletedAt   DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([category])
+}
+
+model Faq {
+  id           String   @id @default(cuid())
+  question     String
+  answer       String
+  // Groups FAQs for a page that is not backed by a database row, e.g. the
+  // "microsoft-licensing" landing page.
+  topic        String?
+  displayOrder Int      @default(100)
+  productId    String?
+  product      Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  brandId      String?
+  brand        Brand?   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  serviceId    String?
+  service      Service? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([productId])
+  @@index([brandId])
+  @@index([serviceId])
+  @@index([topic])
+}
+
+// ------------------------------ operations ---------------------------------
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String
+  entityId   String?
+  // Never store credentials, tokens or raw request bodies here.
+  metadata   Json?
+  ipHash     String?
+  createdAt  DateTime @default(now())
+
+  @@index([actorId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
