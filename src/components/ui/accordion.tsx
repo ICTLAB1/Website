@@ -1,4 +1,5 @@
 import { appUrl } from "@/lib/env";
+import { jsonLdHtml } from "@/lib/seo";
 
 export type FaqEntry = { question: string; answer: string };
 
@@ -50,7 +51,7 @@ export function FaqList({
       {includeSchema ? (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
         />
       ) : null}
     </>

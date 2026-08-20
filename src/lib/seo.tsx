@@ -61,17 +61,21 @@ export function buildMetadata(input: {
   };
 }
 
+/**
+ * Serialises structured data for embedding in a script element.
+ *
+ * `<` is escaped to \u003c so that a "</script>" appearing inside any string
+ * value cannot terminate the element and inject markup. Every JSON-LD block in
+ * the application goes through this function - none serialise inline.
+ */
+export function jsonLdHtml(data: Record<string, unknown>): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
 /** Renders a JSON-LD block. Content is serialised, never interpolated as HTML. */
 export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
-    <script
-      type="application/ld+json"
-      // JSON.stringify output is escaped below so a "</script>" inside any
-      // string value cannot break out of the element.
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
-      }}
-    />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(data) }} />
   );
 }
 

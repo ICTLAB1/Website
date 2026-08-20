@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { appUrl } from "@/lib/env";
+import { jsonLdHtml } from "@/lib/seo";
 
 export type Crumb = { label: string; href?: string };
 
@@ -49,7 +50,7 @@ export function Breadcrumb({ items }: { items: Crumb[] }) {
       </nav>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
       />
     </>
   );

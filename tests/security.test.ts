@@ -95,3 +95,23 @@ describe("basket parsing", () => {
     expect(parseStored(many).length).toBeLessThanOrEqual(60);
   });
 });
+
+describe("JSON-LD serialisation", () => {
+  it("escapes a closing script tag so structured data cannot inject markup", async () => {
+    const { jsonLdHtml } = await import("@/lib/seo");
+    const html = jsonLdHtml({
+      "@type": "FAQPage",
+      question: 'Does this break out? </script><script>alert(1)</script>',
+    });
+    expect(html).not.toContain("</script>");
+    expect(html).toContain("\\u003c/script");
+  });
+
+  it("still produces valid JSON after escaping", async () => {
+    const { jsonLdHtml } = await import("@/lib/seo");
+    const html = jsonLdHtml({ name: "Adobe <Creative> Cloud", price: 1000 });
+    const parsed = JSON.parse(html) as { name: string; price: number };
+    expect(parsed.name).toBe("Adobe <Creative> Cloud");
+    expect(parsed.price).toBe(1000);
+  });
+});
