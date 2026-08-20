@@ -48,21 +48,15 @@ export function VariantForm({
       pendingLabel="Saving…"
       hidden={{ productId, ...(variant ? { variantId: variant.id } : {}) }}
     >
-      {({ fieldErrors }) => (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="SKU" required error={fieldErrors.sku?.[0]}>
-            {({ id, describedBy, invalid }) => (
-              <Input id={id} name="sku" defaultValue={variant?.sku} className="font-mono uppercase" required maxLength={64} aria-describedby={describedBy} invalid={invalid} />
-            )}
-          </Field>
-          <Field label="Option name" required error={fieldErrors.name?.[0]}>
-            {({ id, describedBy, invalid }) => (
-              <Input id={id} name="name" defaultValue={variant?.name} placeholder="1-year subscription, single user" required aria-describedby={describedBy} invalid={invalid} />
-            )}
-          </Field>
-          <Field label="Licence type" required error={fieldErrors.licenceType?.[0]}>
-            {({ id, describedBy, invalid }) => (
-              <Select id={id} name="licenceType" defaultValue={variant?.licenceType ?? "SUBSCRIPTION_ANNUAL"} aria-describedby={describedBy} invalid={invalid}>
+      <div className="grid gap-4 sm:grid-cols-2">
+          <Field name="sku" label="SKU" required>
+<Input name="sku" defaultValue={variant?.sku} className="font-mono uppercase" required maxLength={64} />
+</Field>
+          <Field name="name" label="Option name" required>
+<Input name="name" defaultValue={variant?.name} placeholder="1-year subscription, single user" required />
+</Field>
+          <Field name="licenceType" label="Licence type" required>
+<Select name="licenceType" defaultValue={variant?.licenceType ?? "SUBSCRIPTION_ANNUAL"}>
                 {LICENCE_TYPES.map((type) => (
                   <option key={type} value={type}>
                     {type
@@ -73,46 +67,32 @@ export function VariantForm({
                   </option>
                 ))}
               </Select>
-            )}
-          </Field>
-          <Field
+</Field>
+          <Field name="termMonths"
             label="Term in months"
             hint="Leave blank for a perpetual licence."
-            error={fieldErrors.termMonths?.[0]}
           >
-            {({ id, describedBy, invalid }) => (
-              <Input id={id} name="termMonths" type="number" min={1} max={120} defaultValue={variant?.termMonths ?? ""} aria-describedby={describedBy} invalid={invalid} />
-            )}
-          </Field>
-          <Field label="Seats per unit" required error={fieldErrors.seats?.[0]}>
-            {({ id, describedBy, invalid }) => (
-              <Input id={id} name="seats" type="number" min={1} max={100000} defaultValue={variant?.seats ?? 1} required aria-describedby={describedBy} invalid={invalid} />
-            )}
-          </Field>
-          <Field label="GST rate (%)" required error={fieldErrors.gstRatePercent?.[0]}>
-            {({ id, describedBy, invalid }) => (
-              <Input id={id} name="gstRatePercent" type="number" min={0} max={50} defaultValue={variant?.gstRatePercent ?? 18} required aria-describedby={describedBy} invalid={invalid} />
-            )}
-          </Field>
-          <Field
+<Input name="termMonths" type="number" min={1} max={120} defaultValue={variant?.termMonths ?? ""} />
+</Field>
+          <Field name="seats" label="Seats per unit" required>
+<Input name="seats" type="number" min={1} max={100000} defaultValue={variant?.seats ?? 1} required />
+</Field>
+          <Field name="gstRatePercent" label="GST rate (%)" required>
+<Input name="gstRatePercent" type="number" min={0} max={50} defaultValue={variant?.gstRatePercent ?? 18} required />
+</Field>
+          <Field name="listPrice"
             label="List price (₹, excl. GST)"
             required
             hint="Enter 0 for products that are quoted rather than priced."
-            error={fieldErrors.listPrice?.[0]}
           >
-            {({ id, describedBy, invalid }) => (
-              <Input id={id} name="listPrice" inputMode="decimal" defaultValue={toMajor(variant?.listPriceMinor ?? null)} required aria-describedby={describedBy} invalid={invalid} />
-            )}
-          </Field>
-          <Field
+<Input name="listPrice" inputMode="decimal" defaultValue={toMajor(variant?.listPriceMinor ?? null)} required />
+</Field>
+          <Field name="salePrice"
             label="Sale price (₹, excl. GST)"
             hint="Must be lower than the list price. Leave blank for no discount."
-            error={fieldErrors.salePrice?.[0]}
           >
-            {({ id, describedBy, invalid }) => (
-              <Input id={id} name="salePrice" inputMode="decimal" defaultValue={toMajor(variant?.salePriceMinor ?? null)} aria-describedby={describedBy} invalid={invalid} />
-            )}
-          </Field>
+<Input name="salePrice" inputMode="decimal" defaultValue={toMajor(variant?.salePriceMinor ?? null)} />
+</Field>
           <div className="sm:col-span-2">
             <Checkbox
               name="isDefault"
@@ -121,7 +101,6 @@ export function VariantForm({
             />
           </div>
         </div>
-      )}
     </AdminForm>
   );
 }

@@ -45,36 +45,25 @@ export default async function AccountSupportPage() {
 
         <div className="mt-6">
           <AccountForm action={createSupportTicket} submitLabel="Raise ticket" pendingLabel="Submitting…">
-            {({ fieldErrors }) => (
-              <>
-                <Field label="Subject" required error={fieldErrors.subject?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Input id={id} name="subject" required maxLength={160} aria-describedby={describedBy} invalid={invalid} />
-                  )}
-                </Field>
-                <Field label="Category" required error={fieldErrors.category?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Select id={id} name="category" defaultValue="LICENSING" required aria-describedby={describedBy} invalid={invalid}>
+            <Field name="subject" label="Subject" required>
+<Input name="subject" required maxLength={160} />
+</Field>
+                <Field name="category" label="Category" required>
+<Select name="category" defaultValue="LICENSING" required>
                       {CATEGORIES.map((category) => (
                         <option key={category.value} value={category.value}>
                           {category.label}
                         </option>
                       ))}
                     </Select>
-                  )}
-                </Field>
-                <Field
+</Field>
+                <Field name="message"
                   label="Describe the issue"
                   required
                   hint="Include any reference numbers, error messages and what you have already tried."
-                  error={fieldErrors.message?.[0]}
                 >
-                  {({ id, describedBy, invalid }) => (
-                    <Textarea id={id} name="message" rows={6} maxLength={4000} required aria-describedby={describedBy} invalid={invalid} />
-                  )}
-                </Field>
-              </>
-            )}
+<Textarea name="message" rows={6} maxLength={4000} required />
+</Field>
           </AccountForm>
         </div>
       </section>

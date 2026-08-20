@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { AuthForm, AuthLayout } from "@/components/auth/auth-form";
-import { Field, Input } from "@/components/ui/form";
+import { AuthLayout } from "@/components/auth/auth-layout";
+import { ForgotPasswordForm } from "@/components/auth/password-reset-forms";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -35,41 +35,7 @@ export default function ForgotPasswordPage() {
         </>
       }
     >
-      <AuthForm
-        action="/api/auth/forgot-password"
-        submitLabel="Send reset link"
-        pendingLabel="Sending…"
-        buildPayload={(form) => ({ email: String(form.get("email") ?? "") })}
-        onSuccessMessage={(data) =>
-          data.message ??
-          "If that email address has an account, we have sent a reset link."
-        }
-        footer={
-          <p className="pt-1 text-[13px] text-ink-500">
-            Remembered it?{" "}
-            <Link href="/login" className="text-accent-700 hover:underline">
-              Back to sign in
-            </Link>
-          </p>
-        }
-      >
-        {({ fieldErrors }) => (
-          <Field label="Business email" required error={fieldErrors.email?.[0]}>
-            {({ id, describedBy, invalid }) => (
-              <Input
-                id={id}
-                name="email"
-                type="email"
-                autoComplete="email"
-                autoFocus
-                required
-                aria-describedby={describedBy}
-                invalid={invalid}
-              />
-            )}
-          </Field>
-        )}
-      </AuthForm>
+      <ForgotPasswordForm />
     </AuthLayout>
   );
 }

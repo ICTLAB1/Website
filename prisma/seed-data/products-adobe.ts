@@ -1,4 +1,4 @@
-import { DELIVERY_PERPETUAL, DELIVERY_SUBSCRIPTION, SUPPORT_STANDARD, type ProductSeed } from "./types";
+import { DELIVERY_SUBSCRIPTION, SUPPORT_STANDARD, type ProductSeed } from "./types";
 
 const TEAMS_NOTE =
   "Licensed per named user through the Adobe Admin Console. Seats can be reassigned between people as roles change, which is the practical advantage over device-bound licensing. Annual commitment applies; mid-term seat additions are prorated to the common renewal date.";

@@ -4,7 +4,7 @@ import { useActionState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
-import { FormError, FormSuccess } from "@/components/ui/form";
+import { FormError, FormStateProvider, FormSuccess } from "@/components/ui/form";
 import type { ActionState } from "@/app/account/actions";
 
 function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel: string }) {
@@ -18,6 +18,13 @@ function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel: st
   );
 }
 
+/**
+ * Wraps a Server Action form.
+ *
+ * Children are ordinary React nodes so a Server Component can render the fields
+ * directly; validation messages reach them through FormStateProvider rather
+ * than a render prop, which cannot cross the server/client boundary.
+ */
 export function AccountForm({
   action,
   submitLabel,
@@ -27,7 +34,7 @@ export function AccountForm({
   action: (previous: ActionState, formData: FormData) => Promise<ActionState>;
   submitLabel: string;
   pendingLabel: string;
-  children: (state: { fieldErrors: Record<string, string[]> }) => ReactNode;
+  children: ReactNode;
 }) {
   const [state, formAction] = useActionState<ActionState, FormData>(action, { status: "idle" });
 
@@ -38,7 +45,7 @@ export function AccountForm({
         <FormSuccess>{state.message}</FormSuccess>
       ) : null}
 
-      {children({ fieldErrors: state.fieldErrors ?? {} })}
+      <FormStateProvider fieldErrors={state.fieldErrors ?? {}}>{children}</FormStateProvider>
 
       <div className="border-t border-line pt-5">
         <SubmitButton label={submitLabel} pendingLabel={pendingLabel} />

@@ -28,36 +28,12 @@ export default async function AccountProfilePage() {
 
         <div className="mt-6">
           <AccountForm action={updateProfile} submitLabel="Save changes" pendingLabel="Saving…">
-            {({ fieldErrors }) => (
-              <>
-                <Field label="Full name" required error={fieldErrors.name?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Input
-                      id={id}
-                      name="name"
-                      defaultValue={user.name}
-                      autoComplete="name"
-                      required
-                      aria-describedby={describedBy}
-                      invalid={invalid}
-                    />
-                  )}
-                </Field>
-                <Field label="Phone" error={fieldErrors.phone?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Input
-                      id={id}
-                      name="phone"
-                      type="tel"
-                      defaultValue={user.phone ?? ""}
-                      autoComplete="tel"
-                      aria-describedby={describedBy}
-                      invalid={invalid}
-                    />
-                  )}
-                </Field>
-              </>
-            )}
+            <Field label="Full name" name="name" required>
+              <Input name="name" defaultValue={user.name} autoComplete="name" required />
+            </Field>
+            <Field label="Phone" name="phone">
+              <Input name="phone" type="tel" defaultValue={user.phone ?? ""} autoComplete="tel" />
+            </Field>
           </AccountForm>
         </div>
       </section>

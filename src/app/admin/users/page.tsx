@@ -73,11 +73,8 @@ export default async function AdminUsersPage() {
         </p>
         <div className="mt-5">
           <AdminForm action={updateUserRole} submitLabel="Update role" pendingLabel="Updating…">
-            {({ fieldErrors }) => (
-              <>
-                <Field label="User" required error={fieldErrors.userId?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Select id={id} name="userId" required aria-describedby={describedBy} invalid={invalid}>
+            <Field name="userId" label="User" required>
+<Select name="userId" required>
                       <option value="">Choose a user</option>
                       {users
                         .filter((user) => user.id !== admin.id)
@@ -87,19 +84,14 @@ export default async function AdminUsersPage() {
                           </option>
                         ))}
                     </Select>
-                  )}
-                </Field>
-                <Field label="New role" required error={fieldErrors.role?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Select id={id} name="role" defaultValue="SALES" required aria-describedby={describedBy} invalid={invalid}>
+</Field>
+                <Field name="role" label="New role" required>
+<Select name="role" defaultValue="SALES" required>
                       <option value="SALES">Sales — everything except staff and settings</option>
                       <option value="ADMIN">Administrator — full access</option>
                       <option value="CUSTOMER">Customer — no admin access</option>
                     </Select>
-                  )}
-                </Field>
-              </>
-            )}
+</Field>
           </AdminForm>
         </div>
       </section>

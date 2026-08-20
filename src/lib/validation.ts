@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/auth/password";
+import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/password-policy";
 
 /**
  * Every request body is parsed through one of these schemas before it reaches

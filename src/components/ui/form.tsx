@@ -1,16 +1,49 @@
 "use client";
 
-import type { ComponentPropsWithoutRef, ReactNode } from "react";
-import { useId } from "react";
+import {
+  Children,
+  cloneElement,
+  createContext,
+  isValidElement,
+  useContext,
+  useId,
+  type ComponentPropsWithoutRef,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 import { cn } from "@/lib/utils";
 
 /**
  * Form primitives.
  *
- * Every control is wired to a real <label>, and validation messages are linked
- * with aria-describedby + aria-invalid so screen readers announce the error
- * with the field rather than as loose text.
+ * `Field` wires a real <label>, hint and error message to its control by
+ * cloning the child element and injecting `id`, `aria-describedby` and
+ * `aria-invalid`. Validation messages arrive through context rather than as a
+ * render prop, so a Server Component can render these fields directly - a
+ * function prop cannot cross the server/client boundary.
  */
+
+type FormState = { fieldErrors: Record<string, string[]> };
+
+const FormStateContext = createContext<FormState>({ fieldErrors: {} });
+
+export function FormStateProvider({
+  fieldErrors,
+  children,
+}: {
+  fieldErrors: Record<string, string[]>;
+  children: ReactNode;
+}) {
+  return (
+    <FormStateContext.Provider value={{ fieldErrors }}>{children}</FormStateContext.Provider>
+  );
+}
+
+export function useFieldError(name?: string): string | undefined {
+  const { fieldErrors } = useContext(FormStateContext);
+  if (!name) return undefined;
+  return fieldErrors[name]?.[0];
+}
 
 const CONTROL_BASE =
   "w-full rounded-[--radius-md] border bg-white px-3 text-sm text-ink-900 " +
@@ -24,6 +57,7 @@ const CONTROL_STATE = {
 
 export function Field({
   label,
+  name,
   hint,
   error,
   required,
@@ -31,17 +65,33 @@ export function Field({
   className,
 }: {
   label: string;
+  /** Matches the control's `name`, used to look up its validation message. */
+  name?: string;
   hint?: string;
+  /** Explicit message; otherwise taken from the enclosing form state. */
   error?: string;
   required?: boolean;
-  /** Receives the ids to attach to the control. */
-  children: (ids: { id: string; describedBy: string | undefined; invalid: boolean }) => ReactNode;
+  children: ReactNode;
   className?: string;
 }) {
   const id = useId();
+  const contextError = useFieldError(name);
+  const message = error ?? contextError;
+
   const hintId = hint ? `${id}-hint` : undefined;
-  const errorId = error ? `${id}-error` : undefined;
+  const errorId = message ? `${id}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
+
+  const child = Children.only(children);
+  const control = isValidElement(child)
+    ? cloneElement(child as ReactElement<Record<string, unknown>>, {
+        id,
+        name: (child.props as { name?: string }).name ?? name,
+        "aria-describedby": describedBy,
+        "aria-invalid": message ? true : undefined,
+        "data-invalid": message ? "true" : undefined,
+      })
+    : child;
 
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
@@ -55,69 +105,60 @@ export function Field({
           <span className="ml-1.5 text-[12px] font-normal text-ink-400">(optional)</span>
         )}
       </label>
-      {children({ id, describedBy, invalid: Boolean(error) })}
+
+      {control}
+
       {hint ? (
         <p id={hintId} className="text-[12px] text-ink-500">
           {hint}
         </p>
       ) : null}
-      {error ? (
+      {message ? (
         <p id={errorId} className="text-[12px] font-medium text-danger-700">
-          {error}
+          {message}
         </p>
       ) : null}
     </div>
   );
 }
 
-export function Input({
-  invalid,
-  className,
-  ...props
-}: ComponentPropsWithoutRef<"input"> & { invalid?: boolean }) {
+/** `data-invalid` is set by Field; the control styles itself from it. */
+const INVALID_SELECTOR = "data-[invalid=true]:border-danger-600";
+
+export function Input({ className, ...props }: ComponentPropsWithoutRef<"input">) {
   return (
     <input
-      className={cn(CONTROL_BASE, "h-11", invalid ? CONTROL_STATE.invalid : CONTROL_STATE.normal, className)}
-      aria-invalid={invalid || undefined}
+      className={cn(CONTROL_BASE, "h-11", CONTROL_STATE.normal, INVALID_SELECTOR, className)}
       {...props}
     />
   );
 }
 
-export function Textarea({
-  invalid,
-  className,
-  ...props
-}: ComponentPropsWithoutRef<"textarea"> & { invalid?: boolean }) {
+export function Textarea({ className, ...props }: ComponentPropsWithoutRef<"textarea">) {
   return (
     <textarea
       className={cn(
         CONTROL_BASE,
         "min-h-28 py-2.5 leading-relaxed",
-        invalid ? CONTROL_STATE.invalid : CONTROL_STATE.normal,
+        CONTROL_STATE.normal,
+        INVALID_SELECTOR,
         className,
       )}
-      aria-invalid={invalid || undefined}
       {...props}
     />
   );
 }
 
-export function Select({
-  invalid,
-  className,
-  children,
-  ...props
-}: ComponentPropsWithoutRef<"select"> & { invalid?: boolean }) {
+export function Select({ className, children, ...props }: ComponentPropsWithoutRef<"select">) {
   return (
     <select
       className={cn(
         CONTROL_BASE,
         "h-11 appearance-none bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22%236b7280%22><path d=%22M5.5 7.5 10 12l4.5-4.5z%22/></svg>')] bg-[length:20px_20px] bg-[right_0.5rem_center] bg-no-repeat pr-9",
-        invalid ? CONTROL_STATE.invalid : CONTROL_STATE.normal,
+        CONTROL_STATE.normal,
+        INVALID_SELECTOR,
         className,
       )}
-      aria-invalid={invalid || undefined}
       {...props}
     >
       {children}
@@ -136,7 +177,7 @@ export function Checkbox({
       <input
         id={id}
         type="checkbox"
-        className="mt-0.5 h-4 w-4 shrink-0 rounded-[--radius-xs] border-line-strong text-accent-700 accent-[var(--color-accent-700)]"
+        className="mt-0.5 h-4 w-4 shrink-0 rounded-[--radius-xs] border-line-strong accent-[var(--color-accent-700)]"
         {...props}
       />
       <label htmlFor={id} className="text-[13px] leading-snug text-ink-700">
@@ -188,5 +229,16 @@ export function Fieldset({
       {description ? <p className="mt-1 text-[13px] text-ink-500">{description}</p> : null}
       <div className="mt-4 grid gap-4">{children}</div>
     </fieldset>
+  );
+}
+
+/** Hidden from people, tempting to bots. Paired with a server-side check. */
+export function Honeypot({ name = "website" }: { name?: string }) {
+  const id = useId();
+  return (
+    <div aria-hidden="true" className="absolute h-px w-px overflow-hidden opacity-0">
+      <label htmlFor={id}>Leave this field empty</label>
+      <input id={id} name={name} type="text" tabIndex={-1} autoComplete="off" />
+    </div>
   );
 }

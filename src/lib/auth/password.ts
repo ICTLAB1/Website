@@ -7,9 +7,6 @@ import bcrypt from "bcryptjs";
  */
 const COST = 12;
 
-export const PASSWORD_MIN_LENGTH = 10;
-export const PASSWORD_MAX_LENGTH = 200;
-
 export async function hashPassword(plain: string): Promise<string> {
   return bcrypt.hash(plain, COST);
 }
@@ -33,17 +30,4 @@ export async function fakeVerify(): Promise<void> {
   );
 }
 
-/** Structural password policy. Returns an empty array when the password passes. */
-export function passwordPolicyErrors(password: string): string[] {
-  const errors: string[] = [];
-  if (password.length < PASSWORD_MIN_LENGTH) {
-    errors.push(`Use at least ${PASSWORD_MIN_LENGTH} characters.`);
-  }
-  if (password.length > PASSWORD_MAX_LENGTH) {
-    errors.push(`Use at most ${PASSWORD_MAX_LENGTH} characters.`);
-  }
-  if (!/[a-z]/.test(password)) errors.push("Include a lowercase letter.");
-  if (!/[A-Z]/.test(password)) errors.push("Include an uppercase letter.");
-  if (!/[0-9]/.test(password)) errors.push("Include a number.");
-  return errors;
-}
+export { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH, passwordPolicyErrors } from "@/lib/password-policy";

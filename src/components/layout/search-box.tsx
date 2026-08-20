@@ -33,19 +33,24 @@ export function SearchBox({
   const [loading, setLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const trimmedQuery = query.trim();
+  const queryIsSearchable = trimmedQuery.length >= 2;
+
+  // Derived rather than stored: a short query simply shows nothing, instead of
+  // an effect clearing state and triggering a cascading render.
+  const visibleSuggestions = queryIsSearchable ? suggestions : [];
+
   useEffect(() => {
-    const trimmed = query.trim();
-    if (trimmed.length < 2) {
-      setSuggestions([]);
-      setLoading(false);
-      return;
-    }
+    if (trimmedQuery.length < 2) return;
 
     const controller = new AbortController();
-    setLoading(true);
+    // The loading flag is raised inside the debounce callback rather than in
+    // the effect body: setting state synchronously in an effect causes a
+    // cascading render, and there is nothing to show until the request starts.
     const timer = setTimeout(async () => {
+      setLoading(true);
       try {
-        const response = await fetch(`/api/search/suggest?q=${encodeURIComponent(trimmed)}`, {
+        const response = await fetch(`/api/search/suggest?q=${encodeURIComponent(trimmedQuery)}`, {
           signal: controller.signal,
         });
         if (!response.ok) throw new Error("suggest failed");
@@ -64,7 +69,7 @@ export function SearchBox({
       controller.abort();
       clearTimeout(timer);
     };
-  }, [query]);
+  }, [trimmedQuery]);
 
   useEffect(() => {
     function onPointerDown(event: MouseEvent) {
@@ -76,7 +81,7 @@ export function SearchBox({
 
   function submit(event?: React.FormEvent) {
     event?.preventDefault();
-    const active = suggestions[activeIndex];
+    const active = visibleSuggestions[activeIndex];
     if (active) {
       setOpen(false);
       router.push(active.href);
@@ -113,7 +118,7 @@ export function SearchBox({
             id={`${listId}-input`}
             type="search"
             role="combobox"
-            aria-expanded={open && suggestions.length > 0}
+            aria-expanded={open && visibleSuggestions.length > 0}
             aria-controls={listId}
             aria-autocomplete="list"
             aria-activedescendant={activeIndex >= 0 ? `${listId}-option-${activeIndex}` : undefined}
@@ -130,7 +135,7 @@ export function SearchBox({
               if (event.key === "ArrowDown") {
                 event.preventDefault();
                 setOpen(true);
-                setActiveIndex((index) => Math.min(index + 1, suggestions.length - 1));
+                setActiveIndex((index) => Math.min(index + 1, visibleSuggestions.length - 1));
               } else if (event.key === "ArrowUp") {
                 event.preventDefault();
                 setActiveIndex((index) => Math.max(index - 1, -1));
@@ -157,17 +162,17 @@ export function SearchBox({
         </div>
       </form>
 
-      {open && query.trim().length >= 2 ? (
+      {open && queryIsSearchable ? (
         <div className="absolute left-0 right-0 top-[calc(100%+0.375rem)] z-50 overflow-hidden rounded-[--radius-lg] border border-line bg-white shadow-[--shadow-overlay]">
-          {loading && suggestions.length === 0 ? (
+          {loading && visibleSuggestions.length === 0 ? (
             <p className="px-4 py-3 text-[13px] text-ink-500">Searching…</p>
-          ) : suggestions.length === 0 ? (
+          ) : visibleSuggestions.length === 0 ? (
             <p className="px-4 py-3 text-[13px] text-ink-500">
               No matches. Press Search to look across the whole site.
             </p>
           ) : (
             <ul id={listId} role="listbox" aria-label="Search suggestions" className="max-h-96 overflow-y-auto">
-              {suggestions.map((suggestion, index) => (
+              {visibleSuggestions.map((suggestion, index) => (
                 <li key={suggestion.href} role="none">
                   <Link
                     id={`${listId}-option-${index}`}

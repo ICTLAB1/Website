@@ -176,36 +176,26 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
               pendingLabel="Saving…"
               hidden={{ reference: enquiry.reference }}
             >
-              {() => (
-                <>
-                  <Field label="Status" required>
-                    {({ id, describedBy }) => (
-                      <Select id={id} name="status" defaultValue={enquiry.status} aria-describedby={describedBy}>
+              <Field name="status" label="Status" required>
+<Select name="status" defaultValue={enquiry.status}>
                         {STATUSES.map((status) => (
                           <option key={status} value={status}>
                             {humanise(status)}
                           </option>
                         ))}
                       </Select>
-                    )}
-                  </Field>
-                  <Field
+</Field>
+                  <Field name="internalNotes"
                     label="Internal notes"
                     hint="Visible to staff only. Never shown to the customer."
                   >
-                    {({ id, describedBy }) => (
-                      <Textarea
-                        id={id}
+<Textarea
                         name="internalNotes"
                         rows={6}
                         maxLength={6000}
                         defaultValue={enquiry.internalNotes ?? ""}
-                        aria-describedby={describedBy}
                       />
-                    )}
-                  </Field>
-                </>
-              )}
+</Field>
             </AdminForm>
           </section>
         </aside>

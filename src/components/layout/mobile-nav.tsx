@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { primaryNav, utilityNav, type NavColumn, type NavLink } from "@/lib/navigation";
 import { SearchBox } from "@/components/layout/search-box";
 import { cn } from "@/lib/utils";
@@ -22,15 +22,24 @@ type Panel =
   | { kind: "column"; label: string; parent: string; links: NavLink[] };
 
 export function MobileNav({ signedIn }: { signedIn: boolean }) {
-  const [open, setOpen] = useState(false);
-  const [stack, setStack] = useState<Panel[]>([{ kind: "root" }]);
   const pathname = usePathname();
+  /**
+   * The drawer records the route it was opened on, and is considered open only
+   * while the current route still matches. Navigating therefore closes it as
+   * derived state, without an effect that sets state on every route change.
+   */
+  const [openedOn, setOpenedOn] = useState<string | null>(null);
+  const [stack, setStack] = useState<Panel[]>([{ kind: "root" }]);
+  const open = openedOn !== null && openedOn === pathname;
 
-  // Any navigation closes the drawer and resets it to the root panel.
-  useEffect(() => {
-    setOpen(false);
+  const openDrawer = () => {
     setStack([{ kind: "root" }]);
-  }, [pathname]);
+    setOpenedOn(pathname);
+  };
+  const setOpen = useCallback(
+    (next: boolean) => setOpenedOn(next ? pathname : null),
+    [pathname],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -44,7 +53,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
       document.body.style.overflow = overflow;
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [open]);
+  }, [open, setOpen]);
 
   const current = stack[stack.length - 1] ?? { kind: "root" };
 
@@ -60,7 +69,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={openDrawer}
         aria-expanded={open}
         aria-controls="mobile-navigation"
         className="inline-flex h-10 w-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-navy-900 lg:hidden"

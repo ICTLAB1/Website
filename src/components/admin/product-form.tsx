@@ -43,27 +43,19 @@ export function ProductForm({
       pendingLabel="Saving…"
       hidden={product?.id ? { productId: product.id } : undefined}
     >
-      {({ fieldErrors }) => (
-        <>
-          <Fieldset legend="Identity">
+      <Fieldset legend="Identity">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Product name" required error={fieldErrors.name?.[0]}>
-                {({ id, describedBy, invalid }) => (
-                  <Input id={id} name="name" defaultValue={product?.name} required aria-describedby={describedBy} invalid={invalid} />
-                )}
-              </Field>
-              <Field
+              <Field name="name" label="Product name" required>
+<Input name="name" defaultValue={product?.name} required />
+</Field>
+              <Field name="slug"
                 label="URL slug"
                 hint="Leave blank to derive it from the name. Changing it changes the public URL."
-                error={fieldErrors.slug?.[0]}
               >
-                {({ id, describedBy, invalid }) => (
-                  <Input id={id} name="slug" defaultValue={product?.slug} placeholder="microsoft-365-business-standard" aria-describedby={describedBy} invalid={invalid} />
-                )}
-              </Field>
-              <Field label="Brand" required error={fieldErrors.brandId?.[0]}>
-                {({ id, describedBy, invalid }) => (
-                  <Select id={id} name="brandId" defaultValue={product?.brandId ?? ""} required aria-describedby={describedBy} invalid={invalid}>
+<Input name="slug" defaultValue={product?.slug} placeholder="microsoft-365-business-standard" />
+</Field>
+              <Field name="brandId" label="Brand" required>
+<Select name="brandId" defaultValue={product?.brandId ?? ""} required>
                     <option value="" disabled>
                       Choose a brand
                     </option>
@@ -73,11 +65,9 @@ export function ProductForm({
                       </option>
                     ))}
                   </Select>
-                )}
-              </Field>
-              <Field label="Category" required error={fieldErrors.categoryId?.[0]}>
-                {({ id, describedBy, invalid }) => (
-                  <Select id={id} name="categoryId" defaultValue={product?.categoryId ?? ""} required aria-describedby={describedBy} invalid={invalid}>
+</Field>
+              <Field name="categoryId" label="Category" required>
+<Select name="categoryId" defaultValue={product?.categoryId ?? ""} required>
                     <option value="" disabled>
                       Choose a category
                     </option>
@@ -87,124 +77,93 @@ export function ProductForm({
                       </option>
                     ))}
                   </Select>
-                )}
-              </Field>
+</Field>
             </div>
           </Fieldset>
 
           <Fieldset legend="Description">
-            <Field
+            <Field name="shortDescription"
               label="Short description"
               required
               hint="One sentence. Appears on catalogue cards and in search results."
-              error={fieldErrors.shortDescription?.[0]}
             >
-              {({ id, describedBy, invalid }) => (
-                <Textarea id={id} name="shortDescription" rows={2} maxLength={300} defaultValue={product?.shortDescription} required aria-describedby={describedBy} invalid={invalid} />
-              )}
-            </Field>
-            <Field
+<Textarea name="shortDescription" rows={2} maxLength={300} defaultValue={product?.shortDescription} required />
+</Field>
+            <Field name="description"
               label="Full description"
               required
               hint="Separate paragraphs with a blank line."
-              error={fieldErrors.description?.[0]}
             >
-              {({ id, describedBy, invalid }) => (
-                <Textarea id={id} name="description" rows={10} defaultValue={product?.description} required aria-describedby={describedBy} invalid={invalid} />
-              )}
-            </Field>
+<Textarea name="description" rows={10} defaultValue={product?.description} required />
+</Field>
           </Fieldset>
 
           <Fieldset legend="Structured detail" description="One item per line.">
-            <Field label="Features" error={fieldErrors.features?.[0]}>
-              {({ id, describedBy, invalid }) => (
-                <Textarea id={id} name="features" rows={6} defaultValue={product?.features.join("\n")} aria-describedby={describedBy} invalid={invalid} />
-              )}
-            </Field>
-            <Field label="Compatibility" error={fieldErrors.compatibility?.[0]}>
-              {({ id, describedBy, invalid }) => (
-                <Textarea id={id} name="compatibility" rows={5} defaultValue={product?.compatibility.join("\n")} aria-describedby={describedBy} invalid={invalid} />
-              )}
-            </Field>
-            <Field
+            <Field name="features" label="Features">
+<Textarea name="features" rows={6} defaultValue={product?.features.join("\n")} />
+</Field>
+            <Field name="compatibility" label="Compatibility">
+<Textarea name="compatibility" rows={5} defaultValue={product?.compatibility.join("\n")} />
+</Field>
+            <Field name="keywords"
               label="Search keywords"
               hint="Comma separated. Used by catalogue and site search."
-              error={fieldErrors.keywords?.[0]}
             >
-              {({ id, describedBy, invalid }) => (
-                <Input id={id} name="keywords" defaultValue={product?.keywords.join(", ")} aria-describedby={describedBy} invalid={invalid} />
-              )}
-            </Field>
+<Input name="keywords" defaultValue={product?.keywords.join(", ")} />
+</Field>
           </Fieldset>
 
           <Fieldset legend="Commercial notes">
-            <Field label="Licensing notes" error={fieldErrors.licensingNotes?.[0]}>
-              {({ id, describedBy, invalid }) => (
-                <Textarea id={id} name="licensingNotes" rows={5} defaultValue={product?.licensingNotes ?? ""} aria-describedby={describedBy} invalid={invalid} />
-              )}
-            </Field>
+            <Field name="licensingNotes" label="Licensing notes">
+<Textarea name="licensingNotes" rows={5} defaultValue={product?.licensingNotes ?? ""} />
+</Field>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Delivery notes" error={fieldErrors.deliveryNotes?.[0]}>
-                {({ id, describedBy, invalid }) => (
-                  <Textarea id={id} name="deliveryNotes" rows={4} defaultValue={product?.deliveryNotes ?? ""} aria-describedby={describedBy} invalid={invalid} />
-                )}
-              </Field>
-              <Field label="Support notes" error={fieldErrors.supportNotes?.[0]}>
-                {({ id, describedBy, invalid }) => (
-                  <Textarea id={id} name="supportNotes" rows={4} defaultValue={product?.supportNotes ?? ""} aria-describedby={describedBy} invalid={invalid} />
-                )}
-              </Field>
+              <Field name="deliveryNotes" label="Delivery notes">
+<Textarea name="deliveryNotes" rows={4} defaultValue={product?.deliveryNotes ?? ""} />
+</Field>
+              <Field name="supportNotes" label="Support notes">
+<Textarea name="supportNotes" rows={4} defaultValue={product?.supportNotes ?? ""} />
+</Field>
             </div>
           </Fieldset>
 
           <Fieldset legend="Publication">
             <div className="grid gap-4 sm:grid-cols-3">
-              <Field label="Status" required error={fieldErrors.status?.[0]}>
-                {({ id, describedBy, invalid }) => (
-                  <Select id={id} name="status" defaultValue={product?.status ?? "DRAFT"} aria-describedby={describedBy} invalid={invalid}>
+              <Field name="status" label="Status" required>
+<Select name="status" defaultValue={product?.status ?? "DRAFT"}>
                     <option value="DRAFT">Draft — not publicly visible</option>
                     <option value="ACTIVE">Active — listed in the catalogue</option>
                     <option value="ARCHIVED">Archived — hidden</option>
                   </Select>
-                )}
-              </Field>
-              <Field label="Availability" required error={fieldErrors.availability?.[0]}>
-                {({ id, describedBy, invalid }) => (
-                  <Select id={id} name="availability" defaultValue={product?.availability ?? "ON_REQUEST"} aria-describedby={describedBy} invalid={invalid}>
+</Field>
+              <Field name="availability" label="Availability" required>
+<Select name="availability" defaultValue={product?.availability ?? "ON_REQUEST"}>
                     <option value="IN_STOCK">Available now</option>
                     <option value="MADE_TO_ORDER">Made to order</option>
                     <option value="ON_REQUEST">On request</option>
                     <option value="DISCONTINUED">Discontinued</option>
                   </Select>
-                )}
-              </Field>
-              <Field label="Purchase mode" required error={fieldErrors.purchaseMode?.[0]}>
-                {({ id, describedBy, invalid }) => (
-                  <Select id={id} name="purchaseMode" defaultValue={product?.purchaseMode ?? "BOTH"} aria-describedby={describedBy} invalid={invalid}>
+</Field>
+              <Field name="purchaseMode" label="Purchase mode" required>
+<Select name="purchaseMode" defaultValue={product?.purchaseMode ?? "BOTH"}>
                     <option value="BOTH">Both — buy or enquire</option>
                     <option value="DIRECT">Direct purchase only</option>
                     <option value="ENQUIRY">Enquiry only — no price shown</option>
                   </Select>
-                )}
-              </Field>
+</Field>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field
+              <Field name="popularity"
                 label="Popularity"
                 hint="0–1000. Higher values sort earlier in popular listings."
-                error={fieldErrors.popularity?.[0]}
               >
-                {({ id, describedBy, invalid }) => (
-                  <Input id={id} name="popularity" type="number" min={0} max={1000} defaultValue={product?.popularity ?? 0} aria-describedby={describedBy} invalid={invalid} />
-                )}
-              </Field>
+<Input name="popularity" type="number" min={0} max={1000} defaultValue={product?.popularity ?? 0} />
+</Field>
               <div className="flex items-end pb-2.5">
                 <Checkbox name="featured" defaultChecked={product?.featured} label="Feature on the homepage and brand pages" />
               </div>
             </div>
           </Fieldset>
-        </>
-      )}
     </AdminForm>
   );
 }

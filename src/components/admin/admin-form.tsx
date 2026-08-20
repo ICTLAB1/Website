@@ -4,7 +4,7 @@ import { useActionState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
-import { FormError, FormSuccess } from "@/components/ui/form";
+import { FormError, FormStateProvider, FormSuccess } from "@/components/ui/form";
 import type { AdminActionState } from "@/app/admin/actions";
 
 function SubmitButton({
@@ -38,7 +38,7 @@ export function AdminForm({
   pendingLabel: string;
   variant?: "primary" | "outline" | "danger";
   hidden?: Record<string, string>;
-  children?: (state: { fieldErrors: Record<string, string[]> }) => ReactNode;
+  children?: ReactNode;
   compact?: boolean;
 }) {
   const [state, formAction] = useActionState<AdminActionState, FormData>(action, {
@@ -58,7 +58,7 @@ export function AdminForm({
           ))
         : null}
 
-      {children ? children({ fieldErrors: state.fieldErrors ?? {} }) : null}
+      <FormStateProvider fieldErrors={state.fieldErrors ?? {}}>{children}</FormStateProvider>
 
       <SubmitButton label={submitLabel} pendingLabel={pendingLabel} variant={variant} />
     </form>

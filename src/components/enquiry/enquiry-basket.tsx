@@ -6,7 +6,16 @@ import { useState } from "react";
 
 import { useBasket } from "@/components/enquiry/basket-provider";
 import { Button } from "@/components/ui/button";
-import { Field, Fieldset, FormError, Input, Select, Textarea } from "@/components/ui/form";
+import {
+  Field,
+  Fieldset,
+  FormError,
+  FormStateProvider,
+  Honeypot,
+  Input,
+  Select,
+  Textarea,
+} from "@/components/ui/form";
 import { EmptyState } from "@/components/ui/states";
 import { formatMoney } from "@/lib/money";
 import { postJson } from "@/lib/csrf-client";
@@ -233,7 +242,8 @@ export function EnquiryBasket({
             quotation — not an automated price list.
           </p>
 
-          <form onSubmit={onSubmit} noValidate className="mt-6 space-y-8">
+          <FormStateProvider fieldErrors={fieldErrors}>
+            <form onSubmit={onSubmit} noValidate className="mt-6 space-y-8">
             {formError ? (
               <FormError>
                 {formError}
@@ -245,60 +255,40 @@ export function EnquiryBasket({
 
             <Fieldset legend="Your details">
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Full name" required error={fieldErrors.contactName?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Input
-                      id={id}
+                <Field name="contactName" label="Full name" required>
+<Input
                       name="contactName"
                       autoComplete="name"
                       defaultValue={prefill.contactName}
-                      aria-describedby={describedBy}
-                      invalid={invalid}
                       required
                     />
-                  )}
-                </Field>
-                <Field label="Company name" required error={fieldErrors.companyName?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Input
-                      id={id}
+</Field>
+                <Field name="companyName" label="Company name" required>
+<Input
                       name="companyName"
                       autoComplete="organization"
                       defaultValue={prefill.companyName}
-                      aria-describedby={describedBy}
-                      invalid={invalid}
                       required
                     />
-                  )}
-                </Field>
-                <Field label="Business email" required error={fieldErrors.contactEmail?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Input
-                      id={id}
+</Field>
+                <Field name="contactEmail" label="Business email" required>
+<Input
                       name="contactEmail"
                       type="email"
                       autoComplete="email"
                       defaultValue={prefill.contactEmail}
-                      aria-describedby={describedBy}
-                      invalid={invalid}
                       required
                     />
-                  )}
-                </Field>
-                <Field label="Phone" required error={fieldErrors.contactPhone?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Input
-                      id={id}
+</Field>
+                <Field name="contactPhone" label="Phone" required>
+<Input
                       name="contactPhone"
                       type="tel"
                       autoComplete="tel"
                       defaultValue={prefill.phone}
-                      aria-describedby={describedBy}
-                      invalid={invalid}
                       required
                     />
-                  )}
-                </Field>
+</Field>
               </div>
             </Fieldset>
 
@@ -307,104 +297,71 @@ export function EnquiryBasket({
               description="GSTIN is optional, but providing it now means every invoice carries it correctly from the start."
             >
               <div className="grid gap-4 sm:grid-cols-3">
-                <Field
+                <Field name="gstin"
                   label="GSTIN"
                   hint="15 characters"
-                  error={fieldErrors.gstin?.[0]}
                 >
-                  {({ id, describedBy, invalid }) => (
-                    <Input
-                      id={id}
+<Input
                       name="gstin"
                       maxLength={15}
                       placeholder="22AAAAA0000A1Z5"
                       className="uppercase"
-                      aria-describedby={describedBy}
-                      invalid={invalid}
                     />
-                  )}
-                </Field>
-                <Field label="City" error={fieldErrors.city?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Input
-                      id={id}
+</Field>
+                <Field name="city" label="City">
+<Input
                       name="city"
                       autoComplete="address-level2"
-                      aria-describedby={describedBy}
-                      invalid={invalid}
                     />
-                  )}
-                </Field>
-                <Field label="Country" required error={fieldErrors.country?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Input
-                      id={id}
+</Field>
+                <Field name="country" label="Country" required>
+<Input
                       name="country"
                       defaultValue="India"
                       autoComplete="country-name"
-                      aria-describedby={describedBy}
-                      invalid={invalid}
                       required
                     />
-                  )}
-                </Field>
+</Field>
               </div>
             </Fieldset>
 
             <Fieldset legend="About the requirement">
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field
+                <Field name="userCount"
                   label="Total number of users"
                   hint="Across the whole organisation, if known"
-                  error={fieldErrors.userCount?.[0]}
                 >
-                  {({ id, describedBy, invalid }) => (
-                    <Input
-                      id={id}
+<Input
                       name="userCount"
                       type="number"
                       min={1}
                       max={1000000}
-                      aria-describedby={describedBy}
-                      invalid={invalid}
                     />
-                  )}
-                </Field>
-                <Field label="Expected purchase timeline" error={fieldErrors.timeline?.[0]}>
-                  {({ id, describedBy, invalid }) => (
-                    <Select id={id} name="timeline" defaultValue="EXPLORING" aria-describedby={describedBy} invalid={invalid}>
+</Field>
+                <Field name="timeline" label="Expected purchase timeline">
+<Select name="timeline" defaultValue="EXPLORING">
                       {TIMELINES.map((option) => (
                         <option key={option.value} value={option.value}>
                           {option.label}
                         </option>
                       ))}
                     </Select>
-                  )}
-                </Field>
+</Field>
               </div>
-              <Field
+              <Field name="requirements"
                 label="Requirements and context"
                 hint="Existing licences, renewal dates, deployment needs, or anything else that affects the quotation."
-                error={fieldErrors.requirements?.[0]}
               >
-                {({ id, describedBy, invalid }) => (
-                  <Textarea
-                    id={id}
+<Textarea
                     name="requirements"
                     rows={5}
                     maxLength={4000}
-                    aria-describedby={describedBy}
-                    invalid={invalid}
                   />
-                )}
-              </Field>
+</Field>
             </Fieldset>
 
             {/* Honeypot: hidden from people, tempting to bots. */}
-            <div aria-hidden="true" className="absolute h-px w-px overflow-hidden opacity-0">
-              <label htmlFor="website-field">Leave this field empty</label>
-              <input id="website-field" name="website" type="text" tabIndex={-1} autoComplete="off" />
-            </div>
+            <Honeypot />
 
             <div className="flex flex-wrap items-center gap-4 border-t border-line pt-6">
               <Button type="submit" size="lg" disabled={submitting}>
@@ -418,7 +375,8 @@ export function EnquiryBasket({
                 .
               </p>
             </div>
-          </form>
+            </form>
+          </FormStateProvider>
         </section>
       </div>
 
