@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
@@ -62,9 +63,14 @@ export default async function AdminQuotesPage() {
             <tbody>
               {quotes.map((quote) => (
                 <Tr key={quote.id}>
-                  <Td className="font-mono text-[12px] font-medium text-navy-900">
-                    {quote.reference}
-                    <span className="mt-0.5 block text-[11px] font-normal text-ink-500">
+                  <Td>
+                    <Link
+                      href={`/admin/quotes/${quote.reference}`}
+                      className="font-mono text-[12px] font-medium text-accent-700 hover:underline"
+                    >
+                      {quote.reference}
+                    </Link>
+                    <span className="mt-0.5 block text-[11px] text-ink-500">
                       {formatDate(quote.createdAt)}
                     </span>
                   </Td>

@@ -16,6 +16,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
   const price = variant ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) : 0;
   const saving = variant ? discountPercent(variant.listPriceMinor, variant.salePriceMinor) : null;
   const quoteOnly = !variant || price <= 0 || product.purchaseMode === "ENQUIRY";
+  const canBuyDirect = !quoteOnly && variant != null;
 
   return (
     <article className="group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white transition-colors hover:border-line-strong">
@@ -80,6 +81,17 @@ export function ProductCard({ product }: { product: ProductListItem }) {
               <span className="w-full text-[12px] text-ink-500">
                 excl. GST ({variant!.gstRatePercent}%) &middot;{" "}
                 {variant!.seats > 1 ? `${variant!.seats} seats` : "per seat"}
+                {canBuyDirect ? (
+                  <>
+                    {" · "}
+                    <Link
+                      href={`/buy?sku=${encodeURIComponent(variant!.sku)}`}
+                      className="font-medium text-accent-700 underline underline-offset-2"
+                    >
+                      Buy now
+                    </Link>
+                  </>
+                ) : null}
               </span>
             </p>
           )}

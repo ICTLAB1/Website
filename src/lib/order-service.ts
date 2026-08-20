@@ -1,0 +1,362 @@
+import "server-only";
+import { Prisma } from "@prisma/client";
+import { prisma } from "@/lib/db";
+import { publicReference } from "@/lib/auth/tokens";
+import { documentTotals, priceLine } from "@/lib/pricing";
+import { resolveVariantsBySku } from "@/lib/queries/catalogue";
+import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
+import { getSiteConfig } from "@/lib/site-config";
+import { formatMoney } from "@/lib/money";
+import { logger } from "@/lib/logger";
+
+/**
+ * Order creation and fulfilment.
+ *
+ * Two entry points, both of which price server-side from records the customer
+ * cannot edit:
+ *
+ *  - `createOrderFromQuote` copies frozen quote lines, so the customer is
+ *    charged exactly what was quoted.
+ *  - `createDirectOrder` re-reads the catalogue from SKUs, so a "buy now"
+ *    request carrying a tampered price is priced correctly regardless.
+ *
+ * No payment is taken here. Orders are raised against a purchase order, which
+ * is how B2B licensing is actually bought, and no card data touches the system.
+ */
+
+export type OrderResult =
+  | { ok: true; reference: string }
+  | { ok: false; reason: string };
+
+export type BillingDetails = {
+  name: string;
+  email: string;
+  phone?: string | null;
+  gstin?: string | null;
+  address?: string | null;
+  poNumber?: string | null;
+};
+
+async function notifyOrder(reference: string, billing: BillingDetails, totalMinor: number) {
+  const config = getSiteConfig();
+
+  const internal = salesInbox();
+  if (internal) {
+    void sendMail({
+      to: internal,
+      replyTo: billing.email,
+      subject: `New order ${reference} — ${billing.name}`,
+      text: [
+        `Order reference: ${reference}`,
+        `Customer:  ${billing.name}`,
+        `Email:     ${billing.email}`,
+        billing.phone ? `Phone:     ${billing.phone}` : null,
+        billing.gstin ? `GSTIN:     ${billing.gstin}` : null,
+        billing.poNumber ? `PO number: ${billing.poNumber}` : null,
+        `Total:     ${formatMoney(totalMinor)}`,
+      ]
+        .filter((line) => line !== null)
+        .join("\n"),
+    });
+  }
+
+  void sendMail({
+    to: billing.email,
+    subject: `We have received your order (${reference})`,
+    text: [
+      `Hello ${billing.name},`,
+      "",
+      `Thank you. Your order reference is ${reference}.`,
+      `Order total including GST: ${formatMoney(totalMinor)}`,
+      "",
+      "Our team is confirming availability and will be in touch with provisioning",
+      "details and a GST invoice. Please quote your reference in any follow-up.",
+      "",
+      config.tradingName,
+    ].join("\n"),
+    html: [
+      `<p>Hello ${escapeHtml(billing.name)},</p>`,
+      `<p>Thank you. Your order reference is <strong>${escapeHtml(reference)}</strong>.</p>`,
+      `<p>Order total including GST: <strong>${escapeHtml(formatMoney(totalMinor))}</strong></p>`,
+      "<p>Our team is confirming availability and will be in touch with provisioning details and a GST invoice.</p>",
+      `<p>${escapeHtml(config.tradingName)}</p>`,
+    ].join(""),
+  });
+}
+
+/** Raises an order from an accepted quotation, copying its frozen line prices. */
+export async function createOrderFromQuote(
+  quoteReference: string,
+  userId: string,
+  billing: BillingDetails,
+): Promise<OrderResult> {
+  // Scoped by userId: another organisation's quotation simply does not match.
+  const quote = await prisma.quote.findFirst({
+    where: { reference: quoteReference, userId },
+    select: {
+      id: true,
+      status: true,
+      currency: true,
+      companyId: true,
+      subtotalMinor: true,
+      discountMinor: true,
+      taxMinor: true,
+      totalMinor: true,
+      orders: { select: { reference: true } },
+      items: {
+        select: {
+          productId: true,
+          variantId: true,
+          productName: true,
+          sku: true,
+          quantity: true,
+          unitPriceMinor: true,
+          discountMinor: true,
+          gstRatePercent: true,
+          lineTotalMinor: true,
+        },
+      },
+    },
+  });
+
+  if (!quote) return { ok: false, reason: "That quotation could not be found." };
+  if (quote.status !== "ACCEPTED") {
+    return { ok: false, reason: "The quotation must be accepted before an order can be raised." };
+  }
+  // Fast path for the common case. The authoritative guarantee is the unique
+  // index on Order.quoteId, checked below, because this test on its own is a
+  // check-then-act that two concurrent acceptances could both pass.
+  if (quote.orders.length > 0) {
+    return { ok: false, reason: "An order has already been raised against that quotation." };
+  }
+  if (quote.items.length === 0) {
+    return { ok: false, reason: "That quotation has no line items." };
+  }
+
+  const reference = publicReference("ORD");
+
+  try {
+    await prisma.order.create({
+      data: {
+        reference,
+        status: "PENDING",
+        userId,
+        companyId: quote.companyId,
+        quoteId: quote.id,
+        currency: quote.currency,
+        subtotalMinor: quote.subtotalMinor,
+        discountMinor: quote.discountMinor,
+        taxMinor: quote.taxMinor,
+        totalMinor: quote.totalMinor,
+        poNumber: billing.poNumber ?? null,
+        billingGstin: billing.gstin ?? null,
+        billingName: billing.name,
+        billingEmail: billing.email,
+        billingPhone: billing.phone ?? null,
+        billingAddress: billing.address ?? null,
+        items: { create: quote.items },
+      },
+    });
+  } catch (error) {
+    // P2002 is a unique constraint violation: another request won the race and
+    // has already raised the order for this quotation.
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      logger.warn("order_duplicate_prevented", { quoteReference });
+      return { ok: false, reason: "An order has already been raised against that quotation." };
+    }
+    throw error;
+  }
+
+  await notifyOrder(reference, billing, quote.totalMinor);
+  logger.info("order_created_from_quote", { reference, quoteReference });
+  return { ok: true, reference };
+}
+
+export type DirectOrderLine = { sku: string; quantity: number };
+
+/**
+ * Raises an order directly from SKUs, for products whose purchase mode permits
+ * it. Prices are read from the catalogue here; nothing about the price comes
+ * from the request.
+ */
+export async function createDirectOrder(
+  lines: DirectOrderLine[],
+  billing: BillingDetails,
+  context: { userId?: string | null; companyId?: string | null },
+): Promise<OrderResult> {
+  if (lines.length === 0) return { ok: false, reason: "There is nothing to order." };
+
+  const variants = await resolveVariantsBySku([...new Set(lines.map((line) => line.sku))]);
+  const bySku = new Map(variants.map((variant) => [variant.sku, variant]));
+
+  const resolved = lines
+    .map((line) => {
+      const variant = bySku.get(line.sku);
+      if (!variant) return null;
+      // Enquiry-only products can never be bought directly, whatever the
+      // request says.
+      if (variant.product.purchaseMode === "ENQUIRY") return null;
+
+      const unitPriceMinor =
+        variant.salePriceMinor != null &&
+        variant.salePriceMinor > 0 &&
+        variant.salePriceMinor < variant.listPriceMinor
+          ? variant.salePriceMinor
+          : variant.listPriceMinor;
+
+      // A zero-priced SKU is quote-only in practice and must not become a
+      // free order.
+      if (unitPriceMinor <= 0) return null;
+
+      const priced = priceLine({
+        unitPriceMinor,
+        quantity: line.quantity,
+        gstRatePercent: variant.gstRatePercent,
+      });
+
+      return {
+        priced,
+        data: {
+          productId: variant.product.id,
+          variantId: variant.id,
+          productName: `${variant.product.name} — ${variant.name}`,
+          sku: variant.sku,
+          quantity: priced.quantity,
+          unitPriceMinor: priced.unitPriceMinor,
+          discountMinor: priced.discountMinor,
+          gstRatePercent: priced.gstRatePercent,
+          lineTotalMinor: priced.lineTotalMinor,
+        },
+      };
+    })
+    .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
+
+  if (resolved.length === 0) {
+    return {
+      ok: false,
+      reason:
+        "None of these products can be ordered directly. Please request a quotation instead.",
+    };
+  }
+
+  const totals = documentTotals(resolved.map((entry) => entry.priced));
+  const reference = publicReference("ORD");
+
+  await prisma.order.create({
+    data: {
+      reference,
+      status: "PENDING",
+      userId: context.userId ?? null,
+      companyId: context.companyId ?? null,
+      currency: "INR",
+      subtotalMinor: totals.subtotalMinor,
+      discountMinor: totals.discountMinor,
+      taxMinor: totals.taxMinor,
+      totalMinor: totals.totalMinor,
+      poNumber: billing.poNumber ?? null,
+      billingGstin: billing.gstin ?? null,
+      billingName: billing.name,
+      billingEmail: billing.email,
+      billingPhone: billing.phone ?? null,
+      billingAddress: billing.address ?? null,
+      items: { create: resolved.map((entry) => entry.data) },
+    },
+  });
+
+  await notifyOrder(reference, billing, totals.totalMinor);
+  logger.info("order_created_direct", { reference, lineCount: resolved.length });
+  return { ok: true, reference };
+}
+
+/**
+ * Marks an order fulfilled and materialises a licence record per line, plus a
+ * renewal reminder for subscription terms. This is what populates the
+ * customer's licence and renewal views.
+ */
+export async function fulfilOrder(reference: string, actorId: string): Promise<OrderResult> {
+  const order = await prisma.order.findUnique({
+    where: { reference },
+    select: {
+      id: true,
+      status: true,
+      userId: true,
+      companyId: true,
+      items: {
+        select: {
+          productId: true,
+          variantId: true,
+          productName: true,
+          sku: true,
+          quantity: true,
+          variant: { select: { termMonths: true, seats: true } },
+        },
+      },
+    },
+  });
+
+  if (!order) return { ok: false, reason: "That order no longer exists." };
+  if (order.status === "FULFILLED") {
+    return { ok: false, reason: "That order is already fulfilled." };
+  }
+  if (order.status === "CANCELLED" || order.status === "REFUNDED") {
+    return { ok: false, reason: "A cancelled or refunded order cannot be fulfilled." };
+  }
+
+  const startsAt = new Date();
+
+  await prisma.$transaction(async (tx) => {
+    for (const item of order.items) {
+      const termMonths = item.variant?.termMonths ?? null;
+      const expiresAt = termMonths
+        ? new Date(
+            Date.UTC(
+              startsAt.getUTCFullYear(),
+              startsAt.getUTCMonth() + termMonths,
+              startsAt.getUTCDate(),
+            ),
+          )
+        : null;
+
+      const seats = item.quantity * (item.variant?.seats ?? 1);
+
+      const licence = await tx.licence.create({
+        data: {
+          reference: publicReference("LIC"),
+          status: "ACTIVE",
+          userId: order.userId,
+          companyId: order.companyId,
+          orderId: order.id,
+          productId: item.productId,
+          variantId: item.variantId,
+          productName: item.productName,
+          sku: item.sku,
+          seats,
+          startsAt,
+          expiresAt,
+        },
+        select: { id: true },
+      });
+
+      // Perpetual licences never expire, so they get no renewal row.
+      if (expiresAt) {
+        await tx.renewal.create({
+          data: {
+            reference: publicReference("REN"),
+            licenceId: licence.id,
+            status: "UPCOMING",
+            dueAt: expiresAt,
+            seats,
+          },
+        });
+      }
+    }
+
+    await tx.order.update({
+      where: { id: order.id },
+      data: { status: "FULFILLED", fulfilledAt: new Date() },
+    });
+  });
+
+  logger.info("order_fulfilled", { reference, lineCount: order.items.length, actorId });
+  return { ok: true, reference };
+}

@@ -484,7 +484,11 @@ model Order {
   user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   companyId String?
   company   Company?    @relation(fields: [companyId], references: [id], onDelete: SetNull)
-  quoteId   String?
+  /// One order per quotation, enforced by the database rather than by an
+  /// application check, so two concurrent acceptances cannot both succeed.
+  /// Nullable because a direct purchase has no quotation, and Postgres permits
+  /// many NULLs under a unique constraint.
+  quoteId   String?     @unique
   quote     Quote?      @relation(fields: [quoteId], references: [id], onDelete: SetNull)
 
   currency      String @default("INR")

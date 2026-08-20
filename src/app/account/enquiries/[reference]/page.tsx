@@ -112,7 +112,14 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
               <tbody>
                 {enquiry.quotes.map((quote) => (
                   <Tr key={quote.reference}>
-                    <Td className="font-mono text-[13px]">{quote.reference}</Td>
+                    <Td>
+                      <Link
+                        href={`/account/quotes/${quote.reference}`}
+                        className="font-mono text-[13px] text-accent-700 hover:underline"
+                      >
+                        {quote.reference}
+                      </Link>
+                    </Td>
                     <Td>{formatDate(quote.validUntil)}</Td>
                     <Td className="tabular-nums">{formatMoney(quote.totalMinor, quote.currency)}</Td>
                     <Td>

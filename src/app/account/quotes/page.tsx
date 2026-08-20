@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
@@ -27,7 +28,10 @@ export default async function AccountQuotesPage() {
 
   return (
     <section>
-      <h2 className="mb-5 text-[1.15rem]">Quotations</h2>
+      <h2 className="mb-2 text-[1.15rem]">Quotations</h2>
+      <p className="mb-5 text-[14px] text-ink-600">
+        Open a quotation to review its lines and accept or decline it.
+      </p>
       <TableWrap>
         <Table>
           <thead>
@@ -43,7 +47,14 @@ export default async function AccountQuotesPage() {
           <tbody>
             {quotes.map((quote) => (
               <Tr key={quote.reference}>
-                <Td className="font-mono text-[13px] font-medium text-navy-900">{quote.reference}</Td>
+                <Td>
+                  <Link
+                    href={`/account/quotes/${quote.reference}`}
+                    className="font-mono text-[13px] font-medium text-accent-700 hover:underline"
+                  >
+                    {quote.reference}
+                  </Link>
+                </Td>
                 <Td>{formatDate(quote.createdAt)}</Td>
                 <Td>{formatDate(quote.validUntil)}</Td>
                 <Td className="tabular-nums">{quote._count.items}</Td>

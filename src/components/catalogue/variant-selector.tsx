@@ -48,6 +48,8 @@ export function VariantSelector({
   const unitPrice = effectivePriceMinor(selected.listPriceMinor, selected.salePriceMinor);
   const saving = discountPercent(selected.listPriceMinor, selected.salePriceMinor);
   const quoteOnly = unitPrice <= 0 || purchaseMode === "ENQUIRY";
+  const canBuyDirect =
+    !quoteOnly && (purchaseMode === "DIRECT" || purchaseMode === "BOTH") && unitPrice > 0;
   const lineTotal = unitPrice * quantity;
   const gst = gstAmountMinor(lineTotal, selected.gstRatePercent);
 
@@ -180,7 +182,24 @@ export function VariantSelector({
         )}
 
         <div className="mt-5 space-y-2.5">
-          <ButtonLink href="/enquiry" size="lg" fullWidth>
+          {/* Direct purchase is offered only where the product's mode permits it
+              and the SKU carries a real price. The route and the API both
+              re-check this server-side. */}
+          {canBuyDirect ? (
+            <ButtonLink
+              href={`/buy?sku=${encodeURIComponent(selected.sku)}`}
+              size="lg"
+              fullWidth
+            >
+              Buy now
+            </ButtonLink>
+          ) : null}
+          <ButtonLink
+            href="/enquiry"
+            size="lg"
+            fullWidth
+            variant={canBuyDirect ? "outline" : "primary"}
+          >
             Request Enterprise Pricing
           </ButtonLink>
           <AddToEnquiryButton

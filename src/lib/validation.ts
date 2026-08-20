@@ -137,3 +137,24 @@ export function fieldErrorsOf(error: z.ZodError): Record<string, string[]> {
   if (flattened.formErrors.length > 0) output._form = flattened.formErrors;
   return output;
 }
+
+/**
+ * Direct purchase ("buy now").
+ *
+ * Like the enquiry schema, this carries no price: the server re-reads the
+ * catalogue from the SKU. A purchase order number is optional because not every
+ * buyer raises one up front.
+ */
+export const directOrderSchema = z.object({
+  sku: trimmed(64).min(1),
+  quantity: quantitySchema,
+  contactName: trimmed(120).min(2, "Enter your full name."),
+  companyName: trimmed(160).min(2, "Enter your company name."),
+  contactEmail: emailSchema,
+  contactPhone: phoneSchema,
+  gstin: gstinSchema.optional().or(z.literal("")),
+  poNumber: trimmed(64).optional().or(z.literal("")),
+  billingAddress: trimmed(400).optional().or(z.literal("")),
+  // Honeypot: a real visitor never fills this in.
+  website: z.string().max(0).optional(),
+});

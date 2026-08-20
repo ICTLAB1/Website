@@ -10,6 +10,7 @@ const PAGES = [
   "/", "/products", "/products/microsoft-365-business-standard", "/brands/microsoft",
   "/microsoft-365", "/services/cybersecurity", "/enterprise", "/enquiry",
   "/contact", "/blog", "/login", "/register", "/search", "/privacy",
+  "/buy?sku=MS-M365-BS-A1", "/buy/confirmed?ref=ORD-2026-ABC123",
 ];
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });

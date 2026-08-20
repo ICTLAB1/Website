@@ -12,6 +12,7 @@ because they need a server and a browser.
 | `responsive.mjs`   | No horizontal page scroll and no console errors, across 11 pages × 8 viewport widths (375–1920). |
 | `accessibility.mjs`| Zero axe-core violations (WCAG 2.1 A/AA + best practice) across 14 pages × 2 widths.              |
 | `interactions.mjs` | Mobile drawer, search autocomplete, basket, quote submission, catalogue filters, keyboard paths. |
+| `lifecycle.mjs`    | The full commercial chain: enquiry → quotation → discount → issue → accept → order → fulfilment → licences and renewals, across a customer and a staff session. |
 
 Run them with the server up:
 

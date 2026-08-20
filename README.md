@@ -1,8 +1,12 @@
 # Enterprise Technology Marketplace
 
 A B2B marketplace for enterprise software licensing, cloud and IT solutions —
-catalogue, multi-vendor enquiry basket, quotation workflow, customer account
-area and an administrative back office.
+catalogue, multi-vendor enquiry basket, quotation workflow, direct purchasing,
+order fulfilment, customer account area and an administrative back office.
+
+The full commercial chain is implemented end to end: an enquiry becomes a
+quotation, a quotation becomes an order, and a fulfilled order issues licence
+and renewal records into the customer's account.
 
 > **Before going live**, populate the business identity variables in `.env`
 > (company name, registration, addresses, contact details) and have the four
@@ -82,6 +86,8 @@ npm run verify
   across 14 pages × 2 widths
 - `verify:interactions` — mobile drawer, search autocomplete, basket, quote
   submission, catalogue filtering, keyboard navigation
+- `verify:lifecycle` — enquiry → quotation → discount → issue → accept → order
+  → fulfilment → licences and renewals, driven through two browser sessions
 
 ---
 
@@ -115,7 +121,30 @@ catalogue. Static routes always win over the catch-all, and an unregistered
 path returns a genuine 404.
 
 **Money.** Stored and computed as integer minor units (paise). Floating point is
-never used for prices, discounts or tax.
+never used for prices, discounts or tax. All quotation and order arithmetic goes
+through `src/lib/pricing.ts`, which is pure and exhaustively unit tested: a
+discount can never push a line negative, tax is charged on the discounted
+amount, and document totals always reconcile against their lines exactly.
+
+**Commercial lifecycle.**
+
+```
+enquiry ──(staff drafts)──► quotation ──(staff issues)──► SENT
+                                                            │
+                                   (customer accepts + PO)  ▼
+                                                          order ──(staff fulfils)──► licences
+                                                                                     + renewals
+```
+
+Prices are read from the catalogue when a quotation is drafted and then frozen
+onto its lines, so a later catalogue change cannot alter a quotation already
+sent — which is what makes its stated validity period meaningful. Issued
+quotations are locked against editing for the same reason.
+
+**Purchase modes.** Each product carries `DIRECT`, `ENQUIRY` or `BOTH`. Products
+that permit it offer a direct purchase at `/buy?sku=…`, raised against a
+purchase order with no payment taken. Enquiry-only products have no direct
+purchase path, enforced independently by the route and by the API.
 
 **Enquiry integrity.** The browser basket sends only `sku` and `quantity`. The
 server re-resolves every SKU from the catalogue and rebuilds each line, so
@@ -134,7 +163,14 @@ browser suites:
   role independently. Hiding a control is never the access control.
 - **Ownership** is part of the query, not a check afterwards: account reads are
   scoped by `userId` in the `WHERE` clause, so an altered reference in a URL
-  matches nothing and 404s.
+  matches nothing and 404s. Draft quotations are excluded from customer views
+  entirely — an unsent draft is internal working material.
+- **Pricing is never accepted from a client.** The enquiry basket and the direct
+  purchase endpoint both send a SKU and a quantity only; unit price, discount,
+  GST and status are resolved server-side. A request carrying a price is priced
+  correctly regardless.
+- **One order per quotation is enforced by a unique index**, not by an
+  application check, so two concurrent acceptances cannot both succeed.
 - **Sessions** are opaque random tokens; only an HMAC is stored, so a database
   disclosure cannot be replayed. Cookies are HttpOnly, Secure in production and
   SameSite=Lax. Sessions are revoked on sign-out, password reset and role change.
@@ -217,8 +253,14 @@ silently): `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`,
 
 ### Housekeeping
 
-`purgeExpiredSessions()` in `src/lib/auth/session.ts` deletes expired session
-rows and is safe to call from a scheduled job.
+Two maintenance functions are safe to call from a scheduled job:
+
+- `purgeExpiredSessions()` in `src/lib/auth/session.ts` deletes expired session
+  rows.
+- `expireStaleQuotes()` in `src/lib/quote-service.ts` marks quotations past
+  their validity date as expired. Expiry is also checked at the moment a
+  customer responds, so this is housekeeping rather than a correctness
+  requirement.
 
 ---
 

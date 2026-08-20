@@ -131,3 +131,49 @@ describe("contact", () => {
     expect(parsed.topic).toBe("GENERAL");
   });
 });
+
+describe("direct order schema", () => {
+  const valid = {
+    sku: "MS-M365-BS-A1",
+    quantity: 5,
+    contactName: "Priya Raman",
+    companyName: "Example Technologies Pvt Ltd",
+    contactEmail: "priya@example.test",
+    contactPhone: "+91 99999 99999",
+  };
+
+  it("accepts a well-formed order", async () => {
+    const { directOrderSchema } = await import("@/lib/validation");
+    expect(directOrderSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it("strips any price, discount or status the client sends", async () => {
+    const { directOrderSchema } = await import("@/lib/validation");
+    const parsed = directOrderSchema.parse({
+      ...valid,
+      unitPriceMinor: 1,
+      totalMinor: 0,
+      discountMinor: 99_999_999,
+      status: "FULFILLED",
+      userId: "forged",
+    } as Record<string, unknown>);
+
+    for (const key of ["unitPriceMinor", "totalMinor", "discountMinor", "status", "userId"]) {
+      expect(parsed).not.toHaveProperty(key);
+    }
+  });
+
+  it("rejects a zero, negative or fractional quantity", async () => {
+    const { directOrderSchema } = await import("@/lib/validation");
+    for (const quantity of [0, -5, 2.5]) {
+      expect(directOrderSchema.safeParse({ ...valid, quantity }).success).toBe(false);
+    }
+  });
+
+  it("requires contact details a quotation can actually be sent to", async () => {
+    const { directOrderSchema } = await import("@/lib/validation");
+    expect(directOrderSchema.safeParse({ ...valid, contactEmail: "nope" }).success).toBe(false);
+    expect(directOrderSchema.safeParse({ ...valid, companyName: "X" }).success).toBe(false);
+    expect(directOrderSchema.safeParse({ ...valid, contactPhone: "abc" }).success).toBe(false);
+  });
+});

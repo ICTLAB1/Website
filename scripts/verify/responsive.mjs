@@ -14,6 +14,7 @@ const PAGES = [
   ["contact", "/contact"],
   ["blog", "/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model"],
   ["login", "/login"],
+  ["buy", "/buy?sku=MS-M365-BS-A1"],
 ];
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });

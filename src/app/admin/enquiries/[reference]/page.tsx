@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/badge";
 import { AdminForm } from "@/components/admin/admin-form";
 import { Field, Select, Textarea } from "@/components/ui/form";
 import { updateEnquiry } from "@/app/admin/actions";
+import { draftQuote } from "@/app/admin/quote-actions";
 import { requireStaff } from "@/lib/auth/guards";
 import { getAdminEnquiry } from "@/lib/queries/admin";
 import { formatMoney } from "@/lib/money";
@@ -108,6 +109,23 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
             </div>
           </section>
 
+          <section className="rounded-[--radius-lg] border border-accent-600/40 bg-accent-50 p-5">
+            <h2 className="text-[15px] font-semibold text-navy-900">Prepare a quotation</h2>
+            <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-ink-700">
+              Drafts a quotation from these lines, priced from the current catalogue. You can
+              adjust quantities, unit prices and discounts before issuing it.
+            </p>
+            <div className="mt-4">
+              <AdminForm
+                action={draftQuote}
+                submitLabel="Draft quotation"
+                pendingLabel="Drafting…"
+                hidden={{ reference: enquiry.reference }}
+                compact
+              />
+            </div>
+          </section>
+
           {enquiry.quotes.length > 0 ? (
             <section>
               <h2 className="mb-4 text-[1.05rem]">Quotations</h2>
@@ -123,7 +141,14 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
                   <tbody>
                     {enquiry.quotes.map((quote) => (
                       <Tr key={quote.reference}>
-                        <Td className="font-mono text-[12px]">{quote.reference}</Td>
+                        <Td>
+                          <Link
+                            href={`/admin/quotes/${quote.reference}`}
+                            className="font-mono text-[12px] text-accent-700 hover:underline"
+                          >
+                            {quote.reference}
+                          </Link>
+                        </Td>
                         <Td className="tabular-nums">{formatMoney(quote.totalMinor, quote.currency)}</Td>
                         <Td>
                           <StatusBadge status={quote.status} />

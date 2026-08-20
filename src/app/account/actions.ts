@@ -8,6 +8,9 @@ import { publicReference } from "@/lib/auth/tokens";
 import { recordAudit } from "@/lib/audit";
 import { clientIp } from "@/lib/auth/request";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
+import { decideOnQuote } from "@/lib/quote-service";
+import { createOrderFromQuote } from "@/lib/order-service";
+import { z } from "zod";
 
 /**
  * Account mutations.
@@ -171,5 +174,126 @@ export async function createSupportTicket(
   return {
     status: "success",
     message: `Ticket ${ticket.reference} has been raised. We will respond to the email address on your account.`,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Quotation decisions
+// ---------------------------------------------------------------------------
+
+const quoteDecisionSchema = z.object({
+  reference: z.string().trim().regex(/^QTE-\d{4}-[A-Z0-9]{6}$/, "Invalid reference."),
+  decision: z.enum(["ACCEPTED", "DECLINED"]),
+  poNumber: z.string().trim().max(64).optional(),
+});
+
+/**
+ * Records the customer's decision on a quotation and, on acceptance, raises the
+ * order.
+ *
+ * Both steps re-resolve the session and scope by user id, so a reference
+ * belonging to another organisation matches nothing. Status, expiry and
+ * duplicate-order checks all happen server-side in the services, never on the
+ * strength of which button the browser rendered.
+ */
+export async function decideQuote(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const user = await requireUser("/account/quotes");
+
+  const parsed = quoteDecisionSchema.safeParse({
+    reference: formData.get("reference"),
+    decision: formData.get("decision"),
+    poNumber: formData.get("poNumber"),
+  });
+  if (!parsed.success) {
+    return { status: "error", message: "That response could not be recorded." };
+  }
+
+  const decision = await decideOnQuote(parsed.data.reference, user.id, parsed.data.decision);
+  if (!decision.ok) return { status: "error", message: decision.reason };
+
+  const ip = await clientIp();
+
+  await recordAudit({
+    actorId: user.id,
+    action: `quote.${parsed.data.decision.toLowerCase()}`,
+    entityType: "Quote",
+    entityId: parsed.data.reference,
+    ip,
+  });
+
+  if (parsed.data.decision === "DECLINED") {
+    revalidatePath("/account/quotes");
+    revalidatePath(`/account/quotes/${parsed.data.reference}`);
+    return {
+      status: "success",
+      message: "Thank you — we have recorded that you are not proceeding.",
+    };
+  }
+
+  const profile = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: {
+      name: true,
+      email: true,
+      phone: true,
+      company: {
+        select: {
+          name: true,
+          gstin: true,
+          addressLine1: true,
+          addressLine2: true,
+          city: true,
+          state: true,
+          postcode: true,
+          country: true,
+        },
+      },
+    },
+  });
+
+  const address = profile?.company
+    ? [
+        profile.company.addressLine1,
+        profile.company.addressLine2,
+        [profile.company.city, profile.company.state, profile.company.postcode]
+          .filter(Boolean)
+          .join(" "),
+        profile.company.country,
+      ]
+        .filter(Boolean)
+        .join(", ")
+    : null;
+
+  const order = await createOrderFromQuote(parsed.data.reference, user.id, {
+    // Billing identity comes from the account, never from the submitted form.
+    name: profile?.company?.name ?? profile?.name ?? user.name,
+    email: profile?.email ?? user.email,
+    phone: profile?.phone ?? null,
+    gstin: profile?.company?.gstin ?? null,
+    address,
+    poNumber: parsed.data.poNumber || null,
+  });
+
+  if (!order.ok) return { status: "error", message: order.reason };
+
+  await recordAudit({
+    actorId: user.id,
+    action: "order.created",
+    entityType: "Order",
+    entityId: order.reference,
+    metadata: { quote: parsed.data.reference },
+    ip,
+  });
+
+  revalidatePath("/account/quotes");
+  revalidatePath("/account/orders");
+  revalidatePath(`/account/quotes/${parsed.data.reference}`);
+
+  return {
+    status: "success",
+    message: `Quotation accepted. Your order reference is ${order.reference} — we will confirm provisioning shortly.`,
   };
 }
