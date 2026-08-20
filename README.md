@@ -171,6 +171,9 @@ browser suites:
   correctly regardless.
 - **One order per quotation is enforced by a unique index**, not by an
   application check, so two concurrent acceptances cannot both succeed.
+- **Inbound messages are stored before any mail is attempted**, and staff read
+  them at `/admin/support`. Notification email is best-effort; nothing a
+  customer sends depends on SMTP being configured.
 - **Sessions** are opaque random tokens; only an HMAC is stored, so a database
   disclosure cannot be replayed. Cookies are HttpOnly, Secure in production and
   SameSite=Lax. Sessions are revoked on sign-out, password reset and role change.

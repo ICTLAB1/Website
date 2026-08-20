@@ -335,3 +335,50 @@ export async function fulfilOrderAction(
     message: "Order fulfilled. Licence and renewal records have been created.",
   };
 }
+
+const ticketSchema = z.object({
+  reference: referenceSchema("TKT"),
+  status: z.enum(["OPEN", "IN_PROGRESS", "WAITING_ON_CUSTOMER", "RESOLVED", "CLOSED"]),
+  priority: z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]),
+});
+
+/** Updates a support ticket's status and priority. */
+export async function updateSupportTicket(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const staff = await guard();
+  if (isFailure(staff)) return staff;
+
+  const parsed = ticketSchema.safeParse({
+    reference: formData.get("reference"),
+    status: formData.get("status"),
+    priority: formData.get("priority"),
+  });
+  if (!parsed.success) {
+    return { status: "error", message: "That update could not be applied." };
+  }
+
+  const existing = await prisma.supportTicket.findUnique({
+    where: { reference: parsed.data.reference },
+    select: { status: true },
+  });
+  if (!existing) return { status: "error", message: "That ticket no longer exists." };
+
+  await prisma.supportTicket.update({
+    where: { reference: parsed.data.reference },
+    data: { status: parsed.data.status, priority: parsed.data.priority },
+  });
+
+  await recordAudit({
+    actorId: staff.id,
+    action: "admin.ticket_updated",
+    entityType: "SupportTicket",
+    entityId: parsed.data.reference,
+    metadata: { from: existing.status, to: parsed.data.status },
+    ip: await clientIp(),
+  });
+
+  revalidatePath("/admin/support");
+  return { status: "success", message: "Ticket updated." };
+}
