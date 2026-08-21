@@ -56,7 +56,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   if (!post) notFound();
 
   const related = await getRelatedPosts(post.slug, post.category, 3);
-  const config = getSiteConfig();
+  const config = await getSiteConfig();
 
   return (
     <div className="container-page pb-16">

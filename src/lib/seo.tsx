@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { appUrl } from "@/lib/env";
-import { getSiteConfig } from "@/lib/site-config";
+import { getSiteConfig, getSiteIdentity } from "@/lib/site-config";
 
 /**
  * Metadata helpers.
@@ -25,7 +25,11 @@ export function buildMetadata(input: {
   noIndex?: boolean;
   keywords?: string[];
 }): Metadata {
-  const config = getSiteConfig();
+  // Synchronous on purpose: `buildMetadata` is called at module scope by
+  // `export const metadata` in 46 route files, where nothing can be awaited.
+  // It needs only the site name, which is why the name stayed in the
+  // environment when the contact details moved into the database.
+  const config = getSiteIdentity();
   const url = absoluteUrl(input.path);
   const siteName = config.tradingName;
 
@@ -79,8 +83,8 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   );
 }
 
-export function organizationSchema() {
-  const config = getSiteConfig();
+export async function organizationSchema() {
+  const config = await getSiteConfig();
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -118,8 +122,8 @@ export function organizationSchema() {
   };
 }
 
-export function websiteSchema() {
-  const config = getSiteConfig();
+export async function websiteSchema() {
+  const config = await getSiteConfig();
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",

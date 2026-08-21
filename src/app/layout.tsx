@@ -9,7 +9,7 @@ import { BasketProvider } from "@/components/enquiry/basket-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { JsonLd, organizationSchema, websiteSchema } from "@/lib/seo";
 import { appUrl } from "@/lib/env";
-import { getSiteConfig } from "@/lib/site-config";
+import { getSiteIdentity } from "@/lib/site-config";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
      * being truncated itself. The trading name is what a searcher recognises
      * and is what belongs there.
      */
-    template: `%s | ${getSiteConfig().tradingName}`,
+    template: `%s | ${getSiteIdentity().tradingName}`,
   },
   description:
     "Microsoft, Adobe, Autodesk, Zoho and enterprise technology solutions from one trusted procurement partner. Consolidated quotations, GST invoicing and licence management.",
@@ -47,7 +47,7 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-IN" className={inter.variable}>
       <body className="flex min-h-dvh flex-col bg-white antialiased">
@@ -69,8 +69,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </BasketProvider>
         </ToastProvider>
 
-        <JsonLd data={organizationSchema()} />
-        <JsonLd data={websiteSchema()} />
+        <JsonLd data={await organizationSchema()} />
+        <JsonLd data={await websiteSchema()} />
       </body>
     </html>
   );

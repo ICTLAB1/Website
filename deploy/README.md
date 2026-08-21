@@ -126,7 +126,15 @@ Work through this on the real subdomain, not on a laptop:
       without a restart.
 - [ ] `https://new.techzoidtechnologies.com/sitemap.xml` lists your pages.
 - [ ] The admin dashboard's missing-configuration list is empty, or you know
-      why each remaining item is still there.
+      why each remaining item is still there. Everything on it except the
+      company name and tagline is editable at `/admin/settings` — contact
+      details, registered address, GSTIN, CIN and the grievance officer — and
+      saving takes effect on the public site immediately.
+- [ ] Appoint a grievance officer at `/admin/settings`. Publishing a named
+      officer and their contact details is required of an online seller in
+      India. Until it is set, the grievance section of the legal pages renders
+      nothing at all — silently, which is the right behaviour for a visitor,
+      and still a gap you need to close.
 - [ ] Work through `docs/legal-review-checklist.md` with your adviser. It lists
       the clauses in the five legal documents that are commercial decisions
       rather than legal requirements — payment terms, the liability cap, the

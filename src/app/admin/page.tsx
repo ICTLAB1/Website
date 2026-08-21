@@ -14,7 +14,7 @@ export const metadata: Metadata = { title: "Dashboard" };
 export default async function AdminDashboardPage() {
   await requireStaff();
   const [metrics, audit] = await Promise.all([getDashboardMetrics(), listAuditLog(10)]);
-  const missingConfig = getUnconfiguredIdentityKeys();
+  const missingConfig = await getUnconfiguredIdentityKeys();
 
   const tiles = [
     { label: "Fulfilled revenue", value: formatMoney(metrics.revenueMinor), href: "/admin/orders" },

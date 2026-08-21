@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { requireAdmin } from "@/lib/auth/guards";
-import { getSiteConfig } from "@/lib/site-config";
+import { getSiteConfig, getSiteIdentity, getStoredSettings } from "@/lib/site-config";
+import { SettingsForm } from "@/components/admin/settings-form";
 import { getUnconfiguredIdentityKeys } from "@/lib/admin/config-status";
 import { isMailConfigured } from "@/lib/mail";
 import { listAuditLog } from "@/lib/queries/admin";
@@ -12,33 +13,40 @@ import { formatDateTime, humanise } from "@/lib/utils";
 export const metadata: Metadata = { title: "Settings" };
 
 /**
- * Read-only configuration view, restricted to ADMIN.
+ * Business identity, restricted to ADMIN.
  *
- * Deliberately shows only whether a value is configured, and only for
- * non-secret business identity fields. No secret - database URL, auth secret,
- * SMTP password - is ever displayed, in whole or in part.
+ * The contact details, address, statutory identifiers and grievance officer are
+ * editable here and take effect on the public site immediately — no rebuild, no
+ * redeploy. Three fields are not editable, and the page says which and why
+ * rather than leaving an administrator hunting for them.
+ *
+ * No secret is displayed, in whole or in part: not the database URL, not the
+ * auth secret, not the SMTP password, and not the bank details that reach order
+ * emails. Those stay in server configuration precisely so that an administrator
+ * account cannot read them.
  */
 export default async function AdminSettingsPage() {
   await requireAdmin();
-  const config = getSiteConfig();
-  const missing = getUnconfiguredIdentityKeys();
+  const [config, stored, missing, audit] = await Promise.all([
+    getSiteConfig(),
+    getStoredSettings(),
+    getUnconfiguredIdentityKeys(),
+    listAuditLog(25),
+  ]);
+  const identity = getSiteIdentity();
   const mailReady = isMailConfigured();
-  const audit = await listAuditLog(25);
 
-  const identity: Array<[string, string | null]> = [
-    ["Trading name", config.tradingName],
-    ["Registered legal name", config.legalName],
-    ["Tagline", config.tagline],
-    ["Sales email", config.email.sales],
-    ["Support email", config.email.support],
-    ["Enterprise email", config.email.enterprise],
-    ["Sales phone", config.phone.sales],
-    ["Support phone", config.phone.support],
-    ["Registered address", config.formattedAddress],
-    ["GSTIN", config.gstin],
-    ["CIN", config.cin],
-    ["Support hours", config.supportHours],
-    ["Canonical URL", config.url],
+  /**
+   * The three fields that stay in server configuration, and the reason.
+   *
+   * The name is read at module scope by every route's metadata, where nothing
+   * can be awaited; and renaming a company is a rebrand rather than an edit.
+   */
+  const fixed: Array<[string, string | null]> = [
+    ["Trading name", identity.tradingName],
+    ["Registered legal name", identity.legalName],
+    ["Tagline", identity.tagline],
+    ["Canonical URL", identity.url],
   ];
 
   return (
@@ -46,17 +54,19 @@ export default async function AdminSettingsPage() {
       <header>
         <h1 className="text-2xl">Settings</h1>
         <p className="mt-1.5 max-w-2xl text-[14px] leading-relaxed text-ink-600">
-          Business identity is supplied through environment configuration rather than stored in
-          the database, so it can differ per deployment. Secrets are never displayed here.
+          Your contact details, registered address, GSTIN and grievance officer. Saving here
+          updates the public site straight away — no rebuild and no redeploy. Secrets are never
+          shown on this page.
         </p>
       </header>
 
       {missing.length > 0 ? (
         <div className="rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-5">
-          <h2 className="text-[15px] font-semibold text-warning-700">Review required before launch</h2>
+          <h2 className="text-[15px] font-semibold text-warning-700">Still to fill in</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
-            These values are unset. The public site omits the corresponding details rather than
-            substituting placeholder company information.
+            These are not set anywhere. The public site leaves the corresponding details out
+            rather than inventing them, and says nothing to visitors about their absence.
+            Everything except the name and tagline can be set in the form below.
           </p>
           <ul className="mt-3 flex flex-wrap gap-2">
             {missing.map((key) => (
@@ -70,6 +80,20 @@ export default async function AdminSettingsPage() {
 
       <section>
         <h2 className="mb-4 text-[1.05rem]">Business identity</h2>
+        <div className="max-w-2xl">
+          <SettingsForm stored={stored} effective={config} />
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-4 text-[1.05rem]">Set in server configuration</h2>
+        <p className="mb-4 max-w-2xl text-[13px] leading-relaxed text-ink-600">
+          Not editable here. The site name is read when each page&rsquo;s metadata is built,
+          before anything can be loaded from the database, so changing it needs a deploy —
+          which is the right weight for a rebrand. Bank details are deliberately absent from
+          this page altogether: they are payment credentials, they reach one outbound order
+          email and no page, and no administrator account should be able to read them.
+        </p>
         <TableWrap>
           <Table className="min-w-[36rem]">
             <thead>
@@ -79,14 +103,14 @@ export default async function AdminSettingsPage() {
               </tr>
             </thead>
             <tbody>
-              {identity.map(([label, value]) => (
+              {fixed.map(([label, value]) => (
                 <Tr key={label}>
                   <Td className="font-medium text-graphite-900">{label}</Td>
                   <Td>
                     {value ? (
                       <span className="break-words text-[13px] text-ink-700">{value}</span>
                     ) : (
-                      <Badge tone="warning">Not configured</Badge>
+                      <Badge tone="warning">Not set</Badge>
                     )}
                   </Td>
                 </Tr>

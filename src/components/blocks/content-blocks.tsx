@@ -469,9 +469,9 @@ export function FaqBlock({
   );
 }
 
-export function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }) {
+export async function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }) {
   const dark = data.tone === "dark";
-  const config = getSiteConfig();
+  const config = await getSiteConfig();
   // Business identity lives in configuration, so the block records only that an
   // address belongs here. An unconfigured deployment renders no action at all
   // rather than a broken mailto.
@@ -573,14 +573,14 @@ export function PlansBlock({ data, tone }: { data: BlockData<"PLANS">; tone?: "p
  * and never shown the name of the setting that would supply it. The admin
  * dashboard is where launch readiness is reported.
  */
-export function CompanyInfoBlock({
+export async function CompanyInfoBlock({
   data,
   tone,
 }: {
   data: BlockData<"COMPANY_INFO">;
   tone?: "plain" | "muted";
 }) {
-  const config = getSiteConfig();
+  const config = await getSiteConfig();
 
   const identity: Array<[string, string | null | undefined]> = [
     ["Trading name", config.tradingName],

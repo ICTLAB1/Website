@@ -17,7 +17,7 @@ export const metadata: Metadata = { title: "Support" };
 export default async function AccountSupportPage() {
   const user = await requireUser("/account/support");
   const tickets = await listUserTickets(user.id);
-  const config = getSiteConfig();
+  const config = await getSiteConfig();
 
   return (
     <div className="space-y-10">

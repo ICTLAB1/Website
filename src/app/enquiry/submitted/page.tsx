@@ -26,7 +26,7 @@ export default async function EnquirySubmittedPage({ searchParams }: PageProps) 
   const raw = Array.isArray(params.ref) ? params.ref[0] : params.ref;
   const reference =
     raw && /^ENQ-\d{4}-[A-Z0-9]{6}$/.test(raw) ? raw : null;
-  const config = getSiteConfig();
+  const config = await getSiteConfig();
 
   return (
     <div className="container-page flex min-h-[60vh] items-center py-16">

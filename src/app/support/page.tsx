@@ -21,7 +21,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default async function SupportPage() {
   const [faqs, user] = await Promise.all([getFaqsByTopic("enterprise"), getSessionUser()]);
-  const config = getSiteConfig();
+  const config = await getSiteConfig();
 
   return (
     <div className="container-page pb-16">

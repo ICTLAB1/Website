@@ -101,6 +101,11 @@ for r in brands categories services posts faqs banners; do
 done
 [ $blocked -eq 1 ] && ok "SALES cannot reach any ADMIN-only content resource" || no "SALES content access" "at least one returned 200"
 
+# Business identity is ADMIN-only: it writes the address, the GSTIN and the
+# statutorily-required grievance officer, all of which appear on legal pages.
+code=$(curl -s -o /dev/null -w "%{http_code}" -b "$SJ" "$BASE/admin/settings")
+[ "$code" != "200" ] && ok "SALES cannot reach the business identity settings (got $code)" || no "SALES settings access" "got 200"
+
 # SALES keeps its own commercial surfaces.
 code=$(curl -s -o /dev/null -w "%{http_code}" -b "$SJ" "$BASE/admin/enquiries")
 [ "$code" = "200" ] && ok "SALES keeps its commercial surfaces" || no "SALES enquiries" "got $code"

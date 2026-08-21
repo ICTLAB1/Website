@@ -20,7 +20,7 @@
     "verify:responsive": "node scripts/verify/responsive.mjs",
     "verify:a11y": "node scripts/verify/accessibility.mjs",
     "verify:interactions": "node scripts/verify/interactions.mjs",
-    "verify": "npm run verify:responsive && npm run verify:a11y && npm run verify:motion && npm run verify:interactions && npm run verify:faq && npm run verify:lifecycle && npm run verify:admin && npm run verify:cms && npm run verify:page-editor && npm run verify:navigation && npm run verify:authz && npm run verify:attack && npm run verify:acceptance && npm run verify:crawl && npm run verify:seo",
+    "verify": "npm run verify:responsive && npm run verify:a11y && npm run verify:motion && npm run verify:interactions && npm run verify:faq && npm run verify:lifecycle && npm run verify:admin && npm run verify:cms && npm run verify:page-editor && npm run verify:navigation && npm run verify:settings && npm run verify:authz && npm run verify:attack && npm run verify:acceptance && npm run verify:crawl && npm run verify:seo",
     "check": "npm run typecheck && npm run lint && npm test && npm run build",
     "verify:lifecycle": "node scripts/verify/lifecycle.mjs",
     "verify:attack": "bash scripts/verify/attack.sh",
@@ -34,7 +34,8 @@
     "verify:acceptance": "node scripts/verify/acceptance.mjs",
     "verify:faq": "node scripts/verify/faq.mjs",
     "verify:crawl": "node scripts/verify/crawl.mjs",
-    "verify:seo": "node scripts/verify/seo.mjs"
+    "verify:seo": "node scripts/verify/seo.mjs",
+    "verify:settings": "node scripts/verify/settings-editor.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

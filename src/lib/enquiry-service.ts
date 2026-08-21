@@ -110,7 +110,7 @@ async function notify(
   input: EnquiryInput,
   items: Array<{ productName: string; sku: string; quantity: number }>,
 ) {
-  const config = getSiteConfig();
+  const config = await getSiteConfig();
   const lines = items
     .map((item) => `  • ${item.productName} (${item.sku}) — quantity ${item.quantity}`)
     .join("\n");

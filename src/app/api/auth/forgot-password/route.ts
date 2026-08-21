@@ -64,7 +64,7 @@ export const POST = withErrorHandling("auth.forgotPassword", async (request: Req
       },
     });
 
-    const config = getSiteConfig();
+    const config = await getSiteConfig();
     const link = `${appUrl()}/reset-password?token=${encodeURIComponent(token)}`;
 
     // The raw token appears only in this email. The database holds its HMAC,

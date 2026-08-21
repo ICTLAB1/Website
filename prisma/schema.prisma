@@ -198,6 +198,7 @@ model User {
   tickets       SupportTicket[]
   auditLogs     AuditLog[]
   authoredPosts BlogPost[]
+  savedSettings SiteSettings[]
 
   @@index([companyId])
   @@index([role])
@@ -842,4 +843,66 @@ model NavigationItem {
   updatedAt    DateTime         @updatedAt
 
   @@index([menu, parentId, displayOrder])
+}
+
+/// The company's public-facing business identity, editable in the admin panel.
+///
+/// Exactly one row, whose id is always `singleton` — the values describe *this*
+/// company, so a second row would be meaningless. `upsert` on that fixed id is
+/// what creates it, which means a fresh install needs no seed for it.
+///
+/// Everything here was previously environment configuration and is here now
+/// because it changes without the code changing: a phone number, an office
+/// move, a newly appointed grievance officer. Editing those should not require
+/// a rebuild and a redeploy.
+///
+/// Two categories deliberately did *not* move.
+///
+/// The trading name, legal name and tagline stay in the environment because
+/// they are read at module scope by `buildMetadata`, in 46 route files, where
+/// nothing can be awaited — and because renaming a company is a rebrand, not a
+/// Tuesday afternoon edit.
+///
+/// Bank details stay in the environment because they are payment credentials.
+/// They reach one outbound order email and are never read by a page, so putting
+/// them behind a login that an administrator account could reach would widen
+/// their exposure for no gain in convenience.
+///
+/// Every column is nullable, and a null falls back to its environment variable.
+/// That is what lets an already-running deployment upgrade without losing a
+/// single value: until someone edits a field in the panel, the environment
+/// still supplies it.
+model SiteSettings {
+  id String @id @default("singleton")
+
+  emailSales      String?
+  emailSupport    String?
+  emailEnterprise String?
+  phoneSales      String?
+  phoneSupport    String?
+
+  addressLine1 String?
+  addressLine2 String?
+  city         String?
+  state        String?
+  postcode     String?
+  country      String?
+
+  gstin        String?
+  cin          String?
+  supportHours String?
+
+  /// Publishing a named grievance officer and their contact details is required
+  /// of an online seller in India by the Consumer Protection (E-Commerce) Rules
+  /// 2020. It is a statutory appointment rather than marketing copy, which is
+  /// why it lives here and not in a content block anyone could edit.
+  grievanceName  String?
+  grievanceEmail String?
+  grievancePhone String?
+
+  updatedAt DateTime @updatedAt
+  /// The administrator who last saved. Nullable so a row written by a migration
+  /// or a restore does not have to invent an author.
+  updatedById String?
+  updatedBy   User?   @relation(fields: [updatedById], references: [id], onDelete: SetNull)
 }

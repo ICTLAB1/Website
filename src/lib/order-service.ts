@@ -39,7 +39,7 @@ export type BillingDetails = {
 };
 
 async function notifyOrder(reference: string, billing: BillingDetails, totalMinor: number) {
-  const config = getSiteConfig();
+  const config = await getSiteConfig();
   const banking = getBankingDetails();
 
   const internal = salesInbox();

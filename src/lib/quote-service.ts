@@ -195,7 +195,7 @@ export async function sendQuote(reference: string, actorId: string): Promise<Quo
 
   const recipient = quote.enquiry?.contactEmail;
   if (recipient) {
-    const config = getSiteConfig();
+    const config = await getSiteConfig();
     const lines = quote.items
       .map(
         (item) =>

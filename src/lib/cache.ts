@@ -32,6 +32,13 @@ export const tags = {
   posts: "posts",
   post: (slug: string) => `post:${slug}`,
   faqs: "faqs",
+  /**
+   * The company's business identity: contact details, registered address,
+   * statutory identifiers and the grievance officer. Its own tag because it is
+   * read by the header and the footer, so by every page — invalidating it after
+   * an edit refreshes the whole site at once.
+   */
+  settings: "settings",
 } as const;
 
 /**

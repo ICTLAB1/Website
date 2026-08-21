@@ -55,7 +55,7 @@ export default async function ServicePage({ params }: PageProps) {
   if (!service) notFound();
 
   const steps = parseProcess(service.process);
-  const config = getSiteConfig();
+  const config = await getSiteConfig();
 
   return (
     <div className="pb-16">

@@ -13,8 +13,8 @@ export const metadata: Metadata = buildMetadata({
   path: "/contact",
 });
 
-export default function ContactPage() {
-  const config = getSiteConfig();
+export default async function ContactPage() {
+  const config = await getSiteConfig();
 
   /**
    * Sales only. Support used to be a third card here, which meant a customer

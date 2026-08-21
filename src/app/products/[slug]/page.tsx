@@ -67,7 +67,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     product.brandId,
     4,
   );
-  const config = getSiteConfig();
+  const config = await getSiteConfig();
 
   const defaultVariant = product.variants[0];
   const lowestPrice = product.variants

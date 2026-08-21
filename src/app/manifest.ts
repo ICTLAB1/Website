@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getSiteConfig } from "@/lib/site-config";
 
-export default function manifest(): MetadataRoute.Manifest {
-  const config = getSiteConfig();
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const config = await getSiteConfig();
 
   return {
     name: `${config.tradingName} — Enterprise Technology`,

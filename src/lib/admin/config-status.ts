@@ -16,8 +16,8 @@ import { getSiteConfig } from "@/lib/site-config";
  * nowhere else. The import path is now the reminder, and
  * `config-status.test.ts` enforces it.
  */
-export function getUnconfiguredIdentityKeys(): string[] {
-  const config = getSiteConfig();
+export async function getUnconfiguredIdentityKeys(): Promise<string[]> {
+  const config = await getSiteConfig();
   const missing: string[] = [];
   if (!config.legalName) missing.push("COMPANY_LEGAL_NAME");
   if (!config.email.sales) missing.push("COMPANY_EMAIL_SALES");

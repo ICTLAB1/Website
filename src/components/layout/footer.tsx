@@ -4,7 +4,7 @@ import { getNavigation } from "@/lib/queries/navigation";
 import { getSiteConfig } from "@/lib/site-config";
 
 export async function Footer() {
-  const config = getSiteConfig();
+  const config = await getSiteConfig();
   const navigation = await getNavigation();
   const year = new Date().getFullYear();
 
