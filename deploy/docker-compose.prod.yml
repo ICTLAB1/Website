@@ -90,12 +90,36 @@ services:
       COMPANY_BANK_BRANCH: ${COMPANY_BANK_BRANCH:-}
       COMPANY_UPI_ID: ${COMPANY_UPI_ID:-}
     # Also no `ports:`. Only Caddy talks to the app, over the internal network.
+    healthcheck:
+      # Asks the app whether it can reach its database, which is the failure
+      # `restart: unless-stopped` alone will not catch: a Next.js server whose
+      # database has gone away keeps its process alive and keeps answering on
+      # 3000, so Docker sees a healthy container while every customer sees a
+      # 500. Node's own fetch rather than curl or wget — the slim image has
+      # neither, and installing one to check a health endpoint is a poor trade.
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      # Generous start_period: the first start runs migrations and, on an empty
+      # database, the whole seed. Marking that unhealthy would restart it
+      # mid-seed, which is how a half-populated catalogue happens.
+      start_period: 180s
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
     depends_on:
-      - app
+      app:
+        # Caddy waits for a serving app rather than a started one. Without this
+        # the first request after a deploy can arrive while migrations are
+        # still running, and Caddy answers 502 — to a real visitor, and to
+        # Let's Encrypt if it happens to be validating at that moment.
+        condition: service_healthy
     ports:
       - "80:80"
       - "443:443"

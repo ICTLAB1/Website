@@ -71,12 +71,20 @@ echo "AUTH_SECRET=\"$(openssl rand -base64 48)\""
 echo "POSTGRES_PASSWORD=\"$(openssl rand -hex 24)\""
 ```
 
-Edit `.env` and fill it in. While testing, point it at a subdomain:
+Edit `.env` and fill it in. While testing, point all three domain settings at a
+subdomain — the example file ships with the live values, so all three need
+changing:
 
 ```
 SITE_DOMAIN="new.techzoidtechnologies.com"
+SITE_ADDRESS="new.techzoidtechnologies.com"
 APP_URL="https://new.techzoidtechnologies.com"
 ```
+
+`SITE_ADDRESS` has no `www.` while testing. There is no
+`www.new.techzoidtechnologies.com` record and there never will be, and listing
+a name that does not resolve leaves Caddy chasing a certificate for it forever.
+On the real domain it gains `www`; section 7 covers that.
 
 Set a real `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` **now**, before the
 first start. They create the first administrator, and the values in the
@@ -116,7 +124,21 @@ Then open `https://new.techzoidtechnologies.com`.
 
 ## 5. Check it before anyone else sees it
 
-Work through this on the real subdomain, not on a laptop:
+First, the checks a script can make for you:
+
+```bash
+cd /srv/techzoid/deploy
+chmod +x preflight.sh
+./preflight.sh
+```
+
+On the subdomain it verifies the configuration is internally consistent, the
+three containers are up, the app can reach its database, the site answers over
+HTTPS, the sitemap and `robots.txt` name the right host, the old site's URLs
+redirect, and the business details you are required to publish are set. It
+knows it is looking at a subdomain and skips the www checks accordingly.
+
+Then work through the rest by hand, on the real subdomain and not on a laptop:
 
 - [ ] The home page, catalogue, a product page, and a brand page.
 - [ ] Submit an enquiry as a customer. It should arrive by email — if SMTP is
@@ -191,23 +213,80 @@ than by the front door.
 
 ## 7. The switch
 
-Once the subdomain checks out:
+The order matters here more than anywhere else in this runbook. **The server is
+reconfigured for the real domain first, and DNS moves last.** Doing it the other
+way round means the domain points at a server that is not yet expecting it, and
+customers see a certificate warning during the gap.
 
-1. Lower the TTL on the domain's existing A record to 300 seconds, and wait for
-   the old TTL to expire. This is what makes the switch — and any rollback —
-   take minutes rather than hours.
-2. Change `.env` on the server to the real domain:
-   ```
-   SITE_DOMAIN="techzoidtechnologies.com"
-   APP_URL="https://techzoidtechnologies.com"
-   ```
-3. `docker compose -f docker-compose.prod.yml up -d` to pick it up.
-4. Point the domain's `A` record for `@` — and `www`, if it is an A record
-   rather than a CNAME — at the new server.
-5. Watch `docker compose logs -f caddy` for the certificate being issued for
-   the apex. It happens on the first request after DNS propagates.
-6. Check the site on the real domain, then submit one real enquiry end to end.
-7. Raise the TTL back to 3600 once you are confident.
+### 7a. Reconfigure the server
+
+Edit `.env` and change **three** values, not two:
+
+```
+SITE_DOMAIN="techzoidtechnologies.com"
+SITE_ADDRESS="techzoidtechnologies.com, www.techzoidtechnologies.com"
+APP_URL="https://techzoidtechnologies.com"
+```
+
+`SITE_ADDRESS` is the one that is easy to miss and expensive to miss. It is the
+list of names Caddy actually serves and obtains certificates for. Leave it on
+the test subdomain and Caddy serves the subdomain and nothing else: the real
+domain answers with a certificate error, for a name it was never asked to
+serve, while the logs look entirely healthy. Both names belong in the list —
+`www` is served so that it can redirect, and it cannot redirect without a
+certificate of its own.
+
+Then:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d
+```
+
+### 7b. Prove it before anyone can see it
+
+```bash
+./preflight.sh
+```
+
+This is the point of the script. It forces requests for
+`techzoidtechnologies.com` to the copy of Caddy on this machine regardless of
+where DNS currently points, so the real domain — its redirects, its canonical
+URLs, its sitemap, the old site's URLs — is tested while the old site is still
+live and serving customers. Everything it does is a read; it changes nothing.
+
+It also checks the things that are quietly wrong rather than obviously broken:
+`APP_URL` disagreeing with `SITE_DOMAIN`, a sitemap still advertising the test
+subdomain, the seeded administrator password never having been changed, and the
+business details an Indian online seller is required to publish.
+
+Do not move DNS until it exits without failures.
+
+### 7c. Move DNS
+
+1. Lower the TTL on the domain's existing `A` record to 300 seconds, and wait
+   for the old TTL to expire. This is what makes the switch — and any rollback
+   — take minutes rather than hours.
+2. Point the `A` record for `@` at the new server.
+3. `www` needs changing **only if it is its own A record**. If it is a CNAME to
+   the bare name, as it is on this domain today, it follows automatically.
+   Check with `dig www.techzoidtechnologies.com` before assuming either way.
+4. Watch `docker compose -f docker-compose.prod.yml logs -f caddy` for the
+   certificate being issued. It happens on the first request after DNS
+   propagates, for each name in `SITE_ADDRESS`.
+
+### 7d. Confirm
+
+```bash
+./preflight.sh
+```
+
+The second run notices that DNS now points here and checks what it could not
+check before: that the certificates for both names are real and trusted, and
+that `www` genuinely redirects to the bare name rather than serving a second
+copy of the site.
+
+Then, by hand: submit one real enquiry end to end and confirm the confirmation
+email arrives. Raise the TTL back to 3600 once you are confident.
 
 **To roll back**, point the A record back at the old server. Nothing on the new
 one is destroyed, and the database keeps whatever came in while it was live.

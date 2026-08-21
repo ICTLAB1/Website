@@ -90,6 +90,18 @@ services:
       COMPANY_UPI_ID: ${COMPANY_UPI_ID:-}
     ports:
       - "3000:3000"
+    healthcheck:
+      # Same check as production, so `docker compose ps` means the same thing
+      # in both places: serving, not merely started.
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      start_period: 180s
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   db-data:
