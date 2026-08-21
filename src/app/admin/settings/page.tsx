@@ -10,7 +10,7 @@ import { TestEmailForm } from "@/components/admin/test-email-form";
 import { getPaymentSettingsView } from "@/lib/payments/config";
 import { getUnconfiguredIdentityKeys } from "@/lib/admin/config-status";
 import { isMailConfigured } from "@/lib/mail";
-import { getMailSettingsView } from "@/lib/mail-config";
+import { getMailConfig, getMailSettingsView } from "@/lib/mail-config";
 import { MailSettingsForm } from "@/components/admin/mail-settings-form";
 import { listAuditLog } from "@/lib/queries/admin";
 import { formatDateTime, humanise } from "@/lib/utils";
@@ -41,6 +41,9 @@ export default async function AdminSettingsPage() {
     getMailSettingsView(),
     isMailConfigured(),
   ]);
+  // What the From header will actually say, after the stored-then-environment
+  // fallback — not what is typed in the form, which may be blank and inheriting.
+  const mailFrom = (await getMailConfig()).from;
   const identity = getSiteIdentity();
 
 
@@ -111,7 +114,7 @@ export default async function AdminSettingsPage() {
         </p>
         <div className="max-w-2xl space-y-6">
           <MailSettingsForm settings={mail} />
-          <TestEmailForm address={admin.email} />
+          <TestEmailForm address={admin.email} from={mailFrom} />
         </div>
       </section>
 

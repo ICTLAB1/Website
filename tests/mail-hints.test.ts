@@ -59,11 +59,31 @@ describe("mail failure hints", () => {
     expect(message).toContain("Authenticated SMTP");
   });
 
+  it("recognises nothing answering at all, and names the usual cause", () => {
+    /*
+     * The one that produced a button spinning forever. A blocked outbound port
+     * blackholes packets rather than refusing them, so there is no rejection to
+     * read — and it is the *normal* state of a new cloud server, not an
+     * exotic misconfiguration. Without this the operator is told "timed out"
+     * and left to guess.
+     */
+    for (const detail of [
+      "Connection timeout",
+      "Timed out waiting for the mail server.",
+      "connect ETIMEDOUT 52.96.0.1:587",
+      "connect ECONNREFUSED 127.0.0.1:587",
+    ]) {
+      const hint = hintFor(detail);
+      expect(hint).toContain("block outbound mail ports");
+      expect(hint).toContain("nc -vz");
+    }
+  });
+
   it("adds nothing to a failure it does not recognise", () => {
     // Silence is correct here. A guess dressed up as advice sends somebody to
     // change a setting that was never the problem.
     expect(hintFor("getaddrinfo ENOTFOUND smtp.example.test")).toBe("");
-    expect(hintFor("Connection timed out")).toBe("");
+    expect(hintFor("550 mailbox unavailable")).toBe("");
     expect(hintFor("")).toBe("");
   });
 

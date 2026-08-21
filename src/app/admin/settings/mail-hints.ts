@@ -57,6 +57,26 @@ export function hintFor(detail: string): string {
     );
   }
 
+  if (
+    lower.includes("timed out") ||
+    lower.includes("timeout") ||
+    lower.includes("etimedout") ||
+    lower.includes("econnrefused")
+  ) {
+    return (
+      "\n\nNothing answered at all, which usually means the connection never left " +
+      "the server rather than that the credentials are wrong. Hosting providers " +
+      "commonly block outbound mail ports on new accounts to stop them being " +
+      "used for spam — DigitalOcean, AWS and Google Cloud all do, and it is " +
+      "lifted by asking their support to enable outbound SMTP for the account. " +
+      "Check from the server with:\n\n" +
+      "    nc -vz smtp.office365.com 587\n\n" +
+      "If that hangs or is refused, the port is blocked and no change here will " +
+      "help. The alternative is a mail service that sends over HTTPS instead — " +
+      "Resend, Postmark, SendGrid and Brevo all do, and none of them are affected."
+    );
+  }
+
   if (lower.includes("relay") || lower.includes("not permitted") || lower.includes("5.7.60")) {
     return (
       "\n\nThe mail server will not send on behalf of that sender address. MAIL_FROM usually has " +

@@ -37,6 +37,27 @@ function transport(config: MailConfig): Transporter | null {
     ...(config.username && config.password
       ? { auth: { user: config.username, pass: config.password } }
       : {}),
+
+    /*
+     * Timeouts, because the default is to wait a very long time.
+     *
+     * A refused connection fails fast and is easy to reason about. A silently
+     * dropped one does not fail at all: the socket stays open, nothing arrives,
+     * and the caller waits. That is not hypothetical here — hosting providers
+     * routinely block outbound SMTP on new accounts, and a blocked port
+     * blackholes packets rather than refusing them. DigitalOcean is one of them.
+     *
+     * Without these, registration hangs. It awaits the verification email, so a
+     * blocked port turns "create an account" into a request that never returns,
+     * and the customer sees a spinner rather than an account. The admin test
+     * button did exactly this and span forever.
+     *
+     * Fifteen seconds is far longer than any healthy server needs and far
+     * shorter than a person will wait.
+     */
+    connectionTimeout: 15_000,
+    greetingTimeout: 15_000,
+    socketTimeout: 20_000,
   });
   cachedKey = key;
   return cachedTransport;
@@ -87,20 +108,39 @@ export async function sendMailVerbose(message: MailMessage): Promise<VerboseMail
 
   const detail = (error: unknown) => (error instanceof Error ? error.message : String(error));
 
+  /*
+   * A second, outer bound on the whole exchange.
+   *
+   * The transport timeouts above cover connecting, the greeting and an idle
+   * socket, which is every way this hangs that anyone has met. This exists
+   * because the cost of being wrong about that is a button that spins forever
+   * and an administrator who learns nothing — the precise failure this page was
+   * built to remove. It never fires in a healthy send.
+   */
+  const bounded = <T,>(work: Promise<T>): Promise<T> =>
+    Promise.race([
+      work,
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Timed out waiting for the mail server.")), 45_000),
+      ),
+    ]);
+
   try {
-    await mailer.verify();
+    await bounded(mailer.verify());
   } catch (error) {
     return { delivered: false, failure: { kind: "rejected_connection", detail: detail(error) } };
   }
 
   try {
-    await mailer.sendMail({
-      from,
-      to: message.to,
-      subject: message.subject,
-      text: message.text,
-      html: message.html,
-    });
+    await bounded(
+      mailer.sendMail({
+        from,
+        to: message.to,
+        subject: message.subject,
+        text: message.text,
+        html: message.html,
+      }),
+    );
     return { delivered: true };
   } catch (error) {
     return { delivered: false, failure: { kind: "rejected_message", detail: detail(error) } };
