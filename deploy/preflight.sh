@@ -273,54 +273,94 @@ esac
 # ────────────────────────────────────────────── the real domain, through Caddy
 section "The site, on its real name"
 
-# Force the request to this machine whatever DNS says. Before the switch that
-# is the only way to test the real domain at all; after it, it removes any
-# doubt about which server answered.
+# How the site is reached depends on whether DNS has moved, and the reason is
+# not obvious.
 #
-# Caddy cannot hold a certificate for a name that does not resolve here yet, so
-# before the switch the certificate is genuinely absent, and verifying it would
-# only restate what the DNS section already said. `-k` skips that one check
-# until the run after the switch. Everything else — routing, redirects,
-# canonical URLs — is real now and worth proving now.
-INSECURE=()
-if [ "$LIVE" != "yes" ]; then
-  INSECURE=(-k)
-  printf '        %s\n' "certificate checks deferred: they need DNS pointing here first"
+# `curl --resolve` forces a request for the real domain to this machine
+# whatever DNS says, which is what makes a pre-switch test possible at all. Over
+# HTTPS it is not enough. Caddy obtains a certificate from Let's Encrypt, which
+# proves control of a name by resolving it — so before the switch there is no
+# certificate for this name and there cannot be one. A TLS handshake for it
+# fails outright, and `-k` does not help: it skips *validating* a certificate,
+# and here the server has none to present. An earlier version of this script
+# tried exactly that and reported eight failures for a deployment that was
+# entirely correct.
+#
+# So before the switch the application is asked directly, inside the compose
+# network, over plain HTTP. That covers everything that actually depends on
+# configuration — the canonical URLs, the sitemap's host, robots.txt, the old
+# site's redirects — because all of them come from APP_URL and from the app.
+# What it cannot cover is Caddy's part: serving both names and holding
+# certificates for them. That is checked on the run after the switch, which is
+# the first moment it can be true.
+if [ "$LIVE" = "yes" ]; then
+  printf '        %s\n' "DNS points here, so this is the real thing: through Caddy, over HTTPS"
+else
+  printf '        %s\n' "DNS has not moved yet, so Caddy cannot hold a certificate for this name"
+  printf '        %s\n' "and an HTTPS request to it cannot succeed. Asking the application"
+  printf '        %s\n' "directly instead; the HTTPS and certificate checks run after the switch."
 fi
 
-fetch() {
-  local url="$1" host="$2"
-  curl -sS --max-time 20 "${INSECURE[@]}" \
-    --resolve "${host}:443:127.0.0.1" --resolve "${host}:80:127.0.0.1" "$url" 2>/dev/null
-}
-code_of() {
-  local url="$1" host="$2"
-  curl -sS -o /dev/null -m 20 "${INSECURE[@]}" \
-    --resolve "${host}:443:127.0.0.1" --resolve "${host}:80:127.0.0.1" \
-    -w '%{http_code} %{redirect_url}' "$url" 2>/dev/null
+# `<code> <redirect-location>` for a path on the site.
+site_code() {
+  local path="$1"
+  if [ "$LIVE" = "yes" ]; then
+    curl -sS -o /dev/null -m 20 --resolve "${SITE_DOMAIN}:443:127.0.0.1" \
+      -w '%{http_code} %{redirect_url}' "https://${SITE_DOMAIN}${path}" 2>/dev/null
+  else
+    $COMPOSE exec -T app node -e "
+      fetch('http://127.0.0.1:3000' + process.argv[1], { redirect: 'manual' })
+        .then((r) => console.log(r.status + ' ' + (r.headers.get('location') || '')))
+        .catch(() => console.log('000 '))
+    " "$path" 2>/dev/null | tail -n1
+  fi
 }
 
-read -r apex_code apex_redirect <<<"$(code_of "https://${SITE_DOMAIN}/" "$SITE_DOMAIN")"
+site_body() {
+  local path="$1"
+  if [ "$LIVE" = "yes" ]; then
+    curl -sS -m 20 --resolve "${SITE_DOMAIN}:443:127.0.0.1" "https://${SITE_DOMAIN}${path}" 2>/dev/null
+  else
+    $COMPOSE exec -T app node -e "
+      fetch('http://127.0.0.1:3000' + process.argv[1])
+        .then((r) => r.text())
+        .then((t) => process.stdout.write(t))
+        .catch(() => {})
+    " "$path" 2>/dev/null
+  fi
+}
+
+read -r apex_code _ <<<"$(site_code "/")"
 if [ "$apex_code" = "200" ]; then
-  ok "https://${SITE_DOMAIN}/ answers 200"
+  if [ "$LIVE" = "yes" ]; then ok "https://${SITE_DOMAIN}/ answers 200"; else ok "the application answers 200"; fi
 else
-  bad "https://${SITE_DOMAIN}/ answered ${apex_code:-nothing}" "Caddy is not serving this name. Check SITE_ADDRESS above and: $COMPOSE logs caddy"
+  if [ "$LIVE" = "yes" ]; then
+    bad "https://${SITE_DOMAIN}/ answered ${apex_code:-nothing}" \
+        "Caddy is not serving this name. Check SITE_ADDRESS above and: $COMPOSE logs caddy"
+  else
+    bad "the application answered ${apex_code:-nothing}" "See: $COMPOSE logs app"
+  fi
 fi
 
-read -r www_code www_redirect <<<"$(code_of "https://${WWW}/" "$WWW")"
-if [ "$APEX" = "no" ]; then
-  : # no www on a subdomain
-elif [ "$www_code" = "301" ] && [ "$www_redirect" = "https://${SITE_DOMAIN}/" ]; then
-  ok "https://${WWW}/ redirects permanently to https://${SITE_DOMAIN}/"
-elif [ "$www_code" = "200" ]; then
-  bad "https://${WWW}/ serves the site instead of redirecting" \
-      "Two addresses for every page splits search ranking between them and makes the canonical tags wrong."
-else
-  bad "https://${WWW}/ answered ${www_code:-nothing}" \
-      "Visitors who type www would see an error. Check that SITE_ADDRESS lists $WWW."
+# Caddy's own job: serving www so it can redirect. Only testable once DNS moved.
+if [ "$APEX" = "yes" ] && [ "$LIVE" = "yes" ]; then
+  read -r www_code www_redirect <<<"$(curl -sS -o /dev/null -m 20 \
+    --resolve "${WWW}:443:127.0.0.1" -w '%{http_code} %{redirect_url}' "https://${WWW}/" 2>/dev/null)"
+  if [ "$www_code" = "301" ] && [ "$www_redirect" = "https://${SITE_DOMAIN}/" ]; then
+    ok "https://${WWW}/ redirects permanently to https://${SITE_DOMAIN}/"
+  elif [ "$www_code" = "200" ]; then
+    bad "https://${WWW}/ serves the site instead of redirecting" \
+        "Two addresses for every page splits search ranking between them and makes the canonical tags wrong."
+  else
+    bad "https://${WWW}/ answered ${www_code:-nothing}" \
+        "Visitors who type www would see an error. Check that SITE_ADDRESS lists $WWW."
+  fi
 fi
 
-read -r plain_code plain_redirect <<<"$(code_of "http://${SITE_DOMAIN}/" "$SITE_DOMAIN")"
+# Plain HTTP needs no certificate, so this one is honest in both states.
+read -r plain_code _ <<<"$(curl -sS -o /dev/null -m 20 \
+  --resolve "${SITE_DOMAIN}:80:127.0.0.1" -w '%{http_code} %{redirect_url}' \
+  "http://${SITE_DOMAIN}/" 2>/dev/null)"
 case "$plain_code" in
   30*) ok "http:// redirects to https://" ;;
   *) bad "http://${SITE_DOMAIN}/ answered ${plain_code:-nothing} instead of redirecting to https" ;;
@@ -342,7 +382,7 @@ fi
 # ──────────────────────────────────────────────────── what the site says it is
 section "Canonical URLs"
 
-sitemap="$(fetch "https://${SITE_DOMAIN}/sitemap.xml" "$SITE_DOMAIN")"
+sitemap="$(site_body /sitemap.xml)"
 url_count="$(printf '%s' "$sitemap" | grep -c '<loc>')"
 
 if [ "$url_count" -gt 20 ]; then
@@ -364,7 +404,7 @@ else
       "For example: $(printf '%s' "$stale" | head -n1 | sed 's/<loc>//'). APP_URL is what produces these; correct it and restart the app."
 fi
 
-robots="$(fetch "https://${SITE_DOMAIN}/robots.txt" "$SITE_DOMAIN")"
+robots="$(site_body /robots.txt)"
 robots_sitemap="$(printf '%s' "$robots" | grep -i '^[[:space:]]*sitemap:' | head -n1 | sed 's/^[[:space:]]*[Ss]itemap:[[:space:]]*//')"
 
 # Three outcomes, each reported for what it is. An earlier version said only
@@ -392,9 +432,14 @@ section "The old site's URLs"
 # none, because nobody checks it again.
 redirect_ok() {
   local from="$1" to="$2"
-  read -r c r <<<"$(code_of "https://${SITE_DOMAIN}${from}" "$SITE_DOMAIN")"
+  read -r c r <<<"$(site_code "$from")"
+  # Compare the path only. Asked directly, the app builds its Location header
+  # from the request host, so it says 127.0.0.1:3000 — correct, and not the
+  # public origin. The path is the part that carries the meaning.
+  local landed
+  landed="$(printf '%s' "$r" | sed -E 's#^[a-z]+://[^/]+##')"
   case "$c" in
-    30*) if [ "$r" = "https://${SITE_DOMAIN}${to}" ]; then ok "${from} → ${to}"; else warned "${from} redirects to ${r#https://$SITE_DOMAIN}, not ${to}"; fi ;;
+    30*) if [ "$landed" = "$to" ]; then ok "${from} → ${to}"; else warned "${from} redirects to ${landed:-nothing}, not ${to}"; fi ;;
     *) bad "${from} answered ${c:-nothing} instead of redirecting to ${to}" ;;
   esac
 }
