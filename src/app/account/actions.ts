@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
-import { requireUser } from "@/lib/auth/guards";
+import { canTransact, requireUser } from "@/lib/auth/guards";
 import { companySchema, fieldErrorsOf, profileSchema, supportTicketSchema } from "@/lib/validation";
 import { publicReference } from "@/lib/auth/tokens";
 import { recordAudit } from "@/lib/audit";
@@ -196,11 +196,33 @@ const quoteDecisionSchema = z.object({
  * duplicate-order checks all happen server-side in the services, never on the
  * strength of which button the browser rendered.
  */
+/** Reads the decision straight off the form, before validation, for the guard. */
+function parsedDecisionIsAccept(formData: FormData): boolean {
+  return String(formData.get("decision") ?? "").toUpperCase() === "ACCEPTED";
+}
+
 export async function decideQuote(
   _previous: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const user = await requireUser("/account/quotes");
+
+  /*
+   * Accepting a quotation raises an order in this account's name and puts
+   * licences on their way to this address. Both are worth confirming the
+   * address first.
+   *
+   * Rejecting is not gated — refusing a quotation costs nothing and commits
+   * nobody, and there is no reason to trap somebody in a quotation they do not
+   * want because their email has not arrived.
+   */
+  if (parsedDecisionIsAccept(formData) && !canTransact(user)) {
+    return {
+      status: "error",
+      message:
+        "Please confirm your email address before accepting a quotation. We have sent you a link; you can request another from your account.",
+    };
+  }
 
   const parsed = quoteDecisionSchema.safeParse({
     reference: formData.get("reference"),

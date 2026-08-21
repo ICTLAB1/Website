@@ -3,6 +3,7 @@ import { verifyCsrf } from "@/lib/auth/csrf";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { ipFromRequest } from "@/lib/auth/request";
 import { getSessionUser } from "@/lib/auth/session";
+import { canTransact } from "@/lib/auth/guards";
 import { createDirectOrder } from "@/lib/order-service";
 import { directOrderSchema, fieldErrorsOf } from "@/lib/validation";
 import { recordAudit } from "@/lib/audit";
@@ -50,6 +51,25 @@ export const POST = withErrorHandling("orders.createDirect", async (request: Req
   }
 
   const user = await getSessionUser();
+
+  /*
+   * A signed-in account must have a confirmed address before it can order.
+   *
+   * The limit of this is worth stating rather than glossing: an anonymous
+   * purchase is not gated, because there is no account to confirm, and someone
+   * determined could sign out to get around it. That is not the threat this
+   * guards. It guards a real customer whose address has a typo in it — the case
+   * where an order is placed in their name, the licence keys go somewhere else,
+   * and nobody finds out until they ask where their software is. Anonymous
+   * purchases carry their own protections and are a separate, already-accepted
+   * risk.
+   */
+  if (user && !canTransact(user)) {
+    return jsonError(
+      "forbidden",
+      "Please confirm your email address before placing an order. We have sent you a link; you can request another from your account.",
+    );
+  }
 
   const result = await createDirectOrder(
     [{ sku: parsed.data.sku, quantity: parsed.data.quantity }],

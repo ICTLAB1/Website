@@ -19,6 +19,14 @@ export type SessionUser = {
   role: UserRole;
   companyId: string | null;
   companyName: string | null;
+  /**
+   * When the address was confirmed, or null.
+   *
+   * Carried on the session rather than fetched where it is needed, because
+   * every guard and every banner asks the same question and a second query per
+   * request to answer it would be waste.
+   */
+  emailVerified: Date | null;
 };
 
 function cookieOptions(expires: Date) {
@@ -75,6 +83,7 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
           email: true,
           name: true,
           role: true,
+          emailVerified: true,
           deletedAt: true,
           companyId: true,
           company: { select: { name: true } },
@@ -102,6 +111,7 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
     role: session.user.role,
     companyId: session.user.companyId,
     companyName: session.user.company?.name ?? null,
+    emailVerified: session.user.emailVerified,
   };
 });
 

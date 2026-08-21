@@ -7,6 +7,8 @@ import { createSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { fieldErrorsOf, registerSchema } from "@/lib/validation";
 import { recordAudit } from "@/lib/audit";
+import { sendVerificationEmail } from "@/lib/auth/email-verification";
+import { logger } from "@/lib/logger";
 
 export const POST = withErrorHandling("auth.register", async (request: Request) => {
   if (await verifyCsrf(request)) {
@@ -63,11 +65,25 @@ export const POST = withErrorHandling("auth.register", async (request: Request) 
         role: "CUSTOMER",
         companyId: company.id,
       },
-      select: { id: true },
+      select: { id: true, email: true, name: true },
     });
   });
 
   await createSession(user.id);
+
+  /*
+   * Best-effort, and after the session.
+   *
+   * Registration has already succeeded by this point — the account exists and
+   * the person is signed in. A mail failure must not undo that or surface as a
+   * failed sign-up, so this is awaited only far enough to record the outcome
+   * and never allowed to throw. The same reasoning as the enquiry
+   * confirmation: store first, notify second.
+   */
+  const verification = await sendVerificationEmail(user).catch((error) => {
+    logger.warn("verification_email_failed", { userId: user.id, error: String(error) });
+    return { delivered: false };
+  });
 
   await recordAudit({
     actorId: user.id,
@@ -77,5 +93,7 @@ export const POST = withErrorHandling("auth.register", async (request: Request) 
     ip,
   });
 
-  return jsonOk({ redirectTo: "/account" });
+  // The account page reads this to decide whether to say "check your email" or
+  // to stay quiet, so it never promises a message that was not sent.
+  return jsonOk({ redirectTo: verification.delivered ? "/account?verify=sent" : "/account" });
 });

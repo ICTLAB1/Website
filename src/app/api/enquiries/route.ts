@@ -3,6 +3,7 @@ import { verifyCsrf } from "@/lib/auth/csrf";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { ipFromRequest } from "@/lib/auth/request";
 import { getSessionUser } from "@/lib/auth/session";
+import { canTransact } from "@/lib/auth/guards";
 import { createEnquiry } from "@/lib/enquiry-service";
 import { enquirySchema, fieldErrorsOf } from "@/lib/validation";
 import { recordAudit } from "@/lib/audit";
@@ -56,6 +57,25 @@ export const POST = withErrorHandling("enquiries.create", async (request: Reques
   // Associates the enquiry with the signed-in account when there is one, but
   // never trusts a client-supplied user or company id.
   const user = await getSessionUser();
+
+  /*
+   * Same rule as ordering, and the same limit: anonymous enquiries are not
+   * gated, because there is no account to confirm.
+   *
+   * That is coherent rather than a hole. An anonymous enquirer types an address
+   * once and we reply to it; if it is wrong they get no reply and they know it.
+   * An account's address is stored and reused on every future quotation, so a
+   * typo there poisons everything downstream and the customer may never work
+   * out why. Signing out to avoid this produces a worse result for them — a
+   * one-off enquiry with no account attached — so it is not a bypass anybody
+   * would want.
+   */
+  if (user && !canTransact(user)) {
+    return jsonError(
+      "forbidden",
+      "Please confirm your email address before submitting an enquiry. We have sent you a link; you can request another from your account.",
+    );
+  }
 
   const result = await createEnquiry(parsed.data, {
     userId: user?.id ?? null,

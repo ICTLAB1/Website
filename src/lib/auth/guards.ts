@@ -2,6 +2,7 @@ import "server-only";
 import { redirect } from "next/navigation";
 import type { UserRole } from "@prisma/client";
 import { getSessionUser, type SessionUser } from "@/lib/auth/session";
+import { verificationEnforced } from "@/lib/auth/email-verification";
 
 /**
  * Authorisation is enforced here, on the server, for every protected page and
@@ -44,6 +45,37 @@ export async function requireStaff(returnTo = "/admin"): Promise<SessionUser> {
 export async function requireAdmin(returnTo = "/admin"): Promise<SessionUser> {
   const user = await requireStaff(returnTo);
   if (!isAdmin(user)) redirect("/admin");
+  return user;
+}
+
+/**
+ * Whether this account may transact.
+ *
+ * An unverified address may sign in and look around; it may not submit an
+ * enquiry, accept a quotation or place an order. The line is here because
+ * everything past it results in us emailing something that matters — a
+ * quotation, an invoice, a licence key — and an unverified address is a typo
+ * waiting to send one of those to a stranger.
+ *
+ * Stands down entirely when SMTP is unconfigured. There is no way to receive a
+ * link on such a deployment, so enforcing it would lock every new customer out
+ * with no route back; a mail problem should cost features, never access.
+ */
+export function canTransact(user: { emailVerified: Date | null } | null): boolean {
+  if (!user) return false;
+  if (!verificationEnforced()) return true;
+  return user.emailVerified !== null;
+}
+
+/**
+ * For pages: requires a verified address, having already required a session.
+ *
+ * Sends an unverified user to the page that explains why and offers a fresh
+ * link, rather than to a bare error.
+ */
+export async function requireVerified(returnTo?: string): Promise<SessionUser> {
+  const user = await requireUser(returnTo);
+  if (!canTransact(user)) redirect("/verify-email/required");
   return user;
 }
 

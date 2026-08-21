@@ -191,6 +191,7 @@ model User {
 
   sessions      Session[]
   resetTokens   PasswordResetToken[]
+  verifyTokens  EmailVerificationToken[]
   enquiries     Enquiry[]
   quotes        Quote[]
   orders        Order[]
@@ -242,6 +243,29 @@ model Session {
   userAgent  String?
   createdAt  DateTime  @default(now())
   lastSeenAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+/// A single-use link proving the person registering can read the address.
+///
+/// Deliberately the same shape as `PasswordResetToken`: only the hash is
+/// stored, so the database never holds a usable link; `usedAt` makes it
+/// single-use; `expiresAt` bounds it. The two are separate tables rather than
+/// one with a `purpose` column, because a bug that let a verification token
+/// reset a password would be severe and this makes it unrepresentable.
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// The address the link was sent to. Checked on use, so a token issued before
+  /// an address change cannot verify the new one.
+  email     String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
 
   @@index([userId])
   @@index([expiresAt])
