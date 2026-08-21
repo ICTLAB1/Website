@@ -10,21 +10,28 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { ButtonLink } from "@/components/ui/button";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { VariantSelector } from "@/components/catalogue/variant-selector";
-import { getProductBySlug, getRelatedProducts, getAllProductSlugs } from "@/lib/queries/catalogue";
+import { getProductBySlug, getRelatedProducts } from "@/lib/queries/catalogue";
 import { effectivePriceMinor } from "@/lib/money";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
-import { prerenderParams } from "@/lib/queries/prerender";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 /** Pre-renders the catalogue's route params; unknown slugs still resolve at request time. */
-export async function generateStaticParams() {
-  return prerenderParams("products/[slug]", async () => {
-    const products = await getAllProductSlugs();
-    return products.map((product) => ({ slug: product.slug }));
-  });
-}
+/**
+ * Rendered on request, never prerendered.
+ *
+ * The root layout renders the header, which reads the session cookie to decide
+ * whether to show "Sign in" or the account menu — so no page in this
+ * application can be static HTML, and this route used to claim otherwise. It
+ * declared `generateStaticParams`, which marked it SSG, and Next then tried to
+ * statically generate it on demand and failed on the cookie read.
+ *
+ * Nothing is lost by dropping it. Every database read behind this page goes
+ * through the tag-based cache, so the work per request is a cache lookup, and
+ * an edit in the admin panel invalidates it immediately — which is better than
+ * a prerender that only refreshes on redeploy.
+ */
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;

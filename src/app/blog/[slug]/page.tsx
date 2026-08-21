@@ -4,25 +4,28 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ButtonLink } from "@/components/ui/button";
-import { prisma } from "@/lib/db";
 import { getPostBySlug, getRelatedPosts } from "@/lib/queries/content";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
 import { Markdown } from "@/components/markdown";
 import { formatDate } from "@/lib/utils";
-import { prerenderParams } from "@/lib/queries/prerender";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
-export async function generateStaticParams() {
-  return prerenderParams("blog/[slug]", async () => {
-    const posts = await prisma.blogPost.findMany({
-      where: { status: "PUBLISHED", deletedAt: null },
-      select: { slug: true },
-    });
-    return posts.map((post) => ({ slug: post.slug }));
-  });
-}
+/**
+ * Rendered on request, never prerendered.
+ *
+ * The root layout renders the header, which reads the session cookie to decide
+ * whether to show "Sign in" or the account menu — so no page in this
+ * application can be static HTML, and this route used to claim otherwise. It
+ * declared `generateStaticParams`, which marked it SSG, and Next then tried to
+ * statically generate it on demand and failed on the cookie read.
+ *
+ * Nothing is lost by dropping it. Every database read behind this page goes
+ * through the tag-based cache, so the work per request is a cache lookup, and
+ * an edit in the admin panel invalidates it immediately — which is better than
+ * a prerender that only refreshes on redeploy.
+ */
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
