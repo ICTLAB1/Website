@@ -101,7 +101,11 @@ services:
       - "443:443"
       - "443:443/udp"
     environment:
-      SITE_DOMAIN: ${SITE_DOMAIN:?set SITE_DOMAIN, e.g. techzoidtechnologies.com}
+      SITE_DOMAIN: ${SITE_DOMAIN:?set SITE_DOMAIN, the one canonical name}
+      # Every name to serve, comma separated. Stated separately rather than
+      # derived from SITE_DOMAIN: Compose does not support a nested default, and
+      # a silently empty value here would take the whole site down.
+      SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS, usually the same as SITE_DOMAIN}
       TLS_EMAIL: ${TLS_EMAIL:?set TLS_EMAIL for certificate expiry notices}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
