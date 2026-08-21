@@ -8,6 +8,7 @@ import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
 import { getBankingDetails } from "@/lib/banking-config";
 import { formatMoney } from "@/lib/money";
+import { notifyOrderFulfilled } from "@/lib/emails/transactional";
 import { logger } from "@/lib/logger";
 
 /**
@@ -372,6 +373,9 @@ export async function fulfilOrder(reference: string, actorId: string): Promise<O
       status: true,
       userId: true,
       companyId: true,
+      // Needed to tell the customer their licences are ready.
+      billingName: true,
+      billingEmail: true,
       items: {
         select: {
           productId: true,
@@ -394,6 +398,7 @@ export async function fulfilOrder(reference: string, actorId: string): Promise<O
   }
 
   const startsAt = new Date();
+  const issued: Array<{ reference: string; productName: string; seats: number; expiresAt: Date | null }> = [];
 
   await prisma.$transaction(async (tx) => {
     for (const item of order.items) {
@@ -410,9 +415,10 @@ export async function fulfilOrder(reference: string, actorId: string): Promise<O
 
       const seats = item.quantity * (item.variant?.seats ?? 1);
 
+      const licenceReference = publicReference("LIC");
       const licence = await tx.licence.create({
         data: {
-          reference: publicReference("LIC"),
+          reference: licenceReference,
           status: "ACTIVE",
           userId: order.userId,
           companyId: order.companyId,
@@ -427,6 +433,8 @@ export async function fulfilOrder(reference: string, actorId: string): Promise<O
         },
         select: { id: true },
       });
+
+      issued.push({ reference: licenceReference, productName: item.productName, seats, expiresAt });
 
       // Perpetual licences never expire, so they get no renewal row.
       if (expiresAt) {
@@ -446,6 +454,25 @@ export async function fulfilOrder(reference: string, actorId: string): Promise<O
       where: { id: order.id },
       data: { status: "FULFILLED", fulfilledAt: new Date() },
     });
+  });
+
+  /*
+   * The message the customer has actually been waiting for.
+   *
+   * Fulfilment was silent: licences were created, renewals scheduled, the order
+   * marked done — and the person who paid for it was told none of it. They
+   * could find it by signing in and looking, which is not the same as being
+   * told, and is not what anyone does after buying something.
+   *
+   * Sent after the transaction commits, never inside it. A mail server that is
+   * slow or unreachable must not hold a database transaction open, and the
+   * licences exist whether or not the email leaves.
+   */
+  await notifyOrderFulfilled({
+    reference,
+    billingName: order.billingName,
+    billingEmail: order.billingEmail,
+    licences: issued,
   });
 
   logger.info("order_fulfilled", { reference, lineCount: order.items.length, actorId });

@@ -9,7 +9,7 @@ import {
   priceLine,
   totalsAreStorable,
 } from "@/lib/pricing";
-import { salesInbox, sendMail } from "@/lib/mail";
+import { sendMail } from "@/lib/mail";
 import {
   quotationHtml,
   quotationSubject,
@@ -296,14 +296,18 @@ export type QuoteDecision = "ACCEPTED" | "DECLINED";
  * organisation simply does not match. Status and expiry are re-checked here
  * rather than relying on the button the customer happened to be shown.
  */
+export type QuoteDecisionResult =
+  | { ok: true; reference: string; totalMinor: number; currency: string }
+  | { ok: false; reason: string };
+
 export async function decideOnQuote(
   reference: string,
   userId: string,
   decision: QuoteDecision,
-): Promise<QuoteResult> {
+): Promise<QuoteDecisionResult> {
   const quote = await prisma.quote.findFirst({
     where: { reference, userId },
-    select: { id: true, status: true, validUntil: true },
+    select: { id: true, status: true, validUntil: true, totalMinor: true, currency: true },
   });
 
   if (!quote) return { ok: false, reason: "That quotation could not be found." };
@@ -328,17 +332,17 @@ export async function decideOnQuote(
 
   await prisma.quote.update({ where: { id: quote.id }, data: { status: decision } });
 
-  const internal = await salesInbox();
-  if (internal) {
-    void sendMail({
-      to: internal,
-      subject: `Quotation ${reference} ${decision.toLowerCase()}`,
-      text: `Quotation ${reference} was ${decision.toLowerCase()} by the customer.`,
-    });
-  }
-
+  /*
+   * The notification is sent by the caller, not here.
+   *
+   * There was one at this point: a single line of text with no value, no
+   * customer and no link — enough to know something happened and not enough to
+   * act on. Acceptance also raises an order, and the order reference is the
+   * most useful thing the message can carry, so it belongs where that reference
+   * is known. See `decideQuote` in app/account/actions.ts.
+   */
   logger.info("quote_decision", { reference, decision });
-  return { ok: true, reference };
+  return { ok: true, reference, totalMinor: quote.totalMinor, currency: quote.currency };
 }
 
 /** Marks quotations past their validity date as expired. Safe to schedule. */

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { notifyOrderStatus, notifyTicketUpdated } from "@/lib/emails/transactional";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -275,7 +276,7 @@ export async function updateOrderStatus(
 
   const order = await prisma.order.findUnique({
     where: { reference: parsed.data.reference },
-    select: { status: true },
+    select: { status: true, billingName: true, billingEmail: true },
   });
   if (!order) return { status: "error", message: "That order no longer exists." };
   // Fulfilment is a separate action because it creates licence records.
@@ -299,6 +300,29 @@ export async function updateOrderStatus(
     metadata: { from: order.status, to: parsed.data.status },
     ip: await clientIp(),
   });
+
+  /*
+   * Tell the customer, unless nothing changed.
+   *
+   * Re-saving the form to edit an internal note would otherwise send them a
+   * second "your order is confirmed" for an order that was already confirmed,
+   * which is how a system trains people to ignore its email.
+   */
+  /*
+   * PENDING is excluded deliberately. Moving an order *back* to awaiting is an
+   * internal correction — a status set by mistake, an order reopened while
+   * something is checked — and telling a customer "your order is now pending"
+   * explains nothing and worries them. Every other transition is news they can
+   * act on.
+   */
+  if (parsed.data.status !== order.status && parsed.data.status !== "PENDING") {
+    await notifyOrderStatus({
+      reference: parsed.data.reference,
+      status: parsed.data.status,
+      billingName: order.billingName,
+      billingEmail: order.billingEmail,
+    });
+  }
 
   revalidatePath(`/admin/orders/${parsed.data.reference}`);
   revalidatePath("/admin/orders");
@@ -361,7 +385,11 @@ export async function updateSupportTicket(
 
   const existing = await prisma.supportTicket.findUnique({
     where: { reference: parsed.data.reference },
-    select: { status: true },
+    select: {
+      status: true,
+      subject: true,
+      user: { select: { name: true, email: true } },
+    },
   });
   if (!existing) return { status: "error", message: "That ticket no longer exists." };
 
@@ -378,6 +406,22 @@ export async function updateSupportTicket(
     metadata: { from: existing.status, to: parsed.data.status },
     ip: await clientIp(),
   });
+
+  /*
+   * Only on a real change, and only for the two states worth interrupting
+   * somebody for — `notifyTicketUpdated` decides which. Silence on
+   * WAITING_ON_CUSTOMER is the expensive one: a ticket parked waiting for a
+   * customer who was never told they were the blocker.
+   */
+  if (parsed.data.status !== existing.status && existing.user) {
+    await notifyTicketUpdated({
+      reference: parsed.data.reference,
+      subject: existing.subject,
+      status: parsed.data.status,
+      customerName: existing.user.name,
+      customerEmail: existing.user.email,
+    });
+  }
 
   revalidatePath("/admin/support");
   return { status: "success", message: "Ticket updated." };

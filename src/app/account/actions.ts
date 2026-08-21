@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { notifyQuoteDecision, notifyTicketRaised } from "@/lib/emails/transactional";
 import { prisma } from "@/lib/db";
 import { canTransact, requireUser } from "@/lib/auth/guards";
 import { companySchema, fieldErrorsOf, profileSchema, supportTicketSchema } from "@/lib/validation";
@@ -162,6 +163,22 @@ export async function createSupportTicket(
     select: { reference: true },
   });
 
+  /*
+   * Both sides told, after the ticket exists.
+   *
+   * The contact form has always done this; the same form inside the account did
+   * not, so a signed-in customer — the one most likely to be mid-purchase —
+   * raised a ticket and heard nothing, and nobody here was alerted either.
+   */
+  await notifyTicketRaised({
+    reference: ticket.reference,
+    subject: parsed.data.subject,
+    category: parsed.data.category,
+    message: parsed.data.message,
+    customerName: user.name,
+    customerEmail: user.email,
+  });
+
   await recordAudit({
     actorId: user.id,
     action: "support.ticket_created",
@@ -247,6 +264,16 @@ export async function decideQuote(
   });
 
   if (parsed.data.decision === "DECLINED") {
+    await notifyQuoteDecision({
+      reference: parsed.data.reference,
+      decision: "DECLINED",
+      totalMinor: decision.totalMinor,
+      currency: decision.currency,
+      customerName: user.name,
+      customerEmail: user.email,
+      orderReference: null,
+    });
+
     revalidatePath("/account/quotes");
     revalidatePath(`/account/quotes/${parsed.data.reference}`);
     return {
@@ -308,6 +335,25 @@ export async function decideQuote(
     entityId: order.reference,
     metadata: { quote: parsed.data.reference },
     ip,
+  });
+
+  /*
+   * Sales find out that a quotation was accepted.
+   *
+   * Until now nobody did. An accepted quotation raised an order and sat in the
+   * panel until somebody happened to look — which, for the single most
+   * commercially significant thing a customer can do on this site, is not good
+   * enough. The customer already has their order confirmation from
+   * `createOrderFromQuote`; this is the other half.
+   */
+  await notifyQuoteDecision({
+    reference: parsed.data.reference,
+    decision: "ACCEPTED",
+    totalMinor: decision.totalMinor,
+    currency: decision.currency,
+    customerName: user.name,
+    customerEmail: user.email,
+    orderReference: order.reference,
   });
 
   revalidatePath("/account/quotes");
