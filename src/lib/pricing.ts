@@ -42,6 +42,27 @@ export type DocumentTotals = {
 const MAX_QUANTITY = 100_000;
 const MAX_GST_RATE = 50;
 
+/**
+ * The largest amount a money column can hold: 2^31 − 1 paise, about ₹2.14
+ * crore.
+ *
+ * Not a business rule. Every money column in the schema is a Postgres `integer`,
+ * which is 32 bits, and a value past this is refused by the database with a
+ * conversion error — which surfaced as an unexplained 500 at the moment a
+ * customer pressed "Place order". Eight seats of the most expensive licence in
+ * the catalogue was enough to reach it, so this was not a theoretical limit; it
+ * was a lost sale with no message anybody could act on.
+ *
+ * Checked here, in the arithmetic, rather than at each caller. The ceiling
+ * belongs to the representation, and every path that writes money goes through
+ * these functions.
+ *
+ * Note that the *total* overflows before the subtotal does, because GST is
+ * added on top — a ₹1.96 crore subtotal becomes a ₹2.31 crore total. Checking
+ * only line values would have missed exactly the case that failed.
+ */
+export const MAX_AMOUNT_MINOR = 2_147_483_647;
+
 function toSafeInteger(value: number, fallback = 0): number {
   if (!Number.isFinite(value)) return fallback;
   return Math.trunc(value);
@@ -73,6 +94,34 @@ export function priceLine(input: PricedLineInput): PricedLine {
     lineTotalMinor,
     taxMinor,
   };
+}
+
+/**
+ * Whether these totals can actually be stored.
+ *
+ * Separate from `documentTotals` rather than thrown from inside it, because the
+ * two callers want different things from the answer: a customer at checkout
+ * needs to be sent to the quotation route, and a member of staff building a
+ * quotation needs to be told to split it. Returning a boolean lets each say
+ * something useful; throwing would have produced the same unexplained 500 in
+ * both places, one layer higher up.
+ */
+export function totalsAreStorable(totals: DocumentTotals): boolean {
+  return (
+    totals.subtotalMinor <= MAX_AMOUNT_MINOR &&
+    totals.discountMinor <= MAX_AMOUNT_MINOR &&
+    totals.taxMinor <= MAX_AMOUNT_MINOR &&
+    totals.totalMinor <= MAX_AMOUNT_MINOR
+  );
+}
+
+/** The same question about a single line, whose values are stored too. */
+export function lineIsStorable(line: PricedLine): boolean {
+  return (
+    line.grossMinor <= MAX_AMOUNT_MINOR &&
+    line.lineTotalMinor <= MAX_AMOUNT_MINOR &&
+    line.taxMinor <= MAX_AMOUNT_MINOR
+  );
 }
 
 /** Sums priced lines into document totals that reconcile against them exactly. */

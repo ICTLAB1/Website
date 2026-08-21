@@ -2,7 +2,7 @@ import "server-only";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { publicReference } from "@/lib/auth/tokens";
-import { documentTotals, priceLine } from "@/lib/pricing";
+import { documentTotals, lineIsStorable, priceLine, totalsAreStorable } from "@/lib/pricing";
 import { resolveVariantsBySku } from "@/lib/queries/catalogue";
 import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
@@ -305,6 +305,31 @@ export async function createDirectOrder(
   }
 
   const totals = documentTotals(resolved.map((entry) => entry.priced));
+
+  /*
+   * An order too large to store.
+   *
+   * Every money column is a 32-bit integer, so a total above about ₹2.14 crore
+   * cannot be written — and until this check existed the attempt reached the
+   * database and came back as an unexplained 500 with the customer staring at
+   * "Something went wrong". Eight seats of the most expensive licence in the
+   * catalogue was enough.
+   *
+   * The message sends them to the quotation route, which is where an order of
+   * that size belongs anyway: it needs negotiated pricing, a named account
+   * manager and a purchase order, none of which a self-service form provides.
+   * That makes this a limit worth stating plainly rather than one to apologise
+   * for.
+   */
+  if (!totalsAreStorable(totals) || !resolved.every((entry) => lineIsStorable(entry.priced))) {
+    logger.info("order_above_direct_purchase_limit", { totalMinor: totals.totalMinor });
+    return {
+      ok: false,
+      reason:
+        "An order this large needs a quotation rather than a direct purchase. Please request one and our team will price it for you.",
+    };
+  }
+
   const reference = publicReference("ORD");
 
   const created = await prisma.order.create({

@@ -4,8 +4,11 @@ import {
   discountFromPercent,
   documentTotals,
   isQuoteExpired,
+  lineIsStorable,
+  MAX_AMOUNT_MINOR,
   priceDocument,
   priceLine,
+  totalsAreStorable,
 } from "@/lib/pricing";
 
 describe("priceLine", () => {
@@ -127,5 +130,77 @@ describe("quote validity", () => {
     expect(isQuoteExpired(new Date("2026-06-14T12:00:00Z"), now)).toBe(true);
     expect(isQuoteExpired(new Date("2026-06-16T12:00:00Z"), now)).toBe(false);
     expect(isQuoteExpired(null, now)).toBe(false);
+  });
+});
+
+describe("the 32-bit ceiling on stored money", () => {
+  /*
+   * Every money column in the schema is a Postgres `integer`. A total past
+   * 2^31 − 1 paise cannot be written, and before this was checked the attempt
+   * reached the database and came back to the customer as an unexplained 500
+   * at the moment they pressed "Place order".
+   *
+   * Eight seats of the most expensive licence in the catalogue was enough to
+   * reach it, which is why these tests use realistic figures rather than
+   * absurd ones: the bug was reachable by an ordinary enterprise order, not by
+   * an attacker.
+   */
+  const line = (unitPriceMinor: number, quantity: number) =>
+    priceLine({ unitPriceMinor, quantity, gstRatePercent: 18 });
+
+  it("accepts a large order that still fits", () => {
+    // The real figure from the catalogue: ₹24.5 lakh a seat. Seven seats is
+    // ₹1.71 crore before GST and ₹2.02 crore after. Large, real, and storable.
+    const totals = documentTotals([line(245_000_000, 7)]);
+    expect(totals.totalMinor).toBeLessThanOrEqual(MAX_AMOUNT_MINOR);
+    expect(totalsAreStorable(totals)).toBe(true);
+  });
+
+  it("refuses the one more seat that does not fit", () => {
+    // The actual failure. The subtotal at eight seats is ₹1.96 crore, which
+    // fits — it is GST on top that takes the total to ₹2.31 crore and past the
+    // limit. A check on line values alone would have missed exactly this.
+    const eight = line(245_000_000, 8);
+    expect(lineIsStorable(eight)).toBe(true);
+
+    const totals = documentTotals([eight]);
+    expect(totals.subtotalMinor).toBeLessThanOrEqual(MAX_AMOUNT_MINOR);
+    expect(totals.totalMinor).toBeGreaterThan(MAX_AMOUNT_MINOR);
+    expect(totalsAreStorable(totals)).toBe(false);
+  });
+
+  it("refuses a total reached by many small lines, not only one big one", () => {
+    // The same ceiling from the other direction: no single line is anywhere
+    // near it, and the document still cannot be stored.
+    const many = Array.from({ length: 300 }, () => line(1_000_000, 100));
+    expect(many.every(lineIsStorable)).toBe(true);
+    expect(totalsAreStorable(documentTotals(many))).toBe(false);
+  });
+
+  it("treats the boundary itself as storable", () => {
+    // Off-by-one in the safe direction would silently refuse a legitimate
+    // order at exactly the limit, which nobody would ever report as a bug.
+    const totals = {
+      subtotalMinor: MAX_AMOUNT_MINOR,
+      discountMinor: 0,
+      taxMinor: 0,
+      totalMinor: MAX_AMOUNT_MINOR,
+    };
+    expect(totalsAreStorable(totals)).toBe(true);
+    expect(totalsAreStorable({ ...totals, totalMinor: MAX_AMOUNT_MINOR + 1 })).toBe(false);
+  });
+
+  it("checks every stored column, not just the total", () => {
+    // discount and tax have their own columns and their own ceilings. A
+    // document whose total fits only because a huge discount was subtracted
+    // still cannot be written.
+    expect(
+      totalsAreStorable({
+        subtotalMinor: MAX_AMOUNT_MINOR,
+        discountMinor: MAX_AMOUNT_MINOR + 1,
+        taxMinor: 0,
+        totalMinor: 0,
+      }),
+    ).toBe(false);
   });
 });

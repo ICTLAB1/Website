@@ -16,6 +16,22 @@ EA="atk_a$RANDOM@example.test"
 curl -s -b "$A" -c "$A" -X POST "$BASE/api/auth/register" -H "content-type: application/json" -H "origin: $BASE" -H "x-csrf-token: $TA" \
   --data "{\"name\":\"Attacker A\",\"email\":\"$EA\",\"password\":\"CorrectHorse9\",\"companyName\":\"Attacker A Ltd\"}" >/dev/null
 
+# The rate limiter is in-memory and shared by everything talking to this server.
+#
+# Run this suite after anything that has been placing orders — including a
+# person testing by hand — and its own attempts come back 429. That produced
+# eleven failures scattered across unrelated sections, none of which said
+# "rate limited", and reading them was a waste of an afternoon. So it is
+# checked once, up front, and reported for what it is.
+probe=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/api/orders" -H "content-type: application/json" --data '{}')
+if [ "$probe" = "429" ]; then
+  echo "  RATE LIMITED — this server has taken too many orders recently."
+  echo "  The limiter is in memory, so restarting the app clears it:"
+  echo "    docker compose -f deploy/docker-compose.prod.yml restart app   (or restart your dev server)"
+  echo "  Re-run this suite afterwards. Aborting rather than reporting misleading failures."
+  exit 2
+fi
+
 echo "== Direct purchase pricing cannot be tampered =="
 R=$(curl -s -b "$A" -X POST "$BASE/api/orders" -H "content-type: application/json" -H "origin: $BASE" -H "x-csrf-token: $TA" \
   --data '{"sku":"MS-M365-BS-A1","quantity":2,"contactName":"Attacker A","companyName":"Attacker A Ltd","contactEmail":"a@example.test","contactPhone":"9999999999","unitPriceMinor":1,"totalMinor":1,"discountMinor":99999999,"status":"FULFILLED"}')

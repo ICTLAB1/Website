@@ -44,9 +44,26 @@ await page.getByRole("button", { name: "Sign in" }).click();
 await page.waitForURL("**/admin", { timeout: 15000 });
 
 const settings = `${BASE}/admin/settings`;
-/** Scoped to `main`: the admin layout renders the live site header and footer. */
+/**
+ * Scoped to `main`, because the admin layout renders the live site header and
+ * footer around it and those contain their own links and text.
+ */
 const form = () => page.locator("main");
 const field = (name) => form().locator(`[name="${name}"]`);
+
+/**
+ * The business identity form specifically.
+ *
+ * `/admin/settings` grew a second form when the payment gateway settings were
+ * added, and `main >> form` became ambiguous — Playwright's strict mode turned
+ * that into a crash rather than a silently wrong element, which is the right
+ * outcome and is how this was found.
+ *
+ * Identified by a field only it has, rather than by position or by an added
+ * test attribute: a third form appearing later, or these two being reordered,
+ * leaves this correct.
+ */
+const identityForm = () => form().locator("form").filter({ has: page.locator('[name="emailSales"]') });
 
 async function open() {
   await page.goto(settings, { waitUntil: "load" });
@@ -133,7 +150,7 @@ check(
   !(await form().getByText(/public site is showing these details/i).isVisible().catch(() => false)),
 );
 
-await form().locator("form").evaluate((el) => el.setAttribute("novalidate", "novalidate"));
+await identityForm().evaluate((el) => el.setAttribute("novalidate", "novalidate"));
 await save();
 check(
   "the server refuses a malformed email once the browser stops checking",

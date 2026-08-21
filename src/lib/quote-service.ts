@@ -2,7 +2,13 @@ import "server-only";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { publicReference } from "@/lib/auth/tokens";
-import { defaultValidUntil, documentTotals, isQuoteExpired, priceLine } from "@/lib/pricing";
+import {
+  defaultValidUntil,
+  documentTotals,
+  isQuoteExpired,
+  priceLine,
+  totalsAreStorable,
+} from "@/lib/pricing";
 import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
 import { appUrl } from "@/lib/env";
@@ -88,6 +94,25 @@ export async function createQuoteFromEnquiry(
   });
 
   const totals = documentTotals(priced.map((entry) => entry.line));
+
+  /*
+   * The same 32-bit ceiling that limits a direct purchase.
+   *
+   * Staff hit it differently: an enquiry for enough seats produces a draft that
+   * cannot be written, and without this the drafting screen returned an
+   * unexplained failure. The message names the constraint, because the person
+   * reading it can act on it — splitting the enquiry into two quotations is a
+   * normal thing to do and it is not obvious that it is what is needed.
+   */
+  if (!totalsAreStorable(totals)) {
+    logger.warn("quote_above_storable_total", { enquiryReference, totalMinor: totals.totalMinor });
+    return {
+      ok: false,
+      reason:
+        "This enquiry totals more than a single quotation can hold (about ₹2.14 crore). Please split it across two quotations.",
+    };
+  }
+
   const reference = publicReference("QTE");
 
   await prisma.quote.create({
