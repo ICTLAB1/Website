@@ -47,6 +47,16 @@ if ((await page.getByRole("button", { expanded: true }).count()) !== 0) {
 //    catches is a button inset from its row, leaving a strip down each side
 //    that looks like part of the control and does nothing.
 const row = page.locator(".faq-row").first();
+
+// Scroll it into view before measuring, because the clicks below are positional
+// — `page.mouse.click` takes viewport coordinates and does no scrolling of its
+// own. Without this the suite silently clicked empty space the moment the FAQ
+// moved below the fold, which is exactly what happened when the support page
+// gained a section above it: three checks failed at once and none of them was
+// about the accordion.
+await row.scrollIntoViewIfNeeded();
+await page.waitForTimeout(150);
+
 const box = await row.boundingBox();
 const buttonBox = await first.boundingBox();
 if (buttonBox.x - box.x > 0.5 || box.x + box.width - (buttonBox.x + buttonBox.width) > 0.5) {
@@ -54,7 +64,16 @@ if (buttonBox.x - box.x > 0.5 || box.x + box.width - (buttonBox.x + buttonBox.wi
     `the control is inset from its row by ${Math.round(buttonBox.x - box.x)}px, so the edges are dead`,
   );
 }
-await page.mouse.click(box.x + 6, box.y + buttonBox.height / 2);
+const target = { x: box.x + 6, y: box.y + buttonBox.height / 2 };
+const onScreen = await page.evaluate(
+  ({ x, y }) => Boolean(document.elementFromPoint(x, y)),
+  target,
+);
+if (!onScreen) {
+  problems.push(`the row is not on screen at (${Math.round(target.x)}, ${Math.round(target.y)})`);
+}
+
+await page.mouse.click(target.x, target.y);
 await page.waitForTimeout(400);
 if ((await first.getAttribute("aria-expanded")) !== "true") {
   problems.push("clicking the left padding of a row did not open it");
@@ -74,7 +93,7 @@ if (!/^matrix\(1,\s*0,\s*0,\s*0,/.test(open)) {
 }
 
 // 5. Closing puts the plus back and hides the answer again.
-await page.mouse.click(box.x + 6, box.y + buttonBox.height / 2);
+await page.mouse.click(target.x, target.y);
 await page.waitForTimeout(500);
 if ((await first.getAttribute("aria-expanded")) !== "false") {
   problems.push("clicking an open row did not close it");
@@ -92,6 +111,7 @@ if (!/none|^matrix\(1,\s*0,\s*0,\s*1,/.test(closed)) {
 //    check would prove nothing.
 await page.reload({ waitUntil: "load" });
 await page.locator(".faq-list[data-hydrated='true']").first().waitFor({ timeout: 15000 });
+await row.scrollIntoViewIfNeeded();
 for (let step = 0; step < 60; step += 1) {
   await page.keyboard.press("Tab");
   if (await first.evaluate((el) => el === document.activeElement)) break;

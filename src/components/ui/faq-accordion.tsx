@@ -49,12 +49,9 @@ export function FaqAccordion({ items }: { items: FaqEntry[] }) {
    * Marks the list as hydrated.
    *
    * Until React has attached its listeners, clicking a question does nothing:
-   * that is the price of making this a client component, and it is real — the
-   * verification suite caught it by clicking a row on a loaded machine before
-   * hydration had finished, exactly as an impatient reader on a slow connection
-   * would. The attribute does not fix the window, it makes it observable, so a
-   * test waits for readiness instead of racing it and the gap cannot grow
-   * unnoticed.
+   * that is the price of making this a client component, and it is real. The
+   * attribute does not close the window, it makes it observable, so a test can
+   * wait for readiness rather than race it and the gap cannot grow unnoticed.
    *
    * The window is small in practice — the answers are already in the DOM and in
    * the page's FAQ structured data, so nothing is unreachable, only briefly
