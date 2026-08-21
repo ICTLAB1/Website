@@ -5,6 +5,8 @@ import { CategoryCard } from "@/components/marketing/category-card";
 import { Reveal } from "@/components/motion/reveal";
 import { EmptyState } from "@/components/ui/states";
 import { BlockHeading, BlockSection } from "@/components/blocks/primitives";
+import { ButtonLink } from "@/components/ui/button";
+import { SectionHeader } from "@/components/ui/section-header";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 import { formatDate } from "@/lib/utils";
@@ -28,7 +30,19 @@ export function ProductGridBlock({
 }) {
   return (
     <BlockSection tone={tone}>
-      <BlockHeading heading={data.heading} description={data.description} />
+      {data.action ? (
+        <SectionHeader
+          title={data.heading ?? "Related products"}
+          description={data.description}
+          action={
+            <ButtonLink href={data.action.href} variant="outline" size="sm">
+              {data.action.label}
+            </ButtonLink>
+          }
+        />
+      ) : (
+        <BlockHeading heading={data.heading} description={data.description} />
+      )}
       {products.length === 0 ? (
         // A referenced product may have been archived since the page was
         // written. Say so plainly rather than rendering an empty grid.

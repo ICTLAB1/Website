@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db";
 import { appUrl } from "@/lib/env";
-import { staticRoutes } from "@/lib/navigation";
-import { landingPages } from "@/content/landing";
+import { getNavigationPaths } from "@/lib/queries/navigation";
+import { getPublishedPageSlugs } from "@/lib/queries/pages";
 
 /**
  * Sitemap.
@@ -18,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = appUrl();
   const now = new Date();
 
-  const [products, brands, services, posts] = await Promise.all([
+  const [products, brands, services, posts, cmsPages, navPaths] = await Promise.all([
     prisma.product.findMany({
       where: { status: "ACTIVE", deletedAt: null },
       select: { slug: true, updatedAt: true, featured: true },
@@ -35,11 +35,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       where: { status: "PUBLISHED", deletedAt: null },
       select: { slug: true, updatedAt: true, publishedAt: true },
     }),
+    getPublishedPageSlugs(),
+    getNavigationPaths(),
   ]);
 
   const entries: MetadataRoute.Sitemap = [];
 
-  for (const route of staticRoutes) {
+  for (const route of navPaths) {
     if (EXCLUDED.has(route)) continue;
     entries.push({
       url: `${base}${route === "/" ? "" : route}`,
@@ -49,10 +51,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  for (const page of landingPages) {
+  // CMS pages now carry a real `updatedAt`, so the sitemap can report when a
+  // page actually changed instead of claiming every page changed on every build.
+  for (const page of cmsPages) {
     entries.push({
       url: `${base}/${page.slug}`,
-      lastModified: now,
+      lastModified: page.updatedAt,
       changeFrequency: "monthly",
       // Vendor overview pages sit one level above their product pages.
       priority: page.slug.includes("/") ? 0.7 : 0.8,

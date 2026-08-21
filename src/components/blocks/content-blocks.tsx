@@ -426,7 +426,7 @@ export function PlansBlock({ data, tone }: { data: BlockData<"PLANS">; tone?: "p
                 href={`/products/${plan.productSlug}`}
                 className="underline-grow mt-auto pt-4 text-[13px] font-medium text-accent-700"
               >
-                View details
+                View pricing
               </BlockLink>
             ) : null}
           </div>

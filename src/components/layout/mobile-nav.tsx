@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { primaryNav, utilityNav, type NavColumn, type NavLink } from "@/lib/navigation";
+import type { NavColumn, NavLink, PrimaryNavItem } from "@/lib/queries/navigation";
 import { SearchBox } from "@/components/layout/search-box";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +21,15 @@ type Panel =
   | { kind: "section"; label: string; columns?: NavColumn[]; links?: NavLink[] }
   | { kind: "column"; label: string; parent: string; links: NavLink[] };
 
-export function MobileNav({ signedIn }: { signedIn: boolean }) {
+export function MobileNav({
+  signedIn,
+  nav,
+  utility,
+}: {
+  signedIn: boolean;
+  nav: PrimaryNavItem[];
+  utility: NavLink[];
+}) {
   const pathname = usePathname();
   /**
    * The drawer records the route it was opened on, and is considered open only
@@ -128,7 +136,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
             <nav className="flex-1 overflow-y-auto" aria-label="Mobile navigation">
               {current.kind === "root" ? (
                 <ul className="divide-y divide-line">
-                  {primaryNav.map((item) => (
+                  {nav.map((item) => (
                     <li key={item.label}>
                       {item.megaMenu || item.simpleMenu ? (
                         <button
@@ -162,7 +170,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
                   </li>
                   <li className="bg-surface-muted">
                     <ul className="py-1">
-                      {utilityNav.map((link) => (
+                      {utility.map((link) => (
                         <li key={link.href}>
                           <Link href={link.href} className="block px-4 py-2.5 text-sm text-ink-600">
                             {link.label}

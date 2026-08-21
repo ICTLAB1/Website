@@ -53,6 +53,12 @@ const loadPage = cached(
   },
   ["cms-page"],
   [tags.pages],
+  // A short window, because this caches misses as well as hits. An edit made
+  // through the admin panel invalidates the tag immediately, but a row written
+  // out of band - a migration, a restore, psql - cannot. Without a short
+  // window, a page created that way would 404 for the full hour after
+  // something first requested the slug and cached its absence.
+  60,
 );
 
 /**
@@ -94,5 +100,6 @@ export const getPublishedPageSlugs = cache(
     },
     ["cms-page-slugs"],
     [tags.pages],
+    60,
   ),
 );

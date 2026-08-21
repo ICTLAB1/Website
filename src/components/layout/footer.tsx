@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { footerColumns } from "@/lib/navigation";
+import { getNavigation } from "@/lib/queries/navigation";
 import { getSiteConfig, getUnconfiguredIdentityKeys } from "@/lib/site-config";
 
-export function Footer() {
+export async function Footer() {
   const config = getSiteConfig();
+  const navigation = await getNavigation();
   const missing = getUnconfiguredIdentityKeys();
   const year = new Date().getFullYear();
 
@@ -62,7 +63,7 @@ export function Footer() {
             ) : null}
           </div>
 
-          {footerColumns.map((column) => (
+          {navigation.footer.map((column) => (
             <nav key={column.heading} aria-label={column.heading}>
               <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white">
                 {column.heading}

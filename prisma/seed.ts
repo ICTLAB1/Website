@@ -15,6 +15,7 @@ import { categories } from "./seed-data/categories";
 import { products } from "./seed-data/products";
 import { services } from "./seed-data/services";
 import { blogPosts } from "./seed-data/blog";
+import { pageSeeds, navigationSeeds } from "./seed-data/pages";
 
 const prisma = new PrismaClient();
 
@@ -39,6 +40,80 @@ function buildSearchText(input: {
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, 2000);
+}
+
+async function seedContent() {
+  console.log(`Seeding ${pageSeeds.length} CMS pages…`);
+
+  const brands = await prisma.brand.findMany({ select: { id: true, slug: true } });
+  const brandBySlug = new Map(brands.map((brand) => [brand.slug, brand.id]));
+
+  for (const page of pageSeeds) {
+    const brandId = page.brandSlug ? (brandBySlug.get(page.brandSlug) ?? null) : null;
+
+    const record = await prisma.page.upsert({
+      where: { slug: page.slug },
+      create: {
+        slug: page.slug,
+        title: page.title,
+        description: page.description,
+        keywords: page.keywords,
+        status: page.status,
+        publishedAt: page.status === "PUBLISHED" ? new Date() : null,
+        breadcrumb: page.breadcrumb as Prisma.InputJsonValue,
+        brandId,
+        faqTopic: page.faqTopic,
+      },
+      update: {
+        title: page.title,
+        description: page.description,
+        keywords: page.keywords,
+        status: page.status,
+        breadcrumb: page.breadcrumb as Prisma.InputJsonValue,
+        brandId,
+        faqTopic: page.faqTopic,
+        deletedAt: null,
+      },
+      select: { id: true },
+    });
+
+    // Sections have no natural key, so they are replaced wholesale - the same
+    // idiom this file already uses for FAQs.
+    await prisma.pageSection.deleteMany({ where: { pageId: record.id } });
+    await prisma.pageSection.createMany({
+      data: page.sections.map((section) => ({
+        pageId: record.id,
+        type: section.type,
+        displayOrder: section.displayOrder,
+        visible: section.visible,
+        data: section.data as Prisma.InputJsonValue,
+      })),
+    });
+  }
+
+  console.log(`Seeding ${navigationSeeds.length} navigation items…`);
+  await prisma.navigationItem.deleteMany({});
+
+  // Parents before children, so a child's parentId always resolves.
+  const idByKey = new Map<string, string>();
+  const ordered = [...navigationSeeds].sort(
+    (a, b) => a.key.split(".").length - b.key.split(".").length,
+  );
+
+  for (const item of ordered) {
+    const created = await prisma.navigationItem.create({
+      data: {
+        menu: item.menu,
+        label: item.label,
+        href: item.href,
+        description: item.description,
+        displayOrder: item.displayOrder,
+        parentId: item.parentKey ? (idByKey.get(item.parentKey) ?? null) : null,
+      },
+      select: { id: true },
+    });
+    idByKey.set(item.key, created.id);
+  }
 }
 
 async function main() {
@@ -302,6 +377,9 @@ async function main() {
     );
   }
 
+  // CMS content last: pages reference brands by slug.
+  await seedContent();
+
   const counts = {
     brands: await prisma.brand.count(),
     categories: await prisma.category.count(),
@@ -310,6 +388,9 @@ async function main() {
     services: await prisma.service.count(),
     posts: await prisma.blogPost.count(),
     faqs: await prisma.faq.count(),
+    pages: await prisma.page.count(),
+    sections: await prisma.pageSection.count(),
+    navigation: await prisma.navigationItem.count(),
   };
   console.log("Seed complete:", counts);
 }

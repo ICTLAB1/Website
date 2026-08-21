@@ -120,6 +120,23 @@ is read live from the database by slug, so prices never drift from the
 catalogue. Static routes always win over the catch-all, and an unregistered
 path returns a genuine 404.
 
+**Content.** Marketing pages, navigation and banners live in the database, not
+in the bundle. A page is a row plus an ordered list of typed blocks; the
+navigation is a two-level tree assembled from one flat query. Blocks store
+*references* — a product slug, a brand, "featured" — never copies, so a price
+shown on a landing page is the catalogue price because it is the same row.
+
+Block payloads are JSONB validated by a zod schema chosen on the block's type,
+on write **and on read**. Reading is the important half: a row written by an
+older version of the application, a migration, or by hand can hold a shape the
+renderer does not expect, and that must cost one skipped section rather than a
+failed marketing page.
+
+The catch-all route deliberately leaves `dynamicParams` at its default of true.
+It was once false, which fixed the set of valid paths at build time — so a page
+created in the admin panel returned 404 until the next deploy, which is exactly
+what a database-driven site exists to avoid.
+
 **Motion.** Animation is present but deliberately restrained: short durations, a
 decelerating curve, and only `transform` and `opacity` so the compositor can run
 it without layout or paint. Three rules hold everywhere:

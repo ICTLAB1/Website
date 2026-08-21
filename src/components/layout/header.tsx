@@ -5,7 +5,7 @@ import { MobileNav } from "@/components/layout/mobile-nav";
 import { BasketButton } from "@/components/layout/basket-button";
 import { SearchBox } from "@/components/layout/search-box";
 import { ButtonLink } from "@/components/ui/button";
-import { utilityNav } from "@/lib/navigation";
+import { getNavigation } from "@/lib/queries/navigation";
 import { getSessionUser } from "@/lib/auth/session";
 import { getSiteConfig } from "@/lib/site-config";
 
@@ -15,9 +15,10 @@ import { getSiteConfig } from "@/lib/site-config";
  * drawer, search, basket count) are client components.
  */
 export async function Header() {
-  const [user, config] = await Promise.all([
+  const [user, config, navigation] = await Promise.all([
     getSessionUser(),
     Promise.resolve(getSiteConfig()),
+    getNavigation(),
   ]);
 
   return (
@@ -28,7 +29,7 @@ export async function Header() {
           <p className="text-graphite-200">{config.tagline}</p>
           <nav aria-label="Utility">
             <ul className="flex items-center gap-5">
-              {utilityNav.map((link) => (
+              {navigation.utility.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="hover:text-white hover:underline">
                     {link.label}
@@ -96,7 +97,7 @@ export async function Header() {
               </ButtonLink>
             </div>
 
-            <MobileNav signedIn={Boolean(user)} />
+            <MobileNav signedIn={Boolean(user)} nav={navigation.primary} utility={navigation.utility} />
           </div>
         </div>
       </div>
@@ -104,7 +105,7 @@ export async function Header() {
       {/* Primary navigation */}
       <div className="hidden border-t border-line lg:block">
         <div className="container-page">
-          <MegaMenu />
+          <MegaMenu nav={navigation.primary} />
         </div>
       </div>
     </header>

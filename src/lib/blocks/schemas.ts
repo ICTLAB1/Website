@@ -129,6 +129,8 @@ export const productGridSchema = z.object({
   /** Brand or category slug, for the `brand` and `category` sources. */
   ref: optionalText(200),
   limit: z.number().int().min(1).max(24).optional().default(6),
+  /** Optional "see more" link beside the heading. */
+  action: z.object({ label: text(60), href: safeHref }).optional(),
 });
 
 export const collectionGridSchema = z.object({

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { primaryNav } from "@/lib/navigation";
+import type { PrimaryNavItem } from "@/lib/queries/navigation";
 import { cn } from "@/lib/utils";
 
 /**
@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
  * Panels open on hover and on click, close on Escape and on focus leaving the
  * item, so the menu is fully operable from the keyboard rather than hover-only.
  */
-export function MegaMenu() {
+export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -45,7 +45,7 @@ export function MegaMenu() {
     <div ref={containerRef} className="hidden lg:block">
       <nav aria-label="Primary">
         <ul className="flex items-center">
-          {primaryNav.map((item, index) => {
+          {nav.map((item, index) => {
             const hasPanel = Boolean(item.megaMenu || item.simpleMenu);
             const isOpen = openIndex === index;
 
