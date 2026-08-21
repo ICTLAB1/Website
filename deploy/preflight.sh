@@ -55,6 +55,7 @@ getenv() {
 
 SITE_DOMAIN="$(getenv SITE_DOMAIN)"
 SITE_ADDRESS="$(getenv SITE_ADDRESS)"
+SITE_REDIRECT_FROM="$(getenv SITE_REDIRECT_FROM)"
 APP_URL="$(getenv APP_URL)"
 TLS_EMAIL="$(getenv TLS_EMAIL)"
 AUTH_SECRET="$(getenv AUTH_SECRET)"
@@ -73,32 +74,27 @@ fi
 
 case "$SITE_DOMAIN" in
   http*|*/) bad "SITE_DOMAIN must be a bare name" "Got '$SITE_DOMAIN'. No https://, no trailing slash." ;;
-  www.*)    bad "SITE_DOMAIN must not start with www" "Got '$SITE_DOMAIN'. Set the bare name; www is served and redirected to it." ;;
-  *.*)      ok  "SITE_DOMAIN is $SITE_DOMAIN" ;;
+  *.*)      ok  "the canonical name is $SITE_DOMAIN" ;;
   *)        bad "SITE_DOMAIN does not look like a domain" "Got '$SITE_DOMAIN'." ;;
 esac
 
-WWW="www.${SITE_DOMAIN}"
-
-# Is this the real domain, or the subdomain used for testing?
+# The other name, taken from configuration rather than guessed.
 #
-# It changes what the www checks mean. On `techzoidtechnologies.com`, a missing
-# `www.techzoidtechnologies.com` is a failure — visitors type it. On
-# `new.techzoidtechnologies.com`, `www.new.techzoidtechnologies.com` is a name
-# nobody will ever type and which has no DNS record; demanding it would have
-# Caddy chase a certificate forever, which is precisely what the Caddyfile
-# warns about. So on a subdomain the www checks are skipped, and said to be.
+# Which of `example.com` and `www.example.com` is canonical is a real decision —
+# it changes every URL on the site and where search ranking accumulates — so it
+# is stated in .env and read here. An earlier version inferred that the bare
+# name was always canonical, which quietly made the choice for the operator.
 #
-# Two labels is an apex. Three is normally a subdomain, except where the
-# registry sells names one level down — .co.in and .co.uk being the two this
-# business is most likely to meet.
-label_count="$(printf '%s' "$SITE_DOMAIN" | tr '.' '\n' | grep -c .)"
-second_level="$(printf '%s' "$SITE_DOMAIN" | rev | cut -d. -f2 | rev)"
-case "$label_count:$second_level" in
-  2:*) APEX=yes ;;
-  3:co|3:com|3:net|3:org|3:gov|3:edu|3:ac|3:firm|3:gen|3:ind|3:res) APEX=yes ;;
-  *) APEX=no ;;
-esac
+# When there is only one name, as while testing on a subdomain,
+# SITE_REDIRECT_FROM equals SITE_DOMAIN and every check about the second name is
+# skipped and said to be.
+ALTERNATE="$SITE_REDIRECT_FROM"
+if [ -z "$ALTERNATE" ]; then
+  bad "SITE_REDIRECT_FROM is not set" \
+      "It names the other hostname, which redirects to $SITE_DOMAIN — or $SITE_DOMAIN itself when there is only one. Easiest fix: ./set-domain.sh $SITE_DOMAIN"
+  ALTERNATE="$SITE_DOMAIN"
+fi
+if [ "$ALTERNATE" = "$SITE_DOMAIN" ]; then PAIRED=no; else PAIRED=yes; fi
 
 # The check this script was written for.
 #
@@ -111,16 +107,16 @@ esac
 case ",${SITE_ADDRESS// /}," in
   *",${SITE_DOMAIN},"*) ok "Caddy is set to serve $SITE_DOMAIN" ;;
   *) bad "SITE_ADDRESS does not include $SITE_DOMAIN" \
-        "It is currently '$SITE_ADDRESS'. Caddy serves only the names listed here, so the site would not answer on its own domain." ;;
+        "It is currently '$SITE_ADDRESS'. Caddy serves only the names listed here, so the site would not answer on its own domain. Fix with: ./set-domain.sh $SITE_DOMAIN" ;;
 esac
 
-if [ "$APEX" = "no" ]; then
-  printf '        %s\n' "$SITE_DOMAIN is a subdomain, so the www checks do not apply"
+if [ "$PAIRED" = "no" ]; then
+  printf '        %s\n' "only one name is configured, so the second-name checks do not apply"
 else
   case ",${SITE_ADDRESS// /}," in
-    *",${WWW},"*) ok "Caddy is set to serve $WWW" ;;
-    *) bad "SITE_ADDRESS does not include $WWW" \
-          "It is currently '$SITE_ADDRESS'. Visitors do type www, and if the www record is a CNAME to the bare name it will arrive here whether Caddy expects it or not — and get a certificate warning. Set SITE_ADDRESS=\"$SITE_DOMAIN, $WWW\"." ;;
+    *",${ALTERNATE},"*) ok "Caddy is set to serve $ALTERNATE, which redirects to $SITE_DOMAIN" ;;
+    *) bad "SITE_ADDRESS does not include $ALTERNATE" \
+          "It is currently '$SITE_ADDRESS'. The name that redirects needs a certificate of its own: a browser completes the TLS handshake before it ever sees a redirect, so a name Caddy does not serve shows a security warning instead of forwarding. Fix with: ./set-domain.sh $SITE_DOMAIN" ;;
   esac
 fi
 
@@ -185,37 +181,37 @@ MY_IP="$(curl -fsS --max-time 6 https://api.ipify.org 2>/dev/null \
 if [ -z "$MY_IP" ]; then
   warned "Could not determine this server's public IP address" \
          "The DNS checks below are skipped. Find it with: curl ifconfig.me"
-  APEX_HERE="unknown"; WWW_HERE="unknown"
+  CANON_HERE="unknown"; ALT_HERE="unknown"
 else
   printf '        this server is %s\n' "$MY_IP"
-  APEX_IPS="$(resolve "$SITE_DOMAIN")"
-  WWW_IPS="$(resolve "$WWW")"
+  CANON_IPS="$(resolve "$SITE_DOMAIN")"
+  ALT_IPS="$(resolve "$ALTERNATE")"
 
-  case " $APEX_IPS " in *" $MY_IP "*) APEX_HERE=yes ;; *) APEX_HERE=no ;; esac
-  case " $WWW_IPS "  in *" $MY_IP "*) WWW_HERE=yes  ;; *) WWW_HERE=no  ;; esac
+  case " $CANON_IPS " in *" $MY_IP "*) CANON_HERE=yes ;; *) CANON_HERE=no ;; esac
+  case " $ALT_IPS "  in *" $MY_IP "*) ALT_HERE=yes  ;; *) ALT_HERE=no  ;; esac
 fi
 
 # Which run is this? If the apex already points here the switch has happened,
 # and anything still wrong is wrong now rather than pending.
-if [ "$APEX_HERE" = "yes" ]; then LIVE=yes; else LIVE=no; fi
+if [ "$CANON_HERE" = "yes" ]; then LIVE=yes; else LIVE=no; fi
 
-if [ "$APEX_HERE" = "yes" ]; then
+if [ "$CANON_HERE" = "yes" ]; then
   ok "$SITE_DOMAIN points at this server"
-elif [ "$APEX_HERE" = "no" ]; then
-  warned "$SITE_DOMAIN does not point here yet (currently ${APEX_IPS:-nothing})" \
+elif [ "$CANON_HERE" = "no" ]; then
+  warned "$SITE_DOMAIN does not point here yet (currently ${CANON_IPS:-nothing})" \
          "Expected before the switch. This is the one record you change to go live."
 fi
 
-if [ "$APEX" = "no" ]; then
-  : # a subdomain has no www to check
-elif [ "$WWW_HERE" = "yes" ]; then
-  ok "$WWW points at this server"
-elif [ "$WWW_HERE" = "no" ]; then
+if [ "$PAIRED" = "no" ]; then
+  : # only one name
+elif [ "$ALT_HERE" = "yes" ]; then
+  ok "$ALTERNATE points at this server"
+elif [ "$ALT_HERE" = "no" ]; then
   if [ "$LIVE" = "yes" ]; then
-    bad "$WWW does not point here, but $SITE_DOMAIN does (currently ${WWW_IPS:-nothing})" \
-        "Visitors who type www will reach the old server. If www is a CNAME to the bare name it should have followed automatically; if it is its own A record, change it too."
+    bad "$ALTERNATE does not point here, but $SITE_DOMAIN does (currently ${ALT_IPS:-nothing})" \
+        "Visitors arriving on that name will reach the old server. If it is a CNAME to the other name it should have followed automatically; if it is its own A record, change it too."
   else
-    warned "$WWW does not point here yet (currently ${WWW_IPS:-nothing})" \
+    warned "$ALTERNATE does not point here yet (currently ${ALT_IPS:-nothing})" \
            "Expected before the switch."
   fi
 fi
@@ -343,17 +339,17 @@ else
 fi
 
 # Caddy's own job: serving www so it can redirect. Only testable once DNS moved.
-if [ "$APEX" = "yes" ] && [ "$LIVE" = "yes" ]; then
-  read -r www_code www_redirect <<<"$(curl -sS -o /dev/null -m 20 \
-    --resolve "${WWW}:443:127.0.0.1" -w '%{http_code} %{redirect_url}' "https://${WWW}/" 2>/dev/null)"
-  if [ "$www_code" = "301" ] && [ "$www_redirect" = "https://${SITE_DOMAIN}/" ]; then
-    ok "https://${WWW}/ redirects permanently to https://${SITE_DOMAIN}/"
-  elif [ "$www_code" = "200" ]; then
-    bad "https://${WWW}/ serves the site instead of redirecting" \
+if [ "$PAIRED" = "yes" ] && [ "$LIVE" = "yes" ]; then
+  read -r alt_code alt_redirect <<<"$(curl -sS -o /dev/null -m 20 \
+    --resolve "${ALTERNATE}:443:127.0.0.1" -w '%{http_code} %{redirect_url}' "https://${ALTERNATE}/" 2>/dev/null)"
+  if [ "$alt_code" = "301" ] && [ "$alt_redirect" = "https://${SITE_DOMAIN}/" ]; then
+    ok "https://${ALTERNATE}/ redirects permanently to https://${SITE_DOMAIN}/"
+  elif [ "$alt_code" = "200" ]; then
+    bad "https://${ALTERNATE}/ serves the site instead of redirecting" \
         "Two addresses for every page splits search ranking between them and makes the canonical tags wrong."
   else
-    bad "https://${WWW}/ answered ${www_code:-nothing}" \
-        "Visitors who type www would see an error. Check that SITE_ADDRESS lists $WWW."
+    bad "https://${ALTERNATE}/ answered ${alt_code:-nothing}" \
+        "Visitors arriving on that name would see an error. Check that SITE_ADDRESS lists $ALTERNATE."
   fi
 fi
 
@@ -368,7 +364,7 @@ esac
 
 if [ "$LIVE" = "yes" ]; then
   names=("$SITE_DOMAIN")
-  [ "$APEX" = "yes" ] && names+=("$WWW")
+  [ "$PAIRED" = "yes" ] && names+=("$ALTERNATE")
   for name in "${names[@]}"; do
     if curl -sS -o /dev/null -m 20 --resolve "${name}:443:127.0.0.1" "https://${name}/" 2>/dev/null; then
       ok "the certificate for ${name} is valid and trusted"

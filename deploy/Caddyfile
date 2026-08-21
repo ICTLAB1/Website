@@ -3,10 +3,21 @@
 # hand — but it does mean DNS must already point here, and ports 80 and 443
 # must be reachable, before the first certificate can be issued.
 #
-# Two settings, because they answer different questions:
-#   SITE_ADDRESS  every name to serve, comma separated. A certificate is
-#                 obtained for each, so every one needs a DNS record.
-#   SITE_DOMAIN   the single canonical name, which www redirects to.
+# Three settings, because they answer three different questions:
+#
+#   SITE_ADDRESS        every name to serve, comma separated. A certificate is
+#                       obtained for each, so every one needs a DNS record.
+#   SITE_DOMAIN         the single canonical name — the one in search results,
+#                       in every link, and in the sitemap.
+#   SITE_REDIRECT_FROM  the other name, which permanently redirects to the
+#                       canonical one.
+#
+# The direction is configuration rather than convention. Both `example.com` and
+# `www.example.com` are legitimate choices for the canonical name, and which is
+# right depends on where a site's existing search ranking sits; a deployment
+# should not have to edit this file to pick one. Whichever is chosen, the other
+# name is still served — it has to be, because a name cannot redirect anywhere
+# without a certificate of its own.
 #
 # Deliberately thin. The application sets its own Content-Security-Policy with
 # a per-request nonce, HSTS, X-Frame-Options and the rest, so adding them here
@@ -24,16 +35,19 @@
 {$SITE_ADDRESS} {
 	encode zstd gzip
 
-	# Everything on one canonical host: www redirects to the bare name, so a
-	# page is never reachable at two URLs and the canonical tags stay honest.
+	# Everything on one canonical host, so a page is never reachable at two URLs
+	# and the canonical tags stay honest.
 	#
-	# The matcher is harmless when www is not served at all — it simply never
-	# matches — which is why SITE_ADDRESS is a separate setting. While testing
-	# on a subdomain, serving `www.new.example.com` would have Caddy chase a
-	# certificate for a name that has no DNS record and never will, retrying
-	# on a backoff forever.
-	@www host www.{$SITE_DOMAIN}
-	redir @www https://{$SITE_DOMAIN}{uri} permanent
+	# While testing on a subdomain there is no second name: SITE_REDIRECT_FROM is
+	# set to the canonical name itself, and this matcher then only ever matches
+	# requests that are already canonical, where the redirect is skipped anyway.
+	# That keeps the file valid without a conditional — an empty `host` matcher
+	# would fail to parse and take the whole site down.
+	@needs_canonical {
+		host {$SITE_REDIRECT_FROM}
+		not host {$SITE_DOMAIN}
+	}
+	redir @needs_canonical https://{$SITE_DOMAIN}{uri} permanent
 
 	reverse_proxy app:3000 {
 		# The app reads the client address from X-Forwarded-For for rate

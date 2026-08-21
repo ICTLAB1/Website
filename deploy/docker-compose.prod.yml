@@ -130,6 +130,10 @@ services:
       # derived from SITE_DOMAIN: Compose does not support a nested default, and
       # a silently empty value here would take the whole site down.
       SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS, usually the same as SITE_DOMAIN}
+      # The name that redirects to SITE_DOMAIN. Set it to SITE_DOMAIN itself
+      # when there is only one name, as while testing on a subdomain: the
+      # redirect then never fires, and an empty value would fail to parse.
+      SITE_REDIRECT_FROM: ${SITE_REDIRECT_FROM:?set SITE_REDIRECT_FROM, or SITE_DOMAIN again if there is only one name}
       TLS_EMAIL: ${TLS_EMAIL:?set TLS_EMAIL for certificate expiry notices}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro

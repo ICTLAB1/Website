@@ -71,20 +71,22 @@ echo "AUTH_SECRET=\"$(openssl rand -base64 48)\""
 echo "POSTGRES_PASSWORD=\"$(openssl rand -hex 24)\""
 ```
 
-Edit `.env` and fill it in. While testing, point all three domain settings at a
-subdomain — the example file ships with the live values, so all three need
-changing:
+Edit `.env` and fill it in — everything except the four domain settings, which
+have their own command:
 
-```
-SITE_DOMAIN="new.techzoidtechnologies.com"
-SITE_ADDRESS="new.techzoidtechnologies.com"
-APP_URL="https://new.techzoidtechnologies.com"
+```bash
+./set-domain.sh new.techzoidtechnologies.com
 ```
 
-`SITE_ADDRESS` has no `www.` while testing. There is no
-`www.new.techzoidtechnologies.com` record and there never will be, and listing
-a name that does not resolve leaves Caddy chasing a certificate for it forever.
-On the real domain it gains `www`; section 7 covers that.
+That works out all four (`SITE_DOMAIN`, `SITE_REDIRECT_FROM`, `SITE_ADDRESS`,
+`APP_URL`), writes them, and refuses to leave a file `docker compose` cannot
+read. It exists because these are long values that have to agree with each
+other, and a terminal wrapping a long paste once put half a hostname on its own
+line — after which Compose refused the whole file and every command anybody
+typed silently did nothing.
+
+Recognising a subdomain, it serves that one name only. It does not add a `www.`
+form: no such record exists and Caddy would chase a certificate for it forever.
 
 Set a real `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` **now**, before the
 first start. They create the first administrator, and the values in the
@@ -136,7 +138,8 @@ On the subdomain it verifies the configuration is internally consistent, the
 three containers are up, the app can reach its database, the site answers over
 HTTPS, the sitemap and `robots.txt` name the right host, the old site's URLs
 redirect, and the business details you are required to publish are set. It
-knows it is looking at a subdomain and skips the www checks accordingly.
+knows it is looking at a subdomain and skips the second-name checks
+ accordingly.
 
 Then work through the rest by hand, on the real subdomain and not on a laptop:
 
@@ -220,34 +223,33 @@ customers see a certificate warning during the gap.
 
 ### 7a. Reconfigure the server
 
-Change **three** values in `.env`, not two. Rather than editing by hand, run
-this — each line is a complete command, so nothing breaks if your terminal
-wraps a long paste:
+One command, naming whichever hostname you want to be **canonical** — the one
+in search results, in every link, and in the sitemap:
 
 ```bash
 cd /srv/techzoid/deploy
-cp .env .env.backup
-grep -vE '^[[:space:]]*(export[[:space:]]+)?(SITE_DOMAIN|SITE_ADDRESS|APP_URL)=' .env.backup > .env
-echo 'SITE_DOMAIN="techzoidtechnologies.com"' >> .env
-echo 'SITE_ADDRESS="techzoidtechnologies.com, www.techzoidtechnologies.com"' >> .env
-echo 'APP_URL="https://techzoidtechnologies.com"' >> .env
-docker compose -f docker-compose.prod.yml config --quiet && echo "ENV IS VALID"
+./set-domain.sh www.techzoidtechnologies.com
 ```
 
-That last line matters. A `.env` Compose cannot parse makes *every* Compose
-command fail, so the stack silently keeps running its previous configuration
-while every command you type appears to do nothing. It has happened once
-already, from a `www.` split across two lines by a terminal wrapping a paste —
-`preflight.sh` now checks for it first and reports it rather than letting it
-surface as twenty unrelated failures.
+Both forms are legitimate. Pass the bare name instead if you want that
+canonical; the other name is served and permanently redirects to whichever you
+choose, so no visitor is ever turned away and no page is reachable at two URLs.
+`www.` is the safer pick when an existing site already ranks on www, because the
+redirect then runs in the direction search engines already expect.
 
-`SITE_ADDRESS` is the one that is easy to miss and expensive to miss. It is the
-list of names Caddy actually serves and obtains certificates for. Leave it on
-the test subdomain and Caddy serves the subdomain and nothing else: the real
-domain answers with a certificate error, for a name it was never asked to
-serve, while the logs look entirely healthy. Both names belong in the list —
-`www` is served so that it can redirect, and it cannot redirect without a
-certificate of its own.
+It sets four values that have to agree:
+
+| | |
+| --- | --- |
+| `SITE_DOMAIN` | the canonical name |
+| `SITE_REDIRECT_FROM` | the other name, which redirects to it |
+| `SITE_ADDRESS` | both names — Caddy serves and certifies each |
+| `APP_URL` | `https://` plus the canonical name |
+
+`SITE_ADDRESS` must list **both**. The name that redirects needs a certificate
+of its own: a browser completes the TLS handshake before it ever sees a
+redirect, so a name Caddy does not serve shows a security warning instead of
+forwarding.
 
 Then:
 
