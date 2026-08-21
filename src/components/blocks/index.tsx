@@ -63,26 +63,42 @@ export function BlockRenderer({
   blocks: ParsedBlock[];
   resolved: ResolvedBlockData;
 }) {
-  let banded = 0;
-  let previousTone: "plain" | "muted" = "plain";
+  // Worked out in one pass before rendering rather than while mapping: the
+  // decision for a block depends on the block above it, and carrying that
+  // state through the render callback would mean mutating a variable during
+  // render.
+  const layout = blocks.reduce<Array<{ tone: "plain" | "muted"; continues: boolean }>>(
+    (accumulated, block, index) => {
+      const previous = blocks[index - 1];
+      const previousTone = accumulated[index - 1]?.tone ?? "plain";
+      const continues =
+        FLOWS.has(block.type) && previous !== undefined && FLOWS.has(previous.type);
+
+      // A continuing block keeps the band it is continuing, and does not
+      // advance the alternation — otherwise a run of prose becomes a zebra.
+      if (continues) {
+        accumulated.push({ tone: previousTone, continues });
+        return accumulated;
+      }
+
+      if (!BANDED.has(block.type)) {
+        accumulated.push({ tone: "plain", continues });
+        return accumulated;
+      }
+
+      const banded = accumulated.filter(
+        (entry, entryIndex) => !entry.continues && BANDED.has(blocks[entryIndex]!.type),
+      ).length;
+      accumulated.push({ tone: banded % 2 === 0 ? "plain" : "muted", continues });
+      return accumulated;
+    },
+    [],
+  );
 
   return (
     <>
       {blocks.map((block, index) => {
-        const previous = blocks[index - 1];
-        const continues =
-          FLOWS.has(block.type) && previous !== undefined && FLOWS.has(previous.type);
-
-        // A continuing block keeps the band it is continuing, and does not
-        // advance the alternation — otherwise a run of prose becomes a zebra.
-        const tone: "plain" | "muted" = continues
-          ? previousTone
-          : BANDED.has(block.type)
-            ? banded++ % 2 === 0
-              ? "plain"
-              : "muted"
-            : "plain";
-        previousTone = tone;
+        const { tone, continues } = layout[index]!;
 
         switch (block.type) {
           case "HERO":

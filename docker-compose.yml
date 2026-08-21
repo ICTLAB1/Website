@@ -1,0 +1,95 @@
+# Runs the whole marketplace locally: database, migrations, seed data and the
+# site, from one command.
+#
+#   cp .env.example .env      # then set AUTH_SECRET
+#   docker compose up --build
+#   open http://localhost:3000
+#
+# The database keeps its data in a named volume, so stopping and starting again
+# preserves anything edited in the admin panel. `docker compose down -v` throws
+# that away and the next start re-seeds from scratch.
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ictlab
+      POSTGRES_PASSWORD: ictlab
+      POSTGRES_DB: ictlab
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ictlab -d ictlab"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    # Not published to the host by default. Uncomment to inspect the database
+    # with psql or a GUI client from outside the compose network.
+    # ports:
+    #   - "5432:5432"
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://ictlab:ictlab@db:5432/ictlab?schema=public
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      # Generate one with: openssl rand -base64 48
+      # The default below exists so `docker compose up` works out of the box for
+      # a local look; it is not a secret and must not be used anywhere real.
+      AUTH_SECRET: ${AUTH_SECRET:-local-development-only-not-a-secret-change-me-before-deploying}
+
+      # The first administrator, created by the seed. Change these before
+      # exposing the site to anything.
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-admin@example.test}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-ChangeMe!Admin123}
+
+      # Business identity. Unset values are omitted from the site rather than
+      # filled with placeholders, and the admin dashboard lists what is missing.
+      COMPANY_TRADING_NAME: ${COMPANY_TRADING_NAME:-}
+      COMPANY_LEGAL_NAME: ${COMPANY_LEGAL_NAME:-}
+      COMPANY_TAGLINE: ${COMPANY_TAGLINE:-}
+      COMPANY_EMAIL_SALES: ${COMPANY_EMAIL_SALES:-}
+      COMPANY_EMAIL_SUPPORT: ${COMPANY_EMAIL_SUPPORT:-}
+      COMPANY_EMAIL_ENTERPRISE: ${COMPANY_EMAIL_ENTERPRISE:-}
+      COMPANY_PHONE_SALES: ${COMPANY_PHONE_SALES:-}
+      COMPANY_PHONE_SUPPORT: ${COMPANY_PHONE_SUPPORT:-}
+      COMPANY_ADDRESS_LINE1: ${COMPANY_ADDRESS_LINE1:-}
+      COMPANY_ADDRESS_LINE2: ${COMPANY_ADDRESS_LINE2:-}
+      COMPANY_CITY: ${COMPANY_CITY:-}
+      COMPANY_STATE: ${COMPANY_STATE:-}
+      COMPANY_POSTCODE: ${COMPANY_POSTCODE:-}
+      COMPANY_COUNTRY: ${COMPANY_COUNTRY:-India}
+      COMPANY_GSTIN: ${COMPANY_GSTIN:-}
+      COMPANY_CIN: ${COMPANY_CIN:-}
+      COMPANY_SUPPORT_HOURS: ${COMPANY_SUPPORT_HOURS:-}
+      COMPANY_GRIEVANCE_OFFICER_NAME: ${COMPANY_GRIEVANCE_OFFICER_NAME:-}
+      COMPANY_GRIEVANCE_OFFICER_EMAIL: ${COMPANY_GRIEVANCE_OFFICER_EMAIL:-}
+      COMPANY_GRIEVANCE_OFFICER_PHONE: ${COMPANY_GRIEVANCE_OFFICER_PHONE:-}
+
+      # Outbound email. With no SMTP host, messages are written to the container
+      # log instead of being sent — nothing fails silently.
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      SALES_NOTIFICATION_EMAIL: ${SALES_NOTIFICATION_EMAIL:-}
+
+      # Bank details reach only the order-confirmation email. They are never
+      # rendered on a public page or returned by an API.
+      COMPANY_BANK_NAME: ${COMPANY_BANK_NAME:-}
+      COMPANY_BANK_ACCOUNT_NAME: ${COMPANY_BANK_ACCOUNT_NAME:-}
+      COMPANY_BANK_ACCOUNT_NUMBER: ${COMPANY_BANK_ACCOUNT_NUMBER:-}
+      COMPANY_BANK_IFSC: ${COMPANY_BANK_IFSC:-}
+      COMPANY_BANK_ACCOUNT_TYPE: ${COMPANY_BANK_ACCOUNT_TYPE:-}
+      COMPANY_BANK_BRANCH: ${COMPANY_BANK_BRANCH:-}
+      COMPANY_UPI_ID: ${COMPANY_UPI_ID:-}
+    ports:
+      - "3000:3000"
+
+volumes:
+  db-data:

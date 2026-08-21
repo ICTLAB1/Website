@@ -315,6 +315,38 @@ they are set, the grievance panel says so rather than naming nobody.
 
 ---
 
+## Running it
+
+The quickest way to see the whole thing working — database, seed content,
+admin panel — is the compose file:
+
+```bash
+cp .env.example .env          # then set AUTH_SECRET
+docker compose up --build     # first run takes a few minutes
+```
+
+Then open <http://localhost:3000>, and the admin panel at
+<http://localhost:3000/admin> with the seeded credentials
+(`SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`, defaulting to
+`admin@example.test` / `ChangeMe!Admin123`).
+
+The container applies migrations on every start and seeds only when the
+database has no pages, so restarting never overwrites content edited in the
+admin panel. `docker compose down -v` discards the volume and the next start
+seeds from scratch.
+
+Without Docker, the same thing takes a local PostgreSQL 16 and Node 22:
+
+```bash
+npm ci
+cp .env.example .env          # set DATABASE_URL and AUTH_SECRET
+npm run db:deploy
+npm run db:seed
+npm run dev
+```
+
+---
+
 ## Deployment
 
 1. Provision PostgreSQL and set `DATABASE_URL`.
@@ -337,6 +369,37 @@ they are set, the grievance panel says so rather than naming nobody.
    that edge and not passed through from clients.
 7. Seeding is optional in production and refuses to run unless
    `SEED_ALLOW_PRODUCTION=true` is set explicitly.
+
+### Before the site is public
+
+Everything below is a genuine blocker rather than a nicety.
+
+| | |
+| --- | --- |
+| **Change the seeded administrator password.** | The seed creates the first admin from `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD`. The defaults are published in this repository. Set both to real values before the first seed, or sign in and change the password immediately after. |
+| **Generate a fresh `AUTH_SECRET`.** | `openssl rand -base64 48`. Never reuse a development value; it derives the keys that sign sessions and password-reset tokens. |
+| **Set `APP_URL` to the real HTTPS origin.** | Canonical URLs, the sitemap, Open Graph tags and the cookie/redirect safety checks all read it. |
+| **Appoint a grievance officer.** | `COMPANY_GRIEVANCE_OFFICER_NAME` and `_EMAIL`. Publishing a named officer is required of an online seller in India. |
+| **Have the legal pages reviewed.** | Then delete the "awaiting legal review" block from each of the five, in the admin panel. |
+| **Configure SMTP.** | Without it, quotations and order confirmations are written to the log instead of being delivered. |
+| **Confirm the database has `pg_trgm`.** | The search migration creates the extension; a managed provider may require enabling it first. |
+
+### Where it can run
+
+The app needs a Node runtime and a PostgreSQL database — it is server-rendered
+and database-backed, so it cannot be published as static files.
+
+- **A single virtual machine** running the compose file, behind a reverse proxy
+  that terminates TLS (Caddy obtains certificates automatically). Everything in
+  one region, one bill, and the simplest way to keep customer data in India.
+- **A managed platform** — Vercel, Railway, Render, or AWS App Runner — with a
+  managed PostgreSQL alongside it. Less to operate; check the region if data
+  residency matters, since several default to the United States and the privacy
+  policy commits to transferring personal data abroad only for provisioning.
+
+Either way the release steps are the same: apply migrations, then start the new
+version. `npm run db:deploy` is safe to run repeatedly and never drops data;
+`prisma migrate reset` must never be pointed at a production database.
 
 ### Housekeeping
 
