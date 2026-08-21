@@ -331,10 +331,22 @@ else
 fi
 
 robots="$(fetch "https://${SITE_DOMAIN}/robots.txt" "$SITE_DOMAIN")"
-if printf '%s' "$robots" | grep -qi "sitemap:.*${SITE_DOMAIN}/sitemap.xml"; then
+robots_sitemap="$(printf '%s' "$robots" | grep -i '^[[:space:]]*sitemap:' | head -n1 | sed 's/^[[:space:]]*[Ss]itemap:[[:space:]]*//')"
+
+# Three outcomes, each reported for what it is. An earlier version said only
+# "does not point at …", which is the least useful thing it could have said:
+# a robots.txt that failed to fetch, one with no Sitemap line, and one naming
+# the wrong host are three different problems with three different fixes, and
+# they were indistinguishable.
+if [ -z "$robots" ]; then
+  bad "robots.txt could not be fetched" "The request returned nothing. Try: curl -sS https://${SITE_DOMAIN}/robots.txt"
+elif [ -z "$robots_sitemap" ]; then
+  bad "robots.txt has no Sitemap line" "It fetched $(printf '%s' "$robots" | wc -l) lines but none of them names a sitemap."
+elif [ "$robots_sitemap" = "https://${SITE_DOMAIN}/sitemap.xml" ]; then
   ok "robots.txt points at the sitemap on this domain"
 else
-  bad "robots.txt does not point at https://${SITE_DOMAIN}/sitemap.xml"
+  bad "robots.txt names the wrong sitemap URL" \
+      "It says '${robots_sitemap}' and should say 'https://${SITE_DOMAIN}/sitemap.xml'. APP_URL is what produces this."
 fi
 
 # ────────────────────────────────────────────── the old site's URLs still work
