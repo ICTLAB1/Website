@@ -35,6 +35,591 @@ export type NavigationSeed = {
 
 export const pageSeeds: PageSeed[] = [
   {
+    "slug": "",
+    "title": "Enterprise Software Licensing, Cloud & IT Solutions",
+    "description": "Microsoft, Adobe, Autodesk, Zoho and enterprise technology solutions from one trusted procurement partner. Consolidated quotations, GST invoicing, deployment and licence management.",
+    "keywords": [
+      "enterprise software licensing",
+      "software procurement",
+      "Microsoft licensing",
+      "IT solutions India"
+    ],
+    "status": "PUBLISHED",
+    "breadcrumb": [],
+    "brandSlug": null,
+    "faqTopic": null,
+    "sections": [
+      {
+        "type": "HERO",
+        "displayOrder": 0,
+        "visible": true,
+        "data": {
+          "tone": "dark",
+          "stats": [
+            {
+              "label": "Products listed",
+              "source": "productCount"
+            },
+            {
+              "label": "Licensable SKUs",
+              "source": "skuCount"
+            },
+            {
+              "label": "Vendors supplied",
+              "source": "brandCount"
+            },
+            {
+              "label": "Purchase order",
+              "value": "One",
+              "source": "literal"
+            }
+          ],
+          "eyebrow": "Multiple technology vendors. One procurement partner.",
+          "headline": "Enterprise Software Licensing, Cloud & IT Solutions",
+          "primaryCta": {
+            "href": "/enquiry",
+            "label": "Get Enterprise Quote"
+          },
+          "showSearch": true,
+          "searchTerms": [
+            "Microsoft 365",
+            "Acrobat Pro",
+            "AutoCAD",
+            "Zoho CRM",
+            "Windows Server"
+          ],
+          "subheadline": "Microsoft, Adobe, Autodesk, Zoho and enterprise technology solutions from one trusted procurement partner — with the licensing advice, deployment support and renewal management that make them worth owning.",
+          "secondaryCta": {
+            "href": "/products",
+            "label": "Browse Software"
+          }
+        }
+      },
+      {
+        "type": "COLLECTION_GRID",
+        "displayOrder": 1,
+        "visible": true,
+        "data": {
+          "kind": "brands",
+          "limit": 24,
+          "layout": "strip",
+          "heading": "Licensing and solutions across"
+        }
+      },
+      {
+        "type": "ICON_POINTS",
+        "displayOrder": 2,
+        "visible": true,
+        "data": {
+          "items": [
+            {
+              "label": "100% Genuine",
+              "detail": "Original, authentic licences"
+            },
+            {
+              "label": "Authorised Partner",
+              "detail": "Direct vendor relationships"
+            },
+            {
+              "label": "Expert Support",
+              "detail": "Pre-sales and post-sales"
+            },
+            {
+              "label": "Competitive Pricing",
+              "detail": "Best value at volume"
+            },
+            {
+              "label": "Fast, Secure Delivery",
+              "detail": "Quick turnaround across India"
+            },
+            {
+              "label": "GST Invoicing",
+              "detail": "Fully compliant billing"
+            }
+          ]
+        }
+      },
+      {
+        "type": "COLLECTION_GRID",
+        "displayOrder": 3,
+        "visible": true,
+        "data": {
+          "kind": "categories",
+          "limit": 8,
+          "action": {
+            "href": "/products",
+            "label": "View full catalogue"
+          },
+          "layout": "grid",
+          "eyebrow": "Catalogue",
+          "heading": "Featured software categories",
+          "description": "Browse by what the software does rather than who publishes it — most procurement decisions start with a capability, not a vendor."
+        }
+      },
+      {
+        "type": "PRODUCT_GRID",
+        "displayOrder": 4,
+        "visible": true,
+        "data": {
+          "limit": 6,
+          "slugs": [],
+          "action": {
+            "href": "/products?sort=popular",
+            "label": "See all popular"
+          },
+          "source": "popular",
+          "eyebrow": "Most requested",
+          "heading": "Popular products",
+          "description": "The licences most often included in the quotations we prepare."
+        }
+      },
+      {
+        "type": "SPLIT_PANEL",
+        "displayOrder": 5,
+        "visible": true,
+        "data": {
+          "tiles": [],
+          "bullets": [],
+          "eyebrow": "Enterprise procurement",
+          "heading": "One procurement partner for your technology stack",
+          "description": "A single technology refresh can involve four publishers, two hardware vendors and a services engagement. Handled directly, that is seven vendor relationships for one project.",
+          "bulletsIntro": "We consolidate the sourcing so one requirement produces one quotation, one purchase order and one GST invoice — without losing visibility of what each line costs."
+        }
+      },
+      {
+        "type": "LINK_LIST",
+        "displayOrder": 6,
+        "visible": true,
+        "data": {
+          "items": [
+            {
+              "href": "/enterprise",
+              "label": "Talk to an Enterprise Specialist"
+            },
+            {
+              "href": "/services/it-procurement",
+              "label": "How procurement works"
+            }
+          ],
+          "layout": "inline"
+        }
+      },
+      {
+        "type": "CARDS",
+        "displayOrder": 7,
+        "visible": true,
+        "data": {
+          "items": [
+            {
+              "body": "One requirement covering Microsoft, Adobe, Autodesk, Zoho and infrastructure vendors, sourced together rather than chased separately.",
+              "title": "Multi-vendor sourcing"
+            },
+            {
+              "body": "A single itemised quotation across every vendor, with each line priced individually so nothing is hidden inside a bundle.",
+              "title": "Consolidated quotation"
+            },
+            {
+              "body": "Your finance team raises one PO and reconciles one GST invoice instead of five, whatever the quotation contains.",
+              "title": "One purchase order"
+            },
+            {
+              "body": "Every renewal date tracked with a review window ahead of it, so no subscription renews at last year's count by default.",
+              "title": "Renewals managed"
+            }
+          ],
+          "columns": 2,
+          "numbered": false
+        }
+      },
+      {
+        "type": "PRODUCT_GRID",
+        "displayOrder": 8,
+        "visible": true,
+        "data": {
+          "limit": 6,
+          "slugs": [],
+          "action": {
+            "href": "/products",
+            "label": "Browse all products"
+          },
+          "source": "featured",
+          "eyebrow": "Selected licensing",
+          "heading": "Featured products",
+          "description": "Widely-deployed licences with the licensing detail set out in full on each product page."
+        }
+      },
+      {
+        "type": "COLLECTION_GRID",
+        "displayOrder": 9,
+        "visible": true,
+        "data": {
+          "kind": "services",
+          "limit": 6,
+          "action": {
+            "href": "/services",
+            "label": "All services"
+          },
+          "layout": "grid",
+          "eyebrow": "Managed services",
+          "heading": "Beyond the licence",
+          "description": "Software delivers nothing until it is deployed, adopted and kept running. These are the engagements that get it there."
+        }
+      },
+      {
+        "type": "CARDS",
+        "displayOrder": 10,
+        "visible": true,
+        "data": {
+          "items": [
+            {
+              "body": "We will tell you when a cheaper licensing model fits better, including when that means a smaller order. A recommendation you cannot trust is worth nothing.",
+              "title": "Licensing advice before the sale"
+            },
+            {
+              "body": "Response commitments, support scope and delivery timelines are stated in the quotation, not described qualitatively and settled later.",
+              "title": "Written commercial terms"
+            },
+            {
+              "body": "Migration, tenant configuration and user onboarding are available alongside the licences, so what you buy is actually adopted.",
+              "title": "Deployment, not just delivery"
+            },
+            {
+              "body": "Every invoice carries your GSTIN and registered legal name correctly, so input credit is not lost to a reconciliation mismatch.",
+              "title": "GST-compliant invoicing"
+            }
+          ],
+          "columns": 2,
+          "eyebrow": "Why work with us",
+          "heading": "What you can expect",
+          "numbered": true,
+          "description": "Stated plainly, so you can hold us to it."
+        }
+      },
+      {
+        "type": "LINK_LIST",
+        "displayOrder": 11,
+        "visible": true,
+        "data": {
+          "items": [
+            {
+              "href": "/solutions/architecture-construction",
+              "label": "Architecture & Construction",
+              "description": "BIM, CAD and common data environments"
+            },
+            {
+              "href": "/solutions/manufacturing",
+              "label": "Manufacturing",
+              "description": "Product design, CAM and simulation"
+            },
+            {
+              "href": "/solutions/technology",
+              "label": "IT & Software",
+              "description": "Cloud platforms, developer tooling and security"
+            },
+            {
+              "href": "/solutions/financial-services",
+              "label": "Financial Services",
+              "description": "Compliance, retention and identity controls"
+            },
+            {
+              "href": "/solutions/education",
+              "label": "Education",
+              "description": "Academic licensing and campus deployment"
+            },
+            {
+              "href": "/solutions/design-engineering",
+              "label": "Media & Creative",
+              "description": "Creative suites and post-production"
+            }
+          ],
+          "layout": "cards",
+          "eyebrow": "Industries",
+          "heading": "Sector-specific technology requirements",
+          "description": "Licensing decisions look different depending on what the software is being used for."
+        }
+      },
+      {
+        "type": "SPLIT_PANEL",
+        "displayOrder": 12,
+        "visible": true,
+        "data": {
+          "tiles": [
+            "GeM contracts",
+            "CRAC support",
+            "Timely delivery",
+            "GST invoicing"
+          ],
+          "bullets": [
+            "Government departments",
+            "Public sector undertakings",
+            "Educational institutions",
+            "Public sector organisations"
+          ],
+          "eyebrow": "Government e-Marketplace",
+          "heading": "Registered GeM seller",
+          "description": "An experienced seller on the Government e-Marketplace, supplying software and IT solutions through public procurement channels.",
+          "bulletsIntro": "We support:"
+        }
+      },
+      {
+        "type": "CHIP_LIST",
+        "displayOrder": 13,
+        "visible": true,
+        "data": {
+          "items": [
+            "BSNL",
+            "Delhi Police",
+            "ONGC",
+            "NBCC",
+            "North Delhi Municipal Corporation",
+            "Indian Army",
+            "Border Roads Organisation",
+            "DRDO",
+            "Hindustan Aeronautics Limited"
+          ],
+          "eyebrow": "Public sector and defence",
+          "heading": "Organisations we have supplied technology to",
+          "footnote": "500+ organisations supplied across India.",
+          "description": "Including government departments, defence establishments and public sector undertakings, supplied through GeM and direct tender engagements."
+        }
+      },
+      {
+        "type": "CARDS",
+        "displayOrder": 14,
+        "visible": true,
+        "data": {
+          "items": [
+            {
+              "body": "In whatever detail you have — a product list, a seat count, or just the problem you are solving.",
+              "title": "Tell us the requirement"
+            },
+            {
+              "body": "Across vendors, including the alternative you did not ask about if it fits better.",
+              "title": "We source and advise"
+            },
+            {
+              "body": "Itemised by line, with the GST position and delivery timeline stated in writing.",
+              "title": "One quotation"
+            },
+            {
+              "body": "Provisioning, deployment where in scope, and a renewal calendar from day one.",
+              "title": "Delivery and support"
+            }
+          ],
+          "columns": 4,
+          "eyebrow": "How we work",
+          "heading": "What a first engagement looks like",
+          "numbered": true,
+          "description": "No case studies invented for a website. This is the actual sequence.",
+          "numberLabel": "Step"
+        }
+      },
+      {
+        "type": "COLLECTION_GRID",
+        "displayOrder": 15,
+        "visible": true,
+        "data": {
+          "kind": "brands",
+          "limit": 24,
+          "action": {
+            "href": "/brands",
+            "label": "All vendors"
+          },
+          "layout": "grid",
+          "eyebrow": "Vendors",
+          "heading": "Licensing across the vendors you already use"
+        }
+      },
+      {
+        "type": "KEY_VALUE_LIST",
+        "displayOrder": 16,
+        "visible": true,
+        "data": {
+          "items": [
+            {
+              "key": "Microsoft",
+              "value": "Solution Partner"
+            },
+            {
+              "key": "Adobe",
+              "value": "Certified Partner"
+            },
+            {
+              "key": "Autodesk",
+              "value": "Partner"
+            },
+            {
+              "key": "HP",
+              "value": "Partner"
+            },
+            {
+              "key": "Dell Technologies",
+              "value": "Authorised Partner"
+            },
+            {
+              "key": "Lenovo",
+              "value": "Authorised Partner"
+            }
+          ]
+        }
+      },
+      {
+        "type": "COLLECTION_GRID",
+        "displayOrder": 17,
+        "visible": true,
+        "data": {
+          "kind": "posts",
+          "limit": 3,
+          "action": {
+            "href": "/resources",
+            "label": "Resource centre"
+          },
+          "layout": "grid",
+          "eyebrow": "Resources",
+          "heading": "Licensing and procurement guidance",
+          "description": "Practical explainers on the decisions that cost the most when they go wrong."
+        }
+      },
+      {
+        "type": "CTA_BANNER",
+        "displayOrder": 18,
+        "visible": true,
+        "data": {
+          "body": "Send us the requirement — a product list, a seat count, or just the problem you are trying to solve. We will come back with a consolidated quotation and a plain recommendation, including where a cheaper option would serve you better.",
+          "tone": "dark",
+          "heading": "Ready to consolidate your technology procurement?",
+          "primaryCta": {
+            "href": "/enquiry",
+            "label": "Get Enterprise Quote"
+          },
+          "secondaryCta": {
+            "href": "/contact",
+            "label": "Contact sales"
+          },
+          "showContactEmail": false
+        }
+      }
+    ]
+  },
+  {
+    "slug": "about",
+    "title": "About Us",
+    "description": "An enterprise technology procurement partner consolidating software licensing, cloud and IT solutions from multiple vendors into a single commercial relationship.",
+    "keywords": [
+      "about",
+      "technology procurement partner",
+      "software reseller India"
+    ],
+    "status": "PUBLISHED",
+    "breadcrumb": [
+      {
+        "href": "/",
+        "label": "Home"
+      },
+      {
+        "label": "About"
+      }
+    ],
+    "brandSlug": null,
+    "faqTopic": null,
+    "sections": [
+      {
+        "type": "HERO",
+        "displayOrder": 0,
+        "visible": true,
+        "data": {
+          "tone": "dark",
+          "stats": [],
+          "headline": "One procurement relationship for a multi-vendor technology stack",
+          "showSearch": false,
+          "searchTerms": [],
+          "subheadline": "We supply enterprise software licensing, cloud services and IT solutions across Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure vendors — and the deployment, licence management and support that make them work."
+        }
+      },
+      {
+        "type": "RICH_TEXT",
+        "displayOrder": 1,
+        "visible": true,
+        "data": {
+          "heading": "What we do",
+          "markdown": "A single technology refresh can involve four publishers, two hardware vendors and a services engagement. Handled directly, that is seven vendor relationships, seven quotation formats and seven sets of invoices for one project.\n\nWe consolidate that. One requirement produces one itemised quotation, one purchase order and one GST invoice — without losing visibility of what each line costs.\n\nAlongside procurement we deliver the work that determines whether the software is actually used: tenant design and migration, device management, cloud governance, security posture work and ongoing licence administration."
+        }
+      },
+      {
+        "type": "CARDS",
+        "displayOrder": 2,
+        "visible": true,
+        "data": {
+          "items": [
+            {
+              "body": "We will tell you when a cheaper licensing model fits better, including when that means a smaller order. A recommendation you cannot trust is worth nothing, and a customer who discovers they were over-sold does not come back.",
+              "title": "Advice before the sale"
+            },
+            {
+              "body": "Response times, support scope, delivery timelines and licensing terms are stated in the quotation rather than described qualitatively and settled later. A commitment that is not written down is not a commitment.",
+              "title": "Written commitments"
+            },
+            {
+              "body": "We do not run countdown timers, fabricate discounts or manufacture deadlines. Where a genuine publisher promotion applies, we will say what it is and when it ends.",
+              "title": "No invented urgency"
+            },
+            {
+              "body": "Software that is bought but not adopted returns nothing. Migration, configuration and onboarding are available alongside the licences because that is what makes them worth owning.",
+              "title": "Deployment, not just delivery"
+            }
+          ],
+          "columns": 2,
+          "heading": "How we work",
+          "numbered": false
+        }
+      },
+      {
+        "type": "COLLECTION_GRID",
+        "displayOrder": 3,
+        "visible": true,
+        "data": {
+          "kind": "brands",
+          "limit": 24,
+          "action": {
+            "href": "/brands",
+            "label": "All vendors"
+          },
+          "layout": "strip",
+          "heading": "Vendors we supply",
+          "description": "Licensing and solutions across the vendors most organisations already use."
+        }
+      },
+      {
+        "type": "COMPANY_INFO",
+        "displayOrder": 4,
+        "visible": true,
+        "data": {
+          "heading": "Company information",
+          "footnote": "Third-party product names and trademarks referenced across this site are the property of their respective owners and are used descriptively to identify the software supplied. Nothing here implies endorsement by, or affiliation with, those vendors beyond a commercial reselling relationship."
+        }
+      },
+      {
+        "type": "CTA_BANNER",
+        "displayOrder": 5,
+        "visible": true,
+        "data": {
+          "body": "You do not need a finished product list. Tell us what you are trying to achieve and we will come back with the options, priced, and a plain recommendation.",
+          "tone": "dark",
+          "heading": "Start with a requirement",
+          "primaryCta": {
+            "href": "/enquiry",
+            "label": "Get Enterprise Quote"
+          },
+          "secondaryCta": {
+            "href": "/contact",
+            "label": "Contact us"
+          },
+          "showContactEmail": false
+        }
+      }
+    ]
+  },
+  {
     "slug": "adobe",
     "title": "Adobe Licensing for Teams & Enterprise",
     "description": "Adobe Creative Cloud, Acrobat and single-application licensing for business, with centralised administration, reassignable seats and consolidated billing.",
@@ -1723,6 +2308,198 @@ export const pageSeeds: PageSeed[] = [
     ]
   },
   {
+    "slug": "enterprise",
+    "title": "Enterprise Technology Procurement",
+    "description": "One procurement partner for your technology stack. Multi-vendor sourcing, consolidated quotations, a single purchase order, GST invoicing, licence management, renewals and deployment.",
+    "keywords": [
+      "enterprise procurement",
+      "multi-vendor sourcing",
+      "consolidated quotation"
+    ],
+    "status": "PUBLISHED",
+    "breadcrumb": [
+      {
+        "href": "/",
+        "label": "Home"
+      },
+      {
+        "label": "Enterprise"
+      }
+    ],
+    "brandSlug": null,
+    "faqTopic": "enterprise",
+    "sections": [
+      {
+        "type": "HERO",
+        "displayOrder": 0,
+        "visible": true,
+        "data": {
+          "tone": "dark",
+          "stats": [],
+          "eyebrow": "Enterprise procurement",
+          "headline": "One Procurement Partner for Your Technology Stack",
+          "primaryCta": {
+            "href": "/enquiry",
+            "label": "Talk to an Enterprise Specialist"
+          },
+          "showSearch": false,
+          "searchTerms": [],
+          "subheadline": "A single technology refresh can involve four publishers, two hardware vendors and a services engagement. Handled directly, that is seven vendor relationships, seven quotation formats, seven purchase orders and seven sets of invoices — for one project.",
+          "secondaryCta": {
+            "href": "/contact",
+            "label": "Contact sales"
+          }
+        }
+      },
+      {
+        "type": "COLLECTION_GRID",
+        "displayOrder": 1,
+        "visible": true,
+        "data": {
+          "kind": "brands",
+          "limit": 24,
+          "layout": "strip",
+          "heading": "Consolidating vendors including"
+        }
+      },
+      {
+        "type": "CARDS",
+        "displayOrder": 2,
+        "visible": true,
+        "data": {
+          "items": [
+            {
+              "body": "Microsoft, Adobe, Autodesk, Zoho, SketchUp, Corel and enterprise infrastructure sourced together. One requirement in, one set of options out — including the alternative you did not ask about, where it fits better.",
+              "title": "Multi-vendor procurement"
+            },
+            {
+              "body": "Every line itemised and priced individually on a single document, so consolidation never costs you visibility of what each component costs.",
+              "title": "Consolidated quotations"
+            },
+            {
+              "body": "Your finance team raises one PO covering the whole quotation rather than one per vendor, regardless of how many publishers it spans.",
+              "title": "Single purchase order"
+            },
+            {
+              "body": "One compliant tax invoice with your GSTIN and registered legal name recorded correctly, so input credit is not lost to a reconciliation mismatch.",
+              "title": "GST invoicing"
+            },
+            {
+              "body": "Seat assignment and reclamation handled as staff join and leave, with a consolidated position across publishers rather than one portal per vendor.",
+              "title": "Licence management"
+            },
+            {
+              "body": "Every renewal date tracked with a review window ahead of it. Nothing renews at last year's count because nobody looked in time.",
+              "title": "Renewal management"
+            },
+            {
+              "body": "Tenant configuration, migration, device enrolment and user onboarding available alongside the licences, so what you buy is actually adopted.",
+              "title": "Deployment"
+            },
+            {
+              "body": "A service desk with response commitments stated in writing in the agreement, and an escalation path to specialists for the issues that need one.",
+              "title": "Technical support"
+            }
+          ],
+          "columns": 4,
+          "eyebrow": "What is included",
+          "heading": "Everything between the requirement and the running system",
+          "numbered": false,
+          "description": "Procurement is the entry point, not the whole engagement."
+        }
+      },
+      {
+        "type": "BULLETS",
+        "displayOrder": 3,
+        "visible": true,
+        "data": {
+          "items": [
+            "Consolidation pays for itself where vendor count and administrative overhead have grown faster than the IT team.",
+            "Organisations buying from three or more software publishers",
+            "Finance teams reconciling invoices across multiple vendors and currencies",
+            "IT teams without the capacity to track renewal dates across portals",
+            "Companies scaling headcount where seat counts change every quarter",
+            "Businesses that need GST-compliant invoicing on every technology purchase",
+            "Teams that have discovered a licence shortfall and want it corrected quietly"
+          ],
+          "heading": "Who this suits"
+        }
+      },
+      {
+        "type": "CARDS",
+        "displayOrder": 4,
+        "visible": true,
+        "data": {
+          "items": [
+            {
+              "body": "A product list, a seat count, a renewal date, or just the problem. Whatever detail you have is enough to begin.",
+              "title": "Send the requirement"
+            },
+            {
+              "body": "Across the relevant publishers, with a note on where a different licensing model would cost you less.",
+              "title": "We review and source"
+            },
+            {
+              "body": "Itemised by line, with the GST position, delivery timeline and licensing terms stated in writing.",
+              "title": "You receive one quotation"
+            },
+            {
+              "body": "Covering the whole quotation. Provisioning begins on confirmation and you have one contact for status.",
+              "title": "One purchase order"
+            }
+          ],
+          "columns": 4,
+          "heading": "How an engagement starts",
+          "numbered": true
+        }
+      },
+      {
+        "type": "LINK_LIST",
+        "displayOrder": 5,
+        "visible": true,
+        "data": {
+          "items": [
+            {
+              "href": "/enquiry",
+              "label": "Build an enquiry"
+            },
+            {
+              "href": "/services/it-procurement",
+              "label": "Read about procurement"
+            }
+          ],
+          "layout": "inline"
+        }
+      },
+      {
+        "type": "FAQ",
+        "displayOrder": 6,
+        "visible": true,
+        "data": {
+          "ref": "enterprise",
+          "items": [],
+          "source": "topic",
+          "heading": "Enterprise procurement questions"
+        }
+      },
+      {
+        "type": "CTA_BANNER",
+        "displayOrder": 7,
+        "visible": true,
+        "data": {
+          "body": "Send the requirement and we will come back with a consolidated quotation and a plain recommendation. If a smaller order serves you better, we will say so.",
+          "tone": "dark",
+          "heading": "Talk to an Enterprise Specialist",
+          "primaryCta": {
+            "href": "/enquiry",
+            "label": "Request enterprise quote"
+          },
+          "showContactEmail": true
+        }
+      }
+    ]
+  },
+  {
     "slug": "fusion-360",
     "title": "Autodesk Fusion — Pricing & Licensing",
     "description": "Autodesk Fusion subscriptions: integrated CAD, CAM, simulation and PCB design for product development and small-batch manufacturing teams.",
@@ -3330,6 +4107,130 @@ export const pageSeeds: PageSeed[] = [
             "href": "/contact",
             "label": "Talk to a specialist"
           }
+        }
+      }
+    ]
+  },
+  {
+    "slug": "resources",
+    "title": "Resource Centre",
+    "description": "Licensing guides, procurement explainers and vendor comparisons covering Microsoft, Adobe, Autodesk, cloud cost, cybersecurity and software asset management.",
+    "keywords": [
+      "licensing guides",
+      "procurement explainers",
+      "software asset management"
+    ],
+    "status": "PUBLISHED",
+    "breadcrumb": [
+      {
+        "href": "/",
+        "label": "Home"
+      },
+      {
+        "label": "Resources"
+      }
+    ],
+    "brandSlug": null,
+    "faqTopic": null,
+    "sections": [
+      {
+        "type": "HERO",
+        "displayOrder": 0,
+        "visible": true,
+        "data": {
+          "tone": "light",
+          "stats": [],
+          "headline": "Resource centre",
+          "showSearch": false,
+          "searchTerms": [],
+          "subheadline": "Licensing and procurement guidance written for people making the purchase. Where a decision has a cheaper answer than the one usually sold, these pages say so."
+        }
+      },
+      {
+        "type": "LINK_LIST",
+        "displayOrder": 1,
+        "visible": true,
+        "data": {
+          "items": [
+            {
+              "href": "/microsoft-licensing",
+              "label": "Microsoft licensing guide",
+              "description": "CSP, Enterprise Agreement and volume licensing compared, with the thresholds that actually decide it."
+            },
+            {
+              "href": "/microsoft-365",
+              "label": "Microsoft 365 plan comparison",
+              "description": "Business and Enterprise plans, the 300-seat cap, and why a mixed estate is usually cheaper."
+            },
+            {
+              "href": "/windows-server",
+              "label": "Windows Server core licensing",
+              "description": "Core counting rules, the sixteen-core minimum, CAL requirements and when Datacenter becomes cheaper."
+            },
+            {
+              "href": "/sql-server",
+              "label": "SQL Server licensing",
+              "description": "Per-core versus server-plus-CAL, virtualisation rules and when Enterprise edition is genuinely required."
+            },
+            {
+              "href": "/autodesk",
+              "label": "Autodesk named-user licensing",
+              "description": "What the move away from network licences changed, and which old habits now cost money."
+            },
+            {
+              "href": "/adobe",
+              "label": "Adobe Teams vs Enterprise",
+              "description": "When federated identity and enterprise-owned storage justify the step up from Teams licensing."
+            }
+          ],
+          "layout": "cards",
+          "heading": "Licensing guides",
+          "itemAction": "Read guide"
+        }
+      },
+      {
+        "type": "COLLECTION_GRID",
+        "displayOrder": 2,
+        "visible": true,
+        "data": {
+          "kind": "posts",
+          "limit": 6,
+          "action": {
+            "href": "/blog",
+            "label": "All articles"
+          },
+          "layout": "grid",
+          "heading": "Latest articles"
+        }
+      },
+      {
+        "type": "COLLECTION_GRID",
+        "displayOrder": 3,
+        "visible": true,
+        "data": {
+          "kind": "postCategories",
+          "limit": 24,
+          "layout": "grid",
+          "heading": "Browse by topic"
+        }
+      },
+      {
+        "type": "CTA_BANNER",
+        "displayOrder": 4,
+        "visible": true,
+        "data": {
+          "body": "A licence position review establishes what you own, what is deployed and what is actually used — which is where the recoverable cost and the compliance gaps both show up.",
+          "tone": "light",
+          "heading": "Want this applied to your estate?",
+          "primaryCta": {
+            "href": "/services/software-asset-management",
+            "label": "Software asset management"
+          },
+          "secondaryCta": {
+            "href": "/enquiry",
+            "label": "Request a review"
+          },
+          "showContactEmail": false
         }
       }
     ]
@@ -6067,43 +6968,7 @@ export const pageSeeds: PageSeed[] = [
 
 export const navigationSeeds: NavigationSeed[] = [
   {
-    "key": "about-us",
-    "parentKey": "about",
-    "menu": "HEADER",
-    "label": "About us",
-    "href": "/about",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "microsoft-azure",
-    "parentKey": "products.cloud",
-    "menu": "HEADER",
-    "label": "Microsoft Azure",
-    "href": "/services/azure",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "hpe",
-    "parentKey": "products.infrastructure",
-    "menu": "HEADER",
-    "label": "HPE",
-    "href": "/brands/hpe",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "cloud-advisory",
-    "parentKey": "cloud-infrastructure",
-    "menu": "HEADER",
-    "label": "Cloud advisory",
-    "href": "/services/cloud",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "products",
+    "key": "header:products",
     "parentKey": null,
     "menu": "HEADER",
     "label": "Products",
@@ -6112,107 +6977,8 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 10
   },
   {
-    "key": "crm",
-    "parentKey": "products.zoho",
-    "menu": "HEADER",
-    "label": "CRM",
-    "href": "/zoho-crm",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "microsoft",
-    "parentKey": "brands",
-    "menu": "HEADER",
-    "label": "Microsoft",
-    "href": "/brands/microsoft",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "software-asset-management",
-    "parentKey": "licensing-operations",
-    "menu": "HEADER",
-    "label": "Software asset management",
-    "href": "/services/software-asset-management",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "cloud-infrastructure",
-    "parentKey": "services",
-    "menu": "HEADER",
-    "label": "Cloud & infrastructure",
-    "href": "/services",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "architecture-construction",
-    "parentKey": "solutions.by-industry",
-    "menu": "HEADER",
-    "label": "Architecture & construction",
-    "href": "/solutions/architecture-construction",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "creative-cloud",
-    "parentKey": "products.adobe",
-    "menu": "HEADER",
-    "label": "Creative Cloud",
-    "href": "/adobe-creative-cloud",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "resource-centre",
-    "parentKey": "resources",
-    "menu": "HEADER",
-    "label": "Resource centre",
-    "href": "/resources",
-    "description": "Guides, comparisons and licensing explainers",
-    "displayOrder": 10
-  },
-  {
-    "key": "microsoft-365-deployment",
-    "parentKey": "workplace-security",
-    "menu": "HEADER",
-    "label": "Microsoft 365 deployment",
-    "href": "/services/microsoft-365",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "modern-workplace",
-    "parentKey": "by-outcome",
-    "menu": "HEADER",
-    "label": "Modern workplace",
-    "href": "/solutions/modern-workplace",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "by-outcome",
-    "parentKey": "solutions",
-    "menu": "HEADER",
-    "label": "By outcome",
-    "href": "/solutions",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "microsoft-365",
-    "parentKey": "products.microsoft",
-    "menu": "HEADER",
-    "label": "Microsoft 365",
-    "href": "/microsoft-365",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "products.microsoft",
-    "parentKey": "products",
+    "key": "header:products.microsoft",
+    "parentKey": "header:products",
     "menu": "HEADER",
     "label": "Microsoft",
     "href": "/microsoft",
@@ -6220,62 +6986,17 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 10
   },
   {
-    "key": "autocad",
-    "parentKey": "products.autodesk",
+    "key": "header:products.microsoft.microsoft-365",
+    "parentKey": "header:products.microsoft",
     "menu": "HEADER",
-    "label": "AutoCAD",
-    "href": "/autocad",
+    "label": "Microsoft 365",
+    "href": "/microsoft-365",
     "description": null,
     "displayOrder": 10
   },
   {
-    "key": "cloud-infrastructure.microsoft-azure",
-    "parentKey": "cloud-infrastructure",
-    "menu": "HEADER",
-    "label": "Microsoft Azure",
-    "href": "/services/azure",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "licence-management",
-    "parentKey": "licensing-operations",
-    "menu": "HEADER",
-    "label": "Licence management",
-    "href": "/services/licence-management",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "adobe",
-    "parentKey": "brands",
-    "menu": "HEADER",
-    "label": "Adobe",
-    "href": "/brands/adobe",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "acrobat",
-    "parentKey": "products.adobe",
-    "menu": "HEADER",
-    "label": "Acrobat",
-    "href": "/adobe-acrobat",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "revit",
-    "parentKey": "products.autodesk",
-    "menu": "HEADER",
-    "label": "Revit",
-    "href": "/revit",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "products.microsoft.office",
-    "parentKey": "products.microsoft",
+    "key": "header:products.microsoft.office",
+    "parentKey": "header:products.microsoft",
     "menu": "HEADER",
     "label": "Office",
     "href": "/microsoft-office",
@@ -6283,8 +7004,197 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 20
   },
   {
-    "key": "books",
-    "parentKey": "products.zoho",
+    "key": "header:products.microsoft.windows",
+    "parentKey": "header:products.microsoft",
+    "menu": "HEADER",
+    "label": "Windows",
+    "href": "/products?brand=microsoft&category=operating-systems",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:products.microsoft.windows-server",
+    "parentKey": "header:products.microsoft",
+    "menu": "HEADER",
+    "label": "Windows Server",
+    "href": "/windows-server",
+    "description": null,
+    "displayOrder": 40
+  },
+  {
+    "key": "header:products.microsoft.sql-server",
+    "parentKey": "header:products.microsoft",
+    "menu": "HEADER",
+    "label": "SQL Server",
+    "href": "/sql-server",
+    "description": null,
+    "displayOrder": 50
+  },
+  {
+    "key": "header:products.microsoft.dynamics-365",
+    "parentKey": "header:products.microsoft",
+    "menu": "HEADER",
+    "label": "Dynamics 365",
+    "href": "/products?brand=microsoft&category=business-applications",
+    "description": null,
+    "displayOrder": 60
+  },
+  {
+    "key": "header:products.microsoft.azure",
+    "parentKey": "header:products.microsoft",
+    "menu": "HEADER",
+    "label": "Azure",
+    "href": "/services/azure",
+    "description": null,
+    "displayOrder": 70
+  },
+  {
+    "key": "header:products.microsoft.licensing-csp",
+    "parentKey": "header:products.microsoft",
+    "menu": "HEADER",
+    "label": "Licensing & CSP",
+    "href": "/microsoft-licensing",
+    "description": null,
+    "displayOrder": 80
+  },
+  {
+    "key": "header:products.adobe",
+    "parentKey": "header:products",
+    "menu": "HEADER",
+    "label": "Adobe",
+    "href": "/adobe",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:products.adobe.creative-cloud",
+    "parentKey": "header:products.adobe",
+    "menu": "HEADER",
+    "label": "Creative Cloud",
+    "href": "/adobe-creative-cloud",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:products.adobe.acrobat",
+    "parentKey": "header:products.adobe",
+    "menu": "HEADER",
+    "label": "Acrobat",
+    "href": "/adobe-acrobat",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:products.adobe.photoshop",
+    "parentKey": "header:products.adobe",
+    "menu": "HEADER",
+    "label": "Photoshop",
+    "href": "/adobe-photoshop",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:products.adobe.illustrator",
+    "parentKey": "header:products.adobe",
+    "menu": "HEADER",
+    "label": "Illustrator",
+    "href": "/adobe-illustrator",
+    "description": null,
+    "displayOrder": 40
+  },
+  {
+    "key": "header:products.adobe.premiere-pro",
+    "parentKey": "header:products.adobe",
+    "menu": "HEADER",
+    "label": "Premiere Pro",
+    "href": "/adobe-premiere-pro",
+    "description": null,
+    "displayOrder": 50
+  },
+  {
+    "key": "header:products.autodesk",
+    "parentKey": "header:products",
+    "menu": "HEADER",
+    "label": "Autodesk",
+    "href": "/autodesk",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:products.autodesk.autocad",
+    "parentKey": "header:products.autodesk",
+    "menu": "HEADER",
+    "label": "AutoCAD",
+    "href": "/autocad",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:products.autodesk.revit",
+    "parentKey": "header:products.autodesk",
+    "menu": "HEADER",
+    "label": "Revit",
+    "href": "/revit",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:products.autodesk.aec-collection",
+    "parentKey": "header:products.autodesk",
+    "menu": "HEADER",
+    "label": "AEC Collection",
+    "href": "/aec-collection",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:products.autodesk.maya",
+    "parentKey": "header:products.autodesk",
+    "menu": "HEADER",
+    "label": "Maya",
+    "href": "/maya",
+    "description": null,
+    "displayOrder": 40
+  },
+  {
+    "key": "header:products.autodesk.fusion",
+    "parentKey": "header:products.autodesk",
+    "menu": "HEADER",
+    "label": "Fusion",
+    "href": "/fusion-360",
+    "description": null,
+    "displayOrder": 50
+  },
+  {
+    "key": "header:products.autodesk.construction-cloud",
+    "parentKey": "header:products.autodesk",
+    "menu": "HEADER",
+    "label": "Construction Cloud",
+    "href": "/autodesk-construction-cloud",
+    "description": null,
+    "displayOrder": 60
+  },
+  {
+    "key": "header:products.zoho",
+    "parentKey": "header:products",
+    "menu": "HEADER",
+    "label": "Zoho",
+    "href": "/zoho",
+    "description": null,
+    "displayOrder": 40
+  },
+  {
+    "key": "header:products.zoho.crm",
+    "parentKey": "header:products.zoho",
+    "menu": "HEADER",
+    "label": "CRM",
+    "href": "/zoho-crm",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:products.zoho.books",
+    "parentKey": "header:products.zoho",
     "menu": "HEADER",
     "label": "Books",
     "href": "/zoho-books",
@@ -6292,8 +7202,62 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 20
   },
   {
-    "key": "dell-technologies",
-    "parentKey": "products.infrastructure",
+    "key": "header:products.zoho.desk",
+    "parentKey": "header:products.zoho",
+    "menu": "HEADER",
+    "label": "Desk",
+    "href": "/zoho-desk",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:products.zoho.workplace",
+    "parentKey": "header:products.zoho",
+    "menu": "HEADER",
+    "label": "Workplace",
+    "href": "/zoho-workplace",
+    "description": null,
+    "displayOrder": 40
+  },
+  {
+    "key": "header:products.zoho.mail",
+    "parentKey": "header:products.zoho",
+    "menu": "HEADER",
+    "label": "Mail",
+    "href": "/zoho-mail",
+    "description": null,
+    "displayOrder": 50
+  },
+  {
+    "key": "header:products.zoho.zoho-one",
+    "parentKey": "header:products.zoho",
+    "menu": "HEADER",
+    "label": "Zoho One",
+    "href": "/products?brand=zoho&category=business-suites",
+    "description": null,
+    "displayOrder": 60
+  },
+  {
+    "key": "header:products.infrastructure",
+    "parentKey": "header:products",
+    "menu": "HEADER",
+    "label": "Infrastructure",
+    "href": "/products?category=infrastructure-hardware",
+    "description": null,
+    "displayOrder": 50
+  },
+  {
+    "key": "header:products.infrastructure.hpe",
+    "parentKey": "header:products.infrastructure",
+    "menu": "HEADER",
+    "label": "HPE",
+    "href": "/brands/hpe",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:products.infrastructure.dell-technologies",
+    "parentKey": "header:products.infrastructure",
     "menu": "HEADER",
     "label": "Dell Technologies",
     "href": "/brands/dell",
@@ -6301,17 +7265,53 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 20
   },
   {
-    "key": "blog",
-    "parentKey": "resources",
+    "key": "header:products.infrastructure.servers",
+    "parentKey": "header:products.infrastructure",
     "menu": "HEADER",
-    "label": "Blog",
-    "href": "/blog",
-    "description": "Licensing and procurement articles",
-    "displayOrder": 20
+    "label": "Servers",
+    "href": "/products?category=servers",
+    "description": null,
+    "displayOrder": 30
   },
   {
-    "key": "amazon-web-services",
-    "parentKey": "products.cloud",
+    "key": "header:products.infrastructure.storage",
+    "parentKey": "header:products.infrastructure",
+    "menu": "HEADER",
+    "label": "Storage",
+    "href": "/products?category=storage",
+    "description": null,
+    "displayOrder": 40
+  },
+  {
+    "key": "header:products.infrastructure.networking",
+    "parentKey": "header:products.infrastructure",
+    "menu": "HEADER",
+    "label": "Networking",
+    "href": "/products?category=networking",
+    "description": null,
+    "displayOrder": 50
+  },
+  {
+    "key": "header:products.cloud",
+    "parentKey": "header:products",
+    "menu": "HEADER",
+    "label": "Cloud",
+    "href": "/services/cloud",
+    "description": null,
+    "displayOrder": 60
+  },
+  {
+    "key": "header:products.cloud.microsoft-azure",
+    "parentKey": "header:products.cloud",
+    "menu": "HEADER",
+    "label": "Microsoft Azure",
+    "href": "/services/azure",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:products.cloud.amazon-web-services",
+    "parentKey": "header:products.cloud",
     "menu": "HEADER",
     "label": "Amazon Web Services",
     "href": "/services/aws",
@@ -6319,7 +7319,34 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 20
   },
   {
-    "key": "solutions",
+    "key": "header:products.cloud.google-cloud",
+    "parentKey": "header:products.cloud",
+    "menu": "HEADER",
+    "label": "Google Cloud",
+    "href": "/services/google-cloud",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:products.cloud.cloud-migration",
+    "parentKey": "header:products.cloud",
+    "menu": "HEADER",
+    "label": "Cloud migration",
+    "href": "/services/cloud",
+    "description": null,
+    "displayOrder": 40
+  },
+  {
+    "key": "header:products.cloud.backup-dr",
+    "parentKey": "header:products.cloud",
+    "menu": "HEADER",
+    "label": "Backup & DR",
+    "href": "/services/backup-disaster-recovery",
+    "description": null,
+    "displayOrder": 50
+  },
+  {
+    "key": "header:solutions",
     "parentKey": null,
     "menu": "HEADER",
     "label": "Solutions",
@@ -6328,8 +7355,26 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 20
   },
   {
-    "key": "by-outcome.cloud-transformation",
-    "parentKey": "by-outcome",
+    "key": "header:solutions.by-outcome",
+    "parentKey": "header:solutions",
+    "menu": "HEADER",
+    "label": "By outcome",
+    "href": "/solutions",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:solutions.by-outcome.modern-workplace",
+    "parentKey": "header:solutions.by-outcome",
+    "menu": "HEADER",
+    "label": "Modern workplace",
+    "href": "/solutions/modern-workplace",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:solutions.by-outcome.cloud-transformation",
+    "parentKey": "header:solutions.by-outcome",
     "menu": "HEADER",
     "label": "Cloud transformation",
     "href": "/solutions/cloud-transformation",
@@ -6337,8 +7382,35 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 20
   },
   {
-    "key": "solutions.by-industry",
-    "parentKey": "solutions",
+    "key": "header:solutions.by-outcome.design-engineering",
+    "parentKey": "header:solutions.by-outcome",
+    "menu": "HEADER",
+    "label": "Design & engineering",
+    "href": "/solutions/design-engineering",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:solutions.by-outcome.security-compliance",
+    "parentKey": "header:solutions.by-outcome",
+    "menu": "HEADER",
+    "label": "Security & compliance",
+    "href": "/solutions/security-compliance",
+    "description": null,
+    "displayOrder": 40
+  },
+  {
+    "key": "header:solutions.by-outcome.software-asset-management",
+    "parentKey": "header:solutions.by-outcome",
+    "menu": "HEADER",
+    "label": "Software asset management",
+    "href": "/services/software-asset-management",
+    "description": null,
+    "displayOrder": 50
+  },
+  {
+    "key": "header:solutions.by-industry",
+    "parentKey": "header:solutions",
     "menu": "HEADER",
     "label": "By industry",
     "href": "/solutions",
@@ -6346,8 +7418,17 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 20
   },
   {
-    "key": "solutions.by-industry.manufacturing",
-    "parentKey": "solutions.by-industry",
+    "key": "header:solutions.by-industry.architecture-construction",
+    "parentKey": "header:solutions.by-industry",
+    "menu": "HEADER",
+    "label": "Architecture & construction",
+    "href": "/solutions/architecture-construction",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:solutions.by-industry.manufacturing",
+    "parentKey": "header:solutions.by-industry",
     "menu": "HEADER",
     "label": "Manufacturing",
     "href": "/solutions/manufacturing",
@@ -6355,70 +7436,34 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 20
   },
   {
-    "key": "enterprise-procurement",
-    "parentKey": "about",
+    "key": "header:solutions.by-industry.it-software",
+    "parentKey": "header:solutions.by-industry",
     "menu": "HEADER",
-    "label": "Enterprise procurement",
-    "href": "/enterprise",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "products.adobe",
-    "parentKey": "products",
-    "menu": "HEADER",
-    "label": "Adobe",
-    "href": "/adobe",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "workplace-security",
-    "parentKey": "services",
-    "menu": "HEADER",
-    "label": "Workplace & security",
-    "href": "/services",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "workplace-security.email-migration",
-    "parentKey": "workplace-security",
-    "menu": "HEADER",
-    "label": "Email migration",
-    "href": "/services/email-migration",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "google-cloud",
-    "parentKey": "products.cloud",
-    "menu": "HEADER",
-    "label": "Google Cloud",
-    "href": "/services/google-cloud",
+    "label": "IT & software",
+    "href": "/solutions/technology",
     "description": null,
     "displayOrder": 30
   },
   {
-    "key": "licensing-operations",
-    "parentKey": "services",
+    "key": "header:solutions.by-industry.financial-services",
+    "parentKey": "header:solutions.by-industry",
     "menu": "HEADER",
-    "label": "Licensing operations",
-    "href": "/services",
+    "label": "Financial services",
+    "href": "/solutions/financial-services",
     "description": null,
-    "displayOrder": 30
+    "displayOrder": 40
   },
   {
-    "key": "products.adobe.photoshop",
-    "parentKey": "products.adobe",
+    "key": "header:solutions.by-industry.education",
+    "parentKey": "header:solutions.by-industry",
     "menu": "HEADER",
-    "label": "Photoshop",
-    "href": "/adobe-photoshop",
+    "label": "Education",
+    "href": "/solutions/education",
     "description": null,
-    "displayOrder": 30
+    "displayOrder": 50
   },
   {
-    "key": "services",
+    "key": "header:services",
     "parentKey": null,
     "menu": "HEADER",
     "label": "Services",
@@ -6427,98 +7472,35 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 30
   },
   {
-    "key": "desk",
-    "parentKey": "products.zoho",
+    "key": "header:services.cloud-infrastructure",
+    "parentKey": "header:services",
     "menu": "HEADER",
-    "label": "Desk",
-    "href": "/zoho-desk",
+    "label": "Cloud & infrastructure",
+    "href": "/services",
     "description": null,
-    "displayOrder": 30
+    "displayOrder": 10
   },
   {
-    "key": "aec-collection",
-    "parentKey": "products.autodesk",
+    "key": "header:services.cloud-infrastructure.cloud-advisory",
+    "parentKey": "header:services.cloud-infrastructure",
     "menu": "HEADER",
-    "label": "AEC Collection",
-    "href": "/aec-collection",
+    "label": "Cloud advisory",
+    "href": "/services/cloud",
     "description": null,
-    "displayOrder": 30
+    "displayOrder": 10
   },
   {
-    "key": "products.microsoft.windows",
-    "parentKey": "products.microsoft",
+    "key": "header:services.cloud-infrastructure.microsoft-azure",
+    "parentKey": "header:services.cloud-infrastructure",
     "menu": "HEADER",
-    "label": "Windows",
-    "href": "/products?brand=microsoft&category=operating-systems",
+    "label": "Microsoft Azure",
+    "href": "/services/azure",
     "description": null,
-    "displayOrder": 30
+    "displayOrder": 20
   },
   {
-    "key": "microsoft-licensing-guide",
-    "parentKey": "resources",
-    "menu": "HEADER",
-    "label": "Microsoft licensing guide",
-    "href": "/microsoft-licensing",
-    "description": "CSP, EA and volume licensing compared",
-    "displayOrder": 30
-  },
-  {
-    "key": "by-outcome.design-engineering",
-    "parentKey": "by-outcome",
-    "menu": "HEADER",
-    "label": "Design & engineering",
-    "href": "/solutions/design-engineering",
-    "description": null,
-    "displayOrder": 30
-  },
-  {
-    "key": "products.autodesk",
-    "parentKey": "products",
-    "menu": "HEADER",
-    "label": "Autodesk",
-    "href": "/autodesk",
-    "description": null,
-    "displayOrder": 30
-  },
-  {
-    "key": "autodesk",
-    "parentKey": "brands",
-    "menu": "HEADER",
-    "label": "Autodesk",
-    "href": "/brands/autodesk",
-    "description": null,
-    "displayOrder": 30
-  },
-  {
-    "key": "servers",
-    "parentKey": "products.infrastructure",
-    "menu": "HEADER",
-    "label": "Servers",
-    "href": "/products?category=servers",
-    "description": null,
-    "displayOrder": 30
-  },
-  {
-    "key": "contact",
-    "parentKey": "about",
-    "menu": "HEADER",
-    "label": "Contact",
-    "href": "/contact",
-    "description": null,
-    "displayOrder": 30
-  },
-  {
-    "key": "licensing-operations.enterprise-procurement",
-    "parentKey": "licensing-operations",
-    "menu": "HEADER",
-    "label": "Enterprise procurement",
-    "href": "/enterprise",
-    "description": null,
-    "displayOrder": 30
-  },
-  {
-    "key": "cloud-infrastructure.amazon-web-services",
-    "parentKey": "cloud-infrastructure",
+    "key": "header:services.cloud-infrastructure.amazon-web-services",
+    "parentKey": "header:services.cloud-infrastructure",
     "menu": "HEADER",
     "label": "Amazon Web Services",
     "href": "/services/aws",
@@ -6526,62 +7508,8 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 30
   },
   {
-    "key": "workplace-security.endpoint-management",
-    "parentKey": "workplace-security",
-    "menu": "HEADER",
-    "label": "Endpoint management",
-    "href": "/services/endpoint-management",
-    "description": null,
-    "displayOrder": 30
-  },
-  {
-    "key": "solutions.by-industry.it-software",
-    "parentKey": "solutions.by-industry",
-    "menu": "HEADER",
-    "label": "IT & software",
-    "href": "/solutions/technology",
-    "description": null,
-    "displayOrder": 30
-  },
-  {
-    "key": "products.microsoft.windows-server",
-    "parentKey": "products.microsoft",
-    "menu": "HEADER",
-    "label": "Windows Server",
-    "href": "/windows-server",
-    "description": null,
-    "displayOrder": 40
-  },
-  {
-    "key": "workplace-security.cybersecurity",
-    "parentKey": "workplace-security",
-    "menu": "HEADER",
-    "label": "Cybersecurity",
-    "href": "/services/cybersecurity",
-    "description": null,
-    "displayOrder": 40
-  },
-  {
-    "key": "cloud-migration",
-    "parentKey": "products.cloud",
-    "menu": "HEADER",
-    "label": "Cloud migration",
-    "href": "/services/cloud",
-    "description": null,
-    "displayOrder": 40
-  },
-  {
-    "key": "products.adobe.illustrator",
-    "parentKey": "products.adobe",
-    "menu": "HEADER",
-    "label": "Illustrator",
-    "href": "/adobe-illustrator",
-    "description": null,
-    "displayOrder": 40
-  },
-  {
-    "key": "cloud-infrastructure.google-cloud",
-    "parentKey": "cloud-infrastructure",
+    "key": "header:services.cloud-infrastructure.google-cloud",
+    "parentKey": "header:services.cloud-infrastructure",
     "menu": "HEADER",
     "label": "Google Cloud",
     "href": "/services/google-cloud",
@@ -6589,79 +7517,106 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 40
   },
   {
-    "key": "by-outcome.security-compliance",
-    "parentKey": "by-outcome",
+    "key": "header:services.cloud-infrastructure.backup-disaster-recovery",
+    "parentKey": "header:services.cloud-infrastructure",
     "menu": "HEADER",
-    "label": "Security & compliance",
-    "href": "/solutions/security-compliance",
+    "label": "Backup & disaster recovery",
+    "href": "/services/backup-disaster-recovery",
+    "description": null,
+    "displayOrder": 50
+  },
+  {
+    "key": "header:services.workplace-security",
+    "parentKey": "header:services",
+    "menu": "HEADER",
+    "label": "Workplace & security",
+    "href": "/services",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:services.workplace-security.microsoft-365-deployment",
+    "parentKey": "header:services.workplace-security",
+    "menu": "HEADER",
+    "label": "Microsoft 365 deployment",
+    "href": "/services/microsoft-365",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:services.workplace-security.email-migration",
+    "parentKey": "header:services.workplace-security",
+    "menu": "HEADER",
+    "label": "Email migration",
+    "href": "/services/email-migration",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:services.workplace-security.endpoint-management",
+    "parentKey": "header:services.workplace-security",
+    "menu": "HEADER",
+    "label": "Endpoint management",
+    "href": "/services/endpoint-management",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:services.workplace-security.cybersecurity",
+    "parentKey": "header:services.workplace-security",
+    "menu": "HEADER",
+    "label": "Cybersecurity",
+    "href": "/services/cybersecurity",
     "description": null,
     "displayOrder": 40
   },
   {
-    "key": "zoho",
-    "parentKey": "brands",
+    "key": "header:services.workplace-security.it-helpdesk",
+    "parentKey": "header:services.workplace-security",
     "menu": "HEADER",
-    "label": "Zoho",
-    "href": "/brands/zoho",
+    "label": "IT helpdesk",
+    "href": "/services/it-helpdesk",
     "description": null,
-    "displayOrder": 40
+    "displayOrder": 50
   },
   {
-    "key": "solutions.by-industry.financial-services",
-    "parentKey": "solutions.by-industry",
+    "key": "header:services.licensing-operations",
+    "parentKey": "header:services",
     "menu": "HEADER",
-    "label": "Financial services",
-    "href": "/solutions/financial-services",
+    "label": "Licensing operations",
+    "href": "/services",
     "description": null,
-    "displayOrder": 40
+    "displayOrder": 30
   },
   {
-    "key": "products.zoho",
-    "parentKey": "products",
+    "key": "header:services.licensing-operations.software-asset-management",
+    "parentKey": "header:services.licensing-operations",
     "menu": "HEADER",
-    "label": "Zoho",
-    "href": "/zoho",
+    "label": "Software asset management",
+    "href": "/services/software-asset-management",
     "description": null,
-    "displayOrder": 40
+    "displayOrder": 10
   },
   {
-    "key": "products.zoho.workplace",
-    "parentKey": "products.zoho",
+    "key": "header:services.licensing-operations.licence-management",
+    "parentKey": "header:services.licensing-operations",
     "menu": "HEADER",
-    "label": "Workplace",
-    "href": "/zoho-workplace",
+    "label": "Licence management",
+    "href": "/services/licence-management",
     "description": null,
-    "displayOrder": 40
+    "displayOrder": 20
   },
   {
-    "key": "support-centre",
-    "parentKey": "resources",
+    "key": "header:services.licensing-operations.enterprise-procurement",
+    "parentKey": "header:services.licensing-operations",
     "menu": "HEADER",
-    "label": "Support centre",
-    "href": "/support",
-    "description": "Raise a ticket or reach the service desk",
-    "displayOrder": 40
-  },
-  {
-    "key": "products.autodesk.maya",
-    "parentKey": "products.autodesk",
-    "menu": "HEADER",
-    "label": "Maya",
-    "href": "/maya",
+    "label": "Enterprise procurement",
+    "href": "/enterprise",
     "description": null,
-    "displayOrder": 40
+    "displayOrder": 30
   },
   {
-    "key": "storage",
-    "parentKey": "products.infrastructure",
-    "menu": "HEADER",
-    "label": "Storage",
-    "href": "/products?category=storage",
-    "description": null,
-    "displayOrder": 40
-  },
-  {
-    "key": "brands",
+    "key": "header:brands",
     "parentKey": null,
     "menu": "HEADER",
     "label": "Brands",
@@ -6670,107 +7625,44 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 40
   },
   {
-    "key": "products.infrastructure",
-    "parentKey": "products",
+    "key": "header:brands.microsoft",
+    "parentKey": "header:brands",
     "menu": "HEADER",
-    "label": "Infrastructure",
-    "href": "/products?category=infrastructure-hardware",
+    "label": "Microsoft",
+    "href": "/brands/microsoft",
     "description": null,
-    "displayOrder": 50
+    "displayOrder": 10
   },
   {
-    "key": "products.microsoft.sql-server",
-    "parentKey": "products.microsoft",
+    "key": "header:brands.adobe",
+    "parentKey": "header:brands",
     "menu": "HEADER",
-    "label": "SQL Server",
-    "href": "/sql-server",
+    "label": "Adobe",
+    "href": "/brands/adobe",
     "description": null,
-    "displayOrder": 50
+    "displayOrder": 20
   },
   {
-    "key": "products.adobe.premiere-pro",
-    "parentKey": "products.adobe",
+    "key": "header:brands.autodesk",
+    "parentKey": "header:brands",
     "menu": "HEADER",
-    "label": "Premiere Pro",
-    "href": "/adobe-premiere-pro",
+    "label": "Autodesk",
+    "href": "/brands/autodesk",
     "description": null,
-    "displayOrder": 50
+    "displayOrder": 30
   },
   {
-    "key": "products.autodesk.fusion",
-    "parentKey": "products.autodesk",
+    "key": "header:brands.zoho",
+    "parentKey": "header:brands",
     "menu": "HEADER",
-    "label": "Fusion",
-    "href": "/fusion-360",
+    "label": "Zoho",
+    "href": "/brands/zoho",
     "description": null,
-    "displayOrder": 50
+    "displayOrder": 40
   },
   {
-    "key": "products.zoho.mail",
-    "parentKey": "products.zoho",
-    "menu": "HEADER",
-    "label": "Mail",
-    "href": "/zoho-mail",
-    "description": null,
-    "displayOrder": 50
-  },
-  {
-    "key": "products.infrastructure.networking",
-    "parentKey": "products.infrastructure",
-    "menu": "HEADER",
-    "label": "Networking",
-    "href": "/products?category=networking",
-    "description": null,
-    "displayOrder": 50
-  },
-  {
-    "key": "backup-dr",
-    "parentKey": "products.cloud",
-    "menu": "HEADER",
-    "label": "Backup & DR",
-    "href": "/services/backup-disaster-recovery",
-    "description": null,
-    "displayOrder": 50
-  },
-  {
-    "key": "by-outcome.software-asset-management",
-    "parentKey": "by-outcome",
-    "menu": "HEADER",
-    "label": "Software asset management",
-    "href": "/services/software-asset-management",
-    "description": null,
-    "displayOrder": 50
-  },
-  {
-    "key": "solutions.by-industry.education",
-    "parentKey": "solutions.by-industry",
-    "menu": "HEADER",
-    "label": "Education",
-    "href": "/solutions/education",
-    "description": null,
-    "displayOrder": 50
-  },
-  {
-    "key": "cloud-infrastructure.backup-disaster-recovery",
-    "parentKey": "cloud-infrastructure",
-    "menu": "HEADER",
-    "label": "Backup & disaster recovery",
-    "href": "/services/backup-disaster-recovery",
-    "description": null,
-    "displayOrder": 50
-  },
-  {
-    "key": "workplace-security.it-helpdesk",
-    "parentKey": "workplace-security",
-    "menu": "HEADER",
-    "label": "IT helpdesk",
-    "href": "/services/it-helpdesk",
-    "description": null,
-    "displayOrder": 50
-  },
-  {
-    "key": "brands.sketchup",
-    "parentKey": "brands",
+    "key": "header:brands.sketchup",
+    "parentKey": "header:brands",
     "menu": "HEADER",
     "label": "SketchUp",
     "href": "/brands/sketchup",
@@ -6778,7 +7670,34 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 50
   },
   {
-    "key": "resources",
+    "key": "header:brands.corel",
+    "parentKey": "header:brands",
+    "menu": "HEADER",
+    "label": "Corel",
+    "href": "/brands/corel",
+    "description": null,
+    "displayOrder": 60
+  },
+  {
+    "key": "header:brands.hpe",
+    "parentKey": "header:brands",
+    "menu": "HEADER",
+    "label": "HPE",
+    "href": "/brands/hpe",
+    "description": null,
+    "displayOrder": 70
+  },
+  {
+    "key": "header:brands.dell-technologies",
+    "parentKey": "header:brands",
+    "menu": "HEADER",
+    "label": "Dell Technologies",
+    "href": "/brands/dell",
+    "description": null,
+    "displayOrder": 80
+  },
+  {
+    "key": "header:resources",
     "parentKey": null,
     "menu": "HEADER",
     "label": "Resources",
@@ -6787,106 +7706,79 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 50
   },
   {
-    "key": "products.microsoft.dynamics-365",
-    "parentKey": "products.microsoft",
+    "key": "header:resources.resource-centre",
+    "parentKey": "header:resources",
     "menu": "HEADER",
-    "label": "Dynamics 365",
-    "href": "/products?brand=microsoft&category=business-applications",
-    "description": null,
-    "displayOrder": 60
+    "label": "Resource centre",
+    "href": "/resources",
+    "description": "Guides, comparisons and licensing explainers",
+    "displayOrder": 10
   },
   {
-    "key": "products.cloud",
-    "parentKey": "products",
+    "key": "header:resources.blog",
+    "parentKey": "header:resources",
     "menu": "HEADER",
-    "label": "Cloud",
-    "href": "/services/cloud",
-    "description": null,
-    "displayOrder": 60
+    "label": "Blog",
+    "href": "/blog",
+    "description": "Licensing and procurement articles",
+    "displayOrder": 20
   },
   {
-    "key": "products.zoho.zoho-one",
-    "parentKey": "products.zoho",
+    "key": "header:resources.microsoft-licensing-guide",
+    "parentKey": "header:resources",
     "menu": "HEADER",
-    "label": "Zoho One",
-    "href": "/products?brand=zoho&category=business-suites",
-    "description": null,
-    "displayOrder": 60
+    "label": "Microsoft licensing guide",
+    "href": "/microsoft-licensing",
+    "description": "CSP, EA and volume licensing compared",
+    "displayOrder": 30
   },
   {
-    "key": "products.autodesk.construction-cloud",
-    "parentKey": "products.autodesk",
+    "key": "header:resources.support-centre",
+    "parentKey": "header:resources",
     "menu": "HEADER",
-    "label": "Construction Cloud",
-    "href": "/autodesk-construction-cloud",
-    "description": null,
-    "displayOrder": 60
+    "label": "Support centre",
+    "href": "/support",
+    "description": "Raise a ticket or reach the service desk",
+    "displayOrder": 40
   },
   {
-    "key": "about",
+    "key": "header:about",
     "parentKey": null,
     "menu": "HEADER",
     "label": "About",
     "href": "/about",
     "description": null,
-    "displayOrder": 60
+    "displayOrder": 100
   },
   {
-    "key": "brands.corel",
-    "parentKey": "brands",
+    "key": "header:about.about-us",
+    "parentKey": "header:about",
     "menu": "HEADER",
-    "label": "Corel",
-    "href": "/brands/corel",
-    "description": null,
-    "displayOrder": 60
-  },
-  {
-    "key": "brands.hpe",
-    "parentKey": "brands",
-    "menu": "HEADER",
-    "label": "HPE",
-    "href": "/brands/hpe",
-    "description": null,
-    "displayOrder": 70
-  },
-  {
-    "key": "products.microsoft.azure",
-    "parentKey": "products.microsoft",
-    "menu": "HEADER",
-    "label": "Azure",
-    "href": "/services/azure",
-    "description": null,
-    "displayOrder": 70
-  },
-  {
-    "key": "brands.dell-technologies",
-    "parentKey": "brands",
-    "menu": "HEADER",
-    "label": "Dell Technologies",
-    "href": "/brands/dell",
-    "description": null,
-    "displayOrder": 80
-  },
-  {
-    "key": "products.microsoft.licensing-csp",
-    "parentKey": "products.microsoft",
-    "menu": "HEADER",
-    "label": "Licensing & CSP",
-    "href": "/microsoft-licensing",
-    "description": null,
-    "displayOrder": 80
-  },
-  {
-    "key": "about-us",
-    "parentKey": "company",
-    "menu": "FOOTER",
     "label": "About us",
     "href": "/about",
     "description": null,
     "displayOrder": 10
   },
   {
-    "key": "software",
+    "key": "header:about.enterprise-procurement",
+    "parentKey": "header:about",
+    "menu": "HEADER",
+    "label": "Enterprise procurement",
+    "href": "/enterprise",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:about.contact",
+    "parentKey": "header:about",
+    "menu": "HEADER",
+    "label": "Contact",
+    "href": "/contact",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "footer:software",
     "parentKey": null,
     "menu": "FOOTER",
     "label": "Software",
@@ -6895,8 +7787,8 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 10
   },
   {
-    "key": "software.microsoft-365",
-    "parentKey": "software",
+    "key": "footer:software.microsoft-365",
+    "parentKey": "footer:software",
     "menu": "FOOTER",
     "label": "Microsoft 365",
     "href": "/microsoft-365",
@@ -6904,26 +7796,8 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 10
   },
   {
-    "key": "cloud-advisory",
-    "parentKey": "services",
-    "menu": "FOOTER",
-    "label": "Cloud advisory",
-    "href": "/services/cloud",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "privacy-policy",
-    "parentKey": "legal",
-    "menu": "FOOTER",
-    "label": "Privacy policy",
-    "href": "/privacy",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "software.microsoft-office",
-    "parentKey": "software",
+    "key": "footer:software.microsoft-office",
+    "parentKey": "footer:software",
     "menu": "FOOTER",
     "label": "Microsoft Office",
     "href": "/microsoft-office",
@@ -6931,7 +7805,61 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 20
   },
   {
-    "key": "services",
+    "key": "footer:software.adobe-creative-cloud",
+    "parentKey": "footer:software",
+    "menu": "FOOTER",
+    "label": "Adobe Creative Cloud",
+    "href": "/adobe-creative-cloud",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "footer:software.adobe-acrobat",
+    "parentKey": "footer:software",
+    "menu": "FOOTER",
+    "label": "Adobe Acrobat",
+    "href": "/adobe-acrobat",
+    "description": null,
+    "displayOrder": 40
+  },
+  {
+    "key": "footer:software.autocad",
+    "parentKey": "footer:software",
+    "menu": "FOOTER",
+    "label": "AutoCAD",
+    "href": "/autocad",
+    "description": null,
+    "displayOrder": 50
+  },
+  {
+    "key": "footer:software.revit",
+    "parentKey": "footer:software",
+    "menu": "FOOTER",
+    "label": "Revit",
+    "href": "/revit",
+    "description": null,
+    "displayOrder": 60
+  },
+  {
+    "key": "footer:software.zoho-crm",
+    "parentKey": "footer:software",
+    "menu": "FOOTER",
+    "label": "Zoho CRM",
+    "href": "/zoho-crm",
+    "description": null,
+    "displayOrder": 70
+  },
+  {
+    "key": "footer:software.all-products",
+    "parentKey": "footer:software",
+    "menu": "FOOTER",
+    "label": "All products",
+    "href": "/products",
+    "description": null,
+    "displayOrder": 80
+  },
+  {
+    "key": "footer:services",
     "parentKey": null,
     "menu": "FOOTER",
     "label": "Services",
@@ -6940,8 +7868,17 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 20
   },
   {
-    "key": "services.microsoft-365-deployment",
-    "parentKey": "services",
+    "key": "footer:services.cloud-advisory",
+    "parentKey": "footer:services",
+    "menu": "FOOTER",
+    "label": "Cloud advisory",
+    "href": "/services/cloud",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "footer:services.microsoft-365-deployment",
+    "parentKey": "footer:services",
     "menu": "FOOTER",
     "label": "Microsoft 365 deployment",
     "href": "/services/microsoft-365",
@@ -6949,26 +7886,8 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 20
   },
   {
-    "key": "enterprise-procurement",
-    "parentKey": "company",
-    "menu": "FOOTER",
-    "label": "Enterprise procurement",
-    "href": "/enterprise",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "terms-of-service",
-    "parentKey": "legal",
-    "menu": "FOOTER",
-    "label": "Terms of service",
-    "href": "/terms",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "services.cybersecurity",
-    "parentKey": "services",
+    "key": "footer:services.cybersecurity",
+    "parentKey": "footer:services",
     "menu": "FOOTER",
     "label": "Cybersecurity",
     "href": "/services/cybersecurity",
@@ -6976,34 +7895,43 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 30
   },
   {
-    "key": "cookie-policy",
-    "parentKey": "legal",
+    "key": "footer:services.email-migration",
+    "parentKey": "footer:services",
     "menu": "FOOTER",
-    "label": "Cookie policy",
-    "href": "/cookie-policy",
+    "label": "Email migration",
+    "href": "/services/email-migration",
     "description": null,
-    "displayOrder": 30
+    "displayOrder": 40
   },
   {
-    "key": "software.adobe-creative-cloud",
-    "parentKey": "software",
+    "key": "footer:services.backup-disaster-recovery",
+    "parentKey": "footer:services",
     "menu": "FOOTER",
-    "label": "Adobe Creative Cloud",
-    "href": "/adobe-creative-cloud",
+    "label": "Backup & disaster recovery",
+    "href": "/services/backup-disaster-recovery",
     "description": null,
-    "displayOrder": 30
+    "displayOrder": 50
   },
   {
-    "key": "resources",
-    "parentKey": "company",
+    "key": "footer:services.software-asset-management",
+    "parentKey": "footer:services",
     "menu": "FOOTER",
-    "label": "Resources",
-    "href": "/resources",
+    "label": "Software asset management",
+    "href": "/services/software-asset-management",
     "description": null,
-    "displayOrder": 30
+    "displayOrder": 60
   },
   {
-    "key": "company",
+    "key": "footer:services.all-services",
+    "parentKey": "footer:services",
+    "menu": "FOOTER",
+    "label": "All services",
+    "href": "/services",
+    "description": null,
+    "displayOrder": 70
+  },
+  {
+    "key": "footer:company",
     "parentKey": null,
     "menu": "FOOTER",
     "label": "Company",
@@ -7012,17 +7940,35 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 30
   },
   {
-    "key": "refund-policy",
-    "parentKey": "legal",
+    "key": "footer:company.about-us",
+    "parentKey": "footer:company",
     "menu": "FOOTER",
-    "label": "Refund policy",
-    "href": "/refund-policy",
+    "label": "About us",
+    "href": "/about",
     "description": null,
-    "displayOrder": 40
+    "displayOrder": 10
   },
   {
-    "key": "company.blog",
-    "parentKey": "company",
+    "key": "footer:company.enterprise-procurement",
+    "parentKey": "footer:company",
+    "menu": "FOOTER",
+    "label": "Enterprise procurement",
+    "href": "/enterprise",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "footer:company.resources",
+    "parentKey": "footer:company",
+    "menu": "FOOTER",
+    "label": "Resources",
+    "href": "/resources",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "footer:company.blog",
+    "parentKey": "footer:company",
     "menu": "FOOTER",
     "label": "Blog",
     "href": "/blog",
@@ -7030,25 +7976,25 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 40
   },
   {
-    "key": "software.adobe-acrobat",
-    "parentKey": "software",
+    "key": "footer:company.contact",
+    "parentKey": "footer:company",
     "menu": "FOOTER",
-    "label": "Adobe Acrobat",
-    "href": "/adobe-acrobat",
+    "label": "Contact",
+    "href": "/contact",
     "description": null,
-    "displayOrder": 40
+    "displayOrder": 50
   },
   {
-    "key": "services.email-migration",
-    "parentKey": "services",
+    "key": "footer:company.support",
+    "parentKey": "footer:company",
     "menu": "FOOTER",
-    "label": "Email migration",
-    "href": "/services/email-migration",
+    "label": "Support",
+    "href": "/support",
     "description": null,
-    "displayOrder": 40
+    "displayOrder": 60
   },
   {
-    "key": "legal",
+    "key": "footer:legal",
     "parentKey": null,
     "menu": "FOOTER",
     "label": "Legal",
@@ -7057,88 +8003,43 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 40
   },
   {
-    "key": "software.autocad",
-    "parentKey": "software",
+    "key": "footer:legal.privacy-policy",
+    "parentKey": "footer:legal",
     "menu": "FOOTER",
-    "label": "AutoCAD",
-    "href": "/autocad",
+    "label": "Privacy policy",
+    "href": "/privacy",
     "description": null,
-    "displayOrder": 50
+    "displayOrder": 10
   },
   {
-    "key": "services.backup-disaster-recovery",
-    "parentKey": "services",
+    "key": "footer:legal.terms-of-service",
+    "parentKey": "footer:legal",
     "menu": "FOOTER",
-    "label": "Backup & disaster recovery",
-    "href": "/services/backup-disaster-recovery",
+    "label": "Terms of service",
+    "href": "/terms",
     "description": null,
-    "displayOrder": 50
+    "displayOrder": 20
   },
   {
-    "key": "company.contact",
-    "parentKey": "company",
+    "key": "footer:legal.cookie-policy",
+    "parentKey": "footer:legal",
     "menu": "FOOTER",
-    "label": "Contact",
-    "href": "/contact",
+    "label": "Cookie policy",
+    "href": "/cookie-policy",
     "description": null,
-    "displayOrder": 50
+    "displayOrder": 30
   },
   {
-    "key": "services.software-asset-management",
-    "parentKey": "services",
+    "key": "footer:legal.refund-policy",
+    "parentKey": "footer:legal",
     "menu": "FOOTER",
-    "label": "Software asset management",
-    "href": "/services/software-asset-management",
+    "label": "Refund policy",
+    "href": "/refund-policy",
     "description": null,
-    "displayOrder": 60
+    "displayOrder": 40
   },
   {
-    "key": "company.support",
-    "parentKey": "company",
-    "menu": "FOOTER",
-    "label": "Support",
-    "href": "/support",
-    "description": null,
-    "displayOrder": 60
-  },
-  {
-    "key": "software.revit",
-    "parentKey": "software",
-    "menu": "FOOTER",
-    "label": "Revit",
-    "href": "/revit",
-    "description": null,
-    "displayOrder": 60
-  },
-  {
-    "key": "software.zoho-crm",
-    "parentKey": "software",
-    "menu": "FOOTER",
-    "label": "Zoho CRM",
-    "href": "/zoho-crm",
-    "description": null,
-    "displayOrder": 70
-  },
-  {
-    "key": "services.all-services",
-    "parentKey": "services",
-    "menu": "FOOTER",
-    "label": "All services",
-    "href": "/services",
-    "description": null,
-    "displayOrder": 70
-  },
-  {
-    "key": "software.all-products",
-    "parentKey": "software",
-    "menu": "FOOTER",
-    "label": "All products",
-    "href": "/products",
-    "description": null,
-    "displayOrder": 80
-  },
-  {
-    "key": "enterprise-sales",
+    "key": "utility:enterprise-sales",
     "parentKey": null,
     "menu": "UTILITY",
     "label": "Enterprise Sales",
@@ -7147,7 +8048,7 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 10
   },
   {
-    "key": "support",
+    "key": "utility:support",
     "parentKey": null,
     "menu": "UTILITY",
     "label": "Support",
@@ -7156,7 +8057,7 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 20
   },
   {
-    "key": "track-order",
+    "key": "utility:track-order",
     "parentKey": null,
     "menu": "UTILITY",
     "label": "Track Order",

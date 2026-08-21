@@ -26,27 +26,69 @@ async function main() {
       faqTopic: true,
       brand: { select: { slug: true } },
       sections: {
-        orderBy: { displayOrder: "asc" },
+        // `type` breaks a tie so two blocks sharing a displayOrder do not swap
+        // places between exports and make the seed file churn.
+        orderBy: [{ displayOrder: "asc" }, { type: "asc" }],
         select: { type: true, displayOrder: true, visible: true, data: true },
       },
     },
   });
 
   const nav = await prisma.navigationItem.findMany({
-    orderBy: [{ menu: "asc" }, { displayOrder: "asc" }],
+    // Siblings routinely share a displayOrder, so `label` breaks the tie. Left
+    // ambiguous, the row order came out of the heap and changed between
+    // exports, which made the seed file churn on every run for no reason.
+    orderBy: [{ menu: "asc" }, { displayOrder: "asc" }, { label: "asc" }],
     select: { id: true, menu: true, label: true, href: true, description: true, parentId: true, displayOrder: true },
   });
 
-  // Rewrite cuids as stable, readable keys so the seed file does not churn on
-  // every export and a reviewer can follow the tree.
-  const keyById = new Map<string, string>();
+  /**
+   * Rewrites cuids as stable, readable keys, so the seed file does not carry
+   * ids that change on every fresh install and a reviewer can follow the tree.
+   *
+   * Walked parents-first rather than in row order. Reading the list in order
+   * and looking each parent up as it went silently produced `parentKey: null`
+   * whenever a child happened to sort ahead of its parent — the export
+   * succeeded and a fresh install got a flat menu.
+   */
   const slug = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const childrenOf = new Map<string | null, typeof nav>();
   for (const item of nav) {
-    const parentKey = item.parentId ? keyById.get(item.parentId) : undefined;
-    keyById.set(item.id, `${parentKey ? `${parentKey}.` : ""}${slug(item.label)}`);
+    const list = childrenOf.get(item.parentId) ?? [];
+    list.push(item);
+    childrenOf.set(item.parentId, list);
   }
 
-  const navSeed = nav.map((item) => ({
+  const keyById = new Map<string, string>();
+  const ordered: typeof nav = [];
+  const walk = (parentId: string | null, prefix: string) => {
+    for (const item of childrenOf.get(parentId) ?? []) {
+      // Scoped by menu at the root. Without it a header "Services" and a
+      // footer "Services" both keyed as `services`, the seeder's key -> id map
+      // kept whichever it wrote last, and every child naming that parent
+      // attached to it — a fresh install put the header's submenu under the
+      // footer heading.
+      const key = `${prefix || `${item.menu.toLowerCase()}:`}${slug(item.label)}`;
+      keyById.set(item.id, key);
+      ordered.push(item);
+      walk(item.id, `${key}.`);
+    }
+  };
+  walk(null, "");
+
+  const seen = new Set<string>();
+  for (const key of keyById.values()) {
+    if (seen.has(key)) throw new Error(`navigation key is not unique: ${key}`);
+    seen.add(key);
+  }
+
+  if (ordered.length !== nav.length) {
+    // Only reachable if a row's parent was filtered out or the tree contains a
+    // cycle. Either way the export would be silently incomplete.
+    throw new Error(`navigation tree is not fully connected: ${ordered.length} of ${nav.length} reachable`);
+  }
+
+  const navSeed = ordered.map((item) => ({
     key: keyById.get(item.id)!,
     parentKey: item.parentId ? keyById.get(item.parentId)! : null,
     menu: item.menu,

@@ -94,13 +94,21 @@ async function seedContent() {
   console.log(`Seeding ${navigationSeeds.length} navigation items…`);
   await prisma.navigationItem.deleteMany({});
 
-  // Parents before children, so a child's parentId always resolves.
+  // Parents before children, so a child's parentId always resolves. The export
+  // already emits the tree depth-first; this only guards against a hand-edited
+  // file, and fails loudly rather than silently flattening the menu.
   const idByKey = new Map<string, string>();
   const ordered = [...navigationSeeds].sort(
     (a, b) => a.key.split(".").length - b.key.split(".").length,
   );
 
   for (const item of ordered) {
+    if (item.parentKey && !idByKey.has(item.parentKey)) {
+      throw new Error(`navigation seed "${item.key}" names a parent that does not exist: ${item.parentKey}`);
+    }
+    if (idByKey.has(item.key)) {
+      throw new Error(`navigation seed key is not unique: ${item.key}`);
+    }
     const created = await prisma.navigationItem.create({
       data: {
         menu: item.menu,
