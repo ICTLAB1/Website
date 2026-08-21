@@ -255,6 +255,39 @@ the moment they are saved.
 If you want the repository's seed file to reflect content edited in production,
 run `npm run content:export` against that database and commit the result.
 
+### When a release corrects seeded copy
+
+That "the seed does not run again" is right — it is what stops a redeploy
+overwriting work done in the admin panel. It also means a release that corrects
+*seeded* copy reaches an already-running deployment as new code and old text.
+Wording fixes, removed blocks and rewritten page descriptions all live in rows,
+not in the bundle.
+
+One release so far is in that position: the audit that replaced the ambiguous
+supplier terminology, removed the "Awaiting legal review" notices from the five
+legal documents, dropped the duplicated product grid from the home page, and
+shortened four meta descriptions. To apply it to a deployment that was already
+running before that release:
+
+```bash
+cd /srv/techzoid/deploy
+docker compose -f docker-compose.prod.yml exec app \
+  node scripts/audit/apply-content-fixes.mjs
+docker compose -f docker-compose.prod.yml restart app
+```
+
+**The restart is not optional.** Page content is cached under tags that are
+invalidated when the admin panel writes; a script writing straight to the
+database cannot invalidate anything, so without a restart the old text keeps
+being served until each cache entry ages out — which looks exactly like the
+script having done nothing.
+
+Every step is idempotent and prints what it changed, so running it twice is
+safe, and running it on a database seeded from this release is a no-op that
+says so. It never touches a page you have edited yourself: each change is
+matched against the exact text it expects to replace, and anything that has
+moved on is reported and left alone.
+
 ---
 
 ## Housekeeping
