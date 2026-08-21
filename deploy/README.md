@@ -220,13 +220,26 @@ customers see a certificate warning during the gap.
 
 ### 7a. Reconfigure the server
 
-Edit `.env` and change **three** values, not two:
+Change **three** values in `.env`, not two. Rather than editing by hand, run
+this — each line is a complete command, so nothing breaks if your terminal
+wraps a long paste:
 
+```bash
+cd /srv/techzoid/deploy
+cp .env .env.backup
+grep -vE '^[[:space:]]*(export[[:space:]]+)?(SITE_DOMAIN|SITE_ADDRESS|APP_URL)=' .env.backup > .env
+echo 'SITE_DOMAIN="techzoidtechnologies.com"' >> .env
+echo 'SITE_ADDRESS="techzoidtechnologies.com, www.techzoidtechnologies.com"' >> .env
+echo 'APP_URL="https://techzoidtechnologies.com"' >> .env
+docker compose -f docker-compose.prod.yml config --quiet && echo "ENV IS VALID"
 ```
-SITE_DOMAIN="techzoidtechnologies.com"
-SITE_ADDRESS="techzoidtechnologies.com, www.techzoidtechnologies.com"
-APP_URL="https://techzoidtechnologies.com"
-```
+
+That last line matters. A `.env` Compose cannot parse makes *every* Compose
+command fail, so the stack silently keeps running its previous configuration
+while every command you type appears to do nothing. It has happened once
+already, from a `www.` split across two lines by a terminal wrapping a paste —
+`preflight.sh` now checks for it first and reports it rather than letting it
+surface as twenty unrelated failures.
 
 `SITE_ADDRESS` is the one that is easy to miss and expensive to miss. It is the
 list of names Caddy actually serves and obtains certificates for. Leave it on

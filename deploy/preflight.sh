@@ -223,7 +223,41 @@ fi
 # ────────────────────────────────────────────────────────────────── the stack
 section "The stack"
 
-running() { $COMPOSE ps --status running --services 2>/dev/null | grep -qx "$1"; }
+# Can Compose read .env at all?
+#
+# Checked first, and fatally, because a single malformed line makes every
+# Compose command fail — including the ones this section uses to ask whether the
+# containers are running. The result was a report saying db, app and caddy were
+# all down while `docker ps` showed three healthy containers, and a separate
+# claim that the business details were unset, because the query that reads them
+# also goes through Compose. Every one of those findings was wrong, and not one
+# of them named the actual cause.
+#
+# The real case that produced this: a `www.` split across two lines by a
+# terminal wrapping a long paste, leaving `w.example.com"` orphaned at the top
+# of the file. Compose reported it exactly and nothing else did.
+if ! compose_error="$($COMPOSE config --quiet 2>&1)"; then
+  bad "docker compose cannot read this deployment's configuration" \
+      "${compose_error:-see: $COMPOSE config}"
+  printf '        %s\n' "Every check below depends on Compose, so they would all report failure"
+  printf '        %s\n' "for this one reason. Fix the line named above and run this again."
+  section "Result"
+  printf '  %s%d passed%s, %s%d warnings%s, %s%d failed%s\n' "$G" "$pass" "$Z" "$Y" "$warn" "$Z" "$R" "$fail" "$Z"
+  printf '\n  Stopping here rather than reporting %d misleading failures.\n\n' 20
+  exit 1
+fi
+
+# `docker compose ps -q <service>` rather than `--status running --services`.
+#
+# The latter is not accepted by every Compose 2.x, and when it is rejected the
+# error goes to stderr, the output is empty, and every service reads as not
+# running. Asking for the container id and then asking Docker about its state
+# behaves the same way on every version.
+running() {
+  local id
+  id="$($COMPOSE ps -q "$1" 2>/dev/null | head -n1)"
+  [ -n "$id" ] && [ "$(docker inspect -f '{{.State.Running}}' "$id" 2>/dev/null)" = "true" ]
+}
 for service in db app caddy; do
   if running "$service"; then ok "$service is running"; else bad "$service is not running" "Start it with: $COMPOSE up -d"; fi
 done
