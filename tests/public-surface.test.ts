@@ -96,22 +96,43 @@ async function adminSourceFiles(): Promise<string[]> {
   return (await sourceFiles()).filter(isAdmin);
 }
 
-/** The seed data a fresh install builds its content from. */
-async function seedFiles(): Promise<string[]> {
-  const dir = path.join(process.cwd(), "prisma");
+/**
+ * The seed data a fresh install builds its content from, and the scripts.
+ *
+ * `scripts` is included because two one-shot migration scripts sat there
+ * holding a complete third copy of the site's copy — still saying "Vendors
+ * supplied" and "Awaiting legal review" long after the database and the seed
+ * files had been corrected. Nothing referenced them, and running either would
+ * have put both straight back. They are deleted; this stops the next one.
+ */
+async function contentFiles(): Promise<string[]> {
   const found: string[] = [];
 
   async function walk(current: string) {
     for (const entry of await readdir(current, { withFileTypes: true })) {
       const full = path.join(current, entry.name);
       if (entry.isDirectory()) await walk(full);
-      else if (entry.name.endsWith(".ts")) found.push(full);
+      else if (/\.(?:ts|mjs|md)$/.test(entry.name)) found.push(full);
     }
   }
 
-  await walk(dir);
-  return found;
+  await walk(path.join(process.cwd(), "prisma"));
+  await walk(path.join(process.cwd(), "scripts"));
+  return found.filter((file) => !SEARCHES_FOR_THE_WORD.has(path.basename(file)));
 }
+
+/**
+ * The files whose *job* is to find and replace the word, which therefore have
+ * to contain it. Listed by name rather than by directory so that adding a new
+ * script to `scripts/audit` does not silently exempt it.
+ */
+const SEARCHES_FOR_THE_WORD = new Set([
+  "fix-terminology.mjs",
+  "fix-terminology-catalogue.mjs",
+  "fix-terminology-pagemeta.mjs",
+  "crawl.mjs",
+  "README.md",
+]);
 
 describe("public surfaces", () => {
   it("finds source files to check", async () => {
@@ -179,10 +200,11 @@ describe("public surfaces", () => {
      */
     const offenders: string[] = [];
 
-    // The seed data is checked alongside the source. Fixing the database alone
-    // was not enough: a fresh deployment builds its content from these files,
-    // so the old wording would have come straight back on the next install.
-    for (const file of [...(await sourceFiles()), ...(await seedFiles())]) {
+    // The seed data and the scripts are checked alongside the source. Fixing
+    // the database alone was not enough: a fresh deployment builds its content
+    // from those files, so the old wording would have come straight back on the
+    // next install.
+    for (const file of [...(await sourceFiles()), ...(await contentFiles())]) {
       const source = await readFile(file, "utf8");
       for (const [index, line] of source.split("\n").entries()) {
         if (/vendor/i.test(line)) {

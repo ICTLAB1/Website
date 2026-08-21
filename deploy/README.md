@@ -118,7 +118,7 @@ Then open `https://new.techzoidtechnologies.com`.
 
 Work through this on the real subdomain, not on a laptop:
 
-- [ ] The home page, catalogue, a product page, and a vendor page.
+- [ ] The home page, catalogue, a product page, and a brand page.
 - [ ] Submit an enquiry as a customer. It should arrive by email — if SMTP is
       unset it goes to the container log instead, which tells you SMTP is unset.
 - [ ] Sign in at `/admin` with the credentials from `.env`. Change the password.

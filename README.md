@@ -1,7 +1,7 @@
 # Enterprise Technology Marketplace
 
 A B2B marketplace for enterprise software licensing, cloud and IT solutions —
-catalogue, multi-vendor enquiry basket, quotation workflow, direct purchasing,
+catalogue, multi-brand enquiry basket, quotation workflow, direct purchasing,
 order fulfilment, customer account area and an administrative back office.
 
 The full commercial chain is implemented end to end: an enquiry becomes a
@@ -48,7 +48,7 @@ cp .env.example .env
 
 # 3. Schema and sample catalogue
 npm run db:migrate
-npm run db:seed          # 8 vendors, 49 products, 75 SKUs, 13 services, 8 articles
+npm run db:seed          # 8 brands, 49 products, 75 SKUs, 13 services, 8 articles
 
 # 4. Run
 npm run dev              # http://localhost:3000
@@ -428,9 +428,9 @@ Two maintenance functions are safe to call from a scheduled job:
 ## Content and trademarks
 
 Catalogue copy, service descriptions and articles in this repository were
-written for this application. Vendor and product names are used descriptively to
-identify the software being resold; no vendor marketing copy, imagery or logo
-asset is reproduced, and vendor identity is rendered as styled type rather than
+written for this application. Brand and product names are used descriptively to
+identify the software being resold; no publisher marketing copy, imagery or logo
+asset is reproduced, and brand identity is rendered as styled type rather than
 trademarked artwork.
 
 Catalogue prices in the seed data are **indicative sample values** for

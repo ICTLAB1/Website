@@ -18,7 +18,7 @@ const check = (name, condition, detail = "") =>
 
   // Drill into Products, then into the Microsoft column.
   await drawer.getByRole("button", { name: "Products" }).click();
-  check("drill-down shows vendor columns", await drawer.getByRole("button", { name: "Microsoft" }).isVisible());
+  check("drill-down shows brand columns", await drawer.getByRole("button", { name: "Microsoft" }).isVisible());
   await drawer.getByRole("button", { name: "Microsoft" }).click();
   check("second level lists products", await drawer.getByRole("link", { name: "Microsoft 365", exact: true }).isVisible());
 
