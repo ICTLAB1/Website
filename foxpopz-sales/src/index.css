@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --color-bg: #F7F5EE;
+  --color-surface: #FFFFFF;
+  --color-ink: #1C2B22;
+  --color-ink-soft: #5B6A5F;
+  --color-line: #E4DFD1;
+
+  --color-brand: #1F4B3F;
+  --color-brand-dark: #143028;
+  --color-brand-soft: #E7EFEA;
+
+  --color-gold: #D9A441;
+  --color-gold-dark: #B6822B;
+  --color-gold-soft: #FBF0D9;
+
+  --color-owe: #B3432B;
+  --color-owe-soft: #F7E6E0;
+  --color-paid: #2C6E49;
+  --color-paid-soft: #E5F0E8;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ledger-style texture for balance cards, evoking a traditional bahi-khata */
+.khata-lines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 27px,
+    var(--color-line) 28px
+  );
+}
+
+input, select, textarea {
+  font-family: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 4px;
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
