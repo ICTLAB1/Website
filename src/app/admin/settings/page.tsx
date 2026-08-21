@@ -5,6 +5,8 @@ import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { requireAdmin } from "@/lib/auth/guards";
 import { getSiteConfig, getSiteIdentity, getStoredSettings } from "@/lib/site-config";
 import { SettingsForm } from "@/components/admin/settings-form";
+import { PaymentSettingsForm } from "@/components/admin/payment-settings-form";
+import { getPaymentSettingsView } from "@/lib/payments/config";
 import { getUnconfiguredIdentityKeys } from "@/lib/admin/config-status";
 import { isMailConfigured } from "@/lib/mail";
 import { listAuditLog } from "@/lib/queries/admin";
@@ -27,11 +29,12 @@ export const metadata: Metadata = { title: "Settings" };
  */
 export default async function AdminSettingsPage() {
   await requireAdmin();
-  const [config, stored, missing, audit] = await Promise.all([
+  const [config, stored, missing, audit, payments] = await Promise.all([
     getSiteConfig(),
     getStoredSettings(),
     getUnconfiguredIdentityKeys(),
     listAuditLog(25),
+    getPaymentSettingsView(),
   ]);
   const identity = getSiteIdentity();
   const mailReady = isMailConfigured();
@@ -82,6 +85,13 @@ export default async function AdminSettingsPage() {
         <h2 className="mb-4 text-[1.05rem]">Business identity</h2>
         <div className="max-w-2xl">
           <SettingsForm stored={stored} effective={config} />
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-4 text-[1.05rem]">Payments</h2>
+        <div className="max-w-2xl">
+          <PaymentSettingsForm settings={payments} />
         </div>
       </section>
 

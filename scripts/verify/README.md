@@ -15,6 +15,7 @@ because they need a server and a browser.
 | `faq.mjs`           | The FAQ accordion: collapsed on arrival, the whole row clickable, a plus that becomes a minus rather than a cross, expanded state in the accessibility tree, a focus indicator that is not the form-input ring, and an animated open. |
 | `lifecycle.mjs`     | The full commercial chain: enquiry → quotation → discount → issue → accept → order → fulfilment → licences and renewals, across a customer and a staff session. |
 | `settings-editor.mjs` | The business-identity editor: a saved grievance officer or address reaches the public site with no redeploy, a malformed GSTIN or email is refused with a field-level message, and clearing a field hands it back to the environment rather than blanking it. |
+| `payment-settings.mjs` | The payment credential form: enabling without keys is refused, a malformed key id is refused, and — the reason this suite exists — neither secret ever reaches the browser or the database in plain text. Also that a blank field leaves a stored secret alone, since the form can never show one. |
 | `crawl.mjs`         | Every public page loads without a console error, every internal link resolves, and no page leaks a configuration warning, an environment variable name, draft text, or the reversed supplier terminology. |
 | `seo.mjs`           | Title, meta description, canonical, `og:title` and exactly one `h1` on every page in the sitemap, with no duplicate titles or descriptions and no sitemap entry marked `noindex`. |
 

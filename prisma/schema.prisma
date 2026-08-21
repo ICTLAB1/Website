@@ -200,6 +200,7 @@ model User {
   auditLogs     AuditLog[]
   authoredPosts BlogPost[]
   savedSettings SiteSettings[]
+  savedPayments PaymentSettings[]
 
   @@index([companyId])
   @@index([role])
@@ -929,4 +930,43 @@ model SiteSettings {
   /// or a restore does not have to invent an author.
   updatedById String?
   updatedBy   User?   @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
+/// Which payment gateway is configured, and its credentials.
+///
+/// One row, id `singleton`, like `SiteSettings` — and separate from it on
+/// purpose. This holds credentials that can move money; that holds a telephone
+/// number and an office address. Keeping them apart means the payment
+/// credentials are not read on every page render, and a mistake in the
+/// business-identity form cannot touch them.
+///
+/// The two secrets are encrypted at rest by `lib/secret-box.ts` and are never
+/// sent back to a browser. The key id is not a secret — Razorpay Checkout needs
+/// it in the page — so it is stored and displayed in the clear.
+model PaymentSettings {
+  id String @id @default("singleton")
+
+  /// Off by default. Turning it on with no keys does nothing: the payment
+  /// option only appears when the gateway is both enabled and configured.
+  enabled Boolean @default(false)
+
+  /// TEST or LIVE. Stored rather than inferred from the key prefix, so that
+  /// pointing at live keys is a deliberate act with its own audit entry.
+  mode PaymentMode @default(TEST)
+
+  razorpayKeyId           String?
+  /// AES-256-GCM, keyed from AUTH_SECRET. Never rendered.
+  razorpayKeySecret       String?
+  /// Also encrypted. Used to authenticate Razorpay's webhook calls, which is
+  /// the only trustworthy signal that a payment was actually captured.
+  razorpayWebhookSecret   String?
+
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
+enum PaymentMode {
+  TEST
+  LIVE
 }
