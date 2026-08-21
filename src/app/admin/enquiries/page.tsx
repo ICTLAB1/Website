@@ -42,7 +42,7 @@ export default async function AdminEnquiriesPage({ searchParams }: PageProps) {
             href="/admin/enquiries"
             className={cn(
               "rounded-[--radius-md] px-3 py-2 text-[13px]",
-              !params.status ? "bg-navy-900 font-medium text-white" : "text-ink-600 hover:bg-white",
+              !params.status ? "bg-graphite-900 font-medium text-white" : "text-ink-600 hover:bg-white",
             )}
           >
             All
@@ -54,7 +54,7 @@ export default async function AdminEnquiriesPage({ searchParams }: PageProps) {
               className={cn(
                 "rounded-[--radius-md] px-3 py-2 text-[13px]",
                 params.status === status
-                  ? "bg-navy-900 font-medium text-white"
+                  ? "bg-graphite-900 font-medium text-white"
                   : "text-ink-600 hover:bg-white",
               )}
             >
@@ -98,7 +98,7 @@ export default async function AdminEnquiriesPage({ searchParams }: PageProps) {
                         {formatDate(enquiry.createdAt)}
                       </span>
                     </Td>
-                    <Td className="font-medium text-navy-900">{enquiry.companyName}</Td>
+                    <Td className="font-medium text-graphite-900">{enquiry.companyName}</Td>
                     <Td className="text-[13px]">
                       {enquiry.contactName}
                       <span className="mt-0.5 block text-[12px] text-ink-500">

@@ -36,7 +36,7 @@ export default async function SupportPage() {
 
       <div className="mb-14 grid gap-4 sm:grid-cols-3">
         <div className="rounded-[--radius-lg] border border-line bg-white p-5">
-          <h2 className="text-[15px] font-semibold text-navy-900">Raise a ticket</h2>
+          <h2 className="text-[15px] font-semibold text-graphite-900">Raise a ticket</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             {user
               ? "Raise a ticket against your account so it appears in your support history."
@@ -48,7 +48,7 @@ export default async function SupportPage() {
         </div>
 
         <div className="rounded-[--radius-lg] border border-line bg-white p-5">
-          <h2 className="text-[15px] font-semibold text-navy-900">Track an order</h2>
+          <h2 className="text-[15px] font-semibold text-graphite-900">Track an order</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             Check the status of an order or enquiry using its reference.
           </p>
@@ -58,7 +58,7 @@ export default async function SupportPage() {
         </div>
 
         <div className="rounded-[--radius-lg] border border-line bg-white p-5">
-          <h2 className="text-[15px] font-semibold text-navy-900">Contact the team</h2>
+          <h2 className="text-[15px] font-semibold text-graphite-900">Contact the team</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             {config.email.support
               ? "Email the service desk directly."

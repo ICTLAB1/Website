@@ -31,7 +31,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
           {saving ? <Badge tone="success">{saving}% off</Badge> : null}
         </div>
 
-        <h3 className="mt-2 text-[15px] font-semibold leading-snug text-navy-900">
+        <h3 className="mt-2 text-[15px] font-semibold leading-snug text-graphite-900">
           <Link href={`/products/${product.slug}`} className="hover:text-accent-700">
             {/* Stretching the link would swallow the buttons below, so the
                 anchor stays on the title only. */}
@@ -62,7 +62,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
 
         <div className="mt-auto pt-5">
           {quoteOnly ? (
-            <p className="text-[15px] font-semibold text-navy-900">
+            <p className="text-[15px] font-semibold text-graphite-900">
               Price on enquiry
               <span className="mt-0.5 block text-[12px] font-normal text-ink-500">
                 Quoted against your configuration
@@ -70,7 +70,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
             </p>
           ) : (
             <p className="flex flex-wrap items-baseline gap-2">
-              <span className="text-[19px] font-semibold text-navy-900">
+              <span className="text-[19px] font-semibold text-graphite-900">
                 {formatMoney(price, variant!.currency)}
               </span>
               {saving ? (
@@ -101,7 +101,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
       <div className="flex gap-2 border-t border-line p-3">
         <Link
           href={`/products/${product.slug}`}
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-[--radius-md] border border-line-strong text-[13px] font-medium text-navy-900 hover:border-navy-400 hover:bg-navy-50"
+          className="inline-flex h-10 flex-1 items-center justify-center rounded-[--radius-md] border border-line-strong text-[13px] font-medium text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50"
         >
           View details
         </Link>

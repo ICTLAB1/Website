@@ -91,7 +91,7 @@ export default async function LandingRoute({ params }: PageProps) {
       </div>
 
       {/* Hero */}
-      <section className="border-y border-line bg-navy-900">
+      <section className="border-y border-line bg-graphite-900">
         <div className="container-page py-14 lg:py-18">
           <div className="max-w-3xl">
             {page.hero.eyebrow ? (
@@ -102,7 +102,7 @@ export default async function LandingRoute({ params }: PageProps) {
             <h1 className="text-3xl leading-[1.15] text-white sm:text-[2.6rem]">
               {page.hero.headline}
             </h1>
-            <p className="mt-5 text-[16px] leading-relaxed text-navy-200 lg:text-[17px]">
+            <p className="mt-5 text-[16px] leading-relaxed text-graphite-200 lg:text-[17px]">
               {page.hero.subheadline}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -148,7 +148,7 @@ export default async function LandingRoute({ params }: PageProps) {
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {section.cards.map((card) => (
                   <div key={card.title} className="rounded-[--radius-lg] border border-line bg-white p-5">
-                    <h3 className="text-[15px] font-semibold text-navy-900">{card.title}</h3>
+                    <h3 className="text-[15px] font-semibold text-graphite-900">{card.title}</h3>
                     <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{card.body}</p>
                   </div>
                 ))}
@@ -182,7 +182,7 @@ export default async function LandingRoute({ params }: PageProps) {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {page.plans.items.map((plan) => (
                 <div key={plan.name} className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5">
-                  <h3 className="text-[16px] font-semibold text-navy-900">{plan.name}</h3>
+                  <h3 className="text-[16px] font-semibold text-graphite-900">{plan.name}</h3>
                   <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{plan.summary}</p>
                   <ul className="mt-4 flex-1 space-y-2">
                     {plan.points.map((point) => (
@@ -199,7 +199,7 @@ export default async function LandingRoute({ params }: PageProps) {
                   {plan.productSlug ? (
                     <Link
                       href={`/products/${plan.productSlug}`}
-                      className="mt-5 inline-flex h-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-[13px] font-medium text-navy-900 hover:border-navy-400 hover:bg-navy-50"
+                      className="mt-5 inline-flex h-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-[13px] font-medium text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50"
                     >
                       View pricing
                     </Link>
@@ -240,10 +240,10 @@ export default async function LandingRoute({ params }: PageProps) {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="group flex h-full items-start justify-between gap-3 rounded-[--radius-lg] border border-line bg-white p-4 transition-colors hover:border-navy-300"
+                    className="group flex h-full items-start justify-between gap-3 rounded-[--radius-lg] border border-line bg-white p-4 transition-colors hover:border-graphite-300"
                   >
                     <span>
-                      <span className="block text-[14px] font-medium text-navy-900 group-hover:text-accent-700">
+                      <span className="block text-[14px] font-medium text-graphite-900 group-hover:text-accent-700">
                         {link.label}
                       </span>
                       {link.description ? (
@@ -263,9 +263,9 @@ export default async function LandingRoute({ params }: PageProps) {
         ) : null}
 
         {page.cta ? (
-          <section className="mt-4 rounded-[--radius-lg] bg-navy-900 p-8 sm:p-10">
+          <section className="mt-4 rounded-[--radius-lg] bg-graphite-900 p-8 sm:p-10">
             <h2 className="text-[1.65rem] text-white">{page.cta.heading}</h2>
-            <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-navy-200">
+            <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-graphite-200">
               {page.cta.body}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">

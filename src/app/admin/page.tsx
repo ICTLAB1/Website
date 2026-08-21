@@ -64,12 +64,12 @@ export default async function AdminDashboardPage() {
             <Link
               key={tile.label}
               href={tile.href}
-              className={`rounded-[--radius-lg] border bg-white p-5 transition-colors hover:border-navy-300 ${
+              className={`rounded-[--radius-lg] border bg-white p-5 transition-colors hover:border-graphite-300 ${
                 tile.highlight ? "border-accent-600" : "border-line"
               }`}
             >
               <p className="text-[13px] text-ink-500">{tile.label}</p>
-              <p className="mt-1.5 text-[22px] font-semibold leading-tight text-navy-900 tabular-nums">
+              <p className="mt-1.5 text-[22px] font-semibold leading-tight text-graphite-900 tabular-nums">
                 {tile.value}
               </p>
             </Link>
@@ -114,7 +114,7 @@ export default async function AdminDashboardPage() {
                           {formatDate(enquiry.createdAt)}
                         </span>
                       </Td>
-                      <Td className="font-medium text-navy-900">{enquiry.companyName}</Td>
+                      <Td className="font-medium text-graphite-900">{enquiry.companyName}</Td>
                       <Td className="tabular-nums">{enquiry._count.items}</Td>
                       <Td>
                         <StatusBadge status={enquiry.status} />
@@ -147,7 +147,7 @@ export default async function AdminDashboardPage() {
                 <tbody>
                   {metrics.popularProducts.map((product) => (
                     <Tr key={product.sku}>
-                      <Td className="font-medium text-navy-900">{product.productName}</Td>
+                      <Td className="font-medium text-graphite-900">{product.productName}</Td>
                       <Td className="font-mono text-[12px]">{product.sku}</Td>
                       <Td className="tabular-nums">{product._count._all}</Td>
                       <Td className="tabular-nums">{product._sum.quantity ?? 0}</Td>

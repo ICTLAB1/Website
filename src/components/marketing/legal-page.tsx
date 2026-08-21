@@ -86,7 +86,7 @@ export function LegalPage({
         </div>
 
         <div className="mt-12 rounded-[--radius-lg] border border-line bg-surface-muted p-5">
-          <h2 className="text-[14px] font-semibold text-navy-900">Questions about this document</h2>
+          <h2 className="text-[14px] font-semibold text-graphite-900">Questions about this document</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             {config.email.support ? (
               <>

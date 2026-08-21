@@ -6,6 +6,7 @@ import { documentTotals, priceLine } from "@/lib/pricing";
 import { resolveVariantsBySku } from "@/lib/queries/catalogue";
 import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
+import { getBankingDetails } from "@/lib/banking-config";
 import { formatMoney } from "@/lib/money";
 import { logger } from "@/lib/logger";
 
@@ -39,6 +40,7 @@ export type BillingDetails = {
 
 async function notifyOrder(reference: string, billing: BillingDetails, totalMinor: number) {
   const config = getSiteConfig();
+  const banking = getBankingDetails();
 
   const internal = salesInbox();
   if (internal) {
@@ -60,6 +62,36 @@ async function notifyOrder(reference: string, billing: BillingDetails, totalMino
     });
   }
 
+  // Payment instructions are appended only when every bank field is
+  // configured, and only into this email to the customer who placed this
+  // specific order - never onto any public page or API response.
+  const paymentTextLines = banking
+    ? [
+        "",
+        "Payment against the GST invoice can be made by bank transfer to:",
+        `  Account name:   ${banking.accountName}`,
+        `  Bank:           ${banking.bankName}, ${banking.branch}`,
+        `  Account number: ${banking.accountNumber}`,
+        `  IFSC:           ${banking.ifsc}`,
+        `  Account type:   ${banking.accountType}`,
+        banking.upiId ? `  UPI:            ${banking.upiId}` : null,
+        "Please reference your order number with the payment.",
+      ].filter((line) => line !== null)
+    : [];
+
+  const paymentHtmlBlock = banking
+    ? `<p>Payment against the GST invoice can be made by bank transfer:</p>
+       <table style="border-collapse:collapse;font-size:14px">
+         <tr><td style="padding:2px 12px 2px 0;color:#555">Account name</td><td>${escapeHtml(banking.accountName)}</td></tr>
+         <tr><td style="padding:2px 12px 2px 0;color:#555">Bank</td><td>${escapeHtml(banking.bankName)}, ${escapeHtml(banking.branch)}</td></tr>
+         <tr><td style="padding:2px 12px 2px 0;color:#555">Account number</td><td>${escapeHtml(banking.accountNumber)}</td></tr>
+         <tr><td style="padding:2px 12px 2px 0;color:#555">IFSC</td><td>${escapeHtml(banking.ifsc)}</td></tr>
+         <tr><td style="padding:2px 12px 2px 0;color:#555">Account type</td><td>${escapeHtml(banking.accountType)}</td></tr>
+         ${banking.upiId ? `<tr><td style="padding:2px 12px 2px 0;color:#555">UPI</td><td>${escapeHtml(banking.upiId)}</td></tr>` : ""}
+       </table>
+       <p>Please reference your order number with the payment.</p>`
+    : "";
+
   void sendMail({
     to: billing.email,
     subject: `We have received your order (${reference})`,
@@ -71,6 +103,7 @@ async function notifyOrder(reference: string, billing: BillingDetails, totalMino
       "",
       "Our team is confirming availability and will be in touch with provisioning",
       "details and a GST invoice. Please quote your reference in any follow-up.",
+      ...paymentTextLines,
       "",
       config.tradingName,
     ].join("\n"),
@@ -79,6 +112,7 @@ async function notifyOrder(reference: string, billing: BillingDetails, totalMino
       `<p>Thank you. Your order reference is <strong>${escapeHtml(reference)}</strong>.</p>`,
       `<p>Order total including GST: <strong>${escapeHtml(formatMoney(totalMinor))}</strong></p>`,
       "<p>Our team is confirming availability and will be in touch with provisioning details and a GST invoice.</p>",
+      paymentHtmlBlock,
       `<p>${escapeHtml(config.tradingName)}</p>`,
     ].join(""),
   });

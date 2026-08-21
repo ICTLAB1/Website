@@ -39,7 +39,7 @@ export default async function AccountProfilePage() {
       </section>
 
       <section className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
-        <h3 className="text-[15px] font-semibold text-navy-900">Account details</h3>
+        <h3 className="text-[15px] font-semibold text-graphite-900">Account details</h3>
         <dl className="mt-4 space-y-2.5 text-[13px]">
           <div className="flex gap-3">
             <dt className="w-32 shrink-0 text-ink-500">Email</dt>

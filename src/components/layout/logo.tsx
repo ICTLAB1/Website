@@ -24,7 +24,7 @@ export function Logo({
         aria-hidden="true"
         className={cn(
           "grid h-8 w-8 shrink-0 place-items-center rounded-[--radius-sm] text-[15px] font-bold",
-          onDark ? "bg-white text-navy-900" : "bg-navy-900 text-white",
+          onDark ? "bg-white text-graphite-900" : "bg-graphite-900 text-white",
         )}
       >
         {name.trim().charAt(0).toUpperCase() || "I"}
@@ -33,7 +33,7 @@ export function Logo({
         <span
           className={cn(
             "truncate text-[17px] font-semibold tracking-tight",
-            onDark ? "text-white" : "text-navy-900",
+            onDark ? "text-white" : "text-graphite-900",
           )}
         >
           {name}
@@ -43,7 +43,7 @@ export function Logo({
             // Hidden on the narrowest screens: decorative, and it competes
             // with the header actions for horizontal space.
             "mt-0.5 hidden truncate text-[10px] font-medium uppercase tracking-[0.14em] min-[420px]:block",
-            onDark ? "text-navy-200" : "text-ink-500",
+            onDark ? "text-graphite-200" : "text-ink-500",
           )}
         >
           Enterprise Technology

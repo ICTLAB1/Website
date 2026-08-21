@@ -97,7 +97,7 @@ export function BuyNowForm({
         ) : null}
 
         <section className="rounded-[--radius-lg] border border-line bg-white p-5">
-          <h2 className="text-[15px] font-semibold text-navy-900">{productName}</h2>
+          <h2 className="text-[15px] font-semibold text-graphite-900">{productName}</h2>
           <p className="mt-1 text-[13px] text-ink-600">{variantName}</p>
           <p className="mt-1 font-mono text-[11px] text-ink-500">{sku}</p>
 
@@ -129,7 +129,7 @@ export function BuyNowForm({
                 <dt className="text-ink-500">GST ({gstRatePercent}%)</dt>
                 <dd className="tabular-nums">{formatMoney(gst, currency)}</dd>
               </div>
-              <div className="mt-1 flex justify-between gap-3 border-t border-line pt-1 font-semibold text-navy-900">
+              <div className="mt-1 flex justify-between gap-3 border-t border-line pt-1 font-semibold text-graphite-900">
                 <dt>Total</dt>
                 <dd className="tabular-nums">{formatMoney(net + gst, currency)}</dd>
               </div>

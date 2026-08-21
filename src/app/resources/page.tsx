@@ -73,9 +73,9 @@ export default async function ResourcesPage() {
             <Link
               key={guide.href}
               href={guide.href}
-              className="group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-navy-300"
+              className="group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
             >
-              <h3 className="text-[15px] font-semibold text-navy-900 group-hover:text-accent-700">
+              <h3 className="text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
                 {guide.title}
               </h3>
               <p className="mt-2 flex-1 text-[13px] leading-relaxed text-ink-600">{guide.body}</p>
@@ -99,12 +99,12 @@ export default async function ResourcesPage() {
           {posts.map((post) => (
             <article
               key={post.slug}
-              className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-navy-300"
+              className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
             >
               <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700">
                 {post.category}
               </p>
-              <h3 className="mt-2 text-[15px] font-semibold leading-snug text-navy-900">
+              <h3 className="mt-2 text-[15px] font-semibold leading-snug text-graphite-900">
                 <Link href={`/blog/${post.slug}`} className="hover:text-accent-700">
                   {post.title}
                 </Link>
@@ -127,7 +127,7 @@ export default async function ResourcesPage() {
             <li key={category.name}>
               <Link
                 href={`/blog?category=${encodeURIComponent(category.name)}`}
-                className="inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-[13px] font-medium text-ink-700 hover:border-navy-300 hover:text-navy-900"
+                className="inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-[13px] font-medium text-ink-700 hover:border-graphite-300 hover:text-graphite-900"
               >
                 {category.name}
                 <span className="text-ink-500">{category.count}</span>

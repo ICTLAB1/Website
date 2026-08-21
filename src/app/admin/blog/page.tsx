@@ -55,7 +55,7 @@ export default async function AdminBlogPage() {
               {posts.map((post) => (
                 <Tr key={post.id}>
                   <Td>
-                    <span className="font-medium text-navy-900">{post.title}</span>
+                    <span className="font-medium text-graphite-900">{post.title}</span>
                     <Link
                       href={`/blog/${post.slug}`}
                       className="mt-0.5 block font-mono text-[11px] text-accent-700 hover:underline"

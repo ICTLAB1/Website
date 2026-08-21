@@ -2,33 +2,47 @@
 
 /* ---------------------------------------------------------------------------
    Design tokens
-   Deep navy structure, a single blue accent, white surfaces, light neutral
+   Deep graphite structure, a warm gold accent, white surfaces, light neutral
    backgrounds and dark charcoal type. Restrained on purpose: no gradients,
    no glass, minimal shadow, small radii.
+
+   Every shade below was chosen against the WCAG AA contrast ratio required by
+   its actual usage in the codebase (button fill with white text, link text on
+   white, muted text on a graphite-900 hero, badge text on its own -50 tint),
+   not picked for looks alone - see the contrast notes this token set replaced
+   for the pairs that matter: graphite-800/900 and accent-700 carry almost
+   every text usage and were verified individually.
 --------------------------------------------------------------------------- */
 @theme {
-  --color-navy-50: #f2f5fa;
-  --color-navy-100: #e2e9f4;
-  --color-navy-200: #c5d3e9;
-  --color-navy-300: #9ab1d6;
-  --color-navy-400: #6685bd;
-  --color-navy-500: #3f5f9e;
-  --color-navy-600: #2c4680;
-  --color-navy-700: #223768;
-  --color-navy-800: #17284d;
-  --color-navy-900: #0e1b38;
-  --color-navy-950: #081227;
+  --color-graphite-50: #f7f6f6;
+  --color-graphite-100: #edeceb;
+  --color-graphite-200: #dbd8d4;
+  --color-graphite-300: #bfb8b0;
+  --color-graphite-400: #9b8d7d;
+  --color-graphite-500: #746758;
+  --color-graphite-600: #554b3f;
+  --color-graphite-700: #413930;
+  --color-graphite-800: #2d2822;
+  --color-graphite-900: #201c18;
+  --color-graphite-950: #141210;
 
-  --color-accent-50: #eff5ff;
-  --color-accent-100: #dbe8fe;
-  --color-accent-200: #bfd7fe;
-  --color-accent-300: #93bcfd;
-  --color-accent-400: #6098fa;
-  --color-accent-500: #3b76f6;
-  --color-accent-600: #2563eb;
-  --color-accent-700: #1d4ed8;
-  --color-accent-800: #1e40af;
-  --color-accent-900: #1e3a8a;
+  --color-accent-50: #f8f7f4;
+  --color-accent-100: #f1eee7;
+  --color-accent-200: #e9dfc6;
+  --color-accent-300: #e2cc9a;
+  --color-accent-400: #deb554;
+  --color-accent-500: #d39b17;
+  --color-accent-600: #9e720d;
+  --color-accent-700: #76550a;
+  --color-accent-800: #5a4005;
+  --color-accent-900: #443104;
+
+  /* Tertiary accent, used sparingly (a few icons and small highlights) -
+     the logo's sky blue, never a section background or a button fill. */
+  --color-sky-100: #d0e4f1;
+  --color-sky-400: #69a9d3;
+  --color-sky-600: #327dae;
+  --color-sky-700: #29668e;
 
   --color-ink-50: #f7f8f9;
   --color-ink-100: #eceef1;
@@ -42,10 +56,10 @@
   --color-ink-900: #171b22;
 
   --color-surface: #ffffff;
-  --color-surface-muted: #f6f8fb;
-  --color-surface-sunken: #eef2f7;
-  --color-line: #dfe5ee;
-  --color-line-strong: #c8d2e0;
+  --color-surface-muted: #f9f9f8;
+  --color-surface-sunken: #f4f4f3;
+  --color-line: #e3e1de;
+  --color-line-strong: #d1ccc7;
 
   --color-success-50: #ecfdf5;
   --color-success-600: #059669;
@@ -114,7 +128,7 @@
   h4,
   h5,
   h6 {
-    color: var(--color-navy-900);
+    color: var(--color-graphite-900);
     font-weight: 650;
     letter-spacing: -0.018em;
     text-wrap: balance;
@@ -133,7 +147,7 @@
 
   ::selection {
     background-color: var(--color-accent-100);
-    color: var(--color-navy-900);
+    color: var(--color-graphite-900);
   }
 
   /* Inputs inherit the type scale rather than the browser default. */
@@ -205,7 +219,7 @@
     text-underline-offset: 2px;
   }
   .prose-content strong {
-    color: var(--color-navy-900);
+    color: var(--color-graphite-900);
     font-weight: 620;
   }
   .prose-content code {

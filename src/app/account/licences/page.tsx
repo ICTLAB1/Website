@@ -42,7 +42,7 @@ export default async function AccountLicencesPage() {
           <tbody>
             {licences.map((licence) => (
               <Tr key={licence.reference}>
-                <Td className="font-medium text-navy-900">{licence.productName}</Td>
+                <Td className="font-medium text-graphite-900">{licence.productName}</Td>
                 <Td className="font-mono text-[12px]">{licence.sku}</Td>
                 <Td className="tabular-nums">{licence.seats}</Td>
                 <Td>{formatDate(licence.startsAt)}</Td>

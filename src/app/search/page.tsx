@@ -29,7 +29,7 @@ function ResultGroup({ heading, results }: { heading: string; results: SearchRes
   if (results.length === 0) return null;
   return (
     <section className="mb-10">
-      <h2 className="mb-4 flex items-baseline gap-2 text-[15px] font-semibold text-navy-900">
+      <h2 className="mb-4 flex items-baseline gap-2 text-[15px] font-semibold text-graphite-900">
         {heading}
         <span className="text-[13px] font-normal text-ink-500">({results.length})</span>
       </h2>
@@ -38,7 +38,7 @@ function ResultGroup({ heading, results }: { heading: string; results: SearchRes
           <li key={result.href}>
             <Link href={result.href} className="flex items-start gap-4 px-5 py-4 hover:bg-surface-muted">
               <span className="min-w-0 flex-1">
-                <span className="block text-[15px] font-medium text-navy-900">{result.title}</span>
+                <span className="block text-[15px] font-medium text-graphite-900">{result.title}</span>
                 <span className="clamp-2 mt-1 block text-[13px] leading-relaxed text-ink-600">
                   {result.subtitle}
                 </span>
@@ -102,8 +102,8 @@ export default async function SearchPage({ searchParams }: PageProps) {
       ) : (
         <>
           <p className="mb-8 text-[13px] text-ink-600" aria-live="polite">
-            <strong className="font-semibold text-navy-900">{results.total}</strong> results for{" "}
-            <strong className="font-semibold text-navy-900">“{term}”</strong>
+            <strong className="font-semibold text-graphite-900">{results.total}</strong> results for{" "}
+            <strong className="font-semibold text-graphite-900">“{term}”</strong>
           </p>
           <ResultGroup heading="Products" results={results.products} />
           <ResultGroup heading="Vendors" results={results.brands} />

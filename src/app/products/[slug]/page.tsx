@@ -140,7 +140,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               >
                 {product.brand.name.charAt(0)}
               </span>
-              <p className="mt-4 text-[15px] font-semibold text-navy-900">{product.name}</p>
+              <p className="mt-4 text-[15px] font-semibold text-graphite-900">{product.name}</p>
               <p className="mt-1 text-[13px] text-ink-500">{product.brand.name}</p>
             </div>
           </div>
@@ -195,7 +195,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                         </p>
                       )}
                       <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
-                        <h3 className="text-[14px] font-semibold text-navy-900">
+                        <h3 className="text-[14px] font-semibold text-graphite-900">
                           Available licence options
                         </h3>
                         <ul className="mt-3 space-y-2.5">
@@ -237,7 +237,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   content: (
                     <div className="grid max-w-3xl gap-5 sm:grid-cols-2">
                       <div className="rounded-[--radius-lg] border border-line p-5">
-                        <h3 className="text-[14px] font-semibold text-navy-900">
+                        <h3 className="text-[14px] font-semibold text-graphite-900">
                           Delivery &amp; provisioning
                         </h3>
                         <p className="mt-2 text-[14px] leading-relaxed text-ink-600">
@@ -246,7 +246,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                         </p>
                       </div>
                       <div className="rounded-[--radius-lg] border border-line p-5">
-                        <h3 className="text-[14px] font-semibold text-navy-900">Support</h3>
+                        <h3 className="text-[14px] font-semibold text-graphite-900">Support</h3>
                         <p className="mt-2 text-[14px] leading-relaxed text-ink-600">
                           {product.supportNotes ??
                             "Procurement support is included. Deployment and managed support are available separately."}

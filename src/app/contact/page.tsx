@@ -63,7 +63,7 @@ export default function ContactPage() {
           {anyChannelConfigured ? (
             channels.map((channel) => (
               <div key={channel.title} className="rounded-[--radius-lg] border border-line bg-white p-5">
-                <h2 className="text-[15px] font-semibold text-navy-900">{channel.title}</h2>
+                <h2 className="text-[15px] font-semibold text-graphite-900">{channel.title}</h2>
                 <p className="mt-1.5 text-[13px] leading-relaxed text-ink-600">{channel.body}</p>
                 <div className="mt-3 space-y-1.5 text-[13px]">
                   {channel.email ? (
@@ -104,7 +104,7 @@ export default function ContactPage() {
 
           {config.formattedAddress ? (
             <div className="rounded-[--radius-lg] border border-line bg-white p-5">
-              <h2 className="text-[15px] font-semibold text-navy-900">Office</h2>
+              <h2 className="text-[15px] font-semibold text-graphite-900">Office</h2>
               <address className="mt-2 text-[13px] not-italic leading-relaxed text-ink-600">
                 {config.formattedAddress}
               </address>
@@ -118,7 +118,7 @@ export default function ContactPage() {
 
           {config.supportHours ? (
             <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
-              <h2 className="text-[15px] font-semibold text-navy-900">Support hours</h2>
+              <h2 className="text-[15px] font-semibold text-graphite-900">Support hours</h2>
               <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{config.supportHours}</p>
             </div>
           ) : null}

@@ -32,7 +32,7 @@ export function FaqList({
       <div className="divide-y divide-line rounded-[--radius-lg] border border-line bg-white">
         {items.map((item, index) => (
           <details key={index} className="group px-5">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[15px] font-medium text-navy-900 marker:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[15px] font-medium text-graphite-900 marker:hidden">
               {item.question}
               <span
                 aria-hidden="true"

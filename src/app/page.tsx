@@ -101,17 +101,17 @@ export default async function HomePage() {
   return (
     <>
       {/* ------------------------------------------------------------- Hero */}
-      <section className="border-b border-navy-800 bg-navy-900">
+      <section className="border-b border-graphite-800 bg-graphite-900">
         <div className="container-page py-16 lg:py-24">
           <div className="max-w-3xl">
-            <p className="mb-4 inline-flex items-center gap-2 rounded-[--radius-sm] border border-navy-700 bg-navy-800 px-3 py-1 text-[12px] font-medium text-navy-200">
+            <p className="mb-4 inline-flex items-center gap-2 rounded-[--radius-sm] border border-graphite-700 bg-graphite-800 px-3 py-1 text-[12px] font-medium text-graphite-200">
               <span className="h-1.5 w-1.5 rounded-full bg-accent-400" aria-hidden="true" />
               Multiple technology vendors. One procurement partner.
             </p>
             <h1 className="text-[2.15rem] leading-[1.12] text-white sm:text-5xl lg:text-[3.4rem]">
               Enterprise Software Licensing, Cloud &amp; IT Solutions
             </h1>
-            <p className="mt-5 max-w-2xl text-[16px] leading-relaxed text-navy-200 lg:text-[17px]">
+            <p className="mt-5 max-w-2xl text-[16px] leading-relaxed text-graphite-200 lg:text-[17px]">
               Microsoft, Adobe, Autodesk, Zoho and enterprise technology solutions from one
               trusted procurement partner — with the licensing advice, deployment support and
               renewal management that make them worth owning.
@@ -132,15 +132,15 @@ export default async function HomePage() {
                 label="Search products and solutions"
                 placeholder="What software or solution are you looking for?"
               />
-              <p className="mt-3 text-[13px] text-navy-300">
+              <p className="mt-3 text-[13px] text-graphite-300">
                 Popular:{" "}
                 {["Microsoft 365", "Acrobat Pro", "AutoCAD", "Zoho CRM", "Windows Server"].map(
                   (term, index) => (
                     <span key={term}>
-                      {index > 0 ? <span className="text-navy-600"> · </span> : null}
+                      {index > 0 ? <span className="text-graphite-600"> · </span> : null}
                       <Link
                         href={`/search?q=${encodeURIComponent(term)}`}
-                        className="text-navy-200 underline-offset-2 hover:text-white hover:underline"
+                        className="text-graphite-200 underline-offset-2 hover:text-white hover:underline"
                       >
                         {term}
                       </Link>
@@ -151,7 +151,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <dl className="mt-14 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-6 border-t border-navy-800 pt-8 sm:grid-cols-4">
+          <dl className="mt-14 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-6 border-t border-graphite-800 pt-8 sm:grid-cols-4">
             {[
               { label: "Products listed", value: `${productCount}` },
               { label: "Licensable SKUs", value: `${skuCount}` },
@@ -159,7 +159,7 @@ export default async function HomePage() {
               { label: "Purchase order", value: "One" },
             ].map((item) => (
               <div key={item.label}>
-                <dt className="text-[12px] uppercase tracking-wide text-navy-400">{item.label}</dt>
+                <dt className="text-[12px] uppercase tracking-wide text-graphite-400">{item.label}</dt>
                 <dd className="mt-1 text-2xl font-semibold text-white">{item.value}</dd>
               </div>
             ))}
@@ -242,7 +242,7 @@ export default async function HomePage() {
           <ul className="grid gap-4 sm:grid-cols-2">
             {PROCUREMENT_POINTS.map((point) => (
               <li key={point.title} className="rounded-[--radius-lg] border border-line bg-white p-5">
-                <h3 className="text-[14px] font-semibold text-navy-900">{point.title}</h3>
+                <h3 className="text-[14px] font-semibold text-graphite-900">{point.title}</h3>
                 <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{point.body}</p>
               </li>
             ))}
@@ -284,12 +284,12 @@ export default async function HomePage() {
             <Link
               key={service.slug}
               href={`/services/${service.slug}`}
-              className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-navy-300"
+              className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
             >
               <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700">
                 {service.category}
               </span>
-              <span className="mt-2 text-[15px] font-semibold text-navy-900 group-hover:text-accent-700">
+              <span className="mt-2 text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
                 {service.name}
               </span>
               <span className="clamp-3 mt-2 text-[13px] leading-relaxed text-ink-600">
@@ -317,11 +317,11 @@ export default async function HomePage() {
               <div key={point.title} className="rounded-[--radius-lg] border border-line bg-white p-6">
                 <span
                   aria-hidden="true"
-                  className="mb-3 inline-grid h-7 w-7 place-items-center rounded-[--radius-sm] bg-navy-900 text-[12px] font-semibold text-white"
+                  className="mb-3 inline-grid h-7 w-7 place-items-center rounded-[--radius-sm] bg-graphite-900 text-[12px] font-semibold text-white"
                 >
                   {index + 1}
                 </span>
-                <h3 className="text-[15px] font-semibold text-navy-900">{point.title}</h3>
+                <h3 className="text-[15px] font-semibold text-graphite-900">{point.title}</h3>
                 <p className="mt-2 text-[14px] leading-relaxed text-ink-600">{point.body}</p>
               </div>
             ))}
@@ -341,10 +341,10 @@ export default async function HomePage() {
             <Link
               key={industry.href}
               href={industry.href}
-              className="group flex items-start justify-between gap-4 rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-navy-300"
+              className="group flex items-start justify-between gap-4 rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
             >
               <span>
-                <span className="block text-[15px] font-semibold text-navy-900 group-hover:text-accent-700">
+                <span className="block text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
                   {industry.name}
                 </span>
                 <span className="mt-1 block text-[13px] text-ink-600">{industry.detail}</span>
@@ -377,7 +377,7 @@ export default async function HomePage() {
                 <span className="text-[12px] font-semibold uppercase tracking-wide text-accent-700">
                   Step {index + 1}
                 </span>
-                <h3 className="mt-2 text-[15px] font-semibold text-navy-900">{step.title}</h3>
+                <h3 className="mt-2 text-[15px] font-semibold text-graphite-900">{step.title}</h3>
                 <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{step.body}</p>
               </li>
             ))}
@@ -425,12 +425,12 @@ export default async function HomePage() {
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
-                  className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-navy-300"
+                  className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
                 >
                   <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700">
                     {post.category}
                   </span>
-                  <h3 className="mt-2 text-[15px] font-semibold leading-snug text-navy-900 group-hover:text-accent-700">
+                  <h3 className="mt-2 text-[15px] font-semibold leading-snug text-graphite-900 group-hover:text-accent-700">
                     {post.title}
                   </h3>
                   <p className="clamp-3 mt-2 text-[13px] leading-relaxed text-ink-600">
@@ -447,14 +447,14 @@ export default async function HomePage() {
       ) : null}
 
       {/* ------------------------------------------------------------- CTA */}
-      <section className="bg-navy-900">
+      <section className="bg-graphite-900">
         <div className="container-page py-16 lg:py-20">
           <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
               <h2 className="text-[1.75rem] leading-tight text-white sm:text-[2rem]">
                 Ready to consolidate your technology procurement?
               </h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-navy-200">
+              <p className="mt-4 text-[15px] leading-relaxed text-graphite-200">
                 Send us the requirement — a product list, a seat count, or just the problem you
                 are trying to solve. We will come back with a consolidated quotation and a plain
                 recommendation, including where a cheaper option would serve you better.

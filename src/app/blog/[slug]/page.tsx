@@ -158,7 +158,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               <li key={tag}>
                 <Link
                   href={`/search?q=${encodeURIComponent(tag)}`}
-                  className="inline-block rounded-[--radius-sm] bg-surface-sunken px-2.5 py-1 text-[12px] text-ink-600 hover:bg-navy-100 hover:text-navy-800"
+                  className="inline-block rounded-[--radius-sm] bg-surface-sunken px-2.5 py-1 text-[12px] text-ink-600 hover:bg-graphite-100 hover:text-graphite-800"
                 >
                   {tag}
                 </Link>
@@ -167,9 +167,9 @@ export default async function BlogPostPage({ params }: PageProps) {
           </ul>
         ) : null}
 
-        <aside className="mt-10 rounded-[--radius-lg] bg-navy-900 p-6 sm:p-8">
+        <aside className="mt-10 rounded-[--radius-lg] bg-graphite-900 p-6 sm:p-8">
           <h2 className="text-[1.35rem] text-white">Need this applied to your organisation?</h2>
-          <p className="mt-3 text-[14px] leading-relaxed text-navy-200">
+          <p className="mt-3 text-[14px] leading-relaxed text-graphite-200">
             We will review your actual licence position and renewal dates, and tell you what is
             recoverable and where you are exposed — before recommending anything new.
           </p>
@@ -190,12 +190,12 @@ export default async function BlogPostPage({ params }: PageProps) {
               <Link
                 key={entry.slug}
                 href={`/blog/${entry.slug}`}
-                className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-navy-300"
+                className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
               >
                 <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700">
                   {entry.category}
                 </span>
-                <span className="mt-2 text-[15px] font-semibold leading-snug text-navy-900 group-hover:text-accent-700">
+                <span className="mt-2 text-[15px] font-semibold leading-snug text-graphite-900 group-hover:text-accent-700">
                   {entry.title}
                 </span>
                 <span className="clamp-2 mt-2 text-[13px] leading-relaxed text-ink-600">

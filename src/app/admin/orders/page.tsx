@@ -76,7 +76,7 @@ export default async function AdminOrdersPage() {
                   <Td className="text-[13px]">{order.poNumber ?? "—"}</Td>
                   <Td className="font-mono text-[12px]">{order.billingGstin ?? "—"}</Td>
                   <Td className="tabular-nums">{order._count.items}</Td>
-                  <Td className="tabular-nums font-medium text-navy-900">
+                  <Td className="tabular-nums font-medium text-graphite-900">
                     {formatMoney(order.totalMinor, order.currency)}
                   </Td>
                   <Td>

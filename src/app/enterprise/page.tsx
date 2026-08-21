@@ -71,16 +71,16 @@ export default async function EnterprisePage() {
         <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Enterprise" }]} />
       </div>
 
-      <section className="border-y border-line bg-navy-900">
+      <section className="border-y border-line bg-graphite-900">
         <div className="container-page py-16 lg:py-20">
           <div className="max-w-3xl">
-            <p className="mb-4 inline-flex items-center gap-2 rounded-[--radius-sm] border border-navy-700 bg-navy-800 px-3 py-1 text-[12px] font-medium text-navy-200">
+            <p className="mb-4 inline-flex items-center gap-2 rounded-[--radius-sm] border border-graphite-700 bg-graphite-800 px-3 py-1 text-[12px] font-medium text-graphite-200">
               Enterprise procurement
             </p>
             <h1 className="text-3xl leading-[1.15] text-white sm:text-[2.75rem]">
               One Procurement Partner for Your Technology Stack
             </h1>
-            <p className="mt-5 text-[16px] leading-relaxed text-navy-200 lg:text-[17px]">
+            <p className="mt-5 text-[16px] leading-relaxed text-graphite-200 lg:text-[17px]">
               A single technology refresh can involve four publishers, two hardware vendors and
               a services engagement. Handled directly, that is seven vendor relationships,
               seven quotation formats, seven purchase orders and seven sets of invoices — for
@@ -120,7 +120,7 @@ export default async function EnterprisePage() {
                 key={capability.title}
                 className="rounded-[--radius-lg] border border-line bg-white p-5"
               >
-                <h3 className="text-[14px] font-semibold text-navy-900">{capability.title}</h3>
+                <h3 className="text-[14px] font-semibold text-graphite-900">{capability.title}</h3>
                 <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{capability.body}</p>
               </div>
             ))}
@@ -162,12 +162,12 @@ export default async function EnterprisePage() {
                   <li key={step.title} className="flex gap-4">
                     <span
                       aria-hidden="true"
-                      className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-navy-900 text-[12px] font-semibold text-white"
+                      className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-graphite-900 text-[12px] font-semibold text-white"
                     >
                       {index + 1}
                     </span>
                     <span>
-                      <span className="block text-[14px] font-semibold text-navy-900">
+                      <span className="block text-[14px] font-semibold text-graphite-900">
                         {step.title}
                       </span>
                       <span className="mt-1 block text-[13px] leading-relaxed text-ink-600">
@@ -197,9 +197,9 @@ export default async function EnterprisePage() {
           </section>
         ) : null}
 
-        <section className="rounded-[--radius-lg] bg-navy-900 p-8 sm:p-10">
+        <section className="rounded-[--radius-lg] bg-graphite-900 p-8 sm:p-10">
           <h2 className="text-[1.7rem] text-white">Talk to an Enterprise Specialist</h2>
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-navy-200">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-graphite-200">
             Send the requirement and we will come back with a consolidated quotation and a
             plain recommendation. If a smaller order serves you better, we will say so.
           </p>

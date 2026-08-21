@@ -33,7 +33,7 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
           &larr; All enquiries
         </Link>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-mono text-[1.35rem] text-navy-900">{enquiry.reference}</h2>
+          <h2 className="font-mono text-[1.35rem] text-graphite-900">{enquiry.reference}</h2>
           <StatusBadge status={enquiry.status} />
         </div>
         <p className="mt-1.5 text-[13px] text-ink-500">
@@ -42,7 +42,7 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
       </div>
 
       <section>
-        <h3 className="mb-4 text-[15px] font-semibold text-navy-900">Products requested</h3>
+        <h3 className="mb-4 text-[15px] font-semibold text-graphite-900">Products requested</h3>
         <TableWrap>
           <Table>
             <thead>
@@ -56,7 +56,7 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
             <tbody>
               {enquiry.items.map((item) => (
                 <Tr key={item.sku}>
-                  <Td className="font-medium text-navy-900">{item.productName}</Td>
+                  <Td className="font-medium text-graphite-900">{item.productName}</Td>
                   <Td className="font-mono text-[12px]">{item.sku}</Td>
                   <Td className="tabular-nums">{item.quantity}</Td>
                   <Td className="text-[13px] text-ink-500">{item.note ?? "—"}</Td>
@@ -69,7 +69,7 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
 
       <section className="grid gap-6 sm:grid-cols-2">
         <div className="rounded-[--radius-lg] border border-line bg-white p-5">
-          <h3 className="text-[15px] font-semibold text-navy-900">Contact provided</h3>
+          <h3 className="text-[15px] font-semibold text-graphite-900">Contact provided</h3>
           <dl className="mt-4 space-y-2.5 text-[13px]">
             {[
               ["Company", enquiry.companyName],
@@ -89,7 +89,7 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
         </div>
 
         <div className="rounded-[--radius-lg] border border-line bg-white p-5">
-          <h3 className="text-[15px] font-semibold text-navy-900">Requirements</h3>
+          <h3 className="text-[15px] font-semibold text-graphite-900">Requirements</h3>
           <p className="mt-3 whitespace-pre-wrap text-[13px] leading-relaxed text-ink-600">
             {enquiry.requirements || "No additional requirements were provided."}
           </p>
@@ -98,7 +98,7 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
 
       {enquiry.quotes.length > 0 ? (
         <section>
-          <h3 className="mb-4 text-[15px] font-semibold text-navy-900">Quotations</h3>
+          <h3 className="mb-4 text-[15px] font-semibold text-graphite-900">Quotations</h3>
           <TableWrap>
             <Table>
               <thead>
@@ -133,7 +133,7 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
         </section>
       ) : (
         <section className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
-          <h3 className="text-[15px] font-semibold text-navy-900">Quotation pending</h3>
+          <h3 className="text-[15px] font-semibold text-graphite-900">Quotation pending</h3>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             Our team is preparing your quotation. It will appear here and be sent to the email
             address on the enquiry.

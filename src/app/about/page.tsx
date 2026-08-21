@@ -46,13 +46,13 @@ export default async function AboutPage() {
         <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "About" }]} />
       </div>
 
-      <section className="border-y border-line bg-navy-900">
+      <section className="border-y border-line bg-graphite-900">
         <div className="container-page py-14 lg:py-16">
           <div className="max-w-3xl">
             <h1 className="text-3xl leading-tight text-white sm:text-[2.5rem]">
               One procurement relationship for a multi-vendor technology stack
             </h1>
-            <p className="mt-5 text-[16px] leading-relaxed text-navy-200">
+            <p className="mt-5 text-[16px] leading-relaxed text-graphite-200">
               We supply enterprise software licensing, cloud services and IT solutions across
               Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure vendors — and the
               deployment, licence management and support that make them work.
@@ -91,7 +91,7 @@ export default async function AboutPage() {
               <ul className="space-y-5">
                 {PRINCIPLES.map((principle) => (
                   <li key={principle.title} className="rounded-[--radius-lg] border border-line bg-white p-5">
-                    <h3 className="text-[15px] font-semibold text-navy-900">{principle.title}</h3>
+                    <h3 className="text-[15px] font-semibold text-graphite-900">{principle.title}</h3>
                     <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
                       {principle.body}
                     </p>
@@ -161,9 +161,9 @@ export default async function AboutPage() {
           </p>
         </section>
 
-        <section className="rounded-[--radius-lg] bg-navy-900 p-8 sm:p-10">
+        <section className="rounded-[--radius-lg] bg-graphite-900 p-8 sm:p-10">
           <h2 className="text-[1.6rem] text-white">Start with a requirement</h2>
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-navy-200">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-graphite-200">
             You do not need a finished product list. Tell us what you are trying to achieve and
             we will come back with the options, priced, and a plain recommendation.
           </p>

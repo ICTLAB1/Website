@@ -60,7 +60,7 @@ export default async function ServicePage({ params }: PageProps) {
       </div>
 
       {/* Hero */}
-      <section className="border-y border-line bg-navy-900">
+      <section className="border-y border-line bg-graphite-900">
         <div className="container-page py-14 lg:py-16">
           <div className="max-w-3xl">
             <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-300">
@@ -69,7 +69,7 @@ export default async function ServicePage({ params }: PageProps) {
             <h1 className="text-3xl leading-tight text-white sm:text-[2.5rem]">
               {service.heroHeadline}
             </h1>
-            <p className="mt-5 text-[16px] leading-relaxed text-navy-200">{service.summary}</p>
+            <p className="mt-5 text-[16px] leading-relaxed text-graphite-200">{service.summary}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/contact">Discuss this service</ButtonLink>
               <ButtonLink href="/enquiry" variant="onDark">
@@ -134,11 +134,11 @@ export default async function ServicePage({ params }: PageProps) {
                 <li key={step.step} className="rounded-[--radius-lg] border border-line bg-white p-5">
                   <span
                     aria-hidden="true"
-                    className="mb-3 inline-grid h-8 w-8 place-items-center rounded-[--radius-sm] bg-navy-900 text-[13px] font-semibold text-white"
+                    className="mb-3 inline-grid h-8 w-8 place-items-center rounded-[--radius-sm] bg-graphite-900 text-[13px] font-semibold text-white"
                   >
                     {step.step}
                   </span>
-                  <h3 className="text-[15px] font-semibold text-navy-900">{step.title}</h3>
+                  <h3 className="text-[15px] font-semibold text-graphite-900">{step.title}</h3>
                   <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
                     {step.description}
                   </p>
@@ -178,9 +178,9 @@ export default async function ServicePage({ params }: PageProps) {
         ) : null}
 
         {/* CTA */}
-        <section className="mt-14 rounded-[--radius-lg] bg-navy-900 p-8 sm:p-10">
+        <section className="mt-14 rounded-[--radius-lg] bg-graphite-900 p-8 sm:p-10">
           <h2 className="text-[1.6rem] text-white">Talk to us about {service.name.toLowerCase()}</h2>
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-navy-200">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-graphite-200">
             Tell us where you are now and what you are trying to reach. We will scope it
             honestly, including whether this is the engagement you actually need.
           </p>

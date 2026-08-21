@@ -42,7 +42,7 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
             href="/blog"
             className={cn(
               "rounded-[--radius-md] px-3 py-2 text-[13px]",
-              !params.category ? "bg-navy-900 font-medium text-white" : "text-ink-600 hover:bg-surface-muted",
+              !params.category ? "bg-graphite-900 font-medium text-white" : "text-ink-600 hover:bg-surface-muted",
             )}
           >
             All
@@ -54,7 +54,7 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
               className={cn(
                 "whitespace-nowrap rounded-[--radius-md] px-3 py-2 text-[13px]",
                 params.category === category.name
-                  ? "bg-navy-900 font-medium text-white"
+                  ? "bg-graphite-900 font-medium text-white"
                   : "text-ink-600 hover:bg-surface-muted",
               )}
             >
@@ -75,12 +75,12 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
           {posts.map((post) => (
             <article
               key={post.slug}
-              className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-navy-300"
+              className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
             >
               <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700">
                 {post.category}
               </p>
-              <h2 className="mt-2 text-[16px] font-semibold leading-snug text-navy-900">
+              <h2 className="mt-2 text-[16px] font-semibold leading-snug text-graphite-900">
                 <Link href={`/blog/${post.slug}`} className="hover:text-accent-700">
                   {post.title}
                 </Link>

@@ -45,7 +45,7 @@ export default async function AdminUsersPage() {
           <tbody>
             {users.map((user) => (
               <Tr key={user.id}>
-                <Td className="font-medium text-navy-900">
+                <Td className="font-medium text-graphite-900">
                   {user.name}
                   {user.id === admin.id ? (
                     <span className="ml-2 align-middle">
@@ -66,7 +66,7 @@ export default async function AdminUsersPage() {
       </TableWrap>
 
       <section className="max-w-md rounded-[--radius-lg] border border-line bg-white p-5">
-        <h2 className="text-[15px] font-semibold text-navy-900">Change a user&rsquo;s role</h2>
+        <h2 className="text-[15px] font-semibold text-graphite-900">Change a user&rsquo;s role</h2>
         <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
           You cannot change your own role, and the last remaining administrator cannot be
           demoted.

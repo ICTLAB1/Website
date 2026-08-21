@@ -64,7 +64,7 @@ export function MegaMenu() {
                     href={item.href}
                     className={cn(
                       "px-3 py-4 text-sm font-medium transition-colors",
-                      isOpen ? "text-accent-700" : "text-navy-900 hover:text-accent-700",
+                      isOpen ? "text-accent-700" : "text-graphite-900 hover:text-accent-700",
                     )}
                   >
                     {item.label}
@@ -162,7 +162,7 @@ export function MegaMenu() {
                               onClick={() => setOpenIndex(null)}
                               className="block rounded-[--radius-sm] px-3 py-2 hover:bg-surface-muted"
                             >
-                              <span className="block text-sm font-medium text-navy-900">
+                              <span className="block text-sm font-medium text-graphite-900">
                                 {link.label}
                               </span>
                               {link.description ? (

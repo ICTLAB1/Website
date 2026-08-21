@@ -152,7 +152,7 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
         <div className="grid gap-6 lg:grid-cols-2">
           {product.variants.map((variant) => (
             <details key={variant.id} className="rounded-[--radius-lg] border border-line bg-white p-5">
-              <summary className="cursor-pointer text-[14px] font-medium text-navy-900">
+              <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
                 Edit {variant.sku}
               </summary>
               <div className="mt-5">
@@ -176,7 +176,7 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
           ))}
 
           <div className="rounded-[--radius-lg] border border-line bg-white p-5">
-            <h3 className="mb-5 text-[14px] font-medium text-navy-900">Add a licence option</h3>
+            <h3 className="mb-5 text-[14px] font-medium text-graphite-900">Add a licence option</h3>
             <VariantForm productId={product.id} />
           </div>
         </div>

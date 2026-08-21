@@ -30,13 +30,13 @@ export default async function ServicesPage() {
         <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Services" }]} />
       </div>
 
-      <section className="border-y border-line bg-navy-900">
+      <section className="border-y border-line bg-graphite-900">
         <div className="container-page py-14 lg:py-16">
           <div className="max-w-3xl">
             <h1 className="text-3xl leading-tight text-white sm:text-[2.5rem]">
               Services that make the licensing worth owning
             </h1>
-            <p className="mt-5 text-[16px] leading-relaxed text-navy-200">
+            <p className="mt-5 text-[16px] leading-relaxed text-graphite-200">
               Software delivers nothing until it is deployed, adopted and kept running. These
               engagements cover the work between a purchase order and a system your
               organisation actually relies on.
@@ -60,9 +60,9 @@ export default async function ServicesPage() {
                 <Link
                   key={service.slug}
                   href={`/services/${service.slug}`}
-                  className="group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-navy-300"
+                  className="group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
                 >
-                  <h3 className="text-[15px] font-semibold text-navy-900 group-hover:text-accent-700">
+                  <h3 className="text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
                     {service.name}
                   </h3>
                   <p className="mt-2 flex-1 text-[13px] leading-relaxed text-ink-600">

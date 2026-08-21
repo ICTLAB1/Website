@@ -26,19 +26,19 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-dvh bg-surface-muted">
       <div className="grid lg:grid-cols-[15rem_minmax(0,1fr)]">
-        <aside className="bg-navy-900 px-4 py-5 lg:min-h-dvh lg:px-5 lg:py-7">
+        <aside className="bg-graphite-900 px-4 py-5 lg:min-h-dvh lg:px-5 lg:py-7">
           <div className="mb-6 flex items-center justify-between gap-3 lg:block">
             <div>
               <Link href="/admin" className="text-[15px] font-semibold text-white">
                 Administration
               </Link>
-              <p className="mt-1 text-[12px] text-navy-400">
+              <p className="mt-1 text-[12px] text-graphite-400">
                 {user.name} · {admin ? "Administrator" : "Sales"}
               </p>
             </div>
             <Link
               href="/"
-              className="text-[12px] text-navy-300 hover:text-white hover:underline lg:mt-3 lg:block"
+              className="text-[12px] text-graphite-300 hover:text-white hover:underline lg:mt-3 lg:block"
             >
               View site &rarr;
             </Link>
@@ -47,7 +47,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <AdminNav isAdmin={admin} />
 
           <div className="mt-8 hidden lg:block">
-            <SignOutButton className="w-full border-navy-700 bg-navy-800 text-navy-100 hover:border-danger-600 hover:text-white" />
+            <SignOutButton className="w-full border-graphite-700 bg-graphite-800 text-graphite-100 hover:border-danger-600 hover:text-white" />
           </div>
         </aside>
 

@@ -66,7 +66,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
                 <tbody>
                   {enquiry.items.map((item) => (
                     <Tr key={item.id}>
-                      <Td className="font-medium text-navy-900">
+                      <Td className="font-medium text-graphite-900">
                         {item.productName}
                         {item.note ? (
                           <span className="mt-1 block text-[12px] font-normal text-ink-500">
@@ -81,7 +81,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
                           ? formatMoney(item.variant.listPriceMinor, item.variant.currency)
                           : "On quote"}
                       </Td>
-                      <Td className="tabular-nums font-medium text-navy-900">
+                      <Td className="tabular-nums font-medium text-graphite-900">
                         {item.variant && item.variant.listPriceMinor > 0
                           ? formatMoney(item.variant.listPriceMinor * item.quantity, item.variant.currency)
                           : "—"}
@@ -93,7 +93,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
             </TableWrap>
             <p className="mt-3 text-[13px] text-ink-600">
               Indicative total at current list prices:{" "}
-              <strong className="font-semibold text-navy-900">
+              <strong className="font-semibold text-graphite-900">
                 {indicativeMinor > 0 ? formatMoney(indicativeMinor) : "—"}
               </strong>{" "}
               <span className="text-ink-500">excl. GST</span>
@@ -110,7 +110,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
           </section>
 
           <section className="rounded-[--radius-lg] border border-accent-600/40 bg-accent-50 p-5">
-            <h2 className="text-[15px] font-semibold text-navy-900">Prepare a quotation</h2>
+            <h2 className="text-[15px] font-semibold text-graphite-900">Prepare a quotation</h2>
             <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-ink-700">
               Drafts a quotation from these lines, priced from the current catalogue. You can
               adjust quantities, unit prices and discounts before issuing it.
@@ -164,7 +164,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
 
         <aside className="space-y-6">
           <section className="rounded-[--radius-lg] border border-line bg-white p-5">
-            <h2 className="text-[15px] font-semibold text-navy-900">Contact</h2>
+            <h2 className="text-[15px] font-semibold text-graphite-900">Contact</h2>
             <dl className="mt-4 space-y-2.5 text-[13px]">
               {[
                 ["Company", enquiry.companyName],
@@ -186,7 +186,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
             <div className="mt-4 flex flex-wrap gap-2 border-t border-line pt-4">
               <a
                 href={`mailto:${enquiry.contactEmail}?subject=${encodeURIComponent(`Your enquiry ${enquiry.reference}`)}`}
-                className="inline-flex h-9 items-center rounded-[--radius-md] border border-line-strong px-3 text-[13px] font-medium text-navy-900 hover:bg-navy-50"
+                className="inline-flex h-9 items-center rounded-[--radius-md] border border-line-strong px-3 text-[13px] font-medium text-graphite-900 hover:bg-graphite-50"
               >
                 Reply by email
               </a>
@@ -194,7 +194,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
           </section>
 
           <section className="rounded-[--radius-lg] border border-line bg-white p-5">
-            <h2 className="mb-4 text-[15px] font-semibold text-navy-900">Update</h2>
+            <h2 className="mb-4 text-[15px] font-semibold text-graphite-900">Update</h2>
             <AdminForm
               action={updateEnquiry}
               submitLabel="Save"

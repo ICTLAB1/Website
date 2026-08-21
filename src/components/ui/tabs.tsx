@@ -48,8 +48,8 @@ export function Tabs({ items, className }: { items: TabItem[]; className?: strin
                 className={cn(
                   "-mb-px border-b-2 px-4 py-3 text-sm font-medium transition-colors",
                   selected
-                    ? "border-accent-700 text-navy-900"
-                    : "border-transparent text-ink-500 hover:border-line-strong hover:text-navy-800",
+                    ? "border-accent-700 text-graphite-900"
+                    : "border-transparent text-ink-500 hover:border-line-strong hover:text-graphite-800",
                 )}
               >
                 {item.label}

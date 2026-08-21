@@ -86,7 +86,7 @@ export default async function AccountSupportPage() {
                 {tickets.map((ticket) => (
                   <Tr key={ticket.reference}>
                     <Td className="font-mono text-[12px]">{ticket.reference}</Td>
-                    <Td className="font-medium text-navy-900">{ticket.subject}</Td>
+                    <Td className="font-medium text-graphite-900">{ticket.subject}</Td>
                     <Td>{humanise(ticket.category)}</Td>
                     <Td>{formatDate(ticket.createdAt)}</Td>
                     <Td>

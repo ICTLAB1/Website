@@ -37,10 +37,10 @@ export default async function AccountOverviewPage() {
             <Link
               key={tile.href}
               href={tile.href}
-              className="rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-navy-300"
+              className="rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
             >
               <p className="text-[13px] text-ink-500">{tile.label}</p>
-              <p className="mt-1.5 text-[26px] font-semibold leading-none text-navy-900 tabular-nums">
+              <p className="mt-1.5 text-[26px] font-semibold leading-none text-graphite-900 tabular-nums">
                 {tile.value}
               </p>
             </Link>
@@ -73,7 +73,7 @@ export default async function AccountOverviewPage() {
                   className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 hover:bg-surface-muted"
                 >
                   <span>
-                    <span className="block font-mono text-[13px] font-medium text-navy-900">
+                    <span className="block font-mono text-[13px] font-medium text-graphite-900">
                       {enquiry.reference}
                     </span>
                     <span className="mt-0.5 block text-[13px] text-ink-500">

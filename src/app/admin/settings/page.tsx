@@ -80,7 +80,7 @@ export default async function AdminSettingsPage() {
             <tbody>
               {identity.map(([label, value]) => (
                 <Tr key={label}>
-                  <Td className="font-medium text-navy-900">{label}</Td>
+                  <Td className="font-medium text-graphite-900">{label}</Td>
                   <Td>
                     {value ? (
                       <span className="break-words text-[13px] text-ink-700">{value}</span>
@@ -108,7 +108,7 @@ export default async function AdminSettingsPage() {
             </thead>
             <tbody>
               <Tr>
-                <Td className="font-medium text-navy-900">Outbound email (SMTP)</Td>
+                <Td className="font-medium text-graphite-900">Outbound email (SMTP)</Td>
                 <Td>
                   {mailReady ? (
                     <Badge tone="success">Configured</Badge>
@@ -123,7 +123,7 @@ export default async function AdminSettingsPage() {
                 </Td>
               </Tr>
               <Tr>
-                <Td className="font-medium text-navy-900">Database</Td>
+                <Td className="font-medium text-graphite-900">Database</Td>
                 <Td>
                   <Badge tone="success">Connected</Badge>
                 </Td>

@@ -82,7 +82,7 @@ export default async function BrandPage({ params }: PageProps) {
         />
       </div>
 
-      <section className="border-y border-line bg-navy-900">
+      <section className="border-y border-line bg-graphite-900">
         <div className="container-page py-14 lg:py-16">
           <div className="max-w-3xl">
             <span
@@ -98,7 +98,7 @@ export default async function BrandPage({ params }: PageProps) {
             {brand.tagline ? (
               <p className="mt-3 text-[15px] font-medium text-accent-300">{brand.tagline}</p>
             ) : null}
-            <p className="mt-5 text-[16px] leading-relaxed text-navy-200">{brand.summary}</p>
+            <p className="mt-5 text-[16px] leading-relaxed text-graphite-200">{brand.summary}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href={`/products?brand=${brand.slug}`}>
                 Browse {brand.name} products
@@ -132,9 +132,9 @@ export default async function BrandPage({ params }: PageProps) {
                 <li key={category.slug}>
                   <Link
                     href={`/products?brand=${brand.slug}&category=${category.slug}`}
-                    className="group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-navy-300"
+                    className="group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
                   >
-                    <span className="text-[15px] font-semibold text-navy-900 group-hover:text-accent-700">
+                    <span className="text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
                       {category.name}
                     </span>
                     {category.summary ? (
@@ -189,7 +189,7 @@ export default async function BrandPage({ params }: PageProps) {
               },
             ].map((item) => (
               <div key={item.title} className="rounded-[--radius-lg] border border-line bg-white p-5">
-                <h3 className="text-[15px] font-semibold text-navy-900">{item.title}</h3>
+                <h3 className="text-[15px] font-semibold text-graphite-900">{item.title}</h3>
                 <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{item.body}</p>
               </div>
             ))}
@@ -204,12 +204,12 @@ export default async function BrandPage({ params }: PageProps) {
                 <Link
                   key={service.slug}
                   href={`/services/${service.slug}`}
-                  className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-navy-300"
+                  className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
                 >
                   <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700">
                     {service.category}
                   </span>
-                  <span className="mt-2 text-[15px] font-semibold text-navy-900 group-hover:text-accent-700">
+                  <span className="mt-2 text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
                     {service.name}
                   </span>
                   <span className="clamp-3 mt-2 text-[13px] leading-relaxed text-ink-600">
@@ -228,9 +228,9 @@ export default async function BrandPage({ params }: PageProps) {
           </section>
         ) : null}
 
-        <section className="rounded-[--radius-lg] bg-navy-900 p-8 sm:p-10">
+        <section className="rounded-[--radius-lg] bg-graphite-900 p-8 sm:p-10">
           <h2 className="text-[1.6rem] text-white">Get {brand.name} pricing</h2>
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-navy-200">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-graphite-200">
             Tell us the products and seat counts you need. We will return a written quotation
             with the licensing model that suits your situation — including where a different
             one would cost you less.

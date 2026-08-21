@@ -50,7 +50,7 @@ export default async function AdminServicesPage() {
             {services.map((service) => (
               <Tr key={service.id}>
                 <Td>
-                  <span className="font-medium text-navy-900">{service.name}</span>
+                  <span className="font-medium text-graphite-900">{service.name}</span>
                   <Link
                     href={`/services/${service.slug}`}
                     className="mt-0.5 block font-mono text-[11px] text-accent-700 hover:underline"

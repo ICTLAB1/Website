@@ -71,7 +71,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
           &larr; All quotations
         </Link>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-mono text-[1.35rem] text-navy-900">{quote.reference}</h2>
+          <h2 className="font-mono text-[1.35rem] text-graphite-900">{quote.reference}</h2>
           <StatusBadge status={expired && quote.status === "SENT" ? "EXPIRED" : quote.status} />
         </div>
         <p className="mt-1.5 text-[13px] text-ink-500">
@@ -82,7 +82,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
       </div>
 
       <section>
-        <h3 className="mb-4 text-[15px] font-semibold text-navy-900">Quoted items</h3>
+        <h3 className="mb-4 text-[15px] font-semibold text-graphite-900">Quoted items</h3>
         <TableWrap>
           <Table className="min-w-[38rem]">
             <thead>
@@ -99,7 +99,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
                 const line = priceLine(item);
                 return (
                   <Tr key={item.id}>
-                    <Td className="font-medium text-navy-900">
+                    <Td className="font-medium text-graphite-900">
                       {item.productName}
                       <span className="mt-0.5 block font-mono text-[11px] font-normal text-ink-500">
                         {item.sku}
@@ -109,7 +109,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
                     <Td className="tabular-nums">
                       {formatMoney(item.unitPriceMinor, quote.currency)}
                     </Td>
-                    <Td className="tabular-nums font-medium text-navy-900">
+                    <Td className="tabular-nums font-medium text-graphite-900">
                       {formatMoney(item.lineTotalMinor, quote.currency)}
                     </Td>
                     <Td className="tabular-nums text-[13px]">
@@ -139,7 +139,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
             <dt className="text-ink-500">GST</dt>
             <dd className="tabular-nums">{formatMoney(quote.taxMinor, quote.currency)}</dd>
           </div>
-          <div className="flex justify-between gap-3 border-t border-line pt-2 text-[15px] font-semibold text-navy-900">
+          <div className="flex justify-between gap-3 border-t border-line pt-2 text-[15px] font-semibold text-graphite-900">
             <dt>Total</dt>
             <dd className="tabular-nums">{formatMoney(quote.totalMinor, quote.currency)}</dd>
           </div>
@@ -148,7 +148,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
 
       {quote.notes ? (
         <section className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
-          <h3 className="text-[15px] font-semibold text-navy-900">Notes on this quotation</h3>
+          <h3 className="text-[15px] font-semibold text-graphite-900">Notes on this quotation</h3>
           <p className="mt-2 whitespace-pre-wrap text-[13px] leading-relaxed text-ink-700">
             {quote.notes}
           </p>
@@ -168,7 +168,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
         </section>
       ) : decidable ? (
         <section className="max-w-xl rounded-[--radius-lg] border border-line bg-white p-5">
-          <h3 className="text-[15px] font-semibold text-navy-900">Respond to this quotation</h3>
+          <h3 className="text-[15px] font-semibold text-graphite-900">Respond to this quotation</h3>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             Accepting raises an order against these prices. No payment is taken here — we invoice
             against your purchase order and confirm provisioning separately.
@@ -204,7 +204,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
         </section>
       ) : (
         <section className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
-          <h3 className="text-[15px] font-semibold text-navy-900">
+          <h3 className="text-[15px] font-semibold text-graphite-900">
             {expired ? "This quotation has expired" : "No action available"}
           </h3>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">

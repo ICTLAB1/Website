@@ -82,7 +82,7 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
             href="/admin/support"
             className={cn(
               "rounded-[--radius-md] px-3 py-2 text-[13px]",
-              !status ? "bg-navy-900 font-medium text-white" : "text-ink-600 hover:bg-white",
+              !status ? "bg-graphite-900 font-medium text-white" : "text-ink-600 hover:bg-white",
             )}
           >
             All
@@ -93,7 +93,7 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
               href={`/admin/support?status=${entry}`}
               className={cn(
                 "rounded-[--radius-md] px-3 py-2 text-[13px]",
-                status === entry ? "bg-navy-900 font-medium text-white" : "text-ink-600 hover:bg-white",
+                status === entry ? "bg-graphite-900 font-medium text-white" : "text-ink-600 hover:bg-white",
               )}
             >
               {humanise(entry)}
@@ -130,7 +130,7 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
                         {formatDateTime(ticket.createdAt)}
                       </span>
                     </Td>
-                    <Td className="font-medium text-navy-900">{ticket.subject}</Td>
+                    <Td className="font-medium text-graphite-900">{ticket.subject}</Td>
                     <Td className="text-[13px]">{ticket.user?.email ?? "Not signed in"}</Td>
                     <Td className="text-[13px]">{humanise(ticket.category)}</Td>
                     <Td>
@@ -158,7 +158,7 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
           <section className="grid gap-4 lg:grid-cols-2">
             {tickets.slice(0, 20).map((ticket) => (
               <details key={ticket.id} className="rounded-[--radius-lg] border border-line bg-white p-5">
-                <summary className="cursor-pointer text-[14px] font-medium text-navy-900">
+                <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
                   {ticket.reference} — {ticket.subject}
                 </summary>
                 <div className="mt-4 space-y-5">

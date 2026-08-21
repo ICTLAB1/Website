@@ -86,7 +86,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                     const line = priceLine(item);
                     return (
                       <Tr key={item.id}>
-                        <Td className="font-medium text-navy-900">
+                        <Td className="font-medium text-graphite-900">
                           {item.productName}
                           <span className="mt-0.5 block font-mono text-[11px] font-normal text-ink-500">
                             {item.sku}
@@ -96,7 +96,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                         <Td className="tabular-nums">
                           {formatMoney(item.unitPriceMinor, order.currency)}
                         </Td>
-                        <Td className="tabular-nums font-medium text-navy-900">
+                        <Td className="tabular-nums font-medium text-graphite-900">
                           {formatMoney(item.lineTotalMinor, order.currency)}
                         </Td>
                         <Td className="tabular-nums text-[13px]">
@@ -141,7 +141,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
 
         <aside className="space-y-6">
           <section className="rounded-[--radius-lg] border border-line bg-white p-5">
-            <h2 className="text-[15px] font-semibold text-navy-900">Totals</h2>
+            <h2 className="text-[15px] font-semibold text-graphite-900">Totals</h2>
             <dl className="mt-4 space-y-2 text-[13px]">
               <div className="flex justify-between gap-3">
                 <dt className="text-ink-500">Subtotal</dt>
@@ -159,7 +159,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                 <dt className="text-ink-500">GST</dt>
                 <dd className="tabular-nums">{formatMoney(order.taxMinor, order.currency)}</dd>
               </div>
-              <div className="flex justify-between gap-3 border-t border-line pt-2 text-[15px] font-semibold text-navy-900">
+              <div className="flex justify-between gap-3 border-t border-line pt-2 text-[15px] font-semibold text-graphite-900">
                 <dt>Total</dt>
                 <dd className="tabular-nums">{formatMoney(order.totalMinor, order.currency)}</dd>
               </div>
@@ -167,7 +167,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           </section>
 
           <section className="rounded-[--radius-lg] border border-line bg-white p-5">
-            <h2 className="text-[15px] font-semibold text-navy-900">Billing</h2>
+            <h2 className="text-[15px] font-semibold text-graphite-900">Billing</h2>
             <dl className="mt-4 space-y-2.5 text-[13px]">
               {[
                 ["Name", order.billingName],
@@ -197,7 +197,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           ) : (
             <>
               <section className="rounded-[--radius-lg] border border-line bg-white p-5">
-                <h2 className="mb-4 text-[15px] font-semibold text-navy-900">Update</h2>
+                <h2 className="mb-4 text-[15px] font-semibold text-graphite-900">Update</h2>
                 <AdminForm
                   action={updateOrderStatus}
                   submitLabel="Save"
@@ -230,7 +230,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
 
               {canFulfil ? (
                 <section className="rounded-[--radius-lg] border border-accent-600/40 bg-accent-50 p-5">
-                  <h2 className="text-[15px] font-semibold text-navy-900">Fulfil this order</h2>
+                  <h2 className="text-[15px] font-semibold text-graphite-900">Fulfil this order</h2>
                   <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
                     Creates a licence record for every line, and a renewal reminder for each
                     subscription term. This cannot be undone from here.

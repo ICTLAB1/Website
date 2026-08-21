@@ -58,7 +58,7 @@ export default async function AdminCategoriesPage() {
           <tbody>
             {categories.flatMap((category) => [
               <Tr key={category.id}>
-                <Td className="font-medium text-navy-900">{category.name}</Td>
+                <Td className="font-medium text-graphite-900">{category.name}</Td>
                 <Td className="font-mono text-[12px]">{category.slug}</Td>
                 <Td className="tabular-nums">{category._count.products}</Td>
                 <Td className="tabular-nums">{category.displayOrder}</Td>

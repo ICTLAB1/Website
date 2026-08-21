@@ -99,7 +99,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                     const line = priceLine(item);
                     return (
                       <Tr key={item.id}>
-                        <Td className="font-medium text-navy-900">
+                        <Td className="font-medium text-graphite-900">
                           {item.productName}
                           <span className="mt-0.5 block font-mono text-[11px] font-normal text-ink-500">
                             {item.sku}
@@ -114,7 +114,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                             ? `− ${formatMoney(item.discountMinor, quote.currency)}`
                             : "—"}
                         </Td>
-                        <Td className="tabular-nums font-medium text-navy-900">
+                        <Td className="tabular-nums font-medium text-graphite-900">
                           {formatMoney(item.lineTotalMinor, quote.currency)}
                         </Td>
                         <Td className="tabular-nums text-[13px]">
@@ -134,7 +134,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                     key={item.id}
                     className="rounded-[--radius-lg] border border-line bg-white p-5"
                   >
-                    <summary className="cursor-pointer text-[14px] font-medium text-navy-900">
+                    <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
                       Edit {item.sku}
                     </summary>
                     <div className="mt-5 space-y-5">
@@ -246,7 +246,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
 
         <aside className="space-y-6">
           <section className="rounded-[--radius-lg] border border-line bg-white p-5">
-            <h2 className="text-[15px] font-semibold text-navy-900">Totals</h2>
+            <h2 className="text-[15px] font-semibold text-graphite-900">Totals</h2>
             <dl className="mt-4 space-y-2 text-[13px]">
               <div className="flex justify-between gap-3">
                 <dt className="text-ink-500">Subtotal</dt>
@@ -264,7 +264,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                 <dt className="text-ink-500">GST</dt>
                 <dd className="tabular-nums">{formatMoney(quote.taxMinor, quote.currency)}</dd>
               </div>
-              <div className="flex justify-between gap-3 border-t border-line pt-2 text-[15px] font-semibold text-navy-900">
+              <div className="flex justify-between gap-3 border-t border-line pt-2 text-[15px] font-semibold text-graphite-900">
                 <dt>Total</dt>
                 <dd className="tabular-nums">{formatMoney(quote.totalMinor, quote.currency)}</dd>
               </div>
@@ -273,7 +273,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
 
           {quote.enquiry ? (
             <section className="rounded-[--radius-lg] border border-line bg-white p-5">
-              <h2 className="text-[15px] font-semibold text-navy-900">Customer</h2>
+              <h2 className="text-[15px] font-semibold text-graphite-900">Customer</h2>
               <dl className="mt-4 space-y-2.5 text-[13px]">
                 {[
                   ["Company", quote.enquiry.companyName],
@@ -291,7 +291,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
           ) : null}
 
           <section className="rounded-[--radius-lg] border border-line bg-white p-5">
-            <h2 className="mb-4 text-[15px] font-semibold text-navy-900">Terms</h2>
+            <h2 className="mb-4 text-[15px] font-semibold text-graphite-900">Terms</h2>
             <AdminForm
               action={updateQuoteTerms}
               submitLabel="Save terms"
@@ -317,7 +317,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
 
           {isDraft ? (
             <section className="rounded-[--radius-lg] border border-accent-600/40 bg-accent-50 p-5">
-              <h2 className="text-[15px] font-semibold text-navy-900">Issue this quotation</h2>
+              <h2 className="text-[15px] font-semibold text-graphite-900">Issue this quotation</h2>
               <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
                 Sending emails the customer a link to review and accept it, and freezes these
                 prices for the validity period.

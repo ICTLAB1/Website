@@ -14,11 +14,11 @@ const VARIANTS: Record<Variant, string> = {
   primary:
     "bg-accent-700 text-white hover:bg-accent-800 active:bg-accent-900 focus-visible:outline-accent-700",
   secondary:
-    "bg-navy-900 text-white hover:bg-navy-800 active:bg-navy-950 focus-visible:outline-navy-900",
+    "bg-graphite-900 text-white hover:bg-graphite-800 active:bg-graphite-950 focus-visible:outline-graphite-900",
   outline:
-    "border border-line-strong bg-white text-navy-900 hover:border-navy-400 hover:bg-navy-50 " +
-    "focus-visible:outline-navy-700",
-  ghost: "text-navy-800 hover:bg-navy-50 focus-visible:outline-navy-700",
+    "border border-line-strong bg-white text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50 " +
+    "focus-visible:outline-graphite-700",
+  ghost: "text-graphite-800 hover:bg-graphite-50 focus-visible:outline-graphite-700",
   danger:
     "bg-danger-600 text-white hover:bg-danger-700 focus-visible:outline-danger-600",
   onDark:

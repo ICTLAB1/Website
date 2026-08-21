@@ -22,7 +22,7 @@ export function SignOutButton({ className }: { className?: string }) {
         router.refresh();
       }}
       className={cn(
-        "inline-flex h-10 items-center justify-center rounded-[--radius-md] border border-line-strong px-4 text-[13px] font-medium text-navy-900 hover:border-danger-600 hover:text-danger-700 disabled:opacity-60",
+        "inline-flex h-10 items-center justify-center rounded-[--radius-md] border border-line-strong px-4 text-[13px] font-medium text-graphite-900 hover:border-danger-600 hover:text-danger-700 disabled:opacity-60",
         className,
       )}
     >

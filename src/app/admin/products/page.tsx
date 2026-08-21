@@ -51,7 +51,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
         />
         <button
           type="submit"
-          className="h-11 rounded-[--radius-md] bg-navy-900 px-4 text-sm font-medium text-white hover:bg-navy-800"
+          className="h-11 rounded-[--radius-md] bg-graphite-900 px-4 text-sm font-medium text-white hover:bg-graphite-800"
         >
           Search
         </button>

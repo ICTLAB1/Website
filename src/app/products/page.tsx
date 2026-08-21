@@ -93,8 +93,8 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 "No products match these filters"
               ) : (
                 <>
-                  Showing <strong className="font-semibold text-navy-900">{first}–{last}</strong> of{" "}
-                  <strong className="font-semibold text-navy-900">{total}</strong> products
+                  Showing <strong className="font-semibold text-graphite-900">{first}–{last}</strong> of{" "}
+                  <strong className="font-semibold text-graphite-900">{total}</strong> products
                 </>
               )}
             </p>
@@ -114,7 +114,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                       })}
                       className={`whitespace-nowrap rounded-[--radius-sm] px-2.5 py-1.5 text-[13px] ${
                         active
-                          ? "bg-navy-900 font-medium text-white"
+                          ? "bg-graphite-900 font-medium text-white"
                           : "text-ink-600 hover:bg-surface-muted"
                       }`}
                     >

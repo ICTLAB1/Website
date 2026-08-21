@@ -33,17 +33,17 @@ export function CategoryCard({
   return (
     <Link
       href={`/products?category=${encodeURIComponent(category.slug)}`}
-      className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-navy-300"
+      className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
     >
       <span
         aria-hidden="true"
-        className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-[--radius-md] bg-navy-50 text-navy-700 group-hover:bg-accent-50 group-hover:text-accent-700"
+        className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-[--radius-md] bg-graphite-50 text-graphite-700 group-hover:bg-accent-50 group-hover:text-accent-700"
       >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
           <path d={path} />
         </svg>
       </span>
-      <span className="text-[15px] font-semibold text-navy-900 group-hover:text-accent-700">
+      <span className="text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
         {category.name}
       </span>
       {category.summary ? (

@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* First tab stop on every page. */}
         <Link
           href="#main-content"
-          className="sr-only-focusable absolute left-4 top-4 z-[100] rounded-[--radius-md] bg-navy-900 px-4 py-2 text-sm font-medium text-white"
+          className="sr-only-focusable absolute left-4 top-4 z-[100] rounded-[--radius-md] bg-graphite-900 px-4 py-2 text-sm font-medium text-white"
         >
           Skip to main content
         </Link>

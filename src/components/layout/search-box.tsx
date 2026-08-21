@@ -190,7 +190,7 @@ export function SearchBox({
                     )}
                   >
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-medium text-navy-900">
+                      <span className="block truncate text-sm font-medium text-graphite-900">
                         {suggestion.title}
                       </span>
                       <span className="mt-0.5 block truncate text-[12px] text-ink-500">

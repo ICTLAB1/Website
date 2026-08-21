@@ -83,14 +83,14 @@ export function VariantSelector({
                     className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-accent-700)]"
                   />
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[13px] font-medium text-navy-900">
+                    <span className="block text-[13px] font-medium text-graphite-900">
                       {variant.name}
                     </span>
                     <span className="mt-0.5 block font-mono text-[11px] text-ink-600">
                       {variant.sku}
                     </span>
                   </span>
-                  <span className="shrink-0 text-right text-[13px] font-semibold text-navy-900">
+                  <span className="shrink-0 text-right text-[13px] font-semibold text-graphite-900">
                     {price > 0 ? formatMoney(price, variant.currency) : "On enquiry"}
                   </span>
                 </label>
@@ -124,7 +124,7 @@ export function VariantSelector({
 
         {quoteOnly ? (
           <div className="rounded-[--radius-md] border border-line bg-surface-muted p-4">
-            <p className="text-[17px] font-semibold text-navy-900">Price on enquiry</p>
+            <p className="text-[17px] font-semibold text-graphite-900">Price on enquiry</p>
             <p className="mt-1 text-[13px] leading-relaxed text-ink-600">
               This product is quoted against your configuration and volume. Send us the
               requirement and we will return a written quotation.
@@ -133,7 +133,7 @@ export function VariantSelector({
         ) : (
           <>
             <div className="flex flex-wrap items-baseline gap-2.5">
-              <span className="text-[28px] font-semibold leading-none text-navy-900">
+              <span className="text-[28px] font-semibold leading-none text-graphite-900">
                 {formatMoney(unitPrice, selected.currency)}
               </span>
               {saving ? (
@@ -173,7 +173,7 @@ export function VariantSelector({
                   Subtotal {formatMoney(lineTotal, selected.currency)} + GST{" "}
                   {formatMoney(gst, selected.currency)}
                 </p>
-                <p className="text-[15px] font-semibold text-navy-900">
+                <p className="text-[15px] font-semibold text-graphite-900">
                   {formatMoney(lineTotal + gst, selected.currency)} incl. GST
                 </p>
               </div>
@@ -223,9 +223,9 @@ export function VariantSelector({
         </p>
       </div>
 
-      <div className="border-t border-line bg-navy-900 px-5 py-4 text-white">
+      <div className="border-t border-line bg-graphite-900 px-5 py-4 text-white">
         <p className="text-[14px] font-semibold">Buying 10+ licences?</p>
-        <p className="mt-1 text-[13px] leading-relaxed text-navy-200">
+        <p className="mt-1 text-[13px] leading-relaxed text-graphite-200">
           Volume pricing, consolidated renewals and deployment support are handled by our
           enterprise team.
         </p>

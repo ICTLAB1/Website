@@ -22,7 +22,7 @@ export function EmptyState({
         className,
       )}
     >
-      <Heading className="text-base font-semibold text-navy-900">{title}</Heading>
+      <Heading className="text-base font-semibold text-graphite-900">{title}</Heading>
       {description ? (
         <p className="mt-2 max-w-md text-sm text-ink-600">{description}</p>
       ) : null}

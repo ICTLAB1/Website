@@ -113,7 +113,7 @@ export function FilterPanel({
   return (
     <div className="rounded-[--radius-lg] border border-line bg-white px-5 py-5">
       <div className="mb-1 flex items-center justify-between gap-3">
-        <h2 className="text-[15px] font-semibold text-navy-900">Filters</h2>
+        <h2 className="text-[15px] font-semibold text-graphite-900">Filters</h2>
         {hasFilters ? (
           <Link
             href={buildCatalogueHref({}, { q: Array.isArray(params.q) ? params.q[0] : params.q }, basePath)}
@@ -230,7 +230,7 @@ export function FilterPanel({
 export function MobileFilterPanel(props: Parameters<typeof FilterPanel>[0]) {
   return (
     <details className="lg:hidden">
-      <summary className="flex h-11 cursor-pointer items-center justify-between rounded-[--radius-md] border border-line-strong bg-white px-4 text-sm font-medium text-navy-900">
+      <summary className="flex h-11 cursor-pointer items-center justify-between rounded-[--radius-md] border border-line-strong bg-white px-4 text-sm font-medium text-graphite-900">
         Filters
         <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="text-ink-500">
           <path d="M3 5h14v2H3zM5 9h10v2H5zM8 13h4v2H8z" />

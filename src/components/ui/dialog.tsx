@@ -59,13 +59,13 @@ export function Dialog({
       aria-labelledby="dialog-title"
       className={cn(
         "w-[calc(100vw-2rem)] rounded-[--radius-lg] border border-line bg-white p-0 shadow-[--shadow-overlay]",
-        "backdrop:bg-navy-950/50 open:m-auto",
+        "backdrop:bg-graphite-950/50 open:m-auto",
         width,
       )}
     >
       <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-4">
         <div>
-          <h2 id="dialog-title" className="text-base font-semibold text-navy-900">
+          <h2 id="dialog-title" className="text-base font-semibold text-graphite-900">
             {title}
           </h2>
           {description ? <p className="mt-1 text-[13px] text-ink-500">{description}</p> : null}

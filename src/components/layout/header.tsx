@@ -23,9 +23,9 @@ export async function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-white">
       {/* Utility bar */}
-      <div className="hidden border-b border-navy-800 bg-navy-900 text-navy-100 lg:block">
+      <div className="hidden border-b border-graphite-800 bg-graphite-900 text-graphite-100 lg:block">
         <div className="container-page flex h-9 items-center justify-between text-[12px]">
-          <p className="text-navy-200">{config.tagline}</p>
+          <p className="text-graphite-200">{config.tagline}</p>
           <nav aria-label="Utility">
             <ul className="flex items-center gap-5">
               {utilityNav.map((link) => (
@@ -63,7 +63,7 @@ export async function Header() {
           <div className="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
             <Link
               href="/search"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-navy-900 lg:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-graphite-900 lg:hidden"
             >
               <span className="sr-only">Search</span>
               <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -77,7 +77,7 @@ export async function Header() {
 
             <Link
               href={user ? "/account" : "/login"}
-              className="hidden h-10 w-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-navy-900 hover:border-navy-400 hover:bg-navy-50 sm:inline-flex lg:hidden xl:inline-flex"
+              className="hidden h-10 w-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50 sm:inline-flex lg:hidden xl:inline-flex"
             >
               <span className="sr-only">{user ? "My account" : "Sign in"}</span>
               <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

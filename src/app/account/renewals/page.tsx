@@ -43,7 +43,7 @@ export default async function AccountRenewalsPage() {
           <tbody>
             {renewals.map((renewal) => (
               <Tr key={renewal.reference}>
-                <Td className="font-medium text-navy-900">{renewal.licence.productName}</Td>
+                <Td className="font-medium text-graphite-900">{renewal.licence.productName}</Td>
                 <Td className="font-mono text-[12px]">{renewal.licence.sku}</Td>
                 <Td>{formatDate(renewal.dueAt)}</Td>
                 <Td className="tabular-nums">{renewal.seats}</Td>

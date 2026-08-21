@@ -77,7 +77,7 @@ export default async function AdminQuotesPage() {
                   <Td>{quote.enquiry?.companyName ?? "—"}</Td>
                   <Td className="font-mono text-[12px]">{quote.enquiry?.reference ?? "—"}</Td>
                   <Td className="tabular-nums">{quote._count.items}</Td>
-                  <Td className="tabular-nums font-medium text-navy-900">
+                  <Td className="tabular-nums font-medium text-graphite-900">
                     {formatMoney(quote.totalMinor, quote.currency)}
                   </Td>
                   <Td>{formatDate(quote.validUntil)}</Td>

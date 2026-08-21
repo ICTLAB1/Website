@@ -126,7 +126,7 @@ export function EnquiryBasket({
             </Link>
             <Link
               href="/contact"
-              className="inline-flex h-11 items-center justify-center rounded-[--radius-md] border border-line-strong px-5 text-sm font-medium text-navy-900 hover:bg-navy-50"
+              className="inline-flex h-11 items-center justify-center rounded-[--radius-md] border border-line-strong px-5 text-sm font-medium text-graphite-900 hover:bg-graphite-50"
             >
               Describe a requirement instead
             </Link>
@@ -162,7 +162,7 @@ export function EnquiryBasket({
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-accent-700">
                       {line.brandName}
                     </p>
-                    <h3 className="mt-1 text-[15px] font-semibold text-navy-900">
+                    <h3 className="mt-1 text-[15px] font-semibold text-graphite-900">
                       <Link href={`/products/${line.productSlug}`} className="hover:underline">
                         {line.productName}
                       </Link>
@@ -196,7 +196,7 @@ export function EnquiryBasket({
 
                     <div className="min-w-24 text-right">
                       <p className="text-[12px] text-ink-500">Indicative</p>
-                      <p className="text-[15px] font-semibold text-navy-900">
+                      <p className="text-[15px] font-semibold text-graphite-900">
                         {line.unitPriceMinor === null
                           ? "On quote"
                           : formatMoney(line.unitPriceMinor * line.quantity, line.currency)}
@@ -384,20 +384,20 @@ export function EnquiryBasket({
       <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
         <div className="rounded-[--radius-lg] border border-line bg-white">
           <div className="border-b border-line px-5 py-4">
-            <h2 className="text-[15px] font-semibold text-navy-900">Enquiry summary</h2>
+            <h2 className="text-[15px] font-semibold text-graphite-900">Enquiry summary</h2>
           </div>
           <dl className="space-y-3 px-5 py-4 text-[13px]">
             <div className="flex justify-between gap-3">
               <dt className="text-ink-500">Line items</dt>
-              <dd className="font-medium text-navy-900">{lines.length}</dd>
+              <dd className="font-medium text-graphite-900">{lines.length}</dd>
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-ink-500">Total quantity</dt>
-              <dd className="font-medium tabular-nums text-navy-900">{totalQuantity}</dd>
+              <dd className="font-medium tabular-nums text-graphite-900">{totalQuantity}</dd>
             </div>
             <div className="flex justify-between gap-3 border-t border-line pt-3">
               <dt className="text-ink-500">Indicative subtotal</dt>
-              <dd className={cn("font-semibold text-navy-900", hasQuoteOnly && "text-[13px]")}>
+              <dd className={cn("font-semibold text-graphite-900", hasQuoteOnly && "text-[13px]")}>
                 {indicativeTotal > 0 ? formatMoney(indicativeTotal) : "—"}
               </dd>
             </div>
@@ -412,9 +412,9 @@ export function EnquiryBasket({
           </div>
         </div>
 
-        <div className="mt-4 rounded-[--radius-lg] border border-line bg-navy-900 p-5 text-white">
+        <div className="mt-4 rounded-[--radius-lg] border border-line bg-graphite-900 p-5 text-white">
           <p className="text-[14px] font-semibold">Prefer to talk it through?</p>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-navy-200">
+          <p className="mt-1.5 text-[13px] leading-relaxed text-graphite-200">
             Complex or multi-vendor requirements are often faster to scope in a conversation.
           </p>
           <Link

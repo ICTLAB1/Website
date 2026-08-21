@@ -225,7 +225,7 @@ export function Fieldset({
 }) {
   return (
     <fieldset className={cn("min-w-0", className)}>
-      <legend className="text-sm font-semibold text-navy-900">{legend}</legend>
+      <legend className="text-sm font-semibold text-graphite-900">{legend}</legend>
       {description ? <p className="mt-1 text-[13px] text-ink-500">{description}</p> : null}
       <div className="mt-4 grid gap-4">{children}</div>
     </fieldset>

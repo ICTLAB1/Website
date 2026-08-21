@@ -72,7 +72,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
         onClick={openDrawer}
         aria-expanded={open}
         aria-controls="mobile-navigation"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-navy-900 lg:hidden"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-graphite-900 lg:hidden"
       >
         <span className="sr-only">Open menu</span>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -83,7 +83,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
       {open ? (
         <div className="fixed inset-0 z-[70] lg:hidden">
           <div
-            className="absolute inset-0 bg-navy-950/50"
+            className="absolute inset-0 bg-graphite-950/50"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
@@ -96,12 +96,12 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
           >
             <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
               {current.kind === "root" ? (
-                <span className="text-sm font-semibold text-navy-900">Menu</span>
+                <span className="text-sm font-semibold text-graphite-900">Menu</span>
               ) : (
                 <button
                   type="button"
                   onClick={pop}
-                  className="-ml-1 inline-flex items-center gap-1.5 rounded-[--radius-sm] px-1 py-1 text-sm font-semibold text-navy-900"
+                  className="-ml-1 inline-flex items-center gap-1.5 rounded-[--radius-sm] px-1 py-1 text-sm font-semibold text-graphite-900"
                 >
                   <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path d="M12.5 15.5 8 11l4.5-4.5v9z" />
@@ -141,7 +141,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
                               links: item.simpleMenu,
                             })
                           }
-                          className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px] font-medium text-navy-900"
+                          className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px] font-medium text-graphite-900"
                         >
                           {item.label}
                           <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="text-ink-500">
@@ -149,14 +149,14 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
                           </svg>
                         </button>
                       ) : (
-                        <Link href={item.href} className="block px-4 py-3.5 text-[15px] font-medium text-navy-900">
+                        <Link href={item.href} className="block px-4 py-3.5 text-[15px] font-medium text-graphite-900">
                           {item.label}
                         </Link>
                       )}
                     </li>
                   ))}
                   <li>
-                    <Link href="/enterprise" className="block px-4 py-3.5 text-[15px] font-medium text-navy-900">
+                    <Link href="/enterprise" className="block px-4 py-3.5 text-[15px] font-medium text-graphite-900">
                       Enterprise
                     </Link>
                   </li>
@@ -198,7 +198,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
                               links: [{ label: `All ${column.heading}`, href: column.href }, ...column.links],
                             })
                           }
-                          className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px] font-medium text-navy-900"
+                          className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px] font-medium text-graphite-900"
                         >
                           {column.heading}
                           <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="text-ink-500">
@@ -210,7 +210,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
                     {current.links?.map((link) => (
                       <li key={link.href}>
                         <Link href={link.href} className="block px-4 py-3.5">
-                          <span className="block text-[15px] font-medium text-navy-900">{link.label}</span>
+                          <span className="block text-[15px] font-medium text-graphite-900">{link.label}</span>
                           {link.description ? (
                             <span className="mt-0.5 block text-[13px] text-ink-500">{link.description}</span>
                           ) : null}
@@ -227,7 +227,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
                   <ul className="divide-y divide-line">
                     {current.links.map((link) => (
                       <li key={link.href}>
-                        <Link href={link.href} className="block px-4 py-3.5 text-[15px] text-navy-900">
+                        <Link href={link.href} className="block px-4 py-3.5 text-[15px] text-graphite-900">
                           {link.label}
                         </Link>
                       </li>

@@ -58,7 +58,7 @@ export default async function AccountQuotesPage() {
                 <Td>{formatDate(quote.createdAt)}</Td>
                 <Td>{formatDate(quote.validUntil)}</Td>
                 <Td className="tabular-nums">{quote._count.items}</Td>
-                <Td className="tabular-nums font-medium text-navy-900">
+                <Td className="tabular-nums font-medium text-graphite-900">
                   {formatMoney(quote.totalMinor, quote.currency)}
                 </Td>
                 <Td>

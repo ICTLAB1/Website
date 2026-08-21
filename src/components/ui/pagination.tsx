@@ -26,7 +26,7 @@ export function Pagination({
         <Link
           href={buildHref(page - 1)}
           rel="prev"
-          className={cn(linkClass, "border-line-strong bg-white text-navy-800 hover:bg-navy-50")}
+          className={cn(linkClass, "border-line-strong bg-white text-graphite-800 hover:bg-graphite-50")}
         >
           <span aria-hidden="true">&larr;</span>
           <span className="ml-1.5 hidden sm:inline">Previous</span>
@@ -51,8 +51,8 @@ export function Pagination({
             className={cn(
               linkClass,
               entry === page
-                ? "border-navy-900 bg-navy-900 font-semibold text-white"
-                : "border-line-strong bg-white text-navy-800 hover:bg-navy-50",
+                ? "border-graphite-900 bg-graphite-900 font-semibold text-white"
+                : "border-line-strong bg-white text-graphite-800 hover:bg-graphite-50",
             )}
           >
             {entry}
@@ -64,7 +64,7 @@ export function Pagination({
         <Link
           href={buildHref(page + 1)}
           rel="next"
-          className={cn(linkClass, "border-line-strong bg-white text-navy-800 hover:bg-navy-50")}
+          className={cn(linkClass, "border-line-strong bg-white text-graphite-800 hover:bg-graphite-50")}
         >
           <span className="mr-1.5 hidden sm:inline">Next</span>
           <span className="sr-only sm:hidden">Next page</span>

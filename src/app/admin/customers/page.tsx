@@ -44,7 +44,7 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
         />
         <button
           type="submit"
-          className="h-11 rounded-[--radius-md] bg-navy-900 px-4 text-sm font-medium text-white hover:bg-navy-800"
+          className="h-11 rounded-[--radius-md] bg-graphite-900 px-4 text-sm font-medium text-white hover:bg-graphite-800"
         >
           Search
         </button>
@@ -73,7 +73,7 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
               <tbody>
                 {items.map((customer) => (
                   <Tr key={customer.id}>
-                    <Td className="font-medium text-navy-900">{customer.name}</Td>
+                    <Td className="font-medium text-graphite-900">{customer.name}</Td>
                     <Td className="text-[13px]">{customer.email}</Td>
                     <Td className="text-[13px]">{customer.company?.name ?? "—"}</Td>
                     <Td className="font-mono text-[12px]">{customer.company?.gstin ?? "—"}</Td>
