@@ -71,10 +71,62 @@ for (const [name, path] of PAGES) {
   }
 }
 
+/**
+ * The same overflow question, with the navigation panels open.
+ *
+ * The sweep above only ever measures a closed menu, which is how a mega panel
+ * shipped hanging off the left edge of the screen: it was centred on the button
+ * that opened it, so the leftmost menus put most of a 72rem panel off-viewport.
+ * Nothing that measures a page at rest can see that.
+ */
+for (const width of [1024, 1280, 1440, 1600, 1920]) {
+  const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: "reduce" });
+  const page = await context.newPage();
+  await page.goto(`${BASE}/`, { waitUntil: "load", timeout: 20000 });
+
+  const buttons = page.locator("nav[aria-label='Primary'] button");
+  const count = await buttons.count();
+
+  for (let index = 0; index < count; index += 1) {
+    const button = buttons.nth(index);
+    const label = (await button.innerText()).trim();
+    await button.click();
+    await page.waitForTimeout(180);
+
+    const panel = page.locator("[id^='megamenu-']").first();
+    if ((await panel.count()) === 0) {
+      await page.keyboard.press("Escape");
+      continue;
+    }
+
+    const box = await panel.boundingBox();
+    const scrolls = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    );
+
+    if (box && box.x < -0.5) {
+      problems.push(`menu "${label}" @${width}px: panel starts ${Math.round(box.x)}px off the left edge`);
+    }
+    if (box && box.x + box.width > width + 0.5) {
+      problems.push(`menu "${label}" @${width}px: panel ends ${Math.round(box.x + box.width - width)}px past the right edge`);
+    }
+    if (scrolls) {
+      problems.push(`menu "${label}" @${width}px: opening it makes the page scroll sideways`);
+    }
+
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(120);
+  }
+
+  await context.close();
+}
+
 await browser.close();
 if (problems.length) {
   console.log("PROBLEMS:");
   for (const p of problems) console.log("  " + p);
   process.exit(1);
 }
-console.log(`No horizontal overflow or console errors across ${PAGES.length} pages × ${WIDTHS.length} widths.`);
+console.log(
+  `No horizontal overflow or console errors across ${PAGES.length} pages × ${WIDTHS.length} widths,\n  and no navigation panel escapes the viewport at 5 desktop widths.`,
+);

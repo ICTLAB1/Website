@@ -42,7 +42,10 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
   }
 
   return (
-    <div ref={containerRef} className="hidden lg:block">
+    // `relative` here is what a wide panel positions against. Anchoring it to
+    // the page container rather than to the button that opened it is the whole
+    // fix for a panel that used to hang off the left edge of the screen.
+    <div ref={containerRef} className="relative hidden lg:block">
       <nav aria-label="Primary">
         <ul className="flex items-center">
           {nav.map((item, index) => {
@@ -52,7 +55,9 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
             return (
               <li
                 key={item.label}
-                className="relative"
+                // Only a narrow dropdown positions against its own button; a
+                // wide panel must not, or it inherits the button's position.
+                className={cn(item.megaMenu ? undefined : "relative")}
                 onMouseEnter={() => {
                   cancelClose();
                   if (hasPanel) setOpenIndex(index);
@@ -106,7 +111,12 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                       "animate-slide-down origin-top",
                       "rounded-b-[--radius-lg]",
                       item.megaMenu
-                        ? "left-1/2 w-[min(72rem,calc(100vw-4rem))] -translate-x-1/2 p-6"
+                        // Spans the page container, so its edges are the
+                        // container's edges whatever the viewport width and
+                        // wherever in the bar the button sits. It used to be
+                        // centred on the button — which put most of a 72rem
+                        // panel off-screen for the leftmost menus.
+                        ? "inset-x-0 p-6"
                         : "left-0 w-80 p-3",
                     )}
                   >
