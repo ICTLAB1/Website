@@ -31,6 +31,7 @@ const SECTIONS: Array<{ heading: string; links: Array<{ href: string; label: str
     heading: "Content",
     links: [
       { href: "/admin/pages", label: "Pages", adminOnly: true },
+      { href: "/admin/navigation", label: "Navigation", adminOnly: true },
       { href: "/admin/services", label: "Services", adminOnly: true },
       { href: "/admin/faqs", label: "FAQs", adminOnly: true },
       { href: "/admin/banners", label: "Banners", adminOnly: true },
