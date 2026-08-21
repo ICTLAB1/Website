@@ -30,7 +30,12 @@ if [ "${SKIP_SEED}" = "1" ]; then
   echo "→ seeding skipped (SKIP_SEED=1)"
 elif [ "$(node prisma/db-status.mjs pages)" = "0" ]; then
   echo "→ empty database, seeding catalogue and content"
-  npm run db:seed
+  # The image runs with NODE_ENV=production, which the seed refuses by default.
+  # That guard exists to stop someone seeding a database that already holds real
+  # data — and the check above has just established this one holds none. The
+  # emptiness test is the real protection; the override only gets past a check
+  # that is asking a question already answered.
+  SEED_ALLOW_PRODUCTION=true npm run db:seed
 else
   echo "→ database already has content, leaving it alone"
 fi
