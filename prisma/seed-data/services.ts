@@ -395,7 +395,7 @@ export const services: ServiceSeed[] = [
     problem:
       "Licence administration is a small task that is never anyone's priority. Seats stay assigned to people who left, new starters wait for someone to notice they need a licence, renewals happen automatically at whatever the count was last year, and the total quietly grows.",
     solution:
-      "We manage the administration: seat assignment and reclamation as people join and leave, a renewal calendar with a review before each date, and a single consolidated view across publishers rather than one portal per vendor.\n\nThe intent is that your licence count tracks your headcount closely, in both directions.",
+      "We manage the administration: seat assignment and reclamation as people join and leave, a renewal calendar with a review before each date, and a single consolidated view across publishers rather than one portal per publisher.\n\nThe intent is that your licence count tracks your headcount closely, in both directions.",
     benefits: [
       "Seat assignment and reclamation handled as staff change",
       "Renewal calendar with a review window before every date",
@@ -422,29 +422,29 @@ export const services: ServiceSeed[] = [
     name: "IT Procurement",
     category: "Licensing operations",
     summary:
-      "Multi-vendor sourcing, consolidated quotations and single purchase order fulfilment.",
+      "Multi-brand sourcing, consolidated quotations and single purchase order fulfilment.",
     heroHeadline: "One purchase order for your whole technology stack",
     problem:
-      "A single technology refresh can involve four publishers, two hardware vendors and a services engagement. Handled directly, that is seven vendor relationships, seven quotations in different formats, seven purchase orders through your finance system and seven sets of invoices to reconcile — for one project.",
+      "A single technology refresh can involve four publishers, two hardware manufacturers and a services engagement. Handled directly, that is seven supplier relationships, seven quotations in different formats, seven purchase orders through your finance system and seven sets of invoices to reconcile — for one project.",
     solution:
       "We consolidate the sourcing. One requirement goes in, one quotation comes back covering every line, one purchase order is raised, and one GST invoice is issued.\n\nThe quotation itemises every line at its own price, so consolidation does not mean losing visibility of what each component costs.",
     benefits: [
-      "One quotation covering multiple vendors, itemised by line",
+      "One quotation covering multiple brands, itemised by line",
       "Single purchase order and single GST invoice",
-      "One point of contact for order status across vendors",
-      "Consistent commercial terms rather than per-vendor variation",
+      "One point of contact for order status across brands",
+      "Consistent commercial terms rather than per-supplier variation",
       "Renewal dates consolidated onto common anniversaries where possible",
       "Reduced administrative load on your finance team",
     ],
     process: [
       { step: 1, title: "Requirement", description: "You describe the requirement once, in whatever detail you have." },
-      { step: 2, title: "Sourcing", description: "We source across the relevant publishers and vendors, including alternatives worth considering." },
+      { step: 2, title: "Sourcing", description: "We source across the relevant publishers and manufacturers, including alternatives worth considering." },
       { step: 3, title: "Consolidated quotation", description: "A single itemised quotation with every line priced and the GST position stated." },
       { step: 4, title: "Order", description: "One purchase order covers the whole quotation." },
       { step: 5, title: "Fulfilment", description: "Licences provisioned and hardware shipped, with a single status contact throughout." },
       { step: 6, title: "Invoice", description: "One GST invoice with your GSTIN recorded for input credit." },
     ],
-    technologies: ["Multi-vendor sourcing", "Consolidated quotation", "GST invoicing", "Purchase order fulfilment"],
+    technologies: ["Multi-brand sourcing", "Consolidated quotation", "GST invoicing", "Purchase order fulfilment"],
     displayOrder: 52,
     featured: true,
     faqs: [

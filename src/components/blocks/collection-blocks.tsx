@@ -94,7 +94,7 @@ export function CollectionGridBlock({
 }) {
   if (rows.length === 0) return null;
 
-  // A vendor strip's heading is a caption for the logos beneath it, not a
+  // A brand strip's heading is a caption for the logos beneath it, not a
   // section title, so it is set small and centred rather than as a display
   // heading — the same treatment the page used before the content moved into
   // the CMS.

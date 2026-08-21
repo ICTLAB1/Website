@@ -9,7 +9,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Enquiry Basket — Request an Enterprise Quote",
   description:
-    "Build a multi-vendor enquiry and request a single consolidated quotation covering every product, with GST invoicing and one purchase order.",
+    "Build a multi-brand enquiry and request a single consolidated quotation covering every product, with GST invoicing and one purchase order.",
   path: "/enquiry",
   // Transactional page: useful to visitors, not to a search index.
   noIndex: true,
@@ -38,7 +38,7 @@ export default async function EnquiryPage() {
       <header className="mb-10 max-w-3xl">
         <h1 className="text-3xl sm:text-4xl">Your enquiry</h1>
         <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
-          Add products from any vendor to a single enquiry. We return one consolidated,
+          Add products from any brand to a single enquiry. We return one consolidated,
           itemised quotation covering all of them — which becomes one purchase order and one
           GST invoice.
         </p>

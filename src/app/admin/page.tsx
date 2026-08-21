@@ -7,7 +7,7 @@ import { requireStaff } from "@/lib/auth/guards";
 import { getDashboardMetrics, listAuditLog } from "@/lib/queries/admin";
 import { formatMoney } from "@/lib/money";
 import { formatDate, formatDateTime, humanise } from "@/lib/utils";
-import { getUnconfiguredIdentityKeys } from "@/lib/site-config";
+import { getUnconfiguredIdentityKeys } from "@/lib/admin/config-status";
 
 export const metadata: Metadata = { title: "Dashboard" };
 

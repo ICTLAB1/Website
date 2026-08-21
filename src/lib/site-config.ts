@@ -5,9 +5,12 @@ import { appUrl, optionalEnv } from "@/lib/env";
  * Business identity.
  *
  * Every field is sourced from configuration. Where a value has not been
- * configured we return `null` and the UI renders an explicit "not configured"
- * state - the application never substitutes invented company details such as a
- * fake address, phone number, GSTIN or email.
+ * configured we return `null` and the public UI renders nothing at all for it -
+ * the application never substitutes invented company details such as a fake
+ * address, phone number, GSTIN or email, and equally never tells a visitor that
+ * a detail is missing or which environment variable would supply it. Which
+ * fields are still unset is an operator's question, answered by
+ * `lib/admin/config-status.ts` behind the admin login.
  *
  * These are public-facing, non-secret values (the kind printed on a letterhead).
  * They are read server-side and passed to client components as props, so no
@@ -39,7 +42,7 @@ export function getSiteConfig() {
     entityName: legalName ?? tradingName,
     tagline:
       optionalEnv("COMPANY_TAGLINE") ??
-      "Multiple technology vendors. One procurement partner.",
+      "One procurement partner. Multiple technology brands.",
     url: appUrl(),
     email: {
       sales: optionalEnv("COMPANY_EMAIL_SALES") ?? null,
@@ -84,22 +87,4 @@ export function getSiteConfig() {
     cin: optionalEnv("COMPANY_CIN") ?? null,
     supportHours: optionalEnv("COMPANY_SUPPORT_HOURS") ?? null,
   };
-}
-
-/** Configuration keys that must be filled in before the site goes live. */
-export function getUnconfiguredIdentityKeys(): string[] {
-  const config = getSiteConfig();
-  const missing: string[] = [];
-  if (!config.legalName) missing.push("COMPANY_LEGAL_NAME");
-  if (!config.email.sales) missing.push("COMPANY_EMAIL_SALES");
-  if (!config.email.support) missing.push("COMPANY_EMAIL_SUPPORT");
-  if (!config.phone.sales) missing.push("COMPANY_PHONE_SALES");
-  if (!config.hasAddress) missing.push("COMPANY_ADDRESS_LINE1 / COMPANY_CITY");
-  if (!config.gstin) missing.push("COMPANY_GSTIN");
-  // Publishing a named grievance officer is a legal requirement for an online
-  // seller in India, not a nicety, so an unset one is listed alongside the rest.
-  if (!config.grievance.name || !config.grievance.email) {
-    missing.push("COMPANY_GRIEVANCE_OFFICER_NAME / COMPANY_GRIEVANCE_OFFICER_EMAIL");
-  }
-  return missing;
 }

@@ -26,7 +26,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
 
   const title = query
     ? `Search results for “${query}”`
-    : "Software Catalogue — Licensing from Every Major Vendor";
+    : "Software Catalogue — Licensing from Every Major Brand";
 
   return buildMetadata({
     title,
@@ -174,7 +174,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
             <h2 className="text-[1.25rem]">Cannot find what you need?</h2>
             <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-600">
               This catalogue lists our most-requested licensing. We source considerably more
-              than is listed here, including hardware configurations and vendor products that
+              than is listed here, including hardware configurations and publisher products that
               are only ever quoted. Tell us the requirement and we will price it.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">

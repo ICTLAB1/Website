@@ -10,7 +10,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Create an account",
   description:
-    "Create a business account to track enquiries, quotations, licences and renewals across vendors.",
+    "Create a business account to track enquiries, quotations, licences and renewals across brands.",
   path: "/register",
   noIndex: true,
 });

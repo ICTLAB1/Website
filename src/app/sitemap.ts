@@ -111,7 +111,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: canonical(`/${page.slug}`),
       lastModified: page.updatedAt,
       changeFrequency: "monthly",
-      // Vendor overview pages sit one level above their product pages.
+      // Brand overview pages sit one level above their product pages.
       priority: page.slug === "" ? 1 : page.slug.includes("/") ? 0.7 : 0.8,
     });
   }

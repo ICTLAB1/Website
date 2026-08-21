@@ -18,7 +18,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   return buildMetadata({
     title: term ? `Search results for “${term}”` : "Search",
     description:
-      "Search across the software catalogue, vendors, managed services, licensing guidance and frequently asked questions.",
+      "Search across the software catalogue, brands, managed services, licensing guidance and frequently asked questions.",
     path: "/search",
     // Search result pages are not useful in an index and create unbounded URLs.
     noIndex: true,
@@ -69,14 +69,14 @@ export default async function SearchPage({ searchParams }: PageProps) {
       <header className="mb-8 max-w-2xl">
         <h1 className="text-3xl sm:text-4xl">Search</h1>
         <p className="mt-3 text-[15px] text-ink-600">
-          Search products by name or SKU, plus vendors, services, articles and FAQs.
+          Search products by name or SKU, plus brands, services, articles and FAQs.
         </p>
         <div className="mt-6">
           <SearchBox
             size="lg"
             autoFocus
             label="Search the catalogue and site"
-            placeholder="Search products, SKU, vendors or services"
+            placeholder="Search products, SKU, brands or services"
           />
         </div>
       </header>
@@ -84,7 +84,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
       {!term ? (
         <EmptyState
           title="Enter a search term"
-          description="Try a product name such as “Acrobat”, a SKU, a vendor name, or a service like “email migration”."
+          description="Try a product name such as “Acrobat”, a SKU, a brand name, or a service like “email migration”."
         />
       ) : results.total === 0 ? (
         <EmptyState
@@ -106,7 +106,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
             <strong className="font-semibold text-graphite-900">“{term}”</strong>
           </p>
           <ResultGroup heading="Products" results={results.products} />
-          <ResultGroup heading="Vendors" results={results.brands} />
+          <ResultGroup heading="Brands" results={results.brands} />
           <ResultGroup heading="Services" results={results.services} />
           <ResultGroup heading="Articles" results={results.articles} />
           <ResultGroup heading="Questions" results={results.faqs} />

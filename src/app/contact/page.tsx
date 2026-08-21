@@ -1,39 +1,39 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ContactForm } from "@/components/marketing/contact-form";
 import { buildMetadata } from "@/lib/seo";
-import { getSiteConfig, getUnconfiguredIdentityKeys } from "@/lib/site-config";
+import { getSiteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Contact Us",
+  title: "Contact Sales",
   description:
-    "Contact our sales, enterprise procurement and support teams about software licensing, cloud services and IT solutions.",
+    "Talk to our sales and enterprise procurement teams about software licensing, cloud services and IT solutions. Existing orders and technical issues go to the support centre.",
   path: "/contact",
 });
 
 export default function ContactPage() {
   const config = getSiteConfig();
-  const missing = getUnconfiguredIdentityKeys();
 
+  /**
+   * Sales only. Support used to be a third card here, which meant a customer
+   * with a broken licence and a buyer asking for a quotation arrived at the
+   * same form and the same inbox. Support has its own page, with ticketing and
+   * order tracking behind it, and this page now points there instead.
+   */
   const channels = [
     {
       title: "Sales",
-      body: "Product pricing, licensing questions and new requirements.",
+      body: "Pricing, licensing questions and new requirements.",
       email: config.email.sales,
       phone: config.phone.sales,
     },
     {
       title: "Enterprise procurement",
-      body: "Multi-vendor sourcing, consolidated quotations and volume licensing.",
+      body: "Multi-brand sourcing, consolidated quotations and volume licensing.",
       email: config.email.enterprise ?? config.email.sales,
       phone: config.phone.sales,
-    },
-    {
-      title: "Support",
-      body: "Existing orders, licence administration and technical issues.",
-      email: config.email.support,
-      phone: config.phone.support,
     },
   ];
 
@@ -44,10 +44,10 @@ export default function ContactPage() {
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Contact" }]} />
 
       <header className="mb-10 max-w-3xl">
-        <h1 className="text-3xl sm:text-4xl">Contact us</h1>
+        <h1 className="text-3xl sm:text-4xl">Talk to sales</h1>
         <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
           Tell us what you need. You do not need a finished product list — a seat count, a
-          renewal date or a description of the problem is enough to start.
+          renewal date or a description of what you are trying to do is enough to start.
         </p>
       </header>
 
@@ -85,22 +85,7 @@ export default function ContactPage() {
                 </div>
               </div>
             ))
-          ) : (
-            <div className="rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-5">
-              <h2 className="text-[15px] font-semibold text-warning-700">
-                Direct contact details not configured
-              </h2>
-              <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
-                Email addresses and telephone numbers are supplied through configuration and
-                have not been set for this deployment. Rather than display placeholder contact
-                details, they are omitted — the form on this page is fully functional and every
-                message is recorded.
-              </p>
-              <p className="mt-3 font-mono text-[11px] text-ink-600">
-                Set: {missing.join(", ")}
-              </p>
-            </div>
-          )}
+          ) : null}
 
           {config.formattedAddress ? (
             <div className="rounded-[--radius-lg] border border-line bg-white p-5">
@@ -116,12 +101,31 @@ export default function ContactPage() {
             </div>
           ) : null}
 
-          {config.supportHours ? (
-            <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
-              <h2 className="text-[15px] font-semibold text-graphite-900">Support hours</h2>
-              <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{config.supportHours}</p>
-            </div>
-          ) : null}
+          {/*
+            Support was removed from the channel list above, so this page has to
+            say where it went. Without it, a customer with a licence problem
+            would find only a sales form.
+          */}
+          <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+            <h2 className="text-[15px] font-semibold text-graphite-900">
+              Already a customer?
+            </h2>
+            <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
+              Existing orders, renewals, licence administration and technical issues are
+              handled by the support centre, where they are tracked against your account.
+            </p>
+            {config.supportHours ? (
+              <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
+                {config.supportHours}
+              </p>
+            ) : null}
+            <Link
+              href="/support"
+              className="mt-3 inline-block text-[13px] font-medium text-accent-700 hover:underline"
+            >
+              Go to support
+            </Link>
+          </div>
         </aside>
       </div>
     </div>

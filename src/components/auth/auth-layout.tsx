@@ -42,7 +42,7 @@ export function AuthBenefits() {
       <ul className="mt-5 space-y-4 text-[14px] leading-relaxed text-ink-600">
         {[
           "Track every enquiry and quotation in one place, with their references.",
-          "See your licence position and upcoming renewal dates across vendors.",
+          "See your licence position and upcoming renewal dates across publishers.",
           "Store your company details and GSTIN once, so every invoice carries them correctly.",
           "Reorder or renew without rebuilding the requirement from scratch.",
         ].map((item) => (

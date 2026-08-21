@@ -34,8 +34,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const brand = await getBrandBySlug(slug);
   if (!brand) {
     return buildMetadata({
-      title: "Vendor not found",
-      description: "This vendor page is no longer available.",
+      title: "Brand not found",
+      description: "This brand page is no longer available.",
       path: `/brands/${slug}`,
       noIndex: true,
     });
@@ -65,7 +65,7 @@ export default async function BrandPage({ params }: PageProps) {
     getServices(),
   ]);
 
-  // Services that plausibly relate to this vendor's products, matched on the
+  // Services that plausibly relate to this brand's products, matched on the
   // technology list rather than a hand-maintained mapping.
   const relatedServices = allServices
     .filter((service) =>
@@ -131,7 +131,7 @@ export default async function BrandPage({ params }: PageProps) {
           <section className="border-t border-line py-14">
             <SectionHeader
               title={`${brand.name} product categories`}
-              description="Where this vendor's products sit in the catalogue."
+              description="Where this brand's products sit in the catalogue."
               as="h2"
             />
             <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

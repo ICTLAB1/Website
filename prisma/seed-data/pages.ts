@@ -65,7 +65,7 @@ export const pageSeeds: PageSeed[] = [
               "source": "skuCount"
             },
             {
-              "label": "Vendors supplied",
+              "label": "Technology brands",
               "source": "brandCount"
             },
             {
@@ -74,7 +74,7 @@ export const pageSeeds: PageSeed[] = [
               "source": "literal"
             }
           ],
-          "eyebrow": "Multiple technology vendors. One procurement partner.",
+          "eyebrow": "One procurement partner. Multiple technology brands.",
           "headline": "Enterprise Software Licensing, Cloud & IT Solutions",
           "primaryCta": {
             "href": "/enquiry",
@@ -118,7 +118,7 @@ export const pageSeeds: PageSeed[] = [
             },
             {
               "label": "Authorised Partner",
-              "detail": "Direct vendor relationships"
+              "detail": "Authorised to resell, direct from the publisher"
             },
             {
               "label": "Expert Support",
@@ -153,7 +153,7 @@ export const pageSeeds: PageSeed[] = [
           "layout": "grid",
           "eyebrow": "Catalogue",
           "heading": "Featured software categories",
-          "description": "Browse by what the software does rather than who publishes it — most procurement decisions start with a capability, not a vendor."
+          "description": "Browse by what the software does rather than who publishes it — most procurement decisions start with a capability, not a publisher."
         }
       },
       {
@@ -182,7 +182,7 @@ export const pageSeeds: PageSeed[] = [
           "bullets": [],
           "eyebrow": "Enterprise procurement",
           "heading": "One procurement partner for your technology stack",
-          "description": "A single technology refresh can involve four publishers, two hardware vendors and a services engagement. Handled directly, that is seven vendor relationships for one project.",
+          "description": "A single technology refresh can involve four software publishers, two hardware manufacturers and a services engagement. Bought directly, that is seven supplier relationships for one project.",
           "bulletsIntro": "We consolidate the sourcing so one requirement produces one quotation, one purchase order and one GST invoice — without losing visibility of what each line costs."
         }
       },
@@ -211,11 +211,11 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "items": [
             {
-              "body": "One requirement covering Microsoft, Adobe, Autodesk, Zoho and infrastructure vendors, sourced together rather than chased separately.",
-              "title": "Multi-vendor sourcing"
+              "body": "One requirement covering Microsoft, Adobe, Autodesk, Zoho and infrastructure manufacturers, sourced together rather than chased separately.",
+              "title": "Multi-brand sourcing"
             },
             {
-              "body": "A single itemised quotation across every vendor, with each line priced individually so nothing is hidden inside a bundle.",
+              "body": "A single itemised quotation across every brand, with each line priced individually so nothing is hidden inside a bundle.",
               "title": "Consolidated quotation"
             },
             {
@@ -394,7 +394,7 @@ export const pageSeeds: PageSeed[] = [
               "title": "Tell us the requirement"
             },
             {
-              "body": "Across vendors, including the alternative you did not ask about if it fits better.",
+              "body": "Across brands, including the alternative you did not ask about if it fits better.",
               "title": "We source and advise"
             },
             {
@@ -423,11 +423,12 @@ export const pageSeeds: PageSeed[] = [
           "limit": 24,
           "action": {
             "href": "/brands",
-            "label": "All vendors"
+            "label": "All brands"
           },
           "layout": "grid",
-          "eyebrow": "Vendors",
-          "heading": "Licensing across the vendors you already use"
+          "eyebrow": "Technology brands",
+          "heading": "Licensing across the technology brands you already use",
+          "description": "These are the software publishers and hardware manufacturers we are authorised to resell. We source their products, licence them to you and support them — you hold one commercial relationship, with us."
         }
       },
       {
@@ -504,7 +505,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "about",
     "title": "About Us",
-    "description": "An enterprise technology procurement partner consolidating software licensing, cloud and IT solutions from multiple vendors into a single commercial relationship.",
+    "description": "An enterprise technology procurement partner consolidating software licensing, cloud and IT solutions from multiple publishers and manufacturers into a single commercial relationship.",
     "keywords": [
       "about",
       "technology procurement partner",
@@ -530,10 +531,10 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "tone": "dark",
           "stats": [],
-          "headline": "One procurement relationship for a multi-vendor technology stack",
+          "headline": "One procurement relationship for a multi-brand technology stack",
           "showSearch": false,
           "searchTerms": [],
-          "subheadline": "We supply enterprise software licensing, cloud services and IT solutions across Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure vendors — and the deployment, licence management and support that make them work."
+          "subheadline": "We supply enterprise software licensing, cloud services and IT solutions across Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure manufacturers — and the deployment, licence management and support that make them work."
         }
       },
       {
@@ -542,7 +543,7 @@ export const pageSeeds: PageSeed[] = [
         "visible": true,
         "data": {
           "heading": "What we do",
-          "markdown": "A single technology refresh can involve four publishers, two hardware vendors and a services engagement. Handled directly, that is seven vendor relationships, seven quotation formats and seven sets of invoices for one project.\n\nWe consolidate that. One requirement produces one itemised quotation, one purchase order and one GST invoice — without losing visibility of what each line costs.\n\nAlongside procurement we deliver the work that determines whether the software is actually used: tenant design and migration, device management, cloud governance, security posture work and ongoing licence administration."
+          "markdown": "A single technology refresh can involve four software publishers, two hardware manufacturers and a services engagement. Bought directly, that is seven supplier relationships, seven quotation formats and seven sets of invoices for one project.\n\nWe consolidate that. One requirement produces one itemised quotation, one purchase order and one GST invoice — without losing visibility of what each line costs.\n\nAlongside procurement we deliver the work that determines whether the software is actually used: tenant design and migration, device management, cloud governance, security posture work and ongoing licence administration."
         }
       },
       {
@@ -582,11 +583,11 @@ export const pageSeeds: PageSeed[] = [
           "limit": 24,
           "action": {
             "href": "/brands",
-            "label": "All vendors"
+            "label": "All brands"
           },
           "layout": "strip",
-          "heading": "Vendors we supply",
-          "description": "Licensing and solutions across the vendors most organisations already use."
+          "heading": "Technology brands we are authorised to resell",
+          "description": "We buy from these publishers and manufacturers and supply their products to you — licensing and solutions across the technology brands most organisations already use."
         }
       },
       {
@@ -595,7 +596,7 @@ export const pageSeeds: PageSeed[] = [
         "visible": true,
         "data": {
           "heading": "Company information",
-          "footnote": "Third-party product names and trademarks referenced across this site are the property of their respective owners and are used descriptively to identify the software supplied. Nothing here implies endorsement by, or affiliation with, those vendors beyond a commercial reselling relationship."
+          "footnote": "Third-party product names and trademarks referenced across this site are the property of their respective owners and are used descriptively to identify the software supplied. Nothing here implies endorsement by, or affiliation with, those brand owners beyond a commercial reselling relationship."
         }
       },
       {
@@ -2343,16 +2344,6 @@ export const pageSeeds: PageSeed[] = [
         }
       },
       {
-        "type": "NOTICE",
-        "displayOrder": 1,
-        "visible": true,
-        "data": {
-          "tone": "warning",
-          "heading": "Awaiting legal review",
-          "markdown": "This document describes how this business actually operates and is drafted against Indian law as it applies to a business-to-business reseller. It is **not legal advice**, and it has not yet been reviewed by the company's own adviser.\n\nThis document describes the site exactly as built. If analytics, a chat widget, an advertising pixel or any other third-party script is added later, this page must be updated and a consent mechanism added — none is needed today because nothing here requires consent.\n\nTo remove this notice once the document has been approved, open the page in the admin panel and delete this block."
-        }
-      },
-      {
         "type": "RICH_TEXT",
         "displayOrder": 2,
         "visible": true,
@@ -2489,16 +2480,6 @@ export const pageSeeds: PageSeed[] = [
         }
       },
       {
-        "type": "NOTICE",
-        "displayOrder": 1,
-        "visible": true,
-        "data": {
-          "tone": "warning",
-          "heading": "Awaiting legal review",
-          "markdown": "This document describes how this business actually operates and is drafted against Indian law as it applies to a business-to-business reseller. It is **not legal advice**, and it has not yet been reviewed by the company's own adviser.\n\nThe indicative timelines below describe how fulfilment normally runs. The authoritative timeline for any given order is the one stated on its quotation — that is by design, because lead times differ by publisher and by programme.\n\nTo remove this notice once the document has been approved, open the page in the admin panel and delete this block."
-        }
-      },
-      {
         "type": "RICH_TEXT",
         "displayOrder": 2,
         "visible": true,
@@ -2618,10 +2599,10 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "enterprise",
     "title": "Enterprise Technology Procurement",
-    "description": "One procurement partner for your technology stack. Multi-vendor sourcing, consolidated quotations, a single purchase order, GST invoicing, licence management, renewals and deployment.",
+    "description": "One procurement partner for your technology stack. Multi-brand sourcing, consolidated quotations, a single purchase order, GST invoicing, licence management, renewals and deployment.",
     "keywords": [
       "enterprise procurement",
-      "multi-vendor sourcing",
+      "multi-brand sourcing",
       "consolidated quotation"
     ],
     "status": "PUBLISHED",
@@ -2652,7 +2633,7 @@ export const pageSeeds: PageSeed[] = [
           },
           "showSearch": false,
           "searchTerms": [],
-          "subheadline": "A single technology refresh can involve four publishers, two hardware vendors and a services engagement. Handled directly, that is seven vendor relationships, seven quotation formats, seven purchase orders and seven sets of invoices — for one project.",
+          "subheadline": "A single technology refresh can involve four software publishers, two hardware manufacturers and a services engagement. Bought directly, that is seven supplier relationships, seven quotation formats, seven purchase orders and seven sets of invoices — for one project.",
           "secondaryCta": {
             "href": "/contact",
             "label": "Contact sales"
@@ -2667,7 +2648,7 @@ export const pageSeeds: PageSeed[] = [
           "kind": "brands",
           "limit": 24,
           "layout": "strip",
-          "heading": "Consolidating vendors including"
+          "heading": "Consolidating procurement across brands including"
         }
       },
       {
@@ -2678,14 +2659,14 @@ export const pageSeeds: PageSeed[] = [
           "items": [
             {
               "body": "Microsoft, Adobe, Autodesk, Zoho, SketchUp, Corel and enterprise infrastructure sourced together. One requirement in, one set of options out — including the alternative you did not ask about, where it fits better.",
-              "title": "Multi-vendor procurement"
+              "title": "Multi-brand procurement"
             },
             {
               "body": "Every line itemised and priced individually on a single document, so consolidation never costs you visibility of what each component costs.",
               "title": "Consolidated quotations"
             },
             {
-              "body": "Your finance team raises one PO covering the whole quotation rather than one per vendor, regardless of how many publishers it spans.",
+              "body": "Your finance team raises one PO covering the whole quotation rather than one per supplier, regardless of how many publishers it spans.",
               "title": "Single purchase order"
             },
             {
@@ -2693,7 +2674,7 @@ export const pageSeeds: PageSeed[] = [
               "title": "GST invoicing"
             },
             {
-              "body": "Seat assignment and reclamation handled as staff join and leave, with a consolidated position across publishers rather than one portal per vendor.",
+              "body": "Seat assignment and reclamation handled as staff join and leave, with a consolidated position across publishers rather than one portal per publisher.",
               "title": "Licence management"
             },
             {
@@ -2722,9 +2703,9 @@ export const pageSeeds: PageSeed[] = [
         "visible": true,
         "data": {
           "items": [
-            "Consolidation pays for itself where vendor count and administrative overhead have grown faster than the IT team.",
+            "Consolidation pays for itself where supplier count and administrative overhead have grown faster than the IT team.",
             "Organisations buying from three or more software publishers",
-            "Finance teams reconciling invoices across multiple vendors and currencies",
+            "Finance teams reconciling invoices across multiple suppliers and currencies",
             "IT teams without the capacity to track renewal dates across portals",
             "Companies scaling headcount where seat counts change every quarter",
             "Businesses that need GST-compliant invoicing on every technology purchase",
@@ -4455,16 +4436,6 @@ export const pageSeeds: PageSeed[] = [
         }
       },
       {
-        "type": "NOTICE",
-        "displayOrder": 1,
-        "visible": true,
-        "data": {
-          "tone": "warning",
-          "heading": "Awaiting legal review",
-          "markdown": "This document describes how this business actually operates and is drafted against Indian law as it applies to a business-to-business reseller. It is **not legal advice**, and it has not yet been reviewed by the company's own adviser.\n\nThe retention periods in *How long we keep it* follow the statutory minimums under the Companies Act, 2013 and the CGST Act, 2017. The Digital Personal Data Protection Act, 2023 is in force but its rules are still being notified; this document is drafted to meet it, and should be revisited once those rules are final.\n\nTo remove this notice once the document has been approved, open the page in the admin panel and delete this block."
-        }
-      },
-      {
         "type": "RICH_TEXT",
         "displayOrder": 2,
         "visible": true,
@@ -4669,16 +4640,6 @@ export const pageSeeds: PageSeed[] = [
         }
       },
       {
-        "type": "NOTICE",
-        "displayOrder": 1,
-        "visible": true,
-        "data": {
-          "tone": "warning",
-          "heading": "Awaiting legal review",
-          "markdown": "This document describes how this business actually operates and is drafted against Indian law as it applies to a business-to-business reseller. It is **not legal advice**, and it has not yet been reviewed by the company's own adviser.\n\nTwo commercial defaults here should be confirmed before publication: refunds are stated as being processed **within 10 business days** of approval, and cancellation before provisioning is stated as **free of charge**. Both are conservative and can be edited in the admin panel.\n\nTo remove this notice once the document has been approved, open the page in the admin panel and delete this block."
-        }
-      },
-      {
         "type": "RICH_TEXT",
         "displayOrder": 2,
         "visible": true,
@@ -4810,7 +4771,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "resources",
     "title": "Resource Centre",
-    "description": "Licensing guides, procurement explainers and vendor comparisons covering Microsoft, Adobe, Autodesk, cloud cost, cybersecurity and software asset management.",
+    "description": "Licensing guides, procurement explainers and brand comparisons covering Microsoft, Adobe, Autodesk, cloud cost, cybersecurity and software asset management.",
     "keywords": [
       "licensing guides",
       "procurement explainers",
@@ -6624,16 +6585,6 @@ export const pageSeeds: PageSeed[] = [
         }
       },
       {
-        "type": "NOTICE",
-        "displayOrder": 1,
-        "visible": true,
-        "data": {
-          "tone": "warning",
-          "heading": "Awaiting legal review",
-          "markdown": "This document describes how this business actually operates and is drafted against Indian law as it applies to a business-to-business reseller. It is **not legal advice**, and it has not yet been reviewed by the company's own adviser.\n\nTwo points in particular are commercial decisions rather than legal requirements, and should be confirmed before this is published: the payment term stated in *Payment* (30 days from the date of invoice), and the aggregate liability cap stated in *Limits on our liability* (the amount paid under the order giving rise to the claim).\n\nTo remove this notice once the document has been approved, open the page in the admin panel and delete this block."
-        }
-      },
-      {
         "type": "RICH_TEXT",
         "displayOrder": 2,
         "visible": true,
@@ -6706,7 +6657,7 @@ export const pageSeeds: PageSeed[] = [
         "visible": true,
         "data": {
           "heading": "6. Software is licensed to you by its publisher, not by us",
-          "markdown": "This is the most important thing to understand about buying software through a reseller.\n\nWe supply licences. We do not grant them. Your right to install, use, transfer, reassign or renew the software is governed entirely by the publisher's own licence terms — Microsoft, Adobe, Autodesk, Zoho and every other vendor set their own — and you enter into that licence directly with the publisher.\n\nWe will identify the applicable licensing model and its material constraints on the quotation, including seat minimums, term commitments, downgrade or transfer restrictions, and any renewal behaviour. We cannot vary a publisher's terms, and nothing said by us or written on this website modifies them.\n\nIt is your responsibility to keep your deployment within the entitlements you hold. Where you have engaged us for licence management, the extent to which we take that on is set out in the service agreement rather than here.\n\nWhere a publisher changes its licensing terms, its pricing model or its programme structure after you have bought, that change is between you and the publisher. We will tell you about a change we are aware of that affects you."
+          "markdown": "This is the most important thing to understand about buying software through a reseller.\n\nWe supply licences. We do not grant them. Your right to install, use, transfer, reassign or renew the software is governed entirely by the publisher's own licence terms — Microsoft, Adobe, Autodesk, Zoho and every other publisher set their own — and you enter into that licence directly with the publisher.\n\nWe will identify the applicable licensing model and its material constraints on the quotation, including seat minimums, term commitments, downgrade or transfer restrictions, and any renewal behaviour. We cannot vary a publisher's terms, and nothing said by us or written on this website modifies them.\n\nIt is your responsibility to keep your deployment within the entitlements you hold. Where you have engaged us for licence management, the extent to which we take that on is set out in the service agreement rather than here.\n\nWhere a publisher changes its licensing terms, its pricing model or its programme structure after you have bought, that change is between you and the publisher. We will tell you about a change we are aware of that affects you."
         }
       },
       {
@@ -6760,7 +6711,7 @@ export const pageSeeds: PageSeed[] = [
         "visible": true,
         "data": {
           "heading": "12. Intellectual property and trademarks",
-          "markdown": "The design, text and structure of this website belong to us or to our licensors. You may read, print and share it for the purpose of evaluating or making a purchase. You may not reproduce it commercially, or extract and re-publish the catalogue, without our written permission.\n\nThird-party product names, logos and trademarks referred to on this site belong to their respective owners and are used descriptively, to identify the software and hardware we supply. Their use does not imply endorsement by, sponsorship of, or affiliation with those owners beyond a commercial reselling relationship.\n\nWhere we describe ourselves as a partner of a vendor, that describes a reselling or programme relationship of the kind that vendor operates. It is not a claim to act as that vendor's agent, and we cannot bind a vendor."
+          "markdown": "The design, text and structure of this website belong to us or to our licensors. You may read, print and share it for the purpose of evaluating or making a purchase. You may not reproduce it commercially, or extract and re-publish the catalogue, without our written permission.\n\nThird-party product names, logos and trademarks referred to on this site belong to their respective owners and are used descriptively, to identify the software and hardware we supply. Their use does not imply endorsement by, sponsorship of, or affiliation with those owners beyond a commercial reselling relationship.\n\nWhere we describe ourselves as a partner of a publisher or manufacturer, that describes a reselling or programme relationship of the kind that company operates. It is not a claim to act as its agent, and we cannot bind it."
         }
       },
       {
@@ -7080,7 +7031,7 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 20,
         "visible": true,
         "data": {
-          "markdown": "Zoho's appeal for mid-sized organisations is breadth at a predictable per-user cost: one vendor covering CRM, accounting, service desk and collaboration, with the applications sharing a customer record rather than being stitched together afterwards.\n\nThe failure mode is equally predictable. Licences are bought, data is not migrated properly, workflows are left at their defaults, and six months later the team is still working in spreadsheets. The licensing is the easy part."
+          "markdown": "Zoho's appeal for mid-sized organisations is breadth at a predictable per-user cost: one publisher covering CRM, accounting, service desk and collaboration, with the applications sharing a customer record rather than being stitched together afterwards.\n\nThe failure mode is equally predictable. Licences are bought, data is not migrated properly, workflows are left at their defaults, and six months later the team is still working in spreadsheets. The licensing is the easy part."
         }
       },
       {
@@ -7837,7 +7788,7 @@ export const pageSeeds: PageSeed[] = [
             "Organisations already running other Zoho applications",
             "Teams whose document work is straightforward and collaborative rather than model-heavy",
             "Businesses where the per-user cost difference is material at their headcount",
-            "Companies wanting one vendor across business applications and collaboration"
+            "Companies wanting one publisher across business applications and collaboration"
           ],
           "heading": "Where Workplace is a strong fit"
         }
@@ -8710,7 +8661,7 @@ export const navigationSeeds: NavigationSeed[] = [
     "label": "About",
     "href": "/about",
     "description": null,
-    "displayOrder": 110
+    "displayOrder": 150
   },
   {
     "key": "header:about.about-us",

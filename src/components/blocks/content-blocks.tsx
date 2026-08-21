@@ -9,7 +9,7 @@ import { SearchBox } from "@/components/layout/search-box";
 import { BlockHeading, BlockLink, BlockSection } from "@/components/blocks/primitives";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ResolvedBlockData } from "@/lib/blocks/resolve";
-import { getSiteConfig, getUnconfiguredIdentityKeys } from "@/lib/site-config";
+import { getSiteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
 /** Text and layout blocks. Each renders one validated payload. */
@@ -568,9 +568,10 @@ export function PlansBlock({ data, tone }: { data: BlockData<"PLANS">; tone?: "p
  * CMS, so placing this block positions the panel without granting anyone the
  * ability to edit a registration number through a content form.
  *
- * Values that have not been configured are omitted rather than substituted,
- * and the reviewer notice makes the omission visible before launch instead of
- * letting a half-configured deployment look finished.
+ * Values that have not been configured are omitted rather than substituted, and
+ * omitted without comment: a visitor is never told that a detail is missing,
+ * and never shown the name of the setting that would supply it. The admin
+ * dashboard is where launch readiness is reported.
  */
 export function CompanyInfoBlock({
   data,
@@ -580,7 +581,6 @@ export function CompanyInfoBlock({
   tone?: "plain" | "muted";
 }) {
   const config = getSiteConfig();
-  const missing = getUnconfiguredIdentityKeys();
 
   const identity: Array<[string, string | null | undefined]> = [
     ["Trading name", config.tradingName],
@@ -614,21 +614,12 @@ export function CompanyInfoBlock({
     <BlockSection tone={tone}>
       <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
 
-      {missing.length > 0 ? (
-        <div className="mb-6 max-w-3xl rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-5">
-          <p className="text-[13px] leading-relaxed text-ink-700">
-            <strong className="font-semibold text-warning-700">
-              Details requiring configuration before launch.
-            </strong>{" "}
-            {data.fields === "grievance"
-              ? "An online seller in India must publish a named grievance officer and their contact details. That appointment has not been configured for this deployment."
-              : "Company registration and contact details are supplied through configuration and have not been set for this deployment."}{" "}
-            Nothing here substitutes invented company information — unset values are simply
-            omitted.
-          </p>
-        </div>
-      ) : null}
-
+      {/*
+        No launch-readiness notice here. A visitor reading the grievance section
+        must not be told the appointment is unconfigured, and must never be shown
+        an environment variable name. An unset value is omitted, silently. The
+        admin dashboard reports what is still missing.
+      */}
       {!configured ? null : (
       <dl className="grid max-w-3xl gap-x-8 gap-y-4 sm:grid-cols-2">
         {rows

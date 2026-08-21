@@ -9,7 +9,7 @@ export default function NotFound() {
       <h1 className="mt-3 text-3xl sm:text-4xl">This page could not be found</h1>
       <p className="mt-4 max-w-lg text-[15px] text-ink-600">
         The page you are looking for has moved or no longer exists. You can search the
-        catalogue or browse by vendor instead.
+        catalogue or browse by brand instead.
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <ButtonLink href="/products">Browse software</ButtonLink>

@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 
-import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { BlockRenderer } from "@/components/blocks";
+import { CmsPage } from "@/lib/cms-route";
 import { getPage } from "@/lib/queries/pages";
-import { resolveBlocks } from "@/lib/blocks/resolve";
 import { buildMetadata } from "@/lib/seo";
 
 /**
@@ -67,25 +64,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function CmsPageRoute({ params }: PageProps) {
   const { slug } = await params;
 
+  // Renders through the shared `CmsPage`, which the fixed routes also use. This
+  // route used to hold its own copy of the same JSX, and the two drifted the
+  // moment one of them gained anything — the legal documents' effective dates
+  // reached the fixed routes and not this one, which is where those pages are
+  // actually served from. `getPage` is request-cached, so delegating costs
+  // nothing.
+  //
   // Draft and soft-deleted pages are excluded by the query, so an unpublished
   // page is indistinguishable from one that never existed.
-  const page = await getPage(slug.join("/"));
-  if (!page) notFound();
-
-  const resolved = await resolveBlocks(page.blocks, {
-    brandSlug: page.brandSlug,
-    faqTopic: page.faqTopic,
-  });
-
-  return (
-    <>
-      {page.breadcrumb.length > 0 ? (
-        <div className="container-page">
-          <Breadcrumb items={page.breadcrumb} />
-        </div>
-      ) : null}
-
-      <BlockRenderer blocks={page.blocks} resolved={resolved} />
-    </>
-  );
+  return <CmsPage slug={slug.join("/")} />;
 }

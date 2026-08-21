@@ -18,7 +18,7 @@ export default async function AccountLicencesPage() {
     return (
       <EmptyState
         title="No licences recorded"
-        description="Licences supplied through us appear here with their seat counts and expiry dates, so your position is visible in one place rather than across several vendor portals."
+        description="Licences supplied through us appear here with their seat counts and expiry dates, so your position is visible in one place rather than across several publisher portals."
         action={<ButtonLink href="/services/software-asset-management">Software asset management</ButtonLink>}
       />
     );

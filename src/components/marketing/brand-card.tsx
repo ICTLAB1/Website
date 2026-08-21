@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 /**
- * Vendor tile. A styled wordmark rather than a vendor logo file: we identify
+ * Brand tile. A styled wordmark rather than a brand logo file: we identify
  * the brands we supply without reproducing anyone's trademarked artwork.
  */
 export function BrandCard({
@@ -38,7 +38,7 @@ export function BrandCard({
   );
 }
 
-/** Compact strip of vendor wordmarks used under the hero. */
+/** Compact strip of brand wordmarks used under the hero. */
 export function BrandStrip({ brands }: { brands: Array<{ slug: string; name: string; accentColor: string }> }) {
   return (
     <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-3 sm:gap-x-4">

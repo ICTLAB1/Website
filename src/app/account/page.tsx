@@ -61,7 +61,7 @@ export default async function AccountOverviewPage() {
         {recent.length === 0 ? (
           <EmptyState
             title="No enquiries yet"
-            description="Build an enquiry from the catalogue and request a consolidated quotation across every vendor you need."
+            description="Build an enquiry from the catalogue and request a consolidated quotation across every brand you need."
             action={<ButtonLink href="/products">Browse catalogue</ButtonLink>}
           />
         ) : (

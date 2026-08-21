@@ -11,7 +11,7 @@ export type CategorySeed = {
 /**
  * A single global category tree. Products carry both a brand and a category, so
  * the catalogue can be browsed either way without duplicating the taxonomy per
- * vendor.
+ * brand.
  */
 export const categories: CategorySeed[] = [
   {

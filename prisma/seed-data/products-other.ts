@@ -326,7 +326,7 @@ export const otherProducts: ProductSeed[] = [
     shortDescription:
       "ISV-certified workstations for CAD, BIM, simulation and video production.",
     description:
-      "Precision workstations are certified by the software vendors whose applications run on them, which matters more than it sounds: a certified configuration is one the publisher will support when a graphics driver causes a problem in a production model.\n\nWe size these against the software rather than a generic specification. A Revit model of a large building stresses single-thread performance and memory; a Premiere Pro 4K timeline stresses GPU and storage throughput; a simulation workload stresses core count. The same budget spent differently produces very different results for each.",
+      "Precision workstations are certified by the software publishers whose applications run on them, which matters more than it sounds: a certified configuration is one the publisher will support when a graphics driver causes a problem in a production model.\n\nWe size these against the software rather than a generic specification. A Revit model of a large building stresses single-thread performance and memory; a Premiere Pro 4K timeline stresses GPU and storage throughput; a simulation workload stresses core count. The same budget spent differently produces very different results for each.",
     features: [
       "ISV certification for major CAD, BIM and media applications",
       "Professional GPU options",

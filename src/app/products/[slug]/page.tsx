@@ -134,8 +134,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
             {product.shortDescription}
           </p>
 
-          {/* Visual identity without reproducing vendor artwork: the product's
-              own initial on the vendor's accent colour. */}
+          {/* Visual identity without reproducing brand artwork: the product's
+              own initial on the brand's accent colour. */}
           <div
             className="mt-8 flex aspect-[16/7] items-center justify-center rounded-[--radius-lg] border border-line"
             style={{ backgroundColor: `${product.brand.accentColor}0d` }}

@@ -49,13 +49,13 @@ export type ProductSeed = {
 
 /** Shared boilerplate so every product page carries consistent operational copy. */
 export const DELIVERY_SUBSCRIPTION =
-  "Subscriptions are provisioned into your tenant or vendor account, typically within one business day of a confirmed purchase order. Licence assignment and admin console access are handled with your IT team.";
+  "Subscriptions are provisioned into your tenant or publisher account, typically within one business day of a confirmed purchase order. Licence assignment and admin console access are handled with your IT team.";
 
 export const DELIVERY_PERPETUAL =
   "Perpetual licences are delivered electronically with the publisher's entitlement record and download links, typically within one business day of a confirmed purchase order.";
 
 export const DELIVERY_HARDWARE =
-  "Hardware is configured to the agreed bill of materials and shipped from the vendor or distributor. Lead times are confirmed in writing on the quotation before order placement.";
+  "Hardware is configured to the agreed bill of materials and shipped from the manufacturer or distributor. Lead times are confirmed in writing on the quotation before order placement.";
 
 export const SUPPORT_STANDARD =
   "Includes procurement support, licence assignment assistance and renewal reminders. Deployment, migration and managed support are available as separate engagements.";

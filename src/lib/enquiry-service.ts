@@ -11,7 +11,7 @@ import type { enquirySchema } from "@/lib/validation";
 /**
  * Enquiry submission.
  *
- * The client sends only SKUs and quantities. Product names, prices and vendor
+ * The client sends only SKUs and quantities. Product names, prices and brand
  * details are re-read from the catalogue here, so nothing a user can edit in
  * the browser reaches the stored enquiry.
  */

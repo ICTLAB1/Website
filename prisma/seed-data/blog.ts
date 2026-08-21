@@ -68,7 +68,7 @@ If you would like that modelled against your actual numbers, we will do it as pa
 
 ## Finding it
 
-The reconciliation is straightforward in principle: list what you own, list what is assigned, list what is actually used, and compare. In practice the difficulty is that the three lists live in different places — purchase records in finance, assignments in each vendor's admin console, usage in whatever telemetry the product exposes.
+The reconciliation is straightforward in principle: list what you own, list what is assigned, list what is actually used, and compare. In practice the difficulty is that the three lists live in different places — purchase records in finance, assignments in each publisher's admin console, usage in whatever telemetry the product exposes.
 
 Usage is the one most often skipped, and it is the one that finds edition drift. An assigned seat that has not been signed into for ninety days is a candidate for reclamation regardless of what the assignment list says.
 

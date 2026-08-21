@@ -8,7 +8,7 @@ import { getBrands } from "@/lib/queries/content";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Software Vendors & Brands We Supply",
+  title: "Technology Brands We Are Authorised to Resell",
   description:
     "Licensing and solutions across Microsoft, Adobe, Autodesk, Zoho, SketchUp, Corel, HPE and Dell Technologies — consolidated into a single procurement relationship.",
   path: "/brands",
@@ -22,9 +22,9 @@ export default async function BrandsPage() {
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Brands" }]} />
 
       <header className="mb-10 max-w-3xl">
-        <h1 className="text-3xl sm:text-4xl">Vendors we supply</h1>
+        <h1 className="text-3xl sm:text-4xl">Technology brands we supply</h1>
         <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
-          Each vendor licenses its software differently, and those differences have real
+          Each publisher licenses its software differently, and those differences have real
           commercial consequences. These pages set out how each one works and where the
           decisions usually cost organisations money.
         </p>

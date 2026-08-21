@@ -88,7 +88,7 @@ export function organizationSchema() {
     alternateName: config.tradingName,
     url: config.url,
     description:
-      "Enterprise software licensing, cloud and IT solutions across Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure vendors.",
+      "Enterprise software licensing, cloud and IT solutions across Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure manufacturers.",
     ...(config.email.sales || config.phone.sales
       ? {
           contactPoint: [

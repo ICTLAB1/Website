@@ -115,7 +115,7 @@ export function EnquiryBasket({
     return (
       <EmptyState
         title="Your enquiry basket is empty"
-        description="Add products from the catalogue to build a multi-vendor enquiry, then request a consolidated quotation covering all of them."
+        description="Add products from the catalogue to build a multi-brand enquiry, then request a consolidated quotation covering all of them."
         action={
           <div className="flex flex-wrap justify-center gap-3">
             <Link
@@ -415,7 +415,7 @@ export function EnquiryBasket({
         <div className="mt-4 rounded-[--radius-lg] border border-line bg-graphite-900 p-5 text-white">
           <p className="text-[14px] font-semibold">Prefer to talk it through?</p>
           <p className="mt-1.5 text-[13px] leading-relaxed text-graphite-200">
-            Complex or multi-vendor requirements are often faster to scope in a conversation.
+            Complex or multi-brand requirements are often faster to scope in a conversation.
           </p>
           <Link
             href="/contact"

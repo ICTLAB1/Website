@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { Logo } from "@/components/layout/logo";
 import { getNavigation } from "@/lib/queries/navigation";
-import { getSiteConfig, getUnconfiguredIdentityKeys } from "@/lib/site-config";
+import { getSiteConfig } from "@/lib/site-config";
 
 export async function Footer() {
   const config = getSiteConfig();
   const navigation = await getNavigation();
-  const missing = getUnconfiguredIdentityKeys();
   const year = new Date().getFullYear();
 
   return (
@@ -16,8 +15,8 @@ export async function Footer() {
           <div className="max-w-sm">
             <Logo name={config.tradingName} onDark />
             <p className="mt-5 text-[13px] leading-relaxed text-graphite-300">
-              Enterprise software licensing, cloud and IT solutions. Multiple technology
-              vendors consolidated into a single procurement relationship.
+              Enterprise software licensing, cloud and IT solutions. Software publishers and
+              hardware manufacturers consolidated into a single procurement relationship.
             </p>
 
             <dl className="mt-6 space-y-2 text-[13px]">
@@ -55,13 +54,12 @@ export async function Footer() {
               ) : null}
             </dl>
 
-            {missing.length > 0 ? (
-              <p className="mt-6 rounded-[--radius-md] border border-warning-600/40 bg-warning-600/10 px-3 py-2 text-[12px] leading-relaxed text-warning-600">
-                <strong className="font-semibold">Configuration required.</strong> Company
-                contact details are not set. Populate {missing.join(", ")} in the environment
-                before this site goes live.
-              </p>
-            ) : null}
+            {/*
+              A contact detail that is not configured renders as nothing at all.
+              There used to be a warning panel here naming the environment
+              variables still to be set, which told every visitor the site was
+              half-built. That is an operator's concern: /admin reports it.
+            */}
           </div>
 
           {navigation.footer.map((column) => (

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { BlockRenderer } from "@/components/blocks";
+import { DocumentDates } from "@/components/marketing/document-dates";
 import { getPage } from "@/lib/queries/pages";
 import { resolveBlocks } from "@/lib/blocks/resolve";
 import { buildMetadata } from "@/lib/seo";
@@ -64,7 +65,11 @@ export async function CmsPage({ slug }: { slug: string }) {
           <Breadcrumb items={page.breadcrumb} />
         </div>
       ) : null}
-      <BlockRenderer blocks={page.blocks} resolved={resolved} />
+      <BlockRenderer
+        blocks={page.blocks}
+        resolved={resolved}
+        afterHero={<DocumentDates page={page} />}
+      />
     </>
   );
 }

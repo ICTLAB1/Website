@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
  *
  * Deliberately not a collapsed copy of the desktop menu: it is a drill-down
  * stack. Tapping a section slides in its own panel with a back control, so
- * deep vendor hierarchies stay reachable in one thumb-sized list at a time
+ * deep brand hierarchies stay reachable in one thumb-sized list at a time
  * rather than as a long nested accordion.
  */
 

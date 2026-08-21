@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   BulletsBlock,
   CardsBlock,
@@ -59,10 +61,19 @@ const BANDED = new Set([
 export function BlockRenderer({
   blocks,
   resolved,
+  afterHero,
 }: {
   blocks: ParsedBlock[];
   resolved: ResolvedBlockData;
+  /**
+   * Rendered immediately below the first hero, or at the very top of a page
+   * that has no hero. The legal documents use it for their effective and
+   * last-updated dates, which belong under the title rather than above it and
+   * are not editable content — they are read from the page record.
+   */
+  afterHero?: React.ReactNode;
 }) {
+  const firstHero = blocks.findIndex((block) => block.type === "HERO");
   // Worked out in one pass before rendering rather than while mapping: the
   // decision for a block depends on the block above it, and carrying that
   // state through the render callback would mean mutating a variable during
@@ -97,12 +108,19 @@ export function BlockRenderer({
 
   return (
     <>
+      {firstHero === -1 ? afterHero : null}
       {blocks.map((block, index) => {
         const { tone, continues } = layout[index]!;
+        const slot = index === firstHero ? afterHero : null;
 
         switch (block.type) {
           case "HERO":
-            return <HeroBlock key={block.id} data={block.data} counts={resolved.counts} />;
+            return (
+              <React.Fragment key={block.id}>
+                <HeroBlock data={block.data} counts={resolved.counts} />
+                {slot}
+              </React.Fragment>
+            );
           case "RICH_TEXT":
             return <RichTextBlock key={block.id} data={block.data} tone={tone} continues={continues} />;
           case "BULLETS":

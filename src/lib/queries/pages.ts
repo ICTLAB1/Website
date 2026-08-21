@@ -27,6 +27,7 @@ export type CmsPage = {
   brandSlug: string | null;
   faqTopic: string | null;
   blocks: ParsedBlock[];
+  publishedAt: Date | null;
   updatedAt: Date;
 };
 
@@ -41,6 +42,7 @@ const loadPage = cached(
         keywords: true,
         breadcrumb: true,
         faqTopic: true,
+        publishedAt: true,
         updatedAt: true,
         brand: { select: { slug: true } },
         sections: {
@@ -81,6 +83,7 @@ export const getPage = cache(async (slug: string): Promise<CmsPage | null> => {
     breadcrumb: parseBreadcrumb(row.breadcrumb),
     brandSlug: row.brand?.slug ?? null,
     faqTopic: row.faqTopic,
+    publishedAt: row.publishedAt,
     updatedAt: row.updatedAt,
     blocks: row.sections
       .map((section) => parseBlock({ id: section.id, type: section.type, data: section.data }))

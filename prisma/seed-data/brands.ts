@@ -1,8 +1,8 @@
 /**
- * Vendor catalogue.
+ * Brand catalogue.
  *
- * Copy here is written for this application. Vendor names and product names are
- * used descriptively to identify the software being resold; no vendor marketing
+ * Copy here is written for this application. Brand names and product names are
+ * used descriptively to identify the software being resold; no publisher marketing
  * text, imagery or logo asset is reproduced.
  */
 export type BrandSeed = {
@@ -64,7 +64,7 @@ export const brands: BrandSeed[] = [
     summary:
       "Zoho CRM, Books, Desk, Workplace, Mail and the Zoho One bundle, with implementation and data migration support.",
     description:
-      "Zoho's appeal for mid-sized organisations is breadth at a predictable per-user cost: a single vendor covering CRM, accounting, service desk and collaboration, with the applications sharing a customer record rather than being stitched together after the fact.\n\nWe supply Zoho licensing and, just as importantly, the implementation work around it — data migration from an incumbent system, field mapping, workflow configuration and user onboarding — because a business application that is bought but not adopted returns nothing.",
+      "Zoho's appeal for mid-sized organisations is breadth at a predictable per-user cost: a single publisher covering CRM, accounting, service desk and collaboration, with the applications sharing a customer record rather than being stitched together after the fact.\n\nWe supply Zoho licensing and, just as importantly, the implementation work around it — data migration from an incumbent system, field mapping, workflow configuration and user onboarding — because a business application that is bought but not adopted returns nothing.",
     logoText: "Zoho",
     accentColor: "#e42527",
     displayOrder: 40,
@@ -116,7 +116,7 @@ export const brands: BrandSeed[] = [
     summary:
       "Dell PowerEdge servers, storage arrays, networking and Precision workstations for design and engineering teams.",
     description:
-      "Dell's enterprise range covers the ground from rack compute to the workstations that sit under a CAD or video editing workload, which makes it straightforward to standardise a mixed estate on one vendor and one support relationship.\n\nWe size workstations against the software they will run — a Revit model and a Premiere Pro timeline stress very different parts of a machine — and quote server and storage configurations with the support terms attached.",
+      "Dell's enterprise range covers the ground from rack compute to the workstations that sit under a CAD or video editing workload, which makes it straightforward to standardise a mixed estate on one manufacturer and one support relationship.\n\nWe size workstations against the software they will run — a Revit model and a Premiere Pro timeline stress very different parts of a machine — and quote server and storage configurations with the support terms attached.",
     logoText: "Dell",
     accentColor: "#0076ce",
     displayOrder: 80,

@@ -155,7 +155,7 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                         </div>
                         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
                           <p className="text-[13px] text-ink-500">
-                            Buying for a team? Consolidate multiple vendors onto one quotation.
+                            Buying for a team? Consolidate multiple brands onto one quotation.
                           </p>
                           <Link
                             href="/enterprise"

@@ -53,7 +53,7 @@ export const GET = withErrorHandling("search.suggest", async (request: Request) 
     })),
     ...brands.map((brand) => ({
       title: brand.name,
-      subtitle: brand.tagline ?? "Vendor",
+      subtitle: brand.tagline ?? "Brand",
       href: `/brands/${brand.slug}`,
       badge: "Brand",
     })),

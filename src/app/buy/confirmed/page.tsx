@@ -62,7 +62,7 @@ export default async function BuyConfirmedPage({ searchParams }: PageProps) {
             </li>
             <li className="flex gap-3">
               <span className="font-semibold text-accent-700">2.</span>
-              The licence is provisioned into your tenant or vendor account, and we confirm
+              The licence is provisioned into your tenant or publisher account, and we confirm
               assignment with your IT contact.
             </li>
             <li className="flex gap-3">
