@@ -23,15 +23,17 @@ const SECTIONS: Array<{ heading: string; links: Array<{ href: string; label: str
     heading: "Catalogue",
     links: [
       { href: "/admin/products", label: "Products" },
-      { href: "/admin/categories", label: "Categories" },
-      { href: "/admin/brands", label: "Brands" },
+      { href: "/admin/categories", label: "Categories", adminOnly: true },
+      { href: "/admin/brands", label: "Brands", adminOnly: true },
     ],
   },
   {
     heading: "Content",
     links: [
-      { href: "/admin/services", label: "Services" },
-      { href: "/admin/blog", label: "Blog" },
+      { href: "/admin/services", label: "Services", adminOnly: true },
+      { href: "/admin/faqs", label: "FAQs", adminOnly: true },
+      { href: "/admin/banners", label: "Banners", adminOnly: true },
+      { href: "/admin/posts", label: "Articles", adminOnly: true },
     ],
   },
   {

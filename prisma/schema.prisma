@@ -114,6 +114,12 @@ enum TicketPriority {
   URGENT
 }
 
+enum BannerTone {
+  INFO
+  PROMO
+  WARNING
+}
+
 enum PostStatus {
   DRAFT
   PUBLISHED
@@ -695,4 +701,26 @@ model AuditLog {
   @@index([actorId])
   @@index([entityType, entityId])
   @@index([createdAt])
+}
+
+/// Site-wide notices shown above the header.
+///
+/// Scheduling is expressed as an optional window rather than a single flag so a
+/// promotion can be prepared in advance and expire on its own, without anyone
+/// remembering to switch it off.
+model Banner {
+  id           String     @id @default(cuid())
+  name         String
+  message      String
+  href         String?
+  linkLabel    String?
+  tone         BannerTone @default(INFO)
+  startsAt     DateTime?
+  endsAt       DateTime?
+  active       Boolean    @default(false)
+  displayOrder Int        @default(100)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([active, startsAt, endsAt])
 }

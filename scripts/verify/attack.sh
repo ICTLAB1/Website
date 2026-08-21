@@ -80,6 +80,39 @@ for p in "/admin/quotes/$QREF" "/admin/orders"; do
   echo "$B1" | grep -q "could not be found" && ok "customer blocked from $p" || no "customer $p" "reachable"
 done
 
+echo "== Admin CRUD framework: privilege boundary and resource whitelist =="
+
+# A SALES account must not reach ADMIN-only content resources.
+SALES_EMAIL="atk_sales$RANDOM@example.test"
+SC=$(mktemp); curl -s -c "$SC" -o /dev/null "$BASE/"
+STC=$(grep -oP 'csrf_token\s+\K\S+' "$SC"|tail -1)
+curl -s -b "$SC" -c "$SC" -X POST "$BASE/api/auth/register" -H "content-type: application/json" -H "origin: $BASE" -H "x-csrf-token: $STC" \
+  --data "{\"name\":\"Atk Sales\",\"email\":\"$SALES_EMAIL\",\"password\":\"CorrectHorse9\",\"companyName\":\"Atk Ltd\"}" >/dev/null
+su postgres -c "psql -tA -d ictlab -c \"update \\\"User\\\" set role='SALES' where email='$SALES_EMAIL'\"" >/dev/null 2>&1
+SJ=$(mktemp); curl -s -c "$SJ" -o /dev/null "$BASE/"
+STJ=$(grep -oP 'csrf_token\s+\K\S+' "$SJ"|tail -1)
+curl -s -b "$SJ" -c "$SJ" -X POST "$BASE/api/auth/login" -H "content-type: application/json" -H "origin: $BASE" -H "x-csrf-token: $STJ" \
+  --data "{\"email\":\"$SALES_EMAIL\",\"password\":\"CorrectHorse9\"}" >/dev/null
+
+blocked=1
+for r in brands categories services posts faqs banners; do
+  code=$(curl -s -o /dev/null -w "%{http_code}" -b "$SJ" "$BASE/admin/$r")
+  [ "$code" = "200" ] && blocked=0
+done
+[ $blocked -eq 1 ] && ok "SALES cannot reach any ADMIN-only content resource" || no "SALES content access" "at least one returned 200"
+
+# SALES keeps its own commercial surfaces.
+code=$(curl -s -o /dev/null -w "%{http_code}" -b "$SJ" "$BASE/admin/enquiries")
+[ "$code" = "200" ] && ok "SALES keeps its commercial surfaces" || no "SALES enquiries" "got $code"
+
+# An unknown resource key must 404 rather than fall back to a default.
+code=$(curl -s -o /dev/null -w "%{http_code}" -b "$ADM" "$BASE/admin/users-secret")
+[ "$code" = "404" ] && ok "unknown admin resource 404s" || no "unknown resource" "got $code"
+
+# Products are not in the generic registry, so the generic route must not serve them.
+code=$(curl -s -o /dev/null -w "%{http_code}" -b "$ADM" "$BASE/admin/products/new")
+[ "$code" = "200" ] && ok "products keep their bespoke screens" || no "products screen" "got $code"
+
 echo
 echo "passed: $pass  failed: $fail"
 [ $fail -eq 0 ]
