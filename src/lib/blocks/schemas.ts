@@ -226,6 +226,32 @@ export function parseBlock(row: { id: string; type: string; data: unknown }): Pa
   return { id: row.id, type: row.type, data: parsed.data } as ParsedBlock;
 }
 
+/**
+ * The payload a newly added block starts from.
+ *
+ * Every entry must satisfy its own schema, or that block type cannot be created
+ * at all — a failure invisible until someone tries to add one. A unit test
+ * asserts exactly that, which is only meaningful because this is the single
+ * definition the admin action also uses.
+ */
+export const BLOCK_SEEDS: { [T in BlockType]: BlockData<T> } = {
+  HERO: heroSchema.parse({ headline: "New heading", tone: "dark", showSearch: false }),
+  RICH_TEXT: richTextSchema.parse({ markdown: "New paragraph." }),
+  BULLETS: bulletsSchema.parse({ items: ["First point"] }),
+  CARDS: cardsSchema.parse({ items: [{ title: "Card title", body: "Card body." }] }),
+  ICON_POINTS: iconPointsSchema.parse({ items: [{ label: "Point" }] }),
+  LINK_LIST: linkListSchema.parse({ items: [{ label: "Link", href: "/" }] }),
+  KEY_VALUE_LIST: keyValueListSchema.parse({ items: [{ key: "Name", value: "Value" }] }),
+  CHIP_LIST: chipListSchema.parse({ items: ["Item"] }),
+  SPLIT_PANEL: splitPanelSchema.parse({ heading: "New panel" }),
+  STAT_BAR: statBarSchema.parse({ items: [{ label: "Products", source: "productCount" }] }),
+  PRODUCT_GRID: productGridSchema.parse({ source: "featured", limit: 6 }),
+  COLLECTION_GRID: collectionGridSchema.parse({ kind: "brands", limit: 8 }),
+  FAQ: faqSchema.parse({ source: "page" }),
+  CTA_BANNER: ctaBannerSchema.parse({ heading: "New call to action", tone: "dark" }),
+  PLANS: plansSchema.parse({ items: [{ name: "Plan", summary: "What it includes." }] }),
+};
+
 /** Human labels for the block picker in the admin panel. */
 export const BLOCK_LABELS: Record<BlockType, string> = {
   HERO: "Hero",

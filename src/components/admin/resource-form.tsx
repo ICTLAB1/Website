@@ -4,6 +4,7 @@ import { AdminForm } from "@/components/admin/admin-form";
 import { Checkbox, Field, Fieldset, Input, Select, Textarea } from "@/components/ui/form";
 import { saveResource } from "@/app/admin/resource-actions";
 import type { FieldDescriptor, SelectOption } from "@/lib/admin/fields";
+import type { AdminActionState } from "@/lib/admin/types";
 
 /**
  * Renders a resource's edit form from its field descriptors.
@@ -119,6 +120,7 @@ export function ResourceForm({
   recordId,
   values,
   optionsByField,
+  action,
 }: {
   resourceKey: string;
   singularLabel: string;
@@ -126,6 +128,13 @@ export function ResourceForm({
   recordId?: string;
   values: Record<string, string | boolean>;
   optionsByField: Record<string, SelectOption[]>;
+  /**
+   * Overrides the generic action. Server actions are passed as props rather
+   * than imported here so that a resource with its own rules - pages, whose
+   * slug may contain slashes - can reuse this form without the generic action
+   * having to know about it.
+   */
+  action?: (previous: AdminActionState, formData: FormData) => Promise<AdminActionState>;
 }) {
   // Preserve declaration order while collecting fields into their groups.
   const groups: Array<{ name: string; fields: FieldDescriptor[] }> = [];
@@ -138,7 +147,7 @@ export function ResourceForm({
 
   return (
     <AdminForm
-      action={saveResource}
+      action={action ?? saveResource}
       submitLabel={
         recordId ? `Save ${singularLabel.toLowerCase()}` : `Create ${singularLabel.toLowerCase()}`
       }

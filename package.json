@@ -20,14 +20,15 @@
     "verify:responsive": "node scripts/verify/responsive.mjs",
     "verify:a11y": "node scripts/verify/accessibility.mjs",
     "verify:interactions": "node scripts/verify/interactions.mjs",
-    "verify": "npm run verify:responsive && npm run verify:a11y && npm run verify:motion && npm run verify:interactions && npm run verify:lifecycle && npm run verify:admin && npm run verify:cms && npm run verify:attack",
+    "verify": "npm run verify:responsive && npm run verify:a11y && npm run verify:motion && npm run verify:interactions && npm run verify:lifecycle && npm run verify:admin && npm run verify:cms && npm run verify:page-editor && npm run verify:attack",
     "check": "npm run typecheck && npm run lint && npm test && npm run build",
     "verify:lifecycle": "node scripts/verify/lifecycle.mjs",
     "verify:attack": "bash scripts/verify/attack.sh",
     "verify:admin": "node scripts/verify/admin-crud.mjs",
     "verify:motion": "node scripts/verify/motion.mjs",
     "verify:cms": "tsx scripts/verify/cms.ts",
-    "content:export": "tsx scripts/export-content-seed.ts"
+    "content:export": "tsx scripts/export-content-seed.ts",
+    "verify:page-editor": "node scripts/verify/page-editor.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   BLOCK_SCHEMAS,
+  BLOCK_SEEDS,
   BLOCK_TYPES,
   BLOCK_LABELS,
   isBlockType,
@@ -118,5 +119,20 @@ describe("statBar", () => {
 
   it("rejects an unknown source", () => {
     expect(parseBlock({ id: "a", type: "STAT_BAR", data: { items: [{ label: "L", source: "revenue" }] } })).toBeNull();
+  });
+});
+
+describe("block seeds", () => {
+  it("every block type has a seed that satisfies its own schema", () => {
+    // A seed that fails validation makes that block type impossible to add,
+    // and the failure is invisible until an administrator tries.
+    for (const type of BLOCK_TYPES) {
+      const parsed = BLOCK_SCHEMAS[type].safeParse(BLOCK_SEEDS[type]);
+      expect(parsed.success, `${type}: ${parsed.success ? "" : JSON.stringify(parsed.error.issues)}`).toBe(true);
+    }
+  });
+
+  it("declares a seed for every type, with no extras", () => {
+    expect(Object.keys(BLOCK_SEEDS).sort()).toEqual([...BLOCK_TYPES].sort());
   });
 });
