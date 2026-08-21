@@ -1,4 +1,5 @@
 import { chromium } from "playwright";
+import { execFileSync } from "node:child_process";
 
 /**
  * Exercises the page and block editor the way an administrator would.
@@ -110,6 +111,22 @@ await page.getByRole("button", { name: /Archive page/i }).click();
 await page.waitForTimeout(1500);
 const archived = (await (await fetch(`${BASE}/${slug}`, { redirect: "manual" })).status);
 check("archiving removes the page from the public site", archived === 404, `status ${archived}`);
+
+// Archiving is a soft delete, which is right for real content and wrong for a
+// fixture: left behind, it accumulates in the development database and a run
+// that crashed before archiving would leave a live draft for the next content
+// export to pick up.
+execFileSync("su", [
+  "postgres",
+  "-c",
+  `psql -q -d ictlab -c "delete from \\"Page\\" where slug like 'editor-check-%'"`,
+]);
+check("the fixture page is removed from the database",
+  Number(execFileSync("su", [
+    "postgres",
+    "-c",
+    `psql -tA -d ictlab -c "select count(*) from \\"Page\\" where slug like 'editor-check-%'"`,
+  ], { encoding: "utf8" }).trim()) === 0);
 
 await browser.close();
 for (const r of results) console.log(`${r.ok ? "  ✓" : "  ✗"} ${r.name}${!r.ok && r.detail ? ` — ${r.detail}` : ""}`);

@@ -1,4 +1,5 @@
 import { chromium } from "playwright";
+import { execFileSync } from "node:child_process";
 
 /**
  * The acceptance test for the whole body of work.
@@ -162,6 +163,20 @@ await page
 await page.waitForTimeout(1500);
 check("the test link is removed again",
   !(await (await fetch(`${BASE}/`)).text()).includes(navLabel));
+
+// Archiving is a soft delete, which is right for real content and wrong for a
+// fixture: a run that crashes before this point otherwise leaves a live draft
+// behind, and the next content export would carry it into the seed file.
+try {
+  execFileSync("su", [
+    "postgres",
+    "-c",
+    `psql -q -d ictlab -c "delete from \\"Page\\" where slug like 'acceptance-%'"`,
+  ]);
+  check("the fixture page is removed from the database", true);
+} catch (error) {
+  check("the fixture page is removed from the database", false, String(error).slice(0, 120));
+}
 
 await browser.close();
 for (const r of results) console.log(`${r.ok ? "  ✓" : "  ✗"} ${r.name}${!r.ok && r.detail ? ` — ${r.detail}` : ""}`);
