@@ -8,6 +8,8 @@ import { ButtonLink } from "@/components/ui/button";
 import { getNavigation } from "@/lib/queries/navigation";
 import { getSessionUser } from "@/lib/auth/session";
 import { getSiteConfig } from "@/lib/site-config";
+import { getDisplayCurrency } from "@/lib/display-currency";
+import { CurrencySwitcher } from "@/components/layout/currency-switcher";
 
 /**
  * Site header. A Server Component: the session lookup and configuration read
@@ -15,10 +17,11 @@ import { getSiteConfig } from "@/lib/site-config";
  * drawer, search, basket count) are client components.
  */
 export async function Header() {
-  const [user, config, navigation] = await Promise.all([
+  const [user, config, navigation, display] = await Promise.all([
     getSessionUser(),
     Promise.resolve(getSiteConfig()),
     getNavigation(),
+    getDisplayCurrency(),
   ]);
 
   return (
@@ -62,6 +65,14 @@ export async function Header() {
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
+            {/*
+              * Beside the basket rather than in the utility bar, which is
+              * hidden below `lg`. A visitor reading in dirhams on a phone needs
+              * this at least as much as one on a desktop.
+              */}
+            <div className="hidden sm:block">
+              <CurrencySwitcher current={display.currency} options={display.options} />
+            </div>
             <Link
               href="/search"
               className="inline-flex h-10 w-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-graphite-900 lg:hidden"

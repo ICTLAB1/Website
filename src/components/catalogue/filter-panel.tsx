@@ -1,4 +1,9 @@
 import Link from "next/link";
+
+import { DEFAULT_GST_RATE, formatMoney } from "@/lib/money";
+import { toDisplay } from "@/lib/currency";
+import { getDisplayCurrency } from "@/lib/display-currency";
+import type { PriceDisplay } from "@/lib/price-display";
 import {
   buildCatalogueHref,
   isFacetActive,
@@ -31,13 +36,45 @@ const AVAILABILITY_OPTIONS = [
   { value: "on-request", label: "On request" },
 ];
 
-const PRICE_BANDS = [
-  { label: "Under ₹5,000", min: undefined, max: "5000" },
-  { label: "₹5,000 – ₹25,000", min: "5000", max: "25000" },
-  { label: "₹25,000 – ₹1,00,000", min: "25000", max: "100000" },
-  { label: "₹1,00,000 – ₹5,00,000", min: "100000", max: "500000" },
-  { label: "Over ₹5,00,000", min: "500000", max: undefined },
+/**
+ * The bands, as rupee boundaries. Labels are built from these per currency.
+ *
+ * The filter itself always works in rupees, because that is what the catalogue
+ * is priced in and what the query compares against — only the label changes.
+ * Hard-coded rupee labels used to sit here, which meant a visitor reading in
+ * dollars was offered "Under ₹5,000" beside prices in dollars.
+ */
+const PRICE_BANDS: Array<{ min?: string; max?: string }> = [
+  { max: "5000" },
+  { min: "5000", max: "25000" },
+  { min: "25000", max: "100000" },
+  { min: "100000", max: "500000" },
+  { min: "500000" },
 ];
+
+/**
+ * A band boundary written in the visitor's currency.
+ *
+ * Converted at the standard GST rate rather than a per-product one, because a
+ * band spans many products with potentially different rates and no single
+ * figure could be exact for all of them. That is acceptable for a filter — the
+ * bands are approximate by design — and it is why the label rounds to whole
+ * units rather than pretending to the penny.
+ */
+function bandBoundary(rupees: string, display: PriceDisplay): string {
+  const baseMinor = Number(rupees) * 100;
+  if (display.currency === "INR") return formatMoney(baseMinor, "INR");
+  const view = toDisplay(baseMinor, DEFAULT_GST_RATE, display.currency, display.rates);
+  return formatMoney(Math.round(view.amountMinor / 100) * 100, view.currency, {
+    showDecimals: false,
+  });
+}
+
+function bandLabel(band: { min?: string; max?: string }, display: PriceDisplay): string {
+  if (!band.min) return `Under ${bandBoundary(band.max!, display)}`;
+  if (!band.max) return `Over ${bandBoundary(band.min, display)}`;
+  return `${bandBoundary(band.min, display)} – ${bandBoundary(band.max, display)}`;
+}
 
 function FacetGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -95,7 +132,7 @@ function FacetLink({
   );
 }
 
-export function FilterPanel({
+export async function FilterPanel({
   facets,
   params,
   basePath = "/products",
@@ -104,6 +141,9 @@ export function FilterPanel({
   params: RawSearchParams;
   basePath?: string;
 }) {
+  // Resolved here rather than passed in, for the same reason as ProductGrid: a
+  // caller that forgot would show rupee bands beside dollar prices.
+  const display = await getDisplayCurrency();
   const hasFilters =
     Boolean(params.brand || params.category || params.licence || params.availability || params.min || params.max);
 
@@ -188,13 +228,15 @@ export function FilterPanel({
         </ul>
       </FacetGroup>
 
-      <FacetGroup title="Price (excl. GST)">
+      {/* GST is named in rupees only — a converted band already includes it. */}
+      <FacetGroup title={display.currency === "INR" ? "Price (excl. GST)" : "Price"}>
         <ul className="space-y-0.5">
           {PRICE_BANDS.map((band) => {
             const active = currentMin === band.min && currentMax === band.max;
+            const label = bandLabel(band, display);
             return (
               <FacetLink
-                key={band.label}
+                key={label}
                 href={buildCatalogueHref(
                   params,
                   active
@@ -202,7 +244,7 @@ export function FilterPanel({
                     : { min: band.min ?? null, max: band.max ?? null },
                   basePath,
                 )}
-                label={band.label}
+                label={label}
                 active={active}
               />
             );
@@ -227,7 +269,7 @@ export function FilterPanel({
 }
 
 /** Mobile presentation: the same panel inside a native disclosure. */
-export function MobileFilterPanel(props: Parameters<typeof FilterPanel>[0]) {
+export async function MobileFilterPanel(props: Parameters<typeof FilterPanel>[0]) {
   return (
     <details className="lg:hidden">
       <summary className="flex h-11 cursor-pointer items-center justify-between rounded-[--radius-md] border border-line-strong bg-white px-4 text-sm font-medium text-graphite-900">

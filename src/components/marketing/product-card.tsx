@@ -2,7 +2,9 @@ import Link from "next/link";
 import { RevealGroup } from "@/components/motion/reveal";
 import { Badge } from "@/components/ui/badge";
 import { AddToEnquiryButton } from "@/components/enquiry/add-to-enquiry-button";
-import { discountPercent, effectivePriceMinor, formatMoney, formatTerm } from "@/lib/money";
+import { discountPercent, effectivePriceMinor, formatTerm } from "@/lib/money";
+import { showPrice, statesTaxSeparately, type PriceDisplay } from "@/lib/price-display";
+import { getDisplayCurrency } from "@/lib/display-currency";
 import { humanise } from "@/lib/utils";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 
@@ -12,7 +14,17 @@ import type { ProductListItem } from "@/lib/queries/catalogue";
  * Shows brand, name, SKU, licence type, term, price and the GST position, and
  * offers both "View details" and a direct add to the enquiry basket.
  */
-export function ProductCard({ product }: { product: ProductListItem }) {
+export function ProductCard({
+  product,
+  display,
+}: {
+  product: ProductListItem;
+  /**
+   * The currency this visitor is reading in. Optional so the many callers that
+   * only ever show rupees need not thread it through; absent means rupees.
+   */
+  display?: PriceDisplay;
+}) {
   const variant = product.variants[0];
   const price = variant ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) : 0;
   const saving = variant ? discountPercent(variant.listPriceMinor, variant.salePriceMinor) : null;
@@ -72,11 +84,11 @@ export function ProductCard({ product }: { product: ProductListItem }) {
           ) : (
             <p className="flex flex-wrap items-baseline gap-2">
               <span className="text-[19px] font-semibold text-graphite-900">
-                {formatMoney(price, variant!.currency)}
+                {showPrice(price, variant!.gstRatePercent, display)}
               </span>
               {saving ? (
                 <span className="text-[13px] text-ink-500 line-through">
-                  {formatMoney(variant!.listPriceMinor, variant!.currency)}
+                  {showPrice(variant!.listPriceMinor, variant!.gstRatePercent, display)}
                 </span>
               ) : null}
               {/*
@@ -87,8 +99,16 @@ export function ProductCard({ product }: { product: ProductListItem }) {
                 service pages, where nothing around it says so.
               */}
               <span className="w-full text-[12px] text-ink-500">
-                Indicative, excl. GST ({variant!.gstRatePercent}%) &middot;{" "}
-                {variant!.seats > 1 ? `${variant!.seats} seats` : "per seat"}
+                {/*
+                  The GST wording appears in rupees only.
+                  A converted figure is the whole amount owed, so carrying
+                  "excl. GST" across would state the opposite of what the number
+                  is. It is removed rather than replaced: one figure, and no
+                  claim about tax in either direction.
+                */}
+                Indicative
+                {statesTaxSeparately(display) ? `, excl. GST (${variant!.gstRatePercent}%)` : ""}{" "}
+                &middot; {variant!.seats > 1 ? `${variant!.seats} seats` : "per seat"}
                 {canBuyDirect ? (
                   <>
                     {" · "}
@@ -140,11 +160,23 @@ export function ProductCard({ product }: { product: ProductListItem }) {
  * after the first - a stagger that scales with list length stops reading as
  * polish and starts reading as slowness.
  */
-export function ProductGrid({ products }: { products: ProductListItem[] }) {
+/**
+ * A grid of cards, priced in whatever currency the visitor is reading.
+ *
+ * The currency is resolved here rather than passed in. Five pages render this
+ * grid today and any of them could have been given the prop and forgotten —
+ * and a page that forgot would show rupee figures under a dollar sign, which
+ * is a worse failure than not offering the currency at all. Reading it here
+ * makes that unrepresentable, and costs nothing: `getDisplayCurrency` is
+ * request-cached, so a page with three grids on it still reads the cookie once.
+ */
+export async function ProductGrid({ products }: { products: ProductListItem[] }) {
+  const display = await getDisplayCurrency();
+
   return (
     <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" step={50} max={200}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} display={display} />
       ))}
     </RevealGroup>
   );

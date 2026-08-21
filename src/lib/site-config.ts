@@ -183,6 +183,15 @@ export const getSiteConfig = cache(async () => {
      * and prints nothing of its own.
      */
     quoteTerms: stored(row?.quoteTerms) ?? null,
+    /*
+     * What a dollar and a dirham are worth, in paise. Null means the currency
+     * is not offered — there is deliberately no default, because a rate this
+     * site invented would be a price the business never agreed to.
+     */
+    rates: {
+      USD: row?.usdRatePaise ?? null,
+      AED: row?.aedRatePaise ?? null,
+    },
   };
 });
 

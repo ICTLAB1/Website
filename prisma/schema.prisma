@@ -919,6 +919,20 @@ model SiteSettings {
   cin          String?
   supportHours String?
 
+  /// What one US dollar / UAE dirham is worth, in paise.
+  ///
+  /// Set by an administrator and never guessed. There is no default and no
+  /// live feed: a rate this site invented would be a price this business did
+  /// not agree to, and a feed that failed would either freeze at a stale
+  /// number or take the catalogue down. A currency with no rate is simply not
+  /// offered, so the switcher shows only what has been priced deliberately.
+  ///
+  /// Paise rather than a decimal for the same reason as every other money
+  /// value here: integers, and no floating point anywhere near a price.
+  /// 1 USD at ₹83.50 is stored as 8350.
+  usdRatePaise Int?
+  aedRatePaise Int?
+
   /// The terms printed at the foot of every quotation email.
   ///
   /// Deliberately empty by default and never seeded with sample wording.

@@ -26,6 +26,16 @@ import type { AdminActionState } from "@/lib/admin/types";
  */
 
 /** Trims, and turns "" into null so a cleared field falls back to the environment. */
+/** A rate typed as rupees-and-paise, kept as an integer number of paise. */
+const rateField = z
+  .string()
+  .trim()
+  .transform((value) => (value.length > 0 ? Math.round(Number(value) * 100) : null))
+  .refine(
+    (value) => value === null || (Number.isInteger(value) && value >= 100 && value <= 100_000),
+    { message: "Enter the rate in rupees, for example 83.50. Values between ₹1 and ₹1,000 are accepted." },
+  );
+
 const optionalText = (max: number) =>
   z
     .string()
@@ -114,6 +124,15 @@ const settingsSchema = z.object({
   supportHours: optionalText(180),
   // Generous: these are real contract terms, not a strapline.
   quoteTerms: optionalText(4000),
+  /*
+   * Entered as a decimal — "83.50" is what a person reads off a rate board —
+   * and stored as paise. Bounded well outside any plausible rate rather than
+   * tightly, so a currency this business starts quoting in future is not
+   * refused by a limit somebody chose today; the point is to catch a decimal
+   * point in the wrong place, not to predict the market.
+   */
+  usdRatePaise: rateField,
+  aedRatePaise: rateField,
 
   grievanceName: optionalText(120),
   grievanceEmail: optionalEmail,

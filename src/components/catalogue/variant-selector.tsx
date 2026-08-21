@@ -5,6 +5,12 @@ import { AddToEnquiryButton } from "@/components/enquiry/add-to-enquiry-button";
 import { ButtonLink } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { discountPercent, effectivePriceMinor, formatMoney, formatTerm, gstAmountMinor } from "@/lib/money";
+import {
+  showInclusive,
+  showPrice,
+  statesTaxSeparately,
+  type PriceDisplay,
+} from "@/lib/price-display";
 import { cn, humanise } from "@/lib/utils";
 
 export type SelectableVariant = {
@@ -32,12 +38,15 @@ export function VariantSelector({
   productSlug,
   brandName,
   purchaseMode,
+  display,
 }: {
   variants: SelectableVariant[];
   productName: string;
   productSlug: string;
   brandName: string;
   purchaseMode: "DIRECT" | "ENQUIRY" | "BOTH";
+  /** Resolved on the server. Absent means rupees. */
+  display?: PriceDisplay;
 }) {
   const [selectedSku, setSelectedSku] = useState(variants[0]?.sku ?? "");
   const [quantity, setQuantity] = useState(1);
@@ -91,7 +100,7 @@ export function VariantSelector({
                     </span>
                   </span>
                   <span className="shrink-0 text-right text-[13px] font-semibold text-graphite-900">
-                    {price > 0 ? formatMoney(price, variant.currency) : "On enquiry"}
+                    {price > 0 ? showPrice(price, variant.gstRatePercent, display) : "On enquiry"}
                   </span>
                 </label>
               );
@@ -134,19 +143,22 @@ export function VariantSelector({
           <>
             <div className="flex flex-wrap items-baseline gap-2.5">
               <span className="text-[28px] font-semibold leading-none text-graphite-900">
-                {formatMoney(unitPrice, selected.currency)}
+                {showPrice(unitPrice, selected.gstRatePercent, display)}
               </span>
               {saving ? (
                 <>
                   <span className="text-[15px] text-ink-500 line-through">
-                    {formatMoney(selected.listPriceMinor, selected.currency)}
+                    {showPrice(selected.listPriceMinor, selected.gstRatePercent, display)}
                   </span>
                   <Badge tone="success">Save {saving}%</Badge>
                 </>
               ) : null}
             </div>
             <p className="mt-1.5 text-[13px] text-ink-500">
-              per unit, excluding GST at {selected.gstRatePercent}%
+              {/* GST is named in rupees only — see lib/price-display. */}
+              {statesTaxSeparately(display)
+                ? `per unit, excluding GST at ${selected.gstRatePercent}%`
+                : "per unit"}
             </p>
 
             <div className="mt-5 flex items-end gap-3">
@@ -169,13 +181,31 @@ export function VariantSelector({
                 />
               </div>
               <div className="flex-1 rounded-[--radius-md] bg-surface-muted px-4 py-2.5 text-right">
-                <p className="text-[12px] text-ink-500">
-                  Subtotal {formatMoney(lineTotal, selected.currency)} + GST{" "}
-                  {formatMoney(gst, selected.currency)}
-                </p>
-                <p className="text-[15px] font-semibold text-graphite-900">
-                  {formatMoney(lineTotal + gst, selected.currency)} incl. GST
-                </p>
+                {/*
+                  In rupees: the subtotal, the GST on it, and the total —
+                  the breakdown an Indian buyer needs for input credit.
+                  In any other currency: the total alone, with no tax wording,
+                  because that figure already contains it.
+                */}
+                {statesTaxSeparately(display) ? (
+                  <>
+                    <p className="text-[12px] text-ink-500">
+                      Subtotal {formatMoney(lineTotal, "INR")} + GST {formatMoney(gst, "INR")}
+                    </p>
+                    <p className="text-[15px] font-semibold text-graphite-900">
+                      {formatMoney(lineTotal + gst, "INR")} incl. GST
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-[12px] text-ink-500">
+                      {quantity} &times; {showPrice(unitPrice, selected.gstRatePercent, display)}
+                    </p>
+                    <p className="text-[15px] font-semibold text-graphite-900">
+                      {showInclusive(lineTotal + gst, display)}
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </>
@@ -218,8 +248,14 @@ export function VariantSelector({
         </div>
 
         <p className="mt-4 text-[12px] leading-relaxed text-ink-500">
-          Prices shown are indicative and exclude GST. Final pricing, delivery timelines and
-          licensing terms are confirmed on a written quotation before any order is placed.
+          {statesTaxSeparately(display)
+            ? "Prices shown are indicative and exclude GST."
+            : "Prices shown are indicative and are converted from our rupee list price at the rate we publish."}{" "}
+          Final pricing, delivery timelines and licensing terms are confirmed on a written
+          quotation before any order is placed.
+          {statesTaxSeparately(display)
+            ? ""
+            : " Orders are placed and invoiced in Indian rupees."}
         </p>
       </div>
 

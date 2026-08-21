@@ -14,6 +14,7 @@ import { getProductBySlug, getRelatedProducts } from "@/lib/queries/catalogue";
 import { effectivePriceMinor } from "@/lib/money";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
+import { getDisplayCurrency } from "@/lib/display-currency";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -283,6 +284,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
         <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
           <VariantSelector
+            display={await getDisplayCurrency()}
             variants={product.variants.map((variant) => ({
               id: variant.id,
               sku: variant.sku,

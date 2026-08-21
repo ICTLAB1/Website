@@ -5,14 +5,33 @@
 
 export const DEFAULT_GST_RATE = 18;
 
+/**
+ * Locale per currency, so each reads the way its own market writes it.
+ *
+ * `en-IN` groups in lakhs — ₹12,50,000, not ₹1,250,000 — which is what an
+ * Indian buyer expects and what makes a large figure legible at a glance.
+ * Dirhams get `en-AE` rather than `en-US`, which renders the code as "AED"
+ * where the American locale writes the less familiar "AED " with a different
+ * space.
+ */
+const LOCALES: Record<string, string> = { INR: "en-IN", AED: "en-AE" };
+
 export function formatMoney(
   minorUnits: number,
   currency = "INR",
   options: { showDecimals?: boolean } = {},
 ): string {
-  const { showDecimals = false } = options;
+  /*
+   * Rupees round to whole units by default and the others do not.
+   *
+   * A catalogue of ₹18,000 licences is easier to scan without ".00" on every
+   * row. A converted dollar or dirham figure is rarely round — it is a rupee
+   * amount divided by a rate — so hiding the cents would make two genuinely
+   * different prices display identically.
+   */
+  const { showDecimals = currency !== "INR" } = options;
   const value = minorUnits / 100;
-  return new Intl.NumberFormat(currency === "INR" ? "en-IN" : "en-US", {
+  return new Intl.NumberFormat(LOCALES[currency] ?? "en-US", {
     style: "currency",
     currency,
     minimumFractionDigits: showDecimals ? 2 : 0,

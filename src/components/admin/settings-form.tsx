@@ -41,6 +41,8 @@ type StoredSettings = {
   cin: string | null;
   supportHours: string | null;
   quoteTerms: string | null;
+  usdRatePaise: number | null;
+  aedRatePaise: number | null;
   grievanceName: string | null;
   grievanceEmail: string | null;
   grievancePhone: string | null;
@@ -68,8 +70,24 @@ export function SettingsForm({
     return `Currently showing “${inEffect}”, from the server configuration. Type here to override it; clear it again to go back.`;
   }
 
+  /**
+   * Only the text fields.
+   *
+   * The stored settings now carry numbers too — the exchange rates — and this
+   * helper reads a stored value straight into an `<Input>` and into the
+   * "inherited from the environment" hint, both of which are about strings. The
+   * key type is narrowed rather than the value coerced, so passing a rate here
+   * is a compile error instead of a rate rendered through a hint that was never
+   * written for it.
+   */
+  type TextField = {
+    [K in keyof NonNullable<StoredSettings>]: NonNullable<StoredSettings>[K] extends string | null
+      ? K
+      : never;
+  }[keyof NonNullable<StoredSettings>];
+
   const text = (
-    name: keyof NonNullable<StoredSettings>,
+    name: TextField,
     label: string,
     inEffect: string | null,
     options: { type?: string; placeholder?: string; hint?: string } = {},
@@ -136,6 +154,47 @@ export function SettingsForm({
       >
         {text("gstin", "GSTIN", effective.gstin, { placeholder: "07AABCU9603R1ZX" })}
         {text("cin", "CIN", effective.cin, { placeholder: "U72900DL2019PTC123456" })}
+      </Fieldset>
+
+      <Fieldset
+        legend="Prices in other currencies"
+        description="Visitors can read the catalogue in US dollars or UAE dirhams. A currency is offered only once you set its rate here — nothing is guessed, and no live feed is used, so the figure a customer sees is one you chose. Revisit it when the market moves. Orders, quotations and invoices stay in rupees whatever a visitor is reading in."
+      >
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field
+            label="1 US dollar in rupees"
+            name="usdRatePaise"
+            hint="Leave blank to not offer dollars."
+          >
+            <Input
+              name="usdRatePaise"
+              type="number"
+              step="0.01"
+              min="1"
+              defaultValue={stored?.usdRatePaise != null ? (stored.usdRatePaise / 100).toFixed(2) : ""}
+              placeholder="83.50"
+            />
+          </Field>
+          <Field
+            label="1 UAE dirham in rupees"
+            name="aedRatePaise"
+            hint="Leave blank to not offer dirhams."
+          >
+            <Input
+              name="aedRatePaise"
+              type="number"
+              step="0.01"
+              min="1"
+              defaultValue={stored?.aedRatePaise != null ? (stored.aedRatePaise / 100).toFixed(2) : ""}
+              placeholder="22.75"
+            />
+          </Field>
+        </div>
+        <p className="-mt-2 text-[12px] leading-relaxed text-ink-500">
+          A dollar or dirham price is the whole amount owed, GST included, shown as one figure. In
+          rupees the site continues to show the price and the GST on it separately, which is what an
+          Indian buyer needs for input credit.
+        </p>
       </Fieldset>
 
       <Fieldset
