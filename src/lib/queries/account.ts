@@ -102,6 +102,17 @@ export async function listUserOrders(userId: string) {
       totalMinor: true,
       poNumber: true,
       _count: { select: { items: true } },
+      /*
+       * Enough to say whether this order has been paid, and no more. A captured
+       * payment is the only kind that changes what the customer is shown or
+       * offered; failed and abandoned attempts are the account owner's own
+       * history and belong on a detail view, not in a list of orders.
+       */
+      payments: {
+        where: { status: "CAPTURED" },
+        select: { capturedAt: true },
+        take: 1,
+      },
     },
   });
 }

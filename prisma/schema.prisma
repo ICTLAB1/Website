@@ -587,6 +587,7 @@ model Order {
 
   items    OrderItem[]
   licences Licence[]
+  payments Payment[]
 
   @@index([status])
   @@index([userId])
@@ -969,4 +970,66 @@ model PaymentSettings {
 enum PaymentMode {
   TEST
   LIVE
+}
+
+/// One attempt to pay for an order through the gateway.
+///
+/// A row per attempt rather than a status column on the order, because
+/// abandoned and failed attempts are ordinary — a customer closes the tab, a
+/// bank declines, they try again with a different card — and each one is a fact
+/// worth keeping when somebody later asks why an order was not paid.
+///
+/// The money is recorded here, never on the request that reported it. Every
+/// amount is copied from the order at the moment the attempt is created, and
+/// what the gateway later says it captured is checked against it.
+model Payment {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  provider String @default("razorpay")
+
+  /// The gateway's order id. Unique because it is what the browser callback and
+  /// the webhook both use to find this row, and two rows sharing one would make
+  /// that lookup ambiguous at exactly the wrong moment.
+  providerOrderId String @unique
+
+  /// The gateway's payment id, known only once a payment is attempted. Unique
+  /// so that a webhook and a browser callback reporting the same capture cannot
+  /// produce two captured rows.
+  providerPaymentId String? @unique
+
+  status      PaymentStatus @default(CREATED)
+  amountMinor Int
+  currency    String        @default("INR")
+
+  /// Which set of keys took this payment. A test payment must never be
+  /// mistaken for money, and the mode can be switched between one attempt and
+  /// the next, so it is recorded per attempt rather than read back from
+  /// settings.
+  mode PaymentMode
+
+  /// As reported by the gateway: card, upi, netbanking, wallet. Informational.
+  method        String?
+  failureReason String?
+
+  /// Set once, when the capture is first recorded. Its presence is what makes
+  /// replaying a webhook a no-op.
+  capturedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+}
+
+enum PaymentStatus {
+  /// Gateway order created; the customer has not been charged.
+  CREATED
+  /// Money taken and confirmed.
+  CAPTURED
+  /// The gateway reported a failure, or the customer gave up.
+  FAILED
+  /// Returned to the customer after capture.
+  REFUNDED
 }

@@ -6,6 +6,9 @@ import { EmptyState } from "@/components/ui/states";
 import { ButtonLink } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/guards";
 import { listUserOrders } from "@/lib/queries/account";
+import { cardPaymentsAvailable } from "@/lib/payments/config";
+import { getSiteConfig } from "@/lib/site-config";
+import { PayOrderButton } from "@/components/account/pay-order-button";
 import { formatMoney } from "@/lib/money";
 import { formatDate } from "@/lib/utils";
 
@@ -13,7 +16,11 @@ export const metadata: Metadata = { title: "Orders" };
 
 export default async function AccountOrdersPage() {
   const user = await requireUser("/account/orders");
-  const orders = await listUserOrders(user.id);
+  const [orders, cardPayments, config] = await Promise.all([
+    listUserOrders(user.id),
+    cardPaymentsAvailable(),
+    getSiteConfig(),
+  ]);
 
   if (orders.length === 0) {
     return (
@@ -38,6 +45,7 @@ export default async function AccountOrdersPage() {
               <Th>Lines</Th>
               <Th>Total (incl. GST)</Th>
               <Th>Status</Th>
+              <Th>Payment</Th>
             </tr>
           </thead>
           <tbody>
@@ -52,6 +60,20 @@ export default async function AccountOrdersPage() {
                 </Td>
                 <Td>
                   <StatusBadge status={order.status} />
+                </Td>
+                <Td>
+                  {order.payments.length > 0 ? (
+                    <span className="text-[13px] font-medium text-success-700">Paid</span>
+                  ) : cardPayments && order.status === "PENDING" ? (
+                    <PayOrderButton reference={order.reference} merchantName={config.tradingName} />
+                  ) : (
+                    /*
+                     * Says what is true rather than nothing. An order with no
+                     * card payment against it is being invoiced, which is the
+                     * normal route here, not a gap.
+                     */
+                    <span className="text-[13px] text-ink-500">On invoice</span>
+                  )}
                 </Td>
               </Tr>
             ))}

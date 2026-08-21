@@ -21,12 +21,16 @@ import { logger } from "@/lib/logger";
  *  - `createDirectOrder` re-reads the catalogue from SKUs, so a "buy now"
  *    request carrying a tampered price is priced correctly regardless.
  *
- * No payment is taken here. Orders are raised against a purchase order, which
- * is how B2B licensing is actually bought, and no card data touches the system.
+ * No payment is taken here, and no card details ever reach this system. An
+ * order is raised against a purchase order and invoiced, which is how B2B
+ * licensing is actually bought and remains the default. Paying by card is a
+ * separate, optional step performed against an order that already exists — see
+ * `lib/payments/service.ts` — so the two routes share one definition of what is
+ * owed rather than each computing their own.
  */
 
 export type OrderResult =
-  | { ok: true; reference: string }
+  | { ok: true; reference: string; orderId: string }
   | { ok: false; reason: string };
 
 export type BillingDetails = {
@@ -38,7 +42,21 @@ export type BillingDetails = {
   poNumber?: string | null;
 };
 
-async function notifyOrder(reference: string, billing: BillingDetails, totalMinor: number) {
+async function notifyOrder(
+  reference: string,
+  billing: BillingDetails,
+  totalMinor: number,
+  /*
+   * True when the customer chose to pay by card and is being handed to the
+   * gateway as this sends.
+   *
+   * The email still goes out, and still carries the transfer details, because
+   * a card payment can fail or be abandoned and a customer left with an order
+   * and no way to pay it is worse than a slightly redundant email. One extra
+   * sentence keeps it from reading as a demand for money they have just paid.
+   */
+  cardPaymentPending = false,
+) {
   const config = await getSiteConfig();
   const banking = getBankingDetails();
 
@@ -103,6 +121,9 @@ async function notifyOrder(reference: string, billing: BillingDetails, totalMino
       "",
       "Our team is confirming availability and will be in touch with provisioning",
       "details and a GST invoice. Please quote your reference in any follow-up.",
+      ...(cardPaymentPending
+        ? ["", "If you have just paid by card, please disregard the transfer details below."]
+        : []),
       ...paymentTextLines,
       "",
       config.tradingName,
@@ -112,6 +133,9 @@ async function notifyOrder(reference: string, billing: BillingDetails, totalMino
       `<p>Thank you. Your order reference is <strong>${escapeHtml(reference)}</strong>.</p>`,
       `<p>Order total including GST: <strong>${escapeHtml(formatMoney(totalMinor))}</strong></p>`,
       "<p>Our team is confirming availability and will be in touch with provisioning details and a GST invoice.</p>",
+      cardPaymentPending
+        ? "<p>If you have just paid by card, please disregard the transfer details below.</p>"
+        : "",
       paymentHtmlBlock,
       `<p>${escapeHtml(config.tradingName)}</p>`,
     ].join(""),
@@ -169,8 +193,10 @@ export async function createOrderFromQuote(
 
   const reference = publicReference("ORD");
 
+  let created: { id: string };
   try {
-    await prisma.order.create({
+    created = await prisma.order.create({
+      select: { id: true },
       data: {
         reference,
         status: "PENDING",
@@ -203,7 +229,7 @@ export async function createOrderFromQuote(
 
   await notifyOrder(reference, billing, quote.totalMinor);
   logger.info("order_created_from_quote", { reference, quoteReference });
-  return { ok: true, reference };
+  return { ok: true, reference, orderId: created.id };
 }
 
 export type DirectOrderLine = { sku: string; quantity: number };
@@ -216,7 +242,12 @@ export type DirectOrderLine = { sku: string; quantity: number };
 export async function createDirectOrder(
   lines: DirectOrderLine[],
   billing: BillingDetails,
-  context: { userId?: string | null; companyId?: string | null },
+  context: {
+    userId?: string | null;
+    companyId?: string | null;
+    /** Only changes the wording of the confirmation email. See notifyOrder. */
+    cardPaymentPending?: boolean;
+  },
 ): Promise<OrderResult> {
   if (lines.length === 0) return { ok: false, reason: "There is nothing to order." };
 
@@ -276,7 +307,8 @@ export async function createDirectOrder(
   const totals = documentTotals(resolved.map((entry) => entry.priced));
   const reference = publicReference("ORD");
 
-  await prisma.order.create({
+  const created = await prisma.order.create({
+    select: { id: true },
     data: {
       reference,
       status: "PENDING",
@@ -297,9 +329,9 @@ export async function createDirectOrder(
     },
   });
 
-  await notifyOrder(reference, billing, totals.totalMinor);
+  await notifyOrder(reference, billing, totals.totalMinor, context.cardPaymentPending ?? false);
   logger.info("order_created_direct", { reference, lineCount: resolved.length });
-  return { ok: true, reference };
+  return { ok: true, reference, orderId: created.id };
 }
 
 /**
@@ -392,5 +424,5 @@ export async function fulfilOrder(reference: string, actorId: string): Promise<O
   });
 
   logger.info("order_fulfilled", { reference, lineCount: order.items.length, actorId });
-  return { ok: true, reference };
+  return { ok: true, reference, orderId: order.id };
 }

@@ -8,6 +8,8 @@ import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth/session";
 import { effectivePriceMinor } from "@/lib/money";
 import { buildMetadata } from "@/lib/seo";
+import { cardPaymentsAvailable } from "@/lib/payments/config";
+import { getSiteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = buildMetadata({
   title: "Place an order",
@@ -55,13 +57,18 @@ export default async function BuyPage({ searchParams }: PageProps) {
   if (unitPriceMinor <= 0) notFound();
 
   const user = await getSessionUser();
-  const [company, profile] = await Promise.all([
+  const [company, profile, cardPayments, config] = await Promise.all([
     user?.companyId
       ? prisma.company.findUnique({ where: { id: user.companyId }, select: { name: true } })
       : Promise.resolve(null),
     user
       ? prisma.user.findUnique({ where: { id: user.id }, select: { phone: true } })
       : Promise.resolve(null),
+    // Decided on the server. The form offers the card option only when the
+    // gateway is genuinely usable, so a customer is never shown a button that
+    // cannot work.
+    cardPaymentsAvailable(),
+    getSiteConfig(),
   ]);
 
   return (
@@ -79,8 +86,9 @@ export default async function BuyPage({ searchParams }: PageProps) {
         <header className="mb-8">
           <h1 className="text-3xl sm:text-[2.15rem]">Place an order</h1>
           <p className="mt-3 text-[15px] leading-relaxed text-ink-600">
-            For {variant.product.brand.name} licensing bought against a purchase order. Buying
-            for a larger team, or need several products on one quotation?{" "}
+            For {variant.product.brand.name} licensing
+            {cardPayments ? ", paid by card or against a purchase order" : " bought against a purchase order"}
+            . Buying for a larger team, or need several products on one quotation?{" "}
             <Link href="/enquiry" className="text-accent-700 underline underline-offset-2">
               Request an enterprise quote
             </Link>{" "}
@@ -95,6 +103,8 @@ export default async function BuyPage({ searchParams }: PageProps) {
           unitPriceMinor={unitPriceMinor}
           gstRatePercent={variant.gstRatePercent}
           currency={variant.currency}
+          cardPaymentsAvailable={cardPayments}
+          merchantName={config.tradingName}
           prefill={{
             contactName: user?.name ?? "",
             contactEmail: user?.email ?? "",

@@ -48,6 +48,7 @@ export function StatusBadge({ status }: { status: string }) {
       case "RESOLVED":
       case "PUBLISHED":
       case "IN_STOCK":
+      case "CAPTURED":
         return "success";
       case "NEW":
       case "SENT":
@@ -62,6 +63,9 @@ export function StatusBadge({ status }: { status: string }) {
       case "WAITING_ON_CUSTOMER":
       case "MADE_TO_ORDER":
       case "ON_REQUEST":
+      // A gateway order exists and nobody has paid it yet — the same "waiting"
+      // meaning as PENDING, and it must not look like a success.
+      case "CREATED":
         return "warning";
       case "EXPIRED":
       case "LOST":
@@ -71,6 +75,7 @@ export function StatusBadge({ status }: { status: string }) {
       case "SUSPENDED":
       case "REFUNDED":
       case "DISCONTINUED":
+      case "FAILED":
         return "danger";
       default:
         return "neutral";

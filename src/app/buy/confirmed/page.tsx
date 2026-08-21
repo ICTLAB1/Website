@@ -4,6 +4,8 @@ import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
 import { buildMetadata } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
+import { getSessionUser } from "@/lib/auth/session";
+import { confirmationOutcome } from "@/lib/payments/service";
 
 export const metadata: Metadata = buildMetadata({
   title: "Order received",
@@ -17,15 +19,25 @@ type PageProps = { searchParams: Promise<{ ref?: string | string[] }> };
 /**
  * Confirmation screen.
  *
- * Performs no lookup: it echoes back the reference just issued and nothing
- * else, so a guessed or altered reference in the URL cannot disclose anyone's
- * order.
+ * Says as little as it can. By default it echoes back the reference just issued
+ * and nothing else, so a guessed or altered reference in the URL discloses
+ * nothing about anyone's order.
+ *
+ * The one thing it will confirm is that a payment arrived, and only for a
+ * visitor who owns the order or one whose payment completed minutes ago —
+ * see `confirmationOutcome`, where that trade-off is set out. A customer who
+ * has just paid by card must not be told "no payment has been taken".
  */
 export default async function BuyConfirmedPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const raw = Array.isArray(params.ref) ? params.ref[0] : params.ref;
   const reference = raw && /^ORD-\d{4}-[A-Z0-9]{6}$/.test(raw) ? raw : null;
-  const config = await getSiteConfig();
+  const user = await getSessionUser();
+  const [config, outcome] = await Promise.all([
+    getSiteConfig(),
+    reference ? confirmationOutcome(reference, user?.id ?? null) : Promise.resolve("unknown" as const),
+  ]);
+  const paid = outcome === "paid";
 
   return (
     <div className="container-page flex min-h-[60vh] items-center py-16">
@@ -39,7 +51,9 @@ export default async function BuyConfirmedPage({ searchParams }: PageProps) {
           </svg>
         </span>
 
-        <h1 className="mt-6 text-3xl sm:text-[2.25rem]">Order received</h1>
+        <h1 className="mt-6 text-3xl sm:text-[2.25rem]">
+          {paid ? "Payment received" : "Order received"}
+        </h1>
 
         {reference ? (
           <div className="mt-6 inline-block rounded-[--radius-lg] border border-line bg-surface-muted px-6 py-4">
@@ -49,8 +63,11 @@ export default async function BuyConfirmedPage({ searchParams }: PageProps) {
         ) : null}
 
         <p className="mt-6 text-[15px] leading-relaxed text-ink-600">
-          Thank you. We have sent a confirmation to the email address you gave us. No payment has
-          been taken.
+          {paid
+            ? "Thank you. Your payment has cleared and your order is confirmed. We have sent a receipt to the email address you gave us."
+            : outcome === "awaiting_payment"
+              ? "Thank you. We have sent a confirmation to the email address you gave us. Your payment has not completed, so this order is waiting to be paid \u2014 by card again, or against the invoice we will issue."
+              : "Thank you. We have sent a confirmation to the email address you gave us."}
         </p>
 
         <div className="mt-8 rounded-[--radius-lg] border border-line bg-white p-6 text-left">
@@ -67,8 +84,9 @@ export default async function BuyConfirmedPage({ searchParams }: PageProps) {
             </li>
             <li className="flex gap-3">
               <span className="font-semibold text-accent-700">3.</span>
-              We issue a GST invoice against your purchase order, with your GSTIN recorded for
-              input credit.
+              {paid
+                ? "We issue your GST invoice, marked paid, with your GSTIN recorded for input credit."
+                : "We issue a GST invoice against your purchase order, with your GSTIN recorded for input credit."}
             </li>
           </ol>
         </div>

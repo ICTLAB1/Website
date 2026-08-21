@@ -31,6 +31,13 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
       user: { select: { email: true, name: true } },
       company: { select: { name: true, gstin: true } },
       licences: { select: { reference: true, productName: true, seats: true, expiresAt: true } },
+      /*
+       * Every attempt, not only the successful one. "Why has this order not
+       * been paid" is a question the support desk gets, and three declined
+       * cards with the bank's reason against each answers it; a filtered view
+       * showing nothing looks identical to a customer who never tried.
+       */
+      payments: { orderBy: { createdAt: "desc" } },
     },
   });
   if (!order) notFound();
@@ -109,6 +116,57 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
               </Table>
             </TableWrap>
           </section>
+
+          {order.payments.length > 0 ? (
+            <section>
+              <h2 className="mb-4 text-[1.05rem]">Payments</h2>
+              <TableWrap>
+                <Table className="min-w-[42rem]">
+                  <thead>
+                    <tr>
+                      <Th>When</Th>
+                      <Th>Amount</Th>
+                      <Th>Method</Th>
+                      <Th>Gateway reference</Th>
+                      <Th>Status</Th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {order.payments.map((payment) => (
+                      <Tr key={payment.id}>
+                        <Td>{formatDateTime(payment.capturedAt ?? payment.createdAt)}</Td>
+                        <Td className="tabular-nums font-medium text-graphite-900">
+                          {formatMoney(payment.amountMinor, payment.currency)}
+                        </Td>
+                        <Td>{payment.method ? humanise(payment.method) : "—"}</Td>
+                        <Td className="font-mono text-[12px] text-ink-600">
+                          {payment.providerPaymentId ?? payment.providerOrderId}
+                        </Td>
+                        <Td>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <StatusBadge status={payment.status} />
+                            {/*
+                              * A test payment moved no money. Labelling it is
+                              * the difference between a reconciliation that
+                              * balances and one that does not.
+                              */}
+                            {payment.mode === "TEST" ? (
+                              <span className="rounded-full bg-warning-50 px-2 py-0.5 text-[11px] font-medium text-warning-700">
+                                Test mode — no real money
+                              </span>
+                            ) : null}
+                          </div>
+                          {payment.failureReason ? (
+                            <p className="mt-1 text-[12px] text-ink-500">{payment.failureReason}</p>
+                          ) : null}
+                        </Td>
+                      </Tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </TableWrap>
+            </section>
+          ) : null}
 
           {order.licences.length > 0 ? (
             <section>

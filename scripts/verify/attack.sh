@@ -118,6 +118,61 @@ code=$(curl -s -o /dev/null -w "%{http_code}" -b "$ADM" "$BASE/admin/users-secre
 code=$(curl -s -o /dev/null -w "%{http_code}" -b "$ADM" "$BASE/admin/products/new")
 [ "$code" = "200" ] && ok "products keep their bespoke screens" || no "products screen" "got $code"
 
+echo "== Payments: an order cannot be marked paid without a gateway signature =="
+
+# A payment attempt, written straight into the database so no gateway is needed.
+# Everything below is about what this system will believe, which is entirely our
+# own code.
+PAY_ORDER="atk_order_$RANDOM"
+PAY_REF="ORD-2026-A$(head -c4 /dev/urandom | od -An -tx1 | tr -d ' \n' | tr 'abcdef' 'ABCDEF' | head -c5)"
+psqlq() { su postgres -c "psql -tA -d ictlab -c \"$1\"" 2>/dev/null | tr -d ' \r' | head -1; }
+
+psqlq "insert into \\\"Order\\\" (id,reference,status,currency,\\\"subtotalMinor\\\",\\\"discountMinor\\\",\\\"taxMinor\\\",\\\"totalMinor\\\",\\\"billingName\\\",\\\"billingEmail\\\",\\\"placedAt\\\",\\\"createdAt\\\",\\\"updatedAt\\\") values ('$PAY_ORDER','$PAY_REF','PENDING','INR',9000000,0,0,9000000,'Atk','atk@example.test',now(),now(),now())" >/dev/null
+psqlq "insert into \\\"Payment\\\" (id,\\\"orderId\\\",provider,\\\"providerOrderId\\\",status,\\\"amountMinor\\\",currency,mode,\\\"createdAt\\\",\\\"updatedAt\\\") values ('atk_pay_$RANDOM','$PAY_ORDER','razorpay','order_atk_$PAY_ORDER','CREATED',9000000,'INR','TEST',now(),now())" >/dev/null
+
+# Whether the gateway is switched on changes what these two prove, so it is
+# stated rather than left for somebody to work out from the status codes. With
+# it on, a 403 proves the signature was checked and rejected. With it off, the
+# request is refused earlier, for a different reason — still refused, but not
+# evidence about the signature. The definitive signature tests are in
+# `npm run verify:payments`, which switches the gateway on with a known secret
+# precisely so it can prove that part.
+GATEWAY=$(psqlq "select enabled from \\\"PaymentSettings\\\" where id='singleton'")
+[ "$GATEWAY" = "t" ] && echo "  (gateway on: signature rejection is what is being tested)" \
+                     || echo "  (gateway off: these prove refusal, not signature checking)"
+
+# 1. A forged checkout signature.
+code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/api/payments/verify" -H "content-type: application/json" \
+  --data "{\"razorpay_order_id\":\"order_atk_$PAY_ORDER\",\"razorpay_payment_id\":\"pay_atk\",\"razorpay_signature\":\"$(printf 'a%.0s' $(seq 64))\"}")
+[ "$code" = "403" ] || [ "$code" = "409" ] && ok "a forged payment signature never marks an order paid (got $code)" || no "forged signature" "got $code"
+
+# 2. An unsigned webhook.
+code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/api/payments/webhook" -H "content-type: application/json" \
+  --data "{\"event\":\"payment.captured\",\"payload\":{\"payment\":{\"entity\":{\"id\":\"pay_atk\",\"order_id\":\"order_atk_$PAY_ORDER\",\"amount\":9000000}}}}")
+[ "$code" != "200" ] && ok "an unsigned webhook never marks an order paid (got $code)" || no "unsigned webhook" "got 200"
+
+# 3. Neither of them moved any money.
+st=$(psqlq "select status from \\\"Order\\\" where id='$PAY_ORDER'")
+[ "$st" = "PENDING" ] && ok "the order is still unpaid after both attempts" || no "order state" "got $st"
+
+# 4. Starting a payment for somebody else's order needs more than its reference.
+code=$(curl -s -o /dev/null -w "%{http_code}" -b "$A" -X POST "$BASE/api/payments/start" -H "content-type: application/json" -H "origin: $BASE" -H "x-csrf-token: $TA" \
+  --data "{\"reference\":\"$PAY_REF\"}")
+[ "$code" = "404" ] && ok "a customer cannot start a payment for an order that is not theirs (got $code)" || no "cross-account payment start" "got $code"
+
+# 5. And not without CSRF either.
+code=$(curl -s -o /dev/null -w "%{http_code}" -b "$A" -X POST "$BASE/api/payments/start" -H "content-type: application/json" \
+  --data "{\"reference\":\"$PAY_REF\"}")
+[ "$code" = "403" ] && ok "starting a payment without a CSRF token is refused" || no "payment start CSRF" "got $code"
+
+# 6. Signed out entirely.
+code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/api/payments/start" -H "content-type: application/json" \
+  --data "{\"reference\":\"$PAY_REF\"}")
+[ "$code" = "403" ] || [ "$code" = "401" ] && ok "starting a payment while signed out is refused (got $code)" || no "anonymous payment start" "got $code"
+
+psqlq "delete from \\\"Payment\\\" where \\\"orderId\\\"='$PAY_ORDER'" >/dev/null
+psqlq "delete from \\\"Order\\\" where id='$PAY_ORDER'" >/dev/null
+
 echo
 echo "passed: $pass  failed: $fail"
 [ $fail -eq 0 ]

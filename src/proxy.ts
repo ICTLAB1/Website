@@ -29,7 +29,35 @@ function randomToken(byteLength = 32): string {
     .replace(/=+$/, "");
 }
 
-function buildCsp(nonce: string, isDevelopment: boolean): string {
+/**
+ * Pages on which the payment gateway's checkout can be opened.
+ *
+ * The Content-Security-Policy has to be widened for it — an iframe from
+ * razorpay.com, calls out to their API — and that widening is confined to the
+ * pages that actually need it rather than applied site-wide. A stored XSS on a
+ * product page then still cannot frame a payment provider.
+ *
+ * It is a path test rather than a check of whether payments are switched on,
+ * because this runs before any database is reachable and on every request. The
+ * cost of being generous is three extra origins on two pages; the cost of
+ * getting it wrong the other way is a checkout that silently refuses to open,
+ * with the reason visible only in the browser console.
+ */
+function isPaymentPath(pathname: string): boolean {
+  return pathname === "/buy" || pathname.startsWith("/buy/") || pathname.startsWith("/account/orders");
+}
+
+function buildCsp(nonce: string, isDevelopment: boolean, allowGateway: boolean): string {
+  // Razorpay Checkout is loaded by a nonce-carrying script, so 'strict-dynamic'
+  // covers the script itself; what it cannot cover is the iframe the script
+  // opens and the requests that iframe makes.
+  const gatewayFrame = allowGateway
+    ? ["https://api.razorpay.com", "https://checkout.razorpay.com"]
+    : [];
+  const gatewayConnect = allowGateway
+    ? ["https://api.razorpay.com", "https://lumberjack.razorpay.com", "https://lumberjack-cx.razorpay.com"]
+    : [];
+
   const directives: Record<string, string[]> = {
     "default-src": ["'self'"],
     "script-src": [
@@ -44,11 +72,11 @@ function buildCsp(nonce: string, isDevelopment: boolean): string {
     // Tailwind emits a stylesheet, but React still sets some inline styles.
     "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
     "font-src": ["'self'", "https://fonts.gstatic.com", "data:"],
-    "img-src": ["'self'", "data:", "blob:"],
-    "connect-src": ["'self'", ...(isDevelopment ? ["ws:", "wss:"] : [])],
+    "img-src": ["'self'", "data:", "blob:", ...(allowGateway ? ["https://cdn.razorpay.com"] : [])],
+    "connect-src": ["'self'", ...gatewayConnect, ...(isDevelopment ? ["ws:", "wss:"] : [])],
     "form-action": ["'self'"],
     "frame-ancestors": ["'none'"],
-    "frame-src": ["'none'"],
+    "frame-src": gatewayFrame.length > 0 ? gatewayFrame : ["'none'"],
     "object-src": ["'none'"],
     "base-uri": ["'self'"],
     "manifest-src": ["'self'"],
@@ -66,13 +94,12 @@ function buildCsp(nonce: string, isDevelopment: boolean): string {
 export function proxy(request: NextRequest) {
   const isDevelopment = process.env.NODE_ENV === "development";
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
-  const csp = buildCsp(nonce, isDevelopment);
+  const { pathname, search } = request.nextUrl;
+  const csp = buildCsp(nonce, isDevelopment, isPaymentPath(pathname));
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("content-security-policy", csp);
-
-  const { pathname, search } = request.nextUrl;
 
   /**
    * Convenience redirect only. This checks for the presence of a cookie, not
@@ -111,9 +138,19 @@ export function proxy(request: NextRequest) {
   response.headers.set("x-content-type-options", "nosniff");
   response.headers.set("x-frame-options", "DENY");
   response.headers.set("referrer-policy", "strict-origin-when-cross-origin");
+  /*
+   * The Payment Request API is disabled everywhere except the checkout pages,
+   * where the gateway's iframe uses it to offer saved cards and Google Pay.
+   * Denying it there does not break the payment — it silently removes those
+   * options — which is exactly the kind of degradation nobody notices until a
+   * customer mentions it months later.
+   */
+  const paymentDirective = isPaymentPath(pathname)
+    ? 'payment=(self "https://api.razorpay.com" "https://checkout.razorpay.com")'
+    : "payment=()";
   response.headers.set(
     "permissions-policy",
-    "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+    `camera=(), microphone=(), geolocation=(), ${paymentDirective}, usb=(), interest-cohort=()`,
   );
   response.headers.set("x-dns-prefetch-control", "off");
   response.headers.set("cross-origin-opener-policy", "same-origin");

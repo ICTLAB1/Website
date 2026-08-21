@@ -155,6 +155,15 @@ export const directOrderSchema = z.object({
   gstin: gstinSchema.optional().or(z.literal("")),
   poNumber: trimmed(64).optional().or(z.literal("")),
   billingAddress: trimmed(400).optional().or(z.literal("")),
+  /*
+   * Which route the customer chose at checkout.
+   *
+   * A preference, not an instruction: the order is created identically either
+   * way, and asking to pay by card when the gateway is off or unconfigured
+   * simply produces the same order with no payment attached. Nothing about
+   * what is owed depends on this field.
+   */
+  payWithCard: z.coerce.boolean().optional().default(false),
   // Honeypot: a real visitor never fills this in.
   website: z.string().max(0).optional(),
 });

@@ -5,6 +5,7 @@ import { ipFromRequest } from "@/lib/auth/request";
 import { getSessionUser } from "@/lib/auth/session";
 import { canTransact } from "@/lib/auth/guards";
 import { createDirectOrder } from "@/lib/order-service";
+import { beginPayment } from "@/lib/payments/service";
 import { directOrderSchema, fieldErrorsOf } from "@/lib/validation";
 import { recordAudit } from "@/lib/audit";
 import { logger } from "@/lib/logger";
@@ -82,7 +83,11 @@ export const POST = withErrorHandling("orders.createDirect", async (request: Req
       poNumber: parsed.data.poNumber || null,
     },
     // Never trusts a client-supplied account or company id.
-    { userId: user?.id ?? null, companyId: user?.companyId ?? null },
+    {
+      userId: user?.id ?? null,
+      companyId: user?.companyId ?? null,
+      cardPaymentPending: parsed.data.payWithCard,
+    },
   );
 
   if (!result.ok) return jsonError("conflict", result.reason);
@@ -92,9 +97,54 @@ export const POST = withErrorHandling("orders.createDirect", async (request: Req
     action: "order.created_direct",
     entityType: "Order",
     entityId: result.reference,
-    metadata: { sku: parsed.data.sku, quantity: parsed.data.quantity },
+    metadata: {
+      sku: parsed.data.sku,
+      quantity: parsed.data.quantity,
+      requestedCardPayment: parsed.data.payWithCard,
+    },
     ip,
   });
 
-  return jsonOk({ reference: result.reference });
+  /*
+   * The card payment is started here, in the same request that created the
+   * order, rather than through an endpoint the browser calls afterwards.
+   *
+   * That second endpoint is the obvious design and it is the wrong one. It
+   * would have to decide who is allowed to start a payment for a given order,
+   * and for an anonymous purchase the only thing the caller holds is the order
+   * reference — thirty bits of entropy, issued to be quoted in emails and read
+   * out over the phone, not to authorise anything. Starting the payment inside
+   * the request that created the order removes the question: the only party who
+   * can reach this code is the one who just placed the order.
+   *
+   * A failure to start the payment is not a failure of the order. The order
+   * exists, the customer has the confirmation email with transfer details, and
+   * the response simply carries no payment block — the page then shows the
+   * invoice route, which is where it started.
+   */
+  let payment: Awaited<ReturnType<typeof beginPayment>> | null = null;
+  if (parsed.data.payWithCard) {
+    payment = await beginPayment(result.orderId);
+    if (!payment.ok) {
+      logger.warn("order_card_payment_unavailable", {
+        reference: result.reference,
+        reason: payment.reason,
+      });
+    }
+  }
+
+  return jsonOk({
+    reference: result.reference,
+    payment:
+      payment?.ok === true
+        ? {
+            keyId: payment.keyId,
+            providerOrderId: payment.providerOrderId,
+            amountMinor: payment.amountMinor,
+            currency: payment.currency,
+            mode: payment.mode,
+            prefill: payment.prefill,
+          }
+        : null,
+  });
 });
