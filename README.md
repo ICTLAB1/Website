@@ -384,18 +384,28 @@ Everything below is a genuine blocker rather than a nicety.
 | **Configure SMTP.** | Without it, quotations and order confirmations are written to the log instead of being delivered. |
 | **Confirm the database has `pg_trgm`.** | The search migration creates the extension; a managed provider may require enabling it first. |
 
-### Where it can run
+### Publishing it
+
+**[`deploy/README.md`](deploy/README.md) is the runbook** — a single virtual
+machine, automatic HTTPS, and a cutover that puts the site on a subdomain first
+so it can be checked against a real certificate before any customer-facing DNS
+changes. It also covers backups, updates, and keeping an old site's URLs
+working.
+
+```
+deploy/
+  docker-compose.prod.yml   app + Postgres + Caddy, nothing exposed but 80/443
+  Caddyfile                 TLS obtained and renewed automatically
+  .env.prod.example         every value, with what happens if it is unset
+  backup.sh                 nightly dump, fourteen kept, verified before rotating
+```
 
 The app needs a Node runtime and a PostgreSQL database — it is server-rendered
-and database-backed, so it cannot be published as static files.
-
-- **A single virtual machine** running the compose file, behind a reverse proxy
-  that terminates TLS (Caddy obtains certificates automatically). Everything in
-  one region, one bill, and the simplest way to keep customer data in India.
-- **A managed platform** — Vercel, Railway, Render, or AWS App Runner — with a
-  managed PostgreSQL alongside it. Less to operate; check the region if data
-  residency matters, since several default to the United States and the privacy
-  policy commits to transferring personal data abroad only for provisioning.
+and database-backed, so it cannot be published as static files. A managed
+platform (Vercel, Railway, Render, App Runner) with a managed Postgres works
+too; check the region if data residency matters, since several default to the
+United States while the privacy policy commits to transferring personal data
+abroad only for provisioning.
 
 Either way the release steps are the same: apply migrations, then start the new
 version. `npm run db:deploy` is safe to run repeatedly and never drops data;

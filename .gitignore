@@ -6,6 +6,12 @@ dist
 .env
 .env.local
 .env.*.local
+
+# The filled-in production configuration and the database dumps it produces.
+# Both live on the server and neither belongs in version control.
+/deploy/.env
+/deploy/backups/
+/deploy/backup.log
 *.log
 npm-debug.log*
 .DS_Store

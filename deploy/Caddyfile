@@ -1,0 +1,41 @@
+# Caddy obtains and renews the TLS certificate on its own, from Let's Encrypt,
+# the first time a request arrives for SITE_DOMAIN. Nothing to install, nothing
+# to renew by hand — but it does mean DNS must already point here, and ports 80
+# and 443 must be reachable, before the first certificate can be issued.
+#
+# Deliberately thin. The application sets its own Content-Security-Policy with
+# a per-request nonce, HSTS, X-Frame-Options and the rest, so adding them here
+# would either duplicate them or, worse, override the nonce-bearing CSP with a
+# weaker static one.
+
+{
+	email {$TLS_EMAIL}
+	# Uncomment while testing to use Let's Encrypt's staging service, which has
+	# far higher rate limits and issues untrusted certificates. Getting this
+	# wrong five times against the real service locks the domain out for a week.
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+{$SITE_DOMAIN}, www.{$SITE_DOMAIN} {
+	encode zstd gzip
+
+	# Everything on one canonical host: www redirects to the apex, so a page is
+	# never reachable at two URLs and the canonical tags stay honest.
+	@www host www.{$SITE_DOMAIN}
+	redir @www https://{$SITE_DOMAIN}{uri} permanent
+
+	reverse_proxy app:3000 {
+		# The app reads the client address from X-Forwarded-For for rate
+		# limiting and audit logs. Caddy sets it from the real connection, and
+		# because the app is not otherwise reachable, a client cannot forge it.
+		header_up X-Real-IP {remote_host}
+	}
+
+	log {
+		output file /data/access.log {
+			roll_size 20mb
+			roll_keep 10
+		}
+		format json
+	}
+}

@@ -1,0 +1,114 @@
+# Production stack for a single virtual machine.
+#
+#   cd deploy
+#   cp .env.prod.example .env
+#   # fill in .env, then:
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# Differences from the development compose file at the repository root:
+#
+#   - Caddy sits in front and obtains a TLS certificate automatically.
+#   - Postgres is not reachable from outside the compose network at all.
+#   - Nothing has a default value. An unset secret fails the start rather than
+#     quietly running with a development placeholder.
+#   - Everything restarts unless explicitly stopped, so a reboot brings the
+#     site back without anyone logging in.
+
+name: techzoid
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./backups:/backups
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    # Deliberately no `ports:`. The database is reachable only from the app
+    # container. To inspect it, tunnel in over SSH rather than opening 5432.
+
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
+      APP_URL: ${APP_URL:?set APP_URL to the public https origin}
+      AUTH_SECRET: ${AUTH_SECRET:?generate one with openssl rand -base64 48}
+
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:?set the first administrator email}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:?set a strong first administrator password}
+
+      COMPANY_TRADING_NAME: ${COMPANY_TRADING_NAME:-}
+      COMPANY_LEGAL_NAME: ${COMPANY_LEGAL_NAME:-}
+      COMPANY_TAGLINE: ${COMPANY_TAGLINE:-}
+      COMPANY_EMAIL_SALES: ${COMPANY_EMAIL_SALES:-}
+      COMPANY_EMAIL_SUPPORT: ${COMPANY_EMAIL_SUPPORT:-}
+      COMPANY_EMAIL_ENTERPRISE: ${COMPANY_EMAIL_ENTERPRISE:-}
+      COMPANY_PHONE_SALES: ${COMPANY_PHONE_SALES:-}
+      COMPANY_PHONE_SUPPORT: ${COMPANY_PHONE_SUPPORT:-}
+      COMPANY_ADDRESS_LINE1: ${COMPANY_ADDRESS_LINE1:-}
+      COMPANY_ADDRESS_LINE2: ${COMPANY_ADDRESS_LINE2:-}
+      COMPANY_CITY: ${COMPANY_CITY:-}
+      COMPANY_STATE: ${COMPANY_STATE:-}
+      COMPANY_POSTCODE: ${COMPANY_POSTCODE:-}
+      COMPANY_COUNTRY: ${COMPANY_COUNTRY:-India}
+      COMPANY_GSTIN: ${COMPANY_GSTIN:-}
+      COMPANY_CIN: ${COMPANY_CIN:-}
+      COMPANY_SUPPORT_HOURS: ${COMPANY_SUPPORT_HOURS:-}
+      COMPANY_GRIEVANCE_OFFICER_NAME: ${COMPANY_GRIEVANCE_OFFICER_NAME:-}
+      COMPANY_GRIEVANCE_OFFICER_EMAIL: ${COMPANY_GRIEVANCE_OFFICER_EMAIL:-}
+      COMPANY_GRIEVANCE_OFFICER_PHONE: ${COMPANY_GRIEVANCE_OFFICER_PHONE:-}
+
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      SALES_NOTIFICATION_EMAIL: ${SALES_NOTIFICATION_EMAIL:-}
+
+      # Server-only. Reaches the order confirmation email and nothing else.
+      COMPANY_BANK_NAME: ${COMPANY_BANK_NAME:-}
+      COMPANY_BANK_ACCOUNT_NAME: ${COMPANY_BANK_ACCOUNT_NAME:-}
+      COMPANY_BANK_ACCOUNT_NUMBER: ${COMPANY_BANK_ACCOUNT_NUMBER:-}
+      COMPANY_BANK_IFSC: ${COMPANY_BANK_IFSC:-}
+      COMPANY_BANK_ACCOUNT_TYPE: ${COMPANY_BANK_ACCOUNT_TYPE:-}
+      COMPANY_BANK_BRANCH: ${COMPANY_BANK_BRANCH:-}
+      COMPANY_UPI_ID: ${COMPANY_UPI_ID:-}
+    # Also no `ports:`. Only Caddy talks to the app, over the internal network.
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?set SITE_DOMAIN, e.g. techzoidtechnologies.com}
+      TLS_EMAIL: ${TLS_EMAIL:?set TLS_EMAIL for certificate expiry notices}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  db-data:
+  caddy-data:
+  caddy-config:
