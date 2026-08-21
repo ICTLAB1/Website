@@ -14,13 +14,16 @@ import { getProductBySlug, getRelatedProducts, getAllProductSlugs } from "@/lib/
 import { effectivePriceMinor } from "@/lib/money";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
+import { prerenderParams } from "@/lib/queries/prerender";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 /** Pre-renders the catalogue's route params; unknown slugs still resolve at request time. */
 export async function generateStaticParams() {
-  const products = await getAllProductSlugs();
-  return products.map((product) => ({ slug: product.slug }));
+  return prerenderParams("products/[slug]", async () => {
+    const products = await getAllProductSlugs();
+    return products.map((product) => ({ slug: product.slug }));
+  });
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

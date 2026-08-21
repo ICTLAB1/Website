@@ -11,15 +11,18 @@ import { prisma } from "@/lib/db";
 import { getBrandBySlug, getBrandCategories, getServices } from "@/lib/queries/content";
 import { productListSelect } from "@/lib/queries/catalogue";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
+import { prerenderParams } from "@/lib/queries/prerender";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  const brands = await prisma.brand.findMany({
-    where: { deletedAt: null },
-    select: { slug: true },
+  return prerenderParams("brands/[slug]", async () => {
+    const brands = await prisma.brand.findMany({
+      where: { deletedAt: null },
+      select: { slug: true },
+    });
+    return brands.map((brand) => ({ slug: brand.slug }));
   });
-  return brands.map((brand) => ({ slug: brand.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

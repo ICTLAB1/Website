@@ -10,15 +10,18 @@ import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
 import { Markdown } from "@/components/markdown";
 import { formatDate } from "@/lib/utils";
+import { prerenderParams } from "@/lib/queries/prerender";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  const posts = await prisma.blogPost.findMany({
-    where: { status: "PUBLISHED", deletedAt: null },
-    select: { slug: true },
+  return prerenderParams("blog/[slug]", async () => {
+    const posts = await prisma.blogPost.findMany({
+      where: { status: "PUBLISHED", deletedAt: null },
+      select: { slug: true },
+    });
+    return posts.map((post) => ({ slug: post.slug }));
   });
-  return posts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

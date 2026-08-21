@@ -6,6 +6,7 @@ import { BlockRenderer } from "@/components/blocks";
 import { getPage, getPublishedPageSlugs } from "@/lib/queries/pages";
 import { resolveBlocks } from "@/lib/blocks/resolve";
 import { buildMetadata } from "@/lib/seo";
+import { prerenderParams } from "@/lib/queries/prerender";
 
 /**
  * CMS pages.
@@ -29,8 +30,10 @@ import { buildMetadata } from "@/lib/seo";
 type PageProps = { params: Promise<{ slug: string[] }> };
 
 export async function generateStaticParams() {
-  const pages = await getPublishedPageSlugs();
-  return pages.map((page) => ({ slug: page.slug.split("/") }));
+  return prerenderParams("[...slug]", async () => {
+    const pages = await getPublishedPageSlugs();
+    return pages.map((page) => ({ slug: page.slug.split("/") }));
+  });
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

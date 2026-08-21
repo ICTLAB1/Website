@@ -9,15 +9,18 @@ import { prisma } from "@/lib/db";
 import { getServiceBySlug, parseProcess } from "@/lib/queries/content";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
+import { prerenderParams } from "@/lib/queries/prerender";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  const services = await prisma.service.findMany({
-    where: { published: true, deletedAt: null },
-    select: { slug: true },
+  return prerenderParams("services/[slug]", async () => {
+    const services = await prisma.service.findMany({
+      where: { published: true, deletedAt: null },
+      select: { slug: true },
+    });
+    return services.map((service) => ({ slug: service.slug }));
   });
-  return services.map((service) => ({ slug: service.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

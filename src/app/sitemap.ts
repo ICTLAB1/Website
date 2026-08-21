@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db";
 import { appUrl } from "@/lib/env";
+import { tags } from "@/lib/cache";
+import { cached } from "@/lib/queries/cached";
 import { getNavigationPaths } from "@/lib/queries/navigation";
 import { getPublishedPageSlugs, getUnservedPageSlugs } from "@/lib/queries/pages";
 
@@ -10,35 +12,60 @@ import { getPublishedPageSlugs, getUnservedPageSlugs } from "@/lib/queries/pages
  * Only indexable pages appear. Account, admin, enquiry, search and
  * authentication routes are excluded because they carry a noindex directive -
  * listing them would ask crawlers to fetch pages we have told them to ignore.
+ *
+ * Rendered on request rather than at build. Two reasons, and the second is the
+ * one that matters:
+ *
+ *  - a build has no database. An image is built before the database it will
+ *    talk to exists, so a sitemap generated at build time cannot be built into
+ *    an image at all.
+ *  - a sitemap baked at build is a sitemap that does not know about the page an
+ *    administrator published this morning. Every row below comes from a query
+ *    cached under the same tags as the rest of the site, so publishing a page
+ *    updates the sitemap in the same instant it updates the page.
  */
+export const dynamic = "force-dynamic";
 
 const EXCLUDED = new Set(["/search", "/enquiry", "/track-order"]);
+
+/** The catalogue rows the sitemap needs, cached under the tags that own them. */
+const getSitemapRows = cached(
+  async () => {
+    const [products, brands, services, posts] = await Promise.all([
+      prisma.product.findMany({
+        where: { status: "ACTIVE", deletedAt: null },
+        select: { slug: true, updatedAt: true, featured: true },
+      }),
+      prisma.brand.findMany({
+        where: { deletedAt: null },
+        select: { slug: true, updatedAt: true },
+      }),
+      prisma.service.findMany({
+        where: { published: true, deletedAt: null },
+        select: { slug: true, updatedAt: true },
+      }),
+      prisma.blogPost.findMany({
+        where: { status: "PUBLISHED", deletedAt: null },
+        select: { slug: true, updatedAt: true, publishedAt: true },
+      }),
+    ]);
+    return { products, brands, services, posts };
+  },
+  ["sitemap-rows"],
+  [tags.catalogue, tags.brands, tags.services, tags.posts],
+);
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = appUrl();
   const now = new Date();
 
-  const [products, brands, services, posts, cmsPages, navPaths, unservedPages] = await Promise.all([
-    prisma.product.findMany({
-      where: { status: "ACTIVE", deletedAt: null },
-      select: { slug: true, updatedAt: true, featured: true },
-    }),
-    prisma.brand.findMany({
-      where: { deletedAt: null },
-      select: { slug: true, updatedAt: true },
-    }),
-    prisma.service.findMany({
-      where: { published: true, deletedAt: null },
-      select: { slug: true, updatedAt: true },
-    }),
-    prisma.blogPost.findMany({
-      where: { status: "PUBLISHED", deletedAt: null },
-      select: { slug: true, updatedAt: true, publishedAt: true },
-    }),
+  const [rows, cmsPages, navPaths, unservedPages] = await Promise.all([
+    getSitemapRows(),
     getPublishedPageSlugs(),
     getNavigationPaths(),
     getUnservedPageSlugs(),
   ]);
+  const { products, brands, services, posts } = rows;
 
   /**
    * Keyed by URL so a page listed twice is published once.
