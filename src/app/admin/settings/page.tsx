@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { getSiteConfig, getSiteIdentity, getStoredSettings } from "@/lib/site-config";
 import { SettingsForm } from "@/components/admin/settings-form";
 import { PaymentSettingsForm } from "@/components/admin/payment-settings-form";
+import { TestEmailForm } from "@/components/admin/test-email-form";
 import { getPaymentSettingsView } from "@/lib/payments/config";
 import { getUnconfiguredIdentityKeys } from "@/lib/admin/config-status";
 import { isMailConfigured } from "@/lib/mail";
@@ -28,7 +29,7 @@ export const metadata: Metadata = { title: "Settings" };
  * account cannot read them.
  */
 export default async function AdminSettingsPage() {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const [config, stored, missing, audit, payments] = await Promise.all([
     getSiteConfig(),
     getStoredSettings(),
@@ -96,6 +97,20 @@ export default async function AdminSettingsPage() {
       </section>
 
       <section>
+        <h2 className="mb-4 text-[1.05rem]">Outbound email</h2>
+        <p className="mb-4 max-w-2xl text-[13px] leading-relaxed text-ink-600">
+          Enquiry confirmations, order confirmations, quotations and account verification links
+          all go out over SMTP.{" "}
+          {mailReady
+            ? "A server is configured — but configured is not the same as working, and every one of those flows deliberately carries on if a message fails, so that a mail outage never costs you an order. That means a mailbox rejecting everything looks exactly like one that is fine. This is how you find out."
+            : "No SMTP server is configured, so messages are written to the server log instead of sent. Enquiries and orders are still recorded and visible here; the customer simply hears nothing back."}
+        </p>
+        <div className="max-w-2xl">
+          <TestEmailForm address={admin.email} />
+        </div>
+      </section>
+
+      <section>
         <h2 className="mb-4 text-[1.05rem]">Set in server configuration</h2>
         <p className="mb-4 max-w-2xl text-[13px] leading-relaxed text-ink-600">
           Not editable here. The site name is read when each page&rsquo;s metadata is built,
@@ -153,7 +168,7 @@ export default async function AdminSettingsPage() {
                 </Td>
                 <Td className="text-[13px] text-ink-600">
                   {mailReady
-                    ? "Enquiry confirmations and password reset emails are delivered."
+                    ? "A server is set. Whether it accepts our messages is a different question — send a test email above to find out."
                     : "Messages are logged server-side instead of sent. Enquiries are still stored and visible here."}
                 </Td>
               </Tr>
