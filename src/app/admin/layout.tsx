@@ -47,7 +47,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <AdminNav isAdmin={admin} />
 
           <div className="mt-8 hidden lg:block">
-            <SignOutButton className="w-full border-graphite-700 bg-graphite-800 text-graphite-100 hover:border-danger-600 hover:text-white" />
+            <SignOutButton tone="onDark" className="w-full" />
           </div>
         </aside>
 

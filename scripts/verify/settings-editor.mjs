@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+import { createRequire } from "node:module";
+import { readFileSync } from "node:fs";
 
 /**
  * Exercises the business-identity editor the way an administrator would.
@@ -22,6 +24,7 @@ import { chromium } from "playwright";
  * still looks right to whoever wrote it.
  */
 const BASE = process.env.BASE ?? "http://localhost:3000";
+const axeSource = readFileSync(createRequire(import.meta.url).resolve("axe-core/axe.min.js"), "utf8");
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const results = [];
 const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), detail });
@@ -180,7 +183,34 @@ if (envOfficer) {
   check("environment fallback not asserted (no officer set in the environment)", true);
 }
 
-// ── 4. Put back whatever was there before ───────────────────────────────────
+/*
+ * ── 4. The form itself is accessible ────────────────────────────────────────
+ *
+ * `accessibility.mjs` audits public pages only, because it has no session and
+ * every admin route redirects it to the login screen. This suite is already
+ * signed in as an administrator, so it is the only place the admin panel can be
+ * audited at all — and this form is seventeen new labelled inputs, which is
+ * exactly the shape of thing that grows an unlabelled control or a contrast
+ * failure without anyone noticing.
+ */
+await open();
+await page.addScriptTag({ content: axeSource });
+const audit = await page.evaluate(async () => {
+  // @ts-expect-error injected at runtime
+  return await window.axe.run(document.querySelector("main"), {
+    runOnly: {
+      type: "tag",
+      values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"],
+    },
+  });
+});
+check(
+  "the settings form has no accessibility violations",
+  audit.violations.length === 0,
+  audit.violations.map((v) => `${v.id} (${v.nodes.length})`).join(", "),
+);
+
+// ── 5. Put back whatever was there before ───────────────────────────────────
 await open();
 for (const [name, value] of Object.entries(original)) {
   await field(name).fill(value);
