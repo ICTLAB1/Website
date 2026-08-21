@@ -173,6 +173,16 @@ export const getSiteConfig = cache(async () => {
     gstin: stored(row?.gstin) ?? optionalEnv("COMPANY_GSTIN") ?? null,
     cin: stored(row?.cin) ?? optionalEnv("COMPANY_CIN") ?? null,
     supportHours: stored(row?.supportHours) ?? optionalEnv("COMPANY_SUPPORT_HOURS") ?? null,
+    /*
+     * The terms printed on every quotation.
+     *
+     * Stored only — no environment fallback and no default. These are
+     * commercial and legal commitments, and a plausible-looking placeholder
+     * mailed to a customer under this company's name would be worse than an
+     * omission. Unset means the quotation links to the published terms page
+     * and prints nothing of its own.
+     */
+    quoteTerms: stored(row?.quoteTerms) ?? null,
   };
 });
 

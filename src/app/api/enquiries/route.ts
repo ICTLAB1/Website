@@ -70,7 +70,7 @@ export const POST = withErrorHandling("enquiries.create", async (request: Reques
    * one-off enquiry with no account attached — so it is not a bypass anybody
    * would want.
    */
-  if (user && !canTransact(user)) {
+  if (user && !(await canTransact(user))) {
     return jsonError(
       "forbidden",
       "Please confirm your email address before submitting an enquiry. We have sent you a link; you can request another from your account.",

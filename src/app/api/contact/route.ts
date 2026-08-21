@@ -73,7 +73,7 @@ export const POST = withErrorHandling("contact.create", async (request: Request)
     },
   });
 
-  const internal = salesInbox();
+  const internal = await salesInbox();
   if (internal) {
     void sendMail({
       to: internal,

@@ -9,10 +9,15 @@ import {
   priceLine,
   totalsAreStorable,
 } from "@/lib/pricing";
-import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
+import { salesInbox, sendMail } from "@/lib/mail";
+import {
+  quotationHtml,
+  quotationSubject,
+  quotationText,
+  type QuotationEmailInput,
+} from "@/lib/emails/quotation";
 import { getSiteConfig } from "@/lib/site-config";
 import { appUrl } from "@/lib/env";
-import { formatMoney } from "@/lib/money";
 import { logger } from "@/lib/logger";
 
 /**
@@ -200,8 +205,23 @@ export async function sendQuote(reference: string, actorId: string): Promise<Quo
       totalMinor: true,
       currency: true,
       validUntil: true,
+      subtotalMinor: true,
+      discountMinor: true,
+      taxMinor: true,
+      notes: true,
       enquiry: { select: { contactEmail: true, contactName: true, companyName: true } },
-      items: { select: { productName: true, sku: true, quantity: true, lineTotalMinor: true } },
+      company: { select: { name: true, gstin: true } },
+      items: {
+        select: {
+          productName: true,
+          sku: true,
+          quantity: true,
+          unitPriceMinor: true,
+          discountMinor: true,
+          gstRatePercent: true,
+          lineTotalMinor: true,
+        },
+      },
     },
   });
 
@@ -221,45 +241,45 @@ export async function sendQuote(reference: string, actorId: string): Promise<Quo
   const recipient = quote.enquiry?.contactEmail;
   if (recipient) {
     const config = await getSiteConfig();
-    const lines = quote.items
-      .map(
-        (item) =>
-          `  • ${item.productName} (${item.sku}) x${item.quantity} — ${formatMoney(item.lineTotalMinor, quote.currency)}`,
-      )
-      .join("\n");
+    const sentAt = new Date();
+
+    /*
+     * A quotation, not a notification.
+     *
+     * This document is forwarded to finance teams and attached to purchase
+     * orders, so it carries the letterhead, every line's unit price and GST
+     * rate, a totals block that reconciles against those lines, and whatever
+     * terms an administrator has written. See lib/emails/quotation.ts for why
+     * none of that is invented when it is unset.
+     */
+    const input: QuotationEmailInput = {
+      reference,
+      currency: quote.currency,
+      subtotalMinor: quote.subtotalMinor,
+      discountMinor: quote.discountMinor,
+      taxMinor: quote.taxMinor,
+      totalMinor: quote.totalMinor,
+      validUntil: quote.validUntil,
+      sentAt,
+      notes: quote.notes,
+      customer: {
+        name: quote.enquiry?.contactName ?? "there",
+        companyName: quote.company?.name ?? quote.enquiry?.companyName ?? null,
+        email: recipient,
+        gstin: quote.company?.gstin ?? null,
+      },
+      lines: quote.items,
+      acceptUrl: `${appUrl()}/account/quotes/${reference}`,
+      termsUrl: `${appUrl()}/terms`,
+      config,
+      terms: config.quoteTerms,
+    };
 
     void sendMail({
       to: recipient,
-      subject: `Your quotation ${reference}`,
-      text: [
-        `Hello ${quote.enquiry?.contactName ?? "there"},`,
-        "",
-        `Your quotation ${reference} is ready.`,
-        "",
-        lines,
-        "",
-        `Total including GST: ${formatMoney(quote.totalMinor, quote.currency)}`,
-        quote.validUntil ? `Valid until: ${quote.validUntil.toDateString()}` : "",
-        "",
-        `You can review and accept it here: ${appUrl()}/account/quotes/${reference}`,
-        "",
-        config.tradingName,
-      ]
-        .filter(Boolean)
-        .join("\n"),
-      html: [
-        `<p>Hello ${escapeHtml(quote.enquiry?.contactName ?? "there")},</p>`,
-        `<p>Your quotation <strong>${escapeHtml(reference)}</strong> is ready.</p>`,
-        "<ul>",
-        ...quote.items.map(
-          (item) =>
-            `<li>${escapeHtml(item.productName)} (${escapeHtml(item.sku)}) &times;${item.quantity} — ${escapeHtml(formatMoney(item.lineTotalMinor, quote.currency))}</li>`,
-        ),
-        "</ul>",
-        `<p><strong>Total including GST: ${escapeHtml(formatMoney(quote.totalMinor, quote.currency))}</strong></p>`,
-        `<p><a href="${escapeHtml(`${appUrl()}/account/quotes/${reference}`)}">Review and accept your quotation</a></p>`,
-        `<p>${escapeHtml(config.tradingName)}</p>`,
-      ].join(""),
+      subject: quotationSubject(input),
+      text: quotationText(input),
+      html: quotationHtml(input),
     });
   }
 
@@ -308,7 +328,7 @@ export async function decideOnQuote(
 
   await prisma.quote.update({ where: { id: quote.id }, data: { status: decision } });
 
-  const internal = salesInbox();
+  const internal = await salesInbox();
   if (internal) {
     void sendMail({
       to: internal,

@@ -173,6 +173,6 @@ export async function verifyEmailToken(token: string): Promise<VerificationResul
  * This is the one place that decision is made, so it cannot be enforced in one
  * code path and skipped in another.
  */
-export function verificationEnforced(): boolean {
+export async function verificationEnforced(): Promise<boolean> {
   return isMailConfigured();
 }

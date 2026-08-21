@@ -10,6 +10,8 @@ import { TestEmailForm } from "@/components/admin/test-email-form";
 import { getPaymentSettingsView } from "@/lib/payments/config";
 import { getUnconfiguredIdentityKeys } from "@/lib/admin/config-status";
 import { isMailConfigured } from "@/lib/mail";
+import { getMailSettingsView } from "@/lib/mail-config";
+import { MailSettingsForm } from "@/components/admin/mail-settings-form";
 import { listAuditLog } from "@/lib/queries/admin";
 import { formatDateTime, humanise } from "@/lib/utils";
 
@@ -30,15 +32,17 @@ export const metadata: Metadata = { title: "Settings" };
  */
 export default async function AdminSettingsPage() {
   const admin = await requireAdmin();
-  const [config, stored, missing, audit, payments] = await Promise.all([
+  const [config, stored, missing, audit, payments, mail, mailReady] = await Promise.all([
     getSiteConfig(),
     getStoredSettings(),
     getUnconfiguredIdentityKeys(),
     listAuditLog(25),
     getPaymentSettingsView(),
+    getMailSettingsView(),
+    isMailConfigured(),
   ]);
   const identity = getSiteIdentity();
-  const mailReady = isMailConfigured();
+
 
   /**
    * The three fields that stay in server configuration, and the reason.
@@ -105,7 +109,8 @@ export default async function AdminSettingsPage() {
             ? "A server is configured — but configured is not the same as working, and every one of those flows deliberately carries on if a message fails, so that a mail outage never costs you an order. That means a mailbox rejecting everything looks exactly like one that is fine. This is how you find out."
             : "No SMTP server is configured, so messages are written to the server log instead of sent. Enquiries and orders are still recorded and visible here; the customer simply hears nothing back."}
         </p>
-        <div className="max-w-2xl">
+        <div className="max-w-2xl space-y-6">
+          <MailSettingsForm settings={mail} />
           <TestEmailForm address={admin.email} />
         </div>
       </section>

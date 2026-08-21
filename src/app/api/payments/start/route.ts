@@ -44,7 +44,7 @@ export const POST = withErrorHandling("payments.start", async (request: Request)
   const user = await getSessionUser();
   if (!user) return jsonError("unauthorized", "Please sign in to pay for this order.");
 
-  if (!canTransact(user)) {
+  if (!(await canTransact(user))) {
     return jsonError(
       "forbidden",
       "Please confirm your email address before paying. We have sent you a link; you can request another from your account.",

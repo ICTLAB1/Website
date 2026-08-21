@@ -115,7 +115,7 @@ async function notify(
     .map((item) => `  • ${item.productName} (${item.sku}) — quantity ${item.quantity}`)
     .join("\n");
 
-  const internal = salesInbox();
+  const internal = await salesInbox();
   if (internal) {
     await sendMail({
       to: internal,

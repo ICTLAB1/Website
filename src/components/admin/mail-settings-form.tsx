@@ -1,0 +1,132 @@
+"use client";
+
+import { AdminForm } from "@/components/admin/admin-form";
+import { Checkbox, Field, Fieldset, Input, Select } from "@/components/ui/form";
+import { saveMailSettings } from "@/app/admin/settings/mail-settings-actions";
+import type { MailSettingsView } from "@/lib/mail-config";
+
+/**
+ * The mail server, editable without SSH.
+ *
+ * A client component for the same reason as every other form here: `Field`
+ * clones its child to attach an id and the aria attributes, which needs a real
+ * element rather than one that has crossed the server boundary.
+ *
+ * The password is write-only — never populated, identified only by a masked
+ * hint — so a blank box means "leave it alone" and removing it takes its own
+ * checkbox. Every other blank field falls back to the server's own
+ * configuration, which is what lets this be introduced to a deployment that is
+ * already sending email without a moment where it stops.
+ */
+export function MailSettingsForm({ settings }: { settings: MailSettingsView }) {
+  return (
+    <AdminForm action={saveMailSettings} submitLabel="Save mail server" pendingLabel="Saving…">
+      {settings.usingEnvironment ? (
+        <p className="rounded-[--radius-md] border border-line bg-surface-muted p-3 text-[12px] leading-relaxed text-ink-600">
+          These fields are empty because the mail server is currently set in the server&rsquo;s own
+          configuration file. Filling them in here takes over from that, and takes effect
+          immediately — no redeploy. Clearing one again hands it back.
+        </p>
+      ) : null}
+
+      <Fieldset
+        legend="Mail server"
+        description="From your email provider. For Microsoft 365 this is smtp.office365.com on port 587; for Google Workspace, smtp.gmail.com on 587."
+      >
+        <Field label="Server" name="host" hint="For example smtp.office365.com">
+          <Input
+            name="host"
+            defaultValue={settings.host}
+            placeholder="smtp.office365.com"
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </Field>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Port" name="port" hint="587 for almost everything.">
+            <Input name="port" type="number" min={1} max={65535} defaultValue={String(settings.port)} />
+          </Field>
+          <Field
+            label="Encryption"
+            name="secure"
+            hint="Port 587 uses STARTTLS, which is the first option. Only port 465 needs the second."
+          >
+            <Select name="secure" defaultValue={settings.secure ? "on" : ""}>
+              <option value="">STARTTLS — port 587</option>
+              <option value="on">SSL/TLS on connect — port 465</option>
+            </Select>
+          </Field>
+        </div>
+      </Fieldset>
+
+      <Fieldset
+        legend="Sign-in"
+        description="The mailbox the site signs in as. On Microsoft 365 this mailbox must have Authenticated SMTP switched on, and if it uses multi-factor authentication you need an app password rather than the ordinary one."
+      >
+        <Field label="Username" name="username" hint="Usually the full email address.">
+          <Input
+            name="username"
+            defaultValue={settings.username}
+            placeholder="sales@example.com"
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </Field>
+
+        <Field
+          label="Password"
+          name="password"
+          hint={
+            settings.passwordHint
+              ? `A password ending ${settings.passwordHint.slice(-4)} is saved. Leave blank to keep it, or type a new one to replace it.`
+              : "Stored encrypted and never shown again."
+          }
+        >
+          <Input
+            name="password"
+            type="password"
+            placeholder={settings.passwordHint ?? "Paste the mailbox password"}
+            autoComplete="new-password"
+            spellCheck={false}
+          />
+        </Field>
+
+        {settings.passwordHint ? (
+          <Checkbox name="clearPassword" label="Remove the saved password" />
+        ) : null}
+      </Fieldset>
+
+      <Fieldset
+        legend="Sender"
+        description="What customers see in the From line. Providers generally require the address to be the mailbox you sign in as, or a confirmed alias of it — a mismatch is refused as a relay attempt."
+      >
+        <Field label="From address" name="fromAddress">
+          <Input
+            name="fromAddress"
+            type="email"
+            defaultValue={settings.fromAddress}
+            placeholder="sales@example.com"
+            autoComplete="off"
+          />
+        </Field>
+        <Field label="From name" name="fromName" hint="Optional. Shown beside the address.">
+          <Input name="fromName" defaultValue={settings.fromName} placeholder="TechZoid" />
+        </Field>
+        <Field
+          label="Send a copy of enquiries and orders to"
+          name="salesNotificationEmail"
+          hint="Optional. Your team gets a copy of every enquiry and order as it arrives."
+        >
+          <Input
+            name="salesNotificationEmail"
+            type="email"
+            defaultValue={settings.salesNotificationEmail}
+            placeholder="sales@example.com"
+            autoComplete="off"
+          />
+        </Field>
+      </Fieldset>
+    </AdminForm>
+  );
+}

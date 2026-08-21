@@ -216,7 +216,7 @@ export async function decideQuote(
    * nobody, and there is no reason to trap somebody in a quotation they do not
    * want because their email has not arrived.
    */
-  if (parsedDecisionIsAccept(formData) && !canTransact(user)) {
+  if (parsedDecisionIsAccept(formData) && !(await canTransact(user))) {
     return {
       status: "error",
       message:

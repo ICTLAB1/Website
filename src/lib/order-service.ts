@@ -60,7 +60,7 @@ async function notifyOrder(
   const config = await getSiteConfig();
   const banking = getBankingDetails();
 
-  const internal = salesInbox();
+  const internal = await salesInbox();
   if (internal) {
     void sendMail({
       to: internal,

@@ -65,7 +65,7 @@ export const POST = withErrorHandling("orders.createDirect", async (request: Req
    * purchases carry their own protections and are a separate, already-accepted
    * risk.
    */
-  if (user && !canTransact(user)) {
+  if (user && !(await canTransact(user))) {
     return jsonError(
       "forbidden",
       "Please confirm your email address before placing an order. We have sent you a link; you can request another from your account.",

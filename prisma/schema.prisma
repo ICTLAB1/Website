@@ -201,6 +201,7 @@ model User {
   authoredPosts BlogPost[]
   savedSettings SiteSettings[]
   savedPayments PaymentSettings[]
+  savedMail     MailSettings[]
 
   @@index([companyId])
   @@index([role])
@@ -918,6 +919,16 @@ model SiteSettings {
   cin          String?
   supportHours String?
 
+  /// The terms printed at the foot of every quotation email.
+  ///
+  /// Deliberately empty by default and never seeded with sample wording.
+  /// Payment terms, validity, delivery timelines and a liability position are
+  /// commercial and legal commitments this business makes to its customers;
+  /// inventing plausible-looking ones and mailing them out would be worse than
+  /// sending none. Until it is set, quotations link to the published terms page
+  /// instead. Markdown; one point per line.
+  quoteTerms String?
+
   /// Publishing a named grievance officer and their contact details is required
   /// of an online seller in India by the Consumer Protection (E-Commerce) Rules
   /// 2020. It is a statutory appointment rather than marketing copy, which is
@@ -970,6 +981,43 @@ model PaymentSettings {
 enum PaymentMode {
   TEST
   LIVE
+}
+
+/// The outbound mail server.
+///
+/// Held here rather than only in environment configuration for the same reason
+/// as the business identity: changing which mailbox sends the site's email is
+/// an ordinary administrative act, and it should not require SSH access and a
+/// redeploy. Every field falls back to its environment variable when unset, so
+/// a deployment already configured through `.env` keeps working untouched until
+/// somebody edits it here.
+///
+/// The password is encrypted at rest by `lib/secret-box.ts` and is never sent
+/// back to a browser.
+model MailSettings {
+  id String @id @default("singleton")
+
+  host String?
+  port Int?
+  /// Implicit TLS on connect (port 465). Most providers use STARTTLS on 587,
+  /// where this is false.
+  secure Boolean?
+
+  username String?
+  /// AES-256-GCM, keyed from AUTH_SECRET. Never rendered.
+  password String?
+
+  /// The From address. Providers generally require it to be the mailbox being
+  /// signed in as, or a confirmed alias of it.
+  fromAddress String?
+  fromName    String?
+
+  /// Where a copy of each new enquiry and order is sent internally.
+  salesNotificationEmail String?
+
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
 /// One attempt to pay for an order through the gateway.

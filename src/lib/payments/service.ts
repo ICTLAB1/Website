@@ -373,7 +373,7 @@ async function notifyPaid(
     ].join(""),
   });
 
-  const internal = salesInbox();
+  const internal = await salesInbox();
   if (internal) {
     void sendMail({
       to: internal,

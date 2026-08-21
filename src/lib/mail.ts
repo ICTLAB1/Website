@@ -1,6 +1,6 @@
 import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
-import { smtp } from "@/lib/env";
+import { getMailConfig, type MailConfig } from "@/lib/mail-config";
 import { logger } from "@/lib/logger";
 
 /**
@@ -12,25 +12,39 @@ import { logger } from "@/lib/logger";
  */
 
 let cachedTransport: Transporter | null = null;
+let cachedKey: string | null = null;
 
-function transport(): Transporter | null {
-  const host = smtp.host();
-  if (!host) return null;
-  if (cachedTransport) return cachedTransport;
+/**
+ * Built from the resolved configuration, and rebuilt when that changes.
+ *
+ * The settings are editable at runtime now, so a transport cached for the life
+ * of the process would keep using the server that was configured when the
+ * container started — an administrator would correct a wrong password, see
+ * nothing change, and reasonably conclude the panel does not work. Keying the
+ * cache on the settings themselves makes an edit take effect on the next
+ * message without giving up connection pooling.
+ */
+function transport(config: MailConfig): Transporter | null {
+  if (!config.host) return null;
 
-  const user = smtp.user();
-  const password = smtp.password();
+  const key = [config.host, config.port, config.secure, config.username, config.password].join("\u0000");
+  if (cachedTransport && cachedKey === key) return cachedTransport;
+
   cachedTransport = nodemailer.createTransport({
-    host,
-    port: smtp.port(),
-    secure: smtp.secure(),
-    ...(user && password ? { auth: { user, pass: password } } : {}),
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    ...(config.username && config.password
+      ? { auth: { user: config.username, pass: config.password } }
+      : {}),
   });
+  cachedKey = key;
   return cachedTransport;
 }
 
-export function isMailConfigured(): boolean {
-  return Boolean(smtp.host() && smtp.from());
+export async function isMailConfigured(): Promise<boolean> {
+  const config = await getMailConfig();
+  return Boolean(config.host && config.from);
 }
 
 /**
@@ -64,8 +78,9 @@ export type MailFailure =
 export type VerboseMailResult = { delivered: true } | { delivered: false; failure: MailFailure };
 
 export async function sendMailVerbose(message: MailMessage): Promise<VerboseMailResult> {
-  const from = smtp.from();
-  const mailer = transport();
+  const config = await getMailConfig();
+  const from = config.from;
+  const mailer = transport(config);
 
   if (!mailer) return { delivered: false, failure: { kind: "no_host" } };
   if (!from) return { delivered: false, failure: { kind: "no_from" } };
@@ -95,14 +110,15 @@ export async function sendMailVerbose(message: MailMessage): Promise<VerboseMail
 /**
  * Drops the cached transport.
  *
- * Nodemailer pools connections, and a transport built from a wrong password
- * keeps failing with that password for the life of the process. Without this,
- * correcting the credentials and testing again would keep reporting the old
- * failure — which is the most confusing possible response to having just fixed
- * the problem.
+ * The cache is keyed on the settings, so an edit already takes effect on its
+ * own. This forces the issue for the one caller that cannot wait for that: the
+ * test button, pressed immediately after a correction, where a pooled socket
+ * that is open but doomed would report the old failure — the most confusing
+ * possible response to having just fixed the problem.
  */
 export function resetMailTransport(): void {
   cachedTransport = null;
+  cachedKey = null;
 }
 
 export type MailMessage = {
@@ -114,8 +130,9 @@ export type MailMessage = {
 };
 
 export async function sendMail(message: MailMessage): Promise<{ delivered: boolean }> {
-  const from = smtp.from();
-  const mailer = transport();
+  const config = await getMailConfig();
+  const from = config.from;
+  const mailer = transport(config);
 
   if (!mailer || !from) {
     logger.info("mail_not_configured_message_skipped", {
@@ -147,8 +164,8 @@ export async function sendMail(message: MailMessage): Promise<{ delivered: boole
 }
 
 /** Recipient for internal sales notifications, when configured. */
-export function salesInbox(): string | null {
-  return smtp.salesNotification() ?? null;
+export async function salesInbox(): Promise<string | null> {
+  return (await getMailConfig()).salesNotification;
 }
 
 /** Minimal HTML escape for values interpolated into email bodies. */

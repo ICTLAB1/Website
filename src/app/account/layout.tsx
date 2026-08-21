@@ -43,7 +43,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
         being enforced — on a deployment without SMTP there is no link to open,
         so nagging about one would be cruel.
       */}
-      {verificationEnforced() && !user.emailVerified ? (
+      {(await verificationEnforced()) && !user.emailVerified ? (
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 px-5 py-4">
           <div className="min-w-0">
             <p className="text-[14px] font-semibold text-warning-700">

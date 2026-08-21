@@ -1,7 +1,7 @@
 "use client";
 
 import { AdminForm } from "@/components/admin/admin-form";
-import { Field, Fieldset, Input } from "@/components/ui/form";
+import { Field, Fieldset, Input, Textarea } from "@/components/ui/form";
 import { saveSiteSettings } from "@/app/admin/settings/actions";
 import type { SiteConfig } from "@/lib/site-config";
 
@@ -40,6 +40,7 @@ type StoredSettings = {
   gstin: string | null;
   cin: string | null;
   supportHours: string | null;
+  quoteTerms: string | null;
   grievanceName: string | null;
   grievanceEmail: string | null;
   grievancePhone: string | null;
@@ -135,6 +136,24 @@ export function SettingsForm({
       >
         {text("gstin", "GSTIN", effective.gstin, { placeholder: "07AABCU9603R1ZX" })}
         {text("cin", "CIN", effective.cin, { placeholder: "U72900DL2019PTC123456" })}
+      </Fieldset>
+
+      <Fieldset
+        legend="Quotation terms"
+        description="Printed at the foot of every quotation you send. One term per line. Left blank, quotations carry no terms of their own and point to your published terms page instead — deliberately, because payment terms and delivery commitments are yours to decide and nothing here will invent them for you."
+      >
+        <Field
+          label="Terms and conditions"
+          name="quoteTerms"
+          hint="For example: how long the price holds, when payment is due, what delivery timeline applies, whether prices exclude freight."
+        >
+          <Textarea
+            name="quoteTerms"
+            rows={7}
+            defaultValue={stored?.quoteTerms ?? ""}
+            placeholder={"Prices are valid for 30 days from the date of this quotation.\nPayment is due within 30 days of invoice.\nLicences are provisioned within 2 working days of a confirmed order."}
+          />
+        </Field>
       </Fieldset>
 
       <Fieldset

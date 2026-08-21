@@ -29,7 +29,7 @@ export const metadata: Metadata = buildMetadata({
 export default async function VerificationRequiredPage() {
   const user = await requireUser("/verify-email/required");
 
-  if (!verificationEnforced() || user.emailVerified) redirect("/account");
+  if (!(await verificationEnforced()) || user.emailVerified) redirect("/account");
 
   return (
     <div className="container-page pb-16">

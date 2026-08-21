@@ -112,6 +112,8 @@ const settingsSchema = z.object({
   gstin: optionalGstin,
   cin: optionalCin,
   supportHours: optionalText(180),
+  // Generous: these are real contract terms, not a strapline.
+  quoteTerms: optionalText(4000),
 
   grievanceName: optionalText(120),
   grievanceEmail: optionalEmail,

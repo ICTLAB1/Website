@@ -61,9 +61,11 @@ export async function requireAdmin(returnTo = "/admin"): Promise<SessionUser> {
  * link on such a deployment, so enforcing it would lock every new customer out
  * with no route back; a mail problem should cost features, never access.
  */
-export function canTransact(user: { emailVerified: Date | null } | null): boolean {
+export async function canTransact(
+  user: { emailVerified: Date | null } | null,
+): Promise<boolean> {
   if (!user) return false;
-  if (!verificationEnforced()) return true;
+  if (!(await verificationEnforced())) return true;
   return user.emailVerified !== null;
 }
 
@@ -75,7 +77,7 @@ export function canTransact(user: { emailVerified: Date | null } | null): boolea
  */
 export async function requireVerified(returnTo?: string): Promise<SessionUser> {
   const user = await requireUser(returnTo);
-  if (!canTransact(user)) redirect("/verify-email/required");
+  if (!(await canTransact(user))) redirect("/verify-email/required");
   return user;
 }
 

@@ -28,6 +28,7 @@ type PageProps = { searchParams: Promise<{ status?: string }> };
  * because it is stored before any mail is attempted.
  */
 export default async function AdminSupportPage({ searchParams }: PageProps) {
+  const mailReady = await isMailConfigured();
   await requireStaff();
   const params = await searchParams;
   const status = params.status && STATUSES.includes(params.status) ? params.status : undefined;
@@ -63,7 +64,7 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
         </p>
       </header>
 
-      {!isMailConfigured() ? (
+      {!mailReady ? (
         <div className="rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-5">
           <h2 className="text-[15px] font-semibold text-warning-700">
             Outbound email is not configured
