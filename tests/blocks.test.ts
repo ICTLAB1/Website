@@ -31,6 +31,18 @@ describe("safeHref", () => {
     }
   });
 
+  it("rejects protocol-relative hrefs, which look internal but are not", () => {
+    // `//evil.test` starts with a slash and passes any "must start with /"
+    // check, but the browser reads it as "same scheme, different host". A
+    // backslash is normalised to a slash in the same position. Either would
+    // let someone who can author a menu link point "Products" off-site.
+    for (const value of ["//evil.test", "//evil.test/login", "/\\evil.test", "/\\/evil.test"]) {
+      expect(safeHref.safeParse(value).success, value).toBe(false);
+    }
+    expect(safeHref.safeParse("/products").success).toBe(true);
+    expect(safeHref.safeParse("/blog/a/b").success).toBe(true);
+  });
+
   it("rejects an empty or overlong href", () => {
     expect(safeHref.safeParse("").success).toBe(false);
     expect(safeHref.safeParse(`/${"a".repeat(600)}`).success).toBe(false);

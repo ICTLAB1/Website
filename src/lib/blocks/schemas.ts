@@ -23,7 +23,11 @@ export const safeHref = z
   .max(500)
   .refine(
     (value) =>
-      value.startsWith("/") ||
+      // A protocol-relative href — `//evil.test`, or `/\evil.test`, which
+      // browsers normalise to the same thing — starts with a slash and looks
+      // internal, but navigates off-site. Someone who can author a menu link
+      // or a block could otherwise point "Products" at a phishing page.
+      (value.startsWith("/") && !/^\/[/\\]/.test(value)) ||
       value.startsWith("#") ||
       value.startsWith("https://") ||
       value.startsWith("mailto:") ||

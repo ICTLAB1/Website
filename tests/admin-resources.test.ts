@@ -20,6 +20,16 @@ describe("resolveResource", () => {
     expect(resolveResource("")).toBeNull();
   });
 
+  it("rejects the bespoke screens, which are not resources", () => {
+    // Pages and navigation have their own actions with their own rules -
+    // a page slug may contain slashes, a menu item has a parent and an order.
+    // Naming one in `__resource` must not route it through the generic writer,
+    // which knows none of that.
+    expect(resolveResource("pages")).toBeNull();
+    expect(resolveResource("navigation")).toBeNull();
+    expect(resolveResource("blocks")).toBeNull();
+  });
+
   it("rejects a non-string key", () => {
     for (const value of [null, undefined, 42, {}, [], true]) {
       expect(resolveResource(value)).toBeNull();
