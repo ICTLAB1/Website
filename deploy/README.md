@@ -64,9 +64,11 @@ git clone https://github.com/ICTLAB1/Website.git /srv/techzoid
 cd /srv/techzoid/deploy
 cp .env.prod.example .env
 
-# Generate the two secrets
+# Generate the two secrets. POSTGRES_PASSWORD is hex rather than base64 on
+# purpose: it is substituted into a connection URL, and a `/` in it would
+# break that URL in a way whose error message points nowhere near the cause.
 echo "AUTH_SECRET=\"$(openssl rand -base64 48)\""
-echo "POSTGRES_PASSWORD=\"$(openssl rand -base64 24)\""
+echo "POSTGRES_PASSWORD=\"$(openssl rand -hex 24)\""
 ```
 
 Edit `.env` and fill it in. While testing, point it at a subdomain:
