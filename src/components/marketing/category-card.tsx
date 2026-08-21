@@ -33,7 +33,7 @@ export function CategoryCard({
   return (
     <Link
       href={`/products?category=${encodeURIComponent(category.slug)}`}
-      className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
+      className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 lift hover:border-graphite-300"
     >
       <span
         aria-hidden="true"

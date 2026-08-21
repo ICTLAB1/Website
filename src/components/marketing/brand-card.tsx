@@ -12,7 +12,7 @@ export function BrandCard({
   return (
     <Link
       href={`/brands/${brand.slug}`}
-      className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
+      className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 lift hover:border-graphite-300"
     >
       <span
         aria-hidden="true"
@@ -46,7 +46,7 @@ export function BrandStrip({ brands }: { brands: Array<{ slug: string; name: str
         <li key={brand.slug}>
           <Link
             href={`/brands/${brand.slug}`}
-            className="inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-3.5 py-2 text-[13px] font-medium text-ink-700 transition-colors hover:border-graphite-300 hover:text-graphite-900"
+            className="inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-3.5 py-2 text-[13px] font-medium text-ink-700 lift hover:border-graphite-300 hover:text-graphite-900"
           >
             <span
               aria-hidden="true"

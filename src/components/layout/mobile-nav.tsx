@@ -83,7 +83,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
       {open ? (
         <div className="fixed inset-0 z-[70] lg:hidden">
           <div
-            className="absolute inset-0 bg-graphite-950/50"
+            className="absolute inset-0 bg-graphite-950/50 animate-fade-in"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
@@ -92,7 +92,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
             role="dialog"
             aria-modal="true"
             aria-label="Site navigation"
-            className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-white shadow-[--shadow-overlay]"
+            className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-white shadow-[--shadow-overlay] animate-slide-in-right"
           >
             <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
               {current.kind === "root" ? (

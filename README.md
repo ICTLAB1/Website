@@ -120,6 +120,19 @@ is read live from the database by slug, so prices never drift from the
 catalogue. Static routes always win over the catch-all, and an unregistered
 path returns a genuine 404.
 
+**Motion.** Animation is present but deliberately restrained: short durations, a
+decelerating curve, and only `transform` and `opacity` so the compositor can run
+it without layout or paint. Three rules hold everywhere:
+
+- Content is never hidden by markup. `Reveal` applies its hidden state after
+  hydration and only to elements already below the fold, so a reader never sees
+  content disappear, and a reader without JavaScript sees a normal page.
+- `prefers-reduced-motion` is honoured, and honoured *correctly*: the reduced
+  block also resets the reveal transform, since disabling a transition alone
+  would leave content stuck in its translated, transparent start state.
+- Nothing animates that would move layout. Verified: scrolling the homepage
+  through every reveal measures a Cumulative Layout Shift of 0.
+
 **Money.** Stored and computed as integer minor units (paise). Floating point is
 never used for prices, discounts or tax. All quotation and order arithmetic goes
 through `src/lib/pricing.ts`, which is pure and exhaustively unit tested: a

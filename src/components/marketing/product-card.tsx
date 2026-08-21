@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RevealGroup } from "@/components/motion/reveal";
 import { Badge } from "@/components/ui/badge";
 import { AddToEnquiryButton } from "@/components/enquiry/add-to-enquiry-button";
 import { discountPercent, effectivePriceMinor, formatMoney, formatTerm } from "@/lib/money";
@@ -124,12 +125,20 @@ export function ProductCard({ product }: { product: ProductListItem }) {
   );
 }
 
+/**
+ * The shared product grid.
+ *
+ * Cards reveal in a short stagger. The stagger is capped inside `RevealGroup`
+ * so a full catalogue page does not leave the last card waiting noticeably
+ * after the first - a stagger that scales with list length stops reading as
+ * polish and starts reading as slowness.
+ */
 export function ProductGrid({ products }: { products: ProductListItem[] }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" step={50} max={200}>
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
-    </div>
+    </RevealGroup>
   );
 }

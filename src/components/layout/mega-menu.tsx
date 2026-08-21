@@ -101,6 +101,9 @@ export function MegaMenu() {
                     onMouseLeave={scheduleClose}
                     className={cn(
                       "absolute top-full z-50 border border-line bg-white shadow-[--shadow-overlay]",
+                      // Panels are mounted only while open, so a keyframe runs on
+                      // each open without needing exit-animation bookkeeping.
+                      "animate-slide-down origin-top",
                       "rounded-b-[--radius-lg]",
                       item.megaMenu
                         ? "left-1/2 w-[min(72rem,calc(100vw-4rem))] -translate-x-1/2 p-6"

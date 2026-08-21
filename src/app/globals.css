@@ -84,6 +84,59 @@
   --shadow-card: 0 1px 2px 0 rgb(16 24 40 / 0.04);
   --shadow-raised: 0 4px 12px -2px rgb(16 24 40 / 0.08), 0 2px 4px -2px rgb(16 24 40 / 0.04);
   --shadow-overlay: 0 16px 40px -8px rgb(8 18 39 / 0.24);
+
+  /* ---------------------------------------------------------------------
+     Motion
+     Short durations and a decelerating curve: motion here is meant to make
+     a change legible, not to be noticed for itself. Every animation moves
+     only `transform` and `opacity`, which the compositor can handle without
+     re-running layout or paint.
+  --------------------------------------------------------------------- */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --duration-reveal: 520ms;
+
+  --animate-fade-in: fade-in var(--duration-base) var(--ease-out-quart) both;
+  --animate-rise: rise var(--duration-reveal) var(--ease-out-soft) both;
+  --animate-slide-down: slide-down var(--duration-base) var(--ease-out-quart) both;
+  --animate-slide-in-right: slide-in-right var(--duration-slow) var(--ease-out-soft) both;
+  --animate-scale-in: scale-in var(--duration-base) var(--ease-out-quart) both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translate3d(0, -6px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes slide-in-right {
+  from { transform: translate3d(100%, 0, 0); }
+  to { transform: none; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes shimmer {
+  from { background-position: -180% 0; }
+  to { background-position: 180% 0; }
 }
 
 /* --------------------------------------------------------------------------- */
@@ -110,6 +163,19 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    /* Without this the reveal element keeps its translated, transparent start
+       state: disabling the transition alone would leave the content invisible
+       rather than un-animated. */
+    .reveal,
+    .reveal[data-revealed="false"] {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .lift:hover {
+      transform: none !important;
     }
   }
 
@@ -179,6 +245,94 @@
     .container-page {
       padding-inline: 2rem;
     }
+  }
+
+  /* -----------------------------------------------------------------------
+     Motion utilities
+     `.reveal` pairs with the Reveal component. The element keeps its layout
+     box at all times; only opacity and transform move.
+  ----------------------------------------------------------------------- */
+  .reveal {
+    transition:
+      opacity var(--duration-reveal) var(--ease-out-soft),
+      transform var(--duration-reveal) var(--ease-out-soft);
+  }
+  .reveal[data-revealed="false"] {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  .reveal[data-revealed="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Cards lift very slightly on hover. Kept to a 2px translate and a border
+     change: enough to read as interactive, not enough to feel springy. */
+  .lift {
+    transition:
+      transform var(--duration-base) var(--ease-out-quart),
+      border-color var(--duration-base) var(--ease-out-quart),
+      box-shadow var(--duration-base) var(--ease-out-quart);
+    will-change: transform;
+  }
+  @media (hover: hover) {
+    .lift:hover {
+      transform: translate3d(0, -2px, 0);
+      box-shadow: var(--shadow-raised);
+    }
+  }
+  .lift:active {
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* An underline that draws from the left rather than appearing all at once. */
+  .underline-grow {
+    position: relative;
+  }
+  .underline-grow::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-base) var(--ease-out-quart);
+  }
+  .underline-grow:hover::after,
+  .underline-grow:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /* Loading placeholder. Animates background-position only. */
+  .skeleton {
+    background-image: linear-gradient(
+      90deg,
+      var(--color-surface-sunken) 0%,
+      var(--color-graphite-100) 50%,
+      var(--color-surface-sunken) 100%
+    );
+    background-size: 180% 100%;
+    animation: var(--animate-shimmer);
+    border-radius: var(--radius-md);
+  }
+
+  .animate-rise {
+    animation: var(--animate-rise);
+  }
+  .animate-fade-in {
+    animation: var(--animate-fade-in);
+  }
+  .animate-slide-down {
+    animation: var(--animate-slide-down);
+  }
+  .animate-slide-in-right {
+    animation: var(--animate-slide-in-right);
+  }
+  .animate-scale-in {
+    animation: var(--animate-scale-in);
   }
 
   .prose-content {

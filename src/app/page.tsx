@@ -12,6 +12,8 @@ import { getBrands, getPublishedPosts, getServices } from "@/lib/queries/content
 import { buildMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
+import { Reveal } from "@/components/motion/reveal";
+import { CountUp } from "@/components/motion/count-up";
 
 export const metadata: Metadata = buildMetadata({
   title: "Enterprise Software Licensing, Cloud & IT Solutions",
@@ -164,16 +166,16 @@ export default async function HomePage() {
               <span className="h-1.5 w-1.5 rounded-full bg-accent-400" aria-hidden="true" />
               Multiple technology vendors. One procurement partner.
             </p>
-            <h1 className="text-[2.15rem] leading-[1.12] text-white sm:text-5xl lg:text-[3.4rem]">
+            <h1 className="animate-rise text-[2.15rem] leading-[1.12] text-white sm:text-5xl lg:text-[3.4rem]">
               Enterprise Software Licensing, Cloud &amp; IT Solutions
             </h1>
-            <p className="mt-5 max-w-2xl text-[16px] leading-relaxed text-graphite-200 lg:text-[17px]">
+            <p className="mt-5 max-w-2xl animate-rise text-[16px] leading-relaxed text-graphite-200 lg:text-[17px]" style={{ animationDelay: "80ms" }}>
               Microsoft, Adobe, Autodesk, Zoho and enterprise technology solutions from one
               trusted procurement partner — with the licensing advice, deployment support and
               renewal management that make them worth owning.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 flex animate-rise flex-wrap gap-3" style={{ animationDelay: "160ms" }}>
               <ButtonLink href="/enquiry" size="lg">
                 Get Enterprise Quote
               </ButtonLink>
@@ -182,7 +184,7 @@ export default async function HomePage() {
               </ButtonLink>
             </div>
 
-            <div className="mt-10 max-w-2xl">
+            <div className="mt-10 max-w-2xl animate-rise" style={{ animationDelay: "240ms" }}>
               <SearchBox
                 size="lg"
                 label="Search products and solutions"
@@ -209,14 +211,16 @@ export default async function HomePage() {
 
           <dl className="mt-14 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-6 border-t border-graphite-800 pt-8 sm:grid-cols-4">
             {[
-              { label: "Products listed", value: `${productCount}` },
-              { label: "Licensable SKUs", value: `${skuCount}` },
-              { label: "Vendors supplied", value: `${brandCount}` },
+              { label: "Products listed", count: productCount },
+              { label: "Licensable SKUs", count: skuCount },
+              { label: "Vendors supplied", count: brandCount },
               { label: "Purchase order", value: "One" },
             ].map((item) => (
               <div key={item.label}>
                 <dt className="text-[12px] uppercase tracking-wide text-graphite-400">{item.label}</dt>
-                <dd className="mt-1 text-2xl font-semibold text-white">{item.value}</dd>
+                <dd className="mt-1 text-2xl font-semibold text-white">
+                  {typeof item.count === "number" ? <CountUp value={item.count} /> : item.value}
+                </dd>
               </div>
             ))}
           </dl>
@@ -236,7 +240,7 @@ export default async function HomePage() {
       {/* ---------------------------------------------------- Trust badges */}
       <section className="border-b border-line py-8">
         <div className="container-page">
-          <ul className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-6">
+          <Reveal as="ul" className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-6">
             {TRUST_BADGES.map((badge) => (
               <li key={badge.label} className="flex items-start gap-2.5">
                 <span
@@ -255,7 +259,7 @@ export default async function HomePage() {
                 </span>
               </li>
             ))}
-          </ul>
+          </Reveal>
         </div>
       </section>
 
@@ -271,14 +275,14 @@ export default async function HomePage() {
             </ButtonLink>
           }
         />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal as="div" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {featuredCategories.map((category) => (
             <CategoryCard
               key={category.slug}
               category={{ ...category, count: category._count.products }}
             />
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* --------------------------------------------------------- Popular */}
@@ -313,7 +317,7 @@ export default async function HomePage() {
               purchase order and one GST invoice — without losing visibility of what each
               line costs.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 flex animate-rise flex-wrap gap-3" style={{ animationDelay: "160ms" }}>
               <ButtonLink href="/enterprise">Talk to an Enterprise Specialist</ButtonLink>
               <ButtonLink href="/services/it-procurement" variant="outline">
                 How procurement works
@@ -321,14 +325,14 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <ul className="grid gap-4 sm:grid-cols-2">
+          <Reveal as="ul" className="grid gap-4 sm:grid-cols-2">
             {PROCUREMENT_POINTS.map((point) => (
               <li key={point.title} className="rounded-[--radius-lg] border border-line bg-white p-5">
                 <h3 className="text-[14px] font-semibold text-graphite-900">{point.title}</h3>
                 <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{point.body}</p>
               </li>
             ))}
-          </ul>
+          </Reveal>
         </div>
       </section>
 
@@ -394,7 +398,7 @@ export default async function HomePage() {
             description="Stated plainly, so you can hold us to it."
             align="center"
           />
-          <div className="grid gap-4 sm:grid-cols-2">
+          <Reveal as="div" className="grid gap-4 sm:grid-cols-2">
             {WHY_POINTS.map((point, index) => (
               <div key={point.title} className="rounded-[--radius-lg] border border-line bg-white p-6">
                 <span
@@ -407,7 +411,7 @@ export default async function HomePage() {
                 <p className="mt-2 text-[14px] leading-relaxed text-ink-600">{point.body}</p>
               </div>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -418,7 +422,7 @@ export default async function HomePage() {
           title="Sector-specific technology requirements"
           description="Licensing decisions look different depending on what the software is being used for."
         />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal as="div" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {INDUSTRIES.map((industry) => (
             <Link
               key={industry.href}
@@ -436,7 +440,7 @@ export default async function HomePage() {
               </span>
             </Link>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* ------------------------------------------------------------ GeM */}
@@ -482,7 +486,7 @@ export default async function HomePage() {
           title="Organisations we have supplied technology to"
           description="Including government departments, defence establishments and public sector undertakings, supplied through GeM and direct tender engagements."
         />
-        <ul className="flex flex-wrap gap-x-3 gap-y-3">
+        <Reveal as="ul" className="flex flex-wrap gap-x-3 gap-y-3">
           {SUPPLIED_ORGANISATIONS.map((name) => (
             <li
               key={name}
@@ -491,7 +495,7 @@ export default async function HomePage() {
               {name}
             </li>
           ))}
-        </ul>
+        </Reveal>
         <p className="mt-6 text-[13px] text-ink-500">
           500+ organisations supplied across India.
         </p>
@@ -506,7 +510,7 @@ export default async function HomePage() {
             description="No case studies invented for a website. This is the actual sequence."
             align="center"
           />
-          <ol className="grid gap-4 md:grid-cols-4">
+          <Reveal as="ol" className="grid gap-4 md:grid-cols-4">
             {[
               { title: "Tell us the requirement", body: "In whatever detail you have — a product list, a seat count, or just the problem you are solving." },
               { title: "We source and advise", body: "Across vendors, including the alternative you did not ask about if it fits better." },
@@ -521,7 +525,7 @@ export default async function HomePage() {
                 <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{step.body}</p>
               </li>
             ))}
-          </ol>
+          </Reveal>
         </div>
       </section>
 
@@ -545,7 +549,7 @@ export default async function HomePage() {
           ))}
         </div>
 
-        <ul className="mt-10 grid gap-3 border-t border-line pt-10 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal as="ul" className="mt-10 grid gap-3 border-t border-line pt-10 sm:grid-cols-2 lg:grid-cols-3">
           {PARTNER_CERTIFICATIONS.map((partner) => (
             <li
               key={partner.vendor}
@@ -555,7 +559,7 @@ export default async function HomePage() {
               <span className="text-ink-500">{partner.status}</span>
             </li>
           ))}
-        </ul>
+        </Reveal>
       </section>
 
       {/* ------------------------------------------------------- Resources */}

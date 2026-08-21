@@ -22,6 +22,28 @@ for (const path of PAGES) {
     const page = await context.newPage();
     await page.goto(`${BASE}${path}`, { waitUntil: "load", timeout: 20000 });
     await page.waitForTimeout(300);
+
+    // Scroll the whole page so every reveal has fired, then wait for the
+    // transitions to finish. Auditing mid-fade measures contrast against a
+    // partially transparent element, which is a property of the animation
+    // rather than of the design - the settled state is what a reader sees.
+    await page.evaluate(async () => {
+      const step = window.innerHeight * 0.8;
+      for (let y = 0; y < document.body.scrollHeight; y += step) {
+        window.scrollTo(0, y);
+        await new Promise((resolve) => setTimeout(resolve, 90));
+      }
+      window.scrollTo(0, 0);
+    });
+    await page.waitForFunction(
+      () =>
+        [...document.querySelectorAll(".reveal")].every(
+          (el) => Number(getComputedStyle(el).opacity) > 0.99,
+        ),
+      undefined,
+      { timeout: 5000 },
+    ).catch(() => {});
+    await page.waitForTimeout(200);
     await page.addScriptTag({ content: axeSource });
 
     const results = await page.evaluate(async () => {

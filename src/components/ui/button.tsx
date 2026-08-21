@@ -5,9 +5,13 @@ import { cn } from "@/lib/utils";
 type Variant = "primary" | "secondary" | "outline" | "ghost" | "danger" | "onDark";
 type Size = "sm" | "md" | "lg";
 
+/* Motion: a fast colour transition plus a 1px press. Both are composited. */
+// Motion: colour and a 1px press. Both are cheap, and the press gives the
+// click somewhere to land on touch devices, where there is no hover state.
 const BASE =
   "inline-flex items-center justify-center gap-2 rounded-[--radius-md] font-medium " +
-  "transition-colors duration-150 disabled:pointer-events-none disabled:opacity-55 " +
+  "transition-[color,background-color,border-color,transform] duration-150 ease-[--ease-out-quart] " +
+  "active:translate-y-px disabled:pointer-events-none disabled:opacity-55 " +
   "focus-visible:outline-2 focus-visible:outline-offset-2 whitespace-nowrap";
 
 const VARIANTS: Record<Variant, string> = {
