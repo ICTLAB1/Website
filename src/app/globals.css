@@ -288,6 +288,70 @@
     transform: translate3d(0, 0, 0);
   }
 
+  /*
+   * The FAQ accordion.
+   *
+   * Rules that Tailwind utilities cannot reach: a pseudo-element that only
+   * exists on `<details>`, and a focus treatment that has to *replace* the
+   * global one rather than sit alongside it.
+   */
+
+  /*
+   * The plus becomes a minus.
+   *
+   * The vertical stroke collapses to nothing about its own centre, leaving the
+   * horizontal one. The previous version rotated the whole plus 45 degrees,
+   * which produces a multiplication sign — and a cross reads as "discard this",
+   * not "collapse this".
+   */
+  .faq-plus-stroke {
+    transform-origin: center;
+    transition: transform var(--duration-base) var(--ease-out-quart);
+  }
+  /* The open state itself is set inline by the component, from React state. */
+
+  /*
+   * Focus, without the global ring.
+   *
+   * The global treatment is a 2px amber outline offset from its element. Around
+   * a full-width row inside a bordered card that reads as a text input, which
+   * is what it was mistaken for. A leading bar and a tint say "this row" while
+   * staying well clear of the 3:1 contrast a focus indicator needs — the bar is
+   * accent-600 against white.
+   */
+  .faq-trigger:focus-visible {
+    outline: none;
+    background-color: var(--color-accent-50);
+    box-shadow: inset 3px 0 0 0 var(--color-accent-600);
+  }
+
+  /*
+   * Smooth open and close.
+   *
+   * A grid row animated from 0fr to 1fr, which is the one way to transition to
+   * a content-determined height that works in every browser this site
+   * supports — no hard-coded max-height to clip a long answer, and no reliance
+   * on `interpolate-size`, which is still too new to depend on.
+   *
+   * `visibility` is what takes a closed answer out of the accessibility tree
+   * and out of the focus order. It is used rather than the `hidden` attribute
+   * because `hidden` means `display: none`, which cannot be transitioned at
+   * all: it would have made every open and close instant. `visibility` flips at
+   * the correct end of the transition by itself.
+   */
+  .faq-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition:
+      grid-template-rows var(--duration-base) var(--ease-out-quart),
+      visibility var(--duration-base) var(--ease-out-quart);
+  }
+  .faq-panel-open {
+    grid-template-rows: 1fr;
+    visibility: visible;
+  }
+
   /* An underline that draws from the left rather than appearing all at once. */
   .underline-grow {
     position: relative;

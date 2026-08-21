@@ -1,11 +1,19 @@
 import { appUrl } from "@/lib/env";
 import { jsonLdHtml } from "@/lib/seo";
+import { FaqAccordion } from "@/components/ui/faq-accordion";
 
 export type FaqEntry = { question: string; answer: string };
 
 /**
- * FAQ list built on <details>, so it works without JavaScript and is keyboard
- * accessible by default. Emits matching FAQPage structured data when asked.
+ * A list of questions and answers, plus its `FAQPage` structured data.
+ *
+ * Split in two because the halves need different environments. The accordion is
+ * interactive and runs in the browser; the structured data must be rendered on
+ * the server, both so search engines see it without executing anything and
+ * because `appUrl()` reads configuration that never reaches the client bundle.
+ *
+ * Callers see one component, as they did when this was a single `<details>`
+ * list, so the split is invisible from outside.
  */
 export function FaqList({
   items,
@@ -29,25 +37,7 @@ export function FaqList({
 
   return (
     <>
-      <div className="divide-y divide-line rounded-[--radius-lg] border border-line bg-white">
-        {items.map((item, index) => (
-          <details key={index} className="group px-5">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[15px] font-medium text-graphite-900 marker:hidden">
-              {item.question}
-              <span
-                aria-hidden="true"
-                className="shrink-0 text-ink-500 transition-transform group-open:rotate-45"
-              >
-                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M9 4h2v12H9z" />
-                  <path d="M4 9h12v2H4z" />
-                </svg>
-              </span>
-            </summary>
-            <div className="pb-5 pr-8 text-sm leading-relaxed text-ink-600">{item.answer}</div>
-          </details>
-        ))}
-      </div>
+      <FaqAccordion items={items} />
       {includeSchema ? (
         <script
           type="application/ld+json"
