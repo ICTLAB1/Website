@@ -70,6 +70,7 @@ admin account and says so.
 | `npm run db:migrate`         | Create and apply a migration in development           |
 | `npm run db:deploy`          | Apply pending migrations (use this in production)     |
 | `npm run db:seed`            | Seed catalogue and content                            |
+| `npm run content:export`     | Write the live CMS content back to the seed file       |
 
 ### Browser verification
 
@@ -80,14 +81,24 @@ npm run build && npm run start &
 npm run verify
 ```
 
-- `verify:responsive` — no horizontal page scroll, no console errors, across
-  11 pages × 8 widths (375, 390, 414, 768, 1024, 1280, 1440, 1920)
-- `verify:a11y` — zero axe-core violations (WCAG 2.1 A/AA + best practice)
-  across 14 pages × 2 widths
-- `verify:interactions` — mobile drawer, search autocomplete, basket, quote
-  submission, catalogue filtering, keyboard navigation
-- `verify:lifecycle` — enquiry → quotation → discount → issue → accept → order
-  → fulfilment → licences and renewals, driven through two browser sessions
+| Suite | What it proves |
+| --- | --- |
+| `verify:responsive` | No horizontal page scroll and no console errors, across 12 pages × 8 widths (375–1920) |
+| `verify:a11y` | Zero axe-core violations (WCAG 2.1 A/AA + best practice) across 16 pages × 2 widths |
+| `verify:motion` | Reveals cause no layout shift (CLS 0.0000), content is present and visible with JavaScript disabled, reduced motion is honoured |
+| `verify:interactions` | Mobile drawer, search autocomplete, basket, quote submission, catalogue filtering, keyboard navigation |
+| `verify:lifecycle` | Enquiry → quotation → discount → issue → accept → order → fulfilment → licences and renewals, across two browser sessions |
+| `verify:admin` | The descriptor-driven CRUD screens: create, edit, validate, archive |
+| `verify:cms` | A page created after the build renders on demand; an unpublished page 404s; a block with an unreadable payload is skipped rather than fatal |
+| `verify:page-editor` | Page and block editing, reordering, publishing, and the two ways a bad payload is refused |
+| `verify:navigation` | Menu editing: a refused `javascript:` href, live propagation to the public header, edit, hide, add-child, reorder, cascade delete |
+| `verify:authz` | A SALES session submitting a real, live-bound page/block/navigation action writes nothing — with positive controls proving the same submission as ADMIN does write |
+| `verify:attack` | Price and status tampering, cross-tenant access, CSRF, privilege boundaries |
+| `verify:acceptance` | End to end: create a page, add and reorder blocks, publish, add a menu link, and confirm the page, menu, sitemap and SEO metadata all follow — with no redeploy |
+
+Two of the suites need database access for their fixtures (`verify:authz` and
+`verify:attack` shell out to `psql`), so they assume the local development
+database.
 
 ---
 
@@ -96,14 +107,16 @@ npm run verify
 ```
 src/
   app/                     routes (App Router)
-    [...slug]/             vendor + solution landing pages from a content registry
+    [...slug]/             every CMS page, rendered from the database
     admin/                 back office — guarded by requireStaff in the layout
     account/               customer area — guarded by requireUser in the layout
     api/                   JSON endpoints (auth, enquiries, contact, search)
   components/              UI kit, layout, catalogue, enquiry, admin
-  content/landing/         typed marketing-page registry (40 pages, one route)
+    blocks/                one renderer per block type
   lib/
+    admin/                 the descriptor-driven CRUD framework
     auth/                  sessions, CSRF, password hashing, rate limiting
+    blocks/                block schemas, form shapes, reference resolution
     queries/               all database reads, grouped by surface
     validation.ts          every request schema
 prisma/
@@ -113,18 +126,26 @@ scripts/verify/            browser verification suites
 tests/                     Vitest unit tests
 ```
 
-**Landing pages.** `/microsoft-365`, `/autocad`, `/solutions/manufacturing` and
-37 others are one route (`app/[...slug]`) reading a typed registry, with
-`generateStaticParams` and `dynamicParams = false`. Product data on those pages
-is read live from the database by slug, so prices never drift from the
-catalogue. Static routes always win over the catch-all, and an unregistered
-path returns a genuine 404.
+**Content.** Every marketing page — the home page, `/microsoft-365`,
+`/solutions/manufacturing`, `/about` and 40 others — is a database row plus an
+ordered list of typed blocks, rendered by one route (`app/[...slug]`). Nothing
+about them is compiled in. The navigation is a two-level tree assembled from one
+flat query. Both are edited in the admin panel at `/admin/pages` and
+`/admin/navigation`, and an edit reaches the public site immediately: writes
+invalidate cache tags rather than waiting for a deploy.
 
-**Content.** Marketing pages, navigation and banners live in the database, not
-in the bundle. A page is a row plus an ordered list of typed blocks; the
-navigation is a two-level tree assembled from one flat query. Blocks store
-*references* — a product slug, a brand, "featured" — never copies, so a price
-shown on a landing page is the catalogue price because it is the same row.
+A handful of paths keep their own route file (`/`, `/about`, `/enterprise`,
+`/resources`) so they can be reasoned about and given route-specific behaviour
+later, but they render through the same block pipeline — there is one renderer,
+not two. Static routes win over the catch-all, and a path nothing claims returns
+a genuine 404.
+
+Blocks store *references* — a product slug, a brand, "featured" — never copies,
+so a price shown on a landing page is the catalogue price because it is the same
+row. Business identity is the deliberate exception in the other direction: the
+`COMPANY_INFO` block and `CTA_BANNER`'s contact address read server
+configuration at render time, so an administrator can place the panel without
+being able to edit a GSTIN through a content form.
 
 Block payloads are JSONB validated by a zod schema chosen on the block's type,
 on write **and on read**. Reading is the important half: a row written by an
@@ -233,6 +254,18 @@ browser suites:
   per-account sign-in limit, CSRF check and honeypots are unaffected.
 - **No payment processing.** The platform is enquiry- and quotation-led by
   design; orders are recorded but no card data is handled anywhere.
+- **Content search is trigram-indexed on the two tables that grow.** `Product`
+  and `Faq` carry `pg_trgm` GIN indexes, so `LIKE '%term%'` uses an index rather
+  than scanning; measurements are in the
+  `20260821070000_search_trigram_index` migration. Brands, services and
+  articles are bounded by the business and still scan, deliberately — an index
+  the planner declines to use costs writes and buys nothing.
+- **Typed block forms cover eight of the sixteen block types.** Those eight
+  carry almost every stored block; the rest are edited through the
+  schema-validated JSON editor, which stays available on every block. A unit
+  test asserts that every key in a form-backed schema has a form field, because
+  `saveBlockForm` rebuilds the payload from the declared fields alone — a key
+  without a field would be silently dropped on the next save.
 
 ---
 
