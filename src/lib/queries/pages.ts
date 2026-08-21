@@ -103,3 +103,27 @@ export const getPublishedPageSlugs = cache(
     60,
   ),
 );
+
+/**
+ * Slugs of pages the CMS holds but does not serve — drafts and archived pages.
+ *
+ * The sitemap needs these to avoid advertising a path that 404s. A navigation
+ * link outlives the page it points at: unpublishing a page does not remove the
+ * menu entry, and the sitemap draws on the navigation as well as on the page
+ * list, so without this an archived page stayed listed through its own menu
+ * link.
+ */
+export const getUnservedPageSlugs = cache(
+  cached(
+    async () => {
+      const rows = await prisma.page.findMany({
+        where: { OR: [{ status: { not: "PUBLISHED" } }, { deletedAt: { not: null } }] },
+        select: { slug: true },
+      });
+      return rows.map((row) => row.slug);
+    },
+    ["cms-unserved-page-slugs"],
+    [tags.pages],
+    60,
+  ),
+);

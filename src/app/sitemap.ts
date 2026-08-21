@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db";
 import { appUrl } from "@/lib/env";
 import { getNavigationPaths } from "@/lib/queries/navigation";
-import { getPublishedPageSlugs } from "@/lib/queries/pages";
+import { getPublishedPageSlugs, getUnservedPageSlugs } from "@/lib/queries/pages";
 
 /**
  * Sitemap.
@@ -18,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = appUrl();
   const now = new Date();
 
-  const [products, brands, services, posts, cmsPages, navPaths] = await Promise.all([
+  const [products, brands, services, posts, cmsPages, navPaths, unservedPages] = await Promise.all([
     prisma.product.findMany({
       where: { status: "ACTIVE", deletedAt: null },
       select: { slug: true, updatedAt: true, featured: true },
@@ -37,6 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
     getPublishedPageSlugs(),
     getNavigationPaths(),
+    getUnservedPageSlugs(),
   ]);
 
   /**
@@ -61,8 +62,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   /** One canonical form per page: absolute, no trailing slash except the root. */
   const canonical = (path: string) => `${base}${path === "/" || path === "" ? "" : path}`;
 
+  // A menu link outlives the page it points at: unpublishing a page leaves the
+  // navigation entry alone. Listing it here would advertise a 404.
+  const unserved = new Set(unservedPages.map((slug) => `/${slug}`));
+
   for (const route of navPaths) {
-    if (EXCLUDED.has(route)) continue;
+    if (EXCLUDED.has(route) || unserved.has(route)) continue;
     add({
       url: canonical(route),
       lastModified: now,

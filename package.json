@@ -20,7 +20,7 @@
     "verify:responsive": "node scripts/verify/responsive.mjs",
     "verify:a11y": "node scripts/verify/accessibility.mjs",
     "verify:interactions": "node scripts/verify/interactions.mjs",
-    "verify": "npm run verify:responsive && npm run verify:a11y && npm run verify:motion && npm run verify:interactions && npm run verify:lifecycle && npm run verify:admin && npm run verify:cms && npm run verify:page-editor && npm run verify:navigation && npm run verify:authz && npm run verify:attack",
+    "verify": "npm run verify:responsive && npm run verify:a11y && npm run verify:motion && npm run verify:interactions && npm run verify:lifecycle && npm run verify:admin && npm run verify:cms && npm run verify:page-editor && npm run verify:navigation && npm run verify:authz && npm run verify:attack && npm run verify:acceptance",
     "check": "npm run typecheck && npm run lint && npm test && npm run build",
     "verify:lifecycle": "node scripts/verify/lifecycle.mjs",
     "verify:attack": "bash scripts/verify/attack.sh",
@@ -30,7 +30,8 @@
     "content:export": "tsx scripts/export-content-seed.ts",
     "verify:page-editor": "node scripts/verify/page-editor.mjs",
     "verify:navigation": "node scripts/verify/navigation-editor.mjs",
-    "verify:authz": "node scripts/verify/authz.mjs"
+    "verify:authz": "node scripts/verify/authz.mjs",
+    "verify:acceptance": "node scripts/verify/acceptance.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
