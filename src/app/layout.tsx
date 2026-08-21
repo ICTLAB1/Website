@@ -40,6 +40,29 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+/**
+ * Nothing under this layout can be static, so say so rather than let Next
+ * discover it by accident.
+ *
+ * `<Header />` reads the session cookie to decide between "Sign in" and the
+ * account menu. That has always made every page dynamic — but the way Next
+ * *learned* it was by attempting a prerender and catching the cookie access,
+ * which only works if nothing throws a real error first.
+ *
+ * Something did. This layout awaits `organizationSchema()`, which reads the
+ * company's address and contact details, and those moved into the database.
+ * During a Docker build there is no database, so Prisma threw a connection
+ * error before the header could throw the dynamic-usage signal — and Next
+ * reported a genuine prerender failure on /about instead of marking the route
+ * dynamic. The build exited 1.
+ *
+ * Declaring it removes the guesswork permanently: no route is probed, so no
+ * build-time query can fail, and adding another database read to a layout
+ * cannot resurrect this. It costs nothing, because every one of these routes
+ * was already being rendered on demand.
+ */
+export const dynamic = "force-dynamic";
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,

@@ -35,7 +35,8 @@
     "verify:faq": "node scripts/verify/faq.mjs",
     "verify:crawl": "node scripts/verify/crawl.mjs",
     "verify:seo": "node scripts/verify/seo.mjs",
-    "verify:settings": "node scripts/verify/settings-editor.mjs"
+    "verify:settings": "node scripts/verify/settings-editor.mjs",
+    "verify:build": "bash scripts/verify/build-without-database.sh"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
