@@ -6,6 +6,11 @@ import { prisma } from "@/lib/db";
  *
  * Matching uses parameterised Prisma `contains` filters against indexed
  * columns; the query string is never concatenated into SQL.
+ *
+ * `contains` emits `LIKE '%term%'`, which no B-tree can serve. `Product` and
+ * `Faq` therefore carry trigram (GIN) indexes — see the
+ * `20260821070000_search_trigram_index` migration for the measurements. Brands
+ * and services are bounded by the business and are left to scan.
  */
 
 export type SearchResult = {
@@ -32,10 +37,12 @@ export async function searchProducts(term: string, limit = 8) {
     where: {
       status: "ACTIVE",
       deletedAt: null,
-      OR: [
-        { searchText: { contains: term } },
-        { variants: { some: { sku: { contains: term.toUpperCase() }, deletedAt: null } } },
-      ],
+      // `searchText` already folds in every SKU (see src/lib/search-text.ts),
+      // so this single indexed predicate covers SKU lookups too. There used to
+      // be a second `variants.some.sku` clause beside it; it joined to
+      // `ProductVariant` and could not use the trigram index, and checking all
+      // 75 SKUs in the catalogue found it returned nothing the haystack missed.
+      searchText: { contains: term },
     },
     select: {
       slug: true,

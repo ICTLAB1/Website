@@ -357,6 +357,11 @@ model Product {
   @@index([status, deletedAt])
   @@index([featured])
   @@index([popularity])
+  // Trigram index for `contains` search, which emits LIKE '%term%'. A leading
+  // wildcard cannot use a B-tree, so without this every search scans the table.
+  // Declared here as well as in the migration so a later `migrate dev` does not
+  // read it as drift and drop it.
+  @@index([searchText(ops: raw("gin_trgm_ops"))], type: Gin)
 }
 
 model ProductVariant {
@@ -719,6 +724,10 @@ model Faq {
   @@index([brandId])
   @@index([serviceId])
   @@index([topic])
+  // FAQs grow with the catalogue rather than with editorial effort, so their
+  // search paths get the same trigram treatment as products.
+  @@index([question(ops: raw("gin_trgm_ops"))], type: Gin)
+  @@index([answer(ops: raw("gin_trgm_ops"))], type: Gin)
 }
 
 // ------------------------------ operations ---------------------------------
