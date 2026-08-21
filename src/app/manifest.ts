@@ -1,8 +1,17 @@
 import type { MetadataRoute } from "next";
-import { getSiteConfig } from "@/lib/site-config";
+import { getSiteIdentity } from "@/lib/site-config";
 
-export default async function manifest(): Promise<MetadataRoute.Manifest> {
-  const config = await getSiteConfig();
+/**
+ * Synchronous, and reading only the identity.
+ *
+ * This route is prerendered at build time, and a Docker build has no database —
+ * not even an unreachable one, since `.dockerignore` keeps `.env` out of the
+ * image. Reaching for `getSiteConfig` here would make the manifest depend on a
+ * query it cannot make, for a value that was never in the database anyway: it
+ * needs the company name, which is identity and lives in the environment.
+ */
+export default function manifest(): MetadataRoute.Manifest {
+  const config = getSiteIdentity();
 
   return {
     name: `${config.tradingName} — Enterprise Technology`,

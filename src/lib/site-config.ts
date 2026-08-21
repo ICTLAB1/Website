@@ -71,7 +71,28 @@ export function getSiteIdentity() {
  */
 const loadSettings = cached(
   async () => {
-    return prisma.siteSettings.findUnique({ where: { id: "singleton" } });
+    /*
+     * A settings row that cannot be read is not an error worth failing a page
+     * for. Every field has a defined fallback — the environment variable it
+     * came from before this table existed — so degrading to that is both
+     * correct and invisible, where throwing would turn a transient database
+     * problem into a 500 on every page of the site, header and footer included.
+     *
+     * It also matters at build time. `next build` evaluates every route with no
+     * database and, in a Docker build, no `DATABASE_URL` at all, because
+     * `.dockerignore` keeps `.env` out of the image. Without this the build
+     * printed 296 Prisma errors while still succeeding — noise that hides a
+     * real failure when one happens.
+     */
+    try {
+      return await prisma.siteSettings.findUnique({ where: { id: "singleton" } });
+    } catch (error) {
+      console.warn(
+        "[site-config] could not read stored settings; using environment values",
+        error instanceof Error ? error.message.split("\n")[0] : error,
+      );
+      return null;
+    }
   },
   ["site-settings"],
   [tags.settings],
