@@ -36,6 +36,23 @@ const blankToNull = (max: number) =>
     .nullable();
 
 const schema = z.object({
+  provider: z.enum(["SMTP", "MICROSOFT_GRAPH"]).default("SMTP"),
+  // A GUID. Checked because all three Azure values look alike, and pasting the
+  // wrong one produces a rejection that names none of them.
+  graphTenantId: blankToNull(80).refine(
+    (value) => value === null || /^[0-9a-f-]{36}$/i.test(value),
+    { message: "A tenant ID is a 36-character value like 72f988bf-86f1-41af-91ab-2d7cd011db47." },
+  ),
+  graphClientId: blankToNull(80).refine(
+    (value) => value === null || /^[0-9a-f-]{36}$/i.test(value),
+    { message: "A client ID is a 36-character value. Azure shows it as \u201cApplication (client) ID\u201d." },
+  ),
+  graphClientSecret: blankToNull(300),
+  clearGraphSecret: z.coerce.boolean().default(false),
+  graphSender: blankToNull(200).refine(
+    (value) => value === null || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value),
+    { message: "Enter the mailbox address to send from." },
+  ),
   host: blankToNull(200).refine(
     (value) => value === null || /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(value),
     { message: "That does not look like a server name. It should look like smtp.office365.com." },
@@ -73,6 +90,12 @@ export async function saveMailSettings(
   }
 
   const parsed = schema.safeParse({
+    provider: formData.get("provider") ?? "SMTP",
+    graphTenantId: formData.get("graphTenantId") ?? "",
+    graphClientId: formData.get("graphClientId") ?? "",
+    graphClientSecret: formData.get("graphClientSecret") ?? "",
+    clearGraphSecret: formData.get("clearGraphSecret") === "on",
+    graphSender: formData.get("graphSender") ?? "",
     host: formData.get("host") ?? "",
     port: formData.get("port") ?? "",
     secure: formData.get("secure") === "on",
@@ -95,7 +118,7 @@ export async function saveMailSettings(
   const input = parsed.data;
   const existing = await prisma.mailSettings.findUnique({
     where: { id: "singleton" },
-    select: { password: true },
+    select: { password: true, graphClientSecret: true },
   });
 
   const password = input.clearPassword
@@ -104,11 +127,41 @@ export async function saveMailSettings(
       ? encryptSecret(input.password)
       : (existing?.password ?? null);
 
+  const graphClientSecret = input.clearGraphSecret
+    ? null
+    : input.graphClientSecret
+      ? encryptSecret(input.graphClientSecret)
+      : (existing?.graphClientSecret ?? null);
+
+  /*
+   * Microsoft needs all four, and a partial one is worse than none.
+   *
+   * Saving an incomplete registration would leave the panel saying Microsoft
+   * while nothing can send — and the missing piece is invisible, because three
+   * of the four look identical. Named individually so the message points at the
+   * one that is actually absent.
+   */
+  if (input.provider === "MICROSOFT_GRAPH") {
+    const missing = [
+      !input.graphTenantId ? "the tenant ID" : null,
+      !input.graphClientId ? "the client ID" : null,
+      !graphClientSecret ? "the client secret" : null,
+      !input.graphSender ? "the mailbox to send from" : null,
+    ].filter((part): part is string => part !== null);
+
+    if (missing.length > 0) {
+      return {
+        status: "error",
+        message: `Microsoft 365 needs ${missing.join(", ")}. Nothing was saved.`,
+      };
+    }
+  }
+
   /*
    * A server with no sender address cannot send anything, and the failure would
    * appear at the first enquiry rather than here. Refused where it can be fixed.
    */
-  if (input.host && !input.fromAddress) {
+  if (input.provider === "SMTP" && input.host && !input.fromAddress) {
     return {
       status: "error",
       message: "Add the address messages should come from. Most providers require it to be the same mailbox you sign in as.",
@@ -117,6 +170,11 @@ export async function saveMailSettings(
   }
 
   const data = {
+    provider: input.provider,
+    graphTenantId: input.graphTenantId,
+    graphClientId: input.graphClientId,
+    graphClientSecret,
+    graphSender: input.graphSender,
     host: input.host,
     port: input.port,
     secure: input.secure,
@@ -145,9 +203,12 @@ export async function saveMailSettings(
     entityType: "MailSettings",
     entityId: "singleton",
     metadata: {
+      provider: input.provider,
       hostSet: Boolean(input.host),
       passwordReplaced: Boolean(input.password),
       passwordCleared: input.clearPassword,
+      graphSecretReplaced: Boolean(input.graphClientSecret),
+      graphSecretCleared: input.clearGraphSecret,
       port: input.port,
       secure: input.secure,
     },
@@ -156,8 +217,11 @@ export async function saveMailSettings(
 
   return {
     status: "success",
-    message: input.host
-      ? "Saved. Send a test email below to confirm the server accepts it."
-      : "Saved. With no server set, messages fall back to whatever is configured on the server itself.",
+    message:
+      input.provider === "MICROSOFT_GRAPH"
+        ? "Saved. Mail now goes through Microsoft 365 over HTTPS. Send a test email below to confirm Microsoft accepts it."
+        : input.host
+          ? "Saved. Send a test email below to confirm the server accepts it."
+          : "Saved. With no server set, messages fall back to whatever is configured on the server itself.",
   };
 }

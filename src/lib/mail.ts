@@ -1,6 +1,7 @@
 import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
 import { getMailConfig, type MailConfig } from "@/lib/mail-config";
+import { resetGraphToken, sendViaGraph } from "@/lib/mail/graph";
 import { logger } from "@/lib/logger";
 
 /**
@@ -91,6 +92,8 @@ export type MailFailure =
   | { kind: "no_host" }
   /** A server, but no address to send from. */
   | { kind: "no_from" }
+  /** Microsoft is selected but some part of the registration is missing. */
+  | { kind: "graph_incomplete" }
   /** The server would not accept the connection or the credentials. */
   | { kind: "rejected_connection"; detail: string }
   /** Signed in, but the message itself was refused. */
@@ -100,6 +103,17 @@ export type VerboseMailResult = { delivered: true } | { delivered: false; failur
 
 export async function sendMailVerbose(message: MailMessage): Promise<VerboseMailResult> {
   const config = await getMailConfig();
+
+  if (config.provider === "MICROSOFT_GRAPH") {
+    if (!config.graph) {
+      return { delivered: false, failure: { kind: "graph_incomplete" } };
+    }
+    const result = await sendViaGraph(config.graph, { ...message, fromName: config.fromName });
+    return result.ok
+      ? { delivered: true }
+      : { delivered: false, failure: { kind: "rejected_message", detail: result.detail } };
+  }
+
   const from = config.from;
   const mailer = transport(config);
 
@@ -159,6 +173,9 @@ export async function sendMailVerbose(message: MailMessage): Promise<VerboseMail
 export function resetMailTransport(): void {
   cachedTransport = null;
   cachedKey = null;
+  // The Graph access token is cached for the same reason and goes stale for the
+  // same one: credentials just changed.
+  resetGraphToken();
 }
 
 export type MailMessage = {
@@ -171,6 +188,28 @@ export type MailMessage = {
 
 export async function sendMail(message: MailMessage): Promise<{ delivered: boolean }> {
   const config = await getMailConfig();
+
+  if (config.provider === "MICROSOFT_GRAPH") {
+    if (!config.graph) {
+      logger.info("mail_not_configured_message_skipped", {
+        to: message.to,
+        subject: message.subject,
+      });
+      return { delivered: false };
+    }
+    const result = await sendViaGraph(config.graph, { ...message, fromName: config.fromName });
+    if (!result.ok) {
+      // Same contract as the SMTP path: the detail goes to the log, never to
+      // the caller, because every caller here is a customer-facing flow.
+      logger.error("mail_send_failed", {
+        to: message.to,
+        subject: message.subject,
+        message: result.detail,
+      });
+    }
+    return { delivered: result.ok };
+  }
+
   const from = config.from;
   const mailer = transport(config);
 

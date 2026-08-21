@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { AdminForm } from "@/components/admin/admin-form";
 import { Checkbox, Field, Fieldset, Input, Select } from "@/components/ui/form";
 import { saveMailSettings } from "@/app/admin/settings/mail-settings-actions";
@@ -19,9 +21,115 @@ import type { MailSettingsView } from "@/lib/mail-config";
  * already sending email without a moment where it stops.
  */
 export function MailSettingsForm({ settings }: { settings: MailSettingsView }) {
+  /*
+   * Which set of fields is shown, held in state so switching is immediate.
+   *
+   * Both sets are always *submitted* — the hidden ones keep their stored values
+   * rather than arriving blank — so choosing Microsoft, saving, and later
+   * switching back to SMTP finds the server settings exactly as they were. A
+   * form that quietly cleared the other provider on every save would make
+   * trying one out a one-way door.
+   */
+  const [provider, setProvider] = useState(settings.provider);
+  const graph = provider === "MICROSOFT_GRAPH";
+
   return (
     <AdminForm action={saveMailSettings} submitLabel="Save mail server" pendingLabel="Saving…">
-      {settings.usingEnvironment ? (
+      <Fieldset
+        legend="How email is sent"
+        description="Microsoft 365 over HTTPS is the more reliable of the two: no password, nothing to enable per mailbox, and it is unaffected by a hosting provider blocking outbound mail ports — which most of them do on new servers."
+      >
+        <Field label="Method" name="provider">
+          {/*
+            * Controlled, unlike every other field here.
+            *
+            * This one decides which half of the form exists, so the React value
+            * and the DOM value must not be able to disagree — and they can:
+            * React 19 resets an uncontrolled form after its action returns,
+            * which reverted the select to its old value while the state that
+            * chooses the visible fields kept the new one. The result was a form
+            * showing Microsoft's fields with SMTP selected.
+            */}
+          <Select
+            name="provider"
+            value={provider}
+            onChange={(event) => setProvider(event.target.value as MailSettingsView["provider"])}
+          >
+            <option value="SMTP">A mail server (SMTP)</option>
+            <option value="MICROSOFT_GRAPH">Microsoft 365 (recommended)</option>
+          </Select>
+        </Field>
+      </Fieldset>
+
+      {graph ? (
+        <Fieldset
+          legend="Microsoft 365"
+          description="From an app registration in the Azure portal: Entra ID → App registrations → New registration, then add the Mail.Send Application permission and press Grant admin consent. It needs no redirect URI — nobody signs in to it."
+        >
+          <Field
+            label="Directory (tenant) ID"
+            name="graphTenantId"
+            hint="On the app registration's Overview page."
+          >
+            <Input
+              name="graphTenantId"
+              defaultValue={settings.graphTenantId}
+              placeholder="72f988bf-86f1-41af-91ab-2d7cd011db47"
+              autoComplete="off"
+              spellCheck={false}
+            />
+          </Field>
+
+          <Field label="Application (client) ID" name="graphClientId" hint="Directly beneath it.">
+            <Input
+              name="graphClientId"
+              defaultValue={settings.graphClientId}
+              placeholder="00000000-0000-0000-0000-000000000000"
+              autoComplete="off"
+              spellCheck={false}
+            />
+          </Field>
+
+          <Field
+            label="Client secret"
+            name="graphClientSecret"
+            hint={
+              settings.graphClientSecretHint
+                ? `A secret ending ${settings.graphClientSecretHint.slice(-4)} is saved. Leave blank to keep it.`
+                : "Certificates & secrets → New client secret. Copy the Value, not the Secret ID — Azure shows both and reveals the Value only once."
+            }
+          >
+            <Input
+              name="graphClientSecret"
+              type="password"
+              placeholder={settings.graphClientSecretHint ?? "Paste the secret Value"}
+              autoComplete="new-password"
+              spellCheck={false}
+            />
+          </Field>
+
+          {settings.graphClientSecretHint ? (
+            <Checkbox name="clearGraphSecret" label="Remove the saved client secret" />
+          ) : null}
+
+          <Field
+            label="Send from this mailbox"
+            name="graphSender"
+            hint="A licensed mailbox, not a distribution list or an alias. This is the address customers will see."
+          >
+            <Input
+              name="graphSender"
+              type="email"
+              defaultValue={settings.graphSender}
+              placeholder="sales@example.com"
+              autoComplete="off"
+            />
+          </Field>
+        </Fieldset>
+      ) : null}
+
+      <div hidden={graph}>
+      {settings.usingEnvironment && !graph ? (
         <p className="rounded-[--radius-md] border border-line bg-surface-muted p-3 text-[12px] leading-relaxed text-ink-600">
           These fields are empty because the mail server is currently set in the server&rsquo;s own
           configuration file. Filling them in here takes over from that, and takes effect
@@ -127,6 +235,7 @@ export function MailSettingsForm({ settings }: { settings: MailSettingsView }) {
           />
         </Field>
       </Fieldset>
+      </div>
     </AdminForm>
   );
 }

@@ -994,8 +994,32 @@ enum PaymentMode {
 ///
 /// The password is encrypted at rest by `lib/secret-box.ts` and is never sent
 /// back to a browser.
+/// How outbound mail leaves this system.
+enum MailProvider {
+  /// A mail server on port 587 or 465, with a username and password.
+  SMTP
+  /// Microsoft Graph, over HTTPS. No password, no SMTP AUTH, and unaffected by
+  /// a hosting provider blocking outbound mail ports — which most of them do.
+  MICROSOFT_GRAPH
+}
+
 model MailSettings {
   id String @id @default("singleton")
+
+  provider MailProvider @default(SMTP)
+
+  /// Microsoft Entra application registration, used with the client-credentials
+  /// flow: the site authenticates as itself rather than as a person, so there
+  /// is no sign-in to keep alive and no refresh token to expire. Needs the
+  /// Mail.Send *application* permission with tenant admin consent.
+  graphTenantId     String?
+  graphClientId     String?
+  /// AES-256-GCM, keyed from AUTH_SECRET. Never rendered.
+  graphClientSecret String?
+  /// The mailbox to send as. The application permission grants access to every
+  /// mailbox in the tenant, so this is the one place that decides which — worth
+  /// restricting in Entra with an application access policy as well.
+  graphSender       String?
 
   host String?
   port Int?

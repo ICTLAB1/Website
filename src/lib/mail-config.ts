@@ -21,6 +21,16 @@ import { logger } from "@/lib/logger";
  */
 
 export type MailConfig = {
+  provider: "SMTP" | "MICROSOFT_GRAPH";
+  /** Present and complete only when the provider is MICROSOFT_GRAPH. */
+  graph: {
+    tenantId: string;
+    clientId: string;
+    clientSecret: string;
+    sender: string;
+  } | null;
+  /** Display name for the From header. Graph uses the mailbox's own otherwise. */
+  fromName: string | null;
   host: string | null;
   port: number;
   secure: boolean;
@@ -68,14 +78,47 @@ export const getMailConfig = cache(async (): Promise<MailConfig> => {
    * cannot accidentally produce `TechZoid <TechZoid>` or paste a name into a
    * field that must contain an address.
    */
-  const fromAddress = pick(row?.fromAddress, smtp.from());
+  // On Graph the sending mailbox *is* the From address; Microsoft will not let
+  // an application send as an address it has no mailbox for, so taking it from
+  // a separate field would only create a way to configure a rejection.
+  const fromAddress =
+    row?.provider === "MICROSOFT_GRAPH"
+      ? (row.graphSender?.trim() || null)
+      : pick(row?.fromAddress, smtp.from());
   const fromName = row?.fromName?.trim() || null;
   const from =
     fromAddress && fromName && !fromAddress.includes("<")
       ? `${fromName} <${fromAddress}>`
       : fromAddress;
 
+  /*
+   * Graph is offered only when every part of it is present.
+   *
+   * A half-configured gateway that silently falls back to SMTP would be the
+   * worst outcome: an administrator switches to Microsoft, saves without a
+   * secret, and mail keeps going out over the old path while the panel says
+   * Microsoft. Incomplete means the graph block is null, and `mailIsConfigured`
+   * reports the deployment as unable to send — which is true.
+   */
+  const graphSecret = decryptSecret(row?.graphClientSecret);
+  const graph =
+    row?.provider === "MICROSOFT_GRAPH" &&
+    row.graphTenantId &&
+    row.graphClientId &&
+    graphSecret &&
+    row.graphSender
+      ? {
+          tenantId: row.graphTenantId,
+          clientId: row.graphClientId,
+          clientSecret: graphSecret,
+          sender: row.graphSender,
+        }
+      : null;
+
   return {
+    provider: row?.provider ?? "SMTP",
+    graph,
+    fromName,
     host: pick(row?.host, smtp.host()),
     port: row?.port ?? smtp.port(),
     secure: row?.secure ?? smtp.secure(),
@@ -89,10 +132,17 @@ export const getMailConfig = cache(async (): Promise<MailConfig> => {
 /** True when there is both a server to send through and an address to send as. */
 export async function mailIsConfigured(): Promise<boolean> {
   const config = await getMailConfig();
+  if (config.provider === "MICROSOFT_GRAPH") return config.graph !== null;
   return Boolean(config.host && config.from);
 }
 
 export type MailSettingsView = {
+  provider: "SMTP" | "MICROSOFT_GRAPH";
+  graphTenantId: string;
+  graphClientId: string;
+  /** Masked. The secret itself never leaves the server. */
+  graphClientSecretHint: string | null;
+  graphSender: string;
   host: string;
   port: number;
   secure: boolean;
@@ -120,14 +170,21 @@ export type MailSettingsView = {
 export async function getMailSettingsView(): Promise<MailSettingsView> {
   const row = await load();
   const effective = await getMailConfig();
-  const stored = decryptSecret(row?.password);
+  const storedPassword = decryptSecret(row?.password);
+
+  const graphSecret = decryptSecret(row?.graphClientSecret);
 
   return {
+    provider: row?.provider ?? "SMTP",
+    graphTenantId: row?.graphTenantId ?? "",
+    graphClientId: row?.graphClientId ?? "",
+    graphClientSecretHint: graphSecret ? secretHint(graphSecret) : null,
+    graphSender: row?.graphSender ?? "",
     host: row?.host ?? "",
     port: row?.port ?? effective.port,
     secure: row?.secure ?? effective.secure,
     username: row?.username ?? "",
-    passwordHint: stored ? secretHint(stored) : null,
+    passwordHint: storedPassword ? secretHint(storedPassword) : null,
     fromAddress: row?.fromAddress ?? "",
     fromName: row?.fromName ?? "",
     salesNotificationEmail: row?.salesNotificationEmail ?? "",

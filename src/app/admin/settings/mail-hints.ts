@@ -23,6 +23,8 @@ export function describeMailFailure(failure: MailFailure): string {
   switch (failure.kind) {
     case "no_host":
       return "No mail server is configured. Set SMTP_HOST, SMTP_USER, SMTP_PASSWORD and MAIL_FROM in deploy/.env, then restart the app.";
+    case "graph_incomplete":
+      return "Microsoft 365 is selected but the registration is incomplete. All four are needed: tenant ID, client ID, client secret and the mailbox to send from.";
     case "no_from":
       return "No sender address is configured. Set MAIL_FROM in deploy/.env, then restart the app.";
     case "rejected_connection":
@@ -54,6 +56,51 @@ export function hintFor(detail: string): string {
       "→ the mailbox → Mail → Manage email apps → tick Authenticated SMTP. If that account also " +
       "has multi-factor authentication, its ordinary password will not work here and you need an " +
       "app password instead."
+    );
+  }
+
+  /*
+   * Microsoft's own codes, which are precise and unrecognisable in equal
+   * measure. Each of these is a different mistake in the Azure setup and each
+   * would otherwise send somebody to re-check the wrong one of the four fields.
+   */
+  if (lower.includes("aadsts7000215") || lower.includes("invalid client secret")) {
+    return (
+      "\n\nThe client secret is wrong. The most common cause is pasting the " +
+      "secret's *ID* rather than its Value — Azure shows both, side by side, and " +
+      "only reveals the Value once, at the moment you create it. If it has been " +
+      "lost, create a new secret rather than trying to recover it."
+    );
+  }
+
+  if (lower.includes("aadsts700016") || lower.includes("aadsts900023") || lower.includes("was not found in the directory")) {
+    return (
+      "\n\nMicrosoft does not recognise this application in this directory. " +
+      "Check the tenant ID and client ID against Entra ID → App registrations → " +
+      "Overview, where both are shown; they are easy to transpose."
+    );
+  }
+
+  if (
+    lower.includes("accessdenied") ||
+    lower.includes("insufficient privileges") ||
+    lower.includes("authorization_requestdenied")
+  ) {
+    return (
+      "\n\nThe application exists but is not allowed to send mail. It needs the " +
+      "Mail.Send **Application** permission — not Delegated, which requires a " +
+      "signed-in user and there is not one — and an administrator must then " +
+      "press Grant admin consent. Until consent is granted the permission is " +
+      "listed but has no effect."
+    );
+  }
+
+  if (lower.includes("mailboxnotenabledforrestapi") || lower.includes("resource could not be discovered")) {
+    return (
+      "\n\nThat mailbox is not one Microsoft can send from — usually because " +
+      "the address is a distribution list or an alias rather than a real " +
+      "mailbox, or the account has no Exchange licence. Use the primary address " +
+      "of a licensed mailbox."
     );
   }
 

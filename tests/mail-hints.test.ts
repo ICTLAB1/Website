@@ -79,6 +79,26 @@ describe("mail failure hints", () => {
     }
   });
 
+  it("recognises the four ways a Microsoft app registration goes wrong", () => {
+    /*
+     * Each of these is a different mistake in the Azure setup, and Microsoft
+     * reports all four as an opaque code. Without a hint the operator is told
+     * "AADSTS7000215" and left to re-check whichever of the four fields they
+     * happen to suspect — three of which look identical to each other.
+     */
+    expect(hintFor("AADSTS7000215: Invalid client secret provided.")).toContain("rather than its Value");
+    expect(hintFor("AADSTS700016: Application with identifier was not found in the directory")).toContain(
+      "tenant ID and client ID",
+    );
+    expect(hintFor("ErrorAccessDenied: Access is denied.")).toContain("Grant admin consent");
+    expect(hintFor("MailboxNotEnabledForRESTAPI")).toContain("distribution list");
+  });
+
+  it("says which part of a Microsoft registration is missing", () => {
+    expect(describeMailFailure({ kind: "graph_incomplete" })).toContain("client secret");
+    expect(describeMailFailure({ kind: "graph_incomplete" })).toContain("mailbox to send from");
+  });
+
   it("adds nothing to a failure it does not recognise", () => {
     // Silence is correct here. A guess dressed up as advice sends somebody to
     // change a setting that was never the problem.
