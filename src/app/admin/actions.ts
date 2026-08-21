@@ -11,6 +11,8 @@ import { clientIp } from "@/lib/auth/request";
 import { fieldErrorsOf } from "@/lib/validation";
 import { slugify } from "@/lib/utils";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
+import { buildSearchText, rebuildProductSearchText } from "@/lib/search-text";
+import { invalidate, tags } from "@/lib/cache";
 
 /**
  * Administrative mutations.
@@ -21,11 +23,10 @@ import { hit, LIMITS } from "@/lib/auth/rate-limit";
  * what its schema explicitly allows.
  */
 
-export type AdminActionState = {
-  status: "idle" | "success" | "error";
-  message?: string;
-  fieldErrors?: Record<string, string[]>;
-};
+import type { AdminActionState } from "@/lib/admin/types";
+
+// Re-exported so existing imports from this module keep working.
+export type { AdminActionState };
 
 const moneyField = z
   .string()
@@ -60,40 +61,6 @@ function toLines(value: string | undefined): string[] {
     .map((line) => line.trim())
     .filter(Boolean)
     .slice(0, 60);
-}
-
-async function buildSearchText(input: {
-  name: string;
-  brandId: string;
-  categoryId: string;
-  keywords: string[];
-  shortDescription: string;
-  productId?: string;
-}) {
-  const [brand, category, variants] = await Promise.all([
-    prisma.brand.findUnique({ where: { id: input.brandId }, select: { name: true } }),
-    prisma.category.findUnique({ where: { id: input.categoryId }, select: { name: true } }),
-    input.productId
-      ? prisma.productVariant.findMany({
-          where: { productId: input.productId, deletedAt: null },
-          select: { sku: true },
-        })
-      : Promise.resolve([]),
-  ]);
-
-  return [
-    input.name,
-    brand?.name ?? "",
-    category?.name ?? "",
-    input.shortDescription,
-    ...input.keywords,
-    ...variants.map((variant) => variant.sku),
-  ]
-    .join(" ")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 2000);
 }
 
 export async function saveProduct(
@@ -203,9 +170,11 @@ export async function saveProduct(
     ip: await clientIp(),
   });
 
+  // Tag invalidation rather than a list of paths: every surface that read the
+  // catalogue - homepage, brand pages, landing pages, search - refreshes
+  // without this action having to know they exist.
+  invalidate(tags.catalogue, tags.product(slug));
   revalidatePath("/admin/products");
-  revalidatePath("/products");
-  revalidatePath(`/products/${slug}`);
 
   if (!productId) redirect(`/admin/products/${saved.id}`);
   return { status: "success", message: "Product saved." };
@@ -243,8 +212,8 @@ export async function archiveProduct(
     ip: await clientIp(),
   });
 
+  invalidate(tags.catalogue, tags.product(product.slug));
   revalidatePath("/admin/products");
-  revalidatePath("/products");
   return {
     status: "success",
     message: restoring ? "Product restored as a draft." : "Product archived.",
@@ -398,8 +367,18 @@ export async function saveVariant(
     ip: await clientIp(),
   });
 
+  // `searchText` embeds every SKU, so changing one here would otherwise leave
+  // the product unfindable by its new SKU until someone re-saved the product.
+  await rebuildProductSearchText(productId);
+
+  // Previously this revalidated /products but not /products/{slug}, so a price
+  // change never reached the detail page the customer actually reads.
+  const owner = await prisma.product.findUnique({
+    where: { id: productId },
+    select: { slug: true },
+  });
+  invalidate(tags.catalogue, ...(owner ? [tags.product(owner.slug)] : []));
   revalidatePath(`/admin/products/${productId}`);
-  revalidatePath("/products");
   return { status: "success", message: "Licence option saved." };
 }
 

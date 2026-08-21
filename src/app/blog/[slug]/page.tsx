@@ -8,6 +8,7 @@ import { prisma } from "@/lib/db";
 import { getPostBySlug, getRelatedPosts } from "@/lib/queries/content";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
+import { Markdown } from "@/components/markdown";
 import { formatDate } from "@/lib/utils";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -41,79 +42,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     modifiedTime: post.updatedAt,
     keywords: post.tags,
   });
-}
-
-/**
- * Minimal, deliberately restrictive Markdown rendering.
- *
- * Only headings, blockquotes, lists, bold and paragraphs are recognised, and
- * every piece of text is rendered as a React text node rather than as HTML —
- * so article content cannot inject markup, even though it is authored
- * internally.
- */
-function renderBody(body: string) {
-  const blocks = body.split("\n\n");
-
-  return blocks.map((block, index) => {
-    const trimmed = block.trim();
-    if (!trimmed) return null;
-
-    if (trimmed.startsWith("## ")) {
-      return <h2 key={index}>{trimmed.slice(3)}</h2>;
-    }
-    if (trimmed.startsWith("### ")) {
-      return <h3 key={index}>{trimmed.slice(4)}</h3>;
-    }
-    if (trimmed.startsWith("> ")) {
-      return (
-        <blockquote
-          key={index}
-          className="border-l-2 border-accent-600 pl-4 text-[15px] italic text-ink-600"
-        >
-          {trimmed
-            .split("\n")
-            .map((line) => line.replace(/^>\s?/, ""))
-            .join(" ")}
-        </blockquote>
-      );
-    }
-
-    const lines = trimmed.split("\n");
-
-    if (lines.every((line) => /^[-*]\s/.test(line))) {
-      return (
-        <ul key={index}>
-          {lines.map((line, lineIndex) => (
-            <li key={lineIndex}>{renderInline(line.replace(/^[-*]\s/, ""))}</li>
-          ))}
-        </ul>
-      );
-    }
-
-    if (lines.every((line) => /^\d+\.\s/.test(line))) {
-      return (
-        <ol key={index}>
-          {lines.map((line, lineIndex) => (
-            <li key={lineIndex}>{renderInline(line.replace(/^\d+\.\s/, ""))}</li>
-          ))}
-        </ol>
-      );
-    }
-
-    return <p key={index}>{renderInline(trimmed.replace(/\n/g, " "))}</p>;
-  });
-}
-
-/** Handles **bold** only, as React nodes — never as raw HTML. */
-function renderInline(text: string) {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g);
-  return parts.map((part, index) =>
-    part.startsWith("**") && part.endsWith("**") ? (
-      <strong key={index}>{part.slice(2, -2)}</strong>
-    ) : (
-      <span key={index}>{part}</span>
-    ),
-  );
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
@@ -150,7 +78,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </p>
         </header>
 
-        <div className="prose-content text-[16px]">{renderBody(post.body)}</div>
+        <Markdown body={post.body} />
 
         {post.tags.length > 0 ? (
           <ul className="mt-10 flex flex-wrap gap-2 border-t border-line pt-6">

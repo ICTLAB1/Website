@@ -67,6 +67,62 @@ const INDUSTRIES = [
   { name: "Media & Creative", href: "/solutions/design-engineering", detail: "Creative suites and post-production" },
 ];
 
+const TRUST_BADGES = [
+  { label: "100% Genuine", detail: "Original, authentic licences" },
+  { label: "Authorised Partner", detail: "Direct vendor relationships" },
+  { label: "Expert Support", detail: "Pre-sales and post-sales" },
+  { label: "Competitive Pricing", detail: "Best value at volume" },
+  { label: "Fast, Secure Delivery", detail: "Quick turnaround across India" },
+  { label: "GST Invoicing", detail: "Fully compliant billing" },
+];
+
+/**
+ * Certification status as represented by the operating company. Presented as
+ * a plain statement of standing, not as reproductions of any vendor's
+ * certification badge artwork.
+ */
+const PARTNER_CERTIFICATIONS = [
+  { vendor: "Microsoft", status: "Solution Partner" },
+  { vendor: "Adobe", status: "Certified Partner" },
+  { vendor: "Autodesk", status: "Partner" },
+  { vendor: "HP", status: "Partner" },
+  { vendor: "Dell Technologies", status: "Authorised Partner" },
+  { vendor: "Lenovo", status: "Authorised Partner" },
+];
+
+const GEM_FEATURES = [
+  "GeM contracts",
+  "CRAC support",
+  "Timely delivery",
+  "GST invoicing",
+];
+
+const GEM_SEGMENTS = [
+  "Government departments",
+  "Public sector undertakings",
+  "Educational institutions",
+  "Public sector organisations",
+];
+
+/**
+ * Organisations supplied through GeM and direct tender engagements, as
+ * represented by the operating company. Shown as plain wordmarks rather than
+ * reproduced official emblems - the same restraint the vendor strip already
+ * applies to trademarked logos - and described as organisations supplied to,
+ * not as an implied ongoing partnership or an endorsement by the named body.
+ */
+const SUPPLIED_ORGANISATIONS = [
+  "BSNL",
+  "Delhi Police",
+  "ONGC",
+  "NBCC",
+  "North Delhi Municipal Corporation",
+  "Indian Army",
+  "Border Roads Organisation",
+  "DRDO",
+  "Hindustan Aeronautics Limited",
+];
+
 export default async function HomePage() {
   const [brands, featured, popular, services, posts, stats] = await Promise.all([
     getBrands(),
@@ -174,6 +230,32 @@ export default async function HomePage() {
             Licensing and solutions across
           </p>
           <BrandStrip brands={brands} />
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------- Trust badges */}
+      <section className="border-b border-line py-8">
+        <div className="container-page">
+          <ul className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-6">
+            {TRUST_BADGES.map((badge) => (
+              <li key={badge.label} className="flex items-start gap-2.5">
+                <span
+                  aria-hidden="true"
+                  className="mt-0.5 inline-grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent-50 text-accent-700"
+                >
+                  <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M8.2 13.6 4.6 10l1.3-1.3 2.3 2.3 5.9-5.9L15.4 6z" />
+                  </svg>
+                </span>
+                <span>
+                  <span className="block text-[13px] font-semibold text-graphite-900">
+                    {badge.label}
+                  </span>
+                  <span className="block text-[12px] text-ink-500">{badge.detail}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -357,6 +439,64 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ------------------------------------------------------------ GeM */}
+      <section className="border-y border-line bg-surface-muted py-16 lg:py-20">
+        <div className="container-page">
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+            <div>
+              <SectionHeader
+                eyebrow="Government e-Marketplace"
+                title="Registered GeM seller"
+                description="An experienced seller on the Government e-Marketplace, supplying software and IT solutions through public procurement channels."
+                className="mb-6"
+              />
+              <p className="text-[15px] leading-relaxed text-ink-600">We support:</p>
+              <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-[14px] text-ink-700">
+                {GEM_SEGMENTS.map((segment) => (
+                  <li key={segment} className="flex items-center gap-2">
+                    <span aria-hidden="true" className="h-1 w-1 shrink-0 rounded-full bg-accent-600" />
+                    {segment}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <ul className="grid grid-cols-2 gap-4">
+              {GEM_FEATURES.map((feature) => (
+                <li
+                  key={feature}
+                  className="rounded-[--radius-lg] border border-line bg-white p-5 text-center"
+                >
+                  <span className="text-[14px] font-semibold text-graphite-900">{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------- Supplied to */}
+      <section className="container-page py-16 lg:py-20">
+        <SectionHeader
+          eyebrow="Public sector and defence"
+          title="Organisations we have supplied technology to"
+          description="Including government departments, defence establishments and public sector undertakings, supplied through GeM and direct tender engagements."
+        />
+        <ul className="flex flex-wrap gap-x-3 gap-y-3">
+          {SUPPLIED_ORGANISATIONS.map((name) => (
+            <li
+              key={name}
+              className="rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-[13px] font-medium text-ink-700"
+            >
+              {name}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-6 text-[13px] text-ink-500">
+          500+ organisations supplied across India.
+        </p>
+      </section>
+
       {/* ----------------------------------------------------------- Proof */}
       <section className="border-y border-line bg-surface-muted py-16 lg:py-20">
         <div className="container-page">
@@ -404,6 +544,18 @@ export default async function HomePage() {
             />
           ))}
         </div>
+
+        <ul className="mt-10 grid gap-3 border-t border-line pt-10 sm:grid-cols-2 lg:grid-cols-3">
+          {PARTNER_CERTIFICATIONS.map((partner) => (
+            <li
+              key={partner.vendor}
+              className="flex items-center justify-between gap-3 rounded-[--radius-md] border border-line bg-white px-4 py-3 text-[13px]"
+            >
+              <span className="font-medium text-graphite-900">{partner.vendor}</span>
+              <span className="text-ink-500">{partner.status}</span>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* ------------------------------------------------------- Resources */}

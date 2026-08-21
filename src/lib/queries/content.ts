@@ -1,25 +1,51 @@
 import "server-only";
 import { cache } from "react";
 import { prisma } from "@/lib/db";
+import { cached } from "@/lib/queries/cached";
+import { tags } from "@/lib/cache";
 
-/** Brands, services, articles and FAQ reads shared across the public site. */
+/**
+ * Brands, services, articles and FAQ reads shared across the public site.
+ *
+ * Each read is wrapped in `cached()` under the tags it depends on, so a write
+ * that invalidates a tag refreshes every page that used the data — not only the
+ * pages a mutation happened to name. The outer React `cache()` deduplicates
+ * within a single render; the inner `cached()` persists across requests.
+ *
+ * Reads that are already cheap and highly specific (a grouped count for one
+ * brand, related posts for one article) are left uncached: they are only
+ * reached from a page that is itself cached by the tags above.
+ */
 
-export const getBrands = cache(async () => {
-  return prisma.brand.findMany({
-    where: { deletedAt: null },
-    orderBy: { displayOrder: "asc" },
-    include: {
-      _count: { select: { products: { where: { status: "ACTIVE", deletedAt: null } } } },
+export const getBrands = cache(
+  cached(
+    async () => {
+      return prisma.brand.findMany({
+        where: { deletedAt: null },
+        orderBy: { displayOrder: "asc" },
+        include: {
+          _count: { select: { products: { where: { status: "ACTIVE", deletedAt: null } } } },
+        },
+      });
     },
-  });
-});
+    ["brands-all"],
+    // Depends on the catalogue too: the product count changes when products do.
+    [tags.brands, tags.catalogue],
+  ),
+);
 
-export const getBrandBySlug = cache(async (slug: string) => {
-  return prisma.brand.findFirst({
-    where: { slug, deletedAt: null },
-    include: { faqs: { orderBy: { displayOrder: "asc" } } },
-  });
-});
+export const getBrandBySlug = cache(
+  cached(
+    async (slug: string) => {
+      return prisma.brand.findFirst({
+        where: { slug, deletedAt: null },
+        include: { faqs: { orderBy: { displayOrder: "asc" } } },
+      });
+    },
+    ["brand-by-slug"],
+    [tags.brands, tags.faqs],
+  ),
+);
 
 /** Categories that actually contain products for a given brand. */
 export async function getBrandCategories(brandId: string) {
@@ -42,19 +68,31 @@ export async function getBrandCategories(brandId: string) {
   }));
 }
 
-export const getServices = cache(async () => {
-  return prisma.service.findMany({
-    where: { published: true, deletedAt: null },
-    orderBy: { displayOrder: "asc" },
-  });
-});
+export const getServices = cache(
+  cached(
+    async () => {
+      return prisma.service.findMany({
+        where: { published: true, deletedAt: null },
+        orderBy: { displayOrder: "asc" },
+      });
+    },
+    ["services-all"],
+    [tags.services],
+  ),
+);
 
-export const getServiceBySlug = cache(async (slug: string) => {
-  return prisma.service.findFirst({
-    where: { slug, published: true, deletedAt: null },
-    include: { faqs: { orderBy: { displayOrder: "asc" } } },
-  });
-});
+export const getServiceBySlug = cache(
+  cached(
+    async (slug: string) => {
+      return prisma.service.findFirst({
+        where: { slug, published: true, deletedAt: null },
+        include: { faqs: { orderBy: { displayOrder: "asc" } } },
+      });
+    },
+    ["service-by-slug"],
+    [tags.services, tags.faqs],
+  ),
+);
 
 export type ServiceProcessStep = { step: number; title: string; description: string };
 
@@ -71,35 +109,51 @@ export function parseProcess(value: unknown): ServiceProcessStep[] {
   );
 }
 
-export const getPublishedPosts = cache(async (options: { limit?: number; category?: string } = {}) => {
-  return prisma.blogPost.findMany({
-    where: {
-      status: "PUBLISHED",
-      deletedAt: null,
-      publishedAt: { lte: new Date() },
-      ...(options.category ? { category: options.category } : {}),
+export const getPublishedPosts = cache(
+  cached(
+    async (options: { limit?: number; category?: string } = {}) => {
+      return prisma.blogPost.findMany({
+        where: {
+          status: "PUBLISHED",
+          deletedAt: null,
+          publishedAt: { lte: new Date() },
+          ...(options.category ? { category: options.category } : {}),
+        },
+        orderBy: { publishedAt: "desc" },
+        take: options.limit,
+        select: {
+          slug: true,
+          title: true,
+          excerpt: true,
+          category: true,
+          tags: true,
+          readMinutes: true,
+          publishedAt: true,
+          updatedAt: true,
+        },
+      });
     },
-    orderBy: { publishedAt: "desc" },
-    take: options.limit,
-    select: {
-      slug: true,
-      title: true,
-      excerpt: true,
-      category: true,
-      tags: true,
-      readMinutes: true,
-      publishedAt: true,
-      updatedAt: true,
-    },
-  });
-});
+    ["posts-published"],
+    [tags.posts],
+    // Shorter window than the default: a post scheduled for a future date must
+    // appear without waiting for someone to publish something else.
+    300,
+  ),
+);
 
-export const getPostBySlug = cache(async (slug: string) => {
-  return prisma.blogPost.findFirst({
-    where: { slug, status: "PUBLISHED", deletedAt: null, publishedAt: { lte: new Date() } },
-    include: { author: { select: { name: true } } },
-  });
-});
+export const getPostBySlug = cache(
+  cached(
+    async (slug: string) => {
+      return prisma.blogPost.findFirst({
+        where: { slug, status: "PUBLISHED", deletedAt: null, publishedAt: { lte: new Date() } },
+        include: { author: { select: { name: true } } },
+      });
+    },
+    ["post-by-slug"],
+    [tags.posts],
+    300,
+  ),
+);
 
 export async function getPostCategories() {
   const grouped = await prisma.blogPost.groupBy({
@@ -121,14 +175,47 @@ export async function getRelatedPosts(slug: string, category: string, limit = 3)
     },
     orderBy: [{ category: category ? "asc" : "desc" }, { publishedAt: "desc" }],
     take: limit,
-    select: { slug: true, title: true, excerpt: true, category: true, readMinutes: true, publishedAt: true },
+    select: {
+      slug: true,
+      title: true,
+      excerpt: true,
+      category: true,
+      readMinutes: true,
+      publishedAt: true,
+    },
   });
 }
 
-export const getFaqsByTopic = cache(async (topic: string) => {
-  return prisma.faq.findMany({
-    where: { topic },
-    orderBy: { displayOrder: "asc" },
-    select: { question: true, answer: true },
-  });
-});
+export const getFaqsByTopic = cache(
+  cached(
+    async (topic: string) => {
+      return prisma.faq.findMany({
+        where: { topic },
+        orderBy: { displayOrder: "asc" },
+        select: { question: true, answer: true },
+      });
+    },
+    ["faqs-by-topic"],
+    [tags.faqs],
+  ),
+);
+
+/**
+ * FAQs attached to a brand.
+ *
+ * The landing route previously hand-rolled this Prisma call, which meant it was
+ * the one FAQ read with no caching and no shared definition.
+ */
+export const getFaqsByBrandSlug = cache(
+  cached(
+    async (brandSlug: string) => {
+      return prisma.faq.findMany({
+        where: { brand: { slug: brandSlug } },
+        orderBy: { displayOrder: "asc" },
+        select: { question: true, answer: true },
+      });
+    },
+    ["faqs-by-brand"],
+    [tags.faqs, tags.brands],
+  ),
+);

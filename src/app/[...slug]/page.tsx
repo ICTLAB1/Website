@@ -9,7 +9,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { prisma } from "@/lib/db";
 import { productListSelect, type ProductListItem } from "@/lib/queries/catalogue";
-import { getFaqsByTopic } from "@/lib/queries/content";
+import { getFaqsByBrandSlug, getFaqsByTopic } from "@/lib/queries/content";
 import { allLandingSlugs, getLandingPage } from "@/content/landing";
 import { buildMetadata } from "@/lib/seo";
 
@@ -72,13 +72,7 @@ export default async function LandingRoute({ params }: PageProps) {
     : [];
 
   const [brandFaqs, topicFaqs] = await Promise.all([
-    page.brandSlug
-      ? prisma.faq.findMany({
-          where: { brand: { slug: page.brandSlug } },
-          orderBy: { displayOrder: "asc" },
-          select: { question: true, answer: true },
-        })
-      : Promise.resolve([]),
+    page.brandSlug ? getFaqsByBrandSlug(page.brandSlug) : Promise.resolve([]),
     page.faqTopic ? getFaqsByTopic(page.faqTopic) : Promise.resolve([]),
   ]);
 

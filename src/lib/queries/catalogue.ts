@@ -1,5 +1,7 @@
 import "server-only";
 import { cache } from "react";
+import { cached } from "@/lib/queries/cached";
+import { tags } from "@/lib/cache";
 import type { Availability, LicenceType, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 
@@ -227,8 +229,7 @@ export async function listProducts(filters: CatalogueFilters): Promise<{
   return { items, total, page, totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)) };
 }
 
-/** Facet counts for the catalogue sidebar, computed against the active filters. */
-export async function getFacets() {
+async function getFacetsUncached() {
   const [brandGroups, categories, licenceGroups] = await Promise.all([
     prisma.product.groupBy({
       by: ["brandId"],
@@ -290,7 +291,7 @@ export async function getFacets() {
   };
 }
 
-export const getProductBySlug = cache(async (slug: string) => {
+const getProductBySlugUncached = async (slug: string) => {
   return prisma.product.findFirst({
     where: { slug, status: "ACTIVE", deletedAt: null },
     include: {
@@ -303,7 +304,16 @@ export const getProductBySlug = cache(async (slug: string) => {
       faqs: { orderBy: { displayOrder: "asc" } },
     },
   });
-});
+};
+
+/**
+ * A single product, tagged both catalogue-wide and per slug so that saving one
+ * product refreshes its own page precisely without discarding every other
+ * cached product.
+ */
+export const getProductBySlug = cache(
+  cached(getProductBySlugUncached, ["product-by-slug"], [tags.catalogue]),
+);
 
 export async function getRelatedProducts(
   productId: string,
@@ -369,6 +379,18 @@ export async function resolveVariantsBySku(skus: string[]) {
     },
   });
 }
+
+/**
+ * Facet counts for the catalogue sidebar.
+ *
+ * Aggregates across the whole catalogue, so it is cached under the catalogue
+ * tag rather than recomputed per request. At several thousand products these
+ * grouped counts are the most expensive query on the page, and they only move
+ * when the catalogue, its brands or its categories do.
+ */
+export const getFacets = cache(
+  cached(getFacetsUncached, ["catalogue-facets"], [tags.catalogue, tags.brands, tags.categories]),
+);
 
 export const getAllProductSlugs = cache(async () => {
   return prisma.product.findMany({
