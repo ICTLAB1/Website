@@ -114,6 +114,41 @@ enum TicketPriority {
   URGENT
 }
 
+enum PageStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum NavigationMenu {
+  HEADER
+  FOOTER
+  UTILITY
+}
+
+/// Block types a CMS page can be built from.
+///
+/// Derived from what the existing marketing pages actually use rather than
+/// invented up front: prose and bullets carry most of the copy, card grids and
+/// link lists carry most of the rest, and the collection blocks pull live rows
+/// so a page can show products or articles without duplicating them.
+enum PageSectionType {
+  HERO
+  RICH_TEXT
+  BULLETS
+  CARDS
+  ICON_POINTS
+  LINK_LIST
+  KEY_VALUE_LIST
+  CHIP_LIST
+  SPLIT_PANEL
+  STAT_BAR
+  PRODUCT_GRID
+  COLLECTION_GRID
+  FAQ
+  CTA_BANNER
+  PLANS
+}
+
 enum BannerTone {
   INFO
   PROMO
@@ -243,6 +278,7 @@ model Brand {
   products   Product[]
   categories Category[]
   faqs       Faq[]
+  pages      Page[]
 
   @@index([featured])
   @@index([deletedAt])
@@ -723,4 +759,76 @@ model Banner {
   updatedAt    DateTime   @updatedAt
 
   @@index([active, startsAt, endsAt])
+}
+
+/// A CMS-managed marketing page.
+///
+/// The slug is the full path below the site root, so "microsoft-365/business-standard"
+/// is one row rather than a nested hierarchy. An empty slug is reserved for the
+/// home page, which is a Page like any other so there is only one content system
+/// to maintain.
+model Page {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  title       String
+  description String
+  keywords    String[]
+  status      PageStatus @default(DRAFT)
+  /// Trail of { label, href? }, validated on read and write.
+  breadcrumb  Json       @default("[]")
+  /// Optional joins that let blocks pull live rows without duplicating them.
+  brandId     String?
+  brand       Brand?     @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  faqTopic    String?
+  publishedAt DateTime?
+  deletedAt   DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  sections PageSection[]
+
+  @@index([status, deletedAt])
+  @@index([brandId])
+}
+
+/// One ordered block on a page.
+///
+/// `data` holds the block's payload, validated by a zod schema selected on
+/// `type` at both write and read. Fifteen sets of nullable typed columns would
+/// be far worse to maintain, and a bad or legacy row degrades to a skipped
+/// block rather than a failed page.
+model PageSection {
+  id           String          @id @default(cuid())
+  pageId       String
+  page         Page            @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type         PageSectionType
+  displayOrder Int             @default(100)
+  visible      Boolean         @default(true)
+  data         Json
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([pageId, displayOrder])
+}
+
+/// Header, footer and utility navigation.
+///
+/// Exactly two levels in practice: a top-level item, then either a flat list of
+/// links or a set of columns. `href` is free-form because many links are
+/// catalogue filters such as /products?brand=microsoft rather than routes.
+model NavigationItem {
+  id           String           @id @default(cuid())
+  menu         NavigationMenu
+  label        String
+  href         String?
+  description  String?
+  parentId     String?
+  parent       NavigationItem?  @relation("NavTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children     NavigationItem[] @relation("NavTree")
+  displayOrder Int              @default(100)
+  visible      Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([menu, parentId, displayOrder])
 }
