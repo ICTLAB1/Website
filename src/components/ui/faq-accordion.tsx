@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import type { FaqEntry } from "@/components/ui/accordion";
 
@@ -45,6 +45,26 @@ export function FaqAccordion({ items }: { items: FaqEntry[] }) {
   // are reference answers people compare rather than steps in a sequence.
   const [open, setOpen] = useState<ReadonlySet<number>>(() => new Set());
 
+  /*
+   * Marks the list as hydrated.
+   *
+   * Until React has attached its listeners, clicking a question does nothing:
+   * that is the price of making this a client component, and it is real — the
+   * verification suite caught it by clicking a row on a loaded machine before
+   * hydration had finished, exactly as an impatient reader on a slow connection
+   * would. The attribute does not fix the window, it makes it observable, so a
+   * test waits for readiness instead of racing it and the gap cannot grow
+   * unnoticed.
+   *
+   * The window is small in practice — the answers are already in the DOM and in
+   * the page's FAQ structured data, so nothing is unreachable, only briefly
+   * uninteractive.
+   */
+  const container = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    container.current?.setAttribute("data-hydrated", "true");
+  }, []);
+
   if (items.length === 0) return null;
 
   function toggle(index: number) {
@@ -56,7 +76,10 @@ export function FaqAccordion({ items }: { items: FaqEntry[] }) {
   }
 
   return (
-    <div className="divide-y divide-line overflow-hidden rounded-[--radius-lg] border border-line bg-white">
+    <div
+      ref={container}
+      className="faq-list divide-y divide-line overflow-hidden rounded-[--radius-lg] border border-line bg-white"
+    >
       {items.map((item, index) => {
         const expanded = open.has(index);
         const panelId = `${baseId}-panel-${index}`;

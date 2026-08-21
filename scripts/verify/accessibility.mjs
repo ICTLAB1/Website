@@ -10,6 +10,9 @@ const PAGES = [
   "/", "/products", "/products/microsoft-365-business-standard", "/brands/microsoft",
   "/microsoft-365", "/services/cybersecurity", "/enterprise", "/enquiry",
   "/contact", "/blog", "/login", "/register", "/search", "/privacy",
+  // /support carries the FAQ accordion, and /terms the legal effective dates.
+  // Both were rebuilt in this pass; neither was being audited before.
+  "/support", "/terms", "/about",
   "/buy?sku=MS-M365-BS-A1", "/buy/confirmed?ref=ORD-2026-ABC123",
 ];
 

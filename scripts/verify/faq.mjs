@@ -17,6 +17,14 @@ const problems = [];
 
 await page.goto(`${BASE}/support`, { waitUntil: "load" });
 
+// Wait for the accordion to be interactive before touching it.
+//
+// It is a client component, so between first paint and hydration a click does
+// nothing at all. Without this the suite passed alone and failed inside the
+// full gate, where the machine is busy and hydration lands later — a flake that
+// was reporting a real property of the page as three unrelated defects.
+await page.locator(".faq-list[data-hydrated='true']").first().waitFor({ timeout: 15000 });
+
 const triggers = page.locator("button.faq-trigger");
 const count = await triggers.count();
 console.log("questions:", count);
@@ -83,6 +91,7 @@ if (!/none|^matrix\(1,\s*0,\s*0,\s*1,/.test(closed)) {
 //    focusing programmatically after the clicks above would never match and the
 //    check would prove nothing.
 await page.reload({ waitUntil: "load" });
+await page.locator(".faq-list[data-hydrated='true']").first().waitFor({ timeout: 15000 });
 for (let step = 0; step < 60; step += 1) {
   await page.keyboard.press("Tab");
   if (await first.evaluate((el) => el === document.activeElement)) break;

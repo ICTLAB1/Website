@@ -15,6 +15,10 @@ const PAGES = [
   ["blog", "/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model"],
   ["login", "/login"],
   ["buy", "/buy?sku=MS-M365-BS-A1"],
+  // The support page's accordion and the legal pages' date strip were both
+  // rebuilt in this pass; neither page was in this sweep before.
+  ["support", "/support"],
+  ["legal", "/terms"],
 ];
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
