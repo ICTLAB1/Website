@@ -73,6 +73,9 @@
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Used only by the logo strapline, which is set in italic serif. Kept as a
+     system stack: one line of text does not justify a webfont request. */
+  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
   --radius-xs: 2px;

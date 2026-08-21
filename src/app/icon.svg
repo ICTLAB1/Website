@@ -1,4 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <rect width="32" height="32" rx="4" fill="#0e1b38"/>
-  <path d="M9 22V10h3.1v12H9Zm5.6 0V10h4.9c2.6 0 4.4 1.6 4.4 4.1 0 2.6-1.8 4.2-4.5 4.2h-1.7V22h-3.1Zm3.1-6.2h1.5c1.1 0 1.8-.6 1.8-1.6s-.7-1.6-1.8-1.6h-1.5v3.2Z" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- The TechZoid mark. Set on the brand graphite so it holds its shape
+       against a browser tab of any colour, light or dark. -->
+  <rect width="100" height="100" rx="18" fill="#1C1F1E"/>
+  <g transform="translate(50 50) scale(0.78) translate(-50 -50)" fill="none" stroke-linecap="round" stroke-width="10">
+    <path d="M10.22 45.82A40 40 0 0 1 58.32 10.87" stroke="#2F7DD1"/>
+    <path d="M73.51 17.64A40 40 0 0 1 79.73 76.77" stroke="#F2A33C"/>
+    <path d="M66.27 86.54A40 40 0 0 1 11.96 62.36" stroke="#2BB3A3"/>
+    <circle cx="50" cy="50" r="20" stroke="#FFFFFF" stroke-width="9"/>
+  </g>
 </svg>

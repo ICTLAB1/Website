@@ -50,13 +50,31 @@ export function getSiteConfig() {
       sales: optionalEnv("COMPANY_PHONE_SALES") ?? null,
       support: optionalEnv("COMPANY_PHONE_SUPPORT") ?? null,
     },
+    /**
+     * The grievance officer, whose name and contact the Consumer Protection
+     * (E-Commerce) Rules 2020 require an online seller to publish. Kept in
+     * configuration rather than in page content: it is a statutory appointment,
+     * not marketing copy, and it must be the same on every page that states it.
+     */
+    grievance: {
+      name: optionalEnv("COMPANY_GRIEVANCE_OFFICER_NAME") ?? null,
+      email: optionalEnv("COMPANY_GRIEVANCE_OFFICER_EMAIL") ?? null,
+      phone: optionalEnv("COMPANY_GRIEVANCE_OFFICER_PHONE") ?? null,
+    },
     address,
     hasAddress,
     formattedAddress: hasAddress
       ? [
           address.line1,
           address.line2,
-          [address.city, address.state, address.postcode].filter(Boolean).join(" "),
+          // "New Delhi, Delhi 110034" — locality and region take a comma,
+          // the PIN follows the region with a space, per Indian postal form.
+          [
+            [address.city, address.state].filter(Boolean).join(", "),
+            address.postcode,
+          ]
+            .filter(Boolean)
+            .join(" "),
           address.country,
         ]
           .filter(Boolean)
@@ -78,5 +96,10 @@ export function getUnconfiguredIdentityKeys(): string[] {
   if (!config.phone.sales) missing.push("COMPANY_PHONE_SALES");
   if (!config.hasAddress) missing.push("COMPANY_ADDRESS_LINE1 / COMPANY_CITY");
   if (!config.gstin) missing.push("COMPANY_GSTIN");
+  // Publishing a named grievance officer is a legal requirement for an online
+  // seller in India, not a nicety, so an unset one is listed alongside the rest.
+  if (!config.grievance.name || !config.grievance.email) {
+    missing.push("COMPANY_GRIEVANCE_OFFICER_NAME / COMPANY_GRIEVANCE_OFFICER_EMAIL");
+  }
   return missing;
 }

@@ -13,22 +13,34 @@ import { SectionHeader } from "@/components/ui/section-header";
 export function BlockSection({
   children,
   tone = "plain",
+  continues = false,
   className,
 }: {
   children: ReactNode;
   tone?: "plain" | "muted" | "dark";
+  /**
+   * This section carries on the one above rather than starting a new band.
+   *
+   * A long document — a policy, a set of terms — is a run of prose blocks that
+   * belong to one page, not a stack of unrelated marketing sections. Given a
+   * full band each, nineteen numbered clauses read as nineteen pages. Given
+   * this, they read as one document with headings.
+   */
+  continues?: boolean;
   className?: string;
 }) {
   const wrapper =
     tone === "dark"
       ? "bg-graphite-900"
       : tone === "muted"
-        ? "border-y border-line bg-surface-muted"
+        ? cn("bg-surface-muted", continues ? "border-b border-line" : "border-y border-line")
         : "";
 
   return (
     <section className={cn(wrapper, className)}>
-      <div className="container-page py-14 lg:py-18">{children}</div>
+      <div className={cn("container-page", continues ? "pb-10 lg:pb-12" : "py-14 lg:py-18")}>
+        {children}
+      </div>
     </section>
   );
 }

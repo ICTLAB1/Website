@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/layout/logo";
 import { getNavigation } from "@/lib/queries/navigation";
 import { getSiteConfig, getUnconfiguredIdentityKeys } from "@/lib/site-config";
 
@@ -13,8 +14,8 @@ export async function Footer() {
       <div className="container-page py-14">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(4,minmax(0,1fr))]">
           <div className="max-w-sm">
-            <p className="text-[17px] font-semibold text-white">{config.tradingName}</p>
-            <p className="mt-3 text-[13px] leading-relaxed text-graphite-300">
+            <Logo name={config.tradingName} onDark />
+            <p className="mt-5 text-[13px] leading-relaxed text-graphite-300">
               Enterprise software licensing, cloud and IT solutions. Multiple technology
               vendors consolidated into a single procurement relationship.
             </p>

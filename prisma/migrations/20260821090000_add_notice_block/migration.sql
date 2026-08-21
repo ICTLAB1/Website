@@ -1,0 +1,11 @@
+-- A short highlighted statement placed within a page.
+--
+-- Added for the legal pages, which need to carry a review notice until the
+-- operating company's adviser has signed the documents off — and which then
+-- need that notice gone. Making it a block rather than a configuration flag
+-- means removing it is an edit in the admin panel, not a deploy.
+--
+-- It is a general-purpose block, not a legal one: "prices exclude GST", "this
+-- promotion has ended", and anything else a page needs to say before the rest
+-- of its content is read.
+ALTER TYPE "PageSectionType" ADD VALUE 'NOTICE';

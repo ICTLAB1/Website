@@ -9,6 +9,7 @@ import {
   IconPointsBlock,
   KeyValueListBlock,
   LinkListBlock,
+  NoticeBlock,
   PlansBlock,
   RichTextBlock,
   SplitPanelBlock,
@@ -28,6 +29,16 @@ import type { ProductListItem } from "@/lib/queries/catalogue";
  * treatment — the hero and the call to action — are excluded from the
  * alternation and left to place themselves.
  */
+
+/**
+ * Prose blocks that run together as one document.
+ *
+ * Where one of these follows another, the second continues the first rather
+ * than opening a new band — no fresh top padding, no change of background, no
+ * rule between them. A page of numbered clauses is one document, and reading
+ * it should feel like one.
+ */
+const FLOWS = new Set(["RICH_TEXT", "BULLETS", "CARDS", "KEY_VALUE_LIST"]);
 
 /** Blocks whose background participates in the alternating rhythm. */
 const BANDED = new Set([
@@ -53,31 +64,41 @@ export function BlockRenderer({
   resolved: ResolvedBlockData;
 }) {
   let banded = 0;
+  let previousTone: "plain" | "muted" = "plain";
 
   return (
     <>
-      {blocks.map((block) => {
-        const tone: "plain" | "muted" = BANDED.has(block.type)
-          ? banded++ % 2 === 0
-            ? "plain"
-            : "muted"
-          : "plain";
+      {blocks.map((block, index) => {
+        const previous = blocks[index - 1];
+        const continues =
+          FLOWS.has(block.type) && previous !== undefined && FLOWS.has(previous.type);
+
+        // A continuing block keeps the band it is continuing, and does not
+        // advance the alternation — otherwise a run of prose becomes a zebra.
+        const tone: "plain" | "muted" = continues
+          ? previousTone
+          : BANDED.has(block.type)
+            ? banded++ % 2 === 0
+              ? "plain"
+              : "muted"
+            : "plain";
+        previousTone = tone;
 
         switch (block.type) {
           case "HERO":
             return <HeroBlock key={block.id} data={block.data} counts={resolved.counts} />;
           case "RICH_TEXT":
-            return <RichTextBlock key={block.id} data={block.data} tone={tone} />;
+            return <RichTextBlock key={block.id} data={block.data} tone={tone} continues={continues} />;
           case "BULLETS":
-            return <BulletsBlock key={block.id} data={block.data} tone={tone} />;
+            return <BulletsBlock key={block.id} data={block.data} tone={tone} continues={continues} />;
           case "CARDS":
-            return <CardsBlock key={block.id} data={block.data} tone={tone} />;
+            return <CardsBlock key={block.id} data={block.data} tone={tone} continues={continues} />;
           case "ICON_POINTS":
             return <IconPointsBlock key={block.id} data={block.data} tone={tone} />;
           case "LINK_LIST":
             return <LinkListBlock key={block.id} data={block.data} tone={tone} />;
           case "KEY_VALUE_LIST":
-            return <KeyValueListBlock key={block.id} data={block.data} tone={tone} />;
+            return <KeyValueListBlock key={block.id} data={block.data} tone={tone} continues={continues} />;
           case "CHIP_LIST":
             return <ChipListBlock key={block.id} data={block.data} tone={tone} />;
           case "SPLIT_PANEL":
@@ -117,6 +138,8 @@ export function BlockRenderer({
             return <PlansBlock key={block.id} data={block.data} tone={tone} />;
           case "COMPANY_INFO":
             return <CompanyInfoBlock key={block.id} data={block.data} tone={tone} />;
+          case "NOTICE":
+            return <NoticeBlock key={block.id} data={block.data} tone={tone} />;
         }
       })}
     </>

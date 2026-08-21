@@ -149,9 +149,17 @@ export function HeroBlock({
   );
 }
 
-export function RichTextBlock({ data, tone }: { data: BlockData<"RICH_TEXT">; tone?: "plain" | "muted" }) {
+export function RichTextBlock({
+  data,
+  tone,
+  continues,
+}: {
+  data: BlockData<"RICH_TEXT">;
+  tone?: "plain" | "muted";
+  continues?: boolean;
+}) {
   return (
-    <BlockSection tone={tone}>
+    <BlockSection tone={tone} continues={continues}>
       <Reveal className="max-w-3xl">
         {data.heading ? <h2 className="mb-4 text-[1.5rem]">{data.heading}</h2> : null}
         <Markdown body={data.markdown} className="prose-content text-[15px]" />
@@ -160,9 +168,17 @@ export function RichTextBlock({ data, tone }: { data: BlockData<"RICH_TEXT">; to
   );
 }
 
-export function BulletsBlock({ data, tone }: { data: BlockData<"BULLETS">; tone?: "plain" | "muted" }) {
+export function BulletsBlock({
+  data,
+  tone,
+  continues,
+}: {
+  data: BlockData<"BULLETS">;
+  tone?: "plain" | "muted";
+  continues?: boolean;
+}) {
   return (
-    <BlockSection tone={tone}>
+    <BlockSection tone={tone} continues={continues}>
       <Reveal className="max-w-3xl">
         {data.heading ? <h2 className="mb-4 text-[1.5rem]">{data.heading}</h2> : null}
         <ul className="space-y-2.5">
@@ -178,7 +194,15 @@ export function BulletsBlock({ data, tone }: { data: BlockData<"BULLETS">; tone?
   );
 }
 
-export function CardsBlock({ data, tone }: { data: BlockData<"CARDS">; tone?: "plain" | "muted" }) {
+export function CardsBlock({
+  data,
+  tone,
+  continues,
+}: {
+  data: BlockData<"CARDS">;
+  tone?: "plain" | "muted";
+  continues?: boolean;
+}) {
   const columns =
     data.columns === 4
       ? "sm:grid-cols-2 lg:grid-cols-4"
@@ -187,7 +211,7 @@ export function CardsBlock({ data, tone }: { data: BlockData<"CARDS">; tone?: "p
         : "sm:grid-cols-2";
 
   return (
-    <BlockSection tone={tone}>
+    <BlockSection tone={tone} continues={continues}>
       <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
       <Reveal className={cn("grid gap-4", columns)}>
         {data.items.map((item, index) => (
@@ -300,9 +324,17 @@ export function LinkListBlock({ data, tone }: { data: BlockData<"LINK_LIST">; to
   );
 }
 
-export function KeyValueListBlock({ data, tone }: { data: BlockData<"KEY_VALUE_LIST">; tone?: "plain" | "muted" }) {
+export function KeyValueListBlock({
+  data,
+  tone,
+  continues,
+}: {
+  data: BlockData<"KEY_VALUE_LIST">;
+  tone?: "plain" | "muted";
+  continues?: boolean;
+}) {
   return (
-    <BlockSection tone={tone}>
+    <BlockSection tone={tone} continues={continues}>
       <BlockHeading eyebrow={data.eyebrow} heading={data.heading} />
       <Reveal as="ul" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {data.items.map((item, index) => (
@@ -550,7 +582,7 @@ export function CompanyInfoBlock({
   const config = getSiteConfig();
   const missing = getUnconfiguredIdentityKeys();
 
-  const rows: Array<[string, string | null | undefined]> = [
+  const identity: Array<[string, string | null | undefined]> = [
     ["Trading name", config.tradingName],
     ["Registered legal name", config.legalName],
     ["Registered address", config.formattedAddress],
@@ -562,6 +594,22 @@ export function CompanyInfoBlock({
     ["Support hours", config.supportHours],
   ];
 
+  const grievance: Array<[string, string | null | undefined]> = [
+    ["Grievance officer", config.grievance.name],
+    ["Email", config.grievance.email],
+    ["Telephone", config.grievance.phone],
+    ["Postal address", config.formattedAddress],
+  ];
+
+  const rows =
+    data.fields === "grievance"
+      ? grievance
+      : data.fields === "all"
+        ? [...identity, ...grievance]
+        : identity;
+
+  const configured = rows.some(([, value]) => Boolean(value));
+
   return (
     <BlockSection tone={tone}>
       <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
@@ -570,15 +618,18 @@ export function CompanyInfoBlock({
         <div className="mb-6 max-w-3xl rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-5">
           <p className="text-[13px] leading-relaxed text-ink-700">
             <strong className="font-semibold text-warning-700">
-              Content requiring review before launch.
+              Details requiring configuration before launch.
             </strong>{" "}
-            Company registration and contact details are supplied through configuration and have
-            not been set for this deployment. Nothing on this page substitutes invented company
-            information — unset values are simply omitted.
+            {data.fields === "grievance"
+              ? "An online seller in India must publish a named grievance officer and their contact details. That appointment has not been configured for this deployment."
+              : "Company registration and contact details are supplied through configuration and have not been set for this deployment."}{" "}
+            Nothing here substitutes invented company information — unset values are simply
+            omitted.
           </p>
         </div>
       ) : null}
 
+      {!configured ? null : (
       <dl className="grid max-w-3xl gap-x-8 gap-y-4 sm:grid-cols-2">
         {rows
           .filter(([, value]) => Boolean(value))
@@ -589,10 +640,47 @@ export function CompanyInfoBlock({
             </div>
           ))}
       </dl>
+      )}
 
       {data.footnote ? (
         <p className="mt-8 max-w-3xl text-[13px] leading-relaxed text-ink-500">{data.footnote}</p>
       ) : null}
+    </BlockSection>
+  );
+}
+
+/**
+ * A short highlighted statement placed within a page.
+ *
+ * `warning` is for something the reader needs before they act on the rest of
+ * the page — a legal document still under review, a promotion that has ended.
+ * `info` is for context. Both render the same Markdown subset as every other
+ * block, so a notice can carry a link without carrying markup.
+ */
+export function NoticeBlock({ data, tone }: { data: BlockData<"NOTICE">; tone?: "plain" | "muted" }) {
+  const warning = data.tone === "warning";
+  return (
+    <BlockSection tone={tone} className="!py-0">
+      <div className="py-6">
+        <div
+          className={cn(
+            "max-w-3xl rounded-[--radius-lg] border p-5",
+            warning ? "border-warning-600/40 bg-warning-50" : "border-line bg-surface-muted",
+          )}
+        >
+          {data.heading ? (
+            <h2
+              className={cn(
+                "mb-2 text-[14px] font-semibold",
+                warning ? "text-warning-700" : "text-graphite-900",
+              )}
+            >
+              {data.heading}
+            </h2>
+          ) : null}
+          <Markdown body={data.markdown} className="prose-content text-[13px] leading-relaxed" />
+        </div>
+      </div>
     </BlockSection>
   );
 }

@@ -51,7 +51,8 @@ const SHAPES: Record<BlockType, string> = {
   FAQ: `{ "heading"?, "source": "page" | "brand" | "topic" | "manual", "ref"?, "items"?: [{ "question", "answer" }] }`,
   CTA_BANNER: `{ "heading", "body"?, "primaryCta"?, "secondaryCta"?, "showContactEmail"?: false, "tone"?: "dark" | "light" | "accent" }`,
   PLANS: `{ "eyebrow"?, "heading"?, "description"?, "items": [{ "name", "summary", "points"?: ["…"], "productSlug"? }] }`,
-  COMPANY_INFO: `{ "eyebrow"?, "heading"?, "description"?, "footnote"? }  — the registration and contact values themselves come from server configuration, not from here`,
+  COMPANY_INFO: `{ "eyebrow"?, "heading"?, "description"?, "fields"?: "identity" | "grievance" | "all", "footnote"? }  — the values themselves come from server configuration, not from here`,
+  NOTICE: `{ "tone"?: "info" | "warning", "heading"?, "markdown" }`,
 };
 
 export function BlockEditor({ pageId, blocks }: { pageId: string; blocks: Block[] }) {

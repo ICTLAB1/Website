@@ -146,6 +146,7 @@ enum PageSectionType {
   COLLECTION_GRID
   FAQ
   COMPANY_INFO
+  NOTICE
   CTA_BANNER
   PLANS
 }

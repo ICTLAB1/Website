@@ -1,9 +1,14 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 
 /**
- * Wordmark rather than an image asset: it stays crisp at any size, needs no
- * network request, and adapts to the surface it sits on.
+ * The home link in the header and footer.
+ *
+ * The visible lockup is graphic — the O is a mark, not a letter — so the
+ * accessible name is supplied here from the configured trading name rather than
+ * being inferred from the letterforms. A screen reader hears "TechZoid, home";
+ * a sighted reader sees the wordmark.
  */
 export function Logo({
   name,
@@ -17,38 +22,14 @@ export function Logo({
   return (
     <Link
       href="/"
-      className={cn("group inline-flex min-w-0 items-center gap-2.5", className)}
       aria-label={`${name} — home`}
+      className={cn(
+        "inline-flex min-w-0 items-center rounded-[--radius-sm]",
+        onDark ? "text-white" : "text-graphite-900",
+        className,
+      )}
     >
-      <span
-        aria-hidden="true"
-        className={cn(
-          "grid h-8 w-8 shrink-0 place-items-center rounded-[--radius-sm] text-[15px] font-bold",
-          onDark ? "bg-white text-graphite-900" : "bg-graphite-900 text-white",
-        )}
-      >
-        {name.trim().charAt(0).toUpperCase() || "I"}
-      </span>
-      <span className="flex min-w-0 flex-col leading-none">
-        <span
-          className={cn(
-            "truncate text-[17px] font-semibold tracking-tight",
-            onDark ? "text-white" : "text-graphite-900",
-          )}
-        >
-          {name}
-        </span>
-        <span
-          className={cn(
-            // Hidden on the narrowest screens: decorative, and it competes
-            // with the header actions for horizontal space.
-            "mt-0.5 hidden truncate text-[10px] font-medium uppercase tracking-[0.14em] min-[420px]:block",
-            onDark ? "text-graphite-200" : "text-ink-500",
-          )}
-        >
-          Enterprise Technology
-        </span>
-      </span>
+      <BrandLogo />
     </Link>
   );
 }

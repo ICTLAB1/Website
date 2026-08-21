@@ -8,11 +8,15 @@ The full commercial chain is implemented end to end: an enquiry becomes a
 quotation, a quotation becomes an order, and a fulfilled order issues licence
 and renewal records into the customer's account.
 
-> **Before going live**, populate the business identity variables in `.env`
-> (company name, registration, addresses, contact details) and have the four
-> legal pages reviewed by a qualified adviser. Until those values are set the
-> site *omits* the corresponding details rather than displaying placeholder
-> company information, and the admin dashboard lists exactly what is missing.
+> **Before going live**, three things need attention. Populate the remaining
+> business identity variables in `.env` — until they are set the site *omits*
+> those details rather than displaying placeholder company information, and the
+> admin dashboard lists exactly what is missing. Appoint a grievance officer and
+> set `COMPANY_GRIEVANCE_OFFICER_NAME` and `..._EMAIL`; publishing a named
+> officer is a legal requirement for an online seller in India, not a nicety.
+> And have the five legal pages reviewed by the company's own adviser — each one
+> carries a visible "awaiting legal review" notice until an administrator
+> deletes that block from the page.
 
 ---
 
@@ -125,6 +129,15 @@ prisma/
 scripts/verify/            browser verification suites
 tests/                     Vitest unit tests
 ```
+
+**Legal pages.** The terms of sale, privacy policy, refund and cancellation
+policy, delivery policy and cookie policy are CMS pages like any other, so the
+company's adviser can have wording changed without a deploy. Each carries a
+`NOTICE` block saying the document is awaiting that review; approving it means
+deleting one block in the admin panel. Entity details are never transcribed
+into the text — the registered name, address, GSTIN and grievance officer are
+rendered from configuration by the `COMPANY_INFO` block, so they cannot drift
+between five documents.
 
 **Content.** Every marketing page — the home page, `/microsoft-365`,
 `/solutions/manufacturing`, `/about` and 40 others — is a database row plus an
@@ -291,6 +304,14 @@ silently): `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`,
 `COMPANY_PHONE_SUPPORT`, `COMPANY_ADDRESS_LINE1`, `COMPANY_ADDRESS_LINE2`,
 `COMPANY_CITY`, `COMPANY_STATE`, `COMPANY_POSTCODE`, `COMPANY_COUNTRY`,
 `COMPANY_GSTIN`, `COMPANY_CIN`, `COMPANY_SUPPORT_HOURS`.
+
+**Grievance officer** (legally required before launch):
+`COMPANY_GRIEVANCE_OFFICER_NAME`, `COMPANY_GRIEVANCE_OFFICER_EMAIL`,
+`COMPANY_GRIEVANCE_OFFICER_PHONE`. The Consumer Protection (E-Commerce) Rules
+2020 require an online seller to publish a named officer with contact details,
+acknowledge a complaint within 48 hours and resolve it within one month. The
+legal pages state those commitments; these variables are who they name. Until
+they are set, the grievance panel says so rather than naming nobody.
 
 ---
 

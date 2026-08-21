@@ -197,7 +197,22 @@ export const companyInfoSchema = z.object({
   eyebrow: optionalText(80),
   heading: optionalText(200),
   description: optionalText(800),
+  /**
+   * Which set of configured details to show.
+   *
+   * `identity` is the registration and contact panel an about page wants.
+   * `grievance` is the grievance officer, which the Consumer Protection
+   * (E-Commerce) Rules 2020 require a seller to publish, and which belongs on
+   * the legal pages rather than beside the marketing copy.
+   */
+  fields: z.enum(["identity", "grievance", "all"]).optional().default("identity"),
   footnote: optionalText(1200),
+});
+
+export const noticeSchema = z.object({
+  tone: z.enum(["info", "warning"]).optional().default("info"),
+  heading: optionalText(200),
+  markdown: z.string().trim().min(1).max(4000),
 });
 
 export const ctaBannerSchema = z.object({
@@ -247,6 +262,7 @@ export const BLOCK_SCHEMAS = {
   COLLECTION_GRID: collectionGridSchema,
   FAQ: faqSchema,
   COMPANY_INFO: companyInfoSchema,
+  NOTICE: noticeSchema,
   CTA_BANNER: ctaBannerSchema,
   PLANS: plansSchema,
 } as const;
@@ -301,6 +317,7 @@ export const BLOCK_SEEDS: { [T in BlockType]: BlockData<T> } = {
   COLLECTION_GRID: collectionGridSchema.parse({ kind: "brands", limit: 8 }),
   FAQ: faqSchema.parse({ source: "page" }),
   COMPANY_INFO: companyInfoSchema.parse({ heading: "Company information" }),
+  NOTICE: noticeSchema.parse({ tone: "info", markdown: "Something worth saying before the rest of the page." }),
   CTA_BANNER: ctaBannerSchema.parse({ heading: "New call to action", tone: "dark" }),
   PLANS: plansSchema.parse({ items: [{ name: "Plan", summary: "What it includes." }] }),
 };
@@ -321,6 +338,7 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
   COLLECTION_GRID: "Collection grid",
   FAQ: "FAQ",
   COMPANY_INFO: "Company information",
+  NOTICE: "Notice",
   CTA_BANNER: "Call to action",
   PLANS: "Plan comparison",
 };

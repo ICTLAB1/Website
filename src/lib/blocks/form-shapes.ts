@@ -174,6 +174,14 @@ export const BLOCK_FORMS: Partial<Record<BlockType, BlockFormShape>> = {
     ],
   },
 
+  NOTICE: {
+    fields: [
+      { kind: "select", path: "tone", label: "Tone", options: ["info", "warning"] },
+      { kind: "text", path: "heading", label: "Heading" },
+      { kind: "markdown", path: "markdown", label: "Body", required: true },
+    ],
+  },
+
   CTA_BANNER: {
     fields: [
       { kind: "text", path: "heading", label: "Heading", required: true },

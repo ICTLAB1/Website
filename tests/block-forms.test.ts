@@ -52,9 +52,9 @@ describe("path helpers", () => {
 describe("form shapes", () => {
   const typed = Object.keys(BLOCK_FORMS) as BlockType[];
 
-  it("covers the eight block types that carry the content", () => {
+  it("covers the block types that carry the content", () => {
     expect(typed.sort()).toEqual(
-      ["BULLETS", "CARDS", "CTA_BANNER", "FAQ", "HERO", "LINK_LIST", "PRODUCT_GRID", "RICH_TEXT"].sort(),
+      ["BULLETS", "CARDS", "CTA_BANNER", "FAQ", "HERO", "LINK_LIST", "NOTICE", "PRODUCT_GRID", "RICH_TEXT"].sort(),
     );
   });
 
