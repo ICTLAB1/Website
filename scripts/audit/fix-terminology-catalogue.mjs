@@ -9,10 +9,33 @@ import { PrismaClient } from "@prisma/client";
  * your tenant or vendor account". The account belongs to the publisher.
  *
  * Substring replacements rather than whole-field ones, because these are
- * sentences inside long descriptions. Every replacement is checked for
- * ambiguity first: a phrase that appears in a field where the "after" text is
- * already present is skipped, so the script is safe to run twice.
+ * sentences inside long descriptions. Safe to run twice: a phrase that has
+ * already been replaced no longer matches.
+ *
+ * Every value is walked, not just the top-level strings. The first version of
+ * this script checked `typeof value === "string"` on each column and reported
+ * itself clean — while `Service.benefits`, `Service.process` and
+ * `Service.technologies` are arrays of strings and JSON objects, so four
+ * occurrences on the IT procurement page survived and the script said nothing.
+ * A crawl of the rendered site is what found them. Both the rewriter and the
+ * reporter below now recurse.
  */
+
+/** Rewrites every string anywhere inside a value, preserving its shape. */
+function rewrite(value) {
+  if (typeof value === "string") {
+    let next = value;
+    for (const [from, to] of REPLACEMENTS) {
+      if (next.includes(from)) next = next.split(from).join(to);
+    }
+    return next;
+  }
+  if (Array.isArray(value)) return value.map(rewrite);
+  if (value && typeof value === "object" && !(value instanceof Date)) {
+    return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, rewrite(entry)]));
+  }
+  return value;
+}
 
 /** @type {Array<[string, string]>} */
 const REPLACEMENTS = [
@@ -47,6 +70,13 @@ const REPLACEMENTS = [
 
   // Catalogue and offer labels.
   ["Multi-vendor sourcing", "Multi-brand sourcing"],
+  ["One quotation covering multiple vendors", "One quotation covering multiple brands"],
+  ["One point of contact for order status across vendors", "One point of contact for order status across brands"],
+  ["rather than per-vendor variation", "rather than per-supplier variation"],
+  [
+    "We source across the relevant publishers and vendors",
+    "We source across the relevant publishers and manufacturers",
+  ],
   ["multi-vendor solutions", "multi-brand solutions"],
   ["Can you supply multiple vendors on one purchase order?", "Can you supply multiple brands on one purchase order?"],
 ];
@@ -71,14 +101,11 @@ for (const table of Object.values(TABLES)) {
     const update = {};
 
     for (const [field, value] of Object.entries(row)) {
-      if (typeof value !== "string" || !/vendor/i.test(value)) continue;
+      if (field === "id" || value instanceof Date) continue;
+      if (!/vendor/i.test(JSON.stringify(value) ?? "")) continue;
 
-      let next = value;
-      for (const [from, to] of REPLACEMENTS) {
-        if (next.includes(from)) next = next.split(from).join(to);
-      }
-
-      if (next !== value) {
+      const next = rewrite(value);
+      if (JSON.stringify(next) !== JSON.stringify(value)) {
         update[field] = next;
         fields += 1;
       }
@@ -99,8 +126,10 @@ const remaining = [];
 for (const [name, table] of Object.entries(TABLES)) {
   for (const row of await table.findMany()) {
     for (const [field, value] of Object.entries(row)) {
-      if (typeof value !== "string") continue;
-      for (const match of value.matchAll(/.{0,45}vendor.{0,45}/gi)) {
+      // Serialised, so a string nested inside an array or a JSON object is
+      // searched too. Missing those is what let this script lie the first time.
+      const text = typeof value === "string" ? value : (JSON.stringify(value) ?? "");
+      for (const match of text.matchAll(/.{0,45}vendor.{0,45}/gi)) {
         remaining.push(`${name}.${field} :: …${match[0].replace(/\s+/g, " ")}…`);
       }
     }

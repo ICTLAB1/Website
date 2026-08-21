@@ -59,8 +59,8 @@ export default async function TrackOrderPage() {
 
         <p className="mt-8 border-t border-line pt-6 text-[14px] text-ink-600">
           Placed an order without an account, or cannot sign in?{" "}
-          <Link href="/contact" className="font-medium text-accent-700 underline underline-offset-2">
-            Contact us with your reference
+          <Link href="/support" className="font-medium text-accent-700 underline underline-offset-2">
+            Ask support with your reference
           </Link>{" "}
           and we will confirm the status directly.
         </p>

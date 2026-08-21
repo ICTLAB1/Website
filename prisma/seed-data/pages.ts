@@ -37,7 +37,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "",
     "title": "Enterprise Software Licensing, Cloud & IT Solutions",
-    "description": "Microsoft, Adobe, Autodesk, Zoho and enterprise technology solutions from one trusted procurement partner. Consolidated quotations, GST invoicing, deployment and licence management.",
+    "description": "Microsoft, Adobe, Autodesk, Zoho and enterprise technology from one procurement partner. Consolidated quotations, GST invoicing and licence management.",
     "keywords": [
       "enterprise software licensing",
       "software procurement",
@@ -103,7 +103,7 @@ export const pageSeeds: PageSeed[] = [
           "kind": "brands",
           "limit": 24,
           "layout": "strip",
-          "heading": "Licensing and solutions across"
+          "heading": "Authorised to resell licensing from"
         }
       },
       {
@@ -229,23 +229,6 @@ export const pageSeeds: PageSeed[] = [
           ],
           "columns": 2,
           "numbered": false
-        }
-      },
-      {
-        "type": "PRODUCT_GRID",
-        "displayOrder": 8,
-        "visible": true,
-        "data": {
-          "limit": 6,
-          "slugs": [],
-          "action": {
-            "href": "/products",
-            "label": "Browse all products"
-          },
-          "source": "featured",
-          "eyebrow": "Selected licensing",
-          "heading": "Featured products",
-          "description": "Widely-deployed licences with the licensing detail set out in full on each product page."
         }
       },
       {
@@ -505,7 +488,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "about",
     "title": "About Us",
-    "description": "An enterprise technology procurement partner consolidating software licensing, cloud and IT solutions from multiple publishers and manufacturers into a single commercial relationship.",
+    "description": "An enterprise technology procurement partner, consolidating software licensing, cloud and IT solutions from many publishers into one commercial relationship.",
     "keywords": [
       "about",
       "technology procurement partner",
@@ -2599,7 +2582,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "enterprise",
     "title": "Enterprise Technology Procurement",
-    "description": "One procurement partner for your technology stack. Multi-brand sourcing, consolidated quotations, a single purchase order, GST invoicing, licence management, renewals and deployment.",
+    "description": "One procurement partner for your technology stack: multi-brand sourcing, one consolidated quotation, one purchase order, GST invoicing and managed renewals.",
     "keywords": [
       "enterprise procurement",
       "multi-brand sourcing",
@@ -6985,7 +6968,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "zoho",
     "title": "Zoho Licensing & Implementation",
-    "description": "Zoho CRM, Books, Desk, Workplace, Mail and Zoho One licensing with the implementation work that determines whether it is adopted: data migration, workflow configuration and onboarding.",
+    "description": "Zoho CRM, Books, Desk, Workplace, Mail and Zoho One licensing, with the data migration, workflow configuration and onboarding that decide whether it is adopted.",
     "keywords": [
       "zoho",
       "zoho licensing",

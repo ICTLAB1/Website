@@ -178,6 +178,25 @@ try {
   check("the fixture page is removed from the database", false, String(error).slice(0, 120));
 }
 
+/*
+ * And wait for the sitemap to stop advertising it.
+ *
+ * Deleting the row straight out of Postgres is right for a fixture but it
+ * bypasses `revalidateTag`, so the sitemap keeps listing the slug until the
+ * cache entry ages out. A crawl started in that window finds the sitemap
+ * pointing at a page that 404s — which is exactly what happened, and cost some
+ * time chasing a link nothing had ever written.
+ *
+ * Polling here bounds the fixture's lifetime to this script rather than leaving
+ * it to leak into whatever runs next.
+ */
+let advertised = true;
+for (let attempt = 0; attempt < 40 && advertised; attempt += 1) {
+  advertised = (await (await fetch(`${BASE}/sitemap.xml`)).text()).includes(slug);
+  if (advertised) await new Promise((resolve) => setTimeout(resolve, 2000));
+}
+check("the sitemap stops advertising the removed fixture", !advertised);
+
 await browser.close();
 for (const r of results) console.log(`${r.ok ? "  ✓" : "  ✗"} ${r.name}${!r.ok && r.detail ? ` — ${r.detail}` : ""}`);
 const failed = results.filter((r) => !r.ok).length;

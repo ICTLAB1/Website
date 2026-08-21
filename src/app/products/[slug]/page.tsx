@@ -46,7 +46,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return buildMetadata({
-    title: `${product.name} — ${product.brand.name} Licensing`,
+    // Just the product name. It used to append "— {Brand} Licensing", which
+    // repeated a word already inside almost every name ("Adobe Acrobat Pro for
+    // Teams") and pushed the title past what a search result will show.
+    title: product.name,
     description: product.shortDescription,
     path: `/products/${product.slug}`,
     keywords: [...product.keywords, product.brand.name, product.name],

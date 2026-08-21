@@ -31,7 +31,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   return buildMetadata({
     title,
     description:
-      "Browse enterprise software licensing from Microsoft, Adobe, Autodesk, Zoho, SketchUp, Corel, HPE and Dell. Filter by category, brand, licence type and price, with GST-inclusive quotations.",
+      "Enterprise software licensing from Microsoft, Adobe, Autodesk, Zoho, SketchUp, Corel, HPE and Dell. Filter by category, brand, licence type and price.",
     path: "/products",
     // Filtered permutations are near-duplicates of the base listing, so only
     // the canonical /products view is offered for indexing.

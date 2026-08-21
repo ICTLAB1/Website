@@ -9,16 +9,10 @@ import { requireUser } from "@/lib/auth/guards";
 import { listUserTickets } from "@/lib/queries/account";
 import { formatDate, humanise } from "@/lib/utils";
 import { getSiteConfig } from "@/lib/site-config";
+import { TICKET_CATEGORIES } from "@/lib/support";
 
 export const metadata: Metadata = { title: "Support" };
 
-const CATEGORIES = [
-  { value: "LICENSING", label: "Licensing question" },
-  { value: "BILLING", label: "Billing or invoice" },
-  { value: "TECHNICAL", label: "Technical issue" },
-  { value: "RENEWAL", label: "Renewal" },
-  { value: "OTHER", label: "Something else" },
-];
 
 export default async function AccountSupportPage() {
   const user = await requireUser("/account/support");
@@ -50,7 +44,7 @@ export default async function AccountSupportPage() {
 </Field>
                 <Field name="category" label="Category" required>
 <Select name="category" defaultValue="LICENSING" required>
-                      {CATEGORIES.map((category) => (
+                      {TICKET_CATEGORIES.map((category) => (
                         <option key={category.value} value={category.value}>
                           {category.label}
                         </option>

@@ -79,8 +79,15 @@ export function ProductCard({ product }: { product: ProductListItem }) {
                   {formatMoney(variant!.listPriceMinor, variant!.currency)}
                 </span>
               ) : null}
+              {/*
+                "Indicative" belongs on the card, not only on the pages that
+                happen to carry a note. The catalogue and the product page both
+                explain that a price is confirmed on a written quotation — but
+                this card also appears in home-page grids, on brand pages and on
+                service pages, where nothing around it says so.
+              */}
               <span className="w-full text-[12px] text-ink-500">
-                excl. GST ({variant!.gstRatePercent}%) &middot;{" "}
+                Indicative, excl. GST ({variant!.gstRatePercent}%) &middot;{" "}
                 {variant!.seats > 1 ? `${variant!.seats} seats` : "per seat"}
                 {canBuyDirect ? (
                   <>

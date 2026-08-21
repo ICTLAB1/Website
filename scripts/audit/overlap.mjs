@@ -1,0 +1,12 @@
+import { PrismaClient } from "@prisma/client";
+const p = new PrismaClient();
+const base = { status: "ACTIVE", deletedAt: null };
+const popular = await p.product.findMany({ where: base, orderBy: { popularity: "desc" }, take: 6, select: { name: true } });
+const featured = await p.product.findMany({ where: { ...base, featured: true }, orderBy: { popularity: "desc" }, take: 6, select: { name: true } });
+const pn = popular.map(x => x.name), fn = featured.map(x => x.name);
+console.log("Popular products :", pn);
+console.log("Featured products:", fn);
+const shared = pn.filter(n => fn.includes(n));
+console.log(`\noverlap: ${shared.length} of 6 —`, shared);
+console.log("\ntotals: products", await p.product.count({ where: base }), " variants(SKUs)", await p.productVariant.count({ where: { deletedAt: null } }));
+await p.$disconnect();

@@ -39,7 +39,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return buildMetadata({
-    title: service.heroHeadline,
+    // The service name, not its hero headline. A hero headline is written to be
+    // read at the top of a page ("Security work that closes the gaps that
+    // actually get exploited"); in a search result it is a long sentence with
+    // the subject buried in the middle, and it was being truncated.
+    title: service.name,
     description: service.summary,
     path: `/services/${service.slug}`,
   });

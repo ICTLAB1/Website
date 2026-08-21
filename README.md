@@ -14,9 +14,10 @@ and renewal records into the customer's account.
 > admin dashboard lists exactly what is missing. Appoint a grievance officer and
 > set `COMPANY_GRIEVANCE_OFFICER_NAME` and `..._EMAIL`; publishing a named
 > officer is a legal requirement for an online seller in India, not a nicety.
-> And have the five legal pages reviewed by the company's own adviser — each one
-> carries a visible "awaiting legal review" notice until an administrator
-> deletes that block from the page.
+> And have the five legal pages reviewed by the company's own adviser:
+> `docs/legal-review-checklist.md` lists what to put in front of them. The pages
+> themselves carry no draft notice — they are written to be read by customers —
+> and each prints an effective and a last-updated date taken from its record.
 
 ---
 
@@ -380,7 +381,7 @@ Everything below is a genuine blocker rather than a nicety.
 | **Generate a fresh `AUTH_SECRET`.** | `openssl rand -base64 48`. Never reuse a development value; it derives the keys that sign sessions and password-reset tokens. |
 | **Set `APP_URL` to the real HTTPS origin.** | Canonical URLs, the sitemap, Open Graph tags and the cookie/redirect safety checks all read it. |
 | **Appoint a grievance officer.** | `COMPANY_GRIEVANCE_OFFICER_NAME` and `_EMAIL`. Publishing a named officer is required of an online seller in India. |
-| **Have the legal pages reviewed.** | Then delete the "awaiting legal review" block from each of the five, in the admin panel. |
+| **Have the legal pages reviewed.** | `docs/legal-review-checklist.md` lists the clauses that are commercial decisions rather than legal requirements. All five are editable in the admin panel. |
 | **Configure SMTP.** | Without it, quotations and order confirmations are written to the log instead of being delivered. |
 | **Confirm the database has `pg_trgm`.** | The search migration creates the extension; a managed provider may require enabling it first. |
 

@@ -127,13 +127,17 @@ Work through this on the real subdomain, not on a laptop:
 - [ ] `https://new.techzoidtechnologies.com/sitemap.xml` lists your pages.
 - [ ] The admin dashboard's missing-configuration list is empty, or you know
       why each remaining item is still there.
-- [ ] Run through the legal pages and delete each "awaiting legal review" block
-      once your adviser has approved that document.
+- [ ] Work through `docs/legal-review-checklist.md` with your adviser. It lists
+      the clauses in the five legal documents that are commercial decisions
+      rather than legal requirements — payment terms, the liability cap, the
+      refund window. Every one is editable in the admin panel without a deploy.
 
-Nothing here is optional except the last item's timing, and that only if you
-are launching before the review is finished — in which case leave the notices
-up. They are honest, and a customer reading one is better than a customer
-relying on a document nobody checked.
+Nothing here is optional except the last item's timing. The legal documents
+carry no visible draft notice: a warning block addressed to a reviewer used to
+open each of them, which every customer read, and which made finished documents
+look provisional. What it said now lives in that checklist instead. Each page
+prints an effective and a last-updated date taken from the page record, so an
+edit made after the review moves the date on its own.
 
 ---
 

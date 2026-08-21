@@ -10,6 +10,7 @@ import { getFaqsByTopic } from "@/lib/queries/content";
 import { getSessionUser } from "@/lib/auth/session";
 import { buildMetadata } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
+import { TICKET_CATEGORIES, TICKET_STATUSES } from "@/lib/support";
 
 export const metadata: Metadata = buildMetadata({
   title: "Support Centre",
@@ -50,7 +51,8 @@ export default async function SupportPage() {
         <div className="rounded-[--radius-lg] border border-line bg-white p-5">
           <h2 className="text-[15px] font-semibold text-graphite-900">Track an order</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
-            Check the status of an order or enquiry using its reference.
+            Order, quotation and enquiry status lives in your account, where it is tied
+            to the signed-in user rather than to a reference anyone could guess.
           </p>
           <ButtonLink href="/track-order" variant="outline" size="sm" className="mt-4">
             Track order
@@ -78,6 +80,52 @@ export default async function SupportPage() {
           )}
         </div>
       </div>
+
+      {/*
+        Both lists come from `lib/support.ts`, which is also what builds the
+        form on the account page and is typed against the TicketStatus enum. A
+        category described here is therefore one that can actually be chosen,
+        and a status named here is one a ticket can actually hold.
+      */}
+      <section className="mb-14" aria-label="How a ticket is handled">
+        <SectionHeader
+          title="How a ticket is handled"
+          as="h2"
+          description="Every ticket gets a reference of its own — quote it in any reply and the whole history comes with it."
+          className="mb-6"
+        />
+
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <h3 className="text-[14px] font-semibold text-graphite-900">What you can raise</h3>
+            <ul className="mt-3 space-y-1.5 text-[13px] text-ink-600">
+              {TICKET_CATEGORIES.map((category) => (
+                <li key={category.value} className="flex gap-2.5">
+                  <span
+                    aria-hidden="true"
+                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-600"
+                  />
+                  {category.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <h3 className="text-[14px] font-semibold text-graphite-900">
+              The states a ticket moves through
+            </h3>
+            <dl className="mt-3 space-y-2 text-[13px]">
+              {TICKET_STATUSES.map((status) => (
+                <div key={status.value} className="flex flex-wrap gap-x-2">
+                  <dt className="font-medium text-graphite-900">{status.label}</dt>
+                  <dd className="text-ink-600">{status.detail}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </div>
+      </section>
 
       {faqs.length > 0 ? (
         <section className="mb-14 max-w-3xl">

@@ -1,7 +1,7 @@
 import { chromium } from "playwright";
 
 const BASE = "http://localhost:3000";
-const WIDTHS = [375, 390, 414, 768, 1024, 1280, 1440, 1920];
+const WIDTHS = [320, 360, 375, 390, 414, 430, 768, 1024, 1280, 1440, 1920];
 const PAGES = [
   ["home", "/"],
   ["catalogue", "/products"],
