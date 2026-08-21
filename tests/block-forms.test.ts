@@ -78,6 +78,24 @@ describe("form shapes", () => {
     }
   });
 
+  it("every schema key is reachable from some form field", () => {
+    // The converse of the check above, and the one that matters more.
+    // `saveBlockForm` rebuilds the payload from the form's declared fields
+    // alone, so a schema key no form field names is silently dropped the next
+    // time an administrator saves that block through the form — the edit
+    // succeeds and the content disappears. Adding a field to a schema without
+    // adding it to the form must fail here rather than in production.
+    for (const type of typed) {
+      const shape = (BLOCK_SCHEMAS[type] as unknown as { shape: Record<string, unknown> }).shape;
+      const covered = new Set(BLOCK_FORMS[type]!.fields.map((field) => field.path.split(".")[0]!));
+      for (const key of Object.keys(shape)) {
+        expect(covered.has(key), `${type}.${key} has no form field, so a form save would drop it`).toBe(
+          true,
+        );
+      }
+    }
+  });
+
   it("select options are all valid for their schema", () => {
     const cases: Array<[BlockType, string, string[]]> = [
       ["HERO", "tone", ["dark", "light"]],

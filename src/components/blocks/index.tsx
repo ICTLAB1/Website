@@ -2,6 +2,7 @@ import {
   BulletsBlock,
   CardsBlock,
   ChipListBlock,
+  CompanyInfoBlock,
   CtaBannerBlock,
   FaqBlock,
   HeroBlock,
@@ -41,6 +42,7 @@ const BANDED = new Set([
   "COLLECTION_GRID",
   "PLANS",
   "STAT_BAR",
+  "COMPANY_INFO",
 ]);
 
 export function BlockRenderer({
@@ -63,7 +65,7 @@ export function BlockRenderer({
 
         switch (block.type) {
           case "HERO":
-            return <HeroBlock key={block.id} data={block.data} />;
+            return <HeroBlock key={block.id} data={block.data} counts={resolved.counts} />;
           case "RICH_TEXT":
             return <RichTextBlock key={block.id} data={block.data} tone={tone} />;
           case "BULLETS":
@@ -113,6 +115,8 @@ export function BlockRenderer({
             return <CtaBannerBlock key={block.id} data={block.data} />;
           case "PLANS":
             return <PlansBlock key={block.id} data={block.data} tone={tone} />;
+          case "COMPANY_INFO":
+            return <CompanyInfoBlock key={block.id} data={block.data} tone={tone} />;
         }
       })}
     </>

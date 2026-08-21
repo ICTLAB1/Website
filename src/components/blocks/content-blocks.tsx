@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Markdown } from "@/components/markdown";
 import { Reveal } from "@/components/motion/reveal";
 import { CountUp } from "@/components/motion/count-up";
@@ -7,11 +9,18 @@ import { SearchBox } from "@/components/layout/search-box";
 import { BlockHeading, BlockLink, BlockSection } from "@/components/blocks/primitives";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ResolvedBlockData } from "@/lib/blocks/resolve";
+import { getSiteConfig, getUnconfiguredIdentityKeys } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
 /** Text and layout blocks. Each renders one validated payload. */
 
-export function HeroBlock({ data }: { data: BlockData<"HERO"> }) {
+export function HeroBlock({
+  data,
+  counts,
+}: {
+  data: BlockData<"HERO">;
+  counts?: ResolvedBlockData["counts"];
+}) {
   const dark = data.tone === "dark";
   return (
     <section className={dark ? "border-b border-graphite-800 bg-graphite-900" : "border-b border-line"}>
@@ -78,9 +87,63 @@ export function HeroBlock({ data }: { data: BlockData<"HERO"> }) {
                 label="Search products and solutions"
                 placeholder="What software or solution are you looking for?"
               />
+              {data.searchTerms.length > 0 ? (
+                <p className={cn("mt-3 text-[13px]", dark ? "text-graphite-300" : "text-ink-500")}>
+                  Popular:{" "}
+                  {data.searchTerms.map((term, index) => (
+                    <span key={term}>
+                      {index > 0 ? (
+                        <span className={dark ? "text-graphite-600" : "text-ink-300"}> · </span>
+                      ) : null}
+                      <Link
+                        href={`/search?q=${encodeURIComponent(term)}`}
+                        className={cn(
+                          "underline-offset-2 hover:underline",
+                          dark ? "text-graphite-200 hover:text-white" : "text-accent-700",
+                        )}
+                      >
+                        {term}
+                      </Link>
+                    </span>
+                  ))}
+                </p>
+              ) : null}
             </div>
           ) : null}
         </div>
+
+        {data.stats.length > 0 ? (
+          <dl
+            className={cn(
+              "mt-14 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-6 border-t pt-8 sm:grid-cols-4",
+              dark ? "border-graphite-800" : "border-line",
+            )}
+          >
+            {data.stats.map((item, index) => {
+              const numeric = item.source !== "literal" ? (counts?.[item.source] ?? null) : null;
+              return (
+                <div key={index}>
+                  <dt
+                    className={cn(
+                      "text-[12px] uppercase tracking-wide",
+                      dark ? "text-graphite-400" : "text-ink-500",
+                    )}
+                  >
+                    {item.label}
+                  </dt>
+                  <dd
+                    className={cn(
+                      "mt-1 text-2xl font-semibold",
+                      dark ? "text-white" : "text-graphite-900",
+                    )}
+                  >
+                    {numeric !== null ? <CountUp value={numeric} /> : (item.value ?? "—")}
+                  </dd>
+                </div>
+              );
+            })}
+          </dl>
+        ) : null}
       </div>
     </section>
   );
@@ -125,11 +188,15 @@ export function CardsBlock({ data, tone }: { data: BlockData<"CARDS">; tone?: "p
 
   return (
     <BlockSection tone={tone}>
-      <BlockHeading heading={data.heading} description={data.description} />
+      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
       <Reveal className={cn("grid gap-4", columns)}>
         {data.items.map((item, index) => (
           <div key={index} className="rounded-[--radius-lg] border border-line bg-white p-5">
-            {data.numbered ? (
+            {data.numbered && data.numberLabel ? (
+              <span className="block text-[12px] font-semibold uppercase tracking-wide text-accent-700">
+                {data.numberLabel} {index + 1}
+              </span>
+            ) : data.numbered ? (
               <span
                 aria-hidden="true"
                 className="mb-3 inline-grid h-7 w-7 place-items-center rounded-[--radius-sm] bg-graphite-900 text-[12px] font-semibold text-white"
@@ -137,7 +204,7 @@ export function CardsBlock({ data, tone }: { data: BlockData<"CARDS">; tone?: "p
                 {index + 1}
               </span>
             ) : null}
-            <h3 className="text-[15px] font-semibold text-graphite-900">{item.title}</h3>
+            <h3 className="mt-2 text-[15px] font-semibold text-graphite-900">{item.title}</h3>
             <p className="mt-2 text-[14px] leading-relaxed text-ink-600">{item.body}</p>
           </div>
         ))}
@@ -150,7 +217,7 @@ export function IconPointsBlock({ data, tone }: { data: BlockData<"ICON_POINTS">
   return (
     <BlockSection tone={tone} className="!py-0">
       <div className="py-8">
-        <BlockHeading heading={data.heading} />
+        <BlockHeading eyebrow={data.eyebrow} heading={data.heading} />
         <Reveal as="ul" className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-6">
           {data.items.map((item, index) => (
             <li key={index} className="flex items-start gap-2.5">
@@ -177,7 +244,7 @@ export function IconPointsBlock({ data, tone }: { data: BlockData<"ICON_POINTS">
 export function LinkListBlock({ data, tone }: { data: BlockData<"LINK_LIST">; tone?: "plain" | "muted" }) {
   return (
     <BlockSection tone={tone}>
-      <BlockHeading heading={data.heading} description={data.description} />
+      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
 
       {data.layout === "chips" ? (
         <Reveal as="ul" className="flex flex-wrap gap-x-3 gap-y-3">
@@ -221,8 +288,9 @@ export function LinkListBlock({ data, tone }: { data: BlockData<"LINK_LIST">; to
                   <span className="mt-1 block text-[13px] text-ink-600">{item.description}</span>
                 ) : null}
               </span>
-              <span aria-hidden="true" className="mt-1 shrink-0 text-ink-300 group-hover:text-accent-700">
-                &rarr;
+              <span className="mt-1 shrink-0 text-[13px] font-medium text-ink-300 group-hover:text-accent-700">
+                {data.itemAction ? `${data.itemAction} ` : null}
+                <span aria-hidden="true">&rarr;</span>
               </span>
             </BlockLink>
           ))}
@@ -235,7 +303,7 @@ export function LinkListBlock({ data, tone }: { data: BlockData<"LINK_LIST">; to
 export function KeyValueListBlock({ data, tone }: { data: BlockData<"KEY_VALUE_LIST">; tone?: "plain" | "muted" }) {
   return (
     <BlockSection tone={tone}>
-      <BlockHeading heading={data.heading} />
+      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} />
       <Reveal as="ul" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {data.items.map((item, index) => (
           <li
@@ -254,7 +322,7 @@ export function KeyValueListBlock({ data, tone }: { data: BlockData<"KEY_VALUE_L
 export function ChipListBlock({ data, tone }: { data: BlockData<"CHIP_LIST">; tone?: "plain" | "muted" }) {
   return (
     <BlockSection tone={tone}>
-      <BlockHeading heading={data.heading} description={data.description} />
+      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
       <Reveal as="ul" className="flex flex-wrap gap-x-3 gap-y-3">
         {data.items.map((item, index) => (
           <li
@@ -284,8 +352,11 @@ export function SplitPanelBlock({ data, tone }: { data: BlockData<"SPLIT_PANEL">
           {data.description ? (
             <p className="mt-4 text-[15px] leading-relaxed text-ink-600">{data.description}</p>
           ) : null}
+          {data.bulletsIntro ? (
+            <p className="mt-5 text-[15px] leading-relaxed text-ink-600">{data.bulletsIntro}</p>
+          ) : null}
           {data.bullets.length > 0 ? (
-            <ul className="mt-5 grid grid-cols-1 gap-x-4 gap-y-2 text-[14px] text-ink-700 sm:grid-cols-2">
+            <ul className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2 text-[14px] text-ink-700 sm:grid-cols-2">
               {data.bullets.map((bullet, index) => (
                 <li key={index} className="flex items-center gap-2">
                   <span aria-hidden="true" className="h-1 w-1 shrink-0 rounded-full bg-accent-600" />
@@ -325,7 +396,7 @@ export function StatBarBlock({
   const dark = tone === "dark";
   return (
     <BlockSection tone={tone}>
-      <BlockHeading heading={data.heading} onDark={dark} />
+      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} onDark={dark} />
       <Reveal as="dl" className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
         {data.items.map((item, index) => {
           const numeric = item.source !== "literal" ? counts[item.source] : null;
@@ -368,6 +439,13 @@ export function FaqBlock({
 
 export function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }) {
   const dark = data.tone === "dark";
+  const config = getSiteConfig();
+  // Business identity lives in configuration, so the block records only that an
+  // address belongs here. An unconfigured deployment renders no action at all
+  // rather than a broken mailto.
+  const contactEmail = data.showContactEmail
+    ? (config.email.enterprise ?? config.email.sales ?? null)
+    : null;
   return (
     <section className={dark ? "bg-graphite-900" : data.tone === "accent" ? "bg-accent-50" : "border-y border-line bg-surface-muted"}>
       <div className="container-page py-14 lg:py-18">
@@ -382,12 +460,25 @@ export function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }) {
               </p>
             ) : null}
           </div>
-          {data.primaryCta || data.secondaryCta ? (
-            <div className="flex shrink-0 flex-wrap gap-3">
+          {data.primaryCta || data.secondaryCta || contactEmail ? (
+            <div className="flex shrink-0 flex-wrap items-center gap-3">
               {data.primaryCta ? (
                 <ButtonLink href={data.primaryCta.href} size="lg">
                   {data.primaryCta.label}
                 </ButtonLink>
+              ) : null}
+              {contactEmail ? (
+                <a
+                  href={`mailto:${contactEmail}`}
+                  className={cn(
+                    "inline-flex h-12 items-center justify-center rounded-[--radius-md] border px-6 text-[15px] font-medium",
+                    dark
+                      ? "border-white/30 text-white hover:bg-white/10"
+                      : "border-line text-graphite-900 hover:bg-white",
+                  )}
+                >
+                  {contactEmail}
+                </a>
               ) : null}
               {data.secondaryCta ? (
                 <ButtonLink href={data.secondaryCta.href} size="lg" variant={dark ? "onDark" : "outline"}>
@@ -405,7 +496,7 @@ export function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }) {
 export function PlansBlock({ data, tone }: { data: BlockData<"PLANS">; tone?: "plain" | "muted" }) {
   return (
     <BlockSection tone={tone}>
-      <BlockHeading heading={data.heading} description={data.description} />
+      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
       <Reveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {data.items.map((plan, index) => (
           <div key={index} className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5">
@@ -432,6 +523,76 @@ export function PlansBlock({ data, tone }: { data: BlockData<"PLANS">; tone?: "p
           </div>
         ))}
       </Reveal>
+    </BlockSection>
+  );
+}
+
+/**
+ * The company identity panel.
+ *
+ * Unlike every other block, its values do not come from the stored payload:
+ * they are read from server configuration at render time. Business identity —
+ * legal name, registered address, GSTIN — deliberately does not live in the
+ * CMS, so placing this block positions the panel without granting anyone the
+ * ability to edit a registration number through a content form.
+ *
+ * Values that have not been configured are omitted rather than substituted,
+ * and the reviewer notice makes the omission visible before launch instead of
+ * letting a half-configured deployment look finished.
+ */
+export function CompanyInfoBlock({
+  data,
+  tone,
+}: {
+  data: BlockData<"COMPANY_INFO">;
+  tone?: "plain" | "muted";
+}) {
+  const config = getSiteConfig();
+  const missing = getUnconfiguredIdentityKeys();
+
+  const rows: Array<[string, string | null | undefined]> = [
+    ["Trading name", config.tradingName],
+    ["Registered legal name", config.legalName],
+    ["Registered address", config.formattedAddress],
+    ["GSTIN", config.gstin],
+    ["CIN", config.cin],
+    ["Sales", config.email.sales],
+    ["Support", config.email.support],
+    ["Telephone", config.phone.sales],
+    ["Support hours", config.supportHours],
+  ];
+
+  return (
+    <BlockSection tone={tone}>
+      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
+
+      {missing.length > 0 ? (
+        <div className="mb-6 max-w-3xl rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-5">
+          <p className="text-[13px] leading-relaxed text-ink-700">
+            <strong className="font-semibold text-warning-700">
+              Content requiring review before launch.
+            </strong>{" "}
+            Company registration and contact details are supplied through configuration and have
+            not been set for this deployment. Nothing on this page substitutes invented company
+            information — unset values are simply omitted.
+          </p>
+        </div>
+      ) : null}
+
+      <dl className="grid max-w-3xl gap-x-8 gap-y-4 sm:grid-cols-2">
+        {rows
+          .filter(([, value]) => Boolean(value))
+          .map(([label, value]) => (
+            <div key={label}>
+              <dt className="text-[12px] uppercase tracking-wide text-ink-500">{label}</dt>
+              <dd className="mt-1 break-words text-[14px] text-ink-800">{value}</dd>
+            </div>
+          ))}
+      </dl>
+
+      {data.footnote ? (
+        <p className="mt-8 max-w-3xl text-[13px] leading-relaxed text-ink-500">{data.footnote}</p>
+      ) : null}
     </BlockSection>
   );
 }

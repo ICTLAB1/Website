@@ -53,6 +53,24 @@ export const BLOCK_FORMS: Partial<Record<BlockType, BlockFormShape>> = {
       { kind: "text", path: "secondaryCta.href", label: "Secondary button link" },
       { kind: "select", path: "tone", label: "Background", options: ["dark", "light"] },
       { kind: "checkbox", path: "showSearch", label: "Show the product search box" },
+      {
+        kind: "stringList",
+        path: "searchTerms",
+        label: "Suggested searches",
+        hint: "One per line. Shown under the search box as links; only used when the search box is shown.",
+      },
+      {
+        kind: "objectList",
+        path: "stats",
+        label: "Statistics",
+        itemLabel: "Statistic",
+        hint: 'Leave "Source" as literal to show the value as typed. The other sources read live counts: productCount, skuCount, brandCount, categoryCount.',
+        fields: [
+          { key: "label", label: "Label", kind: "text", required: true },
+          { key: "source", label: "Source", kind: "text" },
+          { key: "value", label: "Value", kind: "text" },
+        ],
+      },
     ],
   },
 
@@ -72,9 +90,11 @@ export const BLOCK_FORMS: Partial<Record<BlockType, BlockFormShape>> = {
 
   CARDS: {
     fields: [
+      { kind: "text", path: "eyebrow", label: "Eyebrow", hint: "Small label above the heading." },
       { kind: "text", path: "heading", label: "Heading" },
       { kind: "textarea", path: "description", label: "Intro" },
       { kind: "checkbox", path: "numbered", label: "Number the cards" },
+      { kind: "text", path: "numberLabel", label: "Number label", hint: 'Worded prefix for the number, e.g. "Step". Leave blank for a plain badge.' },
       { kind: "select", path: "columns", label: "Columns", options: ["2", "3", "4"] },
       {
         kind: "objectList",
@@ -91,9 +111,11 @@ export const BLOCK_FORMS: Partial<Record<BlockType, BlockFormShape>> = {
 
   LINK_LIST: {
     fields: [
+      { kind: "text", path: "eyebrow", label: "Eyebrow", hint: "Small label above the heading." },
       { kind: "text", path: "heading", label: "Heading" },
       { kind: "textarea", path: "description", label: "Intro" },
       { kind: "select", path: "layout", label: "Layout", options: ["cards", "chips", "inline"] },
+      { kind: "text", path: "itemAction", label: "Card affordance", hint: 'Shown on each card before the arrow, e.g. "Read guide". Cards layout only.' },
       {
         kind: "objectList",
         path: "items",
@@ -110,6 +132,7 @@ export const BLOCK_FORMS: Partial<Record<BlockType, BlockFormShape>> = {
 
   PRODUCT_GRID: {
     fields: [
+      { kind: "text", path: "eyebrow", label: "Eyebrow", hint: "Small label above the heading." },
       { kind: "text", path: "heading", label: "Heading" },
       { kind: "textarea", path: "description", label: "Intro" },
       {
@@ -159,6 +182,12 @@ export const BLOCK_FORMS: Partial<Record<BlockType, BlockFormShape>> = {
       { kind: "text", path: "primaryCta.href", label: "Primary button link" },
       { kind: "text", path: "secondaryCta.label", label: "Secondary button label" },
       { kind: "text", path: "secondaryCta.href", label: "Secondary button link" },
+      {
+        kind: "checkbox",
+        path: "showContactEmail",
+        label: "Offer the configured sales address",
+        hint: "Adds a mailto link using the address from server configuration. Nothing is shown if none is configured.",
+      },
       { kind: "select", path: "tone", label: "Background", options: ["dark", "light", "accent"] },
     ],
   },

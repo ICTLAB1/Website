@@ -32,6 +32,7 @@ export function ProductGridBlock({
     <BlockSection tone={tone}>
       {data.action ? (
         <SectionHeader
+          eyebrow={data.eyebrow}
           title={data.heading ?? "Related products"}
           description={data.description}
           action={
@@ -41,7 +42,7 @@ export function ProductGridBlock({
           }
         />
       ) : (
-        <BlockHeading heading={data.heading} description={data.description} />
+        <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
       )}
       {products.length === 0 ? (
         // A referenced product may have been archived since the page was
@@ -72,6 +73,7 @@ type CategoryRow = {
   _count: { products: number };
 };
 type ServiceRow = { slug: string; name: string; summary: string; category: string };
+type PostCategoryRow = { name: string; count: number };
 type PostRow = {
   slug: string;
   title: string;
@@ -92,11 +94,50 @@ export function CollectionGridBlock({
 }) {
   if (rows.length === 0) return null;
 
+  // A vendor strip's heading is a caption for the logos beneath it, not a
+  // section title, so it is set small and centred rather than as a display
+  // heading — the same treatment the page used before the content moved into
+  // the CMS.
+  const caption = data.kind === "brands" && data.layout === "strip" && !data.action;
+
   return (
     <BlockSection tone={tone}>
-      <BlockHeading heading={data.heading} description={data.description} />
+      {caption ? (
+        data.heading ? (
+          <p className="mb-6 text-center text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-500">
+            {data.heading}
+          </p>
+        ) : null
+      ) : data.action ? (
+        <SectionHeader
+          eyebrow={data.eyebrow}
+          title={data.heading ?? ""}
+          description={data.description}
+          action={
+            <ButtonLink href={data.action.href} variant="outline" size="sm">
+              {data.action.label}
+            </ButtonLink>
+          }
+        />
+      ) : (
+        <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
+      )}
 
-      {data.kind === "brands" && data.layout === "strip" ? (
+      {data.kind === "postCategories" ? (
+        <Reveal as="ul" className="flex flex-wrap gap-2">
+          {(rows as PostCategoryRow[]).map((category) => (
+            <li key={category.name}>
+              <Link
+                href={`/blog?category=${encodeURIComponent(category.name)}`}
+                className="lift inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-[13px] font-medium text-ink-700 hover:border-graphite-300 hover:text-graphite-900"
+              >
+                {category.name}
+                <span className="text-ink-500">{category.count}</span>
+              </Link>
+            </li>
+          ))}
+        </Reveal>
+      ) : data.kind === "brands" && data.layout === "strip" ? (
         <Reveal>
           <BrandStrip brands={rows as BrandRow[]} />
         </Reveal>

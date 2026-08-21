@@ -134,12 +134,28 @@ async function collectionFor(
         },
       });
     case "services":
+      // Featured only, matching the `categories` rule above: a grid on a
+      // landing page is a curated selection, and the full list has its own
+      // index page.
       return prisma.service.findMany({
-        where: { published: true, deletedAt: null },
+        where: { published: true, deletedAt: null, featured: true },
         orderBy: { displayOrder: "asc" },
         take,
         select: { slug: true, name: true, summary: true, category: true },
       });
+    case "postCategories": {
+      // Grouped rather than listed: the chip carries the article count, so the
+      // aggregate is the whole payload.
+      const groups = await prisma.blogPost.groupBy({
+        by: ["category"],
+        where: { status: "PUBLISHED", deletedAt: null, publishedAt: { lte: new Date() } },
+        _count: { _all: true },
+        orderBy: { category: "asc" },
+      });
+      return groups
+        .slice(0, take)
+        .map((group) => ({ name: group.category, count: group._count._all }));
+    }
     case "posts":
       return prisma.blogPost.findMany({
         where: { status: "PUBLISHED", deletedAt: null, publishedAt: { lte: new Date() } },
@@ -191,8 +207,11 @@ export async function resolveBlocks(
   const collections = new Map<string, unknown[]>();
   const faqs = new Map<string, Array<{ question: string; answer: string }>>();
 
+  // Both STAT_BAR and a hero carrying statistics can request live counts.
   const needsCounts = blocks.some(
-    (block) => block.type === "STAT_BAR" && block.data.items.some((item) => item.source !== "literal"),
+    (block) =>
+      (block.type === "STAT_BAR" && block.data.items.some((item) => item.source !== "literal")) ||
+      (block.type === "HERO" && block.data.stats.some((item) => item.source !== "literal")),
   );
 
   await Promise.all([

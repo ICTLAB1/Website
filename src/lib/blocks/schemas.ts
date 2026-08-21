@@ -33,6 +33,15 @@ export const safeHref = z
 
 const cta = z.object({ label: text(60), href: safeHref });
 
+/** One statistic. `literal` prints `value`; the rest are counted live. */
+export const statItemSchema = z.object({
+  label: text(80),
+  source: z
+    .enum(["literal", "productCount", "skuCount", "brandCount", "categoryCount"])
+    .default("literal"),
+  value: optionalText(40),
+});
+
 export const heroSchema = z.object({
   eyebrow: optionalText(80),
   headline: text(200),
@@ -42,6 +51,18 @@ export const heroSchema = z.object({
   /** Renders the global product search inside the hero. */
   showSearch: z.boolean().optional().default(false),
   tone: z.enum(["dark", "light"]).optional().default("dark"),
+  /**
+   * Statistics shown inside the hero's own band. Kept here rather than as a
+   * separate STAT_BAR block because they sit within the hero's background;
+   * a separate block would break the band in two.
+   */
+  stats: z.array(statItemSchema).max(6).optional().default([]),
+  /**
+   * Suggested searches offered under the hero search box. Each becomes a link
+   * to the search page for that term, so the suggestions can be tuned to what
+   * the catalogue actually sells without touching code.
+   */
+  searchTerms: z.array(text(60)).max(8).optional().default([]),
 });
 
 export const richTextSchema = z.object({
@@ -56,23 +77,33 @@ export const bulletsSchema = z.object({
 });
 
 export const cardsSchema = z.object({
+  eyebrow: optionalText(80),
   heading: optionalText(200),
   description: optionalText(600),
   /** Numbers the cards, for step-by-step sequences. */
   numbered: z.boolean().optional().default(false),
+  /**
+   * Replaces the numeric badge with a worded label, e.g. "Step" renders
+   * "Step 1". Only used when the cards are numbered.
+   */
+  numberLabel: optionalText(20),
   columns: z.union([z.literal(2), z.literal(3), z.literal(4)]).optional().default(2),
   items: z.array(z.object({ title: text(160), body: text(800) })).min(1).max(24),
 });
 
 export const iconPointsSchema = z.object({
+  eyebrow: optionalText(80),
   heading: optionalText(200),
   items: z.array(z.object({ label: text(80), detail: optionalText(160) })).min(1).max(12),
 });
 
 export const linkListSchema = z.object({
+  eyebrow: optionalText(80),
   heading: optionalText(200),
   description: optionalText(600),
   layout: z.enum(["cards", "chips", "inline"]).optional().default("cards"),
+  /** Affordance shown on each card, e.g. "Read guide". Cards layout only. */
+  itemAction: optionalText(40),
   items: z
     .array(z.object({ label: text(120), href: safeHref, description: optionalText(300) }))
     .min(1)
@@ -80,11 +111,13 @@ export const linkListSchema = z.object({
 });
 
 export const keyValueListSchema = z.object({
+  eyebrow: optionalText(80),
   heading: optionalText(200),
   items: z.array(z.object({ key: text(120), value: text(200) })).min(1).max(30),
 });
 
 export const chipListSchema = z.object({
+  eyebrow: optionalText(80),
   heading: optionalText(200),
   description: optionalText(600),
   items: z.array(text(120)).min(1).max(60),
@@ -95,32 +128,20 @@ export const splitPanelSchema = z.object({
   eyebrow: optionalText(80),
   heading: text(200),
   description: optionalText(800),
+  /** Sentence introducing the bullet list, e.g. "We support:". */
+  bulletsIntro: optionalText(200),
   bullets: z.array(text(200)).max(12).optional().default([]),
   tiles: z.array(text(80)).max(8).optional().default([]),
 });
 
 export const statBarSchema = z.object({
+  eyebrow: optionalText(80),
   heading: optionalText(200),
-  items: z
-    .array(
-      z.object({
-        label: text(80),
-        /**
-         * `literal` shows `value` as written. The others are counted from the
-         * database at render time, so a statistic about the catalogue can never
-         * drift from the catalogue.
-         */
-        source: z
-          .enum(["literal", "productCount", "skuCount", "brandCount", "categoryCount"])
-          .default("literal"),
-        value: optionalText(40),
-      }),
-    )
-    .min(1)
-    .max(6),
+  items: z.array(statItemSchema).min(1).max(6),
 });
 
 export const productGridSchema = z.object({
+  eyebrow: optionalText(80),
   heading: optionalText(200),
   description: optionalText(600),
   source: z.enum(["manual", "featured", "popular", "brand", "category"]).default("manual"),
@@ -134,11 +155,14 @@ export const productGridSchema = z.object({
 });
 
 export const collectionGridSchema = z.object({
+  eyebrow: optionalText(80),
   heading: optionalText(200),
   description: optionalText(600),
-  kind: z.enum(["brands", "categories", "services", "posts"]),
+  kind: z.enum(["brands", "categories", "services", "posts", "postCategories"]),
   limit: z.number().int().min(1).max(24).optional().default(8),
   layout: z.enum(["grid", "strip"]).optional().default("grid"),
+  /** Optional link beside the heading. */
+  action: z.object({ label: text(60), href: safeHref }).optional(),
 });
 
 export const faqSchema = z.object({
@@ -157,15 +181,38 @@ export const faqSchema = z.object({
     .default([]),
 });
 
+/**
+ * Renders the company identity panel.
+ *
+ * Stores no identity itself — the values come from environment configuration
+ * at render time, which is where business identity deliberately lives. The
+ * block only says "show that panel here", so an administrator can place it
+ * without being able to edit a GSTIN through the CMS.
+ */
+export const companyInfoSchema = z.object({
+  eyebrow: optionalText(80),
+  heading: optionalText(200),
+  description: optionalText(800),
+  footnote: optionalText(1200),
+});
+
 export const ctaBannerSchema = z.object({
   heading: text(200),
   body: optionalText(800),
   primaryCta: cta.optional(),
   secondaryCta: cta.optional(),
+  /**
+   * Offers the configured enterprise (or sales) address as a mailto action.
+   * The address itself comes from server configuration, never from the stored
+   * payload - the same rule the company information block follows. When no
+   * address is configured the action is simply omitted.
+   */
+  showContactEmail: z.boolean().optional().default(false),
   tone: z.enum(["dark", "light", "accent"]).optional().default("dark"),
 });
 
 export const plansSchema = z.object({
+  eyebrow: optionalText(80),
   heading: optionalText(200),
   description: optionalText(600),
   items: z
@@ -195,6 +242,7 @@ export const BLOCK_SCHEMAS = {
   PRODUCT_GRID: productGridSchema,
   COLLECTION_GRID: collectionGridSchema,
   FAQ: faqSchema,
+  COMPANY_INFO: companyInfoSchema,
   CTA_BANNER: ctaBannerSchema,
   PLANS: plansSchema,
 } as const;
@@ -248,6 +296,7 @@ export const BLOCK_SEEDS: { [T in BlockType]: BlockData<T> } = {
   PRODUCT_GRID: productGridSchema.parse({ source: "featured", limit: 6 }),
   COLLECTION_GRID: collectionGridSchema.parse({ kind: "brands", limit: 8 }),
   FAQ: faqSchema.parse({ source: "page" }),
+  COMPANY_INFO: companyInfoSchema.parse({ heading: "Company information" }),
   CTA_BANNER: ctaBannerSchema.parse({ heading: "New call to action", tone: "dark" }),
   PLANS: plansSchema.parse({ items: [{ name: "Plan", summary: "What it includes." }] }),
 };
@@ -267,6 +316,7 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
   PRODUCT_GRID: "Product grid",
   COLLECTION_GRID: "Collection grid",
   FAQ: "FAQ",
+  COMPANY_INFO: "Company information",
   CTA_BANNER: "Call to action",
   PLANS: "Plan comparison",
 };

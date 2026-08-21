@@ -36,21 +36,22 @@ type Block = {
 
 /** Plain-language summary of what each block type accepts. */
 const SHAPES: Record<BlockType, string> = {
-  HERO: `{ "eyebrow"?, "headline", "subheadline"?, "primaryCta"?: { "label", "href" }, "secondaryCta"?, "showSearch"?: false, "tone"?: "dark" | "light" }`,
+  HERO: `{ "eyebrow"?, "headline", "subheadline"?, "primaryCta"?: { "label", "href" }, "secondaryCta"?, "showSearch"?: false, "searchTerms"?: ["…"], "stats"?: [{ "label", "source", "value"? }], "tone"?: "dark" | "light" }`,
   RICH_TEXT: `{ "heading"?, "markdown" }  — Markdown subset: ## / ### / - / 1. / > / **bold**`,
   BULLETS: `{ "heading"?, "items": ["…"] }`,
-  CARDS: `{ "heading"?, "description"?, "numbered"?: false, "columns"?: 2 | 3 | 4, "items": [{ "title", "body" }] }`,
-  ICON_POINTS: `{ "heading"?, "items": [{ "label", "detail"? }] }`,
-  LINK_LIST: `{ "heading"?, "description"?, "layout"?: "cards" | "chips" | "inline", "items": [{ "label", "href", "description"? }] }`,
-  KEY_VALUE_LIST: `{ "heading"?, "items": [{ "key", "value" }] }`,
-  CHIP_LIST: `{ "heading"?, "description"?, "items": ["…"], "footnote"? }`,
-  SPLIT_PANEL: `{ "eyebrow"?, "heading", "description"?, "bullets"?: ["…"], "tiles"?: ["…"] }`,
-  STAT_BAR: `{ "heading"?, "items": [{ "label", "source": "literal" | "productCount" | "skuCount" | "brandCount" | "categoryCount", "value"? }] }`,
-  PRODUCT_GRID: `{ "heading"?, "source": "manual" | "featured" | "popular" | "brand" | "category", "slugs"?: ["…"], "ref"?, "limit"?, "action"?: { "label", "href" } }`,
-  COLLECTION_GRID: `{ "heading"?, "kind": "brands" | "categories" | "services" | "posts", "limit"?, "layout"?: "grid" | "strip" }`,
+  CARDS: `{ "eyebrow"?, "heading"?, "description"?, "numbered"?: false, "numberLabel"?, "columns"?: 2 | 3 | 4, "items": [{ "title", "body" }] }`,
+  ICON_POINTS: `{ "eyebrow"?, "heading"?, "items": [{ "label", "detail"? }] }`,
+  LINK_LIST: `{ "eyebrow"?, "heading"?, "description"?, "layout"?: "cards" | "chips" | "inline", "itemAction"?, "items": [{ "label", "href", "description"? }] }`,
+  KEY_VALUE_LIST: `{ "eyebrow"?, "heading"?, "items": [{ "key", "value" }] }`,
+  CHIP_LIST: `{ "eyebrow"?, "heading"?, "description"?, "items": ["…"], "footnote"? }`,
+  SPLIT_PANEL: `{ "eyebrow"?, "heading", "description"?, "bulletsIntro"?, "bullets"?: ["…"], "tiles"?: ["…"] }`,
+  STAT_BAR: `{ "eyebrow"?, "heading"?, "items": [{ "label", "source": "literal" | "productCount" | "skuCount" | "brandCount" | "categoryCount", "value"? }] }`,
+  PRODUCT_GRID: `{ "eyebrow"?, "heading"?, "source": "manual" | "featured" | "popular" | "brand" | "category", "slugs"?: ["…"], "ref"?, "limit"?, "action"?: { "label", "href" } }`,
+  COLLECTION_GRID: `{ "eyebrow"?, "heading"?, "description"?, "kind": "brands" | "categories" | "services" | "posts" | "postCategories", "limit"?, "layout"?: "grid" | "strip", "action"?: { "label", "href" } }`,
   FAQ: `{ "heading"?, "source": "page" | "brand" | "topic" | "manual", "ref"?, "items"?: [{ "question", "answer" }] }`,
-  CTA_BANNER: `{ "heading", "body"?, "primaryCta"?, "secondaryCta"?, "tone"?: "dark" | "light" | "accent" }`,
-  PLANS: `{ "heading"?, "description"?, "items": [{ "name", "summary", "points"?: ["…"], "productSlug"? }] }`,
+  CTA_BANNER: `{ "heading", "body"?, "primaryCta"?, "secondaryCta"?, "showContactEmail"?: false, "tone"?: "dark" | "light" | "accent" }`,
+  PLANS: `{ "eyebrow"?, "heading"?, "description"?, "items": [{ "name", "summary", "points"?: ["…"], "productSlug"? }] }`,
+  COMPANY_INFO: `{ "eyebrow"?, "heading"?, "description"?, "footnote"? }  — the registration and contact values themselves come from server configuration, not from here`,
 };
 
 export function BlockEditor({ pageId, blocks }: { pageId: string; blocks: Block[] }) {

@@ -39,32 +39,53 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getNavigationPaths(),
   ]);
 
-  const entries: MetadataRoute.Sitemap = [];
+  /**
+   * Keyed by URL so a page listed twice is published once.
+   *
+   * Most CMS pages are also linked from the navigation, so the two sources
+   * overlap heavily. A sitemap that names the same page twice — and, for the
+   * home page, once with a trailing slash and once without — asks a crawler to
+   * treat one page as two. Later writers win on `lastModified` and
+   * `changeFrequency`; `priority` keeps the highest claim from either source.
+   */
+  const bySitemapUrl = new Map<string, MetadataRoute.Sitemap[number]>();
+
+  const add = (entry: MetadataRoute.Sitemap[number]) => {
+    const existing = bySitemapUrl.get(entry.url);
+    bySitemapUrl.set(entry.url, {
+      ...entry,
+      priority: Math.max(entry.priority ?? 0, existing?.priority ?? 0),
+    });
+  };
+
+  /** One canonical form per page: absolute, no trailing slash except the root. */
+  const canonical = (path: string) => `${base}${path === "/" || path === "" ? "" : path}`;
 
   for (const route of navPaths) {
     if (EXCLUDED.has(route)) continue;
-    entries.push({
-      url: `${base}${route === "/" ? "" : route}`,
+    add({
+      url: canonical(route),
       lastModified: now,
       changeFrequency: route === "/" ? "daily" : "weekly",
       priority: route === "/" ? 1 : route === "/products" ? 0.9 : 0.7,
     });
   }
 
-  // CMS pages now carry a real `updatedAt`, so the sitemap can report when a
-  // page actually changed instead of claiming every page changed on every build.
+  // CMS pages carry a real `updatedAt`, so the sitemap can report when a page
+  // actually changed instead of claiming every page changed on every build.
+  // Written after the navigation so that date wins where both list a page.
   for (const page of cmsPages) {
-    entries.push({
-      url: `${base}/${page.slug}`,
+    add({
+      url: canonical(`/${page.slug}`),
       lastModified: page.updatedAt,
       changeFrequency: "monthly",
       // Vendor overview pages sit one level above their product pages.
-      priority: page.slug.includes("/") ? 0.7 : 0.8,
+      priority: page.slug === "" ? 1 : page.slug.includes("/") ? 0.7 : 0.8,
     });
   }
 
   for (const product of products) {
-    entries.push({
+    add({
       url: `${base}/products/${product.slug}`,
       lastModified: product.updatedAt,
       changeFrequency: "weekly",
@@ -73,7 +94,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   for (const brand of brands) {
-    entries.push({
+    add({
       url: `${base}/brands/${brand.slug}`,
       lastModified: brand.updatedAt,
       changeFrequency: "monthly",
@@ -82,7 +103,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   for (const service of services) {
-    entries.push({
+    add({
       url: `${base}/services/${service.slug}`,
       lastModified: service.updatedAt,
       changeFrequency: "monthly",
@@ -91,7 +112,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   for (const post of posts) {
-    entries.push({
+    add({
       url: `${base}/blog/${post.slug}`,
       lastModified: post.updatedAt,
       changeFrequency: "yearly",
@@ -99,5 +120,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  return entries;
+  return [...bySitemapUrl.values()];
 }
