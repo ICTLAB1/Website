@@ -82,7 +82,22 @@ export function Field({
   const errorId = message ? `${id}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
 
-  const child = Children.only(children);
+  /*
+   * The single control this label belongs to.
+   *
+   * `Children.toArray` rather than `Children.only`, which was here first and
+   * threw on a page that looked identical to the ones that worked. The
+   * difference was where the JSX came from: a `<Field>` written inside a client
+   * component gets its child as one element, and a `<Field>` written inside a
+   * *server* component gets the same child wrapped in an array once it crosses
+   * the boundary. `Children.only` rejects the array, so the brand editor —
+   * the one admin screen assembled on the server — answered 500 while every
+   * other form worked.
+   *
+   * Exactly one child is still required; the check just no longer depends on
+   * which side of the boundary the caller happens to sit on.
+   */
+  const child = Children.toArray(children)[0];
   const control = isValidElement(child)
     ? cloneElement(child as ReactElement<Record<string, unknown>>, {
         id,

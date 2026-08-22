@@ -2,9 +2,16 @@ import "server-only";
 import { cache } from "react";
 import { cached } from "@/lib/queries/cached";
 import { tags } from "@/lib/cache";
-import type { Availability, LicenceType, Prisma } from "@prisma/client";
+import type { Availability, FormFactor, LicenceType, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { publicVariantWhere } from "@/lib/catalogue/audience";
+import {
+  FORM_FACTORS,
+  formFactorLabel,
+  formFactorsIn,
+  formFactorSlug,
+  parseFormFactor,
+} from "@/lib/catalogue/hardware";
 
 /**
  * Catalogue reads.
@@ -30,6 +37,27 @@ export type CatalogueFilters = {
   category?: string[];
   licenceType?: string[];
   availability?: string[];
+  /** Form-factor slugs: `laptop`, `desktop-sff`. Hardware only. */
+  formFactor?: string[];
+  /** Manufacturer families: `EliteBook`, `ThinkPad T`. Hardware only. */
+  series?: string[];
+  /**
+   * `laptops` or `desktops` — the two groupings the navigation is built from.
+   *
+   * A coarser cut than the form-factor facet, and the one a menu can express:
+   * "business desktops" means towers, small form factors, mini PCs and
+   * all-in-ones, and a menu item cannot list four query parameters. The
+   * mapping lives in `lib/catalogue/hardware` so the menu and the filter agree.
+   */
+  family?: "laptops" | "desktops";
+  /**
+   * Restricts the whole listing to hardware, or to software.
+   *
+   * Set by the route rather than by a visitor: `/hardware` is the hardware
+   * catalogue and `/products` is everything. It is a separate concept from the
+   * form-factor facet, which narrows within hardware.
+   */
+  kind?: "hardware" | "software";
   minPriceMinor?: number;
   maxPriceMinor?: number;
   sort?: SortOption;
@@ -79,6 +107,12 @@ export const productListSelect = {
   featured: true,
   popularity: true,
   createdAt: true,
+  // Hardware, and null on everything else. Selected unconditionally because
+  // every grid on the site renders both kinds and a card that had to be told
+  // which it was holding would be told wrongly somewhere.
+  series: true,
+  formFactor: true,
+  imageUrl: true,
   brand: { select: { slug: true, name: true, accentColor: true } },
   category: { select: { slug: true, name: true } },
   variants: {
@@ -116,13 +150,63 @@ function buildWhere(filters: CatalogueFilters): Prisma.ProductWhereInput {
 
   if (filters.brand?.length) where.brand = { slug: { in: filters.brand } };
 
+  /*
+   * Hardware is "has a form factor", not "is under the hardware category".
+   * A category tree can be reorganised from the admin panel by someone with no
+   * reason to know a filter depends on its shape; a form factor is a property
+   * of the product itself and cannot be rearranged out from under this.
+   */
+  if (filters.kind === "hardware") where.formFactor = { not: null };
+  if (filters.kind === "software") where.formFactor = null;
+
+  // Narrows within hardware, so it never overrides a software restriction — a
+  // form factor and "software only" together describe nothing, and silently
+  // resolving that in favour of the facet would list hardware on a page whose
+  // route said it would not.
+  const formFactors = filters.formFactor
+    ?.map((slug) => parseFormFactor(slug))
+    .filter((value): value is FormFactor => value !== null);
+
+  if (formFactors?.length && filters.kind !== "software") {
+    where.formFactor = { in: formFactors };
+  } else if (filters.family && filters.kind !== "software") {
+    // The narrower facet wins when both are set: somebody who has clicked
+    // "Mini PC" inside "Business desktops" wants mini PCs.
+    where.formFactor = { in: formFactorsIn(filters.family) };
+  }
+
+  /*
+   * Each filter that needs alternatives becomes its own AND group.
+   *
+   * Not a shared `where.OR`. Two filters writing into one OR array turn an
+   * intersection into a union — pick a category and a series and you would get
+   * everything in the category *plus* everything in the series, which reads as
+   * a filter that widened the results. Separate groups keep it "category AND
+   * series", each satisfied by any of its own alternatives.
+   */
+  const groups: Prisma.ProductWhereInput[] = [];
+
   if (filters.category?.length) {
     // Matching a parent category must also return everything beneath it.
-    where.OR = [
-      { category: { slug: { in: filters.category } } },
-      { category: { parent: { slug: { in: filters.category } } } },
-    ];
+    groups.push({
+      OR: [
+        { category: { slug: { in: filters.category } } },
+        { category: { parent: { slug: { in: filters.category } } } },
+      ],
+    });
   }
+
+  if (filters.series?.length) {
+    // Series arrive as slugs because everything in the query string does, and
+    // are matched case-insensitively against the manufacturer's own spelling.
+    groups.push({
+      OR: filters.series.map((slug) => ({
+        series: { equals: slug.replace(/-/g, " "), mode: "insensitive" as const },
+      })),
+    });
+  }
+
+  if (groups.length) where.AND = groups;
 
   const licenceTypes = asLicenceTypes(filters.licenceType);
   const availabilities = asAvailabilities(filters.availability);
@@ -241,11 +325,27 @@ export async function listProducts(filters: CatalogueFilters): Promise<{
   return { items, total, page, totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)) };
 }
 
-async function getFacetsUncached() {
-  const [brandGroups, categories, licenceGroups] = await Promise.all([
+/**
+ * Facet counts, scoped to the catalogue being looked at.
+ *
+ * The scope matters more than it sounds. Counted across everything, the
+ * hardware listing would offer "Subscription annual (38)" and a price band,
+ * both of which return nothing there — and a facet whose count does not match
+ * what clicking it returns is worse than a missing facet, because the visitor
+ * concludes the search is broken rather than that the range is empty.
+ */
+async function getFacetsUncached(kind?: "hardware" | "software") {
+  const scope: Prisma.ProductWhereInput = {
+    status: "ACTIVE",
+    deletedAt: null,
+    ...(kind === "hardware" ? { formFactor: { not: null } } : {}),
+    ...(kind === "software" ? { formFactor: null } : {}),
+  };
+
+  const [brandGroups, categories, licenceGroups, formFactorGroups, seriesGroups] = await Promise.all([
     prisma.product.groupBy({
       by: ["brandId"],
-      where: { status: "ACTIVE", deletedAt: null },
+      where: scope,
       _count: { _all: true },
     }),
     prisma.category.findMany({
@@ -254,14 +354,14 @@ async function getFacetsUncached() {
       select: {
         slug: true,
         name: true,
-        _count: { select: { products: { where: { status: "ACTIVE", deletedAt: null } } } },
+        _count: { select: { products: { where: scope } } },
         children: {
           where: { deletedAt: null },
           orderBy: { displayOrder: "asc" },
           select: {
             slug: true,
             name: true,
-            _count: { select: { products: { where: { status: "ACTIVE", deletedAt: null } } } },
+            _count: { select: { products: { where: scope } } },
           },
         },
       },
@@ -270,8 +370,28 @@ async function getFacetsUncached() {
       by: ["licenceType"],
       // Restricted prices are excluded so a facet count matches the number of
       // results clicking it actually returns.
-      where: { ...publicVariantWhere, product: { status: "ACTIVE", deletedAt: null } },
+      where: { ...publicVariantWhere, product: scope },
       _count: { _all: true },
+    }),
+    /*
+     * Hardware facets, counted from the catalogue rather than declared.
+     *
+     * A filter for a field nothing carries is a dead end that makes the
+     * catalogue look broken, so these lists are empty until products with the
+     * values exist, and the panel renders nothing for an empty list. Adding a
+     * form factor to the enum therefore does not add an unusable filter — the
+     * first product with it does.
+     */
+    prisma.product.groupBy({
+      by: ["formFactor"],
+      where: { ...scope, formFactor: { not: null } },
+      _count: { _all: true },
+    }),
+    prisma.product.groupBy({
+      by: ["series"],
+      where: { ...scope, series: { not: null } },
+      _count: { _all: true },
+      orderBy: { series: "asc" },
     }),
   ]);
 
@@ -300,8 +420,24 @@ async function getFacetsUncached() {
       })),
     })),
     licenceTypes: licenceGroups
+      // HARDWARE is not a licence; see the note on the enum member. Offering it
+      // beside "Perpetual" and "CSP" would invite a buyer to filter licensing by
+      // a value that means the opposite.
+      .filter((group) => group.licenceType !== "HARDWARE")
       .map((group) => ({ value: group.licenceType, count: group._count._all }))
       .sort((a, b) => b.count - a.count),
+    formFactors: FORM_FACTORS.map((value) => ({
+      value: formFactorSlug(value),
+      label: formFactorLabel(value),
+      count: formFactorGroups.find((group) => group.formFactor === value)?._count._all ?? 0,
+    })).filter((facet) => facet.count > 0),
+    series: seriesGroups
+      .filter((group): group is typeof group & { series: string } => Boolean(group.series))
+      .map((group) => ({
+        value: group.series.toLowerCase().replace(/\s+/g, "-"),
+        label: group.series,
+        count: group._count._all,
+      })),
   };
 }
 
@@ -316,6 +452,10 @@ const getProductBySlugUncached = async (slug: string) => {
         orderBy: [{ isDefault: "desc" }, { listPriceMinor: "asc" }],
       },
       faqs: { orderBy: { displayOrder: "asc" } },
+      // Empty on software. Ordered here so the page never has to sort a list
+      // whose order is the manufacturer's, not alphabetical — "Processor"
+      // belongs above "Warranty" because that is how a spec sheet reads.
+      specs: { orderBy: [{ displayOrder: "asc" }, { label: "asc" }] },
     },
   });
 };

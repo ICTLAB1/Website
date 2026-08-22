@@ -33,6 +33,26 @@ enum ProductStatus {
   ARCHIVED
 }
 
+/// The shape of a hardware product, where it has one.
+///
+/// Null for software, which is most of the catalogue. This is the field the
+/// hardware catalogue filters and groups on: "laptops" and "desktops" are
+/// derived from it rather than stored separately, because a product that is
+/// both would be a data-entry mistake and this makes it unrepresentable.
+///
+/// Workstations are their own members rather than a flag beside the others. A
+/// mobile workstation is bought for different reasons than a laptop, by people
+/// who search for the word, and collapsing the two would hide it.
+enum FormFactor {
+  LAPTOP
+  MOBILE_WORKSTATION
+  DESKTOP_TOWER
+  DESKTOP_SFF
+  DESKTOP_MINI
+  DESKTOP_WORKSTATION
+  ALL_IN_ONE
+}
+
 enum Availability {
   IN_STOCK
   MADE_TO_ORDER
@@ -72,6 +92,19 @@ enum LicenceType {
   OEM
   EDUCATION
   MAINTENANCE
+
+  /// Not a licence at all: goods.
+  ///
+  /// A hardware model is a Product and its configurations are ProductVariants,
+  /// the same shape licensing already uses — which means a configuration needs
+  /// a value here. This is that value, and the interface treats it as the
+  /// absence of a licence rather than as a kind of one: the product card and
+  /// detail page show series and form factor where they would show licence and
+  /// term, and the licence facet does not offer it.
+  ///
+  /// The alternative was making `licenceType` nullable, which touches
+  /// twenty-odd call sites in the licensing paths this change must not disturb.
+  HARDWARE
 }
 
 enum EnquiryStatus {
@@ -383,12 +416,55 @@ model Product {
   popularity       Int           @default(0)
 
   // Structured licensing metadata rendered on the product detail page.
+  // `features` doubles as the "business features" list on hardware — security,
+  // manageability, durability — because it is the same thing under a different
+  // heading and a second array would drift from the first.
   features       String[]
   compatibility  String[]
   keywords       String[]
   licensingNotes String?
   deliveryNotes  String?
   supportNotes   String?
+
+  // ── hardware ──────────────────────────────────────────────────────────────
+  // All null for software. A hardware model is a Product and its configurations
+  // are ProductVariants, which is the same shape licensing already uses.
+
+  /// The manufacturer's own family: "EliteBook", "ThinkPad T", "TravelMate P".
+  /// Filtered on and shown on the card, because it is how buyers in this market
+  /// actually narrow a choice — nobody asks for "a laptop", they ask for a
+  /// ThinkPad T or an EliteBook.
+  series String?
+
+  /// Laptop, tower, small form factor, all-in-one. See `FormFactor`.
+  formFactor FormFactor?
+
+  /// The manufacturer's part number for the model as listed. Folded into
+  /// `searchText`, because it is what a procurement officer pastes from a
+  /// tender document.
+  partNumber String?
+
+  /// The product photograph. A path under `/uploads/` (validated, digest-named)
+  /// or `/products/` — see `lib/product-image.ts`, which is deliberately the
+  /// same shape of check as brand logos get.
+  ///
+  /// Null renders a labelled placeholder, never a broken image and never
+  /// another product's photograph.
+  imageUrl String?
+
+  /// The manufacturer's own page for this model.
+  ///
+  /// Kept because specifications change and a catalogue entry with no
+  /// provenance cannot be re-checked — six months on, nobody can tell whether a
+  /// figure came from the manufacturer or from somebody's memory. Internal: it
+  /// is for whoever maintains the catalogue, not a link the site advertises.
+  sourceUrl String?
+
+  /// When the record was last reconciled against `sourceUrl`. Shown in the
+  /// admin panel so a stale entry is visible as stale.
+  sourceCheckedAt DateTime?
+
+  specs ProductSpec[]
 
   // Denormalised lowercase haystack (name + sku + brand + keywords) backing
   // catalogue search without a separate search service.
@@ -410,11 +486,41 @@ model Product {
   @@index([status, deletedAt])
   @@index([featured])
   @@index([popularity])
+  @@index([series])
+  @@index([formFactor])
   // Trigram index for `contains` search, which emits LIKE '%term%'. A leading
   // wildcard cannot use a B-tree, so without this every search scans the table.
   // Declared here as well as in the migration so a later `migrate dev` does not
   // read it as drift and drop it.
   @@index([searchText(ops: raw("gin_trgm_ops"))], type: Gin)
+}
+
+/// One row of a product's specification table.
+///
+/// A table rather than a JSON column, for two reasons that matter here.
+/// Specifications are edited one line at a time in the admin panel, and rows
+/// are what a form can edit; and they are the part of a hardware listing most
+/// likely to be wrong, so they need to be addressable — "fix the storage line
+/// on this model" is a query, not a re-serialisation of a blob.
+///
+/// Labels are free text on purpose. Manufacturers do not agree on what to call
+/// things, and forcing "Processor" onto a row the source calls "Platform" would
+/// be the catalogue inventing a fact about the product.
+model ProductSpec {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  /// "Processor", "Display", "Memory", "Warranty".
+  label String
+  /// The value as the manufacturer states it, including any qualification —
+  /// "Configuration dependent" is a legitimate value and often the honest one.
+  value String
+
+  displayOrder Int @default(0)
+
+  @@unique([productId, label])
+  @@index([productId, displayOrder])
 }
 
 model ProductVariant {

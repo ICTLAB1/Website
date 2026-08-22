@@ -66,7 +66,14 @@ fi
 # ago by the step above can sit behind results cached before it. The cache is
 # derived data and nothing reads it yet, so clearing it costs one repopulation
 # and removes a class of "I deployed it and nothing changed" entirely.
-rm -rf .next/cache/fetch-cache
+#
+# The whole directory, not `cache/fetch-cache` alone. That is where a
+# production build keeps these entries today, but a dev server was observed
+# holding a cached navigation tree that survived deleting exactly that path —
+# so the narrower target is a guess about an internal layout, and the cost of
+# being wrong is the bug this line exists to prevent. Everything under here is
+# derived and regenerates on demand.
+rm -rf .next/cache
 
 echo "→ starting"
 exec "$@"

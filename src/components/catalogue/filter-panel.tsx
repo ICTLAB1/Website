@@ -28,6 +28,9 @@ type Facets = {
     children: Array<{ slug: string; name: string; count: number }>;
   }>;
   licenceTypes: Array<{ value: string; count: number }>;
+  /** Empty until the catalogue holds hardware; see the note at the render. */
+  formFactors: Array<{ value: string; label: string; count: number }>;
+  series: Array<{ value: string; label: string; count: number }>;
 };
 
 const AVAILABILITY_OPTIONS = [
@@ -136,10 +139,19 @@ export async function FilterPanel({
   facets,
   params,
   basePath = "/products",
+  /**
+   * Whether a price filter belongs here at all.
+   *
+   * False on the hardware catalogue, which carries no prices — a band of
+   * rupee ranges over a listing that shows none is an offer to filter by
+   * something the visitor cannot see, and every band returns nothing.
+   */
+  showPrice = true,
 }: {
   facets: Facets;
   params: RawSearchParams;
   basePath?: string;
+  showPrice?: boolean;
 }) {
   // Resolved here rather than passed in, for the same reason as ProductGrid: a
   // caller that forgot would show rupee bands beside dollar prices.
@@ -211,6 +223,46 @@ export async function FilterPanel({
         </ul>
       </FacetGroup>
 
+      {/*
+        Hardware facets, rendered only when the catalogue holds hardware.
+        The lists are counted from the data rather than declared, so a filter
+        for something nothing carries never appears — a facet that returns
+        nothing is worse than a missing one, because the visitor reads it as the
+        catalogue being broken rather than as the range not existing.
+      */}
+      {facets.formFactors.length > 0 ? (
+        <FacetGroup title="Product type">
+          <ul className="space-y-0.5">
+            {facets.formFactors.map((formFactor) => (
+              <FacetLink
+                key={formFactor.value}
+                href={toggleFacetHref(params, "form", formFactor.value, basePath)}
+                label={formFactor.label}
+                count={formFactor.count}
+                active={isFacetActive(params, "form", formFactor.value)}
+              />
+            ))}
+          </ul>
+        </FacetGroup>
+      ) : null}
+
+      {facets.series.length > 0 ? (
+        <FacetGroup title="Series">
+          <ul className="space-y-0.5">
+            {facets.series.map((series) => (
+              <FacetLink
+                key={series.value}
+                href={toggleFacetHref(params, "series", series.value, basePath)}
+                label={series.label}
+                count={series.count}
+                active={isFacetActive(params, "series", series.value)}
+              />
+            ))}
+          </ul>
+        </FacetGroup>
+      ) : null}
+
+      {facets.licenceTypes.length > 0 ? (
       <FacetGroup title="Licence type">
         <ul className="space-y-0.5">
           {facets.licenceTypes.map((licence) => {
@@ -227,8 +279,10 @@ export async function FilterPanel({
           })}
         </ul>
       </FacetGroup>
+      ) : null}
 
       {/* GST is named in rupees only — a converted band already includes it. */}
+      {showPrice ? (
       <FacetGroup title={display.currency === "INR" ? "Price (excl. GST)" : "Price"}>
         <ul className="space-y-0.5">
           {PRICE_BANDS.map((band) => {
@@ -251,6 +305,7 @@ export async function FilterPanel({
           })}
         </ul>
       </FacetGroup>
+      ) : null}
 
       <FacetGroup title="Availability">
         <ul className="space-y-0.5">

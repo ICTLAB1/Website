@@ -13,6 +13,7 @@ import { slugify } from "@/lib/utils";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { buildSearchText, rebuildProductSearchText } from "@/lib/search-text";
 import { invalidate, tags } from "@/lib/cache";
+import { safeProductImage } from "@/lib/product-image";
 
 /**
  * Administrative mutations.
@@ -52,6 +53,24 @@ const productSchema = z.object({
   licensingNotes: z.string().max(6000).optional(),
   deliveryNotes: z.string().max(4000).optional(),
   supportNotes: z.string().max(4000).optional(),
+
+  // Hardware. All optional and all blank on software, which is most of the
+  // catalogue — an empty form factor is what says "this is a licence".
+  formFactor: z
+    .enum([
+      "LAPTOP",
+      "MOBILE_WORKSTATION",
+      "DESKTOP_TOWER",
+      "DESKTOP_SFF",
+      "DESKTOP_MINI",
+      "DESKTOP_WORKSTATION",
+      "ALL_IN_ONE",
+    ])
+    .optional(),
+  series: z.string().trim().max(60).optional(),
+  partNumber: z.string().trim().max(60).optional(),
+  imageUrl: z.string().trim().max(200).optional(),
+  sourceUrl: z.string().trim().max(500).optional(),
 });
 
 function toLines(value: string | undefined): string[] {
@@ -93,6 +112,13 @@ export async function saveProduct(
     licensingNotes: formData.get("licensingNotes"),
     deliveryNotes: formData.get("deliveryNotes"),
     supportNotes: formData.get("supportNotes"),
+    // An empty select posts "", which is not a member of the enum — mapped to
+    // undefined so "not hardware" validates rather than failing the form.
+    formFactor: formData.get("formFactor") || undefined,
+    series: formData.get("series"),
+    partNumber: formData.get("partNumber"),
+    imageUrl: formData.get("imageUrl"),
+    sourceUrl: formData.get("sourceUrl"),
   });
 
   if (!parsed.success) {
@@ -147,6 +173,17 @@ export async function saveProduct(
     licensingNotes: input.licensingNotes?.trim() || null,
     deliveryNotes: input.deliveryNotes?.trim() || null,
     supportNotes: input.supportNotes?.trim() || null,
+    formFactor: input.formFactor ?? null,
+    series: input.series?.trim() || null,
+    partNumber: input.partNumber?.trim() || null,
+    /*
+     * Refused rather than sanitised, and rejected outright rather than stored
+     * and ignored at render. `safeProductImage` is what the page will apply
+     * anyway, so a value it declines would silently become a blank frame with
+     * no explanation to whoever typed it.
+     */
+    imageUrl: input.imageUrl?.trim() ? safeProductImage(input.imageUrl.trim()) : null,
+    sourceUrl: input.sourceUrl?.trim() || null,
     searchText: await buildSearchText({
       name: input.name,
       brandId: input.brandId,

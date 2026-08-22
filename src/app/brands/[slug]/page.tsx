@@ -9,6 +9,9 @@ import { ButtonLink } from "@/components/ui/button";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { prisma } from "@/lib/db";
 import { getBrandBySlug, getBrandCategories, getServices } from "@/lib/queries/content";
+import { getBrandHardware } from "@/lib/queries/hardware";
+import { FAMILY_LABELS } from "@/lib/catalogue/hardware";
+import { getSiteConfig } from "@/lib/site-config";
 import { productListSelect } from "@/lib/queries/catalogue";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 
@@ -54,7 +57,7 @@ export default async function BrandPage({ params }: PageProps) {
   const brand = await getBrandBySlug(slug);
   if (!brand) notFound();
 
-  const [categories, featured, allServices] = await Promise.all([
+  const [categories, featured, allServices, hardware, config] = await Promise.all([
     getBrandCategories(brand.id),
     prisma.product.findMany({
       where: { brandId: brand.id, status: "ACTIVE", deletedAt: null },
@@ -63,6 +66,8 @@ export default async function BrandPage({ params }: PageProps) {
       take: 6,
     }),
     getServices(),
+    getBrandHardware(brand.slug),
+    getSiteConfig(),
   ]);
 
   // Services that plausibly relate to this brand's products, matched on the
@@ -126,6 +131,63 @@ export default async function BrandPage({ params }: PageProps) {
             ))}
           </div>
         </section>
+
+        {/*
+          The manufacturer's commercial range, grouped the way it is chosen.
+          Somebody arriving at Lenovo knows they want a ThinkPad and needs to
+          see which ones there are; an alphabetical run of forty models across
+          three families is a list, not a catalogue.
+
+          Rendered only where the brand has hardware, so nothing appears on
+          Microsoft or Adobe — and nothing appears on HP either until real
+          models are imported.
+        */}
+        {hardware.length > 0 ? (
+          <section className="border-t border-line py-14">
+            <SectionHeader
+              title={`${brand.name} business and commercial computers`}
+              description={`${brand.name} commercial models supplied by ${config.entityName}. Quoted to your configuration and quantity — hardware is not listed at a price.`}
+              as="h2"
+              action={
+                <ButtonLink href={`/hardware?brand=${brand.slug}`} variant="outline" size="sm">
+                  All {brand.name} hardware
+                </ButtonLink>
+              }
+            />
+            <div className="space-y-12">
+              {hardware.map((family) => (
+                <div key={family.family}>
+                  <h3 className="text-subsection font-semibold text-graphite-900">
+                    {FAMILY_LABELS[family.family]}
+                  </h3>
+                  <div className="mt-6 space-y-10">
+                    {family.series.map((series) => (
+                      <div key={series.name}>
+                        <h4 className="mb-4 text-label font-semibold uppercase tracking-[0.1em] text-ink-500">
+                          {series.name}
+                        </h4>
+                        <ProductGrid products={series.items} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-10 rounded-[--radius-lg] border border-line bg-surface-muted p-6">
+              <h3 className="text-[1.125rem]">Request a {brand.name} quote</h3>
+              <p className="mt-2 max-w-2xl text-meta leading-relaxed text-ink-600">
+                Volume requirements, standard-build configurations and staged delivery are handled
+                on one quotation, alongside any licensing that goes on the devices.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <ButtonLink href="/enquiry">Request enterprise quote</ButtonLink>
+                <ButtonLink href="/contact" variant="outline">
+                  Talk to a specialist
+                </ButtonLink>
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         {categories.length > 0 ? (
           <section className="border-t border-line py-14">

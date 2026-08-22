@@ -1,20 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { EmptyState } from "@/components/ui/states";
-import { Pagination } from "@/components/ui/pagination";
 import { ButtonLink } from "@/components/ui/button";
-import { ProductGrid } from "@/components/marketing/product-card";
-import { FilterPanel, MobileFilterPanel } from "@/components/catalogue/filter-panel";
-import { getFacets, listProducts, PAGE_SIZE } from "@/lib/queries/catalogue";
-import {
-  activeFilterChips,
-  buildCatalogueHref,
-  parseCatalogueParams,
-  SORT_OPTIONS,
-  type RawSearchParams,
-} from "@/lib/catalogue-params";
+import { CatalogueListing } from "@/components/catalogue/catalogue-listing";
+import { parseCatalogueParams, type RawSearchParams } from "@/lib/catalogue-params";
 import { buildMetadata } from "@/lib/seo";
 
 type PageProps = { searchParams: Promise<RawSearchParams> };
@@ -43,23 +32,6 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const filters = parseCatalogueParams(params);
 
-  const [{ items, total, page, totalPages }, facets] = await Promise.all([
-    listProducts(filters),
-    getFacets(),
-  ]);
-
-  const brandLabels = new Map(facets.brands.map((brand) => [brand.slug, brand.name]));
-  const categoryLabels = new Map(
-    facets.categories.flatMap((category) => [
-      [category.slug, category.name] as const,
-      ...category.children.map((child) => [child.slug, child.name] as const),
-    ]),
-  );
-  const chips = activeFilterChips(params, { brands: brandLabels, categories: categoryLabels });
-
-  const first = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
-  const last = Math.min(page * PAGE_SIZE, total);
-
   return (
     <div className="container-page pb-16">
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Products" }]} />
@@ -75,116 +47,24 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         </p>
       </header>
 
-      <div className="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)]">
-        <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
-          <div className="hidden lg:block">
-            <FilterPanel facets={facets} params={params} />
-          </div>
-          <MobileFilterPanel facets={facets} params={params} />
-        </aside>
+      <CatalogueListing params={params} filters={filters} basePath="/products" />
 
-        <section aria-labelledby="results-heading" className="min-w-0">
-          <h2 id="results-heading" className="sr-only">
-            Products
-          </h2>
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
-            <p className="text-[13px] text-ink-600" aria-live="polite">
-              {total === 0 ? (
-                "No products match these filters"
-              ) : (
-                <>
-                  Showing <strong className="font-semibold text-graphite-900">{first}–{last}</strong> of{" "}
-                  <strong className="font-semibold text-graphite-900">{total}</strong> products
-                </>
-              )}
-            </p>
-
-            {/* Sort is a set of links so it works without JavaScript and keeps
-                each ordering independently addressable. */}
-            <div className="flex min-w-0 max-w-full items-center gap-2">
-              <span className="shrink-0 text-[13px] text-ink-500">Sort</span>
-              <div className="scroll-x -mx-1 flex min-w-0 gap-1 px-1">
-                {SORT_OPTIONS.map((option) => {
-                  const active = (filters.sort ?? "relevance") === option.value;
-                  return (
-                    <Link
-                      key={option.value}
-                      href={buildCatalogueHref(params, {
-                        sort: option.value === "relevance" ? null : option.value,
-                      })}
-                      className={`whitespace-nowrap rounded-[--radius-sm] px-2.5 py-1.5 text-[13px] ${
-                        active
-                          ? "bg-graphite-900 font-medium text-white"
-                          : "text-ink-600 hover:bg-surface-muted"
-                      }`}
-                    >
-                      {option.label}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {chips.length > 0 ? (
-            <ul className="mb-5 flex flex-wrap gap-2">
-              {chips.map((chip) => (
-                <li key={chip.label}>
-                  <Link
-                    href={chip.removeHref}
-                    className="inline-flex items-center gap-1.5 rounded-[--radius-sm] border border-line-strong bg-white py-1 pl-2.5 pr-2 text-[12px] text-ink-700 hover:border-danger-600 hover:text-danger-700"
-                  >
-                    {chip.label}
-                    <span aria-hidden="true" className="text-ink-500">
-                      ×
-                    </span>
-                    <span className="sr-only">Remove filter</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-
-          {items.length === 0 ? (
-            <EmptyState
-              as="h3"
-              title="No products match these filters"
-              description="Try removing a filter, searching for a different term, or tell us what you need — we can source products that are not listed in the catalogue."
-              action={
-                <div className="flex flex-wrap justify-center gap-3">
-                  <ButtonLink href="/products" variant="outline">
-                    Clear filters
-                  </ButtonLink>
-                  <ButtonLink href="/contact">Ask us to source it</ButtonLink>
-                </div>
-              }
-            />
-          ) : (
-            <>
-              <ProductGrid products={items} />
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                buildHref={(target) => buildCatalogueHref(params, { page: target })}
-              />
-            </>
-          )}
-
-          <div className="mt-14 rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
-            <h2 className="text-[1.25rem]">Cannot find what you need?</h2>
-            <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-600">
-              This catalogue lists our most-requested licensing. We source considerably more
-              than is listed here, including hardware configurations and publisher products that
-              are only ever quoted. Tell us the requirement and we will price it.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <ButtonLink href="/enquiry">Request enterprise pricing</ButtonLink>
-              <ButtonLink href="/contact" variant="outline">
-                Talk to a specialist
-              </ButtonLink>
-            </div>
-          </div>
-        </section>
+      <div className="mt-14 rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
+        <h2 className="text-[1.25rem]">Cannot find what you need?</h2>
+        <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-600">
+          This catalogue lists our most-requested licensing. We source considerably more than is
+          listed here, including hardware configurations and publisher products that are only
+          ever quoted. Tell us the requirement and we will price it.
+        </p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <ButtonLink href="/enquiry">Request enterprise pricing</ButtonLink>
+          <ButtonLink href="/contact" variant="outline">
+            Talk to a specialist
+          </ButtonLink>
+          <ButtonLink href="/hardware" variant="outline">
+            Business laptops &amp; desktops
+          </ButtonLink>
+        </div>
       </div>
     </div>
   );

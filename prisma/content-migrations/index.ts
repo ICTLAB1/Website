@@ -1,4 +1,5 @@
 import { brandLogos } from "./2026-08-brand-logos";
+import { hardwareCatalogue } from "./2026-08-hardware-catalogue";
 import { homepageAndCertifications } from "./2026-08-homepage-and-certifications";
 import type { ContentMigration } from "./types";
 
@@ -13,6 +14,7 @@ import type { ContentMigration } from "./types";
 export const contentMigrations: ContentMigration[] = [
   homepageAndCertifications,
   brandLogos,
+  hardwareCatalogue,
 ];
 
 export type { ContentMigration };

@@ -6,6 +6,8 @@ import { discountPercent, effectivePriceMinor, formatTerm } from "@/lib/money";
 import { showPrice, statesTaxSeparately, type PriceDisplay } from "@/lib/price-display";
 import { getDisplayCurrency } from "@/lib/display-currency";
 import { humanise } from "@/lib/utils";
+import { hardwareClassLabel, isHardware } from "@/lib/catalogue/hardware";
+import { ProductPhoto } from "@/components/catalogue/product-photo";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 
 /**
@@ -28,11 +30,38 @@ export function ProductCard({
   const variant = product.variants[0];
   const price = variant ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) : 0;
   const saving = variant ? discountPercent(variant.listPriceMinor, variant.salePriceMinor) : null;
-  const quoteOnly = !variant || price <= 0 || product.purchaseMode === "ENQUIRY";
+  const hardware = isHardware(product);
+
+  /*
+   * Hardware is quote-only here, not merely quote-only by configuration.
+   *
+   * A hardware row is imported with `purchaseMode: ENQUIRY` and no price, so
+   * the general test below would already catch it. This adds `hardware ||`
+   * anyway, because "no price on hardware" is a requirement of the business
+   * rather than a property of a row: one mis-imported record, or one price set
+   * by hand in the admin panel to note a cost, and the general test would put a
+   * figure on a public card. The card cannot be made to show one.
+   */
+  const quoteOnly = hardware || !variant || price <= 0 || product.purchaseMode === "ENQUIRY";
   const canBuyDirect = !quoteOnly && variant != null;
 
+  /*
+   * Hardware and licensing on one card.
+   *
+   * The differences are narrow and worth keeping in one component: a
+   * photograph, and series and form factor where a licence type and term would
+   * be. Everything else — the brand line, the name, the description, the
+   * enquiry button — is identical, and a second card component would be two
+   * copies of that drifting apart. The homepage, brand pages and search results
+   * all render mixed grids, so this has to hold both anyway.
+   */
   return (
     <article className="group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white transition-colors hover:border-line-strong">
+      {hardware ? (
+        <div className="border-b border-line p-4 pb-0">
+          <ProductPhoto src={product.imageUrl} alt={product.name} />
+        </div>
+      ) : null}
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-start justify-between gap-3">
           <Link
@@ -56,7 +85,26 @@ export function ProductCard({
           {product.shortDescription}
         </p>
 
-        {variant ? (
+        {hardware ? (
+          <dl className="mt-4 space-y-1 text-label">
+            {product.series ? (
+              <div className="flex gap-2">
+                <dt className="w-20 shrink-0 text-ink-500">Series</dt>
+                <dd className="text-ink-600">{product.series}</dd>
+              </div>
+            ) : null}
+            <div className="flex gap-2">
+              <dt className="w-20 shrink-0 text-ink-500">Type</dt>
+              <dd className="text-ink-600">{hardwareClassLabel(product.formFactor!)}</dd>
+            </div>
+            {variant ? (
+              <div className="flex gap-2">
+                <dt className="w-20 shrink-0 text-ink-500">Part no.</dt>
+                <dd className="truncate font-mono text-ink-600">{variant.sku}</dd>
+              </div>
+            ) : null}
+          </dl>
+        ) : variant ? (
           <dl className="mt-4 space-y-1 text-label">
             <div className="flex gap-2">
               <dt className="w-20 shrink-0 text-ink-500">SKU</dt>
@@ -76,9 +124,11 @@ export function ProductCard({
         <div className="mt-auto pt-5">
           {quoteOnly ? (
             <p className="text-body font-semibold text-graphite-900">
-              Price on enquiry
+              {hardware ? "Request a quote" : "Price on enquiry"}
               <span className="mt-0.5 block text-label font-normal text-ink-500">
-                Quoted against your configuration
+                {hardware
+                  ? "Priced to your configuration and quantity"
+                  : "Quoted against your configuration"}
               </span>
             </p>
           ) : (

@@ -21,6 +21,12 @@ const VALID_SORTS = new Set(SORT_OPTIONS.map((option) => option.value));
 
 export type RawSearchParams = Record<string, string | string[] | undefined>;
 
+/** `laptops` or `desktops`, and nothing else. */
+function familyOf(value: string | string[] | undefined): "laptops" | "desktops" | undefined {
+  const raw = Array.isArray(value) ? value[0] : value;
+  return raw === "laptops" || raw === "desktops" ? raw : undefined;
+}
+
 function toArray(value: string | string[] | undefined): string[] {
   if (!value) return [];
   const values = Array.isArray(value) ? value : value.split(",");
@@ -52,6 +58,12 @@ export function parseCatalogueParams(params: RawSearchParams): CatalogueFilters 
     brand: toArray(params.brand),
     category: toArray(params.category),
     licenceType: toArray(params.licence).map((value) => value.toUpperCase().replace(/-/g, "_")),
+    // Both pass through `toArray`, so both are already constrained to plain
+    // slugs; the query layer then checks the form factor against the enum and
+    // parameterises the series. Neither reaches SQL as a string.
+    formFactor: toArray(params.form),
+    series: toArray(params.series),
+    family: familyOf(params.family),
     availability: toArray(params.availability).map((value) => value.toUpperCase().replace(/-/g, "_")),
     minPriceMinor: toPriceMinor(params.min),
     maxPriceMinor: toPriceMinor(params.max),
@@ -110,32 +122,55 @@ export function isFacetActive(current: RawSearchParams, key: string, value: stri
 /** Chips shown above the results so active filters are always visible. */
 export function activeFilterChips(
   current: RawSearchParams,
-  labels: { brands: Map<string, string>; categories: Map<string, string> },
+  labels: {
+    brands: Map<string, string>;
+    categories: Map<string, string>;
+    /**
+     * The listing these chips belong to. Without it a chip removed on
+     * `/hardware` rebuilds its link against `/products` and moves the visitor
+     * into a different catalogue — which reads as the filter having done
+     * something far stranger than it did.
+     */
+    basePath?: string;
+  },
 ): Array<{ label: string; removeHref: string }> {
   const chips: Array<{ label: string; removeHref: string }> = [];
+  const base = labels.basePath;
 
   for (const slug of toArray(current.brand)) {
     chips.push({
       label: labels.brands.get(slug) ?? slug,
-      removeHref: toggleFacetHref(current, "brand", slug),
+      removeHref: toggleFacetHref(current, "brand", slug, base),
     });
   }
   for (const slug of toArray(current.category)) {
     chips.push({
       label: labels.categories.get(slug) ?? slug,
-      removeHref: toggleFacetHref(current, "category", slug),
+      removeHref: toggleFacetHref(current, "category", slug, base),
     });
   }
   for (const value of toArray(current.licence)) {
     chips.push({
       label: value.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()),
-      removeHref: toggleFacetHref(current, "licence", value),
+      removeHref: toggleFacetHref(current, "licence", value, base),
     });
   }
   for (const value of toArray(current.availability)) {
     chips.push({
       label: value.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()),
-      removeHref: toggleFacetHref(current, "availability", value),
+      removeHref: toggleFacetHref(current, "availability", value, base),
+    });
+  }
+  for (const value of toArray(current.form)) {
+    chips.push({
+      label: value.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()),
+      removeHref: toggleFacetHref(current, "form", value, base),
+    });
+  }
+  for (const value of toArray(current.series)) {
+    chips.push({
+      label: value.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()),
+      removeHref: toggleFacetHref(current, "series", value, base),
     });
   }
   const min = Array.isArray(current.min) ? current.min[0] : current.min;
@@ -143,7 +178,7 @@ export function activeFilterChips(
   if (min || max) {
     chips.push({
       label: `Price ${min ? `₹${min}` : "0"} – ${max ? `₹${max}` : "any"}`,
-      removeHref: buildCatalogueHref(current, { min: null, max: null }),
+      removeHref: buildCatalogueHref(current, { min: null, max: null }, base),
     });
   }
 

@@ -178,16 +178,16 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 5,
         "visible": true,
         "data": {
-          "eyebrow": "IT hardware",
-          "heading": "Servers, storage, networking and workstations",
-          "description": "Hardware supplied alongside the software that runs on it, on the same quotation and the same purchase order.",
+          "eyebrow": "Business laptops & desktops",
+          "heading": "Commercial computers from HP, Lenovo and Acer",
+          "description": "Business-class laptops, desktops and workstations for enterprise, government, PSU, education and corporate requirements — sourced from the manufacturers and quoted alongside the licensing that goes on them. Priced to your configuration and quantity rather than listed.",
           "source": "category",
           "ref": "infrastructure-hardware",
           "slugs": [],
-          "limit": 6,
+          "limit": 4,
           "action": {
-            "label": "All hardware",
-            "href": "/products?category=infrastructure-hardware"
+            "label": "Explore business computers",
+            "href": "/hardware"
           }
         }
       },
@@ -7921,6 +7921,123 @@ export const pageSeeds: PageSeed[] = [
 ];
 
 export const navigationSeeds: NavigationSeed[] = [
+  {
+    "key": "header:hardware",
+    "parentKey": null,
+    "menu": "HEADER",
+    "label": "Hardware",
+    "href": "/hardware",
+    "description": null,
+    "displayOrder": 15
+  },
+  {
+    "key": "header:hardware.laptops",
+    "parentKey": "header:hardware",
+    "menu": "HEADER",
+    "label": "Business laptops",
+    "href": "/hardware?family=laptops",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:hardware.laptops.hp",
+    "parentKey": "header:hardware.laptops",
+    "menu": "HEADER",
+    "label": "HP laptops",
+    "href": "/hardware?family=laptops&brand=hp",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:hardware.laptops.lenovo",
+    "parentKey": "header:hardware.laptops",
+    "menu": "HEADER",
+    "label": "Lenovo laptops",
+    "href": "/hardware?family=laptops&brand=lenovo",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:hardware.laptops.acer",
+    "parentKey": "header:hardware.laptops",
+    "menu": "HEADER",
+    "label": "Acer laptops",
+    "href": "/hardware?family=laptops&brand=acer",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:hardware.desktops",
+    "parentKey": "header:hardware",
+    "menu": "HEADER",
+    "label": "Business desktops",
+    "href": "/hardware?family=desktops",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:hardware.desktops.hp",
+    "parentKey": "header:hardware.desktops",
+    "menu": "HEADER",
+    "label": "HP desktops",
+    "href": "/hardware?family=desktops&brand=hp",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:hardware.desktops.lenovo",
+    "parentKey": "header:hardware.desktops",
+    "menu": "HEADER",
+    "label": "Lenovo desktops",
+    "href": "/hardware?family=desktops&brand=lenovo",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:hardware.desktops.acer",
+    "parentKey": "header:hardware.desktops",
+    "menu": "HEADER",
+    "label": "Acer desktops",
+    "href": "/hardware?family=desktops&brand=acer",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:hardware.workstations",
+    "parentKey": "header:hardware",
+    "menu": "HEADER",
+    "label": "Workstations",
+    "href": "/hardware?form=mobile-workstation&form=desktop-workstation",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:hardware.workstations.mobile",
+    "parentKey": "header:hardware.workstations",
+    "menu": "HEADER",
+    "label": "Mobile workstations",
+    "href": "/hardware?form=mobile-workstation",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:hardware.workstations.desktop",
+    "parentKey": "header:hardware.workstations",
+    "menu": "HEADER",
+    "label": "Desktop workstations",
+    "href": "/hardware?form=desktop-workstation",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:hardware.workstations.all",
+    "parentKey": "header:hardware.workstations",
+    "menu": "HEADER",
+    "label": "All business computers",
+    "href": "/hardware",
+    "description": null,
+    "displayOrder": 30
+  },
   {
     "key": "header:products",
     "parentKey": null,
