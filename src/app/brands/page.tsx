@@ -7,8 +7,19 @@ import { ButtonLink } from "@/components/ui/button";
 import { getBrands } from "@/lib/queries/content";
 import { buildMetadata } from "@/lib/seo";
 
+/*
+ * The title says "supply", not "authorised to resell".
+ *
+ * It used to say the latter, written when this page listed eight brands. It now
+ * lists forty, added so buyers can see the breadth of what can go on one
+ * quotation — and several publishers tie the words "authorised reseller" to a
+ * specific programme enrolment. A page title is a claim like any other, and
+ * this one would be making it forty times over on the strength of a list.
+ *
+ * Narrow it per brand where the enrolment is real; do not widen it here.
+ */
 export const metadata: Metadata = buildMetadata({
-  title: "Technology Brands We Are Authorised to Resell",
+  title: "Technology Brands We Supply",
   description:
     "Licensing and solutions across Microsoft, Adobe, Autodesk, Zoho, SketchUp, Corel, HPE and Dell Technologies — consolidated into a single procurement relationship.",
   path: "/brands",

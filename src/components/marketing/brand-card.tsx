@@ -26,6 +26,18 @@ function BrandMark({ brand, size }: { brand: BrandArtwork; size: "sm" | "md" }) 
   const logo = safeBrandLogo(brand.logoUrl);
   const box = size === "md" ? "h-9 w-9" : "h-5 w-5";
 
+  /*
+   * A logo gets a fixed height and a free width; the wordmark tile gets a
+   * square. That difference is the whole reason this is not one class name.
+   *
+   * Publishers' marks are not square. Some are close (Dropbox, Red Hat), and
+   * several are long wordmarks six or seven times wider than they are tall
+   * (VMware, SAP, Kaspersky, Synology). `object-contain` inside a square box
+   * fits a 7:1 wordmark by its *width*, which leaves it five pixels tall and
+   * unreadable — the artwork is there, correct, and useless.
+   */
+  const mark = size === "md" ? "h-8 w-auto max-w-[6.5rem]" : "h-4 w-auto max-w-[4.5rem]";
+
   if (logo) {
     return (
       /*
@@ -37,10 +49,16 @@ function BrandMark({ brand, size }: { brand: BrandArtwork; size: "sm" | "md" }) 
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={logo}
-        // The name, not "logo": a screen reader announcing "Microsoft" is the
-        // useful reading, and the surrounding link already says it is a brand.
-        alt={brand.name}
-        className={`${box} shrink-0 rounded-[--radius-sm] object-contain`}
+        /*
+         * Empty, deliberately. Both places that render a mark print the brand's
+         * name in text right beside it, so `alt="Microsoft"` makes a screen
+         * reader say "Microsoft Microsoft" — which axe-core reports as
+         * `image-redundant-alt` and a person using one hears as noise. The mark
+         * carries no information the sighted reader does not also get from the
+         * word; that is the definition of decorative.
+         */
+        alt=""
+        className={`${mark} shrink-0 object-contain object-left`}
         loading="lazy"
         decoding="async"
       />

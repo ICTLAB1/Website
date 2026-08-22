@@ -2,8 +2,13 @@
  * Brand catalogue.
  *
  * Copy here is written for this application. Brand names and product names are
- * used descriptively to identify the software being resold; no publisher marketing
- * text, imagery or logo asset is reproduced.
+ * used descriptively to identify the software being resold; no publisher
+ * marketing text is reproduced.
+ *
+ * Logos are a separate question, answered in `public/brands/README.md`. Where
+ * this repository holds a publisher's mark, the brand points at it; where it
+ * does not, the brand keeps a lettered wordmark. Approximating a logo is not
+ * one of the options.
  */
 export type BrandSeed = {
   slug: string;
@@ -12,6 +17,15 @@ export type BrandSeed = {
   summary: string;
   description: string;
   logoText: string;
+  /**
+   * A file in `public/brands/`, or null for the lettered wordmark.
+   *
+   * Only set where this repository actually holds the publisher's artwork.
+   * See `public/brands/README.md` — a brand with no file keeps the wordmark,
+   * which is the intended fallback rather than a gap to be filled with
+   * something approximate.
+   */
+  logoUrl?: string;
   accentColor: string;
   displayOrder: number;
   featured: boolean;
@@ -46,6 +60,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "autodesk",
+    logoUrl: "/brands/autodesk.svg",
     name: "Autodesk",
     tagline: "Design, engineering and construction software",
     summary:
@@ -59,6 +74,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "zoho",
+    logoUrl: "/brands/zoho.svg",
     name: "Zoho",
     tagline: "Business applications for sales, finance and support",
     summary:
@@ -72,6 +88,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "sketchup",
+    logoUrl: "/brands/sketchup.svg",
     name: "SketchUp",
     tagline: "3D modelling for architecture and interiors",
     summary:
@@ -111,6 +128,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "dell",
+    logoUrl: "/brands/dell.svg",
     name: "Dell Technologies",
     tagline: "Enterprise compute, storage and workstations",
     summary:
@@ -134,6 +152,7 @@ export const brands: BrandSeed[] = [
    */
   {
     slug: "vmware",
+    logoUrl: "/brands/vmware.svg",
     name: "VMware",
     tagline: "Virtualisation and private cloud",
     summary:
@@ -147,6 +166,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "red-hat",
+    logoUrl: "/brands/red-hat.svg",
     name: "Red Hat",
     tagline: "Enterprise Linux and open-source platforms",
     summary:
@@ -186,6 +206,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "sap",
+    logoUrl: "/brands/sap.svg",
     name: "SAP",
     tagline: "Enterprise resource planning",
     summary:
@@ -212,6 +233,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "atlassian",
+    logoUrl: "/brands/atlassian.svg",
     name: "Atlassian",
     tagline: "Software delivery and collaboration",
     summary:
@@ -225,6 +247,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "jetbrains",
+    logoUrl: "/brands/jetbrains.svg",
     name: "JetBrains",
     tagline: "Developer tools",
     summary:
@@ -238,6 +261,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "dropbox",
+    logoUrl: "/brands/dropbox.svg",
     name: "Dropbox",
     tagline: "File storage and sharing",
     summary:
@@ -264,6 +288,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "mcafee",
+    logoUrl: "/brands/mcafee.svg",
     name: "McAfee",
     tagline: "Endpoint and data protection",
     summary:
@@ -277,6 +302,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "kaspersky",
+    logoUrl: "/brands/kaspersky.svg",
     name: "Kaspersky",
     tagline: "Endpoint security",
     summary:
@@ -290,6 +316,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "bitdefender",
+    logoUrl: "/brands/bitdefender.svg",
     name: "Bitdefender",
     tagline: "Endpoint and cloud workload security",
     summary:
@@ -316,6 +343,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "trend-micro",
+    logoUrl: "/brands/trend-micro.svg",
     name: "Trend Micro",
     tagline: "Hybrid cloud and endpoint security",
     summary:
@@ -342,6 +370,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "fortinet",
+    logoUrl: "/brands/fortinet.svg",
     name: "Fortinet",
     tagline: "Network security",
     summary:
@@ -355,6 +384,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "cisco",
+    logoUrl: "/brands/cisco.svg",
     name: "Cisco",
     tagline: "Networking and network security",
     summary:
@@ -394,6 +424,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "lenovo",
+    logoUrl: "/brands/lenovo.svg",
     name: "Lenovo",
     tagline: "Servers, workstations and laptops",
     summary:
@@ -407,6 +438,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "hp",
+    logoUrl: "/brands/hp.svg",
     name: "HP",
     tagline: "Workstations, laptops and printing",
     summary:
@@ -420,6 +452,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "acer",
+    logoUrl: "/brands/acer.svg",
     name: "Acer",
     tagline: "Laptops, desktops and displays",
     summary:
@@ -433,6 +466,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "asus",
+    logoUrl: "/brands/asus.svg",
     name: "ASUS",
     tagline: "Laptops, workstations and components",
     summary:
@@ -446,6 +480,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "intel",
+    logoUrl: "/brands/intel.svg",
     name: "Intel",
     tagline: "Processors and platform technology",
     summary:
@@ -459,6 +494,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "amd",
+    logoUrl: "/brands/amd.svg",
     name: "AMD",
     tagline: "Processors and accelerators",
     summary:
@@ -472,6 +508,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "nvidia",
+    logoUrl: "/brands/nvidia.svg",
     name: "NVIDIA",
     tagline: "GPUs and accelerated computing",
     summary:
@@ -485,6 +522,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "synology",
+    logoUrl: "/brands/synology.svg",
     name: "Synology",
     tagline: "Network-attached storage and backup",
     summary:
@@ -524,6 +562,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "bentley-systems",
+    logoUrl: "/brands/bentley-systems.svg",
     name: "Bentley Systems",
     tagline: "Infrastructure engineering software",
     summary:
@@ -537,6 +576,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "dassault-systemes",
+    logoUrl: "/brands/dassault-systemes.svg",
     name: "Dassault Systèmes",
     tagline: "Product design and simulation",
     summary:

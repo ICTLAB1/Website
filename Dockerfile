@@ -44,13 +44,12 @@ COPY --from=build /app/public ./public
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/next.config.ts ./next.config.ts
 COPY --from=build /app/tsconfig.json ./tsconfig.json
+# Carries the schema, the seed, and the content migrations the entrypoint runs.
 COPY --from=build /app/prisma ./prisma
-# One-shot maintenance scripts, run with `docker compose exec app node …`.
-# They exist because the entrypoint seeds only an empty database — which is
-# right, since it must never overwrite content edited in the admin panel, and
-# which means a correction to seeded copy has to be applied to a running
-# deployment deliberately rather than by redeploying. See
-# scripts/audit/apply-content-fixes.mjs.
+# Older one-shot corrections, kept for the record and runnable with
+# `docker compose exec app node scripts/audit/…`. Content changes are no longer
+# written this way: they go in prisma/content-migrations/ and are applied by the
+# entrypoint, so a deploy is the whole operation. See the note there.
 COPY --from=build /app/scripts/audit ./scripts/audit
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh

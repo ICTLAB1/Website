@@ -92,8 +92,9 @@ export async function Footer() {
             {config.cin ? <span className="ml-2 font-mono">CIN {config.cin}</span> : null}
           </p>
           <p className="max-w-2xl text-graphite-300">
-            Third-party product names and trademarks are the property of their respective
-            owners and are used here only to identify the software supplied.
+            Third-party product names, logos and trademarks are the property of their
+            respective owners and are used here only to identify the software and
+            hardware supplied.
           </p>
         </div>
       </div>

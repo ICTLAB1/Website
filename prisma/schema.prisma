@@ -1192,3 +1192,32 @@ enum PaymentStatus {
   /// Returned to the customer after capture.
   REFUNDED
 }
+
+/// A content change that has been applied to this database.
+///
+/// The schema has `prisma migrate` for structure; this is the equivalent for
+/// the rows structure holds. It exists because of one true and easily missed
+/// fact: **the container seeds only a database with no pages.** That guard is
+/// right — a redeploy must never overwrite copy someone edited in the admin
+/// panel — and its consequence is that a release which changes seeded content
+/// arrives at a live site as new code and old rows. Nothing is broken, nothing
+/// logs an error, and the site simply keeps showing what it showed yesterday.
+///
+/// So a change to seeded content is written twice: into the seed, for databases
+/// that do not exist yet, and as a content migration, for the one that is
+/// already serving. Each is applied at most once and recorded here, which is
+/// what lets an administrator's later edits stand: the migration that set a
+/// section has already run, and will not run again to undo them.
+model ContentMigration {
+  /// The migration's own name, e.g. `2026-08-homepage-sections`. Chosen by
+  /// hand rather than generated, because it has to be readable in a log that
+  /// somebody reads while wondering why a deploy did or did not change a page.
+  id String @id
+
+  /// What it did, in the words it printed at the time. Kept so the question
+  /// "did this deploy apply the homepage change?" has an answer in the
+  /// database rather than in a scrollback buffer that is long gone.
+  summary String
+
+  appliedAt DateTime @default(now())
+}

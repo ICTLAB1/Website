@@ -1,4 +1,9 @@
+import { existsSync, readdirSync } from "node:fs";
+import { join } from "node:path";
+
 import { describe, expect, it } from "vitest";
+
+import { brands } from "../prisma/seed-data/brands";
 import { safeBrandLogo } from "@/lib/brand-logo";
 
 /**
@@ -73,5 +78,50 @@ describe("what is refused", () => {
 
   it("refuses an absurdly long value rather than rendering it", () => {
     expect(safeBrandLogo(`/brands/${"a".repeat(400)}.svg`)).toBeNull();
+  });
+});
+
+/**
+ * The seed and the files on disk, checked against each other.
+ *
+ * A brand pointing at a file that is not there renders a broken image on the
+ * public site — the one failure mode that looks worse than the wordmark this
+ * feature was built to replace. Nothing at runtime catches it: `safeBrandLogo`
+ * asks whether a path is *permissible*, not whether it *resolves*.
+ */
+describe("the brand logos this repository ships", () => {
+  const seeded = brands.filter(
+    (brand): brand is typeof brand & { logoUrl: string } => Boolean(brand.logoUrl),
+  );
+
+  it("is a set of brands large enough to be worth having", () => {
+    expect(seeded.length).toBeGreaterThan(20);
+  });
+
+  it("points every brand at a file that exists", () => {
+    const missing = seeded
+      .filter((brand) => !existsSync(join(process.cwd(), "public", brand.logoUrl)))
+      .map((brand) => `${brand.slug} → ${brand.logoUrl}`);
+
+    expect(missing).toEqual([]);
+  });
+
+  it("points every brand at a path the renderer will accept", () => {
+    // Belt and braces: the seed is written by hand, and a value the renderer
+    // refuses would fall back to the wordmark silently.
+    const refused = seeded
+      .filter((brand) => safeBrandLogo(brand.logoUrl) === null)
+      .map((brand) => brand.slug);
+
+    expect(refused).toEqual([]);
+  });
+
+  it("ships no file that no brand points at", () => {
+    const claimed = new Set(seeded.map((brand) => brand.logoUrl.replace("/brands/", "")));
+    const orphans = readdirSync(join(process.cwd(), "public", "brands"))
+      .filter((name) => name.endsWith(".svg"))
+      .filter((name) => !claimed.has(name));
+
+    expect(orphans).toEqual([]);
   });
 });

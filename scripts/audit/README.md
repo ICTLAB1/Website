@@ -1,5 +1,10 @@
 # One-shot content corrections
 
+> **Superseded.** New content changes go in `prisma/content-migrations/`, which
+> the container entrypoint applies on every start. Nothing here needs running
+> by hand any more; the scripts are kept because they are the record of what was
+> corrected and when.
+
 Scripts that correct **data**, not code.
 
 They exist because of a deliberate property of the deployment: the container
@@ -9,23 +14,20 @@ release which corrects *seeded copy* reaches a running deployment as new code
 and old text. Wording, removed blocks and rewritten page descriptions all live
 in rows.
 
-Run them all, in order, with:
+The flaw was never the diagnosis; it was leaving the remedy as a command
+somebody had to remember, on a server, after a deploy that reported success.
+Three separate "the new section isn't showing" reports came from exactly that
+gap. So the mechanism moved into the deploy itself — same idea, same rules,
+applied automatically and recorded in a `ContentMigration` row. See
+`prisma/content-migrations/types.ts`.
+
+To run the old ones anyway, against a local database:
 
 ```bash
 node scripts/audit/apply-content-fixes.mjs
 ```
 
-or on a deployed site, per `deploy/README.md`:
-
-```bash
-docker compose -f docker-compose.prod.yml exec app \
-  node scripts/audit/apply-content-fixes.mjs
-docker compose -f docker-compose.prod.yml restart app
-```
-
-The restart is required. Page content is cached under tags invalidated when the
-admin panel writes; a script writing straight to the database cannot invalidate
-anything, so the old text keeps being served until each entry ages out.
+They are no-ops on a database seeded from the current release.
 
 | Script | What it corrects |
 | --- | --- |

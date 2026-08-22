@@ -16,6 +16,8 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
+    "content:migrate": "tsx prisma/content-migrate.ts",
+    "content:status": "tsx prisma/content-migrate.ts --status",
     "db:reset": "prisma migrate reset --force",
     "verify:responsive": "node scripts/verify/responsive.mjs",
     "verify:a11y": "node scripts/verify/accessibility.mjs",
