@@ -78,6 +78,51 @@
   --font-serif: ui-serif, Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
+  /* ---------------------------------------------------------------------
+     Type scale
+
+     Named by the job, not the size. Before this existed the components had
+     grown seventeen distinct sizes between them — nine for headings alone,
+     including 1.75rem, 1.85rem and 1.9rem, which are the same size to every
+     reader and only differ to whoever typed them. Sections therefore did not
+     line up with one another, and there was no way to tell whether a new
+     number was a considered choice or a guess.
+
+     Nine roles replace them. A heading picks the role it plays on the page;
+     the size follows from that, and changing the scale is one edit here
+     rather than a search across every block.
+
+     Each entry carries its own line height, because the right leading for a
+     48px display line is not a scaled version of the right leading for 13px
+     of small print.
+  --------------------------------------------------------------------- */
+  /*
+   * Headings are fluid rather than stepped.
+   *
+   * `clamp()` puts the responsive behaviour inside the token, which is what
+   * makes the scale hold: previously every heading carried its own
+   * `sm:` and `lg:` overrides, and no two blocks chose the same ones — a
+   * section heading was 2rem in one block, 1.9 in the next and 1.5 in a third,
+   * all at the same viewport. There is now nothing left to disagree about.
+   */
+  --text-display: clamp(2rem, 1.35rem + 2.8vw, 3rem);   /* Hero. One per page. */
+  --text-display--line-height: 1.08;
+  --text-title: clamp(1.75rem, 1.4rem + 1.5vw, 2.25rem); /* Page title (h1).   */
+  --text-title--line-height: 1.15;
+  --text-section: clamp(1.5rem, 1.3rem + 0.9vw, 1.75rem); /* Section (h2).     */
+  --text-section--line-height: 1.22;
+  --text-subsection: 1.25rem;        /* Sub-heading inside a section (h3).    */
+  --text-subsection--line-height: 1.3;
+
+  --text-lead: 1.0625rem;            /* Intro paragraph under a heading.      */
+  --text-lead--line-height: 1.65;
+  --text-body: 0.9375rem;            /* Default running text.                 */
+  --text-body--line-height: 1.65;
+  --text-meta: 0.8125rem;            /* Secondary detail, card copy.          */
+  --text-meta--line-height: 1.6;
+  --text-label: 0.75rem;             /* Eyebrows, table headers, small print. */
+  --text-label--line-height: 1.5;
+
   --radius-xs: 2px;
   --radius-sm: 3px;
   --radius-md: 4px;

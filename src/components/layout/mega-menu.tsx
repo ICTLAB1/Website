@@ -133,7 +133,7 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                               <Link
                                 href={column.href}
                                 onClick={() => setOpenIndex(null)}
-                                className="mb-3 block text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700 hover:underline"
+                                className="mb-3 block text-label font-semibold uppercase tracking-[0.1em] text-accent-700 hover:underline"
                               >
                                 {column.heading}
                               </Link>
@@ -143,7 +143,7 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                                     <Link
                                       href={link.href}
                                       onClick={() => setOpenIndex(null)}
-                                      className="block text-[13px] leading-snug text-ink-700 hover:text-accent-700 hover:underline"
+                                      className="block text-meta leading-snug text-ink-700 hover:text-accent-700 hover:underline"
                                     >
                                       {link.label}
                                     </Link>
@@ -154,13 +154,13 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                           ))}
                         </div>
                         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
-                          <p className="text-[13px] text-ink-500">
+                          <p className="text-meta text-ink-500">
                             Buying for a team? Consolidate multiple brands onto one quotation.
                           </p>
                           <Link
                             href="/enterprise"
                             onClick={() => setOpenIndex(null)}
-                            className="text-[13px] font-semibold text-accent-700 hover:underline"
+                            className="text-meta font-semibold text-accent-700 hover:underline"
                           >
                             Enterprise procurement &rarr;
                           </Link>
@@ -179,7 +179,7 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                                 {link.label}
                               </span>
                               {link.description ? (
-                                <span className="mt-0.5 block text-[12px] text-ink-500">
+                                <span className="mt-0.5 block text-label text-ink-500">
                                   {link.description}
                                 </span>
                               ) : null}

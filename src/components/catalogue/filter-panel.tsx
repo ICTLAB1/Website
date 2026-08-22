@@ -79,7 +79,7 @@ function bandLabel(band: { min?: string; max?: string }, display: PriceDisplay):
 function FacetGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="border-b border-line py-5 first:pt-0 last:border-b-0">
-      <h3 className="mb-3 text-[12px] font-semibold uppercase tracking-[0.1em] text-ink-500">
+      <h3 className="mb-3 text-label font-semibold uppercase tracking-[0.1em] text-ink-500">
         {title}
       </h3>
       {children}
@@ -104,7 +104,7 @@ function FacetLink({
     <li>
       <Link
         href={href}
-        className={`flex items-center gap-2.5 rounded-[--radius-sm] px-2 py-1.5 text-[13px] transition-colors ${
+        className={`flex items-center gap-2.5 rounded-[--radius-sm] px-2 py-1.5 text-meta transition-colors ${
           active ? "bg-accent-50 text-accent-800" : "text-ink-700 hover:bg-surface-muted"
         } ${indented ? "ml-3" : ""}`}
       >
@@ -125,7 +125,7 @@ function FacetLink({
             accessible name instead. */}
         <span className="sr-only">{active ? " — filter applied, activate to remove" : " — activate to apply filter"}</span>
         {typeof count === "number" ? (
-          <span className="shrink-0 text-[11px] tabular-nums text-ink-500">{count}</span>
+          <span className="shrink-0 text-label tabular-nums text-ink-500">{count}</span>
         ) : null}
       </Link>
     </li>
@@ -153,11 +153,11 @@ export async function FilterPanel({
   return (
     <div className="rounded-[--radius-lg] border border-line bg-white px-5 py-5">
       <div className="mb-1 flex items-center justify-between gap-3">
-        <h2 className="text-[15px] font-semibold text-graphite-900">Filters</h2>
+        <h2 className="text-body font-semibold text-graphite-900">Filters</h2>
         {hasFilters ? (
           <Link
             href={buildCatalogueHref({}, { q: Array.isArray(params.q) ? params.q[0] : params.q }, basePath)}
-            className="text-[12px] font-medium text-accent-700 hover:underline"
+            className="text-label font-medium text-accent-700 hover:underline"
           >
             Clear all
           </Link>

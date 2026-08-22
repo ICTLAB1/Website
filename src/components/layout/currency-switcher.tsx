@@ -42,7 +42,7 @@ export function CurrencySwitcher({
         name="currency"
         defaultValue={current}
         onChange={() => form.current?.requestSubmit()}
-        className="h-9 cursor-pointer rounded-[--radius-md] border border-line-strong bg-white px-2 text-[13px] font-medium text-graphite-900 transition-colors hover:border-graphite-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-600"
+        className="h-9 cursor-pointer rounded-[--radius-md] border border-line-strong bg-white px-2 text-meta font-medium text-graphite-900 transition-colors hover:border-graphite-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-600"
       >
         {options.map((option) => (
           <option key={option.code} value={option.code}>
@@ -59,7 +59,7 @@ export function CurrencySwitcher({
       <noscript>
         <button
           type="submit"
-          className="h-9 rounded-[--radius-md] border border-line-strong px-2 text-[13px] font-medium"
+          className="h-9 rounded-[--radius-md] border border-line-strong px-2 text-meta font-medium"
         >
           Go
         </button>

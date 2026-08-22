@@ -1,6 +1,10 @@
 import { chromium } from "playwright";
+import { firstPurchasableSku } from "./lib/live-sku.mjs";
 
 const BASE = "http://localhost:3000";
+
+// Discovered, not hardcoded — see lib/live-sku.mjs.
+const BUY_SKU = await firstPurchasableSku(BASE);
 const WIDTHS = [320, 360, 375, 390, 414, 430, 768, 1024, 1280, 1440, 1920];
 const PAGES = [
   ["home", "/"],
@@ -14,7 +18,7 @@ const PAGES = [
   ["contact", "/contact"],
   ["blog", "/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model"],
   ["login", "/login"],
-  ["buy", "/buy?sku=MS-M365-BS-A1"],
+  ["buy", `/buy?sku=${encodeURIComponent(BUY_SKU)}`],
   // The support page's accordion and the legal pages' date strip were both
   // rebuilt in this pass; neither page was in this sweep before.
   ["support", "/support"],

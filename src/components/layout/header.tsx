@@ -28,7 +28,7 @@ export async function Header() {
     <header className="sticky top-0 z-50 border-b border-line bg-white">
       {/* Utility bar */}
       <div className="hidden border-b border-graphite-800 bg-graphite-900 text-graphite-100 lg:block">
-        <div className="container-page flex h-9 items-center justify-between text-[12px]">
+        <div className="container-page flex h-9 items-center justify-between text-label">
           <p className="text-graphite-200">{config.tagline}</p>
           <nav aria-label="Utility">
             <ul className="flex items-center gap-5">

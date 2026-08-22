@@ -65,13 +65,13 @@ export function BlockHeading({
     return (
       <div className={cn("mb-8 max-w-3xl", align === "center" && "mx-auto text-center")}>
         {eyebrow ? (
-          <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-400">
+          <p className="mb-2 text-label font-semibold uppercase tracking-[0.12em] text-accent-400">
             {eyebrow}
           </p>
         ) : null}
-        {heading ? <h2 className="text-[1.75rem] text-white sm:text-[2rem]">{heading}</h2> : null}
+        {heading ? <h2 className="text-section text-white">{heading}</h2> : null}
         {description ? (
-          <p className="mt-3 text-[15px] leading-relaxed text-graphite-200">{description}</p>
+          <p className="mt-3 text-body leading-relaxed text-graphite-200">{description}</p>
         ) : null}
       </div>
     );

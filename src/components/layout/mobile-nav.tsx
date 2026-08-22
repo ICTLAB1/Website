@@ -149,7 +149,7 @@ export function MobileNav({
                               links: item.simpleMenu,
                             })
                           }
-                          className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px] font-medium text-graphite-900"
+                          className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-body font-medium text-graphite-900"
                         >
                           {item.label}
                           <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="text-ink-500">
@@ -157,14 +157,14 @@ export function MobileNav({
                           </svg>
                         </button>
                       ) : (
-                        <Link href={item.href} className="block px-4 py-3.5 text-[15px] font-medium text-graphite-900">
+                        <Link href={item.href} className="block px-4 py-3.5 text-body font-medium text-graphite-900">
                           {item.label}
                         </Link>
                       )}
                     </li>
                   ))}
                   <li>
-                    <Link href="/enterprise" className="block px-4 py-3.5 text-[15px] font-medium text-graphite-900">
+                    <Link href="/enterprise" className="block px-4 py-3.5 text-body font-medium text-graphite-900">
                       Enterprise
                     </Link>
                   </li>
@@ -190,7 +190,7 @@ export function MobileNav({
                 </ul>
               ) : current.kind === "section" ? (
                 <>
-                  <p className="px-4 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">
+                  <p className="px-4 pb-1 pt-4 text-label font-semibold uppercase tracking-[0.1em] text-ink-500">
                     {current.label}
                   </p>
                   <ul className="divide-y divide-line">
@@ -206,7 +206,7 @@ export function MobileNav({
                               links: [{ label: `All ${column.heading}`, href: column.href }, ...column.links],
                             })
                           }
-                          className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px] font-medium text-graphite-900"
+                          className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-body font-medium text-graphite-900"
                         >
                           {column.heading}
                           <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="text-ink-500">
@@ -218,9 +218,9 @@ export function MobileNav({
                     {current.links?.map((link) => (
                       <li key={link.href}>
                         <Link href={link.href} className="block px-4 py-3.5">
-                          <span className="block text-[15px] font-medium text-graphite-900">{link.label}</span>
+                          <span className="block text-body font-medium text-graphite-900">{link.label}</span>
                           {link.description ? (
-                            <span className="mt-0.5 block text-[13px] text-ink-500">{link.description}</span>
+                            <span className="mt-0.5 block text-meta text-ink-500">{link.description}</span>
                           ) : null}
                         </Link>
                       </li>
@@ -229,13 +229,13 @@ export function MobileNav({
                 </>
               ) : (
                 <>
-                  <p className="px-4 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">
+                  <p className="px-4 pb-1 pt-4 text-label font-semibold uppercase tracking-[0.1em] text-ink-500">
                     {current.label}
                   </p>
                   <ul className="divide-y divide-line">
                     {current.links.map((link) => (
                       <li key={link.href}>
-                        <Link href={link.href} className="block px-4 py-3.5 text-[15px] text-graphite-900">
+                        <Link href={link.href} className="block px-4 py-3.5 text-body text-graphite-900">
                           {link.label}
                         </Link>
                       </li>

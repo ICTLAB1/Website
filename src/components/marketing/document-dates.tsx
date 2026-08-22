@@ -51,7 +51,7 @@ export function DocumentDates({ page }: { page: CmsPage }) {
 
   return (
     <div className="container-page pt-6">
-      <dl className="flex flex-wrap gap-x-8 gap-y-2 border-b border-line pb-5 text-[13px] text-ink-600">
+      <dl className="flex flex-wrap gap-x-8 gap-y-2 border-b border-line pb-5 text-meta text-ink-600">
         <div className="flex gap-2">
           <dt className="text-ink-500">Effective from</dt>
           <dd>

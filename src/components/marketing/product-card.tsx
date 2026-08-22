@@ -37,14 +37,14 @@ export function ProductCard({
         <div className="flex items-start justify-between gap-3">
           <Link
             href={`/brands/${product.brand.slug}`}
-            className="text-[12px] font-semibold uppercase tracking-wide text-accent-700 hover:underline"
+            className="text-label font-semibold uppercase tracking-wide text-accent-700 hover:underline"
           >
             {product.brand.name}
           </Link>
           {saving ? <Badge tone="success">{saving}% off</Badge> : null}
         </div>
 
-        <h3 className="mt-2 text-[15px] font-semibold leading-snug text-graphite-900">
+        <h3 className="mt-2 text-body font-semibold leading-snug text-graphite-900">
           <Link href={`/products/${product.slug}`} className="hover:text-accent-700">
             {/* Stretching the link would swallow the buttons below, so the
                 anchor stays on the title only. */}
@@ -52,12 +52,12 @@ export function ProductCard({
           </Link>
         </h3>
 
-        <p className="clamp-2 mt-2 text-[13px] leading-relaxed text-ink-600">
+        <p className="clamp-2 mt-2 text-meta leading-relaxed text-ink-600">
           {product.shortDescription}
         </p>
 
         {variant ? (
-          <dl className="mt-4 space-y-1 text-[12px]">
+          <dl className="mt-4 space-y-1 text-label">
             <div className="flex gap-2">
               <dt className="w-20 shrink-0 text-ink-500">SKU</dt>
               <dd className="truncate font-mono text-ink-600">{variant.sku}</dd>
@@ -75,19 +75,19 @@ export function ProductCard({
 
         <div className="mt-auto pt-5">
           {quoteOnly ? (
-            <p className="text-[15px] font-semibold text-graphite-900">
+            <p className="text-body font-semibold text-graphite-900">
               Price on enquiry
-              <span className="mt-0.5 block text-[12px] font-normal text-ink-500">
+              <span className="mt-0.5 block text-label font-normal text-ink-500">
                 Quoted against your configuration
               </span>
             </p>
           ) : (
             <p className="flex flex-wrap items-baseline gap-2">
-              <span className="text-[19px] font-semibold text-graphite-900">
+              <span className="text-subsection font-semibold text-graphite-900">
                 {showPrice(price, variant!.gstRatePercent, display)}
               </span>
               {saving ? (
-                <span className="text-[13px] text-ink-500 line-through">
+                <span className="text-meta text-ink-500 line-through">
                   {showPrice(variant!.listPriceMinor, variant!.gstRatePercent, display)}
                 </span>
               ) : null}
@@ -98,7 +98,7 @@ export function ProductCard({
                 this card also appears in home-page grids, on brand pages and on
                 service pages, where nothing around it says so.
               */}
-              <span className="w-full text-[12px] text-ink-500">
+              <span className="w-full text-label text-ink-500">
                 {/*
                   The GST wording appears in rupees only.
                   A converted figure is the whole amount owed, so carrying
@@ -129,7 +129,7 @@ export function ProductCard({
       <div className="flex gap-2 border-t border-line p-3">
         <Link
           href={`/products/${product.slug}`}
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-[--radius-md] border border-line-strong text-[13px] font-medium text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50"
+          className="inline-flex h-10 flex-1 items-center justify-center rounded-[--radius-md] border border-line-strong text-meta font-medium text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50"
         >
           View details
         </Link>

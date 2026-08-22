@@ -14,6 +14,63 @@ import { cn } from "@/lib/utils";
 
 /** Text and layout blocks. Each renders one validated payload. */
 
+/**
+ * The texture behind a dark hero.
+ *
+ * Three layers, all CSS: a fine grid that fades out towards the text, a warm
+ * gold glow sitting off to the right where the copy is not, and a scatter of
+ * small nodes on the grid intersections. Nothing here loads a file or runs
+ * JavaScript, so it costs one paint and cannot fail to arrive.
+ *
+ * The mask is what makes it usable rather than merely decorative: the pattern
+ * is strongest on the empty right-hand side and fades to nothing under the
+ * headline, so contrast where the words are is exactly what it was before.
+ */
+function HeroPattern() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+      {/* The grid. 56px cells, one-pixel lines at 5% white. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, rgb(255 255 255 / 0.055) 1px, transparent 1px)," +
+            "linear-gradient(to bottom, rgb(255 255 255 / 0.055) 1px, transparent 1px)",
+          backgroundSize: "52px 52px",
+          maskImage:
+            "radial-gradient(90% 120% at 100% 30%, black 25%, rgb(0 0 0 / 0.35) 60%, transparent 85%)",
+          WebkitMaskImage:
+            "radial-gradient(90% 120% at 100% 30%, black 25%, rgb(0 0 0 / 0.35) 60%, transparent 85%)",
+        }}
+      />
+      {/* Gold nodes on a coarser interval, so the grid reads as a network. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 1px 1px, rgb(222 181 84 / 0.55) 1.5px, transparent 0)",
+          backgroundSize: "104px 104px",
+          maskImage:
+            "radial-gradient(80% 110% at 100% 28%, black 20%, rgb(0 0 0 / 0.4) 55%, transparent 80%)",
+          WebkitMaskImage:
+            "radial-gradient(80% 110% at 100% 28%, black 20%, rgb(0 0 0 / 0.4) 55%, transparent 80%)",
+        }}
+      />
+      {/* The glow. Off-centre right, well clear of the headline. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(46rem 30rem at 80% 18%, rgb(211 155 23 / 0.20), transparent 65%)," +
+            /* A cooler counterweight low and right, from the logo's sky blue,
+               so the panel has depth rather than one warm smear. */
+            "radial-gradient(38rem 26rem at 96% 92%, rgb(50 125 174 / 0.16), transparent 68%)",
+        }}
+      />
+    </div>
+  );
+}
+
 export function HeroBlock({
   data,
   counts,
@@ -23,13 +80,34 @@ export function HeroBlock({
 }) {
   const dark = data.tone === "dark";
   return (
-    <section className={dark ? "border-b border-graphite-800 bg-graphite-900" : "border-b border-line"}>
-      <div className="container-page py-14 lg:py-20">
+    <section
+      className={cn(
+        "relative isolate overflow-hidden",
+        dark ? "border-b border-graphite-800 bg-graphite-900" : "border-b border-line",
+      )}
+    >
+      {/*
+        The hero was a flat charcoal slab with the right-hand half empty, which
+        read as an unfinished page rather than a restrained one. This fills it
+        without a photograph: a field of thin gold lines and nodes, drawn in CSS
+        gradients rather than fetched.
+
+        Drawn rather than photographed on purpose. A stock image of a building
+        or a meeting says nothing true about this business, dates quickly, and
+        costs a licence and a download on every visit. Gradients cost nothing,
+        stay sharp at any size, and are made from the palette the rest of the
+        site already uses.
+
+        `aria-hidden` and `pointer-events-none`: it is texture, not content.
+      */}
+      {dark ? <HeroPattern /> : null}
+
+      <div className="container-page relative py-14 lg:py-20">
         <div className="max-w-3xl">
           {data.eyebrow ? (
             <p
               className={cn(
-                "mb-4 inline-flex items-center gap-2 rounded-[--radius-sm] px-3 py-1 text-[12px] font-medium",
+                "mb-4 inline-flex items-center gap-2 rounded-[--radius-sm] px-3 py-1 text-label font-medium",
                 dark
                   ? "border border-graphite-700 bg-graphite-800 text-graphite-200"
                   : "bg-accent-50 text-accent-800",
@@ -42,7 +120,7 @@ export function HeroBlock({
 
           <h1
             className={cn(
-              "animate-rise text-[2rem] leading-[1.14] sm:text-[2.6rem] lg:text-[3rem]",
+              "animate-rise text-display",
               dark ? "text-white" : "text-graphite-900",
             )}
           >
@@ -52,7 +130,7 @@ export function HeroBlock({
           {data.subheadline ? (
             <p
               className={cn(
-                "mt-5 max-w-2xl animate-rise text-[16px] leading-relaxed lg:text-[17px]",
+                "mt-5 max-w-2xl animate-rise text-lead",
                 dark ? "text-graphite-200" : "text-ink-600",
               )}
               style={{ animationDelay: "80ms" }}
@@ -88,7 +166,7 @@ export function HeroBlock({
                 placeholder="What software or solution are you looking for?"
               />
               {data.searchTerms.length > 0 ? (
-                <p className={cn("mt-3 text-[13px]", dark ? "text-graphite-300" : "text-ink-500")}>
+                <p className={cn("mt-3 text-meta", dark ? "text-graphite-300" : "text-ink-500")}>
                   Popular:{" "}
                   {data.searchTerms.map((term, index) => (
                     <span key={term}>
@@ -125,7 +203,7 @@ export function HeroBlock({
                 <div key={index}>
                   <dt
                     className={cn(
-                      "text-[12px] uppercase tracking-wide",
+                      "text-label uppercase tracking-wide",
                       dark ? "text-graphite-400" : "text-ink-500",
                     )}
                   >
@@ -161,8 +239,8 @@ export function RichTextBlock({
   return (
     <BlockSection tone={tone} continues={continues}>
       <Reveal className="max-w-3xl">
-        {data.heading ? <h2 className="mb-4 text-[1.5rem]">{data.heading}</h2> : null}
-        <Markdown body={data.markdown} className="prose-content text-[15px]" />
+        {data.heading ? <h2 className="mb-4 text-section">{data.heading}</h2> : null}
+        <Markdown body={data.markdown} className="prose-content text-body" />
       </Reveal>
     </BlockSection>
   );
@@ -180,10 +258,10 @@ export function BulletsBlock({
   return (
     <BlockSection tone={tone} continues={continues}>
       <Reveal className="max-w-3xl">
-        {data.heading ? <h2 className="mb-4 text-[1.5rem]">{data.heading}</h2> : null}
+        {data.heading ? <h2 className="mb-4 text-section">{data.heading}</h2> : null}
         <ul className="space-y-2.5">
           {data.items.map((item, index) => (
-            <li key={index} className="flex gap-3 text-[15px] leading-relaxed text-ink-700">
+            <li key={index} className="flex gap-3 text-body leading-relaxed text-ink-700">
               <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-600" />
               {item}
             </li>
@@ -217,19 +295,19 @@ export function CardsBlock({
         {data.items.map((item, index) => (
           <div key={index} className="rounded-[--radius-lg] border border-line bg-white p-5">
             {data.numbered && data.numberLabel ? (
-              <span className="block text-[12px] font-semibold uppercase tracking-wide text-accent-700">
+              <span className="block text-label font-semibold uppercase tracking-wide text-accent-700">
                 {data.numberLabel} {index + 1}
               </span>
             ) : data.numbered ? (
               <span
                 aria-hidden="true"
-                className="mb-3 inline-grid h-7 w-7 place-items-center rounded-[--radius-sm] bg-graphite-900 text-[12px] font-semibold text-white"
+                className="mb-3 inline-grid h-7 w-7 place-items-center rounded-[--radius-sm] bg-graphite-900 text-label font-semibold text-white"
               >
                 {index + 1}
               </span>
             ) : null}
-            <h3 className="mt-2 text-[15px] font-semibold text-graphite-900">{item.title}</h3>
-            <p className="mt-2 text-[14px] leading-relaxed text-ink-600">{item.body}</p>
+            <h3 className="mt-2 text-body font-semibold text-graphite-900">{item.title}</h3>
+            <p className="mt-2 text-body leading-relaxed text-ink-600">{item.body}</p>
           </div>
         ))}
       </Reveal>
@@ -254,8 +332,8 @@ export function IconPointsBlock({ data, tone }: { data: BlockData<"ICON_POINTS">
                 </svg>
               </span>
               <span>
-                <span className="block text-[13px] font-semibold text-graphite-900">{item.label}</span>
-                {item.detail ? <span className="block text-[12px] text-ink-500">{item.detail}</span> : null}
+                <span className="block text-meta font-semibold text-graphite-900">{item.label}</span>
+                {item.detail ? <span className="block text-label text-ink-500">{item.detail}</span> : null}
               </span>
             </li>
           ))}
@@ -276,7 +354,7 @@ export function LinkListBlock({ data, tone }: { data: BlockData<"LINK_LIST">; to
             <li key={index}>
               <BlockLink
                 href={item.href}
-                className="lift inline-block rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-[13px] font-medium text-ink-700 hover:border-graphite-300"
+                className="lift inline-block rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-meta font-medium text-ink-700 hover:border-graphite-300"
               >
                 {item.label}
               </BlockLink>
@@ -289,7 +367,7 @@ export function LinkListBlock({ data, tone }: { data: BlockData<"LINK_LIST">; to
             <li key={index}>
               <BlockLink
                 href={item.href}
-                className="underline-grow text-[14px] font-medium text-accent-700"
+                className="underline-grow text-body font-medium text-accent-700"
               >
                 {item.label}
               </BlockLink>
@@ -305,14 +383,14 @@ export function LinkListBlock({ data, tone }: { data: BlockData<"LINK_LIST">; to
               className="lift group flex items-start justify-between gap-4 rounded-[--radius-lg] border border-line bg-white p-5 hover:border-graphite-300"
             >
               <span>
-                <span className="block text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
+                <span className="block text-body font-semibold text-graphite-900 group-hover:text-accent-700">
                   {item.label}
                 </span>
                 {item.description ? (
-                  <span className="mt-1 block text-[13px] text-ink-600">{item.description}</span>
+                  <span className="mt-1 block text-meta text-ink-600">{item.description}</span>
                 ) : null}
               </span>
-              <span className="mt-1 shrink-0 text-[13px] font-medium text-ink-300 group-hover:text-accent-700">
+              <span className="mt-1 shrink-0 text-meta font-medium text-ink-300 group-hover:text-accent-700">
                 {data.itemAction ? `${data.itemAction} ` : null}
                 <span aria-hidden="true">&rarr;</span>
               </span>
@@ -340,7 +418,7 @@ export function KeyValueListBlock({
         {data.items.map((item, index) => (
           <li
             key={index}
-            className="flex items-center justify-between gap-3 rounded-[--radius-md] border border-line bg-white px-4 py-3 text-[13px]"
+            className="flex items-center justify-between gap-3 rounded-[--radius-md] border border-line bg-white px-4 py-3 text-meta"
           >
             <span className="font-medium text-graphite-900">{item.key}</span>
             <span className="text-ink-500">{item.value}</span>
@@ -359,13 +437,13 @@ export function ChipListBlock({ data, tone }: { data: BlockData<"CHIP_LIST">; to
         {data.items.map((item, index) => (
           <li
             key={index}
-            className="rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-[13px] font-medium text-ink-700"
+            className="rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-meta font-medium text-ink-700"
           >
             {item}
           </li>
         ))}
       </Reveal>
-      {data.footnote ? <p className="mt-6 text-[13px] text-ink-500">{data.footnote}</p> : null}
+      {data.footnote ? <p className="mt-6 text-meta text-ink-500">{data.footnote}</p> : null}
     </BlockSection>
   );
 }
@@ -376,19 +454,19 @@ export function SplitPanelBlock({ data, tone }: { data: BlockData<"SPLIT_PANEL">
       <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
         <Reveal>
           {data.eyebrow ? (
-            <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-700">
+            <p className="mb-3 text-label font-semibold uppercase tracking-[0.12em] text-accent-700">
               {data.eyebrow}
             </p>
           ) : null}
-          <h2 className="text-[1.6rem] sm:text-[1.85rem]">{data.heading}</h2>
+          <h2 className="text-section">{data.heading}</h2>
           {data.description ? (
-            <p className="mt-4 text-[15px] leading-relaxed text-ink-600">{data.description}</p>
+            <p className="mt-4 text-body leading-relaxed text-ink-600">{data.description}</p>
           ) : null}
           {data.bulletsIntro ? (
-            <p className="mt-5 text-[15px] leading-relaxed text-ink-600">{data.bulletsIntro}</p>
+            <p className="mt-5 text-body leading-relaxed text-ink-600">{data.bulletsIntro}</p>
           ) : null}
           {data.bullets.length > 0 ? (
-            <ul className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2 text-[14px] text-ink-700 sm:grid-cols-2">
+            <ul className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2 text-body text-ink-700 sm:grid-cols-2">
               {data.bullets.map((bullet, index) => (
                 <li key={index} className="flex items-center gap-2">
                   <span aria-hidden="true" className="h-1 w-1 shrink-0 rounded-full bg-accent-600" />
@@ -406,7 +484,7 @@ export function SplitPanelBlock({ data, tone }: { data: BlockData<"SPLIT_PANEL">
                 key={index}
                 className="rounded-[--radius-lg] border border-line bg-white p-5 text-center"
               >
-                <span className="text-[14px] font-semibold text-graphite-900">{tile}</span>
+                <span className="text-body font-semibold text-graphite-900">{tile}</span>
               </li>
             ))}
           </Reveal>
@@ -434,7 +512,7 @@ export function StatBarBlock({
           const numeric = item.source !== "literal" ? counts[item.source] : null;
           return (
             <div key={index}>
-              <dt className={cn("text-[12px] uppercase tracking-wide", dark ? "text-graphite-400" : "text-ink-500")}>
+              <dt className={cn("text-label uppercase tracking-wide", dark ? "text-graphite-400" : "text-ink-500")}>
                 {item.label}
               </dt>
               <dd className={cn("mt-1 text-2xl font-semibold", dark ? "text-white" : "text-graphite-900")}>
@@ -461,7 +539,7 @@ export function FaqBlock({
   return (
     <BlockSection tone={tone ?? "muted"}>
       <div className="mx-auto max-w-3xl">
-        <h2 className="mb-6 text-[1.5rem]">{data.heading ?? "Frequently asked questions"}</h2>
+        <h2 className="mb-6 text-section">{data.heading ?? "Frequently asked questions"}</h2>
         {/* FaqList also emits the FAQPage structured data. */}
         <FaqList items={items} />
       </div>
@@ -483,11 +561,11 @@ export async function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }
       <div className="container-page py-14 lg:py-18">
         <Reveal className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
-            <h2 className={cn("text-[1.6rem] leading-tight sm:text-[1.9rem]", dark ? "text-white" : "text-graphite-900")}>
+            <h2 className={cn("text-section", dark ? "text-white" : "text-graphite-900")}>
               {data.heading}
             </h2>
             {data.body ? (
-              <p className={cn("mt-4 text-[15px] leading-relaxed", dark ? "text-graphite-200" : "text-ink-600")}>
+              <p className={cn("mt-4 text-body leading-relaxed", dark ? "text-graphite-200" : "text-ink-600")}>
                 {data.body}
               </p>
             ) : null}
@@ -503,7 +581,7 @@ export async function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }
                 <a
                   href={`mailto:${contactEmail}`}
                   className={cn(
-                    "inline-flex h-12 items-center justify-center rounded-[--radius-md] border px-6 text-[15px] font-medium",
+                    "inline-flex h-12 items-center justify-center rounded-[--radius-md] border px-6 text-body font-medium",
                     dark
                       ? "border-white/30 text-white hover:bg-white/10"
                       : "border-line text-graphite-900 hover:bg-white",
@@ -532,12 +610,12 @@ export function PlansBlock({ data, tone }: { data: BlockData<"PLANS">; tone?: "p
       <Reveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {data.items.map((plan, index) => (
           <div key={index} className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5">
-            <h3 className="text-[15px] font-semibold text-graphite-900">{plan.name}</h3>
-            <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{plan.summary}</p>
+            <h3 className="text-body font-semibold text-graphite-900">{plan.name}</h3>
+            <p className="mt-2 text-meta leading-relaxed text-ink-600">{plan.summary}</p>
             {plan.points.length > 0 ? (
               <ul className="mt-4 space-y-1.5">
                 {plan.points.map((point, pointIndex) => (
-                  <li key={pointIndex} className="flex gap-2 text-[13px] text-ink-600">
+                  <li key={pointIndex} className="flex gap-2 text-meta text-ink-600">
                     <span aria-hidden="true" className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent-600" />
                     {point}
                   </li>
@@ -547,7 +625,7 @@ export function PlansBlock({ data, tone }: { data: BlockData<"PLANS">; tone?: "p
             {plan.productSlug ? (
               <BlockLink
                 href={`/products/${plan.productSlug}`}
-                className="underline-grow mt-auto pt-4 text-[13px] font-medium text-accent-700"
+                className="underline-grow mt-auto pt-4 text-meta font-medium text-accent-700"
               >
                 View pricing
               </BlockLink>
@@ -626,15 +704,15 @@ export async function CompanyInfoBlock({
           .filter(([, value]) => Boolean(value))
           .map(([label, value]) => (
             <div key={label}>
-              <dt className="text-[12px] uppercase tracking-wide text-ink-500">{label}</dt>
-              <dd className="mt-1 break-words text-[14px] text-ink-800">{value}</dd>
+              <dt className="text-label uppercase tracking-wide text-ink-500">{label}</dt>
+              <dd className="mt-1 break-words text-body text-ink-800">{value}</dd>
             </div>
           ))}
       </dl>
       )}
 
       {data.footnote ? (
-        <p className="mt-8 max-w-3xl text-[13px] leading-relaxed text-ink-500">{data.footnote}</p>
+        <p className="mt-8 max-w-3xl text-meta leading-relaxed text-ink-500">{data.footnote}</p>
       ) : null}
     </BlockSection>
   );
@@ -662,14 +740,14 @@ export function NoticeBlock({ data, tone }: { data: BlockData<"NOTICE">; tone?: 
           {data.heading ? (
             <h2
               className={cn(
-                "mb-2 text-[14px] font-semibold",
+                "mb-2 text-body font-semibold",
                 warning ? "text-warning-700" : "text-graphite-900",
               )}
             >
               {data.heading}
             </h2>
           ) : null}
-          <Markdown body={data.markdown} className="prose-content text-[13px] leading-relaxed" />
+          <Markdown body={data.markdown} className="prose-content text-meta leading-relaxed" />
         </div>
       </div>
     </BlockSection>

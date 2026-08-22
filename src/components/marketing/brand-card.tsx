@@ -51,7 +51,7 @@ function BrandMark({ brand, size }: { brand: BrandArtwork; size: "sm" | "md" }) 
     <span
       aria-hidden="true"
       className={`${box} inline-flex shrink-0 items-center justify-center rounded-[--radius-sm] font-bold text-white ${
-        size === "md" ? "text-[15px]" : "text-[11px]"
+        size === "md" ? "text-body" : "text-label"
       }`}
       style={{ backgroundColor: brand.accentColor }}
     >
@@ -80,16 +80,16 @@ export function BrandCard({
       <span className="mb-4 inline-flex">
         <BrandMark brand={brand} size="md" />
       </span>
-      <span className="text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
+      <span className="text-body font-semibold text-graphite-900 group-hover:text-accent-700">
         {brand.name}
       </span>
       {brand.tagline ? (
-        <span className="clamp-2 mt-1.5 text-[13px] leading-relaxed text-ink-600">
+        <span className="clamp-2 mt-1.5 text-meta leading-relaxed text-ink-600">
           {brand.tagline}
         </span>
       ) : null}
       {typeof brand.productCount === "number" ? (
-        <span className="mt-4 text-[12px] font-medium text-ink-500">
+        <span className="mt-4 text-label font-medium text-ink-500">
           {brand.productCount} {brand.productCount === 1 ? "product" : "products"}
         </span>
       ) : null}
@@ -109,7 +109,7 @@ export function BrandStrip({
         <li key={brand.slug}>
           <Link
             href={`/brands/${brand.slug}`}
-            className="inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-3.5 py-2 text-[13px] font-medium text-ink-700 lift hover:border-graphite-300 hover:text-graphite-900"
+            className="inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-3.5 py-2 text-meta font-medium text-ink-700 lift hover:border-graphite-300 hover:text-graphite-900"
           >
             <BrandMark brand={brand} size="sm" />
             {brand.name}

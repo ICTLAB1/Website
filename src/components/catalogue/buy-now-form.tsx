@@ -170,19 +170,19 @@ export function BuyNowForm({
           <FormError>
             {error}
             {correlationId ? (
-              <span className="mt-1 block font-mono text-[11px]">Reference: {correlationId}</span>
+              <span className="mt-1 block font-mono text-label">Reference: {correlationId}</span>
             ) : null}
           </FormError>
         ) : null}
 
         <section className="rounded-[--radius-lg] border border-line bg-white p-5">
-          <h2 className="text-[15px] font-semibold text-graphite-900">{productName}</h2>
-          <p className="mt-1 text-[13px] text-ink-600">{variantName}</p>
-          <p className="mt-1 font-mono text-[11px] text-ink-500">{sku}</p>
+          <h2 className="text-body font-semibold text-graphite-900">{productName}</h2>
+          <p className="mt-1 text-meta text-ink-600">{variantName}</p>
+          <p className="mt-1 font-mono text-label text-ink-500">{sku}</p>
 
           <div className="mt-5 flex flex-wrap items-end gap-4">
             <div className="w-32">
-              <label htmlFor="buy-quantity" className="mb-1.5 block text-[13px] font-medium text-ink-800">
+              <label htmlFor="buy-quantity" className="mb-1.5 block text-meta font-medium text-ink-800">
                 Quantity
               </label>
               <input
@@ -199,7 +199,7 @@ export function BuyNowForm({
                 className="h-11 w-full rounded-[--radius-md] border border-line-strong px-3 text-sm tabular-nums"
               />
             </div>
-            <dl className="flex-1 rounded-[--radius-md] bg-surface-muted px-4 py-3 text-right text-[13px]">
+            <dl className="flex-1 rounded-[--radius-md] bg-surface-muted px-4 py-3 text-right text-meta">
               <div className="flex justify-between gap-3">
                 <dt className="text-ink-500">Subtotal</dt>
                 <dd className="tabular-nums">{formatMoney(net, currency)}</dd>
@@ -304,7 +304,7 @@ export function BuyNowForm({
                 ? `Pay ${formatMoney(net + gst, currency)}`
                 : "Place order"}
           </Button>
-          <p className="max-w-md text-[12px] leading-relaxed text-ink-500">
+          <p className="max-w-md text-label leading-relaxed text-ink-500">
             {cardPaymentsAvailable && payWithCard
               ? "Your card details are entered on our payment provider's own secure form and never reach this site."
               : "No payment is taken now. We confirm availability, provision the licence and issue a GST invoice against your purchase order."}{" "}
@@ -360,8 +360,8 @@ function PaymentChoice({
         className="mt-0.5 h-4 w-4 shrink-0 accent-accent-700"
       />
       <span>
-        <span className="block text-[14px] font-semibold text-graphite-900">{title}</span>
-        <span className="mt-1 block text-[12px] leading-relaxed text-ink-600">{detail}</span>
+        <span className="block text-body font-semibold text-graphite-900">{title}</span>
+        <span className="mt-1 block text-label leading-relaxed text-ink-600">{detail}</span>
       </span>
     </label>
   );

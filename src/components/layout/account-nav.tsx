@@ -31,7 +31,7 @@ export function AccountNav() {
                 href={link.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "block whitespace-nowrap rounded-[--radius-md] px-3 py-2.5 text-[14px] transition-colors",
+                  "block whitespace-nowrap rounded-[--radius-md] px-3 py-2.5 text-body transition-colors",
                   active
                     ? "bg-graphite-900 font-medium text-white"
                     : "text-ink-700 hover:bg-surface-muted hover:text-graphite-900",

@@ -104,8 +104,24 @@ const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), d
   const page = await ctx.newPage();
   await page.goto(BASE, { waitUntil: "load" });
   const text = await page.locator("body").innerText();
-  check("content is present with JavaScript disabled",
-    text.includes("Enterprise Software Licensing") && text.includes("Registered GeM seller"));
+  /*
+   * Asserted structurally, not on the words.
+   *
+   * This used to require the literal "Enterprise Software Licensing" and
+   * "Registered GeM seller" — the hero headline and one panel's heading. Both
+   * are CMS content the owner is entitled to rewrite from the admin panel, and
+   * when they did, a suite about JavaScript failed and said nothing about
+   * JavaScript. What the check is actually for is that the server renders the
+   * page rather than leaving it to the client, so it now measures that: a real
+   * headline, and a page's worth of text behind it.
+   */
+  const headline = (await page.locator("main h1").first().innerText().catch(() => "")).trim();
+  const sections = await page.locator("main h2").count();
+  check(
+    "content is present with JavaScript disabled",
+    headline.length > 10 && sections >= 5 && text.length > 2000,
+    `h1 "${headline}", ${sections} sections, ${text.length} characters`,
+  );
   const hidden = await page.locator('[data-revealed="false"]').count();
   check("nothing is hidden with JavaScript disabled", hidden === 0, `${hidden} hidden`);
   await ctx.close();

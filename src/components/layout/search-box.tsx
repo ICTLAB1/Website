@@ -96,7 +96,7 @@ export function SearchBox({
     router.push(`/search?q=${encodeURIComponent(trimmed)}`);
   }
 
-  const height = size === "lg" ? "h-14 text-[15px]" : "h-11 text-sm";
+  const height = size === "lg" ? "h-14 text-body" : "h-11 text-sm";
 
   return (
     <div ref={containerRef} className={cn("relative w-full", className)}>
@@ -157,7 +157,7 @@ export function SearchBox({
             type="submit"
             className={cn(
               "absolute right-1.5 top-1/2 -translate-y-1/2 rounded-[--radius-sm] bg-accent-700 px-4 font-medium text-white hover:bg-accent-800",
-              size === "lg" ? "h-11 text-sm" : "h-8 text-[13px]",
+              size === "lg" ? "h-11 text-sm" : "h-8 text-meta",
             )}
           >
             Search
@@ -168,9 +168,9 @@ export function SearchBox({
       {open && queryIsSearchable ? (
         <div className="absolute left-0 right-0 top-[calc(100%+0.375rem)] z-50 overflow-hidden rounded-[--radius-lg] border border-line bg-white shadow-[--shadow-overlay]">
           {loading && visibleSuggestions.length === 0 ? (
-            <p className="px-4 py-3 text-[13px] text-ink-500">Searching…</p>
+            <p className="px-4 py-3 text-meta text-ink-500">Searching…</p>
           ) : visibleSuggestions.length === 0 ? (
-            <p className="px-4 py-3 text-[13px] text-ink-500">
+            <p className="px-4 py-3 text-meta text-ink-500">
               No matches. Press Search to look across the whole site.
             </p>
           ) : (
@@ -193,7 +193,7 @@ export function SearchBox({
                       <span className="block truncate text-sm font-medium text-graphite-900">
                         {suggestion.title}
                       </span>
-                      <span className="mt-0.5 block truncate text-[12px] text-ink-500">
+                      <span className="mt-0.5 block truncate text-label text-ink-500">
                         {suggestion.subtitle}
                       </span>
                     </span>

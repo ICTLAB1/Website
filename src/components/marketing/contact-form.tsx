@@ -77,7 +77,7 @@ export function ContactForm({ defaultTopic = "GENERAL" }: { defaultTopic?: strin
         <FormError>
           {error}
           {correlationId ? (
-            <span className="mt-1 block font-mono text-[11px]">Reference: {correlationId}</span>
+            <span className="mt-1 block font-mono text-label">Reference: {correlationId}</span>
           ) : null}
         </FormError>
       ) : null}
@@ -122,7 +122,7 @@ export function ContactForm({ defaultTopic = "GENERAL" }: { defaultTopic?: strin
         <Button type="submit" size="lg" disabled={pending}>
           {pending ? "Sending…" : "Send message"}
         </Button>
-        <p className="text-[12px] leading-relaxed text-ink-500">
+        <p className="text-label leading-relaxed text-ink-500">
           We use these details only to respond to your message. See our{" "}
           <Link href="/privacy" className="text-accent-700 underline">
             privacy policy

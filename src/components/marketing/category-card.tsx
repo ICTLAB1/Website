@@ -1,7 +1,16 @@
 import Link from "next/link";
 
+/**
+ * One glyph per category, drawn on a 20×20 grid as a single stroked path.
+ *
+ * `workspace` used to be a wide bar over two boxes, which was meant to read as
+ * a window layout and read instead as a shopfront with an awning — a building,
+ * on the two most prominent cards on the homepage, for a company that sells
+ * software licences. It is now two overlapping panels: a document in front of a
+ * window, which is what productivity and collaboration actually look like.
+ */
 const ICON_PATHS: Record<string, string> = {
-  workspace: "M3 4h14v3H3zM3 9h6v7H3zM11 9h6v7h-6z",
+  workspace: "M2 4h11v9H2zM2 7h11M6 16h10V8h-3",
   document: "M5 2h7l4 4v12H5zM12 2v4h4",
   mail: "M2 5h16v10H2zM2 5l8 6 8-6",
   creative: "M10 2 3 6v8l7 4 7-4V6zM10 2v16M3 6l7 4 7-4",
@@ -43,16 +52,16 @@ export function CategoryCard({
           <path d={path} />
         </svg>
       </span>
-      <span className="text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
+      <span className="text-body font-semibold text-graphite-900 group-hover:text-accent-700">
         {category.name}
       </span>
       {category.summary ? (
-        <span className="clamp-2 mt-1.5 text-[13px] leading-relaxed text-ink-600">
+        <span className="clamp-2 mt-1.5 text-meta leading-relaxed text-ink-600">
           {category.summary}
         </span>
       ) : null}
       {typeof category.count === "number" && category.count > 0 ? (
-        <span className="mt-4 text-[12px] font-medium text-ink-500">
+        <span className="mt-4 text-label font-medium text-ink-500">
           {category.count} {category.count === 1 ? "product" : "products"}
         </span>
       ) : null}

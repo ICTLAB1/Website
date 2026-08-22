@@ -29,21 +29,21 @@ export function SectionHeader({
     >
       <div className={cn("max-w-2xl", centered && "mx-auto")}>
         {eyebrow ? (
-          <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-700">
+          <p className="mb-2 text-label font-semibold uppercase tracking-[0.12em] text-accent-700">
             {eyebrow}
           </p>
         ) : null}
         <Heading
           className={cn(
             Heading === "h1"
-              ? "text-3xl sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]"
-              : "text-2xl sm:text-[1.75rem] sm:leading-tight",
+              ? "text-title"
+              : "text-section",
           )}
         >
           {title}
         </Heading>
         {description ? (
-          <p className="mt-3 text-[15px] leading-relaxed text-ink-600">{description}</p>
+          <p className="mt-3 text-body leading-relaxed text-ink-600">{description}</p>
         ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}

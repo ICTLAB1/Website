@@ -65,7 +65,7 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
 
             return (
               <div key={section.heading}>
-                <p className="mb-2 hidden text-[11px] font-semibold uppercase tracking-[0.1em] text-graphite-400 lg:block">
+                <p className="mb-2 hidden text-label font-semibold uppercase tracking-[0.1em] text-graphite-400 lg:block">
                   {section.heading}
                 </p>
                 <ul className="flex gap-1 lg:flex-col lg:gap-0.5">
@@ -80,7 +80,7 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
                           href={link.href}
                           aria-current={active ? "page" : undefined}
                           className={cn(
-                            "block whitespace-nowrap rounded-[--radius-md] px-3 py-2 text-[13px] transition-colors",
+                            "block whitespace-nowrap rounded-[--radius-md] px-3 py-2 text-meta transition-colors",
                             active
                               ? "bg-accent-700 font-medium text-white"
                               : "text-graphite-200 hover:bg-graphite-800 hover:text-white",

@@ -82,7 +82,7 @@ export function VariantSelector({
     <div className="rounded-[--radius-lg] border border-line bg-white">
       {variants.length > 1 ? (
         <fieldset className="border-b border-line px-5 py-4">
-          <legend className="text-[12px] font-semibold uppercase tracking-[0.1em] text-ink-500">
+          <legend className="text-label font-semibold uppercase tracking-[0.1em] text-ink-500">
             Licence option
           </legend>
           <div className="mt-3 space-y-2">
@@ -108,14 +108,14 @@ export function VariantSelector({
                     className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-accent-700)]"
                   />
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[13px] font-medium text-graphite-900">
+                    <span className="block text-meta font-medium text-graphite-900">
                       {variant.name}
                     </span>
-                    <span className="mt-0.5 block font-mono text-[11px] text-ink-600">
+                    <span className="mt-0.5 block font-mono text-label text-ink-600">
                       {variant.sku}
                     </span>
                   </span>
-                  <span className="shrink-0 text-right text-[13px] font-semibold text-graphite-900">
+                  <span className="shrink-0 text-right text-meta font-semibold text-graphite-900">
                     {price > 0 ? showPrice(price, variant.gstRatePercent, display) : "On enquiry"}
                   </span>
                 </label>
@@ -126,10 +126,10 @@ export function VariantSelector({
       ) : null}
 
       <div className="px-5 py-5">
-        <dl className="mb-4 grid grid-cols-2 gap-3 text-[13px]">
+        <dl className="mb-4 grid grid-cols-2 gap-3 text-meta">
           <div>
             <dt className="text-ink-500">SKU</dt>
-            <dd className="mt-0.5 font-mono text-[12px] text-ink-700">{selected.sku}</dd>
+            <dd className="mt-0.5 font-mono text-label text-ink-700">{selected.sku}</dd>
           </div>
           <div>
             <dt className="text-ink-500">Licence type</dt>
@@ -149,8 +149,8 @@ export function VariantSelector({
 
         {quoteOnly ? (
           <div className="rounded-[--radius-md] border border-line bg-surface-muted p-4">
-            <p className="text-[17px] font-semibold text-graphite-900">Price on enquiry</p>
-            <p className="mt-1 text-[13px] leading-relaxed text-ink-600">
+            <p className="text-lead font-semibold text-graphite-900">Price on enquiry</p>
+            <p className="mt-1 text-meta leading-relaxed text-ink-600">
               This product is quoted against your configuration and volume. Send us the
               requirement and we will return a written quotation.
             </p>
@@ -163,14 +163,14 @@ export function VariantSelector({
               </span>
               {saving ? (
                 <>
-                  <span className="text-[15px] text-ink-500 line-through">
+                  <span className="text-body text-ink-500 line-through">
                     {showPrice(selected.listPriceMinor, selected.gstRatePercent, display)}
                   </span>
                   <Badge tone="success">Save {saving}%</Badge>
                 </>
               ) : null}
             </div>
-            <p className="mt-1.5 text-[13px] text-ink-500">
+            <p className="mt-1.5 text-meta text-ink-500">
               {/* GST is named in rupees only — see lib/price-display. */}
               {statesTaxSeparately(display)
                 ? `per unit, excluding GST at ${selected.gstRatePercent}%`
@@ -179,7 +179,7 @@ export function VariantSelector({
 
             <div className="mt-5 flex items-end gap-3">
               <div className="w-32">
-                <label htmlFor="quantity" className="mb-1.5 block text-[13px] font-medium text-ink-800">
+                <label htmlFor="quantity" className="mb-1.5 block text-meta font-medium text-ink-800">
                   Quantity
                 </label>
                 <input
@@ -205,19 +205,19 @@ export function VariantSelector({
                 */}
                 {statesTaxSeparately(display) ? (
                   <>
-                    <p className="text-[12px] text-ink-500">
+                    <p className="text-label text-ink-500">
                       Subtotal {formatMoney(lineTotal, "INR")} + GST {formatMoney(gst, "INR")}
                     </p>
-                    <p className="text-[15px] font-semibold text-graphite-900">
+                    <p className="text-body font-semibold text-graphite-900">
                       {formatMoney(lineTotal + gst, "INR")} incl. GST
                     </p>
                   </>
                 ) : (
                   <>
-                    <p className="text-[12px] text-ink-500">
+                    <p className="text-label text-ink-500">
                       {quantity} &times; {showPrice(unitPrice, selected.gstRatePercent, display)}
                     </p>
-                    <p className="text-[15px] font-semibold text-graphite-900">
+                    <p className="text-body font-semibold text-graphite-900">
                       {showInclusive(lineTotal + gst, display)}
                     </p>
                   </>
@@ -234,7 +234,7 @@ export function VariantSelector({
           qualify should learn that here, not after ordering.
         */}
         {eligibility ? (
-          <p className="mt-4 rounded-[--radius-md] border border-warning-600/40 bg-warning-50 p-3 text-[13px] leading-relaxed text-graphite-900">
+          <p className="mt-4 rounded-[--radius-md] border border-warning-600/40 bg-warning-50 p-3 text-meta leading-relaxed text-graphite-900">
             {eligibility}
           </p>
         ) : null}
@@ -275,7 +275,7 @@ export function VariantSelector({
           />
         </div>
 
-        <p className="mt-4 text-[12px] leading-relaxed text-ink-500">
+        <p className="mt-4 text-label leading-relaxed text-ink-500">
           {statesTaxSeparately(display)
             ? "Prices shown are indicative and exclude GST."
             : "Prices shown are indicative and are converted from our rupee list price at the rate we publish."}{" "}
@@ -288,8 +288,8 @@ export function VariantSelector({
       </div>
 
       <div className="border-t border-line bg-graphite-900 px-5 py-4 text-white">
-        <p className="text-[14px] font-semibold">Buying 10+ licences?</p>
-        <p className="mt-1 text-[13px] leading-relaxed text-graphite-200">
+        <p className="text-body font-semibold">Buying 10+ licences?</p>
+        <p className="mt-1 text-meta leading-relaxed text-graphite-200">
           Volume pricing, consolidated renewals and deployment support are handled by our
           enterprise team.
         </p>

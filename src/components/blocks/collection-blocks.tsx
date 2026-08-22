@@ -101,20 +101,20 @@ type CertificationRow = {
 function CertificationCard({ certification }: { certification: CertificationRow }) {
   return (
     <div className="flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700">
+      <p className="text-label font-semibold uppercase tracking-[0.1em] text-accent-700">
         {certification.title}
       </p>
-      <p className="mt-1.5 text-[17px] font-semibold leading-tight text-graphite-900">
+      <p className="mt-1.5 text-lead font-semibold leading-tight text-graphite-900">
         {certification.standard}
       </p>
 
       {certification.scope ? (
-        <p className="clamp-3 mt-3 text-[13px] leading-relaxed text-ink-600">
+        <p className="clamp-3 mt-3 text-meta leading-relaxed text-ink-600">
           {certification.scope}
         </p>
       ) : null}
 
-      <dl className="mt-4 space-y-1 border-t border-line pt-3 text-[12px] text-ink-600">
+      <dl className="mt-4 space-y-1 border-t border-line pt-3 text-label text-ink-600">
         <div className="flex gap-2">
           <dt className="text-ink-500">Certificate</dt>
           <dd className="font-mono text-graphite-900">{certification.reference}</dd>
@@ -142,7 +142,7 @@ function CertificationCard({ certification }: { certification: CertificationRow 
             }
             target="_blank"
             rel="noreferrer noopener"
-            className="text-[12px] font-medium text-accent-700 underline underline-offset-2 hover:text-accent-800"
+            className="text-label font-medium text-accent-700 underline underline-offset-2 hover:text-accent-800"
           >
             Verify this certificate
           </a>
@@ -181,7 +181,7 @@ export function CollectionGridBlock({
     <BlockSection tone={tone}>
       {caption ? (
         data.heading ? (
-          <p className="mb-6 text-center text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-500">
+          <p className="mb-6 text-center text-label font-semibold uppercase tracking-[0.14em] text-ink-500">
             {data.heading}
           </p>
         ) : null
@@ -206,7 +206,7 @@ export function CollectionGridBlock({
             <li key={category.name}>
               <Link
                 href={`/blog?category=${encodeURIComponent(category.name)}`}
-                className="lift inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-[13px] font-medium text-ink-700 hover:border-graphite-300 hover:text-graphite-900"
+                className="lift inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-meta font-medium text-ink-700 hover:border-graphite-300 hover:text-graphite-900"
               >
                 {category.name}
                 <span className="text-ink-500">{category.count}</span>
@@ -247,16 +247,16 @@ export function CollectionGridBlock({
               href={`/services/${service.slug}`}
               className="lift group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 hover:border-graphite-300"
             >
-              <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700">
+              <span className="text-label font-semibold uppercase tracking-[0.1em] text-accent-700">
                 {service.category}
               </span>
-              <span className="mt-2 text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
+              <span className="mt-2 text-body font-semibold text-graphite-900 group-hover:text-accent-700">
                 {service.name}
               </span>
-              <span className="clamp-3 mt-2 text-[13px] leading-relaxed text-ink-600">
+              <span className="clamp-3 mt-2 text-meta leading-relaxed text-ink-600">
                 {service.summary}
               </span>
-              <span className="mt-4 text-[13px] font-medium text-accent-700">Read more &rarr;</span>
+              <span className="mt-4 text-meta font-medium text-accent-700">Read more &rarr;</span>
             </Link>
           ))}
         </Reveal>
@@ -268,14 +268,14 @@ export function CollectionGridBlock({
               href={`/blog/${post.slug}`}
               className="lift group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 hover:border-graphite-300"
             >
-              <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700">
+              <span className="text-label font-semibold uppercase tracking-[0.1em] text-accent-700">
                 {post.category}
               </span>
-              <h3 className="mt-2 text-[15px] font-semibold leading-snug text-graphite-900 group-hover:text-accent-700">
+              <h3 className="mt-2 text-body font-semibold leading-snug text-graphite-900 group-hover:text-accent-700">
                 {post.title}
               </h3>
-              <p className="clamp-3 mt-2 text-[13px] leading-relaxed text-ink-600">{post.excerpt}</p>
-              <span className="mt-4 text-[12px] text-ink-500">
+              <p className="clamp-3 mt-2 text-meta leading-relaxed text-ink-600">{post.excerpt}</p>
+              <span className="mt-4 text-label text-ink-500">
                 {formatDate(post.publishedAt)} &middot; {post.readMinutes} min read
               </span>
             </Link>

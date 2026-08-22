@@ -23,7 +23,7 @@ export function BasketButton({ className }: { className?: string }) {
       </svg>
       <span className="hidden lg:inline">Enquiry</span>
       {ready && count > 0 ? (
-        <span className="grid h-5 min-w-5 place-items-center rounded-full bg-accent-700 px-1 text-[11px] font-semibold text-white">
+        <span className="grid h-5 min-w-5 place-items-center rounded-full bg-accent-700 px-1 text-label font-semibold text-white">
           {count > 99 ? "99+" : count}
         </span>
       ) : null}

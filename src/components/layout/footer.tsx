@@ -14,12 +14,12 @@ export async function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(4,minmax(0,1fr))]">
           <div className="max-w-sm">
             <Logo name={config.tradingName} onDark />
-            <p className="mt-5 text-[13px] leading-relaxed text-graphite-300">
+            <p className="mt-5 text-meta leading-relaxed text-graphite-300">
               Enterprise software licensing, cloud and IT solutions. Software publishers and
               hardware manufacturers consolidated into a single procurement relationship.
             </p>
 
-            <dl className="mt-6 space-y-2 text-[13px]">
+            <dl className="mt-6 space-y-2 text-meta">
               {config.phone.sales ? (
                 <div className="flex gap-2">
                   <dt className="text-graphite-400">Sales</dt>
@@ -49,7 +49,7 @@ export async function Footer() {
               {config.gstin ? (
                 <div className="flex gap-2">
                   <dt className="text-graphite-400">GSTIN</dt>
-                  <dd className="font-mono text-[12px] text-graphite-300">{config.gstin}</dd>
+                  <dd className="font-mono text-label text-graphite-300">{config.gstin}</dd>
                 </div>
               ) : null}
             </dl>
@@ -64,13 +64,13 @@ export async function Footer() {
 
           {navigation.footer.map((column) => (
             <nav key={column.heading} aria-label={column.heading}>
-              <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white">
+              <h2 className="text-label font-semibold uppercase tracking-[0.12em] text-white">
                 {column.heading}
               </h2>
               <ul className="mt-4 space-y-2.5">
                 {column.links.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-[13px] text-graphite-300 hover:text-white hover:underline">
+                    <Link href={link.href} className="text-meta text-graphite-300 hover:text-white hover:underline">
                       {link.label}
                     </Link>
                   </li>
@@ -82,7 +82,7 @@ export async function Footer() {
       </div>
 
       <div className="border-t border-graphite-800">
-        <div className="container-page flex flex-col gap-3 py-5 text-[12px] text-graphite-400 sm:flex-row sm:items-center sm:justify-between">
+        <div className="container-page flex flex-col gap-3 py-5 text-label text-graphite-400 sm:flex-row sm:items-center sm:justify-between">
           <p>
             &copy; {year} {config.entityName}. All rights reserved.
             {config.cin ? <span className="ml-2 font-mono">CIN {config.cin}</span> : null}

@@ -32,15 +32,37 @@ if [ "$probe" = "429" ]; then
   exit 2
 fi
 
+# The SKU these tests buy is discovered, not hardcoded.
+#
+# It used to be MS-M365-BS-A1, a seeded sample. Importing the real price list
+# replaced the samples, the SKU stopped existing, and every price-tampering
+# test carried on passing — because a 404 for an unknown SKU is also a refusal.
+# The suite reported green while proving nothing about price tampering at all.
+SKU=$(curl -s "$BASE/products?sort=popular" | grep -oP '/buy\?sku=\K[A-Za-z0-9._-]+' | head -1)
+if [ -z "$SKU" ]; then
+  echo "  NO PURCHASABLE SKU — the catalogue offers nothing that can be bought directly."
+  echo "  Every pricing test below would pass without testing anything. Aborting."
+  exit 2
+fi
+echo "  (buying $SKU)"
+
 echo "== Direct purchase pricing cannot be tampered =="
 R=$(curl -s -b "$A" -X POST "$BASE/api/orders" -H "content-type: application/json" -H "origin: $BASE" -H "x-csrf-token: $TA" \
-  --data '{"sku":"MS-M365-BS-A1","quantity":2,"contactName":"Attacker A","companyName":"Attacker A Ltd","contactEmail":"a@example.test","contactPhone":"9999999999","unitPriceMinor":1,"totalMinor":1,"discountMinor":99999999,"status":"FULFILLED"}')
+  --data '{"sku":"'"$SKU"'","quantity":2,"contactName":"Attacker A","companyName":"Attacker A Ltd","contactEmail":"a@example.test","contactPhone":"9999999999","unitPriceMinor":1,"totalMinor":1,"discountMinor":99999999,"status":"FULFILLED"}')
 REF=$(echo "$R" | grep -oP '"reference":"\K[^"]+')
 [ -n "$REF" ] && ok "direct order created ($REF)" || no "direct order" "$R"
 
 TOTAL=$(su postgres -c "psql -tA -d ictlab -c \"select \\\"totalMinor\\\" from \\\"Order\\\" where reference='$REF'\"" 2>/dev/null | tr -d ' ')
-# 2 x 11,800 = 23,600 + 18% GST = 27,848 -> 2784800 paise
-[ "$TOTAL" = "2784800" ] && ok "price recomputed server-side (₹27,848 not ₹0.01)" || no "price tampering" "totalMinor=$TOTAL"
+#
+# The expected figure is derived from the catalogue, not written down here.
+#
+# It used to be the literal 2784800 — two seats of a sample SKU. Once the SKU
+# became whatever the catalogue currently sells, a hardcoded number could only
+# ever be wrong, and the useful assertion is the one this test was always
+# about: the server priced the order from its own records and ignored the
+# unitPriceMinor of 1 the request asked for.
+EXPECTED=$(su postgres -c "psql -tA -d ictlab -c \"select round(2 * least(coalesce(nullif(\\\"salePriceMinor\\\",0), \\\"listPriceMinor\\\"), \\\"listPriceMinor\\\") * (100 + \\\"gstRatePercent\\\") / 100.0) from \\\"ProductVariant\\\" where sku='$SKU'\"" 2>/dev/null | tr -d ' ')
+[ -n "$TOTAL" ] && [ "$TOTAL" = "$EXPECTED" ] && ok "price recomputed server-side ($TOTAL paise, not the 1 that was asked for)" || no "price tampering" "stored=$TOTAL expected=$EXPECTED"
 
 ST=$(su postgres -c "psql -tA -d ictlab -c \"select status from \\\"Order\\\" where reference='$REF'\"" 2>/dev/null | tr -d ' ')
 [ "$ST" = "PENDING" ] && ok "injected status ignored (stored PENDING)" || no "status injection" "$ST"
@@ -60,12 +82,12 @@ R=$(curl -s -o /dev/null -w "%{http_code}" -b "$A" "$BASE/buy?sku=DOES-NOT-EXIST
 
 echo "== Negative and absurd quantities =="
 R=$(curl -s -b "$A" -X POST "$BASE/api/orders" -H "content-type: application/json" -H "origin: $BASE" -H "x-csrf-token: $TA" \
-  --data '{"sku":"MS-M365-BS-A1","quantity":-10,"contactName":"Attacker A","companyName":"Attacker A Ltd","contactEmail":"a@example.test","contactPhone":"9999999999"}')
+  --data '{"sku":"'"$SKU"'","quantity":-10,"contactName":"Attacker A","companyName":"Attacker A Ltd","contactEmail":"a@example.test","contactPhone":"9999999999"}')
 echo "$R" | grep -q '"code":"validation_failed"' && ok "negative quantity rejected" || no "negative quantity" "$R"
 
 echo "== CSRF still enforced on the new endpoint =="
 R=$(curl -s -b "$A" -X POST "$BASE/api/orders" -H "content-type: application/json" -H "origin: $BASE" \
-  --data '{"sku":"MS-M365-BS-A1","quantity":1,"contactName":"A B","companyName":"Acme Ltd","contactEmail":"a@example.test","contactPhone":"9999999999"}')
+  --data '{"sku":"'"$SKU"'","quantity":1,"contactName":"A B","companyName":"Acme Ltd","contactEmail":"a@example.test","contactPhone":"9999999999"}')
 echo "$R" | grep -q '"code":"forbidden"' && ok "order without CSRF header rejected" || no "order CSRF" "$R"
 
 echo "== Cross-tenant quote access =="
@@ -81,7 +103,7 @@ echo "== Draft quotations are invisible to the customer =="
 # Draft a quote for A's own enquiry, then confirm A cannot see it before it is sent.
 ADM=$(mktemp); TADM=$(login "$ADM" "admin@example.test" "ChangeMe!Admin123")
 ENQ=$(curl -s -b "$A" -X POST "$BASE/api/enquiries" -H "content-type: application/json" -H "origin: $BASE" -H "x-csrf-token: $TA" \
-  --data '{"contactName":"Attacker A","companyName":"Attacker A Ltd","contactEmail":"a@example.test","contactPhone":"9999999999","items":[{"sku":"MS-M365-BS-A1","quantity":3}]}' | grep -oP '"reference":"\K[^"]+')
+  --data '{"contactName":"Attacker A","companyName":"Attacker A Ltd","contactEmail":"a@example.test","contactPhone":"9999999999","items":[{"sku":"'"$SKU"'","quantity":3}]}' | grep -oP '"reference":"\K[^"]+')
 DRAFT=$(su postgres -c "psql -tA -d ictlab -c \"insert into \\\"Quote\\\" (id,reference,status,\\\"enquiryId\\\",\\\"userId\\\",currency,\\\"subtotalMinor\\\",\\\"discountMinor\\\",\\\"taxMinor\\\",\\\"totalMinor\\\",\\\"createdAt\\\",\\\"updatedAt\\\") select 'atk'||floor(random()*100000)::text,'QTE-2026-D'||upper(substr(md5(random()::text),1,5)),'DRAFT',e.id,e.\\\"userId\\\",'INR',1000,0,180,1180,now(),now() from \\\"Enquiry\\\" e where e.reference='$ENQ' returning reference\"" 2>/dev/null | tr -d ' ' | head -1)
 if [ -n "$DRAFT" ]; then
   C=$(curl -s -o /dev/null -w "%{http_code}" -b "$A" "$BASE/account/quotes/$DRAFT")
