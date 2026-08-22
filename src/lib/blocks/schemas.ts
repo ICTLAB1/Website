@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { safeMarkImage } from "@/lib/mark-image";
+
 /**
  * Block payload schemas.
  *
@@ -36,6 +38,22 @@ export const safeHref = z
   );
 
 const cta = z.object({ label: text(60), href: safeHref });
+
+/**
+ * An image path a block may reference: a file inside the marks directory.
+ *
+ * Validated with the same function the brand logos and product photographs go
+ * through, so there is one definition of "an image this site will load" and a
+ * block payload cannot become the exception to it.
+ */
+const markPath = z
+  .string()
+  .trim()
+  .min(1)
+  .max(200)
+  .refine((value) => safeMarkImage(value) !== null, {
+    message: "Use a file served from /marks/.",
+  });
 
 /** One statistic. `literal` prints `value`; the rest are counted live. */
 export const statItemSchema = z.object({
@@ -136,6 +154,16 @@ export const splitPanelSchema = z.object({
   bulletsIntro: optionalText(200),
   bullets: z.array(text(200)).max(12).optional().default([]),
   tiles: z.array(text(80)).max(8).optional().default([]),
+  /**
+   * A programme mark shown above the heading — GeM, for the panel that states
+   * the GeM registration.
+   *
+   * `src` is checked against the marks directory rather than merely trimmed, so
+   * an authored payload cannot point the panel at an arbitrary host, and `alt`
+   * is required because the mark is usually the only thing naming the
+   * programme.
+   */
+  logo: z.object({ src: markPath, alt: text(120) }).optional(),
 });
 
 export const statBarSchema = z.object({

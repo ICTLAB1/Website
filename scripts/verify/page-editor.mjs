@@ -92,6 +92,25 @@ await page.waitForTimeout(1500);
 check("a payload that does not match the block type is refused",
   (await page.locator("body").innerText()).includes("does not match what that block type expects"));
 
+// ------------------------- a block image pointing at somebody else's server
+//
+// The split panel can carry a programme mark, and the path to it is authored
+// text that ends up in an `src`. Off-site is the whole risk: a mark loaded from
+// another host is a request every visitor makes, and an image nobody here
+// controls. The schema allows one directory, and this proves it.
+await addBlock("Split panel");
+await page.goto(editorUrl, { waitUntil: "load" });
+const panel = page.locator("ol > li").filter({ hasText: "Split panel" }).first();
+// The split panel has no typed form, so its disclosure reads "Edit content".
+await panel.locator("details").first().locator("summary").click();
+await page.waitForTimeout(300);
+await panel.locator('textarea[name="data"]').first()
+  .fill('{ "heading": "Panel", "logo": { "src": "https://evil.test/gem.webp", "alt": "GeM" } }');
+await panel.getByRole("button", { name: "Save block" }).click();
+await page.waitForTimeout(1500);
+check("a block mark pointing off-site is refused",
+  (await page.locator("body").innerText()).includes("does not match what that block type expects"));
+
 // ------------------------------------------------- publish and go public
 await page.goto(editorUrl, { waitUntil: "load" });
 await page.getByLabel("Status").selectOption("PUBLISHED");

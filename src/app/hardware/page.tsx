@@ -9,6 +9,7 @@ import { parseCatalogueParams, type RawSearchParams } from "@/lib/catalogue-para
 import { buildMetadata } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
 import { safeBrandLogo } from "@/lib/brand-logo";
+import { AccreditationMark } from "@/components/marketing/accreditation-mark";
 
 type PageProps = { searchParams: Promise<RawSearchParams> };
 
@@ -139,6 +140,17 @@ export default async function HardwarePage({ searchParams }: PageProps) {
           are handled on the quotation. Government and PSU procurement, including requirements
           that must be routed through the Government e-Marketplace, are supported.
         </p>
+        {/*
+          The mark earns its place here because this paragraph is where a public
+          buyer learns the GeM route is open to them. It is deliberately not on
+          the cards or in the footer: beside a product it would read as an
+          endorsement of that product rather than a statement about the seller.
+        */}
+        <AccreditationMark
+          src="/marks/gem.webp"
+          alt="Government e Marketplace (GeM)"
+          className="mt-5 h-12"
+        />
         <div className="mt-5 flex flex-wrap gap-3">
           <ButtonLink href="/enquiry">Request enterprise quote</ButtonLink>
           <ButtonLink href="/contact" variant="outline">

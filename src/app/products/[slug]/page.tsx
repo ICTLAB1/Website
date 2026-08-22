@@ -433,7 +433,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             {[
               { href: "/brands/microsoft", label: "Microsoft 365 and Windows" },
               { href: "/brands/adobe", label: "Adobe Acrobat and Creative Cloud" },
-              { href: "/solutions/cybersecurity", label: "Endpoint security" },
+              { href: "/solutions/security-compliance", label: "Endpoint security" },
               { href: "/services", label: "Deployment and support" },
             ].map((item) => (
               <li key={item.href}>

@@ -359,7 +359,11 @@ export const pageSeeds: PageSeed[] = [
           "eyebrow": "Government e-Marketplace",
           "heading": "Registered GeM seller",
           "description": "An experienced seller on the Government e-Marketplace, supplying software and IT solutions through public procurement channels.",
-          "bulletsIntro": "We support:"
+          "bulletsIntro": "We support:",
+          "logo": {
+            "src": "/marks/gem.webp",
+            "alt": "Government e Marketplace (GeM)"
+          }
         }
       },
       {

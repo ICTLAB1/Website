@@ -326,7 +326,7 @@
    "name": "HP Z2 G1i Tower Workstation",
    "series": "Z2",
    "formFactor": "DESKTOP_WORKSTATION",
-   "shortDescription": "HP's current mid-range tower workstation on Intel Core Ultra 7 and Ultra 9 processors, from integrated graphics to NVIDIA RTX Pro and GeForce RTX cards, with three to five years of onsite warranty.",
+   "shortDescription": "HP's current mid-range tower workstation on Intel Core Ultra 7 and Ultra 9 processors, with graphics from integrated to NVIDIA RTX Pro, and three to five years of onsite warranty.",
    "description": "The Z2 G1i is the current generation of HP's mid-range tower workstation, built on Intel Core Ultra 7 and Ultra 9 processors. It is the broadest part of this range: builds run from integrated graphics through NVIDIA RTX A1000 and RTX 2000 Ada to RTX Pro Blackwell and GeForce RTX 5070, 5070 Ti and 5080 cards, in 500 W, 700 W and 1200 W power supplies.\n\nThat spread is why the configuration table matters more than the model page — the right build for CAD drafting and the right build for GPU rendering are both on this list, and they are not the same machine. Selected builds add a second LAN port, Wi-Fi 6 with Bluetooth, or Indian manufacture.",
    "businessFeatures": [
     "Three or five years of onsite warranty depending on build",
@@ -747,7 +747,7 @@
    "name": "HP Z4 G5 Tower Workstation",
    "series": "Z4",
    "formFactor": "DESKTOP_WORKSTATION",
-   "shortDescription": "A single-socket Xeon W workstation with ECC registered memory and professional NVIDIA graphics, for simulation, rendering and data work, with four years of onsite warranty on most builds.",
+   "shortDescription": "A single-socket Xeon W workstation with ECC registered memory and professional NVIDIA graphics, for simulation, rendering and data work. Four years onsite warranty on most builds.",
    "description": "The Z4 G5 moves from Core to Intel Xeon W processors and ECC registered memory — error-correcting memory being the practical dividing line between a fast desktop and a machine trusted to run a simulation unattended for two days. Builds listed run from a 6-core Xeon W3-2423 to a 26-core W7-2595X, with 16 GB to 128 GB of ECC memory.\n\nGraphics options span NVIDIA RTX A1000 and T1000 through RTX 2000 and 4000 Ada to RTX Pro 4000 and 5000 Blackwell. Storage options include dual NVMe with VROC for RAID. Most builds carry four years of onsite warranty, and several are supplied Linux-ready rather than with Windows.",
    "businessFeatures": [
     "Four years of onsite warranty on most builds",
@@ -998,7 +998,7 @@
    "name": "HP Z8 Fury G5 Tower Workstation",
    "series": "Z8 Fury",
    "formFactor": "DESKTOP_WORKSTATION",
-   "shortDescription": "HP's highest-specified workstation, on Xeon W-3500 processors with up to 512 GB of ECC registered memory and NVIDIA RTX Pro Blackwell graphics to 96 GB, with five years of onsite warranty.",
+   "shortDescription": "HP's highest-specified workstation: Xeon W-3500 processors, up to 512 GB of ECC registered memory and NVIDIA RTX Pro Blackwell graphics to 96 GB. Five years of onsite warranty.",
    "description": "The Z8 Fury G5 is the top of the range: single-socket Intel Xeon W-3500 processors from 16 to 60 cores, ECC registered memory in the builds listed from 32 GB to 512 GB, and Z Turbo NVMe storage. It is bought for work that does not fit anywhere else — large-scale simulation, volumetric and medical imaging, and model training on a workstation rather than a cluster.\n\nGraphics run to NVIDIA RTX Pro 6000 Blackwell with 96 GB. Power supplies are 1450 W and 2250 W, every build listed carries five years of onsite warranty, and selected builds are manufactured in India.",
    "businessFeatures": [
     "Five years of onsite warranty on every build listed",

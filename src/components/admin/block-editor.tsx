@@ -44,7 +44,7 @@ const SHAPES: Record<BlockType, string> = {
   LINK_LIST: `{ "eyebrow"?, "heading"?, "description"?, "layout"?: "cards" | "chips" | "inline", "itemAction"?, "items": [{ "label", "href", "description"? }] }`,
   KEY_VALUE_LIST: `{ "eyebrow"?, "heading"?, "items": [{ "key", "value" }] }`,
   CHIP_LIST: `{ "eyebrow"?, "heading"?, "description"?, "items": ["…"], "footnote"? }`,
-  SPLIT_PANEL: `{ "eyebrow"?, "heading", "description"?, "bulletsIntro"?, "bullets"?: ["…"], "tiles"?: ["…"] }`,
+  SPLIT_PANEL: `{ "eyebrow"?, "heading", "description"?, "bulletsIntro"?, "bullets"?: ["…"], "tiles"?: ["…"], "logo"?: { "src": "/marks/…", "alt" } }`,
   STAT_BAR: `{ "eyebrow"?, "heading"?, "items": [{ "label", "source": "literal" | "productCount" | "skuCount" | "brandCount" | "categoryCount", "value"? }] }`,
   PRODUCT_GRID: `{ "eyebrow"?, "heading"?, "source": "manual" | "featured" | "popular" | "brand" | "category", "slugs"?: ["…"], "ref"?, "limit"?, "action"?: { "label", "href" } }`,
   COLLECTION_GRID: `{ "eyebrow"?, "heading"?, "description"?, "kind": "brands" | "categories" | "services" | "posts" | "postCategories", "limit"?, "layout"?: "grid" | "strip", "action"?: { "label", "href" } }`,

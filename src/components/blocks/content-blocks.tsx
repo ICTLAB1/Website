@@ -6,6 +6,7 @@ import { CountUp } from "@/components/motion/count-up";
 import { FaqList } from "@/components/ui/accordion";
 import { ButtonLink } from "@/components/ui/button";
 import { SearchBox } from "@/components/layout/search-box";
+import { AccreditationMark } from "@/components/marketing/accreditation-mark";
 import { BlockHeading, BlockLink, BlockSection } from "@/components/blocks/primitives";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ResolvedBlockData } from "@/lib/blocks/resolve";
@@ -453,6 +454,14 @@ export function SplitPanelBlock({ data, tone }: { data: BlockData<"SPLIT_PANEL">
     <BlockSection tone={tone ?? "muted"}>
       <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
         <Reveal>
+          {/*
+            Above the eyebrow rather than beside the heading: the mark is the
+            programme this panel is about, so it reads as the panel's subject
+            rather than as an illustration of the sentence.
+          */}
+          {data.logo ? (
+            <AccreditationMark src={data.logo.src} alt={data.logo.alt} className="mb-6 h-16" />
+          ) : null}
           {data.eyebrow ? (
             <p className="mb-3 text-label font-semibold uppercase tracking-[0.12em] text-accent-700">
               {data.eyebrow}
