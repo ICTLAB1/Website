@@ -4,6 +4,7 @@ import { cached } from "@/lib/queries/cached";
 import { tags } from "@/lib/cache";
 import type { Availability, LicenceType, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { publicVariantWhere } from "@/lib/catalogue/audience";
 
 /**
  * Catalogue reads.
@@ -81,7 +82,7 @@ export const productListSelect = {
   brand: { select: { slug: true, name: true, accentColor: true } },
   category: { select: { slug: true, name: true } },
   variants: {
-    where: { deletedAt: null },
+    where: publicVariantWhere,
     orderBy: [{ isDefault: "desc" }, { listPriceMinor: "asc" }],
     select: {
       id: true,
@@ -127,7 +128,15 @@ function buildWhere(filters: CatalogueFilters): Prisma.ProductWhereInput {
   const availabilities = asAvailabilities(filters.availability);
   if (availabilities.length) where.availability = { in: availabilities };
 
-  const variantConditions: Prisma.ProductVariantWhereInput = { deletedAt: null };
+  /*
+   * Restricted prices never satisfy a filter.
+   *
+   * Without the audience clause, filtering "under ₹5,000" would return a
+   * product whose only match is an academic rate — a result the visitor cannot
+   * buy at, listed under a price band it does not belong to for them.
+   */
+  const variantConditions: Prisma.ProductVariantWhereInput = { ...publicVariantWhere };
+  const baseConditionCount = Object.keys(variantConditions).length;
   if (licenceTypes.length) variantConditions.licenceType = { in: licenceTypes };
 
   const hasMin = typeof filters.minPriceMinor === "number" && filters.minPriceMinor > 0;
@@ -142,7 +151,10 @@ function buildWhere(filters: CatalogueFilters): Prisma.ProductWhereInput {
     };
   }
 
-  if (Object.keys(variantConditions).length > 1) {
+  // Only when a real filter was added: the base clause on its own would also
+  // drop every product priced solely for a restricted audience, which belongs
+  // in the catalogue even though its price is not shown.
+  if (Object.keys(variantConditions).length > baseConditionCount) {
     where.variants = { some: variantConditions };
   }
 
@@ -256,7 +268,9 @@ async function getFacetsUncached() {
     }),
     prisma.productVariant.groupBy({
       by: ["licenceType"],
-      where: { deletedAt: null, product: { status: "ACTIVE", deletedAt: null } },
+      // Restricted prices are excluded so a facet count matches the number of
+      // results clicking it actually returns.
+      where: { ...publicVariantWhere, product: { status: "ACTIVE", deletedAt: null } },
       _count: { _all: true },
     }),
   ]);
@@ -298,7 +312,7 @@ const getProductBySlugUncached = async (slug: string) => {
       brand: true,
       category: { include: { parent: true } },
       variants: {
-        where: { deletedAt: null },
+        where: publicVariantWhere,
         orderBy: [{ isDefault: "desc" }, { listPriceMinor: "asc" }],
       },
       faqs: { orderBy: { displayOrder: "asc" } },

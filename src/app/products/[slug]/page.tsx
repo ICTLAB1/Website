@@ -296,6 +296,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               listPriceMinor: variant.listPriceMinor,
               salePriceMinor: variant.salePriceMinor,
               gstRatePercent: variant.gstRatePercent,
+              audience: variant.audience,
             }))}
             productName={product.name}
             productSlug={product.slug}

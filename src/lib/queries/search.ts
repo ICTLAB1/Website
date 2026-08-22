@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/db";
+import { publicVariantWhere } from "@/lib/catalogue/audience";
 
 /**
  * Site-wide search across products, brands, services and articles.
@@ -51,7 +52,7 @@ export async function searchProducts(term: string, limit = 8) {
       popularity: true,
       brand: { select: { name: true } },
       variants: {
-        where: { deletedAt: null },
+        where: publicVariantWhere,
         orderBy: [{ isDefault: "desc" }],
         take: 1,
         select: { sku: true, listPriceMinor: true, salePriceMinor: true, currency: true },

@@ -12,6 +12,8 @@ import {
   type PriceDisplay,
 } from "@/lib/price-display";
 import { cn, humanise } from "@/lib/utils";
+import { audienceNote, isDirectlyPurchasable } from "@/lib/catalogue/audience";
+import type { VariantAudience } from "@prisma/client";
 
 export type SelectableVariant = {
   id: string;
@@ -24,6 +26,7 @@ export type SelectableVariant = {
   listPriceMinor: number;
   salePriceMinor: number | null;
   gstRatePercent: number;
+  audience: VariantAudience;
 };
 
 /**
@@ -56,9 +59,22 @@ export function VariantSelector({
 
   const unitPrice = effectivePriceMinor(selected.listPriceMinor, selected.salePriceMinor);
   const saving = discountPercent(selected.listPriceMinor, selected.salePriceMinor);
+  /*
+   * A restricted price cannot be bought here.
+   *
+   * Academic and non-profit rates belong to organisations that qualify, and
+   * nothing on this site establishes that somebody does. The option stays
+   * selectable and priced — a school comparing rates needs to see it — but the
+   * route out is an enquiry, where a person checks eligibility before a licence
+   * is ordered. The server refuses these lines regardless; this is so the page
+   * does not offer a button that would fail.
+   */
+  const restricted = !isDirectlyPurchasable(selected.audience);
+  const eligibility = audienceNote(selected.audience);
+
   const quoteOnly = unitPrice <= 0 || purchaseMode === "ENQUIRY";
   const canBuyDirect =
-    !quoteOnly && (purchaseMode === "DIRECT" || purchaseMode === "BOTH") && unitPrice > 0;
+    !quoteOnly && !restricted && (purchaseMode === "DIRECT" || purchaseMode === "BOTH") && unitPrice > 0;
   const lineTotal = unitPrice * quantity;
   const gst = gstAmountMinor(lineTotal, selected.gstRatePercent);
 
@@ -210,6 +226,18 @@ export function VariantSelector({
             </div>
           </>
         )}
+
+        {/*
+          Who this price is for, stated beside it rather than in small print.
+          A figure with no eligibility note reads as an offer, and an academic
+          rate can be a fraction of the commercial one — a buyer who does not
+          qualify should learn that here, not after ordering.
+        */}
+        {eligibility ? (
+          <p className="mt-4 rounded-[--radius-md] border border-warning-600/40 bg-warning-50 p-3 text-[13px] leading-relaxed text-graphite-900">
+            {eligibility}
+          </p>
+        ) : null}
 
         <div className="mt-5 space-y-2.5">
           {/* Direct purchase is offered only where the product's mode permits it

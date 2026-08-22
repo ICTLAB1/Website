@@ -46,6 +46,23 @@ enum PurchaseMode {
   BOTH
 }
 
+/// Who a price is available to.
+///
+/// Publisher price lists carry the same SKU several times over at different
+/// figures, because education and non-profit rates exist and are restricted to
+/// organisations that qualify. Before this existed, importing such a list left
+/// no way to tell those rows apart, and the cheapest one would have won every
+/// "from" price on the catalogue — quoting an academic rate to a company.
+enum VariantAudience {
+  /// Available to any buyer. The default, and the only audience that may be
+  /// bought without a person checking eligibility first.
+  COMMERCIAL
+  /// Academic pricing, for qualifying institutions only.
+  EDUCATION
+  /// Charity and non-profit pricing, for qualifying organisations only.
+  NON_PROFIT
+}
+
 enum LicenceType {
   SUBSCRIPTION_ANNUAL
   SUBSCRIPTION_MONTHLY
@@ -399,6 +416,9 @@ model ProductVariant {
   sku         String      @unique
   name        String
   licenceType LicenceType
+  /// Who may buy at this price. Only COMMERCIAL is shown to everyone and
+  /// bought without a person checking eligibility; see `lib/catalogue/audience`.
+  audience    VariantAudience @default(COMMERCIAL)
   // Term length in months; null for perpetual licences.
   termMonths  Int?
   // Seats included in a single unit of this SKU.
@@ -424,6 +444,9 @@ model ProductVariant {
 
   @@index([productId])
   @@index([licenceType])
+  // Every public read filters on this, so it carries the same weight as the
+  // price indexes beside it.
+  @@index([audience])
   @@index([salePriceMinor])
   @@index([listPriceMinor])
 }

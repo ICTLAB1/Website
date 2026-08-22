@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { publicReference } from "@/lib/auth/tokens";
 import { documentTotals, lineIsStorable, priceLine, totalsAreStorable } from "@/lib/pricing";
 import { resolveVariantsBySku } from "@/lib/queries/catalogue";
+import { isDirectlyPurchasable } from "@/lib/catalogue/audience";
 import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
 import { getBankingDetails } from "@/lib/banking-config";
@@ -262,6 +263,17 @@ export async function createDirectOrder(
       // Enquiry-only products can never be bought directly, whatever the
       // request says.
       if (variant.product.purchaseMode === "ENQUIRY") return null;
+
+      /*
+       * Nor can a price somebody has to be entitled to.
+       *
+       * Academic and non-profit rates are a fraction of the commercial one —
+       * an eighth, in places — and this site has no way to establish that a
+       * buyer qualifies. Selling one to a buyer who does not is a licence the
+       * publisher will not honour and a refund this business funds. They stay
+       * visible and enquirable; they are not checkout lines.
+       */
+      if (!isDirectlyPurchasable(variant.audience)) return null;
 
       const unitPriceMinor =
         variant.salePriceMinor != null &&
