@@ -7,6 +7,8 @@ import { ipFromRequest } from "@/lib/auth/request";
 import { getSessionUser } from "@/lib/auth/session";
 import { canTransact } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db";
+import { orgScope } from "@/lib/auth/scope";
+import { canInCompany } from "@/lib/auth/capabilities";
 import { beginPayment } from "@/lib/payments/service";
 import { recordAudit } from "@/lib/audit";
 import { logger } from "@/lib/logger";
@@ -68,13 +70,18 @@ export const POST = withErrorHandling("payments.start", async (request: Request)
   const parsed = schema.safeParse(body);
   if (!parsed.success) return jsonError("bad_request", "The request could not be read.");
 
+  if (!canInCompany(user, "payments.act")) {
+    return jsonError("forbidden", "Your access does not include paying invoices.");
+  }
+
   /*
-   * Scoped by userId in the query itself, so somebody else's order does not
-   * match rather than matching and then being rejected. The two are equivalent
-   * here, but only one of them stays equivalent when this code is edited later.
+   * Scoped to the organisation in the query itself, so another company's order
+   * does not match rather than matching and then being rejected. The two are
+   * equivalent here, but only one of them stays equivalent when this code is
+   * edited later.
    */
   const order = await prisma.order.findFirst({
-    where: { reference: parsed.data.reference, userId: user.id },
+    where: { reference: parsed.data.reference, ...orgScope(user) },
     select: { id: true },
   });
 

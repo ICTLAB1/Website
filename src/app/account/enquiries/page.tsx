@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Enquiries" };
 
 export default async function AccountEnquiriesPage() {
   const user = await requireUser("/account/enquiries");
-  const enquiries = await listUserEnquiries(user.id);
+  const enquiries = await listUserEnquiries(user);
 
   if (enquiries.length === 0) {
     return (

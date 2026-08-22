@@ -3,6 +3,7 @@ import { verifyCsrf } from "@/lib/auth/csrf";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { ipFromRequest } from "@/lib/auth/request";
 import { getSessionUser } from "@/lib/auth/session";
+import { canInCompany } from "@/lib/auth/capabilities";
 import { canTransact } from "@/lib/auth/guards";
 import { createDirectOrder } from "@/lib/order-service";
 import { beginPayment } from "@/lib/payments/service";
@@ -69,6 +70,18 @@ export const POST = withErrorHandling("orders.createDirect", async (request: Req
     return jsonError(
       "forbidden",
       "Please confirm your email address before placing an order. We have sent you a link; you can request another from your account.",
+    );
+  }
+
+  /*
+   * A signed-in customer orders on behalf of their organisation, so the role
+   * inside it applies. Somebody with no account is ordering for themselves and
+   * has nobody to be restricted from.
+   */
+  if (user && !canInCompany(user, "orders.act")) {
+    return jsonError(
+      "forbidden",
+      "Your access does not include placing orders. Ask a colleague with procurement access.",
     );
   }
 

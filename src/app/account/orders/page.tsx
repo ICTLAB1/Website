@@ -17,7 +17,7 @@ export const metadata: Metadata = { title: "Orders" };
 export default async function AccountOrdersPage() {
   const user = await requireUser("/account/orders");
   const [orders, cardPayments, config] = await Promise.all([
-    listUserOrders(user.id),
+    listUserOrders(user),
     cardPaymentsAvailable(),
     getSiteConfig(),
   ]);

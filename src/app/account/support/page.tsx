@@ -16,7 +16,7 @@ export const metadata: Metadata = { title: "Support" };
 
 export default async function AccountSupportPage() {
   const user = await requireUser("/account/support");
-  const tickets = await listUserTickets(user.id);
+  const tickets = await listUserTickets(user);
   const config = await getSiteConfig();
 
   return (

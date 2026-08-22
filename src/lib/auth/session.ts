@@ -1,7 +1,7 @@
 import "server-only";
 import { cookies, headers } from "next/headers";
 import { cache } from "react";
-import type { UserRole } from "@prisma/client";
+import type { CompanyRole, UserRole } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { isProduction } from "@/lib/env";
 import { generateToken, hashIp, hashToken } from "@/lib/auth/tokens";
@@ -19,6 +19,14 @@ export type SessionUser = {
   role: UserRole;
   companyId: string | null;
   companyName: string | null;
+  /**
+   * What this account may do inside its own organisation.
+   *
+   * Carried on the session for the same reason as the role: every screen that
+   * offers an action asks it, and the answer cannot differ between the screen
+   * and the action behind it.
+   */
+  companyRole: CompanyRole;
   /**
    * When the address was confirmed, or null.
    *
@@ -83,6 +91,7 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
           email: true,
           name: true,
           role: true,
+          companyRole: true,
           emailVerified: true,
           deletedAt: true,
           companyId: true,
@@ -111,6 +120,7 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
     role: session.user.role,
     companyId: session.user.companyId,
     companyName: session.user.company?.name ?? null,
+    companyRole: session.user.companyRole,
     emailVerified: session.user.emailVerified,
   };
 });

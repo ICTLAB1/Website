@@ -21,10 +21,55 @@ datasource db {
 
 // ------------------------------ enums --------------------------------------
 
+/// What somebody may do inside TechZoid.
+///
+/// The first three are the roles this application shipped with and are left
+/// exactly where they were, so no stored row changes meaning. The rest are the
+/// operating roles the business actually has; each one is a job, not a rank,
+/// and what it may do is declared once in `lib/auth/capabilities`.
 enum UserRole {
   CUSTOMER
   SALES
   ADMIN
+  DIRECTOR
+  SALES_MANAGER
+  PROCUREMENT
+  OPERATIONS
+  ACCOUNTS
+  SUPPORT
+}
+
+/// What somebody may do inside their own organisation.
+///
+/// Orthogonal to `UserRole`: a customer's finance controller and a customer's
+/// IT administrator are both `CUSTOMER` to us and differ only here. Read access
+/// is the organisation's records for every role — colleagues covering for each
+/// other is the entire point of an organisation account — and the role decides
+/// what may be written.
+enum CompanyRole {
+  /// Full access, including the company profile and its people.
+  ADMIN
+  /// Requirements, enquiries, quotations and orders.
+  PROCUREMENT
+  /// Invoices and payments.
+  FINANCE
+  /// Licences, devices and support.
+  IT
+  /// Read-only.
+  VIEWER
+}
+
+enum AddressKind {
+  BILLING
+  DELIVERY
+  BOTH
+}
+
+enum ContactKind {
+  PROCUREMENT
+  FINANCE
+  IT
+  ESCALATION
 }
 
 enum ProductStatus {
@@ -234,6 +279,10 @@ model User {
   name          String
   phone         String?
   role          UserRole  @default(CUSTOMER)
+  /// Only meaningful when the account belongs to a company. An account with no
+  /// company sees its own records and nobody else's, which is what a sole
+  /// trader signing up on the website should get.
+  companyRole   CompanyRole @default(VIEWER)
   emailVerified DateTime?
   lastLoginAt   DateTime?
   // Counts consecutive failed sign-in attempts; cleared on success.
@@ -244,6 +293,10 @@ model User {
   deletedAt     DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  /// Companies this member of staff looks after. Every lead, quotation, order,
+  /// renewal and ticket for those companies has a name against it.
+  accountsManaged Company[] @relation("AccountManager")
 
   sessions      Session[]
   resetTokens   PasswordResetToken[]
@@ -263,11 +316,24 @@ model User {
   @@index([role])
 }
 
+/// A customer organisation.
+///
+/// The unit of access control on the customer side: records belong to a
+/// company, not to the individual who happened to raise them, so a procurement
+/// officer on leave does not take the quotation history with them.
+///
+/// The registered address stays on the row itself because there is exactly one
+/// of it and it goes on the tax invoice. Delivery addresses are a list, because
+/// an organisation ordering forty laptops routinely ships them to four sites.
 model Company {
   id            String   @id @default(cuid())
   name          String
+  /// PAN, where the customer supplies it. Kept beside the GSTIN because
+  /// procurement departments are routinely asked for both.
+  pan           String?
   gstin         String?
   website       String?
+  phone         String?
   addressLine1  String?
   addressLine2  String?
   city          String?
@@ -275,6 +341,11 @@ model Company {
   postcode      String?
   country       String   @default("India")
   employeeCount Int?
+
+  /// The member of staff who owns this relationship.
+  accountManagerId String?
+  accountManager   User?   @relation("AccountManager", fields: [accountManagerId], references: [id], onDelete: SetNull)
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -283,9 +354,63 @@ model Company {
   quotes    Quote[]
   orders    Order[]
   licences  Licence[]
+  tickets   SupportTicket[]
+  addresses CompanyAddress[]
+  contacts  CompanyContact[]
 
   @@index([name])
   @@index([gstin])
+  @@index([accountManagerId])
+}
+
+/// A delivery or billing address belonging to a company.
+///
+/// Soft-deleted, because an address is referenced by orders that have already
+/// shipped to it and a hard delete would rewrite where they went.
+model CompanyAddress {
+  id        String      @id @default(cuid())
+  companyId String
+  company   Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  label     String
+  kind      AddressKind @default(DELIVERY)
+  attention String?
+  line1     String
+  line2     String?
+  city      String
+  state     String
+  postcode  String
+  country   String      @default("India")
+  /// A GSTIN for this place of business, where it differs from the company's.
+  gstin     String?
+  /// Preferred address for its kind. Not a database constraint: enforced when
+  /// written, because "exactly one default per kind" is a rule about a set.
+  isDefault Boolean     @default(false)
+  deletedAt DateTime?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([companyId])
+}
+
+/// A named contact at a company, by function rather than by login.
+///
+/// Separate from `User`: the person who signs the purchase order often has no
+/// reason to hold an account on this site, and quotations still have to reach
+/// them.
+model CompanyContact {
+  id        String      @id @default(cuid())
+  companyId String
+  company   Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  kind      ContactKind
+  name      String
+  email     String
+  phone     String?
+  note      String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([companyId, kind, email])
+  @@index([companyId])
 }
 
 model Session {
@@ -847,6 +972,10 @@ model SupportTicket {
   reference String         @unique
   userId    String?
   user      User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  /// Set from the raiser's company, so a colleague can pick up a ticket the
+  /// person who raised it is not around to answer.
+  companyId String?
+  company   Company?       @relation(fields: [companyId], references: [id], onDelete: SetNull)
   subject   String
   category  String
   message   String
@@ -856,6 +985,7 @@ model SupportTicket {
   updatedAt DateTime       @updatedAt
 
   @@index([userId])
+  @@index([companyId])
   @@index([status])
 }
 

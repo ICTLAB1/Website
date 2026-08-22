@@ -16,6 +16,7 @@ const SECTIONS: Array<{ heading: string; links: Array<{ href: string; label: str
       { href: "/admin/quotes", label: "Quotes" },
       { href: "/admin/orders", label: "Orders" },
       { href: "/admin/customers", label: "Customers" },
+      { href: "/admin/organisations", label: "Organisations" },
       { href: "/admin/support", label: "Support" },
     ],
   },

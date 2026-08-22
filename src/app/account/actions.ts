@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { notifyQuoteDecision, notifyTicketRaised } from "@/lib/emails/transactional";
 import { prisma } from "@/lib/db";
 import { canTransact, requireUser } from "@/lib/auth/guards";
+import { canInCompany } from "@/lib/auth/capabilities";
 import { companySchema, fieldErrorsOf, profileSchema, supportTicketSchema } from "@/lib/validation";
 import { publicReference } from "@/lib/auth/tokens";
 import { recordAudit } from "@/lib/audit";
@@ -73,9 +74,25 @@ export async function updateCompany(
 ): Promise<ActionState> {
   const user = await requireUser("/account/company");
 
+  /*
+   * The company profile is what goes on every tax invoice we raise for this
+   * organisation, so it is not something any colleague may edit. A viewer or a
+   * finance user reading the page sees the details; only a company
+   * administrator may change them.
+   */
+  if (!canInCompany(user, "company.manage")) {
+    return {
+      status: "error",
+      message:
+        "Only a company administrator can change these details. Ask whoever manages your organisation's account.",
+    };
+  }
+
   const parsed = companySchema.safeParse({
     name: formData.get("name"),
     gstin: String(formData.get("gstin") ?? "").toUpperCase(),
+    pan: String(formData.get("pan") ?? "").toUpperCase(),
+    phone: formData.get("phone"),
     website: formData.get("website"),
     addressLine1: formData.get("addressLine1"),
     addressLine2: formData.get("addressLine2"),
@@ -95,6 +112,8 @@ export async function updateCompany(
   const data = {
     name: parsed.data.name,
     gstin: parsed.data.gstin || null,
+    pan: parsed.data.pan || null,
+    phone: parsed.data.phone || null,
     website: parsed.data.website || null,
     addressLine1: parsed.data.addressLine1 || null,
     addressLine2: parsed.data.addressLine2 || null,
@@ -108,8 +127,21 @@ export async function updateCompany(
     // Scoped by the company id resolved from the session, never from the form.
     await prisma.company.update({ where: { id: user.companyId }, data });
   } else {
+    /*
+     * Whoever creates the organisation administers it. There is nobody else to
+     * do it, and an organisation whose only member cannot invite anybody or
+     * edit its own details is a dead end.
+     */
     const company = await prisma.company.create({ data, select: { id: true } });
-    await prisma.user.update({ where: { id: user.id }, data: { companyId: company.id } });
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { companyId: company.id, companyRole: "ADMIN" },
+    });
+
+    // No session to reissue: the session record is resolved against the user
+    // row on every request, so the new company and role are in effect on the
+    // next one. Signing somebody out for saving their own company details
+    // would be a strange way to thank them.
   }
 
   await recordAudit({
@@ -129,6 +161,13 @@ export async function createSupportTicket(
   formData: FormData,
 ): Promise<ActionState> {
   const user = await requireUser("/account/support");
+
+  if (!canInCompany(user, "service.act")) {
+    return {
+      status: "error",
+      message: "Your access is read-only. Ask a colleague with support access to raise this.",
+    };
+  }
 
   const ip = await clientIp();
   const limit = hit(`ticket:${user.id}`, LIMITS.contact.limit, LIMITS.contact.windowSeconds);
@@ -156,6 +195,9 @@ export async function createSupportTicket(
     data: {
       reference: publicReference("TKT"),
       userId: user.id,
+      // So a colleague can pick the ticket up when the person who raised it is
+      // not around to answer.
+      companyId: user.companyId,
       subject: parsed.data.subject,
       category: parsed.data.category,
       message: parsed.data.message,
@@ -233,6 +275,19 @@ export async function decideQuote(
    * nobody, and there is no reason to trap somebody in a quotation they do not
    * want because their email has not arrived.
    */
+  /*
+   * Responding to a quotation commits the organisation, so it is gated on the
+   * role inside it rather than on merely holding an account there. A viewer may
+   * read the quotation and may not accept it.
+   */
+  if (!canInCompany(user, "quotes.act")) {
+    return {
+      status: "error",
+      message:
+        "Your access does not include responding to quotations. Ask a colleague with procurement access.",
+    };
+  }
+
   if (parsedDecisionIsAccept(formData) && !(await canTransact(user))) {
     return {
       status: "error",
@@ -250,7 +305,7 @@ export async function decideQuote(
     return { status: "error", message: "That response could not be recorded." };
   }
 
-  const decision = await decideOnQuote(parsed.data.reference, user.id, parsed.data.decision);
+  const decision = await decideOnQuote(parsed.data.reference, user, parsed.data.decision);
   if (!decision.ok) return { status: "error", message: decision.reason };
 
   const ip = await clientIp();
@@ -316,7 +371,7 @@ export async function decideQuote(
         .join(", ")
     : null;
 
-  const order = await createOrderFromQuote(parsed.data.reference, user.id, {
+  const order = await createOrderFromQuote(parsed.data.reference, user, {
     // Billing identity comes from the account, never from the submitted form.
     name: profile?.company?.name ?? profile?.name ?? user.name,
     email: profile?.email ?? user.email,

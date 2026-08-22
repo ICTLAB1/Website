@@ -64,6 +64,13 @@ export const POST = withErrorHandling("auth.register", async (request: Request) 
         // not part of the schema, and unknown keys are stripped by Zod.
         role: "CUSTOMER",
         companyId: company.id,
+        /*
+         * Whoever registers the organisation administers it: they are its only
+         * member, and an organisation nobody can invite anybody into or edit is
+         * a dead end. Colleagues they invite start lower and are raised
+         * deliberately.
+         */
+        companyRole: "ADMIN",
       },
       select: { id: true, email: true, name: true },
     });

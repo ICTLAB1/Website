@@ -3,6 +3,7 @@ import { verifyCsrf } from "@/lib/auth/csrf";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { ipFromRequest } from "@/lib/auth/request";
 import { getSessionUser } from "@/lib/auth/session";
+import { canInCompany } from "@/lib/auth/capabilities";
 import { canTransact } from "@/lib/auth/guards";
 import { createEnquiry } from "@/lib/enquiry-service";
 import { enquirySchema, fieldErrorsOf } from "@/lib/validation";
@@ -74,6 +75,13 @@ export const POST = withErrorHandling("enquiries.create", async (request: Reques
     return jsonError(
       "forbidden",
       "Please confirm your email address before submitting an enquiry. We have sent you a link; you can request another from your account.",
+    );
+  }
+
+  if (user && !canInCompany(user, "enquiries.act")) {
+    return jsonError(
+      "forbidden",
+      "Your access is read-only. Ask a colleague with procurement access to submit this.",
     );
   }
 

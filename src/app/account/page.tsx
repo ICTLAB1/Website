@@ -13,8 +13,8 @@ export const metadata: Metadata = { title: "Overview" };
 export default async function AccountOverviewPage() {
   const user = await requireUser("/account");
   const [summary, enquiries] = await Promise.all([
-    getAccountSummary(user.id),
-    listUserEnquiries(user.id),
+    getAccountSummary(user),
+    listUserEnquiries(user),
   ]);
 
   const tiles = [

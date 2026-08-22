@@ -23,7 +23,7 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
    * returns nothing and renders the same 404 as a reference that does not
    * exist. There is no fetch-then-compare step that could be forgotten.
    */
-  const enquiry = await getUserEnquiry(user.id, reference);
+  const enquiry = await getUserEnquiry(user, reference);
   if (!enquiry) notFound();
 
   return (

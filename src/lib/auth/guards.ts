@@ -3,18 +3,27 @@ import { redirect } from "next/navigation";
 import type { UserRole } from "@prisma/client";
 import { getSessionUser, type SessionUser } from "@/lib/auth/session";
 import { verificationEnforced } from "@/lib/auth/email-verification";
+import { can, type Capability } from "@/lib/auth/capabilities";
 
 /**
  * Authorisation is enforced here, on the server, for every protected page and
  * API route. Hiding a link in the UI is never treated as an access control.
  */
 
-const STAFF_ROLES: UserRole[] = ["ADMIN", "SALES"];
-
+/**
+ * Everyone who works here.
+ *
+ * Written as "every role except CUSTOMER" rather than as a list of the internal
+ * ones, so adding a role to the enum cannot silently leave it locked out of the
+ * admin area — the failure would be invisible until the person it was created
+ * for tried to sign in. What each of them may actually *do* once inside is a
+ * separate question, answered by `lib/auth/capabilities`.
+ */
 export function isStaff(user: { role: UserRole } | null): boolean {
-  return user != null && STAFF_ROLES.includes(user.role);
+  return user != null && user.role !== "CUSTOMER";
 }
 
+/** The super administrator, who holds every capability. */
 export function isAdmin(user: { role: UserRole } | null): boolean {
   return user?.role === "ADMIN";
 }
@@ -45,6 +54,26 @@ export async function requireStaff(returnTo = "/admin"): Promise<SessionUser> {
 export async function requireAdmin(returnTo = "/admin"): Promise<SessionUser> {
   const user = await requireStaff(returnTo);
   if (!isAdmin(user)) redirect("/admin");
+  return user;
+}
+
+/**
+ * For pages: requires a staff account holding a particular capability.
+ *
+ * The capability, not the role, is what a screen should ask for. A screen that
+ * checks `role === "SALES"` has to be found and edited every time the business
+ * adds a job title; a screen that asks for `quotes.write` never does.
+ *
+ * Sends somebody who is staff but lacks the capability back to the admin home
+ * rather than to a refusal, because they are a colleague who followed a link to
+ * a screen that is not theirs, not an intruder.
+ */
+export async function requireCapability(
+  capability: Capability,
+  returnTo = "/admin",
+): Promise<SessionUser> {
+  const user = await requireStaff(returnTo);
+  if (!can(user, capability)) redirect("/admin");
   return user;
 }
 
@@ -103,5 +132,13 @@ export async function apiRequireAdmin(): Promise<ApiAuth> {
   const user = await getSessionUser();
   if (!user) return { ok: false, status: 401 };
   if (!isAdmin(user)) return { ok: false, status: 403 };
+  return { ok: true, user };
+}
+
+/** For API routes: requires a staff capability. */
+export async function apiRequireCapability(capability: Capability): Promise<ApiAuth> {
+  const user = await getSessionUser();
+  if (!user) return { ok: false, status: 401 };
+  if (!can(user, capability)) return { ok: false, status: 403 };
   return { ok: true, user };
 }

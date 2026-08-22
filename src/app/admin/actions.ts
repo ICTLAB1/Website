@@ -464,7 +464,17 @@ export async function updateEnquiry(
 
 const roleSchema = z.object({
   userId: z.string().trim().min(1),
-  role: z.enum(["CUSTOMER", "SALES", "ADMIN"]),
+  role: z.enum([
+    "CUSTOMER",
+    "SALES",
+    "SALES_MANAGER",
+    "DIRECTOR",
+    "PROCUREMENT",
+    "OPERATIONS",
+    "ACCOUNTS",
+    "SUPPORT",
+    "ADMIN",
+  ]),
 });
 
 /**

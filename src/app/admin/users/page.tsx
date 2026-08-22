@@ -18,8 +18,14 @@ export const metadata: Metadata = { title: "Staff users" };
 type PageProps = { searchParams: Promise<{ deleted?: string }> };
 
 const ROLES = [
-  { value: "SALES", label: "Sales — everything except staff and settings" },
-  { value: "ADMIN", label: "Administrator — full access" },
+  { value: "SALES", label: "Salesperson — own leads, customers and quotations" },
+  { value: "SALES_MANAGER", label: "Sales manager — the sales team, quotations and reporting" },
+  { value: "DIRECTOR", label: "Director — management, approvals and margin" },
+  { value: "PROCUREMENT", label: "Procurement — the catalogue and supplier orders" },
+  { value: "OPERATIONS", label: "Operations — orders, fulfilment and delivery" },
+  { value: "ACCOUNTS", label: "Accounts — invoices, payments and reporting" },
+  { value: "SUPPORT", label: "Support — tickets and the customers who raise them" },
+  { value: "ADMIN", label: "Administrator — full access, including settings" },
   { value: "CUSTOMER", label: "Customer — no admin access" },
 ];
 

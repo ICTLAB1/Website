@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Licences" };
 
 export default async function AccountLicencesPage() {
   const user = await requireUser("/account/licences");
-  const licences = await listUserLicences(user.id);
+  const licences = await listUserLicences(user);
 
   if (licences.length === 0) {
     return (

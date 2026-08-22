@@ -1,6 +1,7 @@
 import "server-only";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { orgScope, type Scoped } from "@/lib/auth/scope";
 import { publicReference } from "@/lib/auth/tokens";
 import { documentTotals, lineIsStorable, priceLine, totalsAreStorable } from "@/lib/pricing";
 import { resolveVariantsBySku } from "@/lib/queries/catalogue";
@@ -147,12 +148,13 @@ async function notifyOrder(
 /** Raises an order from an accepted quotation, copying its frozen line prices. */
 export async function createOrderFromQuote(
   quoteReference: string,
-  userId: string,
+  actor: Scoped,
   billing: BillingDetails,
 ): Promise<OrderResult> {
-  // Scoped by userId: another organisation's quotation simply does not match.
+  // Scoped to the organisation: another company's quotation simply does not
+  // match, and a colleague's does.
   const quote = await prisma.quote.findFirst({
-    where: { reference: quoteReference, userId },
+    where: { reference: quoteReference, ...orgScope(actor) },
     select: {
       id: true,
       status: true,
@@ -202,8 +204,8 @@ export async function createOrderFromQuote(
       data: {
         reference,
         status: "PENDING",
-        userId,
-        companyId: quote.companyId,
+        userId: actor.id,
+        companyId: quote.companyId ?? actor.companyId ?? null,
         quoteId: quote.id,
         currency: quote.currency,
         subtotalMinor: quote.subtotalMinor,

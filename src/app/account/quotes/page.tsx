@@ -14,7 +14,7 @@ export const metadata: Metadata = { title: "Quotations" };
 
 export default async function AccountQuotesPage() {
   const user = await requireUser("/account/quotes");
-  const quotes = await listUserQuotes(user.id);
+  const quotes = await listUserQuotes(user);
 
   if (quotes.length === 0) {
     return (

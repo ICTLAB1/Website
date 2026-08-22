@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Renewals" };
 
 export default async function AccountRenewalsPage() {
   const user = await requireUser("/account/renewals");
-  const renewals = await listUserRenewals(user.id);
+  const renewals = await listUserRenewals(user);
 
   if (renewals.length === 0) {
     return (

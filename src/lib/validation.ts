@@ -112,6 +112,17 @@ export const profileSchema = z.object({
 export const companySchema = z.object({
   name: trimmed(160).min(2, "Enter the company name."),
   gstin: gstinSchema.optional().or(z.literal("")),
+  /*
+   * Ten characters, five letters, four digits, one letter. Checked for shape
+   * only: whether a PAN is real is a question for the income tax department,
+   * and refusing a valid one because of a stricter rule than theirs would be
+   * worse than accepting a typo.
+   */
+  pan: trimmed(10)
+    .regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "A PAN is ten characters, e.g. AAAPA1234A.")
+    .optional()
+    .or(z.literal("")),
+  phone: trimmed(24).optional().or(z.literal("")),
   website: trimmed(200).url("Enter a valid URL.").optional().or(z.literal("")),
   addressLine1: trimmed(200).optional().or(z.literal("")),
   addressLine2: trimmed(200).optional().or(z.literal("")),

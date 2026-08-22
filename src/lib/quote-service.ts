@@ -1,6 +1,7 @@
 import "server-only";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { orgScope, type Scoped } from "@/lib/auth/scope";
 import { publicReference } from "@/lib/auth/tokens";
 import {
   defaultValidUntil,
@@ -302,11 +303,14 @@ export type QuoteDecisionResult =
 
 export async function decideOnQuote(
   reference: string,
-  userId: string,
+  actor: Scoped,
   decision: QuoteDecision,
 ): Promise<QuoteDecisionResult> {
+  // Scoped to the organisation: a colleague may respond to a quotation raised
+  // by somebody else at the same company, and nobody may touch another
+  // company's — the reference simply matches nothing.
   const quote = await prisma.quote.findFirst({
-    where: { reference, userId },
+    where: { reference, ...orgScope(actor) },
     select: { id: true, status: true, validUntil: true, totalMinor: true, currency: true },
   });
 

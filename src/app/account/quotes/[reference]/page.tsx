@@ -8,6 +8,7 @@ import { AccountForm } from "@/components/account/account-form";
 import { Field, Input } from "@/components/ui/form";
 import { decideQuote } from "@/app/account/actions";
 import { requireUser } from "@/lib/auth/guards";
+import { orgScope } from "@/lib/auth/scope";
 import { prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { isQuoteExpired, priceLine } from "@/lib/pricing";
@@ -22,14 +23,14 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
   const user = await requireUser(`/account/quotes/${reference}`);
 
   /**
-   * Scoped by userId, so another organisation's quotation returns nothing and
-   * renders the same 404 as one that does not exist.
+   * Scoped to the organisation, so another organisation's quotation returns
+   * nothing and renders the same 404 as one that does not exist.
    *
    * A DRAFT quotation is excluded too: an unsent draft is internal working
    * material and must not be visible to the customer it concerns.
    */
   const quote = await prisma.quote.findFirst({
-    where: { reference, userId: user.id, status: { not: "DRAFT" } },
+    where: { reference, ...orgScope(user), status: { not: "DRAFT" } },
     select: {
       reference: true,
       status: true,
