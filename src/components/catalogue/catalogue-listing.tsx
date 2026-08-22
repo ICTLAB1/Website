@@ -4,7 +4,7 @@ import { EmptyState } from "@/components/ui/states";
 import { Pagination } from "@/components/ui/pagination";
 import { ButtonLink } from "@/components/ui/button";
 import { ProductGrid } from "@/components/marketing/product-card";
-import { FilterPanel, MobileFilterPanel } from "@/components/catalogue/filter-panel";
+import { FilterPanel, MobileFilterPanel, hasAnyFacet } from "@/components/catalogue/filter-panel";
 import { getFacets, listProducts, PAGE_SIZE, type CatalogueFilters } from "@/lib/queries/catalogue";
 import {
   activeFilterChips,
@@ -60,8 +60,17 @@ export async function CatalogueListing({
   const first = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const last = Math.min(page * PAGE_SIZE, total);
 
+  /*
+   * The column is reserved only when there is a panel to put in it. An empty
+   * catalogue has no facets, and a seventeen-rem void beside the words "no
+   * products match" reads as a layout that broke rather than a range that is
+   * empty.
+   */
+  const showFilters = hasAnyFacet(facets);
+
   return (
-    <div className="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)]">
+    <div className={showFilters ? "grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)]" : ""}>
+      {showFilters ? (
       <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
         <div className="hidden lg:block">
           <FilterPanel
@@ -78,6 +87,7 @@ export async function CatalogueListing({
           showPrice={filters.kind !== "hardware"}
         />
       </aside>
+      ) : null}
 
       <section aria-labelledby="results-heading" className="min-w-0">
         <h2 id="results-heading" className="sr-only">

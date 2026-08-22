@@ -19,7 +19,7 @@ import { humanise } from "@/lib/utils";
  * JavaScript, is shareable, and each filtered view is independently reachable.
  */
 
-type Facets = {
+export type Facets = {
   brands: Array<{ slug: string; name: string; count: number }>;
   categories: Array<{
     slug: string;
@@ -32,6 +32,27 @@ type Facets = {
   formFactors: Array<{ value: string; label: string; count: number }>;
   series: Array<{ value: string; label: string; count: number }>;
 };
+
+/**
+ * Whether these facets can narrow anything.
+ *
+ * Shared with the listing, which reserves a column for the panel: without one
+ * answer to this question the panel can hide itself and still leave a
+ * seventeen-rem gap where it used to be, which is how the empty hardware
+ * catalogue looked before both sides agreed.
+ *
+ * Availability is excluded on purpose — it is a fixed list rather than a
+ * counted one, so it is "available" even when the catalogue holds nothing.
+ */
+export function hasAnyFacet(facets: Facets): boolean {
+  return (
+    facets.categories.some((category) => category.count > 0) ||
+    facets.brands.some((brand) => brand.count > 0) ||
+    facets.licenceTypes.length > 0 ||
+    facets.formFactors.length > 0 ||
+    facets.series.length > 0
+  );
+}
 
 const AVAILABILITY_OPTIONS = [
   { value: "in-stock", label: "Available now" },
@@ -159,8 +180,15 @@ export async function FilterPanel({
   const hasFilters =
     Boolean(params.brand || params.category || params.licence || params.availability || params.min || params.max);
 
+  const categories = facets.categories.filter((category) => category.count > 0);
+  const brands = facets.brands.filter((brand) => brand.count > 0);
+
   const currentMin = Array.isArray(params.min) ? params.min[0] : params.min;
   const currentMax = Array.isArray(params.max) ? params.max[0] : params.max;
+
+  // Nothing to filter, so no panel. The listing asks the same question before
+  // it reserves a column for one.
+  if (!hasAnyFacet(facets)) return null;
 
   return (
     <div className="rounded-[--radius-lg] border border-line bg-white px-5 py-5">
@@ -176,9 +204,19 @@ export async function FilterPanel({
         ) : null}
       </div>
 
+      {/*
+        Only categories that hold something.
+        A facet reading zero cannot be usefully clicked, and a column of them
+        beside "no products match" reads as a broken page rather than an empty
+        range — which is exactly how the hardware catalogue looked on the day it
+        shipped with no models in it. The brand facet has always filtered this
+        way; the category one did not, because until there were two catalogues
+        every category held products.
+      */}
+      {categories.length > 0 ? (
       <FacetGroup title="Category">
         <ul className="space-y-0.5">
-          {facets.categories.map((category) => (
+          {categories.map((category) => (
             <li key={category.slug}>
               <ul className="space-y-0.5">
                 <FacetLink
@@ -206,12 +244,12 @@ export async function FilterPanel({
           ))}
         </ul>
       </FacetGroup>
+      ) : null}
 
+      {brands.length > 0 ? (
       <FacetGroup title="Brand">
         <ul className="space-y-0.5">
-          {facets.brands
-            .filter((brand) => brand.count > 0)
-            .map((brand) => (
+          {brands.map((brand) => (
               <FacetLink
                 key={brand.slug}
                 href={toggleFacetHref(params, "brand", brand.slug, basePath)}
@@ -222,6 +260,7 @@ export async function FilterPanel({
             ))}
         </ul>
       </FacetGroup>
+      ) : null}
 
       {/*
         Hardware facets, rendered only when the catalogue holds hardware.
