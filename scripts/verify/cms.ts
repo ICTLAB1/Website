@@ -111,6 +111,52 @@ async function main() {
   await prisma.page.delete({ where: { id: page.id } });
   check("cleanup removed the test page", (await prisma.page.count({ where: { slug } })) === 0);
 
+  /*
+   * Every curated product grid still has products in it.
+   *
+   * A PRODUCT_GRID with `source: "manual"` names its products by slug. Archive
+   * one — which a catalogue import does, replacing sample data with real —
+   * and the grid quietly renders "No products to show" on a live landing page.
+   * That happened: importing the Microsoft price list emptied eleven pages,
+   * including /windows-server and /sql-server entirely, and nothing failed.
+   *
+   * This is the check that would have caught it in the same minute.
+   */
+  const manualGrids = await prisma.pageSection.findMany({
+    where: { type: "PRODUCT_GRID" },
+    select: { data: true, page: { select: { slug: true, status: true } } },
+  });
+
+  const live = new Set(
+    (
+      await prisma.product.findMany({
+        where: { status: "ACTIVE", deletedAt: null },
+        select: { slug: true },
+      })
+    ).map((product) => product.slug),
+  );
+
+  const broken: string[] = [];
+  for (const grid of manualGrids) {
+    if (grid.page.status !== "PUBLISHED") continue;
+    const data = grid.data as { source?: string; slugs?: string[] } | null;
+    if (data?.source !== "manual") continue;
+    const slugs = data.slugs ?? [];
+    if (slugs.length === 0) continue;
+    const missing = slugs.filter((entry) => !live.has(entry));
+    if (missing.length === slugs.length) {
+      broken.push(`/${grid.page.slug} — every product is gone (${missing.join(", ")})`);
+    } else if (missing.length > 0) {
+      broken.push(`/${grid.page.slug} — ${missing.length}/${slugs.length}: ${missing.join(", ")}`);
+    }
+  }
+
+  check(
+    "every curated product grid still resolves to live products",
+    broken.length === 0,
+    broken.slice(0, 4).join(" | "),
+  );
+
   await prisma.$disconnect();
 
   for (const r of results) console.log(`${r.ok ? "  ✓" : "  ✗"} ${r.name}${!r.ok && r.detail ? ` — ${r.detail}` : ""}`);

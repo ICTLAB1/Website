@@ -19,7 +19,8 @@ export type ResourceKey =
   | "services"
   | "posts"
   | "faqs"
-  | "banners";
+  | "banners"
+  | "certifications";
 
 export type ListColumn = {
   header: string;
@@ -34,7 +35,7 @@ export type ListColumn = {
 export type ResourceConfig = {
   key: ResourceKey;
   /** Prisma delegate name; must be a model with a matching shape. */
-  model: "brand" | "category" | "service" | "blogPost" | "faq" | "banner";
+  model: "brand" | "category" | "service" | "blogPost" | "faq" | "banner" | "certification";
   label: { singular: string; plural: string };
   description: string;
   /**
@@ -223,6 +224,38 @@ export const RESOURCES: Record<ResourceKey, ResourceConfig> = {
       { kind: "relation", name: "serviceId", label: "Service", resource: "service", group: "Attach to" },
       { kind: "relation", name: "productId", label: "Product", resource: "product", group: "Attach to" },
       { kind: "text", name: "topic", label: "Topic", maxLength: 80, hint: "For pages with no database record of their own, e.g. microsoft-licensing.", group: "Attach to" },
+      { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
+    ],
+  },
+
+  certifications: {
+    key: "certifications",
+    model: "certification",
+    label: { singular: "Certification", plural: "Certifications" },
+    description:
+      "Independently issued certifications, transcribed from the certificate itself. An expired certificate stops being shown on the public site automatically, so keep the expiry accurate.",
+    guard: "admin",
+    softDelete: false,
+    orderBy: [{ displayOrder: "asc" }],
+    searchFields: ["standard", "title", "reference", "issuer"],
+    tagsFor: () => [tags.certifications, tags.pages],
+    listColumns: [
+      { header: "Standard", path: "standard", primary: true },
+      { header: "Covers", path: "title" },
+      { header: "Certificate", path: "reference" },
+      { header: "Issued by", path: "issuer" },
+      { header: "Expires", path: "expiresAt", format: "date" },
+      { header: "Order", path: "displayOrder", format: "number" },
+    ],
+    fields: [
+      { kind: "text", name: "standard", label: "Standard", required: true, maxLength: 60, hint: "Exactly as printed, e.g. ISO 9001:2015", group: "Identity" },
+      { kind: "text", name: "title", label: "What it covers", required: true, maxLength: 120, hint: "e.g. Quality Management System", group: "Identity" },
+      { kind: "text", name: "reference", label: "Certificate number", required: true, maxLength: 60, group: "Identity" },
+      { kind: "text", name: "issuer", label: "Issued by", required: true, maxLength: 160, hint: "The certification body named on the certificate.", group: "Identity" },
+      { kind: "text", name: "verifyUrl", label: "Verification address", maxLength: 300, hint: "Where a customer can check it is still valid.", group: "Identity" },
+      { kind: "textarea", name: "scope", label: "Scope", rows: 4, maxLength: 1000, hint: "The scope printed on the certificate, word for word.", group: "Content" },
+      { kind: "date", name: "issuedAt", label: "Date of certification", required: true, group: PUBLICATION_GROUP },
+      { kind: "date", name: "expiresAt", label: "Expires", hint: "After this date it is hidden from the public site.", group: PUBLICATION_GROUP },
       { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
     ],
   },

@@ -806,6 +806,48 @@ model AuditLog {
 /// Scheduling is expressed as an optional window rather than a single flag so a
 /// promotion can be prepared in advance and expire on its own, without anyone
 /// remembering to switch it off.
+/// An independently issued certification held by this company.
+///
+/// Structured rather than written into page copy, for one reason: certificates
+/// expire. A claim of ISO 27001 compliance sitting in a paragraph of marketing
+/// text stays on the page for years after the certificate lapses, and nobody
+/// notices because nothing in the system knows it was a dated fact. Here the
+/// expiry is a column, the renderer checks it, and a lapsed certificate stops
+/// being displayed on its own.
+///
+/// Every field is transcribed from the certificate itself, including the number
+/// and the body that issued it, so a visitor can verify the claim rather than
+/// take it on trust. Nothing here may be filled in from memory or inference.
+model Certification {
+  id String @id @default(cuid())
+
+  /// The standard, exactly as written on the certificate: "ISO 9001:2015".
+  standard String
+  /// What the standard covers: "Quality Management System".
+  title     String
+  /// The certificate's own reference number.
+  reference String
+  /// The certification body that issued it.
+  issuer String
+  /// Where a visitor can check it is still valid.
+  verifyUrl String?
+  /// The scope the certificate was granted for, as printed on it.
+  scope String?
+
+  issuedAt  DateTime
+  /// Past this date the certificate is not displayed. Null means no expiry
+  /// is printed on it, which is unusual and worth checking before trusting.
+  expiresAt DateTime?
+
+  displayOrder Int      @default(100)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([standard, reference])
+  @@index([displayOrder])
+  @@index([expiresAt])
+}
+
 model Banner {
   id           String     @id @default(cuid())
   name         String

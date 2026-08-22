@@ -74,8 +74,8 @@ export const pageSeeds: PageSeed[] = [
               "source": "literal"
             }
           ],
-          "eyebrow": "One procurement partner. Multiple technology brands.",
-          "headline": "Enterprise Software Licensing, Cloud & IT Solutions",
+          "eyebrow": "Microsoft Authorised Partner | Verified GeM Reseller | Enterprise IT Solutions",
+          "headline": "Trusted IT & Software Solutions Partner",
           "primaryCta": {
             "href": "/enquiry",
             "label": "Get Enterprise Quote"
@@ -85,10 +85,10 @@ export const pageSeeds: PageSeed[] = [
             "Microsoft 365",
             "Acrobat Pro",
             "AutoCAD",
-            "Zoho CRM",
-            "Windows Server"
+            "Windows Server",
+            "Workstations"
           ],
-          "subheadline": "Microsoft, Adobe, Autodesk, Zoho and enterprise technology solutions from one trusted procurement partner — with the licensing advice, deployment support and renewal management that make them worth owning.",
+          "subheadline": "Software licensing, cloud and productivity solutions, and IT hardware and accessories — supplied together by one partner, with the licensing advice, deployment support and renewal management that make them worth owning.",
           "secondaryCta": {
             "href": "/products",
             "label": "Browse Software"
@@ -152,8 +152,8 @@ export const pageSeeds: PageSeed[] = [
           },
           "layout": "grid",
           "eyebrow": "Catalogue",
-          "heading": "Featured software categories",
-          "description": "Browse by what the software does rather than who publishes it — most procurement decisions start with a capability, not a publisher."
+          "heading": "Featured categories",
+          "description": "Software and IT hardware, browsed by what it does rather than who makes it — most procurement decisions start with a capability, not a publisher."
         }
       },
       {
@@ -174,8 +174,26 @@ export const pageSeeds: PageSeed[] = [
         }
       },
       {
-        "type": "SPLIT_PANEL",
+        "type": "PRODUCT_GRID",
         "displayOrder": 5,
+        "visible": true,
+        "data": {
+          "eyebrow": "IT hardware",
+          "heading": "Servers, storage, networking and workstations",
+          "description": "Hardware supplied alongside the software that runs on it, on the same quotation and the same purchase order.",
+          "source": "category",
+          "ref": "infrastructure-hardware",
+          "slugs": [],
+          "limit": 6,
+          "action": {
+            "label": "All hardware",
+            "href": "/products?category=infrastructure-hardware"
+          }
+        }
+      },
+      {
+        "type": "SPLIT_PANEL",
+        "displayOrder": 6,
         "visible": true,
         "data": {
           "tiles": [],
@@ -188,7 +206,7 @@ export const pageSeeds: PageSeed[] = [
       },
       {
         "type": "LINK_LIST",
-        "displayOrder": 6,
+        "displayOrder": 7,
         "visible": true,
         "data": {
           "items": [
@@ -206,7 +224,7 @@ export const pageSeeds: PageSeed[] = [
       },
       {
         "type": "CARDS",
-        "displayOrder": 7,
+        "displayOrder": 8,
         "visible": true,
         "data": {
           "items": [
@@ -349,6 +367,52 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 13,
         "visible": true,
         "data": {
+          "eyebrow": "Our experience",
+          "heading": "Where we have delivered",
+          "items": [
+            "Government",
+            "Defence",
+            "Education",
+            "PSU",
+            "Corporate"
+          ]
+        }
+      },
+      {
+        "type": "CHIP_LIST",
+        "displayOrder": 14,
+        "visible": true,
+        "data": {
+          "eyebrow": "Industries we serve",
+          "heading": "Industries we serve",
+          "description": "Sectors whose procurement rules, security requirements and licensing models we work within routinely.",
+          "items": [
+            "Defence",
+            "Education",
+            "Banking & Finance",
+            "Manufacturing",
+            "Ministry of Health and Family Welfare"
+          ]
+        }
+      },
+      {
+        "type": "COLLECTION_GRID",
+        "displayOrder": 15,
+        "visible": true,
+        "data": {
+          "eyebrow": "Independently certified",
+          "heading": "Certifications",
+          "description": "Assessed by accredited certification bodies against international standards. Each certificate number below can be checked with the body that issued it.",
+          "kind": "certifications",
+          "limit": 6,
+          "layout": "grid"
+        }
+      },
+      {
+        "type": "CHIP_LIST",
+        "displayOrder": 16,
+        "visible": true,
+        "data": {
           "items": [
             "BSNL",
             "Delhi Police",
@@ -368,7 +432,7 @@ export const pageSeeds: PageSeed[] = [
       },
       {
         "type": "CARDS",
-        "displayOrder": 14,
+        "displayOrder": 17,
         "visible": true,
         "data": {
           "items": [
@@ -399,7 +463,7 @@ export const pageSeeds: PageSeed[] = [
       },
       {
         "type": "COLLECTION_GRID",
-        "displayOrder": 15,
+        "displayOrder": 18,
         "visible": true,
         "data": {
           "kind": "brands",
@@ -416,7 +480,7 @@ export const pageSeeds: PageSeed[] = [
       },
       {
         "type": "KEY_VALUE_LIST",
-        "displayOrder": 16,
+        "displayOrder": 19,
         "visible": true,
         "data": {
           "items": [
@@ -449,7 +513,7 @@ export const pageSeeds: PageSeed[] = [
       },
       {
         "type": "COLLECTION_GRID",
-        "displayOrder": 17,
+        "displayOrder": 20,
         "visible": true,
         "data": {
           "kind": "posts",
@@ -466,7 +530,7 @@ export const pageSeeds: PageSeed[] = [
       },
       {
         "type": "CTA_BANNER",
-        "displayOrder": 18,
+        "displayOrder": 21,
         "visible": true,
         "data": {
           "body": "Send us the requirement — a product list, a seat count, or just the problem you are trying to solve. We will come back with a consolidated quotation and a plain recommendation, including where a cheaper option would serve you better.",
@@ -3176,9 +3240,9 @@ export const pageSeeds: PageSeed[] = [
             "microsoft-365-business-standard",
             "microsoft-365-business-premium",
             "microsoft-365-e3",
-            "windows-server-2025-standard",
-            "sql-server-2022-standard",
-            "microsoft-office-ltsc-professional-plus-2024"
+            "windows-server-2025-standard-8-core-license-pack-1-year",
+            "sql-server-2025-standard-2-core-license-pack-1-year",
+            "office-ltsc-professional-plus-2024"
           ],
           "action": {
             "href": "/products",
@@ -3401,8 +3465,7 @@ export const pageSeeds: PageSeed[] = [
             "microsoft-365-business-basic",
             "microsoft-365-business-standard",
             "microsoft-365-business-premium",
-            "microsoft-365-e3",
-            "microsoft-365-e5"
+            "microsoft-365-e3"
           ],
           "action": {
             "href": "/products",
@@ -4165,8 +4228,7 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 3,
           "slugs": [
-            "microsoft-office-home-and-business-2024",
-            "microsoft-office-ltsc-professional-plus-2024",
+            "office-ltsc-professional-plus-2024",
             "microsoft-365-business-standard"
           ],
           "action": {
@@ -4321,7 +4383,7 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 1,
           "slugs": [
-            "microsoft-office-ltsc-professional-plus-2024"
+            "office-ltsc-professional-plus-2024"
           ],
           "action": {
             "href": "/products",
@@ -5403,15 +5465,14 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 40,
         "visible": true,
         "data": {
-          "limit": 1,
-          "slugs": [
-            "azure-consumption-commitment"
-          ],
+          "limit": 6,
+          "slugs": [],
           "action": {
-            "href": "/products",
+            "href": "/products?category=cloud-platforms",
             "label": "Full catalogue"
           },
-          "source": "manual",
+          "source": "category",
+          "ref": "cloud-subscriptions",
           "heading": "Cloud consumption"
         }
       },
@@ -5805,8 +5866,7 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 2,
           "slugs": [
-            "microsoft-365-e3",
-            "microsoft-365-e5"
+            "microsoft-365-e3"
           ],
           "action": {
             "href": "/products",
@@ -5932,7 +5992,7 @@ export const pageSeeds: PageSeed[] = [
           "slugs": [
             "autodesk-product-design-manufacturing-collection",
             "fusion-360",
-            "microsoft-office-ltsc-professional-plus-2024",
+            "office-ltsc-professional-plus-2024",
             "dell-precision-workstation"
           ],
           "action": {
@@ -6196,8 +6256,7 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 2,
           "slugs": [
-            "microsoft-365-business-premium",
-            "microsoft-365-e5"
+            "microsoft-365-business-premium"
           ],
           "action": {
             "href": "/products",
@@ -6319,8 +6378,7 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 3,
           "slugs": [
-            "azure-consumption-commitment",
-            "sql-server-2022-standard",
+            "sql-server-2025-standard-2-core-license-pack-1-year",
             "microsoft-365-e3"
           ],
           "action": {
@@ -6469,8 +6527,8 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 2,
           "slugs": [
-            "sql-server-2022-standard",
-            "sql-server-2022-enterprise"
+            "sql-server-2025-standard-2-core-license-pack-1-year",
+            "sql-server-2025-enterprise-2-core-license-pack-1-year"
           ],
           "action": {
             "href": "/products",
@@ -6901,9 +6959,9 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 3,
           "slugs": [
-            "windows-server-2025-standard",
-            "windows-server-2025-datacenter",
-            "windows-server-cal-user"
+            "windows-server-2025-standard-8-core-license-pack-1-year",
+            "windows-server-2025-datacenter-8-core-license-pack-1-year",
+            "windows-server-2025-cal-1-user-cal-1-year"
           ],
           "action": {
             "href": "/products",

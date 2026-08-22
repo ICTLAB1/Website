@@ -74,6 +74,82 @@ type CategoryRow = {
 };
 type ServiceRow = { slug: string; name: string; summary: string; category: string };
 type PostCategoryRow = { name: string; count: number };
+type CertificationRow = {
+  standard: string;
+  title: string;
+  reference: string;
+  issuer: string;
+  verifyUrl: string | null;
+  scope: string | null;
+  issuedAt: Date;
+  expiresAt: Date | null;
+};
+
+/**
+ * A certification, stated so it can be checked.
+ *
+ * The certificate number, the body that issued it and the verification address
+ * are all on the card. A badge saying "ISO 27001 certified" with nothing behind
+ * it is a claim; this is the same claim with the means to disprove it, which is
+ * the only version worth making to a procurement officer.
+ *
+ * The expiry is shown for the same reason. A certificate is a statement about a
+ * period, and a reader who cannot see the period has to assume it is current —
+ * which is exactly the assumption that goes wrong.
+ */
+function CertificationCard({ certification }: { certification: CertificationRow }) {
+  return (
+    <div className="flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700">
+        {certification.title}
+      </p>
+      <p className="mt-1.5 text-[17px] font-semibold leading-tight text-graphite-900">
+        {certification.standard}
+      </p>
+
+      {certification.scope ? (
+        <p className="clamp-3 mt-3 text-[13px] leading-relaxed text-ink-600">
+          {certification.scope}
+        </p>
+      ) : null}
+
+      <dl className="mt-4 space-y-1 border-t border-line pt-3 text-[12px] text-ink-600">
+        <div className="flex gap-2">
+          <dt className="text-ink-500">Certificate</dt>
+          <dd className="font-mono text-graphite-900">{certification.reference}</dd>
+        </div>
+        <div className="flex gap-2">
+          <dt className="text-ink-500">Issued by</dt>
+          <dd className="text-graphite-900">{certification.issuer}</dd>
+        </div>
+        <div className="flex gap-2">
+          <dt className="text-ink-500">Valid</dt>
+          <dd className="text-graphite-900">
+            {formatDate(certification.issuedAt)}
+            {certification.expiresAt ? ` – ${formatDate(certification.expiresAt)}` : ""}
+          </dd>
+        </div>
+      </dl>
+
+      {certification.verifyUrl ? (
+        <p className="mt-auto pt-3">
+          <a
+            href={
+              certification.verifyUrl.startsWith("http")
+                ? certification.verifyUrl
+                : `https://${certification.verifyUrl}`
+            }
+            target="_blank"
+            rel="noreferrer noopener"
+            className="text-[12px] font-medium text-accent-700 underline underline-offset-2 hover:text-accent-800"
+          >
+            Verify this certificate
+          </a>
+        </p>
+      ) : null}
+    </div>
+  );
+}
 type PostRow = {
   slug: string;
   title: string;
@@ -135,6 +211,12 @@ export function CollectionGridBlock({
                 <span className="text-ink-500">{category.count}</span>
               </Link>
             </li>
+          ))}
+        </Reveal>
+      ) : data.kind === "certifications" ? (
+        <Reveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {(rows as CertificationRow[]).map((certification) => (
+            <CertificationCard key={certification.reference} certification={certification} />
           ))}
         </Reveal>
       ) : data.kind === "brands" && data.layout === "strip" ? (

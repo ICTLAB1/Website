@@ -32,6 +32,8 @@ export const tags = {
   posts: "posts",
   post: (slug: string) => `post:${slug}`,
   faqs: "faqs",
+  /** Independently issued certifications shown on the homepage and about page. */
+  certifications: "certifications",
   /**
    * The company's business identity: contact details, registered address,
    * statutory identifiers and the grievance officer. Its own tag because it is

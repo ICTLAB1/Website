@@ -16,6 +16,7 @@ import { products } from "./seed-data/products";
 import { services } from "./seed-data/services";
 import { blogPosts } from "./seed-data/blog";
 import { pageSeeds, navigationSeeds } from "./seed-data/pages";
+import { certifications } from "./seed-data/certifications";
 
 const prisma = new PrismaClient();
 
@@ -363,6 +364,31 @@ async function main() {
     });
   }
 
+  console.log("Seeding certifications…");
+  for (const certification of certifications) {
+    const data = {
+      title: certification.title,
+      issuer: certification.issuer,
+      verifyUrl: certification.verifyUrl,
+      scope: certification.scope,
+      issuedAt: new Date(`${certification.issuedAt}T00:00:00.000Z`),
+      expiresAt: certification.expiresAt
+        ? new Date(`${certification.expiresAt}T00:00:00.000Z`)
+        : null,
+      displayOrder: certification.displayOrder,
+    };
+    await prisma.certification.upsert({
+      where: {
+        standard_reference: {
+          standard: certification.standard,
+          reference: certification.reference,
+        },
+      },
+      create: { ...data, standard: certification.standard, reference: certification.reference },
+      update: data,
+    });
+  }
+
   const adminEmail = process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase();
   const adminPassword = process.env.SEED_ADMIN_PASSWORD;
   if (adminEmail && adminPassword && adminPassword.length >= 10) {
@@ -396,6 +422,7 @@ async function main() {
     services: await prisma.service.count(),
     posts: await prisma.blogPost.count(),
     faqs: await prisma.faq.count(),
+    certifications: await prisma.certification.count(),
     pages: await prisma.page.count(),
     sections: await prisma.pageSection.count(),
     navigation: await prisma.navigationItem.count(),

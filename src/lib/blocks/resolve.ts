@@ -143,6 +143,33 @@ async function collectionFor(
         take,
         select: { slug: true, name: true, summary: true, category: true },
       });
+    case "certifications":
+      /*
+       * Expired certificates are not returned.
+       *
+       * The whole reason these are rows rather than page copy: a certificate
+       * lapses on a date, and a claim in a paragraph does not know that. The
+       * filter is here, in the one place every page reads them from, so no
+       * page can display a lapsed one by forgetting to check.
+       *
+       * A null expiry is shown — some certificates carry none — which is why
+       * the column is nullable rather than defaulted to a date nobody checked.
+       */
+      return prisma.certification.findMany({
+        where: { OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
+        orderBy: [{ displayOrder: "asc" }, { standard: "asc" }],
+        take,
+        select: {
+          standard: true,
+          title: true,
+          reference: true,
+          issuer: true,
+          verifyUrl: true,
+          scope: true,
+          issuedAt: true,
+          expiresAt: true,
+        },
+      });
     case "postCategories": {
       // Grouped rather than listed: the chip carries the article count, so the
       // aggregate is the whole payload.

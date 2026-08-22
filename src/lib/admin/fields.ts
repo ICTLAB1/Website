@@ -32,7 +32,7 @@ export type FieldDescriptor =
   | (Common & { kind: "select"; required?: boolean; options: SelectOption[] })
   | (Common & { kind: "relation"; required?: boolean; resource: RelationSource })
   | (Common & { kind: "lines"; maxItems?: number })
-  | (Common & { kind: "date" });
+  | (Common & { kind: "date"; required?: boolean });
 
 /** Which table a `relation` field draws its options from. */
 export type RelationSource = "brand" | "category" | "service" | "product" | "user";
@@ -106,14 +106,20 @@ export function schemaFor(fields: FieldDescriptor[]): z.ZodType<Record<string, u
         shape[field.name] = z.string().max(20_000).optional().default("");
         break;
 
-      case "date":
-        shape[field.name] = z
+      case "date": {
+        const date = z
           .string()
           .trim()
-          .regex(/^\d{4}-\d{2}-\d{2}$/, "Use the date picker.")
-          .or(z.literal(""))
-          .optional();
+          .regex(/^\d{4}-\d{2}-\d{2}$/, "Use the date picker.");
+        /*
+         * A required date is enforced here rather than left to the database.
+         * A non-nullable column reached with null raises a Prisma error, which
+         * surfaces as an unexplained failure instead of a message against the
+         * field somebody left blank.
+         */
+        shape[field.name] = field.required ? date : date.or(z.literal("")).optional();
         break;
+      }
     }
   }
 

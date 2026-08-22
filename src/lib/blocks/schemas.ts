@@ -162,7 +162,7 @@ export const collectionGridSchema = z.object({
   eyebrow: optionalText(80),
   heading: optionalText(200),
   description: optionalText(600),
-  kind: z.enum(["brands", "categories", "services", "posts", "postCategories"]),
+  kind: z.enum(["brands", "categories", "services", "posts", "postCategories", "certifications"]),
   limit: z.number().int().min(1).max(24).optional().default(8),
   layout: z.enum(["grid", "strip"]).optional().default("grid"),
   /** Optional link beside the heading. */
