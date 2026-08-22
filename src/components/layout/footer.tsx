@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Logo } from "@/components/layout/logo";
 import { getNavigation } from "@/lib/queries/navigation";
 import { getSiteConfig } from "@/lib/site-config";
+import { CertificationStrip } from "@/components/layout/certification-strip";
 
 export async function Footer() {
   const config = await getSiteConfig();
@@ -80,6 +81,9 @@ export async function Footer() {
           ))}
         </div>
       </div>
+
+      {/* Above the small print, below the link columns: seen on every page. */}
+      <CertificationStrip />
 
       <div className="border-t border-graphite-800">
         <div className="container-page flex flex-col gap-3 py-5 text-label text-graphite-400 sm:flex-row sm:items-center sm:justify-between">

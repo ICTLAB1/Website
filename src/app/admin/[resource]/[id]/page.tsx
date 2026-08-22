@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { ResourceForm } from "@/components/admin/resource-form";
 import { AdminForm } from "@/components/admin/admin-form";
 import { deleteResource } from "@/app/admin/resource-actions";
+import { BrandLogoForm } from "@/components/admin/brand-logo-form";
 import { requireAdmin, requireStaff } from "@/lib/auth/guards";
 import { resolveResource } from "@/lib/admin/resources";
 import { getRecord, relationOptions, toFormValues } from "@/lib/admin/repository";
@@ -97,6 +98,20 @@ export default async function EditResourcePage({ params }: PageProps) {
           />
         </div>
       </header>
+
+      {/*
+        Brands get a logo panel the generic form cannot provide: it needs a file
+        input, and the descriptor framework posts plain values.
+      */}
+      {config.key === "brands" ? (
+        <div className="max-w-3xl">
+          <BrandLogoForm
+            brandId={id}
+            brandName={String(record.name ?? "This brand")}
+            logoUrl={typeof record.logoUrl === "string" ? record.logoUrl : null}
+          />
+        </div>
+      ) : null}
 
       <div className="max-w-3xl">
         <ResourceForm

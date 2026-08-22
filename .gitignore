@@ -20,3 +20,6 @@ coverage
 next-env.d.ts
 *.tsbuildinfo
 /prisma/*.db
+
+# Admin-uploaded files in development. Production keeps these on a volume.
+.uploads/

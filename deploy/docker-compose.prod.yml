@@ -73,6 +73,11 @@ services:
       COMPANY_GRIEVANCE_OFFICER_EMAIL: ${COMPANY_GRIEVANCE_OFFICER_EMAIL:-}
       COMPANY_GRIEVANCE_OFFICER_PHONE: ${COMPANY_GRIEVANCE_OFFICER_PHONE:-}
 
+      # Files uploaded from the admin panel — brand logos today. Kept on a
+      # volume rather than under public/, which is baked into the image and so
+      # would lose every upload at the next rebuild.
+      UPLOAD_DIR: /data/uploads
+
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_SECURE: ${SMTP_SECURE:-false}
@@ -89,6 +94,9 @@ services:
       COMPANY_BANK_ACCOUNT_TYPE: ${COMPANY_BANK_ACCOUNT_TYPE:-}
       COMPANY_BANK_BRANCH: ${COMPANY_BANK_BRANCH:-}
       COMPANY_UPI_ID: ${COMPANY_UPI_ID:-}
+    volumes:
+      # Admin uploads (brand logos). Outside the image, so a rebuild keeps them.
+      - uploads:/data/uploads
     # Also no `ports:`. Only Caddy talks to the app, over the internal network.
     healthcheck:
       # Asks the app whether it can reach its database, which is the failure
@@ -142,5 +150,6 @@ services:
 
 volumes:
   db-data:
+  uploads:
   caddy-data:
   caddy-config:

@@ -8702,7 +8702,7 @@ export const navigationSeeds: NavigationSeed[] = [
     "label": "About",
     "href": "/about",
     "description": null,
-    "displayOrder": 150
+    "displayOrder": 5
   },
   {
     "key": "header:about.about-us",

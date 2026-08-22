@@ -15,8 +15,20 @@
  * publisher's logo, and inventing one is not an option.
  */
 
-/** The single directory brand artwork is served from, under `public/`. */
+/** Artwork committed to the repository, served from `public/brands/`. */
 export const BRAND_LOGO_DIR = "/brands/";
+
+/**
+ * Artwork uploaded from the admin panel, served by `app/uploads/[name]`.
+ *
+ * A second directory rather than one, because the two have different
+ * guarantees. A file under `/brands/` was put there by someone with repository
+ * access and is whatever they named it. A file under `/uploads/` was validated
+ * on the way in, is named after a digest of its own contents, and is served
+ * with headers that neuter it — so its shape can be checked far more strictly.
+ */
+export const BRAND_UPLOAD_DIR = "/uploads/";
+const UPLOADED_NAME = /^[0-9a-f]{32}\.(png|jpg|webp|avif|svg)$/;
 
 const ALLOWED_EXTENSIONS = [".svg", ".png", ".webp", ".jpg", ".jpeg", ".avif"];
 
@@ -33,6 +45,16 @@ export function safeBrandLogo(value: string | null | undefined): string | null {
 
   const path = value.trim();
   if (path.length === 0 || path.length > 200) return null;
+
+  /*
+   * An uploaded file is checked against the exact shape the uploader produces.
+   * Nothing about that name came from a person, so an exact match is available
+   * here and is stronger than any character filter.
+   */
+  if (path.startsWith(BRAND_UPLOAD_DIR)) {
+    const uploaded = path.slice(BRAND_UPLOAD_DIR.length);
+    return UPLOADED_NAME.test(uploaded) ? path : null;
+  }
 
   // No scheme, no protocol-relative, no traversal, no query or fragment.
   if (!path.startsWith(BRAND_LOGO_DIR)) return null;
