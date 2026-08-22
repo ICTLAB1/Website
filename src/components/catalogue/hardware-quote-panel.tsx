@@ -39,22 +39,28 @@ export function HardwareQuotePanel({
         carry GST, and can cover several manufacturers on one document.
       </p>
 
-      {partNumber ? (
-        <dl className="mt-5 border-t border-line pt-4 text-label">
+      {/*
+        Manufacturer and supplier always; the part number only where the source
+        names one. The first two are the relationship statement — who makes this
+        and who sells it — and hiding them because a build has no part number
+        would drop the sentence the whole catalogue can be misread without.
+      */}
+      <dl className="mt-5 border-t border-line pt-4 text-label">
+        {partNumber ? (
           <div className="flex gap-3">
             <dt className="w-24 shrink-0 text-ink-500">Part number</dt>
             <dd className="font-mono text-ink-700">{partNumber}</dd>
           </div>
-          <div className="mt-2 flex gap-3">
-            <dt className="w-24 shrink-0 text-ink-500">Manufacturer</dt>
-            <dd className="text-ink-700">{brandName}</dd>
-          </div>
-          <div className="mt-2 flex gap-3">
-            <dt className="w-24 shrink-0 text-ink-500">Supplied by</dt>
-            <dd className="text-ink-700">{supplierName}</dd>
-          </div>
-        </dl>
-      ) : null}
+        ) : null}
+        <div className={`flex gap-3${partNumber ? " mt-2" : ""}`}>
+          <dt className="w-24 shrink-0 text-ink-500">Manufacturer</dt>
+          <dd className="text-ink-700">{brandName}</dd>
+        </div>
+        <div className="mt-2 flex gap-3">
+          <dt className="w-24 shrink-0 text-ink-500">Supplied by</dt>
+          <dd className="text-ink-700">{supplierName}</dd>
+        </div>
+      </dl>
 
       <div className="mt-6 space-y-3">
         {/*

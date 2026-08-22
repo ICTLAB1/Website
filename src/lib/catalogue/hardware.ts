@@ -25,6 +25,8 @@ export const FORM_FACTORS: FormFactor[] = [
   "DESKTOP_MINI",
   "ALL_IN_ONE",
   "DESKTOP_WORKSTATION",
+  "TOWER_SERVER",
+  "RACK_SERVER",
 ];
 
 const LABELS: Record<FormFactor, string> = {
@@ -35,6 +37,8 @@ const LABELS: Record<FormFactor, string> = {
   DESKTOP_MINI: "Mini PC",
   ALL_IN_ONE: "All-in-one",
   DESKTOP_WORKSTATION: "Desktop workstation",
+  TOWER_SERVER: "Tower server",
+  RACK_SERVER: "Rack server",
 };
 
 /**
@@ -53,10 +57,12 @@ const CLASS_LABELS: Record<FormFactor, string> = {
   DESKTOP_MINI: "Commercial mini PC",
   ALL_IN_ONE: "Commercial all-in-one",
   DESKTOP_WORKSTATION: "Desktop workstation",
+  TOWER_SERVER: "Tower server",
+  RACK_SERVER: "Rack server",
 };
 
 /** The two families the navigation is built from. */
-export type HardwareFamily = "laptops" | "desktops";
+export type HardwareFamily = "laptops" | "desktops" | "servers";
 
 const FAMILY: Record<FormFactor, HardwareFamily> = {
   LAPTOP: "laptops",
@@ -66,11 +72,14 @@ const FAMILY: Record<FormFactor, HardwareFamily> = {
   DESKTOP_MINI: "desktops",
   ALL_IN_ONE: "desktops",
   DESKTOP_WORKSTATION: "desktops",
+  TOWER_SERVER: "servers",
+  RACK_SERVER: "servers",
 };
 
 export const FAMILY_LABELS: Record<HardwareFamily, string> = {
   laptops: "Business laptops",
   desktops: "Business desktops",
+  servers: "Servers",
 };
 
 export function formFactorLabel(value: FormFactor): string {

@@ -51,6 +51,12 @@ enum FormFactor {
   DESKTOP_MINI
   DESKTOP_WORKSTATION
   ALL_IN_ONE
+  /// A server in a tower case, for an office rather than a rack.
+  TOWER_SERVER
+  /// A rack-mounted server. How many units it occupies is a specification, not
+  /// a form factor — a 1U and a 2U are bought by the same person for the same
+  /// rack, and splitting them would put half the range behind a second filter.
+  RACK_SERVER
 }
 
 enum Availability {
@@ -568,6 +574,11 @@ model ProductVariant {
   opticalDrive    String?
   powerSupply     String?
   warranty        String?
+  /// Servers. A workstation has graphics where a server has a RAID controller
+  /// and a management processor, and calling either by the other's name would
+  /// put a PERC card under a "Graphics" heading.
+  raidController   String?
+  systemManagement String?
   /// "Made in India", "Modified" — qualifications the source attaches to a
   /// specific build, kept verbatim rather than folded into another field.
   configNote      String?

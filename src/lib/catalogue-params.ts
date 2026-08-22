@@ -1,4 +1,5 @@
 import type { CatalogueFilters, SortOption } from "@/lib/queries/catalogue";
+import type { HardwareFamily } from "@/lib/catalogue/hardware";
 
 /**
  * Catalogue URL state.
@@ -21,10 +22,10 @@ const VALID_SORTS = new Set(SORT_OPTIONS.map((option) => option.value));
 
 export type RawSearchParams = Record<string, string | string[] | undefined>;
 
-/** `laptops` or `desktops`, and nothing else. */
-function familyOf(value: string | string[] | undefined): "laptops" | "desktops" | undefined {
+/** One of the three families the navigation is built from, and nothing else. */
+function familyOf(value: string | string[] | undefined): HardwareFamily | undefined {
   const raw = Array.isArray(value) ? value[0] : value;
-  return raw === "laptops" || raw === "desktops" ? raw : undefined;
+  return raw === "laptops" || raw === "desktops" || raw === "servers" ? raw : undefined;
 }
 
 function toArray(value: string | string[] | undefined): string[] {

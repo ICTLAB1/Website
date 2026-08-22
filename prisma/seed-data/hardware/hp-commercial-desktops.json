@@ -1,0 +1,1487 @@
+{
+ "brand": "hp",
+ "category": "infrastructure-hardware",
+ "source": "HP commercial desktop and all-in-one line card supplied by TechZoid Technologies Private Limited",
+ "checkedOn": "2026-08-22",
+ "models": [
+  {
+   "name": "HP Pro Tower 280 G9",
+   "series": "Pro 280",
+   "formFactor": "DESKTOP_TOWER",
+   "shortDescription": "The HP Pro Tower 280 G9 is part of HP's commercial desktop range, supplied for business, government and education procurement in a microtower chassis.",
+   "description": "The HP Pro Tower 280 G9 sits in HP's commercial line rather than its consumer one, which is what makes it eligible for the standard-build, warranty and lifecycle terms a procurement department works to.\n\nBuilds listed differ by processor, memory, storage and operating system — FreeDOS where an organisation images its own machines, Windows 11 Pro where it does not. Warranty terms vary by build and are listed against each one.",
+   "businessFeatures": [
+    "Commercial range, eligible for standard-build and lifecycle terms",
+    "FreeDOS or Windows 11 Pro specified at order",
+    "Warranty terms of one to five years depending on build"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Microtower"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-14500",
+     "memory": "16GB DDR5",
+     "storage": "1TB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-14500",
+     "memory": "16GB DDR5",
+     "storage": "1TB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700",
+     "memory": "16GB DDR5",
+     "storage": "1TB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700",
+     "memory": "16GB DDR5",
+     "storage": "1TB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-14500",
+     "memory": "16GB DDR4",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": "Wi-Fi 6"
+    },
+    {
+     "partNumber": "8X3U9AV",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700",
+     "memory": "16GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": "Wi-Fi 6"
+    },
+    {
+     "partNumber": "B6BP4AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i3-12100",
+     "memory": "8GB DDR4",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "B1WW6PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i3-13100",
+     "memory": "8GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "B5SL4PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-13500",
+     "memory": "8GB",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Home Single Language",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "B4SF3PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-12400",
+     "memory": "8GB",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": "Made in India · Wi-Fi 6"
+    },
+    {
+     "partNumber": "A44X4PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-12500",
+     "memory": "8GB DDR4",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": "DVD",
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "BC5W4AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-13500",
+     "memory": "8GB DDR4",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "BC5Y0AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-13500",
+     "memory": "16GB DDR4",
+     "storage": "1TB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "BC5Y3AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-13700",
+     "memory": "16GB",
+     "storage": "1TB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "BC5Y2AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-13700",
+     "memory": "16GB",
+     "storage": "1TB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Pro Small Form Factor 280 G9",
+   "series": "Pro 280",
+   "formFactor": "DESKTOP_SFF",
+   "shortDescription": "The HP Pro Small Form Factor 280 G9 is part of HP's commercial desktop range, supplied for business, government and education procurement in a small form factor chassis.",
+   "description": "The HP Pro Small Form Factor 280 G9 sits in HP's commercial line rather than its consumer one, which is what makes it eligible for the standard-build, warranty and lifecycle terms a procurement department works to.\n\nBuilds listed differ by processor, memory, storage and operating system — FreeDOS where an organisation images its own machines, Windows 11 Pro where it does not. Warranty terms vary by build and are listed against each one.",
+   "businessFeatures": [
+    "Commercial range, eligible for standard-build and lifecycle terms",
+    "FreeDOS or Windows 11 Pro specified at order",
+    "Warranty terms of one to five years depending on build"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Small form factor"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "7B9T6PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i3-12100",
+     "memory": "8GB",
+     "storage": "256GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP ProDesk 2 Small Form Factor G1i",
+   "series": "ProDesk 2",
+   "formFactor": "DESKTOP_SFF",
+   "shortDescription": "The HP ProDesk 2 Small Form Factor G1i is part of HP's commercial desktop range, supplied for business, government and education procurement in a small form factor chassis.",
+   "description": "The HP ProDesk 2 Small Form Factor G1i sits in HP's commercial line rather than its consumer one, which is what makes it eligible for the standard-build, warranty and lifecycle terms a procurement department works to.\n\nBuilds listed differ by processor, memory, storage and operating system — FreeDOS where an organisation images its own machines, Windows 11 Pro where it does not. Warranty terms vary by build and are listed against each one.",
+   "businessFeatures": [
+    "Wi-Fi 6 with Bluetooth 5.4",
+    "Three years of warranty",
+    "DDR5 memory"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Small form factor"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "BN0S4PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-14500",
+     "memory": "8GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": "Wi-Fi 6, Bluetooth 5.4"
+    },
+    {
+     "partNumber": "BN0S7PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700",
+     "memory": "16GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": "Wi-Fi 6, Bluetooth 5.4"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP ProOne 440 G9 All-in-One",
+   "series": "ProOne 440",
+   "formFactor": "ALL_IN_ONE",
+   "shortDescription": "A 23.8-inch full-HD business all-in-one on Intel Core processors, for reception desks, counters and offices where a tower does not fit.",
+   "description": "The ProOne 440 G9 puts a commercial desktop behind a 23.8-inch full-HD display. It is specified where floor and desk space are the constraint — reception, service counters, teller positions, and offices standardising on a single unit per desk.\n\nEvery build listed carries a 23.8-inch full-HD display and three years of warranty. Processor, memory, storage and operating system vary by build.",
+   "businessFeatures": [
+    "23.8-inch full-HD display on every build",
+    "Three years of warranty",
+    "Commercial range with Q-series chipset",
+    "FreeDOS or Windows 11 Pro at order"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "All-in-one"
+    },
+    {
+     "label": "Display",
+     "value": "23.8-inch (60.45 cm) diagonal, full HD"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "D10LVAT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i3-13100",
+     "memory": "8GB DDR5-4800 (1 x 8GB)",
+     "storage": "512GB PCIe NVMe M.2 SSD",
+     "graphics": "Intel UHD Graphics 730",
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "D10LYAT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-13500T",
+     "memory": "8GB DDR5-4800 (1 x 8GB)",
+     "storage": "512GB PCIe NVMe M.2 SSD",
+     "graphics": "Intel UHD Graphics 770",
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "CN8M7AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-13500",
+     "memory": "16GB DDR4-3200 (1 x 16GB)",
+     "storage": "1TB PCIe NVMe SSD",
+     "graphics": "Intel UHD Graphics 770",
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "780A4PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-12700",
+     "memory": "8GB DDR4-3200 (1 x 8GB)",
+     "storage": "512GB PCIe NVMe SSD",
+     "graphics": "Intel UHD Graphics 730",
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "BF0N8AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-13700",
+     "memory": "16GB DDR4-3200 (1 x 16GB)",
+     "storage": "1TB PCIe NVMe SSD",
+     "graphics": "Intel UHD Graphics 770",
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "C2FK3AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-14500",
+     "memory": "8GB DDR5-4800 (1 x 8GB)",
+     "storage": "512GB PCIe NVMe M.2 SSD",
+     "graphics": "Intel UHD Graphics 770",
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": "C2FL4AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700",
+     "memory": "16GB DDR5-4800 (1 x 16GB)",
+     "storage": "512GB PCIe NVMe M.2 SSD",
+     "graphics": "Intel UHD Graphics 770",
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Pro 400 G9 Microtower",
+   "series": "Pro 400",
+   "formFactor": "DESKTOP_TOWER",
+   "shortDescription": "The HP Pro 400 G9 Microtower is part of HP's commercial desktop range, supplied for business, government and education procurement in a microtower chassis.",
+   "description": "The HP Pro 400 G9 Microtower sits in HP's commercial line rather than its consumer one, which is what makes it eligible for the standard-build, warranty and lifecycle terms a procurement department works to.\n\nBuilds listed differ by processor, memory, storage and operating system — FreeDOS where an organisation images its own machines, Windows 11 Pro where it does not. Warranty terms vary by build and are listed against each one.",
+   "businessFeatures": [
+    "Commercial range, eligible for standard-build and lifecycle terms",
+    "FreeDOS or Windows 11 Pro specified at order",
+    "Warranty terms of one to five years depending on build"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Microtower"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "52J89AV",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i3-12100",
+     "memory": "8GB DDR4",
+     "storage": "1TB HDD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "7E951AV",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-13500",
+     "memory": "8GB DDR4",
+     "storage": "256GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "7N5L7PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-12500",
+     "memory": "8GB DDR4",
+     "storage": "1TB HDD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "5 years",
+     "note": null
+    },
+    {
+     "partNumber": "52J89AV",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-12400",
+     "memory": "16GB DDR4",
+     "storage": "256GB SSD + 1TB HDD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": "Listed under the same part number as the i3-12100 build — please confirm on quotation"
+    },
+    {
+     "partNumber": "7K659PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-12500",
+     "memory": "8GB DDR4",
+     "storage": "512GB SSD + 1TB HDD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "B3WH0PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-13500",
+     "memory": "8GB DDR4",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "7E953AV",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-13500",
+     "memory": "16GB DDR4",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "B6QN9PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-12700",
+     "memory": "16GB DDR4",
+     "storage": "512GB SSD + 1TB HDD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": null
+    },
+    {
+     "partNumber": "B1UM7PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-13700",
+     "memory": "16GB DDR4",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "CB1N9AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700",
+     "memory": "8GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": null
+    },
+    {
+     "partNumber": "B3WH8PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-13700",
+     "memory": "16GB DDR4",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "C1UH1AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700",
+     "memory": "16GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Pro 400 G9 Small Form Factor",
+   "series": "Pro 400",
+   "formFactor": "DESKTOP_SFF",
+   "shortDescription": "The HP Pro 400 G9 Small Form Factor is part of HP's commercial desktop range, supplied for business, government and education procurement in a small form factor chassis.",
+   "description": "The HP Pro 400 G9 Small Form Factor sits in HP's commercial line rather than its consumer one, which is what makes it eligible for the standard-build, warranty and lifecycle terms a procurement department works to.\n\nBuilds listed differ by processor, memory, storage and operating system — FreeDOS where an organisation images its own machines, Windows 11 Pro where it does not. Warranty terms vary by build and are listed against each one.",
+   "businessFeatures": [
+    "Commercial range, eligible for standard-build and lifecycle terms",
+    "FreeDOS or Windows 11 Pro specified at order",
+    "Warranty terms of one to five years depending on build"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Small form factor"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "BK9U2PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700",
+     "memory": "8GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": null
+    },
+    {
+     "partNumber": "7P9E7PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-12500",
+     "memory": "8GB DDR4",
+     "storage": "1TB HDD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": "DVD-RW",
+     "powerSupply": null,
+     "warranty": "5 years",
+     "note": null
+    },
+    {
+     "partNumber": "B59PRPT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-12700",
+     "memory": "8GB DDR4",
+     "storage": "512GB SSD + 1TB HDD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Pro 400 G7 Microtower",
+   "series": "Pro 400",
+   "formFactor": "DESKTOP_TOWER",
+   "shortDescription": "The HP Pro 400 G7 Microtower is part of HP's commercial desktop range, supplied for business, government and education procurement in a microtower chassis.",
+   "description": "The HP Pro 400 G7 Microtower sits in HP's commercial line rather than its consumer one, which is what makes it eligible for the standard-build, warranty and lifecycle terms a procurement department works to.\n\nBuilds listed differ by processor, memory, storage and operating system — FreeDOS where an organisation images its own machines, Windows 11 Pro where it does not. Warranty terms vary by build and are listed against each one.",
+   "businessFeatures": [
+    "Commercial range, eligible for standard-build and lifecycle terms",
+    "FreeDOS or Windows 11 Pro specified at order",
+    "Warranty terms of one to five years depending on build"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Microtower"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "55G76PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i3-10100",
+     "memory": "4GB DDR4",
+     "storage": "1TB HDD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 10 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Pro 400 G7 Small Form Factor",
+   "series": "Pro 400",
+   "formFactor": "DESKTOP_SFF",
+   "shortDescription": "The HP Pro 400 G7 Small Form Factor is part of HP's commercial desktop range, supplied for business, government and education procurement in a small form factor chassis.",
+   "description": "The HP Pro 400 G7 Small Form Factor sits in HP's commercial line rather than its consumer one, which is what makes it eligible for the standard-build, warranty and lifecycle terms a procurement department works to.\n\nBuilds listed differ by processor, memory, storage and operating system — FreeDOS where an organisation images its own machines, Windows 11 Pro where it does not. Warranty terms vary by build and are listed against each one.",
+   "businessFeatures": [
+    "Commercial range, eligible for standard-build and lifecycle terms",
+    "FreeDOS or Windows 11 Pro specified at order",
+    "Warranty terms of one to five years depending on build"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Small form factor"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "6X9Z3PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-10400",
+     "memory": "8GB DDR4",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "3Y1P2PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-10400",
+     "memory": "8GB DDR4",
+     "storage": "1TB HDD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 10 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Elite Tower 800 G9",
+   "series": "Elite 800",
+   "formFactor": "DESKTOP_TOWER",
+   "shortDescription": "HP's Elite commercial tower on Intel Core i5 to i9 processors with DDR5 memory, for standardised corporate and government fleets.",
+   "description": "The Elite Tower 800 G9 is the top of HP's commercial desktop range: Intel Core processors up to i9, DDR5 memory and the manageability and lifecycle terms an Elite-series machine carries.\n\nIt is specified where a fleet is standardised and expected to stay in service for several years, and where the buying decision is about support and image stability rather than headline price.",
+   "businessFeatures": [
+    "Elite commercial range with fleet lifecycle terms",
+    "DDR5 memory",
+    "FreeDOS or Windows 11 Pro at order",
+    "Warranty of one or three years depending on build"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Microtower"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-14500",
+     "memory": "8GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": "Wi-Fi 6"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-13700",
+     "memory": "16GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700",
+     "memory": "16GB DDR5",
+     "storage": "1TB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700",
+     "memory": "16GB DDR5",
+     "storage": "1TB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i9-12900",
+     "memory": "16GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i9-12900",
+     "memory": "32GB DDR5",
+     "storage": "256GB SSD + 1TB HDD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i9-14900",
+     "memory": "16GB DDR5",
+     "storage": "1TB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i9-14900",
+     "memory": "16GB DDR5",
+     "storage": "1TB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Elite Small Form Factor 800 G9",
+   "series": "Elite 800",
+   "formFactor": "DESKTOP_SFF",
+   "shortDescription": "HP's Elite commercial small-form-factor desktop on Intel Core processors with DDR5 memory.",
+   "description": "The Elite 800 G9 in small-form-factor puts the same commercial platform as the tower into a case that fits under a monitor or behind a desk.\n\nIt is specified where the Elite range's manageability and lifecycle terms are wanted but floor space is not available.",
+   "businessFeatures": [
+    "Elite commercial range with fleet lifecycle terms",
+    "DDR5 memory",
+    "Small chassis for constrained desks"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Small form factor"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i5-14500",
+     "memory": "8GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": "Wi-Fi 6"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-12700",
+     "memory": "8GB DDR5",
+     "storage": "256GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Elite Small Form Factor 805 G9",
+   "series": "Elite 805",
+   "formFactor": "DESKTOP_SFF",
+   "shortDescription": "The AMD Ryzen version of HP's Elite small-form-factor desktop, on Ryzen 8000G processors with DDR5 memory and three years of warranty.",
+   "description": "The Elite 805 G9 is the AMD half of HP's Elite commercial desktop range, built on Ryzen 8000G processors with integrated graphics and DDR5 memory.\n\nIt is specified where an organisation prefers or standardises on AMD, and where the integrated graphics of the 8000G series are sufficient for the workload. Both builds listed carry three years of warranty.",
+   "businessFeatures": [
+    "AMD Ryzen 8000G platform",
+    "Three years of warranty on both builds",
+    "DDR5 memory",
+    "Elite commercial range"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Small form factor"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "AMD Ryzen 5 8600G",
+     "memory": "8GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "AMD Ryzen 7 8700G",
+     "memory": "16GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Pro 285 G8 Microtower",
+   "series": "Pro 285",
+   "formFactor": "DESKTOP_TOWER",
+   "shortDescription": "An AMD Ryzen commercial microtower with integrated graphics, supplied with keyboard and mouse and three years of warranty.",
+   "description": "The Pro 285 G8 is HP's AMD commercial microtower, built on Ryzen 5000G processors with integrated graphics. It is specified for general office work where the requirement is a reliable, manageable machine at volume rather than discrete graphics or high single-thread performance.\n\nEvery build listed ships with keyboard and mouse and three years of warranty.",
+   "businessFeatures": [
+    "AMD Ryzen 5000G platform",
+    "Three years of warranty on every build",
+    "Keyboard and mouse included",
+    "Commercial range"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Microtower"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "7K1H4PA",
+     "alsoOrderedAs": [],
+     "processor": "AMD Ryzen 5 5600G",
+     "memory": "4GB DDR4",
+     "storage": "1TB HDD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": "Keyboard and mouse included"
+    },
+    {
+     "partNumber": "B6CP9PT",
+     "alsoOrderedAs": [],
+     "processor": "AMD Ryzen 7 5700G",
+     "memory": "8GB DDR4",
+     "storage": "512GB",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "Windows 11 Pro",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": null
+    },
+    {
+     "partNumber": "B6BV6PT",
+     "alsoOrderedAs": [],
+     "processor": "AMD Ryzen 7 5700G",
+     "memory": "8GB DDR4",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": "Keyboard and mouse included"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Pro Tower 2 G1a",
+   "series": "Pro 2",
+   "formFactor": "DESKTOP_TOWER",
+   "shortDescription": "An AMD Ryzen 8000G commercial tower with DDR5 memory, supplied with keyboard and mouse and three years of warranty.",
+   "description": "The Pro Tower 2 G1a is the current generation of HP's AMD commercial tower, on Ryzen 8000G with DDR5 memory.\n\nIt is the volume machine in the AMD line — specified where a department is buying a standard build for general office work and wants a current platform rather than run-out stock.",
+   "businessFeatures": [
+    "AMD Ryzen 8000G platform",
+    "DDR5 memory",
+    "Three years of warranty",
+    "Keyboard and mouse included"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Microtower"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Graphics",
+     "value": "graphics"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "D1VT8AT",
+     "alsoOrderedAs": [],
+     "processor": "AMD Ryzen 5 8500G",
+     "memory": "8GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "3 years",
+     "note": "Keyboard and mouse included"
+    }
+   ],
+   "status": "ACTIVE"
+  }
+ ]
+}

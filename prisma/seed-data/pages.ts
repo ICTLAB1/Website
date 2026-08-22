@@ -7922,6 +7922,51 @@ export const pageSeeds: PageSeed[] = [
 
 export const navigationSeeds: NavigationSeed[] = [
   {
+    "key": "header:hardware.servers",
+    "parentKey": "header:hardware",
+    "menu": "HEADER",
+    "label": "Servers",
+    "href": "/hardware?family=servers",
+    "description": null,
+    "displayOrder": 25
+  },
+  {
+    "key": "header:hardware.servers.tower",
+    "parentKey": "header:hardware.servers",
+    "menu": "HEADER",
+    "label": "Tower servers",
+    "href": "/hardware?form=tower-server",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:hardware.servers.rack",
+    "parentKey": "header:hardware.servers",
+    "menu": "HEADER",
+    "label": "Rack servers",
+    "href": "/hardware?form=rack-server",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:hardware.servers.dell",
+    "parentKey": "header:hardware.servers",
+    "menu": "HEADER",
+    "label": "Dell PowerEdge",
+    "href": "/hardware?family=servers&brand=dell",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:hardware.servers.hpe",
+    "parentKey": "header:hardware.servers",
+    "menu": "HEADER",
+    "label": "HPE ProLiant",
+    "href": "/hardware?family=servers&brand=hpe",
+    "description": null,
+    "displayOrder": 40
+  },
+  {
     "key": "header:hardware",
     "parentKey": null,
     "menu": "HEADER",

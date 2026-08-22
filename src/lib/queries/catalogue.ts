@@ -5,6 +5,7 @@ import { tags } from "@/lib/cache";
 import type { Availability, FormFactor, LicenceType, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { publicVariantWhere } from "@/lib/catalogue/audience";
+import type { HardwareFamily } from "@/lib/catalogue/hardware";
 import {
   FORM_FACTORS,
   formFactorLabel,
@@ -49,7 +50,7 @@ export type CatalogueFilters = {
    * all-in-ones, and a menu item cannot list four query parameters. The
    * mapping lives in `lib/catalogue/hardware` so the menu and the filter agree.
    */
-  family?: "laptops" | "desktops";
+  family?: HardwareFamily;
   /**
    * Restricts the whole listing to hardware, or to software.
    *

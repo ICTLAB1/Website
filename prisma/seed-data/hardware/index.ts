@@ -46,6 +46,8 @@ const FORM_FACTORS = [
   "DESKTOP_MINI",
   "DESKTOP_WORKSTATION",
   "ALL_IN_ONE",
+  "TOWER_SERVER",
+  "RACK_SERVER",
 ] as const;
 
 const specSchema = z.object({
@@ -62,13 +64,22 @@ const configurationSchema = z.object({
     .transform((value) => value ?? []),
   processor: z.string().trim().min(2).max(160),
   memory: z.string().trim().min(1).max(120),
-  storage: z.string().trim().min(1).max(160),
-  graphics: z.string().trim().min(1).max(200),
-  operatingSystem: z.string().trim().min(1).max(160),
+  storage: z.string().trim().min(1).max(240),
+  graphics: optionalText(200),
+  operatingSystem: optionalText(160),
+  /** Servers: the RAID card, where the source names one. */
+  raidController: optionalText(200),
+  /** Servers: iDRAC, iLO and the like. */
+  systemManagement: optionalText(160),
   opticalDrive: optionalText(60),
-  powerSupply: optionalText(40),
+  /**
+   * 120 characters, not 40. A workstation says "700W"; a server says "Dual
+   * hot-plug redundant (1+1), 1400W, mixed mode", and truncating that would
+   * lose the redundancy — which is the half of it a buyer is choosing.
+   */
+  powerSupply: optionalText(120),
   warranty: z.string().trim().min(2).max(120),
-  note: optionalText(120),
+  note: optionalText(200),
 });
 
 const modelSchema = z.object({
@@ -245,7 +256,17 @@ export async function applyHardwareFile(
      * A line card names a model "HP Z2 G1i Tower Workstation", and prefixing
      * unconditionally produced `/products/hp-hp-z2-g1i-…`.
      */
-    const alreadyPrefixed = model.name.toLowerCase().startsWith(`${brand.name.toLowerCase()} `);
+    /*
+     * Checked against the slug as well as the name.
+     *
+     * "Dell PowerEdge R770" does not start with "Dell Technologies", which is
+     * the brand's name, so a name test alone produced
+     * `/products/dell-dell-poweredge-r770`. The slug is the shorter, commoner
+     * form a model name actually carries.
+     */
+    const lower = model.name.toLowerCase();
+    const alreadyPrefixed =
+      lower.startsWith(`${brand.name.toLowerCase()} `) || lower.startsWith(`${brand.slug} `);
     const slug = slugify(alreadyPrefixed ? model.name : `${brand.slug}-${model.name}`);
     result.slugs.push(slug);
 
@@ -352,7 +373,9 @@ export async function applyHardwareFile(
         memory: configuration.memory,
         storage: configuration.storage,
         graphics: configuration.graphics,
-        operatingSystem: configuration.operatingSystem,
+        operatingSystem: configuration.operatingSystem ?? null,
+        raidController: configuration.raidController ?? null,
+        systemManagement: configuration.systemManagement ?? null,
         opticalDrive: configuration.opticalDrive ?? null,
         powerSupply: configuration.powerSupply ?? null,
         warranty: configuration.warranty,

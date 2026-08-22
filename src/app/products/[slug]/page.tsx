@@ -374,7 +374,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
         <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
           {hardware ? (
             <HardwareQuotePanel
-              partNumber={product.partNumber ?? defaultVariant?.sku ?? null}
+              /*
+               * The manufacturer's number or nothing — never the SKU.
+               *
+               * `sku` is this site's key, and for a build the source names no
+               * number for it is a generated string like
+               * `dell-poweredge-r770-c1`. Falling back to it printed that under
+               * the heading "Part number", which is the site inventing a
+               * manufacturer's identifier. The panel omits the row instead.
+               */
+              partNumber={product.partNumber ?? defaultVariant?.partNumber ?? null}
               productName={product.name}
               productSlug={product.slug}
               brandName={product.brand.name}

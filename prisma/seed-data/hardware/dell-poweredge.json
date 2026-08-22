@@ -1,0 +1,1202 @@
+{
+ "brand": "dell",
+ "category": "infrastructure-hardware",
+ "source": "Dell PowerEdge server line card supplied by TechZoid Technologies Private Limited",
+ "checkedOn": "2026-08-22",
+ "models": [
+  {
+   "name": "Dell PowerEdge T160",
+   "series": "PowerEdge T",
+   "formFactor": "TOWER_SERVER",
+   "shortDescription": "An entry tower server on Intel Xeon 6 with up to three cabled SATA drives and iDRAC9 Enterprise, for a first server in an office rather than a rack.",
+   "description": "The PowerEdge T160 is Dell's entry tower server: a single Intel Xeon 6 processor, four DIMM slots and up to three cabled 3.5-inch SATA drives in a 300 W chassis. It suits a first file, print or line-of-business server in an office where there is no rack and no one to manage one full time.\n\nEvery build listed includes iDRAC9 Enterprise, which is the part that matters after the sale — remote console, power control and alerting without a site visit. Support is ProSupport Next Business Day.",
+   "businessFeatures": [
+    "iDRAC9 Enterprise remote management on every build",
+    "ProSupport Next Business Day",
+    "Tower chassis for an office without a rack"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Tower server"
+    },
+    {
+     "label": "Processor",
+     "value": "Intel Xeon 6 Performance 6315P 2.8G, 4C/4T, 12M cache, Turbo (55W), DDR5-4800"
+    },
+    {
+     "label": "Memory",
+     "value": "1 x 32GB UDIMM, 5600MT/s"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "RAID controller",
+     "value": "No RAID, embedded SATA"
+    },
+    {
+     "label": "System management",
+     "value": "iDRAC9 Enterprise 16G"
+    },
+    {
+     "label": "Power supply",
+     "value": "300W cabled"
+    },
+    {
+     "label": "Support",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6315P 2.8G, 4C/4T, 12M cache, Turbo (55W), DDR5-4800",
+     "memory": "1 x 32GB UDIMM, 5600MT/s",
+     "storage": "1 x 2TB SATA 6Gbps 7.2K RPM 512n 3.5in",
+     "graphics": null,
+     "raidController": "No RAID, embedded SATA",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "300W cabled",
+     "warranty": "ProSupport Next Business Day, 48 months",
+     "note": "Up to 4 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6315P 2.8G, 4C/4T, 12M cache, Turbo (55W), DDR5-4800",
+     "memory": "1 x 32GB UDIMM, 5600MT/s",
+     "storage": "2 x 2TB SATA 6Gbps 7.2K RPM 512n 3.5in",
+     "graphics": null,
+     "raidController": "No RAID, embedded SATA",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "300W cabled",
+     "warranty": "ProSupport Next Business Day, 48 months",
+     "note": "Up to 4 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6315P 2.8G, 4C/4T, 12M cache, Turbo (55W), DDR5-4800",
+     "memory": "1 x 32GB UDIMM, 5600MT/s",
+     "storage": "4TB SATA 6Gbps 7.2K RPM 512n 3.5in",
+     "graphics": null,
+     "raidController": "No RAID, embedded SATA",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "300W cabled",
+     "warranty": "ProSupport Next Business Day, 60 months",
+     "note": "Up to 4 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6315P 2.8G, 4C/4T, 12M cache, Turbo (55W), DDR5-4800",
+     "memory": "1 x 32GB UDIMM, 5600MT/s",
+     "storage": "2 x 2TB SATA 6Gbps 7.2K RPM",
+     "graphics": null,
+     "raidController": "No RAID, embedded SATA",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "300W cabled",
+     "warranty": "ProSupport Next Business Day, 51 months",
+     "note": "Up to 4 DIMM slots"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "Dell PowerEdge T360",
+   "series": "PowerEdge T",
+   "formFactor": "TOWER_SERVER",
+   "shortDescription": "A tower server with up to eight hot-plug drives, hardware RAID and redundant power, for a business outgrowing its first server.",
+   "description": "The PowerEdge T360 moves up from the T160 where uptime starts to matter: hot-plug drive bays, a PERC H755 hardware RAID adapter and redundant hot-plug power supplies, so a failed disk or supply is replaced without stopping the business.\n\nIt takes a single Intel Xeon 6 processor across four DIMM slots and up to eight 3.5-inch drives, with ProSupport Next Business Day.",
+   "businessFeatures": [
+    "Hot-plug drive bays and redundant power",
+    "PERC H755 hardware RAID",
+    "iDRAC9 remote management",
+    "ProSupport Next Business Day"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Tower server"
+    },
+    {
+     "label": "Processor",
+     "value": "Intel Xeon 6 Performance 6353P 2.7G, 8C/16T, 24M cache, Turbo (65W), DDR5-4800"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "RAID controller",
+     "value": "PERC H755 adapter, full height"
+    },
+    {
+     "label": "System management",
+     "value": "iDRAC9 Basic 16G"
+    },
+    {
+     "label": "Power supply",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Support",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6353P 2.7G, 8C/16T, 24M cache, Turbo (65W), DDR5-4800",
+     "memory": "1 x 32GB UDIMM, 5600MT/s",
+     "storage": "3.5\" chassis with up to 8 hot-plug hard drives, AIC PERC 11, hot-plug PSU — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 adapter, full height",
+     "systemManagement": "iDRAC9 Basic 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual (1+1) redundant hot-plug, 600W",
+     "warranty": "ProSupport Next Business Day, 48 months",
+     "note": "Dual-port 1Gb on-board LOM · Up to 4 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6353P 2.7G, 8C/16T, 24M cache, Turbo (65W), DDR5-4800",
+     "memory": "2 x 32GB UDIMM, 5600MT/s",
+     "storage": "4 x 1.2TB 10K SAS + 4 x 16TB SAS",
+     "graphics": null,
+     "raidController": "PERC H755 adapter, full height",
+     "systemManagement": "iDRAC9 Basic 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual 600W",
+     "warranty": "ProSupport Next Business Day, 51 months",
+     "note": "Up to 4 DIMM slots"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "Dell PowerEdge T560",
+   "series": "PowerEdge T",
+   "formFactor": "TOWER_SERVER",
+   "shortDescription": "A two-socket-class tower server on Intel Xeon Silver with sixteen DIMM slots and eight 3.5-inch bays, supported with four-hour onsite response.",
+   "description": "The PowerEdge T560 is the largest tower in this range: Intel Xeon Silver processors, sixteen DIMM slots and eight 3.5-inch SAS/SATA bays behind a PERC 11 controller. It is specified for virtualisation and departmental workloads that need real capacity but no rack.\n\nEvery build listed carries iDRAC9 Enterprise and ProSupport with four-hour onsite response, which is the term to look at rather than the processor when the server runs something the day depends on.",
+   "businessFeatures": [
+    "ProSupport with four-hour onsite response",
+    "iDRAC9 Enterprise remote management",
+    "Sixteen DIMM slots for memory-led workloads",
+    "Hot-plug drives behind a PERC 11 controller"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Tower server"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "RAID controller",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "System management",
+     "value": "iDRAC9 Enterprise 16G"
+    },
+    {
+     "label": "Power supply",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Support",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4410Y 2.0G, 12C/24T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4000, TPM",
+     "memory": "1 x 16GB RDIMM, 5600MT/s",
+     "storage": "8 x 3.5\" SAS/SATA, 1 CPU, PERC 11 — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H355 controller, front",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single hot-plug non-redundant (1+0), 800W",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "Riser config 0, no PCIe riser, 1 CPU · dual-port 1Gb on-board LOM · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4410Y 2.0G, 12C/24T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4000, TPM",
+     "memory": "1 x 32GB RDIMM, 5600MT/s",
+     "storage": "8 x 3.5\" SAS/SATA, 1 CPU, PERC 11 — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 SAS, front",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single hot-plug non-redundant (1+0), 800W",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "Riser config 0, no PCIe riser, 1 CPU · dual-port 1Gb on-board LOM · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4510 2.4G, 12C/24T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4400",
+     "memory": "1 x 32GB RDIMM, 5600MT/s",
+     "storage": "8 x 3.5\" SAS/SATA, 1 CPU, PERC 11 — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 SAS, front",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single hot-plug non-redundant (1+0), 800W",
+     "warranty": "ProSupport with 4-hour onsite service, 6 months",
+     "note": "Riser config 0, no PCIe riser, 1 CPU · dual-port 1Gb on-board LOM · warranty term as supplied, please confirm · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4514Y 2.0G, 16C/32T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4400",
+     "memory": "1 x 32GB RDIMM, 5600MT/s",
+     "storage": "8 x 3.5\" SAS/SATA, 1 CPU, PERC 11 — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 SAS, front",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single hot-plug non-redundant (1+0), 800W",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "Riser config 0, no PCIe riser, 1 CPU · dual-port 1Gb on-board LOM · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4410Y 2.0G, 12C/24T, 30M cache, Turbo, HT (150W), DDR5-4000",
+     "memory": "4 x 32GB RDIMM, 5600MT/s",
+     "storage": "4 x 8TB SATA + 4 x 12TB SATA",
+     "graphics": null,
+     "raidController": "PERC 11",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual 800W",
+     "warranty": "ProSupport with 4-hour onsite service, 63 months",
+     "note": "Up to 16 DIMM slots"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "Dell PowerEdge R260",
+   "series": "PowerEdge R",
+   "formFactor": "RACK_SERVER",
+   "shortDescription": "A 1U rack server on Intel Xeon 6 with iDRAC9 Enterprise, for edge sites and racks with little space to spare.",
+   "description": "The PowerEdge R260 is the entry point to the rack range: one Intel Xeon 6 processor, four DIMM slots and a short 1U chassis. It is bought for branch and edge sites, and for racks where a full-depth server will not fit.\n\nBuilds are offered with cabled 3.5-inch drives or hot-plug 2.5-inch bays with a PERC H755 controller. All carry iDRAC9 Enterprise and ProSupport with four-hour onsite response.",
+   "businessFeatures": [
+    "iDRAC9 Enterprise remote management",
+    "ProSupport with four-hour onsite response",
+    "1U chassis for space-constrained racks",
+    "Platinum-rated power supply"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Rack server"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "RAID controller",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "System management",
+     "value": "iDRAC9 Enterprise 16G"
+    },
+    {
+     "label": "Power supply",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Support",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6315P 2.8G, 4C/4T, 12M cache, Turbo (55W), DDR5-4800",
+     "memory": "1 x 32GB UDIMM, 5600MT/s ECC",
+     "storage": "3.5\" chassis with up to 2 cabled hard drives — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "No RAID, embedded SATA",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single (1+0) non-redundant cabled, 450W (100–240Vac), Platinum",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "1U · Up to 4 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6353P 2.7G, 8C/16T, 24M cache, Turbo (65W), DDR5-4800",
+     "memory": "1 x 32GB UDIMM, 5600MT/s ECC",
+     "storage": "2.5\" chassis with hot-plug drives and cabled PSU (SAS/SATA), 1 CPU — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 controller",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single (1+0) non-redundant cabled, 450W (100–240Vac), Platinum",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "1U · Up to 4 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6315P 2.8G, 4C/4T, 12M cache, Turbo (55W), DDR5-4800",
+     "memory": "1 x 32GB UDIMM, 5600MT/s ECC",
+     "storage": "2 x 4TB SATA 6Gbps 7.2K",
+     "graphics": null,
+     "raidController": "No RAID, embedded SATA",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "450W Platinum",
+     "warranty": "ProSupport with 4-hour onsite service, 63 months",
+     "note": "1U · Up to 4 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6353P 2.7G, 8C/16T, 24M cache, Turbo (65W), DDR5-4800",
+     "memory": "2 x 32GB UDIMM, 5600MT/s ECC",
+     "storage": "6 x 2.4TB 10K SAS",
+     "graphics": null,
+     "raidController": "PERC H755 controller",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "450W Platinum",
+     "warranty": "ProSupport with 4-hour onsite service, 63 months",
+     "note": "1U · Up to 4 DIMM slots"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "Dell PowerEdge R760xs",
+   "series": "PowerEdge R",
+   "formFactor": "RACK_SERVER",
+   "shortDescription": "A 2U rack server on Intel Xeon Silver and Gold with twelve 3.5-inch bays, for storage-led virtualisation and backup workloads.",
+   "description": "The PowerEdge R760xs is the capacity-oriented 2U server: up to twelve 3.5-inch SAS/SATA drives behind a PERC H755, with Intel Xeon Silver or Gold processors across sixteen DIMM slots. It is specified where the requirement is terabytes rather than cores — file services, backup targets and virtualisation with large local storage.\n\nEvery build listed carries iDRAC9 Enterprise and ProSupport with four-hour onsite response.",
+   "businessFeatures": [
+    "Up to twelve 3.5-inch drives for storage-led workloads",
+    "PERC H755 hardware RAID",
+    "iDRAC9 Enterprise remote management",
+    "ProSupport with four-hour onsite response"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Rack server"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "3.5\" chassis with up to 12 hard drives (SAS/SATA) — open bay, drives quoted to requirement"
+    },
+    {
+     "label": "RAID controller",
+     "value": "PERC H755 card"
+    },
+    {
+     "label": "System management",
+     "value": "iDRAC9 Enterprise 16G"
+    },
+    {
+     "label": "Power supply",
+     "value": "Single non-redundant (1+0) hot-plug, 800W"
+    },
+    {
+     "label": "Support",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4410Y 2.0G, 12C/24T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4000, TPM",
+     "memory": "1 x 32GB RDIMM, 5600MT/s",
+     "storage": "3.5\" chassis with up to 12 hard drives (SAS/SATA) — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 card",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single non-redundant (1+0) hot-plug, 800W",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, dual socket · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4510 2.4G, 12C/24T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4400",
+     "memory": "1 x 32GB RDIMM, 5600MT/s",
+     "storage": "3.5\" chassis with up to 12 hard drives (SAS/SATA) — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 card",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single non-redundant (1+0) hot-plug, 800W",
+     "warranty": "ProSupport with 4-hour onsite service, 63 months",
+     "note": "2U, dual socket · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4514Y 2.0G, 16C/32T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4400",
+     "memory": "1 x 32GB RDIMM, 6400MT/s",
+     "storage": "3.5\" chassis with up to 12 hard drives (SAS/SATA) — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 card",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single non-redundant (1+0) hot-plug, 800W",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, dual socket · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4514Y 2.0G, 16C/32T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4400",
+     "memory": "1 x 64GB RDIMM, 6400MT/s",
+     "storage": "3.5\" chassis with up to 12 hard drives (SAS/SATA) — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 card",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single non-redundant (1+0) hot-plug, 800W",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, dual socket · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Gold 6438Y+ 2.0G, 32C/64T, 16GT/s, 60M cache, Turbo, HT (205W), DDR5-4800",
+     "memory": "1 x 64GB RDIMM, 6400MT/s",
+     "storage": "3.5\" chassis with up to 12 hard drives (SAS/SATA) — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 card",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single non-redundant (1+0) hot-plug, 800W",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, dual socket · Up to 16 DIMM slots"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "Dell PowerEdge R760",
+   "series": "PowerEdge R",
+   "formFactor": "RACK_SERVER",
+   "shortDescription": "A dual-socket 2U rack server with redundant power, in eight-bay 2.5-inch and twelve-bay 3.5-inch chassis, for consolidation and virtualisation.",
+   "description": "The PowerEdge R760 is the mainstream dual-socket 2U server: thirty-two DIMM slots, redundant hot-plug power supplies and a choice of an eight-bay 2.5-inch chassis with universal SAS/SATA/NVMe slots or a twelve-bay 3.5-inch chassis.\n\nIt is what a consolidation project usually lands on — enough sockets, memory and expansion to carry a rack's worth of older servers. Builds range from dual Xeon Silver to dual Xeon Gold with NVMe storage. All carry iDRAC9 Enterprise.",
+   "businessFeatures": [
+    "Dual-socket capacity with thirty-two DIMM slots",
+    "Redundant hot-plug power supplies",
+    "Universal SAS/SATA/NVMe drive slots on the 2.5-inch chassis",
+    "iDRAC9 Enterprise remote management"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Rack server"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "RAID controller",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "System management",
+     "value": "iDRAC9 Enterprise 16G"
+    },
+    {
+     "label": "Power supply",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Support",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "2 x Intel Xeon Silver 4510 2.4G, 12C/24T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4400",
+     "memory": "2 x 32GB RDIMM, 5600MT/s, dual rank",
+     "storage": "8 x 2.5\" chassis with universal drive slots (SAS/SATA/NVMe), front PERC 11, 2 CPU — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 SAS front, Broadcom 5720 dual-port 1GbE LOM",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual hot-plug redundant (1+1), 1400W, mixed mode",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, dual socket · dual CPU only · Up to 32 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "2 x Intel Xeon Silver 4514Y 2.0G, 16C/32T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4400",
+     "memory": "2 x 32GB RDIMM, 5600MT/s, dual rank",
+     "storage": "8 x 2.5\" chassis with universal drive slots (SAS/SATA/NVMe), front PERC 11, 2 CPU — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 SAS front, Broadcom 5720 dual-port 1GbE LOM",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual hot-plug redundant (1+1), 1400W, mixed mode",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, dual socket · dual CPU only · Up to 32 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4510 2.4G, 12C/24T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4400",
+     "memory": "1 x 32GB RDIMM, 5600MT/s, dual rank",
+     "storage": "12 x 3.5\" chassis with SAS/SATA drives, LP adapter PERC 11 — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 adapter low profile, Broadcom 5720 dual-port 1GbE LOM",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual hot-plug redundant (1+1), 1100W mixed mode (100–240Vac), Titanium",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U · Up to 32 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4514Y 2.0G, 16C/32T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4400",
+     "memory": "1 x 32GB RDIMM, 5600MT/s, dual rank",
+     "storage": "12 x 3.5\" chassis with SAS/SATA drives, LP adapter PERC 11 — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 adapter low profile, Broadcom 5720 dual-port 1GbE LOM",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual hot-plug redundant (1+1), 1100W mixed mode (100–240Vac), Titanium",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U · Up to 32 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "2 x Intel Xeon Gold 6430 2.1G, 32C/64T, 60M cache (270W)",
+     "memory": "16 x 64GB RDIMM, 5600MT/s (1TB)",
+     "storage": "5 x 3.84TB + 3 x 15.36TB NVMe SSD",
+     "graphics": null,
+     "raidController": "PERC H755N",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual 2400W",
+     "warranty": "ProSupport, 42 months",
+     "note": "2U, dual socket · Up to 32 DIMM slots"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "Dell PowerEdge R660xs",
+   "series": "PowerEdge R",
+   "formFactor": "RACK_SERVER",
+   "shortDescription": "A 1U dual-socket rack server with eight 2.5-inch bays and hardware RAID, for dense compute where rack space is the constraint.",
+   "description": "The PowerEdge R660xs puts dual-socket-capable compute into 1U with eight 2.5-inch SAS/SATA bays behind a PERC H755 front controller. It is specified where rack units are scarce and the workload is compute rather than storage.\n\nBoth builds listed carry iDRAC9 Enterprise and ProSupport with four-hour onsite response.",
+   "businessFeatures": [
+    "Dual-socket compute in 1U",
+    "PERC H755 front hardware RAID",
+    "iDRAC9 Enterprise remote management",
+    "ProSupport with four-hour onsite response"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Rack server"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "1 x 32GB RDIMM, 5600MT/s, dual rank"
+    },
+    {
+     "label": "Storage",
+     "value": "8 x 2.5\" chassis with hard drives (SAS/SATA), 1 CPU — open bay, drives quoted to requirement"
+    },
+    {
+     "label": "RAID controller",
+     "value": "PERC H755 front, Broadcom 5720 dual-port 1GbE on-board LOM"
+    },
+    {
+     "label": "System management",
+     "value": "iDRAC9 Enterprise 16G"
+    },
+    {
+     "label": "Power supply",
+     "value": "Single (1+0) non-redundant hot-plug, 800W mixed mode (100–240Vac)"
+    },
+    {
+     "label": "Support",
+     "value": "ProSupport with 4-hour onsite service, 60 months"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4510 2.4G, 12C/24T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4400",
+     "memory": "1 x 32GB RDIMM, 5600MT/s, dual rank",
+     "storage": "8 x 2.5\" chassis with hard drives (SAS/SATA), 1 CPU — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 front, Broadcom 5720 dual-port 1GbE on-board LOM",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single (1+0) non-redundant hot-plug, 800W mixed mode (100–240Vac)",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "1U, dual socket · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4514Y 2.0G, 16C/32T, 16GT/s, 30M cache, Turbo, HT (150W), DDR5-4400",
+     "memory": "1 x 32GB RDIMM, 5600MT/s, dual rank",
+     "storage": "8 x 2.5\" chassis with hard drives (SAS/SATA), 1 CPU — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H755 front, Broadcom 5720 dual-port 1GbE on-board LOM",
+     "systemManagement": "iDRAC9 Enterprise 16G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Single (1+0) non-redundant hot-plug, 800W mixed mode (100–240Vac)",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "1U, dual socket · Up to 16 DIMM slots"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "Dell PowerEdge R470",
+   "series": "PowerEdge R",
+   "formFactor": "RACK_SERVER",
+   "shortDescription": "A 1U single-socket rack server on Intel Xeon 6 with iDRAC10 and redundant power, from Dell's current generation.",
+   "description": "The PowerEdge R470 is part of Dell's current 17G generation: Intel Xeon 6 processors on DDR5-6400, a PERC H965i front controller and iDRAC10 Enterprise. Single socket in 1U, with redundant hot-plug power as standard across the builds listed.\n\niDRAC10 is the practical difference from the previous generation for anyone running a fleet — it is where the remote management and lifecycle tooling changed.",
+   "businessFeatures": [
+    "iDRAC10 Enterprise, Dell's current management generation",
+    "Redundant hot-plug power as standard",
+    "DDR5-6400 memory",
+    "ProSupport with four-hour onsite response"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Rack server"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "RAID controller",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "System management",
+     "value": "iDRAC10 Enterprise 17G"
+    },
+    {
+     "label": "Power supply",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Support",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6511P 2.3G, 16C/32T, 72M cache, Turbo (150W), DDR5-6400",
+     "memory": "1 x 32GB RDIMM, 6400MT/s, dual rank",
+     "storage": "2.5\" chassis with up to 8 hard drives (SAS/SATA) — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H965i controller, front, DCMHS",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual redundant (1+1) hot-plug MHS, 800W mixed mode (100–240Vac)",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "1U, single socket · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6505P 2.2G, 12C/24T, 24GT/s, 48M cache, Turbo (150W), DDR5-6400",
+     "memory": "1 x 32GB RDIMM, 6400MT/s, dual rank",
+     "storage": "2.5\" chassis with up to 8 hard drives (SAS/SATA) — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H965i controller, front, DCMHS",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual redundant (1+1) hot-plug MHS, 800W mixed mode (100–240Vac)",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "1U, single socket · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6505P 2.2G, 12C/24T, 48M cache, Turbo (150W), DDR5-6400",
+     "memory": "4 x 32GB RDIMM, 6400MT/s",
+     "storage": "2 x 3.84TB SSD + 2 x 1.92TB SSD",
+     "graphics": null,
+     "raidController": "PERC H965i controller",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual 800W",
+     "warranty": "ProSupport with 4-hour onsite service, 63 months",
+     "note": "1U, single socket · Up to 16 DIMM slots"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "Dell PowerEdge R570",
+   "series": "PowerEdge R",
+   "formFactor": "RACK_SERVER",
+   "shortDescription": "A 2U single-socket rack server on Intel Xeon 6 with up to twelve 3.5-inch or eight 2.5-inch bays and iDRAC10.",
+   "description": "The PowerEdge R570 is the single-socket 2U of Dell's 17G generation: Intel Xeon 6 processors up to 24 cores, sixteen DIMM slots on DDR5-6400, and a choice of a twelve-bay 3.5-inch or eight-bay 2.5-inch chassis behind a PERC H965i.\n\nOne socket in 2U buys expansion and drive capacity without paying for a second processor — often the right answer for storage-led and single-application workloads. All builds carry iDRAC10 Enterprise and redundant power.",
+   "businessFeatures": [
+    "iDRAC10 Enterprise, Dell's current management generation",
+    "Up to twelve 3.5-inch or eight 2.5-inch drives",
+    "Redundant hot-plug power as standard",
+    "ProSupport with four-hour onsite response"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Rack server"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "RAID controller",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "System management",
+     "value": "iDRAC10 Enterprise 17G"
+    },
+    {
+     "label": "Power supply",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Support",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6505P 2.2G, 12C/24T, 24GT/s, 48M cache, Turbo (150W), DDR5-6400",
+     "memory": "1 x 32GB RDIMM, 6400MT/s, dual rank",
+     "storage": "3.5\" chassis with up to 12 SAS4/SATA drives — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H965i controller, front, DCMHS",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual redundant (1+1) hot-plug MHS, 800W mixed mode (100–240Vac)",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, single socket · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6511P 2.3G, 16C/32T, 72M cache, Turbo (150W), DDR5-6400",
+     "memory": "1 x 32GB RDIMM, 6400MT/s, dual rank",
+     "storage": "3.5\" chassis with up to 12 SAS4/SATA drives — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H965i controller, front, DCMHS",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual redundant (1+1) hot-plug MHS, 800W mixed mode (100–240Vac)",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, single socket · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6505P 2.2G, 12C/24T, 24GT/s, 48M cache, Turbo (150W), DDR5-6400",
+     "memory": "1 x 32GB RDIMM, 6400MT/s, dual rank",
+     "storage": "2.5\" chassis with up to 8 SAS4/SATA drives — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H965i controller, front, DCMHS",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual redundant (1+1) hot-plug MHS, 800W mixed mode (100–240Vac)",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, single socket · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6511P 2.3G, 16C/32T, 72M cache, Turbo (150W), DDR5-6400",
+     "memory": "1 x 32GB RDIMM, 6400MT/s, dual rank",
+     "storage": "2.5\" chassis with up to 8 SAS4/SATA drives — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H965i controller, front, DCMHS",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual redundant (1+1) hot-plug MHS, 800W mixed mode (100–240Vac)",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, single socket · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6521P 2.6G, 24C/48T, 144M cache, Turbo (225W), DDR5-6400",
+     "memory": "1 x 32GB RDIMM, 6400MT/s, dual rank",
+     "storage": "2.5\" chassis with up to 8 SAS4/SATA drives — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H965i controller, front, DCMHS",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual redundant (1+1) hot-plug MHS, 800W mixed mode (100–240Vac)",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, single socket · Up to 16 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon 6 Performance 6521P 2.6G, 24C/48T, 144M cache, Turbo (225W), DDR5-6400",
+     "memory": "4 x 32GB RDIMM, 6400MT/s",
+     "storage": "2 x 1.2TB 10K SAS + 2 x 2.4TB 10K SAS",
+     "graphics": null,
+     "raidController": "PERC H965i controller",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual 800W",
+     "warranty": "ProSupport with 4-hour onsite service, 63 months",
+     "note": "2U, single socket · Up to 16 DIMM slots"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "Dell PowerEdge R670",
+   "series": "PowerEdge R",
+   "formFactor": "RACK_SERVER",
+   "shortDescription": "A 1U dual-socket rack server on Intel Xeon 6 with thirty-two DIMM slots, for dense virtualisation on the current generation.",
+   "description": "The PowerEdge R670 is dual-socket Intel Xeon 6 in 1U: thirty-two DIMM slots on DDR5-6400, eight 2.5-inch bays and redundant 1100 W power. It is the density option in Dell's 17G generation — the most cores and memory that fit in a single rack unit.\n\nAll builds listed carry iDRAC10 Enterprise and ProSupport with four-hour onsite response.",
+   "businessFeatures": [
+    "Dual-socket Intel Xeon 6 in a single rack unit",
+    "Thirty-two DIMM slots on DDR5-6400",
+    "iDRAC10 Enterprise remote management",
+    "ProSupport with four-hour onsite response"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Rack server"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "RAID controller",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "System management",
+     "value": "iDRAC10 Enterprise 17G"
+    },
+    {
+     "label": "Power supply",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Support",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "2 x Intel Xeon 6 Performance 6724P 3.6G, 16C/32T, 24GT/s, 72M cache, Turbo (210W), DDR5-6400",
+     "memory": "2 x 32GB RDIMM, 6400MT/s, dual rank",
+     "storage": "2.5\" chassis with up to 8 SAS4/SATA drives — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H965i controller, front, DCMHS",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual redundant (1+1) hot-plug MHS, 1100W mixed mode (100–240Vac)",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "1U, dual socket · Up to 32 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "2 x Intel Xeon 6 Performance 6520P 2.4G, 24C/48T, 24GT/s, 144M cache, Turbo (210W), DDR5-6400",
+     "memory": "2 x 32GB RDIMM, 6400MT/s, dual rank",
+     "storage": "2.5\" chassis with up to 8 SAS4/SATA drives — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H965i controller, front, DCMHS",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual redundant (1+1) hot-plug MHS, 1100W mixed mode (100–240Vac)",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "1U, dual socket · Up to 32 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "2 x Intel Xeon 6 Performance 6724P 3.6G, 16C/32T each, 72M cache, Turbo (210W), DDR5-6400",
+     "memory": "8 x 32GB RDIMM, 6400MT/s",
+     "storage": "2 x 1.2TB 10K SAS + 2 x 2.4TB 10K SAS",
+     "graphics": null,
+     "raidController": "PERC H965i controller",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual 1100W",
+     "warranty": "ProSupport with 4-hour onsite service, 63 months",
+     "note": "1U, dual socket · Up to 32 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "2 x Intel Xeon 6 Performance 6520P 2.4G, 24C/48T each, 144M cache, Turbo (210W), DDR5-6400",
+     "memory": "8 x 32GB RDIMM, 6400MT/s",
+     "storage": "2 x 1.92TB SSD + 2 x 3.84TB SSD",
+     "graphics": null,
+     "raidController": "PERC H965i controller",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual 1100W",
+     "warranty": "ProSupport with 4-hour onsite service, 63 months",
+     "note": "1U, dual socket · Up to 32 DIMM slots"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "Dell PowerEdge R770",
+   "series": "PowerEdge R",
+   "formFactor": "RACK_SERVER",
+   "shortDescription": "A dual-socket 2U rack server on Intel Xeon 6 with NVMe-capable bays and Titanium redundant power, the top of the current generation.",
+   "description": "The PowerEdge R770 is the dual-socket 2U of Dell's 17G generation, with up to 32 cores per socket, thirty-two DIMM slots on DDR5-6400 and eight 2.5-inch bays that take SAS4, SATA or NVMe. Power is dual 1500 W Titanium, redundant.\n\nIt is specified for virtualisation and database consolidation at the top of the range, where the rack is expected to run for five years. All builds carry iDRAC10 Enterprise.",
+   "businessFeatures": [
+    "NVMe-capable universal drive bays",
+    "Titanium-rated redundant power",
+    "Thirty-two DIMM slots on DDR5-6400",
+    "iDRAC10 Enterprise remote management"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Rack server"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "RAID controller",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "System management",
+     "value": "iDRAC10 Enterprise 17G"
+    },
+    {
+     "label": "Power supply",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Support",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "2 x Intel Xeon 6 Performance 6511P 2.3G, 16C/32T, 72M cache, Turbo (150W), DDR5-6400",
+     "memory": "2 x 32GB RDIMM, 6400MT/s, dual rank",
+     "storage": "2.5\" chassis with up to 8 SAS4/SATA/NVMe drives — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H965i controller, front, DCMHS",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual redundant (1+1) hot-plug MHS, 1500W mixed mode, Titanium",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, dual socket · Up to 32 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "2 x Intel Xeon 6 Performance 6530P 2.3G, 32C/64T, 24GT/s, 144M cache, Turbo (225W), DDR5-6400",
+     "memory": "2 x 32GB RDIMM, 6400MT/s, dual rank",
+     "storage": "2.5\" chassis with up to 8 SAS4/SATA/NVMe drives — open bay, drives quoted to requirement",
+     "graphics": null,
+     "raidController": "PERC H965i controller, front, DCMHS",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual redundant (1+1) hot-plug MHS, 1500W mixed mode, Titanium",
+     "warranty": "ProSupport with 4-hour onsite service, 60 months",
+     "note": "2U, dual socket · Up to 32 DIMM slots"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "2 x Intel Xeon 6 Performance 6530P 2.3G, 32C/64T each, 144M cache, Turbo (225W), DDR5-6400",
+     "memory": "8 x 32GB RDIMM, 6400MT/s",
+     "storage": "2 x 1.2TB 10K SAS + 2 x 2.4TB 10K SAS",
+     "graphics": null,
+     "raidController": "PERC H965i controller",
+     "systemManagement": "iDRAC10 Enterprise 17G",
+     "operatingSystem": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual 1500W Titanium",
+     "warranty": "ProSupport with 4-hour onsite service, 63 months",
+     "note": "2U, dual socket · Up to 32 DIMM slots"
+    }
+   ],
+   "status": "ACTIVE"
+  }
+ ]
+}

@@ -1,0 +1,425 @@
+{
+ "brand": "hpe",
+ "category": "infrastructure-hardware",
+ "source": "HPE ProLiant server line card supplied by TechZoid Technologies Private Limited",
+ "checkedOn": "2026-08-22",
+ "models": [
+  {
+   "name": "HPE ProLiant ML110 Gen11",
+   "series": "ProLiant ML",
+   "formFactor": "TOWER_SERVER",
+   "shortDescription": "An entry tower server on Intel Xeon Bronze with DDR5 memory and a Platinum power supply, for a first server in an office.",
+   "description": "The ProLiant ML110 Gen11 is HPE's entry single-socket tower: an Intel Xeon Bronze processor, DDR5 memory and a Platinum-rated power supply in a case designed to sit in an office rather than a rack.\n\nIt suits a first file, print or line-of-business server, and a branch office that needs one machine rather than a cabinet.",
+   "businessFeatures": [
+    "Tower chassis for an office without a rack",
+    "DDR5 memory",
+    "Platinum-rated power supply"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Tower server"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "RAID controller",
+     "value": "raidController"
+    },
+    {
+     "label": "System management",
+     "value": "systemManagement"
+    },
+    {
+     "label": "Power supply",
+     "value": "powerSupply"
+    },
+    {
+     "label": "Support",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Bronze 3508U (8-core, 2.1GHz, 125W)",
+     "memory": "32GB DDR5 5600MHz",
+     "storage": "960GB SATA SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": null,
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": "500W Platinum",
+     "warranty": "As quoted",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HPE ProLiant ML30 Gen11",
+   "series": "ProLiant ML",
+   "formFactor": "TOWER_SERVER",
+   "shortDescription": "A compact tower server on Intel Xeon E with DDR5 UDIMM memory and a Platinum power supply, with three years of warranty.",
+   "description": "The ProLiant ML30 Gen11 is the smallest server in HPE's tower range, built on the Intel Xeon E platform with DDR5 UDIMM memory. It is specified where a small business or a branch needs server-class reliability and remote management at close to desktop scale.\n\nThe build listed uses Intel VROC SATA rather than a hardware RAID card, and carries three years of warranty.",
+   "businessFeatures": [
+    "Three years of warranty",
+    "DDR5 UDIMM memory",
+    "Platinum-rated power supply",
+    "Compact tower for a small office"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Tower server"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "RAID controller",
+     "value": "raidController"
+    },
+    {
+     "label": "System management",
+     "value": "systemManagement"
+    },
+    {
+     "label": "Power supply",
+     "value": "powerSupply"
+    },
+    {
+     "label": "Support",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon E-2414 (4-core, 2.6GHz)",
+     "memory": "32GB DDR5 UDIMM",
+     "storage": "1TB SATA 7.2K HDD",
+     "graphics": null,
+     "raidController": "Intel VROC SATA",
+     "operatingSystem": null,
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": "350W Platinum",
+     "warranty": "3 years",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HPE ProLiant DL360 Gen10",
+   "series": "ProLiant DL",
+   "formFactor": "RACK_SERVER",
+   "shortDescription": "A 1U rack server on Intel Xeon Silver with a P408i array controller, for racks where space is the constraint.",
+   "description": "The ProLiant DL360 Gen10 is a 1U dual-socket-capable rack server on the Intel Xeon Scalable platform, with an HPE Smart Array P408i controller.\n\nIt remains a practical choice where an estate is already standardised on Gen10 and the requirement is to extend it rather than start again.",
+   "businessFeatures": [
+    "1U chassis for space-constrained racks",
+    "HPE Smart Array P408i controller",
+    "Three years of warranty"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Rack server"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "RAID controller",
+     "value": "raidController"
+    },
+    {
+     "label": "System management",
+     "value": "systemManagement"
+    },
+    {
+     "label": "Power supply",
+     "value": "powerSupply"
+    },
+    {
+     "label": "Support",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4208 (8C/16T, 2.1GHz)",
+     "memory": "16GB",
+     "storage": "As quoted",
+     "graphics": null,
+     "raidController": "HPE Smart Array P408i",
+     "operatingSystem": null,
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": "800W",
+     "warranty": "3 years",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HPE ProLiant DL360 Gen11",
+   "series": "ProLiant DL",
+   "formFactor": "RACK_SERVER",
+   "shortDescription": "A 1U rack server on Intel Xeon Silver with eight small-form-factor bays, an MR408i-o controller and redundant 1000W power.",
+   "description": "The ProLiant DL360 Gen11 is HPE's current 1U dual-socket-capable rack server: Intel Xeon Silver processors, eight small-form-factor drive bays behind an MR408i-o controller, and redundant 1000 W power supplies.\n\nIt is the density option — the most compute HPE fits in a single rack unit — and is usually specified for virtualisation hosts where rack space is scarce.",
+   "businessFeatures": [
+    "1U chassis with eight small-form-factor bays",
+    "MR408i-o array controller",
+    "Redundant 1000W power supplies",
+    "3/3/3 warranty"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Rack server"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "RAID controller",
+     "value": "raidController"
+    },
+    {
+     "label": "System management",
+     "value": "systemManagement"
+    },
+    {
+     "label": "Power supply",
+     "value": "powerSupply"
+    },
+    {
+     "label": "Support",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4510 (12C/24T)",
+     "memory": "64GB (1 x 64GB)",
+     "storage": "2 x 960GB SATA SSD",
+     "graphics": null,
+     "raidController": "HPE MR408i-o",
+     "operatingSystem": null,
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual 1000W",
+     "warranty": "3/3/3",
+     "note": "8 SFF bays"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HPE ProLiant DL380 Gen10 Plus",
+   "series": "ProLiant DL",
+   "formFactor": "RACK_SERVER",
+   "shortDescription": "A 2U rack server on Intel Xeon Silver with eight small-form-factor bays and an MR416i-p controller.",
+   "description": "The ProLiant DL380 Gen10 Plus is the 2U workhorse of the previous generation: Intel Xeon Scalable processors, eight small-form-factor bays and an MR416i-p array controller.\n\nIt is specified where an estate is standardised on this generation and the requirement is another identical host rather than a new platform.",
+   "businessFeatures": [
+    "2U chassis with eight small-form-factor bays",
+    "MR416i-p array controller",
+    "3/3/3 warranty"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Rack server"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "RAID controller",
+     "value": "raidController"
+    },
+    {
+     "label": "System management",
+     "value": "systemManagement"
+    },
+    {
+     "label": "Power supply",
+     "value": "powerSupply"
+    },
+    {
+     "label": "Support",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4310 (12C/24T, 2.1GHz)",
+     "memory": "32GB RDIMM",
+     "storage": "As quoted",
+     "graphics": null,
+     "raidController": "HPE MR416i-p",
+     "operatingSystem": null,
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": "800W",
+     "warranty": "3/3/3",
+     "note": "8 SFF bays"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HPE ProLiant DL380 Gen11",
+   "series": "ProLiant DL",
+   "formFactor": "RACK_SERVER",
+   "shortDescription": "HPE's current 2U rack server on Intel Xeon Silver, in small-form-factor and twelve-bay large-form-factor chassis, with redundant power.",
+   "description": "The ProLiant DL380 Gen11 is the server most HPE estates are built on: a 2U dual-socket-capable chassis with DDR5 memory, MR416i-o array controllers and redundant power supplies.\n\nBuilds listed cover both directions the DL380 is bought in — small-form-factor SSD configurations for virtualisation, and a twelve-bay large-form-factor chassis for storage-led workloads. All carry HPE's 3/3/3 warranty.",
+   "businessFeatures": [
+    "2U chassis in SFF and 12-bay LFF configurations",
+    "MR416i-o array controller",
+    "Redundant Titanium power supplies on selected builds",
+    "3/3/3 warranty"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Rack server"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "RAID controller",
+     "value": "raidController"
+    },
+    {
+     "label": "System management",
+     "value": "systemManagement"
+    },
+    {
+     "label": "Power supply",
+     "value": "powerSupply"
+    },
+    {
+     "label": "Support",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4510 (12C, 2.4GHz, 30MB cache)",
+     "memory": "64GB DDR5",
+     "storage": "2 x 960GB SATA SSD",
+     "graphics": null,
+     "raidController": "HPE MR416i-o",
+     "operatingSystem": null,
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual 1000W Titanium",
+     "warranty": "3/3/3",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4509Y (8C/16T)",
+     "memory": "64GB",
+     "storage": "2 x 4TB SATA HDD",
+     "graphics": null,
+     "raidController": "HPE MR416i-o",
+     "operatingSystem": null,
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual 800W",
+     "warranty": "3/3/3",
+     "note": "12 LFF chassis"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon Silver 4510 (12C/24T)",
+     "memory": "64GB",
+     "storage": "2 x 960GB SSD",
+     "graphics": null,
+     "raidController": "HPE MR416i-o",
+     "operatingSystem": null,
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": "Dual 1000W",
+     "warranty": "3/3/3",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  }
+ ]
+}
