@@ -3,8 +3,8 @@ import type { BlockType } from "@/lib/blocks/schemas";
 /**
  * Which block types get a typed form, and what fields that form shows.
  *
- * Eight types cover 296 of the 297 stored blocks, so eight forms remove almost
- * all need to edit raw JSON. The rest keep the JSON editor, which stays
+ * The types that carry almost all of the stored blocks get one, which removes
+ * almost all need to edit raw JSON. The rest keep the JSON editor, which stays
  * available on every block regardless.
  *
  * A form is described as data rather than hand-built markup so that the field
@@ -85,6 +85,33 @@ export const BLOCK_FORMS: Partial<Record<BlockType, BlockFormShape>> = {
     fields: [
       { kind: "text", path: "heading", label: "Heading" },
       { kind: "stringList", path: "items", label: "Points", hint: "One per line." },
+    ],
+  },
+
+  /**
+   * The block that lists organisations — sectors served, customers named.
+   *
+   * Given a form because the names in it change as the business wins work, and
+   * whoever knows a new one is worth naming is not the person who should have
+   * to edit JSON to add it.
+   */
+  CHIP_LIST: {
+    fields: [
+      { kind: "text", path: "eyebrow", label: "Eyebrow", hint: "Small label above the heading." },
+      { kind: "text", path: "heading", label: "Heading" },
+      { kind: "textarea", path: "description", label: "Intro" },
+      {
+        kind: "stringList",
+        path: "items",
+        label: "Names",
+        hint: "One per line, in the order to display.",
+      },
+      {
+        kind: "text",
+        path: "footnote",
+        label: "Footnote",
+        hint: "Small line under the list, e.g. a total.",
+      },
     ],
   },
 

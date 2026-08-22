@@ -111,6 +111,24 @@ await page.waitForTimeout(1500);
 check("a block mark pointing off-site is refused",
   (await page.locator("body").innerText()).includes("does not match what that block type expects"));
 
+// ------------------------------- the list of names, edited as a typed form
+//
+// The block that names sectors and organisations changes as the business wins
+// work, so it has to be editable by whoever knows the new name — not only by
+// somebody willing to edit JSON.
+await addBlock("Chip list");
+await page.goto(editorUrl, { waitUntil: "load" });
+const chips = page.locator("ol > li").filter({ hasText: "Chip list" }).first();
+await chips.locator('textarea[name="items"]').fill(`First name ${stamp}\nSecond name ${stamp}`);
+await chips.locator('input[name="heading"]').fill(`Named organisations ${stamp}`);
+await chips.locator('form:has(textarea[name="items"])').getByRole("button", { name: "Save block" }).click();
+await page.waitForTimeout(1500);
+await page.goto(editorUrl, { waitUntil: "load" });
+const savedChips = await page.locator("ol > li").filter({ hasText: "Chip list" }).first()
+  .locator('textarea[name="items"]').inputValue();
+check("names typed into the chip-list form persist",
+  savedChips === `First name ${stamp}\nSecond name ${stamp}`, savedChips.replace(/\n/g, " | "));
+
 // ------------------------------------------------- publish and go public
 await page.goto(editorUrl, { waitUntil: "load" });
 await page.getByLabel("Status").selectOption("PUBLISHED");
