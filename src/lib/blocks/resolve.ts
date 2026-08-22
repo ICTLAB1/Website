@@ -117,6 +117,7 @@ async function collectionFor(
           name: true,
           tagline: true,
           accentColor: true,
+          logoUrl: true,
           _count: { select: { products: { where: { status: "ACTIVE", deletedAt: null } } } },
         },
       });

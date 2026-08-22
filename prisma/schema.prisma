@@ -313,6 +313,14 @@ model Brand {
   summary      String
   description  String
   logoText     String
+  /// Path to the publisher's own logo, served from `public/brands/`.
+  ///
+  /// Local only, and validated as such: an admin-entered value ends up in an
+  /// `src` attribute, so anything that is not a path under /brands/ is refused
+  /// rather than rendered. Null falls back to the styled wordmark, which is
+  /// what every brand showed before this existed and what any brand without
+  /// artwork on file still shows.
+  logoUrl      String?
   accentColor  String    @default("#1e3a8a")
   website      String?
   displayOrder Int       @default(100)

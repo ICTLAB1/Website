@@ -88,6 +88,7 @@ export const RESOURCES: Record<ResourceKey, ResourceConfig> = {
       { kind: "textarea", name: "summary", label: "Summary", required: true, rows: 3, maxLength: 600, group: "Content" },
       { kind: "textarea", name: "description", label: "Description", required: true, rows: 8, markdown: true, group: "Content" },
       { kind: "text", name: "logoText", label: "Logo text", required: true, maxLength: 40, hint: "Short wordmark shown on cards.", group: "Presentation" },
+      { kind: "text", name: "logoUrl", label: "Logo file", maxLength: 200, hint: "A file in public/brands/, e.g. /brands/microsoft.svg. Leave empty to use the lettered wordmark.", group: "Presentation" },
       { kind: "text", name: "accentColor", label: "Accent colour", maxLength: 9, hint: "Hex, e.g. #1e3a8a", group: "Presentation" },
       { kind: "text", name: "website", label: "Brand website", maxLength: 300, group: "Presentation" },
       { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, hint: "Lower sorts first.", group: PUBLICATION_GROUP },

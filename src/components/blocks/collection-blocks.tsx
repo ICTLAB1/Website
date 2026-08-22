@@ -63,6 +63,7 @@ type BrandRow = {
   name: string;
   tagline: string | null;
   accentColor: string;
+  logoUrl: string | null;
   _count: { products: number };
 };
 type CategoryRow = {
