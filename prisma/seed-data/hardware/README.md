@@ -27,22 +27,48 @@ remembers where the number came from.
 
 ## Fields
 
+### The file
+
 | Field | Notes |
 | --- | --- |
 | `brand` | Brand slug, e.g. `hp`. Must already exist. |
 | `category` | Category slug, e.g. `infrastructure-hardware`. Must already exist. |
-| `checkedOn` | `YYYY-MM-DD`, when the manufacturer's pages were read. |
-| `models[].name` | The manufacturer's model name, as written on its page. |
-| `models[].series` | `EliteBook`, `ThinkPad T`, `TravelMate P`. Becomes a filter. |
-| `models[].formFactor` | One of `LAPTOP`, `MOBILE_WORKSTATION`, `DESKTOP_TOWER`, `DESKTOP_SFF`, `DESKTOP_MINI`, `DESKTOP_WORKSTATION`, `ALL_IN_ONE`. |
-| `models[].partNumber` | The manufacturer's part number. Used to match on re-import, and searchable. |
-| `models[].shortDescription` | One or two sentences, **written for this site**. |
-| `models[].description` | A few paragraphs, likewise written rather than copied. |
-| `models[].businessFeatures` | Security, manageability, durability — what makes the range commercial. |
-| `models[].specifications` | `{ label, value }` rows, in the order they should read. |
-| `models[].image` | A filename inside the `--images` directory. |
-| `models[].sourceUrl` | The manufacturer's page for this model. Required. |
-| `models[].status` | `ACTIVE` or `DISCONTINUED`. Discontinued models stop being listed and keep their record. |
+| `source` | Where this came from, in words. A URL where there is one, a description where there is not — "HP Z-series line card supplied by the distributor". Required. |
+| `checkedOn` | `YYYY-MM-DD`, when the source was read. |
+
+### Each model
+
+| Field | Notes |
+| --- | --- |
+| `name` | The manufacturer's model name. |
+| `series` | `EliteBook`, `ThinkPad T`, `Z2`. Becomes a filter. |
+| `formFactor` | One of `LAPTOP`, `MOBILE_WORKSTATION`, `DESKTOP_TOWER`, `DESKTOP_SFF`, `DESKTOP_MINI`, `DESKTOP_WORKSTATION`, `ALL_IN_ONE`. |
+| `shortDescription` | One or two sentences, **written for this site**. |
+| `description` | A few paragraphs, likewise written rather than copied. |
+| `businessFeatures` | Security, manageability, durability — what makes the range commercial. |
+| `specifications` | `{ label, value }` rows — only what is true of *every* build. Anything that varies goes in `configurations`. |
+| `configurations` | The builds this model is sold in. At least one. |
+| `image` | A filename inside the `--images` directory. |
+| `sourceUrl` | The manufacturer's page for this model, where the source is a page. Optional. |
+| `status` | `ACTIVE` or `DISCONTINUED`. Discontinued models stop being listed and keep their record. |
+
+### Each configuration
+
+| Field | Notes |
+| --- | --- |
+| `partNumber` | The manufacturer's. Optional — a line card genuinely omits it for a deal build, and the site then shows "On request" rather than a number it made up. |
+| `alsoOrderedAs` | Further part numbers the same build is ordered under. |
+| `processor`, `memory`, `storage`, `graphics`, `operatingSystem`, `warranty` | Free text, as the source writes it. |
+| `opticalDrive`, `powerSupply` | Optional. |
+| `note` | "Made in India", "Modified" — kept verbatim. |
+
+## A model is not a build
+
+Twelve part numbers of the same workstation are **one model with twelve
+configurations**, not twelve products. Twelve cards all reading "Z2 G1i" is a
+list a buyer has to decode; one card leading to a table of twelve is the
+decision they came to make. Put the varying attributes in `configurations` and
+leave `specifications` for what every build shares.
 
 ## Three things the importer will not do
 

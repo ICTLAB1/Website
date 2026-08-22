@@ -546,6 +546,32 @@ model ProductVariant {
   salePriceMinor Int?
   gstRatePercent Int    @default(18)
 
+  // ── hardware configuration ────────────────────────────────────────────────
+  // All null on software. A variant of a hardware product *is* a build: one
+  // part number, one processor, one memory and storage fitting. Recording it
+  // here rather than in a table of its own because it is one-to-one with the
+  // variant — a second table would be the same row behind a join, and the
+  // enquiry basket, quotations and orders all already hang off the variant.
+  //
+  // Free text, not parsed. A line card says "16GB DDR5 RAM" and "2 X 16GB DDR5
+  // RAM" and those are different machines; normalising them into a number
+  // would throw away the distinction the buyer is choosing between.
+
+  /// The manufacturer's part number. Distinct from `sku`, which is this site's
+  /// unique key and exists even when the source names no part number.
+  partNumber      String?
+  processor       String?
+  memory          String?
+  storage         String?
+  graphics        String?
+  operatingSystem String?
+  opticalDrive    String?
+  powerSupply     String?
+  warranty        String?
+  /// "Made in India", "Modified" — qualifications the source attaches to a
+  /// specific build, kept verbatim rather than folded into another field.
+  configNote      String?
+
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -558,6 +584,7 @@ model ProductVariant {
 
   @@index([productId])
   @@index([licenceType])
+  @@index([partNumber])
   // Every public read filters on this, so it carries the same weight as the
   // price indexes beside it.
   @@index([audience])

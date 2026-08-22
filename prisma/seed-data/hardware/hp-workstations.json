@@ -1,0 +1,1131 @@
+{
+ "brand": "hp",
+ "category": "infrastructure-hardware",
+ "source": "HP Z-series workstation line card supplied by TechZoid Technologies Private Limited",
+ "checkedOn": "2026-08-22",
+ "models": [
+  {
+   "name": "HP Z1 G1i Tower Workstation",
+   "series": "Z1",
+   "formFactor": "DESKTOP_WORKSTATION",
+   "shortDescription": "An entry tower workstation built on Intel Core Ultra 5 and Ultra 7 processors with integrated graphics, supplied with FreeDOS or Windows 11 Pro and three years of onsite warranty.",
+   "description": "The Z1 G1i is the entry point to HP's Z workstation range: a tower sized for a desk, built on Intel Core Ultra 5 and Ultra 7 processors with integrated graphics and DDR5 memory. It suits CAD drafting, engineering review and analysis work that needs workstation-class reliability and a long onsite warranty rather than discrete professional graphics.\n\nBuilds are offered with FreeDOS or Windows 11 Pro, and selected part numbers are manufactured in India — relevant where a tender specifies local content. Every build listed carries a three-year onsite warranty.",
+   "businessFeatures": [
+    "Three years of onsite warranty on every build listed",
+    "Windows 11 Pro or FreeDOS specified at order",
+    "Selected part numbers manufactured in India",
+    "Wi-Fi 6 with Bluetooth on selected builds"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Tower workstation"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "512GB NVMe"
+    },
+    {
+     "label": "Graphics",
+     "value": "Intel HD Graphics, VGA"
+    },
+    {
+     "label": "Operating system",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Optical drive",
+     "value": "DVD-RW"
+    },
+    {
+     "label": "Power supply",
+     "value": "500W"
+    },
+    {
+     "label": "Warranty",
+     "value": "3 years onsite"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "D30A8PA",
+     "alsoOrderedAs": [
+      "D52NLPA"
+     ],
+     "processor": "Intel Core Ultra 5 225 (10-core)",
+     "memory": "8GB DDR5 RAM",
+     "storage": "512GB NVMe",
+     "graphics": "Intel HD Graphics, VGA",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "500W",
+     "warranty": "3 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": "D52Q6PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 5 225 (10-core)",
+     "memory": "8GB DDR5 RAM",
+     "storage": "512GB NVMe",
+     "graphics": "Intel HD Graphics, VGA",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "500W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D3MV6PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 5 225 (10-core)",
+     "memory": "8GB DDR5 RAM",
+     "storage": "512GB NVMe",
+     "graphics": "Intel HD Graphics, VGA",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "500W",
+     "warranty": "3 years onsite",
+     "note": "Made in India"
+    },
+    {
+     "partNumber": "D88Z1PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 5 225 (10-core)",
+     "memory": "16GB DDR5 RAM",
+     "storage": "512GB NVMe",
+     "graphics": "Intel HD Graphics, VGA",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "500W",
+     "warranty": "3 years onsite",
+     "note": "Made in India"
+    },
+    {
+     "partNumber": "D2FX3PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "8GB DDR5 RAM",
+     "storage": "512GB NVMe",
+     "graphics": "Intel HD Graphics, VGA",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "500W",
+     "warranty": "3 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": "D2FX9PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "8GB DDR5 RAM",
+     "storage": "512GB NVMe",
+     "graphics": "Intel HD Graphics, VGA",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "500W",
+     "warranty": "3 years onsite",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Z1 G9 Tower Workstation",
+   "series": "Z1",
+   "formFactor": "DESKTOP_WORKSTATION",
+   "shortDescription": "A tower workstation on the 14th-generation Intel Core i7-14700 with integrated graphics, supplied with Windows 11 Pro and three years of onsite warranty.",
+   "description": "The Z1 G9 is the preceding generation of HP's entry tower workstation, built on the 14th-generation Intel Core i7-14700. It remains a practical choice where a standard build has already been qualified against this platform and a department is extending an existing fleet rather than starting one.\n\nThe build listed ships with Windows 11 Pro, integrated graphics and a three-year onsite warranty.",
+   "businessFeatures": [
+    "Three years of onsite warranty",
+    "Windows 11 Pro",
+    "Intel vPro-generation Core i7 platform for fleet standardisation"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Tower workstation"
+    },
+    {
+     "label": "Processor",
+     "value": "Intel Core i7-14700 (14th generation, 20-core)"
+    },
+    {
+     "label": "Memory",
+     "value": "8GB DDR5 RAM"
+    },
+    {
+     "label": "Storage",
+     "value": "512GB NVMe"
+    },
+    {
+     "label": "Graphics",
+     "value": "Intel HD Graphics, VGA"
+    },
+    {
+     "label": "Operating system",
+     "value": "Windows 11 Pro"
+    },
+    {
+     "label": "Optical drive",
+     "value": "DVD-RW"
+    },
+    {
+     "label": "Power supply",
+     "value": "550W"
+    },
+    {
+     "label": "Warranty",
+     "value": "3 years onsite"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "A1VZ2PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700 (14th generation, 20-core)",
+     "memory": "8GB DDR5 RAM",
+     "storage": "512GB NVMe",
+     "graphics": "Intel HD Graphics, VGA",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "550W",
+     "warranty": "3 years onsite",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Z2 G9 Tower Workstation",
+   "series": "Z2",
+   "formFactor": "DESKTOP_WORKSTATION",
+   "shortDescription": "A mid-range tower workstation on the 14th-generation Intel Core i7-14700, offered with integrated graphics or an NVIDIA T1000, and three to five years of onsite warranty.",
+   "description": "The Z2 G9 is HP's mid-range tower workstation on the 14th-generation Intel Core i7-14700, with more expansion and power headroom than the Z1. It is specified for design, simulation and media work that needs a discrete professional card or the room to add one later.\n\nBuilds are offered with integrated graphics or an NVIDIA T1000, in 350 W, 500 W and 700 W power supplies, and with warranty terms of three or five years onsite.",
+   "businessFeatures": [
+    "Three or five years of onsite warranty depending on build",
+    "Discrete NVIDIA T1000 professional graphics option",
+    "Power supplies from 350 W to 700 W for expansion headroom"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Tower workstation"
+    },
+    {
+     "label": "Processor",
+     "value": "Intel Core i7-14700 (14th generation, 20-core)"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Graphics",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Operating system",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Optical drive",
+     "value": "DVD-RW"
+    },
+    {
+     "label": "Power supply",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Warranty",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "BG1D0PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700 (14th generation, 20-core)",
+     "memory": "8GB DDR5 RAM",
+     "storage": "512GB NVMe",
+     "graphics": "Intel HD Graphics, VGA",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "350W",
+     "warranty": "3 years onsite",
+     "note": "Modified"
+    },
+    {
+     "partNumber": "BG1D1PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700 (14th generation, 20-core)",
+     "memory": "16GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, VGA",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "350W",
+     "warranty": "3 years onsite",
+     "note": "Modified"
+    },
+    {
+     "partNumber": "D42SKPA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700 (14th generation, 20-core)",
+     "memory": "16GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, VGA",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "500W",
+     "warranty": "3 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": "A1ZX9PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700 (14th generation, 20-core)",
+     "memory": "16GB DDR5 RAM",
+     "storage": "512GB NVMe",
+     "graphics": "Intel HD Graphics, VGA",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": "A20BQPT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core i7-14700 (14th generation, 20-core)",
+     "memory": "16GB DDR5 RAM",
+     "storage": "512GB NVMe + 2TB SATA",
+     "graphics": "NVIDIA T1000 4GB",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "500W",
+     "warranty": "5 years onsite",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Z2 G1i Tower Workstation",
+   "series": "Z2",
+   "formFactor": "DESKTOP_WORKSTATION",
+   "shortDescription": "HP's current mid-range tower workstation on Intel Core Ultra 7 and Ultra 9 processors, from integrated graphics to NVIDIA RTX Pro and GeForce RTX cards, with three to five years of onsite warranty.",
+   "description": "The Z2 G1i is the current generation of HP's mid-range tower workstation, built on Intel Core Ultra 7 and Ultra 9 processors. It is the broadest part of this range: builds run from integrated graphics through NVIDIA RTX A1000 and RTX 2000 Ada to RTX Pro Blackwell and GeForce RTX 5070, 5070 Ti and 5080 cards, in 500 W, 700 W and 1200 W power supplies.\n\nThat spread is why the configuration table matters more than the model page — the right build for CAD drafting and the right build for GPU rendering are both on this list, and they are not the same machine. Selected builds add a second LAN port, Wi-Fi 6 with Bluetooth, or Indian manufacture.",
+   "businessFeatures": [
+    "Three or five years of onsite warranty depending on build",
+    "Professional NVIDIA RTX Pro and RTX Ada graphics options",
+    "Second LAN port on selected builds for segregated networks",
+    "Wi-Fi 6 with Bluetooth on most builds",
+    "Selected part numbers manufactured in India"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Tower workstation"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Graphics",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Operating system",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Optical drive",
+     "value": "DVD-RW"
+    },
+    {
+     "label": "Power supply",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Warranty",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "C1PT8PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "8GB DDR5 RAM",
+     "storage": "512GB NVMe",
+     "graphics": "Intel HD Graphics",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "500W",
+     "warranty": "1 year onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "CD3A1PA",
+     "alsoOrderedAs": [
+      "D53JDPA"
+     ],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "16GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, HDMI",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "500W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D53JCPA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "32GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, HDMI",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "CD3A2PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "16GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, HDMI",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "2 x 16GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, HDMI",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "CD3A3PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "32GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, HDMI",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1200W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "CD3A5PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "16GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "NVIDIA RTX A1000 8GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "500W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D88Z0PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "16GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, HDMI",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Made in India · Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "CD3A8PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "32GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Modified · Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D53JGPA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "32GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "NVIDIA RTX A1000 8GB, 2 LAN ports",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "5 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D52Y7PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265K (20-core)",
+     "memory": "48GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, HDMI",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D53JHPA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "32GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "NVIDIA RTX 5060 8GB, 2 LAN ports",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "5 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "CD3A8PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "32GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "NVIDIA RTX 2000 Ada 16GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D52VDPA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "48GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "NVIDIA RTX 2000 Blackwell 16GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "CD3B0PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "32GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "NVIDIA RTX 4000 Ada 20GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D52ZXPA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "48GB DDR5 RAM",
+     "storage": "2TB NVMe",
+     "graphics": "NVIDIA RTX 5070 12GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1200W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D52ZYPA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "48GB DDR5 RAM",
+     "storage": "2TB NVMe",
+     "graphics": "NVIDIA RTX 5070 Ti 16GB, 2 LAN ports",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1200W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "CD3B4PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 7 265 (20-core)",
+     "memory": "32GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "NVIDIA RTX 5000 Ada 32GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1200W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "CF5A1PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 9 285 (24-core)",
+     "memory": "16GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, HDMI",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 9 265 (20-core)",
+     "memory": "32GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, HDMI",
+     "operatingSystem": "FreeDOS",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D53J8PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 9 285K (24-core)",
+     "memory": "32GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, VGA",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1200W",
+     "warranty": "3 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": "CF4Z4PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 9 285 (24-core)",
+     "memory": "16GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, HDMI",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "CC9H8PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 9 285K (24-core)",
+     "memory": "16GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "Intel HD Graphics, HDMI",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "CC9N5PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 9 285 (24-core)",
+     "memory": "32GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "NVIDIA RTX 2000 Ada 16GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D52VQPA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 9 285 (24-core)",
+     "memory": "48GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "NVIDIA RTX 2000 Blackwell 16GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "CD3B6PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 9 285 (24-core)",
+     "memory": "32GB DDR5 RAM",
+     "storage": "1TB NVMe",
+     "graphics": "NVIDIA RTX 4000 Ada 20GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "700W",
+     "warranty": "3 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D53A1PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 9 285 (24-core)",
+     "memory": "48GB DDR5 RAM",
+     "storage": "2TB NVMe",
+     "graphics": "NVIDIA RTX 5080 16GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1200W",
+     "warranty": "5 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    },
+    {
+     "partNumber": "D53A0PA",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core Ultra 9 285K (24-core)",
+     "memory": "48GB DDR5 RAM",
+     "storage": "2TB NVMe",
+     "graphics": "NVIDIA RTX 5070 Ti 16GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1200W",
+     "warranty": "5 years onsite",
+     "note": "Wi-Fi 6 + Bluetooth"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Z4 G5 Tower Workstation",
+   "series": "Z4",
+   "formFactor": "DESKTOP_WORKSTATION",
+   "shortDescription": "A single-socket Xeon W workstation with ECC registered memory and professional NVIDIA graphics, for simulation, rendering and data work, with four years of onsite warranty on most builds.",
+   "description": "The Z4 G5 moves from Core to Intel Xeon W processors and ECC registered memory — error-correcting memory being the practical dividing line between a fast desktop and a machine trusted to run a simulation unattended for two days. Builds listed run from a 6-core Xeon W3-2423 to a 26-core W7-2595X, with 16 GB to 128 GB of ECC memory.\n\nGraphics options span NVIDIA RTX A1000 and T1000 through RTX 2000 and 4000 Ada to RTX Pro 4000 and 5000 Blackwell. Storage options include dual NVMe with VROC for RAID. Most builds carry four years of onsite warranty, and several are supplied Linux-ready rather than with Windows.",
+   "businessFeatures": [
+    "Four years of onsite warranty on most builds",
+    "ECC registered memory throughout the range",
+    "Dual NVMe with VROC for RAID on selected builds",
+    "Two LAN ports on most builds",
+    "Linux-ready builds available alongside Windows 11 Pro",
+    "Selected builds manufactured in India"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Tower workstation"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Graphics",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Operating system",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Optical drive",
+     "value": "DVD-RW"
+    },
+    {
+     "label": "Power supply",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Warranty",
+     "value": "Configuration dependent — see Configurations"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W3-2423 (6-core, 4.0GHz)",
+     "memory": "16GB (1x16GB) DDR5 ECC registered",
+     "storage": "1TB NVMe",
+     "graphics": "No graphics, 2 LAN ports",
+     "operatingSystem": "Linux ready",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "775W",
+     "warranty": "4 years onsite",
+     "note": "Made in India · Wi-Fi + Bluetooth"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W3-2525 (8-core)",
+     "memory": "16GB DDR5 ECC",
+     "storage": "1TB NVMe",
+     "graphics": "No graphics, 2 LAN ports",
+     "operatingSystem": "Linux ready",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "775W",
+     "warranty": "4 years onsite",
+     "note": "Made in India · Wi-Fi + Bluetooth"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W3-2525 (8-core, 4.3GHz)",
+     "memory": "32GB (1x16GB) DDR5 ECC registered",
+     "storage": "1TB NVMe",
+     "graphics": "NVIDIA RTX A1000 8GB, 2 LAN ports",
+     "operatingSystem": "Linux ready",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "775W",
+     "warranty": "4 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W3-2525 (8-core)",
+     "memory": "64GB (2x32GB) DDR5 ECC registered",
+     "storage": "1TB NVMe + 2TB SATA",
+     "graphics": "NVIDIA RTX A1000 8GB, 2 LAN ports",
+     "operatingSystem": "Linux ready",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "775W",
+     "warranty": "4 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W3-2525 (8-core, 4.3GHz)",
+     "memory": "64GB (2x32GB) DDR5 ECC registered",
+     "storage": "1TB NVMe + 1TB NVMe with VROC for RAID",
+     "graphics": "NVIDIA RTX A1000 8GB, 2 LAN ports",
+     "operatingSystem": "Linux ready",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "775W",
+     "warranty": "4 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W5-2455X (12-core, 4.4GHz)",
+     "memory": "32GB (2x16GB) DDR5 ECC registered",
+     "storage": "1TB NVMe + 2TB SATA",
+     "graphics": "NVIDIA T1000 8GB",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "775W",
+     "warranty": "3 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W3-2525 (8-core, 4.3GHz)",
+     "memory": "32GB (2x16GB) DDR5 ECC registered",
+     "storage": "1TB NVMe",
+     "graphics": "NVIDIA RTX 2000 Ada 16GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "775W",
+     "warranty": "4 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W5-2545 (12-core, 4.7GHz)",
+     "memory": "32GB (2x16GB) DDR5 ECC registered",
+     "storage": "2TB NVMe",
+     "graphics": "NVIDIA RTX 4000 Ada 20GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1125W",
+     "warranty": "4 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W5-2545 (12-core, 4.7GHz)",
+     "memory": "32GB (2x16GB) DDR5 ECC registered",
+     "storage": "2TB NVMe",
+     "graphics": "NVIDIA RTX Pro 4000 Blackwell 24GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1125W",
+     "warranty": "4 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W5-2555X (14-core)",
+     "memory": "64GB (2x32GB) DDR5 ECC registered",
+     "storage": "1TB NVMe + 2TB SATA",
+     "graphics": "NVIDIA RTX 4000 Ada 20GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1125W",
+     "warranty": "4 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W5-2555X (14-core)",
+     "memory": "64GB (2x32GB) DDR5 ECC registered",
+     "storage": "2TB NVMe + 2TB SATA",
+     "graphics": "NVIDIA RTX 4000 Ada 20GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1125W",
+     "warranty": "4 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W5-2565X (18-core)",
+     "memory": "64GB (2x32GB) DDR5 ECC registered",
+     "storage": "2TB NVMe + 2TB SATA",
+     "graphics": "NVIDIA RTX 4000 Ada 20GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1125W",
+     "warranty": "4 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W7-2575X (22-core)",
+     "memory": "64GB (2x32GB) DDR5 ECC registered",
+     "storage": "2TB NVMe + 2TB SATA",
+     "graphics": "NVIDIA RTX 4000 Ada 20GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1125W",
+     "warranty": "4 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W7-2575X (22-core)",
+     "memory": "64GB (2x32GB) DDR5 ECC registered",
+     "storage": "2TB NVMe",
+     "graphics": "NVIDIA RTX Pro 4000 Blackwell 24GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1125W",
+     "warranty": "4 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W7-2595X (26-core)",
+     "memory": "128GB (4x32GB) DDR5 ECC registered",
+     "storage": "2TB NVMe",
+     "graphics": "NVIDIA RTX Pro 5000 Blackwell 48GB, 2 LAN ports",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1125W",
+     "warranty": "4 years onsite",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP Z8 Fury G5 Tower Workstation",
+   "series": "Z8 Fury",
+   "formFactor": "DESKTOP_WORKSTATION",
+   "shortDescription": "HP's highest-specified workstation, on Xeon W-3500 processors with up to 512 GB of ECC registered memory and NVIDIA RTX Pro Blackwell graphics to 96 GB, with five years of onsite warranty.",
+   "description": "The Z8 Fury G5 is the top of the range: single-socket Intel Xeon W-3500 processors from 16 to 60 cores, ECC registered memory in the builds listed from 32 GB to 512 GB, and Z Turbo NVMe storage. It is bought for work that does not fit anywhere else — large-scale simulation, volumetric and medical imaging, and model training on a workstation rather than a cluster.\n\nGraphics run to NVIDIA RTX Pro 6000 Blackwell with 96 GB. Power supplies are 1450 W and 2250 W, every build listed carries five years of onsite warranty, and selected builds are manufactured in India.",
+   "businessFeatures": [
+    "Five years of onsite warranty on every build listed",
+    "ECC registered memory to 512 GB in the builds listed",
+    "NVIDIA RTX Pro Blackwell graphics to 96 GB",
+    "Z Turbo NVMe storage",
+    "Selected builds manufactured in India"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Tower workstation"
+    },
+    {
+     "label": "Processor",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Memory",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Storage",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Graphics",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Operating system",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Optical drive",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Power supply",
+     "value": "Configuration dependent — see Configurations"
+    },
+    {
+     "label": "Warranty",
+     "value": "5 years onsite"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W5-3525 (16-core)",
+     "memory": "32GB (1x32GB) DDR5 ECC registered",
+     "storage": "Z Turbo 1TB NVMe",
+     "graphics": "No graphics",
+     "operatingSystem": "Linux ready",
+     "opticalDrive": "DVD-RW",
+     "powerSupply": "1450W",
+     "warranty": "5 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W7-3565X (32-core)",
+     "memory": "32GB (1x32GB) DDR5 ECC registered",
+     "storage": "Z Turbo 4TB NVMe",
+     "graphics": "NVIDIA RTX Pro 4500 Blackwell 32GB",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "No optical drive",
+     "powerSupply": "2250W",
+     "warranty": "5 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W7-3565X (32-core)",
+     "memory": "128GB (4x32GB) DDR5 ECC registered",
+     "storage": "Z Turbo 1TB NVMe + 1TB NVMe",
+     "graphics": "NVIDIA RTX Pro 5000 Blackwell 48GB",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RS",
+     "powerSupply": "2250W",
+     "warranty": "5 years onsite",
+     "note": null
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W7-3565X (32-core)",
+     "memory": "128GB (4x32GB) DDR5 ECC registered",
+     "storage": "Z Turbo 1TB NVMe + 1TB NVMe",
+     "graphics": "NVIDIA RTX Pro 6000 Blackwell 96GB",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RS",
+     "powerSupply": "2250W",
+     "warranty": "5 years onsite",
+     "note": "Made in India"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W9-3595X (60-core)",
+     "memory": "256GB (8x32GB) DDR5 ECC registered",
+     "storage": "Z Turbo 1TB NVMe + 1TB NVMe",
+     "graphics": "NVIDIA RTX Pro 6000 Blackwell 96GB",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RS",
+     "powerSupply": "2250W",
+     "warranty": "5 years onsite",
+     "note": "Made in India"
+    },
+    {
+     "partNumber": null,
+     "alsoOrderedAs": [],
+     "processor": "Intel Xeon W9-3595X (60-core)",
+     "memory": "512GB (16x32GB) DDR5 ECC registered",
+     "storage": "Z Turbo 1TB NVMe + 1TB NVMe",
+     "graphics": "NVIDIA RTX Pro 5000 Blackwell 48GB",
+     "operatingSystem": "Windows 11 Pro (6 cores Plus)",
+     "opticalDrive": "DVD-RS",
+     "powerSupply": "2250W",
+     "warranty": "5 years onsite",
+     "note": null
+    }
+   ],
+   "status": "ACTIVE"
+  }
+ ]
+}

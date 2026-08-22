@@ -12,6 +12,7 @@ import { ProductGrid } from "@/components/marketing/product-card";
 import { VariantSelector } from "@/components/catalogue/variant-selector";
 import { ProductPhoto } from "@/components/catalogue/product-photo";
 import { SpecTable } from "@/components/catalogue/spec-table";
+import { ConfigurationTable } from "@/components/catalogue/configuration-table";
 import { HardwareQuotePanel } from "@/components/catalogue/hardware-quote-panel";
 import { hardwareClassLabel, isHardware } from "@/lib/catalogue/hardware";
 import { getProductBySlug, getRelatedProducts } from "@/lib/queries/catalogue";
@@ -260,6 +261,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
                  */
                 ...(hardware
                   ? [
+                      {
+                        id: "configurations",
+                        label: `Configurations (${product.variants.length})`,
+                        content: (
+                          <ConfigurationTable
+                            configurations={product.variants}
+                            productName={product.name}
+                            productSlug={product.slug}
+                            brandName={product.brand.name}
+                          />
+                        ),
+                      },
                       {
                         id: "specifications",
                         label: "Specifications",

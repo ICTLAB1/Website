@@ -100,7 +100,14 @@ export function ProductCard({
             {variant ? (
               <div className="flex gap-2">
                 <dt className="w-20 shrink-0 text-ink-500">Part no.</dt>
-                <dd className="truncate font-mono text-ink-600">{variant.sku}</dd>
+                {/*
+                  `min-w-0` is what makes `truncate` work here. A flex item
+                  defaults to `min-width: auto`, so an unbreakable string — a
+                  part number is exactly that — grows the row past its container
+                  however much overflow is hidden. Two pixels of sideways scroll
+                  on a phone, from one card in a grid of six.
+                */}
+                <dd className="min-w-0 truncate font-mono text-ink-600">{variant.sku}</dd>
               </div>
             ) : null}
           </dl>
@@ -108,7 +115,7 @@ export function ProductCard({
           <dl className="mt-4 space-y-1 text-label">
             <div className="flex gap-2">
               <dt className="w-20 shrink-0 text-ink-500">SKU</dt>
-              <dd className="truncate font-mono text-ink-600">{variant.sku}</dd>
+              <dd className="min-w-0 truncate font-mono text-ink-600">{variant.sku}</dd>
             </div>
             <div className="flex gap-2">
               <dt className="w-20 shrink-0 text-ink-500">Licence</dt>
@@ -224,7 +231,18 @@ export async function ProductGrid({ products }: { products: ProductListItem[] })
   const display = await getDisplayCurrency();
 
   return (
-    <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" step={50} max={200}>
+    /*
+     * `grid-cols-1` is not redundant.
+     *
+     * With no column class at the base width the grid has no explicit template,
+     * so the implicit column is sized `auto` — which means max-content, and a
+     * card wide enough pushes the track past its container. Tailwind's
+     * `grid-cols-*` expand to `repeat(n, minmax(0, 1fr))`, and it is the
+     * `minmax(0, …)` that caps it. Software cards happened to fit; hardware
+     * cards, which carry a photograph, did not, and the page scrolled two
+     * pixels sideways on a phone.
+     */
+    <RevealGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" step={50} max={200}>
       {products.map((product) => (
         <ProductCard key={product.id} product={product} display={display} />
       ))}

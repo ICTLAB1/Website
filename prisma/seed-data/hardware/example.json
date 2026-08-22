@@ -1,0 +1,57 @@
+{
+  "_comment": "A worked example of the file format, NOT catalogue data. Every value below is a placeholder written to show the shape. Replace all of it from the manufacturer's own current information before importing. See README.md.",
+  "brand": "hp",
+  "category": "infrastructure-hardware",
+  "source": "EXAMPLE — replace with the manufacturer page, price list or line card this came from",
+  "checkedOn": "2026-08-22",
+  "models": [
+    {
+      "name": "EXAMPLE Commercial Notebook (replace with the manufacturer's model name)",
+      "series": "EXAMPLE Series",
+      "formFactor": "LAPTOP",
+      "shortDescription": "EXAMPLE placeholder. Replace with one or two sentences naming the platform, the display and the business capabilities that matter, written for this site.",
+      "description": "EXAMPLE placeholder. Replace with a few paragraphs describing what the model is for and who it suits, written from the manufacturer's specification rather than pasted from its marketing copy.\n\nA second paragraph can cover deployment, warranty position or where the model sits against the rest of the range.",
+      "businessFeatures": [
+        "EXAMPLE placeholder — replace with a security capability the manufacturer documents",
+        "EXAMPLE placeholder — replace with a manageability capability",
+        "EXAMPLE placeholder — replace with a durability or testing standard"
+      ],
+      "specifications": [
+        { "label": "Form factor", "value": "EXAMPLE — true of every build, or leave the row out" },
+        { "label": "Display", "value": "EXAMPLE placeholder" },
+        { "label": "Warranty", "value": "EXAMPLE — as offered by the manufacturer" }
+      ],
+      "configurations": [
+        {
+          "partNumber": "EXAMPLE-PN-0001",
+          "alsoOrderedAs": [],
+          "processor": "EXAMPLE processor, written as the source writes it",
+          "memory": "EXAMPLE memory",
+          "storage": "EXAMPLE storage",
+          "graphics": "EXAMPLE graphics",
+          "operatingSystem": "EXAMPLE operating system",
+          "opticalDrive": null,
+          "powerSupply": null,
+          "warranty": "EXAMPLE warranty",
+          "note": null
+        },
+        {
+          "partNumber": null,
+          "alsoOrderedAs": [],
+          "processor": "EXAMPLE — a build the source names no part number for",
+          "memory": "EXAMPLE memory",
+          "storage": "EXAMPLE storage",
+          "graphics": "EXAMPLE graphics",
+          "operatingSystem": "EXAMPLE operating system",
+          "opticalDrive": null,
+          "powerSupply": null,
+          "warranty": "EXAMPLE warranty",
+          "note": "EXAMPLE — this row lists as \"On request\" rather than inventing a number"
+        }
+      ],
+      "image": "example-notebook.jpg",
+      "sourceUrl": "https://www.example.invalid/replace-with-the-manufacturer-product-page",
+      "status": "ACTIVE"
+    }
+  ]
+}

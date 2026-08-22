@@ -17,6 +17,7 @@ import { services } from "./seed-data/services";
 import { blogPosts } from "./seed-data/blog";
 import { pageSeeds, navigationSeeds } from "./seed-data/pages";
 import { certifications } from "./seed-data/certifications";
+import { applyHardwareFile, hardwareFiles } from "./seed-data/hardware";
 
 const prisma = new PrismaClient();
 
@@ -408,6 +409,24 @@ async function main() {
   } else {
     console.log(
       "No administrator seeded. Set SEED_ADMIN_EMAIL and a SEED_ADMIN_PASSWORD of at least 10 characters to bootstrap one.",
+    );
+  }
+
+  /*
+   * Commercial hardware, from the committed manufacturer line cards.
+   *
+   * After the brands and categories it hangs off, and shared with the content
+   * migration that carries the same files to a database already serving — one
+   * writer, so a freshly seeded site and an upgraded one hold the same
+   * catalogue rather than two that drifted.
+   */
+  for (const { name, file } of hardwareFiles()) {
+    const result = await applyHardwareFile(prisma, file);
+    console.log(
+      `Seeding hardware from ${name}: ${result.created} model(s), ${result.configurations} configuration(s)` +
+        (result.withoutPhotograph.length > 0
+          ? ` — ${result.withoutPhotograph.length} without a photograph`
+          : ""),
     );
   }
 
