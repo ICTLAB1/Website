@@ -9,12 +9,13 @@ import { requireStaff } from "@/lib/auth/guards";
 import { listAdminEnquiries } from "@/lib/queries/admin";
 import { formatDate, humanise } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { DeletedNotice } from "@/components/admin/deleted-notice";
 
 export const metadata: Metadata = { title: "Enquiries" };
 
 const STATUSES = ["NEW", "IN_REVIEW", "QUOTED", "WON", "LOST", "CLOSED"];
 
-type PageProps = { searchParams: Promise<{ status?: string; page?: string }> };
+type PageProps = { searchParams: Promise<{ status?: string; page?: string; deleted?: string }> };
 
 export default async function AdminEnquiriesPage({ searchParams }: PageProps) {
   await requireStaff();
@@ -35,6 +36,8 @@ export default async function AdminEnquiriesPage({ searchParams }: PageProps) {
           {params.status ? ` with status ${humanise(params.status)}` : ""}.
         </p>
       </header>
+
+      <DeletedNotice reference={params.deleted} noun="enquiry" />
 
       <div className="scroll-x">
         <div className="flex min-w-max gap-1">

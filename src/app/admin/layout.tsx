@@ -26,7 +26,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-dvh bg-surface-muted">
       <div className="grid lg:grid-cols-[15rem_minmax(0,1fr)]">
-        <aside className="bg-graphite-900 px-4 py-5 lg:min-h-dvh lg:px-5 lg:py-7">
+        {/*
+          * A full-height sticky column on large screens, holding the menu and
+          * the sign-out button together. The menu scrolls inside it when the
+          * list outgrows the viewport, and sign-out stays at the bottom of the
+          * sidebar rather than at the bottom of a menu that moves independently
+          * of it.
+          */}
+        <aside className="bg-graphite-900 px-4 py-5 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:px-5 lg:py-7">
           <div className="mb-6 flex items-center justify-between gap-3 lg:block">
             <div>
               <Link href="/admin" className="text-[15px] font-semibold text-white">
@@ -36,17 +43,30 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 {user.name} · {admin ? "Administrator" : "Sales"}
               </p>
             </div>
-            <Link
-              href="/"
-              className="text-[12px] text-graphite-300 hover:text-white hover:underline lg:mt-3 lg:block"
-            >
-              View site &rarr;
-            </Link>
+            {/*
+              * Sign-out appears here on small screens and at the foot of the
+              * sidebar on large ones. It used to appear only in the sidebar
+              * foot, which left a phone with no way to sign out at all.
+              */}
+            <div className="flex items-center gap-3">
+              <Link
+                href="/"
+                className="text-[12px] text-graphite-300 hover:text-white hover:underline lg:mt-3 lg:block"
+              >
+                View site &rarr;
+              </Link>
+              <span className="lg:hidden">
+                <SignOutButton tone="onDark" />
+              </span>
+            </div>
           </div>
 
-          <AdminNav isAdmin={admin} />
+          {/* min-h-0 so this can actually shrink and scroll inside the flex column. */}
+          <div className="lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
+            <AdminNav isAdmin={admin} />
+          </div>
 
-          <div className="mt-8 hidden lg:block">
+          <div className="mt-6 hidden shrink-0 border-t border-graphite-800 pt-5 lg:block">
             <SignOutButton tone="onDark" className="w-full" />
           </div>
         </aside>

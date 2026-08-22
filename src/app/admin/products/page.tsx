@@ -9,10 +9,11 @@ import { EmptyState } from "@/components/ui/states";
 import { requireStaff } from "@/lib/auth/guards";
 import { listAdminProducts } from "@/lib/queries/admin";
 import { formatDate, humanise } from "@/lib/utils";
+import { DeletedNotice } from "@/components/admin/deleted-notice";
 
 export const metadata: Metadata = { title: "Products" };
 
-type PageProps = { searchParams: Promise<{ q?: string; page?: string }> };
+type PageProps = { searchParams: Promise<{ q?: string; page?: string; deleted?: string }> };
 
 export default async function AdminProductsPage({ searchParams }: PageProps) {
   await requireStaff();
@@ -35,6 +36,8 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
         </div>
         <ButtonLink href="/admin/products/new">New product</ButtonLink>
       </header>
+
+      <DeletedNotice reference={params.deleted} noun="product" />
 
       {/* GET form: the search term stays in the URL and can be shared. */}
       <form method="get" role="search" className="flex max-w-md gap-2">

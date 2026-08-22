@@ -8,7 +8,9 @@ import { AdminForm } from "@/components/admin/admin-form";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { archiveProduct } from "@/app/admin/actions";
-import { requireStaff } from "@/lib/auth/guards";
+import { DangerZone } from "@/components/admin/danger-zone";
+import { DELETABLE } from "@/lib/admin/deletable";
+import { isAdmin, requireStaff } from "@/lib/auth/guards";
 import { getAdminProduct } from "@/lib/queries/admin";
 import { prisma } from "@/lib/db";
 import { formatMoney, formatTerm } from "@/lib/money";
@@ -19,7 +21,7 @@ export const metadata: Metadata = { title: "Edit product" };
 type PageProps = { params: Promise<{ id: string }> };
 
 export default async function AdminProductDetailPage({ params }: PageProps) {
-  await requireStaff();
+  const staff = await requireStaff();
   const { id } = await params;
 
   const product = await getAdminProduct(id);
@@ -171,6 +173,14 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
                     isDefault: variant.isDefault,
                   }}
                 />
+                {isAdmin(staff) ? (
+                  <DangerZone
+                    config={DELETABLE.variants}
+                    id={variant.id}
+                    reference={variant.sku}
+                    className="mt-6 rounded-[--radius-md] border border-danger-600/30 bg-danger-50/40 p-4"
+                  />
+                ) : null}
               </div>
             </details>
           ))}
@@ -181,6 +191,17 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
           </div>
         </div>
       </section>
+
+      {isAdmin(staff) ? (
+        <DangerZone
+          config={DELETABLE.products}
+          id={product.id}
+          reference={product.slug}
+          archived={product.deletedAt !== null}
+          // The header already carries an archive button; see `showArchive`.
+          showArchive={false}
+        />
+      ) : null}
     </div>
   );
 }

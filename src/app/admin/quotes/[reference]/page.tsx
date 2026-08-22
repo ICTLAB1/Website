@@ -12,7 +12,9 @@ import {
   updateQuoteLine,
   updateQuoteTerms,
 } from "@/app/admin/quote-actions";
-import { requireStaff } from "@/lib/auth/guards";
+import { DangerZone } from "@/components/admin/danger-zone";
+import { DELETABLE } from "@/lib/admin/deletable";
+import { isAdmin, requireStaff } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { priceLine } from "@/lib/pricing";
@@ -28,7 +30,7 @@ function toMajor(minor: number): string {
 }
 
 export default async function AdminQuoteDetailPage({ params }: PageProps) {
-  await requireStaff();
+  const staff = await requireStaff();
   const { reference } = await params;
 
   const quote = await prisma.quote.findUnique({
@@ -335,6 +337,10 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
           ) : null}
         </aside>
       </div>
+
+      {isAdmin(staff) ? (
+        <DangerZone config={DELETABLE.quotes} id={quote.id} reference={quote.reference} />
+      ) : null}
     </div>
   );
 }

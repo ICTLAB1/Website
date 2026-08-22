@@ -3,16 +3,19 @@ import type { Metadata } from "next";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/states";
-import { requireStaff } from "@/lib/auth/guards";
+import { DangerZone } from "@/components/admin/danger-zone";
+import { DeletedNotice } from "@/components/admin/deleted-notice";
+import { DELETABLE } from "@/lib/admin/deletable";
+import { isAdmin, requireStaff } from "@/lib/auth/guards";
 import { listAdminCustomers } from "@/lib/queries/admin";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Customers" };
 
-type PageProps = { searchParams: Promise<{ q?: string; page?: string }> };
+type PageProps = { searchParams: Promise<{ q?: string; page?: string; deleted?: string }> };
 
 export default async function AdminCustomersPage({ searchParams }: PageProps) {
-  await requireStaff();
+  const staff = await requireStaff();
   const params = await searchParams;
   const page = Number(params.page ?? 1);
 
@@ -29,6 +32,8 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
           {total} registered {total === 1 ? "customer" : "customers"}.
         </p>
       </header>
+
+      <DeletedNotice reference={params.deleted} noun="customer" />
 
       <form method="get" role="search" className="flex max-w-md gap-2">
         <label htmlFor="customer-search" className="sr-only">
@@ -85,6 +90,34 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
               </tbody>
             </Table>
           </TableWrap>
+
+          {isAdmin(staff) ? (
+            <section>
+              <h2 className="text-[15px] font-semibold text-graphite-900">Remove a customer</h2>
+              <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-ink-600">
+                Archiving revokes their sign-in and hides the account. Their past orders keep the
+                billing details recorded at the time, so the sales history stays intact either way.
+              </p>
+              <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                {items.map((customer) => (
+                  <details
+                    key={customer.id}
+                    className="rounded-[--radius-lg] border border-line bg-white p-5"
+                  >
+                    <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
+                      {customer.name} — {customer.email}
+                    </summary>
+                    <DangerZone
+                      config={DELETABLE.customers}
+                      id={customer.id}
+                      reference={customer.email}
+                      className="mt-4 rounded-[--radius-md] border border-danger-600/30 bg-danger-50/40 p-4"
+                    />
+                  </details>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           <Pagination
             page={page > 0 ? page : 1}

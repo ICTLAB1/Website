@@ -7,17 +7,20 @@ import { EmptyState } from "@/components/ui/states";
 import { AdminForm } from "@/components/admin/admin-form";
 import { Field, Select } from "@/components/ui/form";
 import { updateSupportTicket } from "@/app/admin/quote-actions";
-import { requireStaff } from "@/lib/auth/guards";
+import { DangerZone } from "@/components/admin/danger-zone";
+import { DELETABLE } from "@/lib/admin/deletable";
+import { isAdmin, requireStaff } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db";
 import { isMailConfigured } from "@/lib/mail";
 import { cn, formatDateTime, humanise } from "@/lib/utils";
+import { DeletedNotice } from "@/components/admin/deleted-notice";
 
 export const metadata: Metadata = { title: "Support" };
 
 const STATUSES = ["OPEN", "IN_PROGRESS", "WAITING_ON_CUSTOMER", "RESOLVED", "CLOSED"];
 const PRIORITIES = ["LOW", "NORMAL", "HIGH", "URGENT"];
 
-type PageProps = { searchParams: Promise<{ status?: string }> };
+type PageProps = { searchParams: Promise<{ status?: string; deleted?: string }> };
 
 /**
  * Inbound support and contact messages.
@@ -29,7 +32,7 @@ type PageProps = { searchParams: Promise<{ status?: string }> };
  */
 export default async function AdminSupportPage({ searchParams }: PageProps) {
   const mailReady = await isMailConfigured();
-  await requireStaff();
+  const staff = await requireStaff();
   const params = await searchParams;
   const status = params.status && STATUSES.includes(params.status) ? params.status : undefined;
 
@@ -63,6 +66,8 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
           form and from customer accounts both arrive here.
         </p>
       </header>
+
+      <DeletedNotice reference={params.deleted} noun="support ticket" />
 
       {!mailReady ? (
         <div className="rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-5">
@@ -193,6 +198,15 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
                       </Field>
                     </div>
                   </AdminForm>
+
+                  {isAdmin(staff) ? (
+                    <DangerZone
+                      config={DELETABLE.tickets}
+                      id={ticket.id}
+                      reference={ticket.reference}
+                      className="rounded-[--radius-md] border border-danger-600/30 bg-danger-50/40 p-4"
+                    />
+                  ) : null}
                 </div>
               </details>
             ))}

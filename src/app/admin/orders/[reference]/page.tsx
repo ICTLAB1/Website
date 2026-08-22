@@ -7,7 +7,9 @@ import { StatusBadge } from "@/components/ui/badge";
 import { AdminForm } from "@/components/admin/admin-form";
 import { Field, Select, Textarea } from "@/components/ui/form";
 import { fulfilOrderAction, updateOrderStatus } from "@/app/admin/quote-actions";
-import { requireStaff } from "@/lib/auth/guards";
+import { DangerZone } from "@/components/admin/danger-zone";
+import { DELETABLE } from "@/lib/admin/deletable";
+import { isAdmin, requireStaff } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { priceLine } from "@/lib/pricing";
@@ -20,7 +22,7 @@ const STATUSES = ["PENDING", "CONFIRMED", "PROVISIONING", "CANCELLED", "REFUNDED
 type PageProps = { params: Promise<{ reference: string }> };
 
 export default async function AdminOrderDetailPage({ params }: PageProps) {
-  await requireStaff();
+  const staff = await requireStaff();
   const { reference } = await params;
 
   const order = await prisma.order.findUnique({
@@ -308,6 +310,19 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           )}
         </aside>
       </div>
+
+      {isAdmin(staff) ? (
+        <DangerZone
+          config={DELETABLE.orders}
+          id={order.id}
+          reference={order.reference}
+          retentionNote={
+            order.payments.some((payment) => payment.status === "CAPTURED")
+              ? "Money has been taken against this order. Indian law requires books of account and the tax invoices behind them to be kept for eight years, and deleting this removes the only record of the sale held here. Cancel or refund it instead unless you are certain it should never have existed."
+              : undefined
+          }
+        />
+      ) : null}
     </div>
   );
 }

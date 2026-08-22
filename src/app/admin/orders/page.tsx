@@ -8,11 +8,15 @@ import { requireStaff } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { formatDate } from "@/lib/utils";
+import { DeletedNotice } from "@/components/admin/deleted-notice";
 
 export const metadata: Metadata = { title: "Orders" };
 
-export default async function AdminOrdersPage() {
+type PageProps = { searchParams: Promise<{ deleted?: string }> };
+
+export default async function AdminOrdersPage({ searchParams }: PageProps) {
   await requireStaff();
+  const params = await searchParams;
   const orders = await prisma.order.findMany({
     orderBy: { placedAt: "desc" },
     take: 100,
@@ -38,6 +42,8 @@ export default async function AdminOrdersPage() {
           Confirmed orders and their fulfilment status.
         </p>
       </header>
+
+      <DeletedNotice reference={params.deleted} noun="order" />
 
       {orders.length === 0 ? (
         <EmptyState

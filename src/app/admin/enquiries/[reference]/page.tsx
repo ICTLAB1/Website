@@ -8,7 +8,9 @@ import { AdminForm } from "@/components/admin/admin-form";
 import { Field, Select, Textarea } from "@/components/ui/form";
 import { updateEnquiry } from "@/app/admin/actions";
 import { draftQuote } from "@/app/admin/quote-actions";
-import { requireStaff } from "@/lib/auth/guards";
+import { DangerZone } from "@/components/admin/danger-zone";
+import { DELETABLE } from "@/lib/admin/deletable";
+import { isAdmin, requireStaff } from "@/lib/auth/guards";
 import { getAdminEnquiry } from "@/lib/queries/admin";
 import { formatMoney } from "@/lib/money";
 import { formatDateTime, humanise } from "@/lib/utils";
@@ -20,7 +22,7 @@ const STATUSES = ["NEW", "IN_REVIEW", "QUOTED", "WON", "LOST", "CLOSED"];
 type PageProps = { params: Promise<{ reference: string }> };
 
 export default async function AdminEnquiryDetailPage({ params }: PageProps) {
-  await requireStaff();
+  const staff = await requireStaff();
   const { reference } = await params;
 
   const enquiry = await getAdminEnquiry(reference);
@@ -225,6 +227,10 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
           </section>
         </aside>
       </div>
+
+      {isAdmin(staff) ? (
+        <DangerZone config={DELETABLE.enquiries} id={enquiry.id} reference={enquiry.reference} />
+      ) : null}
     </div>
   );
 }

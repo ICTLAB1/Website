@@ -45,7 +45,7 @@ export const POST = withErrorHandling("auth.resetPassword", async (request: Requ
       userId: true,
       expiresAt: true,
       usedAt: true,
-      user: { select: { deletedAt: true } },
+      user: { select: { deletedAt: true, emailVerified: true } },
     },
   });
 
@@ -75,7 +75,22 @@ export const POST = withErrorHandling("auth.resetPassword", async (request: Requ
 
     await tx.user.update({
       where: { id: record.userId },
-      data: { passwordHash, failedLogins: 0, lockedUntil: null },
+      data: {
+        passwordHash,
+        failedLogins: 0,
+        lockedUntil: null,
+        /*
+         * Following a link sent to an address proves control of it, which is
+         * exactly what verification establishes — so an account arriving here
+         * unverified is verified by the act of arriving.
+         *
+         * This is what makes an administrator-created account work: it is
+         * created unverified, deliberately, and the invitation both sets the
+         * password and settles the address in one step rather than asking a new
+         * colleague to act on two separate emails.
+         */
+        ...(record.user.emailVerified ? {} : { emailVerified: new Date() }),
+      },
     });
   });
 

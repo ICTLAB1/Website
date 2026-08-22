@@ -9,11 +9,15 @@ import { requireStaff } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { formatDate } from "@/lib/utils";
+import { DeletedNotice } from "@/components/admin/deleted-notice";
 
 export const metadata: Metadata = { title: "Quotes" };
 
-export default async function AdminQuotesPage() {
+type PageProps = { searchParams: Promise<{ deleted?: string }> };
+
+export default async function AdminQuotesPage({ searchParams }: PageProps) {
   await requireStaff();
+  const params = await searchParams;
   const quotes = await prisma.quote.findMany({
     orderBy: { createdAt: "desc" },
     take: 100,
@@ -39,6 +43,8 @@ export default async function AdminQuotesPage() {
           recorded here so the customer can see them in their account.
         </p>
       </header>
+
+      <DeletedNotice reference={params.deleted} noun="quote" />
 
       {quotes.length === 0 ? (
         <EmptyState

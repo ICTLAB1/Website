@@ -51,7 +51,12 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Admin" className="lg:sticky lg:top-6">
+    /*
+     * Not sticky itself. The sidebar around it is the sticky element, so that
+     * the sign-out button beneath travels with the menu instead of being
+     * overrun by it — which is what happened when only this nav was pinned.
+     */
+    <nav aria-label="Admin">
       <div className="scroll-x lg:overflow-visible">
         <div className="flex min-w-max gap-6 lg:min-w-0 lg:flex-col lg:gap-6">
           {SECTIONS.map((section) => {
