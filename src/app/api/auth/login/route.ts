@@ -110,7 +110,22 @@ export const POST = withErrorHandling("auth.login", async (request: Request) => 
     data: { failedLogins: 0, lockedUntil: null, lastLoginAt: new Date() },
   });
 
+  /*
+   * A successful sign-in costs nothing, on either counter.
+   *
+   * The account bucket was already cleared here. The IP bucket was not, and
+   * that is a lockout waiting to happen: an office behind one NAT address is a
+   * single IP, so the twenty-fifth colleague to sign in within five minutes was
+   * refused — every one of those attempts having succeeded. The bucket exists
+   * to bound *guessing*, and a correct password is not a guess.
+   *
+   * Wrong attempts still count on both, which is what the limit is for, and the
+   * durable `failedLogins` / `lockedUntil` lock on the account row is untouched
+   * — that is the layer that actually stops a patient attacker, and it survives
+   * a restart where an in-memory bucket does not.
+   */
   reset(`login:acct:${email}`);
+  reset(`login:ip:${ip}`);
   await createSession(user.id);
 
   await recordAudit({
