@@ -9,12 +9,18 @@ import { ButtonLink } from "@/components/ui/button";
 import { PartnerBadge, PartnerBadgeArtwork } from "@/components/marketing/partner-badge";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { prisma } from "@/lib/db";
-import { getBrandBySlug, getBrandCategories, getServices } from "@/lib/queries/content";
+import {
+  getBrandBySlug,
+  getBrandCatalogueShape,
+  getBrandCategories,
+  getServices,
+} from "@/lib/queries/content";
 import { getBrandHardware } from "@/lib/queries/hardware";
 import { FAMILY_LABELS } from "@/lib/catalogue/hardware";
 import { getSiteConfig } from "@/lib/site-config";
 import { productListSelect } from "@/lib/queries/catalogue";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
+import { metaDescription } from "@/lib/seo-description";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -45,9 +51,42 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     });
   }
 
+  /*
+   * The title used to be "{Brand} Licensing & Solutions" on all forty of these
+   * pages. Lenovo, Acer, Intel, AMD, Synology and Logitech do not license
+   * anything to anybody — they make machines and parts — and a page title is a
+   * claim like any other. This asks what is actually listed under the brand and
+   * says that instead: "licensing" where there are licences, "hardware" where
+   * there are machines, and neither where the catalogue is empty and the honest
+   * offer is that we can source it.
+   */
+  const shape = await getBrandCatalogueShape(brand.id);
+  const title =
+    shape.licences > 0 && shape.hardware > 0
+      ? `${brand.name} Licensing & Hardware`
+      : shape.licences > 0
+        ? `${brand.name} Licensing & Solutions`
+        : shape.hardware > 0
+          ? `${brand.name} Business Hardware`
+          : `${brand.name} — Products & Procurement`;
+
   return buildMetadata({
-    title: `${brand.name} Licensing & Solutions`,
-    description: brand.summary,
+    title,
+    /*
+     * A brand summary is a line under a heading — forty characters for Acer.
+     * In a search result that is a third of the space, so where it is short
+     * this adds a sentence about how the brand is bought here. Nothing in it is
+     * specific to the brand beyond its name, and nothing claims a relationship
+     * with the manufacturer: sourcing and quoting is what this business does,
+     * and it is what the brands index page already says on their behalf.
+     */
+    description: metaDescription(
+      brand.summary,
+      shape.licences + shape.hardware > 0
+        ? `Sourced and quoted by TechZoid, on one quotation and one purchase order with the rest of your estate.`
+        : `Sourced and quoted by TechZoid on request, on the same terms as the rest of the catalogue.`,
+      "Sourced and quoted by TechZoid alongside the rest of your software and hardware.",
+    ),
     path: `/brands/${brand.slug}`,
     keywords: [brand.name, `${brand.name} licensing`, `buy ${brand.name}`],
   });
@@ -58,7 +97,7 @@ export default async function BrandPage({ params }: PageProps) {
   const brand = await getBrandBySlug(slug);
   if (!brand) notFound();
 
-  const [categories, featured, allServices, hardware, config] = await Promise.all([
+  const [categories, featured, allServices, hardware, config, shape] = await Promise.all([
     getBrandCategories(brand.id),
     prisma.product.findMany({
       where: { brandId: brand.id, status: "ACTIVE", deletedAt: null },
@@ -69,7 +108,27 @@ export default async function BrandPage({ params }: PageProps) {
     getServices(),
     getBrandHardware(brand.slug),
     getSiteConfig(),
+    getBrandCatalogueShape(brand.id),
   ]);
+
+  /*
+   * The heading, and the same reasoning as the page title above.
+   *
+   * "Lenovo licensing & solutions" was the visible H1 on this page, in white on
+   * charcoal, forty times over. Lenovo licenses nothing; nor do Acer, Intel,
+   * AMD, Synology or Logitech. Derived from the rows in the catalogue rather
+   * than from `BrandSegment`, which groups brands the way a buyer looks for
+   * them and says nothing about what they sell — the mistake the comment
+   * further down records.
+   */
+  const heading =
+    shape.licences > 0 && shape.hardware > 0
+      ? `${brand.name} licensing & hardware`
+      : shape.licences > 0
+        ? `${brand.name} licensing & solutions`
+        : shape.hardware > 0
+          ? `${brand.name} business hardware`
+          : `${brand.name} products & procurement`;
 
   // Services that plausibly relate to this brand's products, matched on the
   // technology list rather than a hand-maintained mapping.
@@ -131,9 +190,7 @@ export default async function BrandPage({ params }: PageProps) {
             >
               {brand.name.charAt(0)}
             </span>
-            <h1 className="text-3xl leading-tight text-white sm:text-[2.5rem]">
-              {brand.name} licensing &amp; solutions
-            </h1>
+            <h1 className="text-3xl leading-tight text-white sm:text-[2.5rem]">{heading}</h1>
             {brand.tagline ? (
               <p className="mt-3 text-[15px] font-medium text-accent-300">{brand.tagline}</p>
             ) : null}

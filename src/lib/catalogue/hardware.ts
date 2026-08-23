@@ -91,6 +91,41 @@ export function hardwareClassLabel(value: FormFactor): string {
   return CLASS_LABELS[value];
 }
 
+/**
+ * The noun in each class label that a model name might already contain.
+ *
+ * "Commercial desktop" is worth appending to "HP Pro 400 G9", which does not
+ * say what it is. It is not worth appending to "HP Z8 Fury G5 Tower
+ * Workstation", which does.
+ */
+const CLASS_NOUN: Record<FormFactor, string> = {
+  LAPTOP: "laptop",
+  MOBILE_WORKSTATION: "workstation",
+  DESKTOP_TOWER: "desktop",
+  DESKTOP_SFF: "desktop",
+  DESKTOP_MINI: "mini pc",
+  ALL_IN_ONE: "all-in-one",
+  DESKTOP_WORKSTATION: "workstation",
+  TOWER_SERVER: "server",
+  RACK_SERVER: "server",
+};
+
+/**
+ * A page title for a hardware model: the name, qualified only if it needs it.
+ *
+ * A search result shows about sixty characters, and "HP ProOne 440 G9
+ * All-in-One — Commercial all-in-one" spends twenty-one of them saying
+ * all-in-one a second time. Where the model name already carries the noun, the
+ * name is the title.
+ */
+export function hardwareTitle(name: string, value: FormFactor): string {
+  const noun = CLASS_NOUN[value];
+  // Word-boundary, so "Mini" in a model name does not swallow "mini pc" and a
+  // hyphenated noun still matches the way it is written.
+  const pattern = new RegExp(`\\b${noun.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+  return pattern.test(name) ? name : `${name} — ${CLASS_LABELS[value]}`;
+}
+
 export function familyOf(value: FormFactor): HardwareFamily {
   return FAMILY[value];
 }

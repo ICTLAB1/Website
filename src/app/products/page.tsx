@@ -13,9 +13,17 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const query = Array.isArray(params.q) ? params.q[0] : params.q;
   const hasFilters = Object.keys(params).some((key) => key !== "page" && params[key]);
 
+  /*
+   * "Licensing from Every Major Brand" was the claim here, and it is not one
+   * this page can support: it lists forty brands, which is not every major
+   * brand, and there is no list anywhere that says which brands those would be.
+   * The named brands below are the ones actually in the catalogue, so the
+   * description makes the specific claim and the title stops making the
+   * unbounded one. It is nine characters shorter as a side effect.
+   */
   const title = query
     ? `Search results for “${query}”`
-    : "Software Catalogue — Licensing from Every Major Brand";
+    : "Software Catalogue — Licensing and Renewals";
 
   return buildMetadata({
     title,

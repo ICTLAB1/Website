@@ -15,11 +15,12 @@ import { RepresentativeImageNotice } from "@/components/catalogue/representative
 import { SpecTable } from "@/components/catalogue/spec-table";
 import { ConfigurationTable } from "@/components/catalogue/configuration-table";
 import { HardwareQuotePanel } from "@/components/catalogue/hardware-quote-panel";
-import { hardwareClassLabel, isHardware } from "@/lib/catalogue/hardware";
+import { hardwareClassLabel, hardwareTitle, isHardware } from "@/lib/catalogue/hardware";
 import { resolveProductPhoto } from "@/lib/representative-image";
 import { getProductBySlug, getRelatedProducts } from "@/lib/queries/catalogue";
 import { effectivePriceMinor } from "@/lib/money";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
+import { metaDescription } from "@/lib/seo-description";
 import { getSiteConfig } from "@/lib/site-config";
 import { getDisplayCurrency } from "@/lib/display-currency";
 
@@ -61,10 +62,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     // Hardware gets one qualifier, because the name alone does not say what the
     // thing is: "HP EliteBook 840" means nothing to a search engine, and
     // "Commercial laptop" is what somebody typed into it.
-    title: product.formFactor
-      ? `${product.name} — ${hardwareClassLabel(product.formFactor)}`
-      : product.name,
-    description: product.shortDescription,
+    //
+    // Unless the name has already said it. "HP Z8 Fury G5 Tower Workstation —
+    // Desktop workstation" and "HP ProOne 440 G9 All-in-One — Commercial
+    // all-in-one" repeat the noun back at the reader inside sixty characters of
+    // a search result, which is the one place there is no room to.
+    title: product.formFactor ? hardwareTitle(product.name, product.formFactor) : product.name,
+    /*
+     * A short description reads well under a heading and badly in a search
+     * result, where a third of a line looks like a page with nothing on it.
+     * Where the record's own sentence is under seventy characters this adds a
+     * second one about how the business sells — the same on every page, stated
+     * across the site already, and never anything specific to the product that
+     * the record does not itself say.
+     */
+    description: metaDescription(
+      product.shortDescription,
+      `Supplied by TechZoid on a single quotation with GST invoicing, alongside your other ${product.brand.name} purchasing.`,
+      "Supplied by TechZoid on a single quotation, with GST invoicing and one purchase order across brands.",
+      "Quoted by TechZoid with GST invoicing, on one purchase order with the rest of your software.",
+    ),
     path: `/products/${product.slug}`,
     keywords: [...product.keywords, product.brand.name, product.name],
   });

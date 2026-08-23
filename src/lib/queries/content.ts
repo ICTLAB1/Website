@@ -52,6 +52,37 @@ export const getBrandBySlug = cache(
   ),
 );
 
+/**
+ * What this brand's catalogue rows actually are: licences, machines, or both.
+ *
+ * Written for the brand page's title and meta description, which used to say
+ * "{Brand} Licensing & Solutions" for all forty brands — including Lenovo, Acer
+ * and Intel, who do not license anything to anybody. A page title is a claim,
+ * and that one was wrong on a third of these pages.
+ *
+ * This counts rows in the catalogue rather than reading `BrandSegment`, which
+ * is a note about where a brand sits in the market and not a statement about
+ * what is listed. The count is: if there are licences here, "licensing" is a
+ * true word for this page; if there are machines, so is "hardware".
+ */
+export const getBrandCatalogueShape = cache(
+  cached(
+    async (brandId: string) => {
+      const [licences, hardware] = await Promise.all([
+        prisma.product.count({
+          where: { brandId, status: "ACTIVE", deletedAt: null, formFactor: null },
+        }),
+        prisma.product.count({
+          where: { brandId, status: "ACTIVE", deletedAt: null, formFactor: { not: null } },
+        }),
+      ]);
+      return { licences, hardware };
+    },
+    ["brand-catalogue-shape"],
+    [tags.catalogue],
+  ),
+);
+
 /** Categories that actually contain products for a given brand. */
 export async function getBrandCategories(brandId: string) {
   const grouped = await prisma.product.groupBy({
