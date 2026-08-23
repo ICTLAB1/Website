@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/states";
 import { requireStaff } from "@/lib/auth/guards";
+import { RFQ_STATUSES, RFQ_STATUS_LABELS } from "@/lib/rfq";
 import { listAdminEnquiries } from "@/lib/queries/admin";
 import { formatDate, humanise } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -13,7 +14,7 @@ import { DeletedNotice } from "@/components/admin/deleted-notice";
 
 export const metadata: Metadata = { title: "Enquiries" };
 
-const STATUSES = ["NEW", "IN_REVIEW", "QUOTED", "WON", "LOST", "CLOSED"];
+
 
 type PageProps = { searchParams: Promise<{ status?: string; page?: string; deleted?: string }> };
 
@@ -33,7 +34,7 @@ export default async function AdminEnquiriesPage({ searchParams }: PageProps) {
         <h1 className="text-2xl">Enquiries</h1>
         <p className="mt-1.5 text-[14px] text-ink-600">
           {total} {total === 1 ? "enquiry" : "enquiries"}
-          {params.status ? ` with status ${humanise(params.status)}` : ""}.
+          {params.status ? ` at ${(RFQ_STATUS_LABELS[params.status as keyof typeof RFQ_STATUS_LABELS] ?? params.status).toLowerCase()}` : ""}.
         </p>
       </header>
 
@@ -50,7 +51,7 @@ export default async function AdminEnquiriesPage({ searchParams }: PageProps) {
           >
             All
           </Link>
-          {STATUSES.map((status) => (
+          {RFQ_STATUSES.map((status) => (
             <Link
               key={status}
               href={`/admin/enquiries?status=${status}`}
@@ -61,7 +62,7 @@ export default async function AdminEnquiriesPage({ searchParams }: PageProps) {
                   : "text-ink-600 hover:bg-white",
               )}
             >
-              {humanise(status)}
+              {RFQ_STATUS_LABELS[status]}
             </Link>
           ))}
         </div>

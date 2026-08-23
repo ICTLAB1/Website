@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -41,6 +42,13 @@ export default async function EnquiryPage() {
           Add products from any brand to a single enquiry. We return one consolidated,
           itemised quotation covering all of them — which becomes one purchase order and one
           GST invoice.
+        </p>
+        <p className="mt-3 text-[15px] leading-relaxed text-ink-600">
+          Not sure which products you need?{" "}
+          <Link href="/requirement" className="text-accent-700 underline underline-offset-2">
+            Describe the requirement instead
+          </Link>{" "}
+          — quantity, specification and timescale — and we will find them.
         </p>
       </header>
 

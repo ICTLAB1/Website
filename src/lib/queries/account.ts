@@ -55,6 +55,7 @@ export async function listUserEnquiries(user: Scoped) {
       createdAt: true,
       companyName: true,
       timeline: true,
+      kind: true,
       user: raisedBy,
       _count: { select: { items: true } },
     },
@@ -77,6 +78,8 @@ export async function getUserEnquiry(user: Scoped, reference: string) {
       country: true,
       userCount: true,
       timeline: true,
+      kind: true,
+      requirement: true,
       requirements: true,
       user: raisedBy,
       items: {

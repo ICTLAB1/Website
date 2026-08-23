@@ -1,5 +1,7 @@
 import "server-only";
+import type { EnquiryStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { RFQ_STATUSES } from "@/lib/rfq";
 
 /**
  * Admin reads.
@@ -31,7 +33,9 @@ export async function getDashboardMetrics() {
     }),
     prisma.order.count(),
     prisma.enquiry.count(),
-    prisma.enquiry.count({ where: { status: "NEW" } }),
+    // What has arrived and nobody has picked up. The dashboard's "needs
+    // attention" number, so it counts the state that means exactly that.
+    prisma.enquiry.count({ where: { status: "SUBMITTED" } }),
     prisma.quote.count({ where: { status: { in: ["DRAFT", "SENT"] } } }),
     prisma.user.count({ where: { role: "CUSTOMER", deletedAt: null } }),
     prisma.product.count({ where: { status: "ACTIVE", deletedAt: null } }),
@@ -134,10 +138,9 @@ export async function getAdminProduct(id: string) {
 export async function listAdminEnquiries(options: { status?: string; page?: number } = {}) {
   const page = Math.max(1, options.page ?? 1);
   const pageSize = 25;
-  const validStatuses = ["NEW", "IN_REVIEW", "QUOTED", "WON", "LOST", "CLOSED"];
   const status =
-    options.status && validStatuses.includes(options.status)
-      ? (options.status as "NEW")
+    options.status && (RFQ_STATUSES as string[]).includes(options.status)
+      ? (options.status as EnquiryStatus)
       : undefined;
 
   const where = status ? { status } : {};

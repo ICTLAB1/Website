@@ -8097,6 +8097,15 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 10
   },
   {
+    "key": "header:products.requirement",
+    "parentKey": "header:products",
+    "menu": "HEADER",
+    "label": "Tell us what you need",
+    "href": "/requirement",
+    "description": "Describe the requirement and we will find the products",
+    "displayOrder": 5
+  },
+  {
     "key": "header:products.microsoft",
     "parentKey": "header:products",
     "menu": "HEADER",

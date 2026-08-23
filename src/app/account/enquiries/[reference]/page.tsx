@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/badge";
+import { RequirementSummary } from "@/components/enquiry/requirement-summary";
+import { RFQ_STATUS_LABELS } from "@/lib/rfq";
 import { ButtonLink } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/guards";
 import { getUserEnquiry } from "@/lib/queries/account";
@@ -34,14 +36,26 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
         </Link>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-mono text-[1.35rem] text-graphite-900">{enquiry.reference}</h2>
-          <StatusBadge status={enquiry.status} />
+          <span className="flex items-center gap-2">
+            <StatusBadge status={enquiry.status} />
+            <span className="text-[13px] text-ink-600">{RFQ_STATUS_LABELS[enquiry.status]}</span>
+          </span>
         </div>
         <p className="mt-1.5 text-[13px] text-ink-500">
           Submitted {formatDate(enquiry.createdAt)}
         </p>
       </div>
 
-      <section>
+      {enquiry.requirement ? (
+        <section>
+          <h3 className="mb-4 text-[15px] font-semibold text-graphite-900">
+            {enquiry.kind === "BOQ" ? "What you uploaded" : "What you asked for"}
+          </h3>
+          <RequirementSummary value={enquiry.requirement} />
+        </section>
+      ) : null}
+
+      <section className={enquiry.items.length === 0 ? "hidden" : undefined}>
         <h3 className="mb-4 text-[15px] font-semibold text-graphite-900">Products requested</h3>
         <TableWrap>
           <Table>

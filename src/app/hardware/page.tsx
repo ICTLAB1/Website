@@ -152,7 +152,10 @@ export default async function HardwarePage({ searchParams }: PageProps) {
           className="mt-5 h-12"
         />
         <div className="mt-5 flex flex-wrap gap-3">
-          <ButtonLink href="/enquiry">Request enterprise quote</ButtonLink>
+          <ButtonLink href="/requirement">Tell us what you need</ButtonLink>
+          <ButtonLink href="/enquiry" variant="outline">
+            Request enterprise quote
+          </ButtonLink>
           <ButtonLink href="/contact" variant="outline">
             Talk to a specialist
           </ButtonLink>

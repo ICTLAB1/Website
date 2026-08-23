@@ -158,13 +158,37 @@ enum LicenceType {
   HARDWARE
 }
 
+/// Where a requirement has got to.
+///
+/// The set a procurement officer can actually be told, rather than the four
+/// internal buckets this started with. "Quotation preparing" and "needs
+/// information" exist because they are the two states a customer most often
+/// rings up to ask about, and a status that cannot express them sends them to
+/// the phone.
 enum EnquiryStatus {
-  NEW
-  IN_REVIEW
-  QUOTED
-  WON
-  LOST
+  /// Started and not yet submitted. Nobody here has seen it.
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  /// We have asked the customer something and are waiting.
+  NEEDS_INFORMATION
+  QUOTATION_PREPARING
+  QUOTATION_SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CONVERTED_TO_ORDER
   CLOSED
+}
+
+/// How a requirement reached us.
+enum EnquiryKind {
+  /// Built in the enquiry basket from catalogue lines.
+  BASKET
+  /// Described in words and specifications, without naming products.
+  REQUIREMENT
+  /// Uploaded as a bill of quantities.
+  BOQ
 }
 
 enum QuoteStatus {
@@ -775,7 +799,10 @@ model Price {
 model Enquiry {
   id        String        @id @default(cuid())
   reference String        @unique
-  status    EnquiryStatus @default(NEW)
+  /// Submitted, not draft: an enquiry created by the basket or the API has
+  /// already been sent by the time the row exists. Only the requirement builder
+  /// creates a draft, and it sets it explicitly.
+  status    EnquiryStatus @default(SUBMITTED)
 
   contactName  String
   contactEmail String
@@ -787,6 +814,24 @@ model Enquiry {
   userCount    Int?
   requirements String?
   timeline     PurchaseTimeline @default(EXPLORING)
+
+  /// How this one arrived, which decides how it is read and shown.
+  kind EnquiryKind @default(BASKET)
+
+  /**
+   * The structured requirement, for the ones described rather than picked.
+   *
+   * JSON rather than twelve columns because it is a snapshot of a form: what a
+   * customer was asked for laptops in August is not what they will be asked
+   * next year, and a column per question turns every wording change into a
+   * migration. Validated by a zod schema on the way in and on the way out, the
+   * same as the CMS blocks, so a payload that does not fit costs one section
+   * rather than the page.
+   */
+  requirement Json?
+
+  /// When it stopped being a draft. Null while it still is one.
+  submittedAt DateTime?
 
   userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)

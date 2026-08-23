@@ -150,9 +150,18 @@ export async function createQuoteFromEnquiry(
     },
   });
 
+  /*
+   * Preparing, not sent.
+   *
+   * This creates a *draft* quotation; the customer sees nothing yet. Marking
+   * the requirement as quoted here is what made "quoted" mean two different
+   * things — one of them being "somebody started typing" — and a customer
+   * chasing a quotation they had not received was told it had gone.
+   * `sendQuote` moves it on.
+   */
   await prisma.enquiry.update({
     where: { id: enquiry.id },
-    data: { status: "QUOTED" },
+    data: { status: "QUOTATION_PREPARING" },
   });
 
   logger.info("quote_drafted", {
@@ -210,6 +219,7 @@ export async function sendQuote(reference: string, actorId: string): Promise<Quo
       discountMinor: true,
       taxMinor: true,
       notes: true,
+      enquiryId: true,
       enquiry: { select: { contactEmail: true, contactName: true, companyName: true } },
       company: { select: { name: true, gstin: true } },
       items: {
@@ -238,6 +248,15 @@ export async function sendQuote(reference: string, actorId: string): Promise<Quo
     where: { id: quote.id },
     data: { status: "SENT", sentAt: new Date() },
   });
+
+  // The requirement moves with it: a customer looking at their enquiry should
+  // see that the quotation has gone out, without having to find the quotation.
+  if (quote.enquiryId) {
+    await prisma.enquiry.update({
+      where: { id: quote.enquiryId },
+      data: { status: "QUOTATION_SENT" },
+    });
+  }
 
   const recipient = quote.enquiry?.contactEmail;
   if (recipient) {

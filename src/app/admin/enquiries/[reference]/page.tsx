@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/badge";
+import { RequirementSummary } from "@/components/enquiry/requirement-summary";
 import { AdminForm } from "@/components/admin/admin-form";
 import { Field, Select, Textarea } from "@/components/ui/form";
 import { updateEnquiry } from "@/app/admin/actions";
@@ -11,13 +12,14 @@ import { draftQuote } from "@/app/admin/quote-actions";
 import { DangerZone } from "@/components/admin/danger-zone";
 import { DELETABLE } from "@/lib/admin/deletable";
 import { isAdmin, requireStaff } from "@/lib/auth/guards";
+import { allowedTransitions, RFQ_STATUS_HINTS, RFQ_STATUS_LABELS } from "@/lib/rfq";
 import { getAdminEnquiry } from "@/lib/queries/admin";
 import { formatMoney } from "@/lib/money";
 import { formatDateTime, humanise } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Enquiry" };
 
-const STATUSES = ["NEW", "IN_REVIEW", "QUOTED", "WON", "LOST", "CLOSED"];
+
 
 type PageProps = { params: Promise<{ reference: string }> };
 
@@ -52,7 +54,16 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="space-y-8">
-          <section>
+          {enquiry.requirement ? (
+            <section>
+              <h2 className="mb-4 text-[1.05rem]">
+                {enquiry.kind === "BOQ" ? "Uploaded requirement" : "What they need"}
+              </h2>
+              <RequirementSummary value={enquiry.requirement} />
+            </section>
+          ) : null}
+
+          <section className={enquiry.items.length === 0 && enquiry.requirement ? "hidden" : undefined}>
             <h2 className="mb-4 text-[1.05rem]">Requested products</h2>
             <TableWrap>
               <Table className="min-w-[38rem]">
@@ -203,11 +214,25 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
               pendingLabel="Saving…"
               hidden={{ reference: enquiry.reference }}
             >
-              <Field name="status" label="Status" required>
+              <Field
+                name="status"
+                label="Status"
+                required
+                hint={RFQ_STATUS_HINTS[enquiry.status]}
+              >
 <Select name="status" defaultValue={enquiry.status}>
-                        {STATUSES.map((status) => (
+                        {/*
+                          Where it is now, plus only the places it may go. A
+                          menu offering a move the server will refuse is a menu
+                          that lies, and the server refuses these — see
+                          `allowedTransitions`.
+                        */}
+                        <option value={enquiry.status}>
+                          {RFQ_STATUS_LABELS[enquiry.status]} (no change)
+                        </option>
+                        {allowedTransitions(enquiry.status).map((status) => (
                           <option key={status} value={status}>
-                            {humanise(status)}
+                            {RFQ_STATUS_LABELS[status]}
                           </option>
                         ))}
                       </Select>

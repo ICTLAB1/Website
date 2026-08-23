@@ -3,8 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import type { EnquiryStatus } from "@prisma/client";
 
 import { prisma } from "@/lib/db";
+import { canTransition, RFQ_STATUSES, RFQ_STATUS_LABELS } from "@/lib/rfq";
 import { requireAdmin, requireStaff } from "@/lib/auth/guards";
 import { recordAudit } from "@/lib/audit";
 import { clientIp } from "@/lib/auth/request";
@@ -421,7 +423,7 @@ export async function saveVariant(
 
 const enquiryUpdateSchema = z.object({
   reference: z.string().trim().regex(/^ENQ-\d{4}-[A-Z0-9]{6}$/),
-  status: z.enum(["NEW", "IN_REVIEW", "QUOTED", "WON", "LOST", "CLOSED"]),
+  status: z.enum(RFQ_STATUSES as [EnquiryStatus, ...EnquiryStatus[]]),
   internalNotes: z.string().max(6000).optional(),
 });
 
@@ -438,6 +440,25 @@ export async function updateEnquiry(
   });
   if (!parsed.success) {
     return { status: "error", message: "That update could not be applied." };
+  }
+
+  /*
+   * The move is checked against where it is coming from, not merely against the
+   * enum. A status that says an order exists must only be reachable by an order
+   * existing, and a submitted requirement must not be pushed back to a draft
+   * the customer never saw.
+   */
+  const current = await prisma.enquiry.findUnique({
+    where: { reference: parsed.data.reference },
+    select: { status: true },
+  });
+  if (!current) return { status: "error", message: "That enquiry no longer exists." };
+
+  if (parsed.data.status !== current.status && !canTransition(current.status, parsed.data.status)) {
+    return {
+      status: "error",
+      message: `A requirement that is ${RFQ_STATUS_LABELS[current.status].toLowerCase()} cannot be moved to ${RFQ_STATUS_LABELS[parsed.data.status].toLowerCase()}.`,
+    };
   }
 
   await prisma.enquiry.update({

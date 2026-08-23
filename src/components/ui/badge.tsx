@@ -42,6 +42,7 @@ export function StatusBadge({ status }: { status: string }) {
       case "ACTIVE":
       case "WON":
       case "ACCEPTED":
+      case "CONVERTED_TO_ORDER":
       case "FULFILLED":
       case "CONFIRMED":
       case "RENEWED":
@@ -54,6 +55,9 @@ export function StatusBadge({ status }: { status: string }) {
       case "SENT":
       case "QUOTED":
       case "IN_REVIEW":
+      case "SUBMITTED":
+      case "UNDER_REVIEW":
+      case "QUOTATION_SENT":
       case "IN_PROGRESS":
       case "PROVISIONING":
         return "accent";
@@ -61,6 +65,10 @@ export function StatusBadge({ status }: { status: string }) {
       case "UPCOMING":
       case "PENDING":
       case "WAITING_ON_CUSTOMER":
+      // Both mean "somebody is waiting on somebody", which is the one thing a
+      // procurement officer scanning a list needs to pick out.
+      case "NEEDS_INFORMATION":
+      case "QUOTATION_PREPARING":
       case "MADE_TO_ORDER":
       case "ON_REQUEST":
       // A gateway order exists and nobody has paid it yet — the same "waiting"
@@ -70,6 +78,7 @@ export function StatusBadge({ status }: { status: string }) {
       case "EXPIRED":
       case "LOST":
       case "DECLINED":
+      case "REJECTED":
       case "CANCELLED":
       case "LAPSED":
       case "SUSPENDED":
