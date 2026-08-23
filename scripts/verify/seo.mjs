@@ -53,6 +53,54 @@ const inbound = new Map(paths.map((path) => [path, 0]));
  * The orphan check below would catch a repeat of this eventually, once enough
  * pages fell off the graph. This says which thing broke.
  */
+/*
+ * The old Wix URLs other sites still link to, and where each must land.
+ *
+ * Not a guess at what the old site published — a reading of the backlink index
+ * on 23 August 2026, listing every URL on this domain that somebody else
+ * currently points at. Sixty-five of the hundred and fourteen inbound links
+ * were landing on a 404 or on `/products`, which is a listing page and not an
+ * answer; Google calls a redirect that lands somewhere unrelated a soft 404 and
+ * passes it nothing.
+ *
+ * These are checked because they are silent when they break. A redirect that
+ * stops matching, or a destination that is renamed or unpublished, costs a link
+ * somebody else's site earned this business, and nothing on the site would look
+ * any different afterwards. The count in each row is how many links ride on it.
+ */
+const RECLAIMED = [
+  ["/product-page/microsoft-365-business-standard-annual-subscription", "/products/microsoft-365-business-standard", 10],
+  ["/product-page/microsoft-365-business-basic-annual-subscription", "/products/microsoft-365-business-basic", 10],
+  ["/product-page/m365-business-premium-annual-license", "/products/microsoft-365-business-premium", 7],
+  ["/post/why-your-business-needs-a-microsoft-office-365-license", "/microsoft-365", 6],
+  ["/product-page/autodesk-civil-3d-business-license", "/products/autodesk-civil-3d", 5],
+  ["/product-page/adobeacrobatprodc1yearsubscription", "/products/adobe-acrobat-pro-teams", 4],
+  ["/post/where-can-i-buy-a-subscription-for-professional-office-software-bundles-in-india", "/microsoft-365", 4],
+  ["/product-page/microsoft-365-apps-for-business-annual-subscription", "/microsoft-365", 3],
+  ["/product-page/autodesk-vault-business-license", "/brands/autodesk", 3],
+  ["/product-page/3ds-max-business-license", "/brands/autodesk", 3],
+  ["/group/techzoid-technologie-group/discussion/be30586d-6eda-4d46-9e63-9360fe5c166e", "/blog", 3],
+  ["/product-page/autodesk-autocad-lt-1-year-subscription", "/autocad", 2],
+  ["/product-page/autodesk-revit-business-license", "/products/revit", 1],
+  ["/product-page/autocad-business-license", "/products/autocad", 1],
+  ["/product-page/adobe-creative-cloud-all-apps", "/products/adobe-creative-cloud-all-apps-teams", 1],
+  ["/post/windows-11-in-2026-still-worth-buying-or-already-outdated", "/products/windows-11-pro-upgrade", 1],
+  ["/post/top-5-reasons-businesses-should-upgrade-to-windows-11-pro-in-2025", "/products/windows-11-pro-upgrade", 1],
+];
+
+let reclaimed = 0;
+for (const [legacy, expected, links] of RECLAIMED) {
+  const response = await fetch(BASE + legacy, { redirect: "follow" });
+  const landed = new URL(response.url).pathname;
+  if (response.status === 200 && landed === expected) {
+    reclaimed += links;
+  } else {
+    problems.push(
+      `${legacy} carries ${links} inbound link(s) and lands on ${landed} (${response.status}), not ${expected}`,
+    );
+  }
+}
+
 const homeHtml = await (await fetch(`${BASE}/`)).text();
 const primaryNav = homeHtml.match(/<nav aria-label="Primary"[\s\S]*?<\/nav>/)?.[0] ?? "";
 const primaryLinks = [...primaryNav.matchAll(/href="\/[^"]*"/g)].length;
@@ -212,4 +260,8 @@ if (problems.length) {
 console.log(
   `SEO: title, description, canonical, og:title, single h1, no duplicates, no fixture slugs ` +
     `and an inbound link for every one of ${paths.length} pages.`,
+);
+console.log(
+  `Legacy URLs: ${reclaimed} inbound links across ${RECLAIMED.length} old Wix paths still land ` +
+    `on the page they were about.`,
 );

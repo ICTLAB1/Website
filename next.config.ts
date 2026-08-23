@@ -133,22 +133,168 @@ const nextConfig: NextConfig = {
       },
 
       /*
-       * ── The ones nobody has a list of ──────────────────────────────────
+       * ── The ones nobody had a list of ──────────────────────────────────
        *
-       * There is no Wix export, no archived sitemap and nothing in this
-       * repository's history recording what the old site published, so the
-       * seven above are the ones somebody happened to notice. The rest are
-       * still indexed and still 404.
+       * There is now a list. It did not come from a Wix export — there still
+       * isn't one — but from the backlink index: every URL on this domain that
+       * another site currently links to. That is a better list than an export
+       * would have been, because it is not "what the old site published", it is
+       * "what the old site published that somebody else still points at".
        *
-       * A catch-all is a blunt instrument and is the right one here. Sending
-       * an unknown `/product-page/*` to the catalogue is not a great answer,
-       * but it is a live page in the right section rather than a dead end, and
-       * Google treats a 301 to a relevant page far better than a 404.
+       * Sixty-five of the hundred and fourteen inbound links on this domain
+       * were landing on a dead end or a generic listing. Fifty-one pointed at
+       * `/product-page/*`, which the catch-all below swept to `/products`, and
+       * eleven pointed at `/post/*`, which 404d outright.
+       *
+       * A catch-all redirect to a listing page is barely better than the 404 it
+       * replaces. Google calls that pattern a soft 404 and treats a redirect
+       * that lands somewhere unrelated as one — the link is followed, the value
+       * is not passed, and a reader who clicked "Microsoft 365 Business
+       * Standard" gets a page of two hundred other things. Every entry below
+       * goes to the page about the thing that was linked.
+       *
+       * Where the catalogue has no equivalent — Autodesk Vault, 3ds Max,
+       * AutoCAD LT, Microsoft 365 Apps for Business are all products this site
+       * does not list — the destination is the nearest page that is honestly
+       * about the subject, a brand or topic page, and never a different product.
+       * Sending a link for AutoCAD LT to AutoCAD would be answering a question
+       * nobody asked with a product that costs several times as much.
+       *
+       * Link counts are from the index reading on 23 August 2026 and are here
+       * so the next person can tell a redirect that matters from one that does
+       * not. Re-measure before removing any of them.
+       */
+
+      // ── Microsoft (30 links) ────────────────────────────────────────────
+      {
+        // 10 links
+        source: "/product-page/microsoft-365-business-standard-annual-subscription",
+        destination: "/products/microsoft-365-business-standard",
+        permanent: true,
+      },
+      {
+        // 10 links
+        source: "/product-page/microsoft-365-business-basic-annual-subscription",
+        destination: "/products/microsoft-365-business-basic",
+        permanent: true,
+      },
+      {
+        // 7 links
+        source: "/product-page/m365-business-premium-annual-license",
+        destination: "/products/microsoft-365-business-premium",
+        permanent: true,
+      },
+      {
+        // 3 links. Not listed as its own product — the apps-only plan is not in
+        // the catalogue — so this goes to the page that explains the range.
+        source: "/product-page/microsoft-365-apps-for-business-annual-subscription",
+        destination: "/microsoft-365",
+        permanent: true,
+      },
+
+      // ── Autodesk (15 links) ─────────────────────────────────────────────
+      {
+        // 5 links
+        source: "/product-page/autodesk-civil-3d-business-license",
+        destination: "/products/autodesk-civil-3d",
+        permanent: true,
+      },
+      {
+        // 3 links. Vault is not listed on its own.
+        source: "/product-page/autodesk-vault-business-license",
+        destination: "/brands/autodesk",
+        permanent: true,
+      },
+      {
+        // 3 links. 3ds Max is not listed.
+        source: "/product-page/3ds-max-business-license",
+        destination: "/brands/autodesk",
+        permanent: true,
+      },
+      {
+        // 2 links. LT is a different, cheaper product than AutoCAD and is not
+        // listed; the topic page covers how AutoCAD licensing works, which is
+        // the closest true answer.
+        source: "/product-page/autodesk-autocad-lt-1-year-subscription",
+        destination: "/autocad",
+        permanent: true,
+      },
+      {
+        // 1 link
+        source: "/product-page/autodesk-revit-business-license",
+        destination: "/products/revit",
+        permanent: true,
+      },
+
+      // ── Adobe (5 links) ─────────────────────────────────────────────────
+      {
+        // 4 links. The old slug ran the words together; same product.
+        source: "/product-page/adobeacrobatprodc1yearsubscription",
+        destination: "/products/adobe-acrobat-pro-teams",
+        permanent: true,
+      },
+      {
+        // 1 link
+        source: "/product-page/adobe-creative-cloud-all-apps",
+        destination: "/products/adobe-creative-cloud-all-apps-teams",
+        permanent: true,
+      },
+
+      /*
+       * Whatever the list above misses. Still a blunt instrument, still better
+       * than a dead end, and now carrying far less traffic than it used to.
        *
        * Ordered last on purpose: Next matches redirects top to bottom, so the
        * specific slugs above win and only what they miss falls through here.
        */
       { source: "/product-page/:slug*", destination: "/products", permanent: true },
+
+      /*
+       * ── Wix's blog, at `/post/<slug>` ──────────────────────────────────
+       *
+       * Eleven inbound links, every one of them a 404 until now: the pattern
+       * was simply never redirected. `/blog-1/*` below was, which is the Wix
+       * *listing* path — the individual posts live at `/post/*` and were
+       * missed.
+       *
+       * The four with named destinations are the four anybody links to. None of
+       * those articles was carried over, so each goes to the page on this site
+       * that answers the same question rather than to a blog index that does
+       * not mention it.
+       */
+      {
+        // 6 links: "Why your business needs a Microsoft Office 365 license"
+        source: "/post/why-your-business-needs-a-microsoft-office-365-license",
+        destination: "/microsoft-365",
+        permanent: true,
+      },
+      {
+        // 4 links: "Where can I buy a subscription for professional office
+        // software bundles in India"
+        source:
+          "/post/where-can-i-buy-a-subscription-for-professional-office-software-bundles-in-india",
+        destination: "/microsoft-365",
+        permanent: true,
+      },
+      {
+        // 1 link: "Windows 11 in 2026 — still worth buying or already outdated"
+        source: "/post/windows-11-in-2026-still-worth-buying-or-already-outdated",
+        destination: "/products/windows-11-pro-upgrade",
+        permanent: true,
+      },
+      {
+        // 1 link: "Top 5 reasons businesses should upgrade to Windows 11 Pro"
+        source: "/post/top-5-reasons-businesses-should-upgrade-to-windows-11-pro-in-2025",
+        destination: "/products/windows-11-pro-upgrade",
+        permanent: true,
+      },
+      { source: "/post/:slug*", destination: "/blog", permanent: true },
+
+      /*
+       * Wix's forum, which this site does not have. Three inbound links, all to
+       * one discussion thread. The articles are the nearest thing to it.
+       */
+      { source: "/group/:path*", destination: "/blog", permanent: true },
 
       /*
        * Wix's own reserved paths, which it published on every site and which
