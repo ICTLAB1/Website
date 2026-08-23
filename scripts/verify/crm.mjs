@@ -281,7 +281,21 @@ check(
 );
 
 const adminContext = await browser.newContext({ viewport: { width: 1400, height: 1100 } });
-await signIn(adminContext, process.env.SEED_ADMIN_EMAIL ?? "admin@example.test", process.env.SEED_ADMIN_PASSWORD ?? "");
+/*
+ * The seeded administrator, with the seed's own default when the environment
+ * does not name one.
+ *
+ * `.env` is read by the application, not by a bare `node` script, so a suite
+ * run through `npm run verify` sees neither variable. The sibling suites have
+ * always fallen back to the seed's password; this one fell back to an empty
+ * string, so the sign-in silently failed and the run died at a navigation
+ * timeout twelve suites into the gate — a long way from anything that looked
+ * like a cause.
+ */
+const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? "admin@example.test";
+const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? "ChangeMe!Admin123";
+
+await signIn(adminContext, ADMIN_EMAIL, ADMIN_PASSWORD);
 const adminPage = await adminContext.newPage();
 await adminPage.goto(`${BASE}/admin/settings/crm`, { waitUntil: "load" });
 const crmScreen = (await adminPage.locator("body").innerText()).replace(/\s+/g, " ");
