@@ -4,21 +4,36 @@ import { drawMark } from "@/lib/pdf/letterhead";
 import type { EmbeddedImage } from "@/lib/pdf/image";
 import { panFromGstin, placeOfSupply, taxHeads, taxTreatment, type TaxTreatment } from "@/lib/gstin";
 import {
-  ACCENT,
   BLACK,
   FAINT,
   HAIRLINE,
-  INK,
-  MUTED,
   PANEL,
   PdfDocument,
-  RULE,
   WHITE,
   ZEBRA,
   fit,
   textWidth,
   wrap,
+  type Colour,
 } from "@/lib/pdf/writer";
+
+/**
+ * The document's own palette, from the supplied design tokens.
+ *
+ * Local rather than taken from the writer's shared set, which is the site's
+ * charcoal and gold. This document is not a web page: it is printed, filed and
+ * read beside a customer's other suppliers' quotations, and the navy is the
+ * register that company expects a commercial document in. The writer's palette
+ * stays where it is for everything else that prints.
+ *
+ * `#0D2B55`, `#18202A`, `#64748B`, `#D7DCE2` — the four tokens the design pack
+ * names, converted once here so no drawing call carries a literal.
+ */
+const NAVY: Colour = { r: 0.051, g: 0.169, b: 0.333 };
+const TEXT_INK: Colour = { r: 0.094, g: 0.125, b: 0.165 };
+const SOFT: Colour = { r: 0.392, g: 0.455, b: 0.545 };
+const LINE_RULE: Colour = { r: 0.843, g: 0.863, b: 0.886 };
+
 
 /**
  * A quotation as a commercial document.
@@ -309,7 +324,7 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
   let logoY = top + (artwork ? 56 : 50);
   if (!artwork && config.tagline) {
     for (const line of wrap(config.tagline, LOGO_WIDTH, 7, "italic")) {
-      pdf.text(line, MARGIN, logoY, { size: 7, font: "italic", colour: MUTED });
+      pdf.text(line, MARGIN, logoY, { size: 7, font: "italic", colour: SOFT });
       logoY += 9;
     }
   }
@@ -338,7 +353,7 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
     [10.5, 9.6, 8.8].find((size) => textWidth(config.entityName, size, "sansBold") <= issuerWidth) ??
     8.8;
   for (const line of wrap(config.entityName, issuerWidth, nameSize, "sansBold")) {
-    pdf.text(line, ISSUER_X, issuerY, { size: nameSize, font: "sansBold", colour: INK });
+    pdf.text(line, ISSUER_X, issuerY, { size: nameSize, font: "sansBold", colour: TEXT_INK });
     issuerY += nameSize + 1.5;
   }
   issuerY += 2;
@@ -352,7 +367,7 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
 
   for (const line of issuerDetail) {
     for (const wrapped of wrap(line, issuerWidth, 7.2)) {
-      pdf.text(wrapped, ISSUER_X, issuerY, { size: 7.2, colour: MUTED });
+      pdf.text(wrapped, ISSUER_X, issuerY, { size: 7.2, colour: SOFT });
       issuerY += 8.6;
     }
   }
@@ -367,23 +382,23 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
    */
   if (config.secondaryEntity) {
     issuerY += 6;
-    pdf.line(ISSUER_X, issuerY - 4, ISSUER_X + 90, issuerY - 4, RULE, 0.7);
+    pdf.line(ISSUER_X, issuerY - 4, ISSUER_X + 90, issuerY - 4, LINE_RULE, 0.7);
     issuerY += 6;
 
     pdf.text(fit(config.secondaryEntity.name, issuerWidth, 8.5, "sansBold"), ISSUER_X, issuerY, {
       size: 8.5,
       font: "sansBold",
-      colour: INK,
+      colour: TEXT_INK,
     });
     issuerY += 10;
 
     for (const line of wrap(config.secondaryEntity.address, issuerWidth, 7.2)) {
-      pdf.text(line, ISSUER_X, issuerY, { size: 7.2, colour: MUTED });
+      pdf.text(line, ISSUER_X, issuerY, { size: 7.2, colour: SOFT });
       issuerY += 8.6;
     }
 
     if (config.secondaryEntity.phone) {
-      pdf.text(config.secondaryEntity.phone, ISSUER_X, issuerY, { size: 7.2, colour: MUTED });
+      pdf.text(config.secondaryEntity.phone, ISSUER_X, issuerY, { size: 7.2, colour: SOFT });
       issuerY += 8.6;
     }
 
@@ -401,14 +416,14 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
     for (const registration of config.secondaryEntity.registrations) {
       pdf.text(`${registration.label}: ${registration.value}`, ISSUER_X, issuerY, {
         size: 7.2,
-        colour: MUTED,
+        colour: SOFT,
       });
       issuerY += 8.6;
     }
   }
 
   // ── what the document is ────────────────────────────────────────────────
-  pdf.textRight("QUOTATION", RIGHT, top + 16, { size: 20, font: "sansBold", colour: ACCENT });
+  pdf.textRight("QUOTATION", RIGHT, top + 16, { size: 20, font: "sansBold", colour: NAVY });
 
   const meta: Array<[string, string | null]> = [
     ["Quotation No.", input.documentNo ?? input.reference],
@@ -434,12 +449,12 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
   for (const [label, value] of meta) {
     if (!clean(value)) continue;
 
-    pdf.text(label, META_LABEL_X, metaY, { size: 7, colour: MUTED });
+    pdf.text(label, META_LABEL_X, metaY, { size: 7, colour: SOFT });
 
     // Long terms wrap under themselves rather than running into the label.
     const lines = wrap(value!, valueWidth + 70, 7.2, "sansBold");
     for (const line of lines) {
-      pdf.textRight(line, RIGHT, metaY, { size: 7.2, font: "sansBold", colour: INK });
+      pdf.textRight(line, RIGHT, metaY, { size: 7.2, font: "sansBold", colour: TEXT_INK });
       metaY += 9.5;
     }
     if (lines.length === 0) metaY += 9.5;
@@ -467,7 +482,7 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
     pdf.text(standards, MARGIN, bandBottom + 6, {
       size: 7.4,
       font: "sansBold",
-      colour: ACCENT,
+      colour: NAVY,
     });
     bandBottom += 14;
   }
@@ -497,13 +512,13 @@ function drawStatutoryStrip(pdf: PdfDocument, config: SiteConfig, top: number): 
 
   if (parts.length === 0) return top;
 
-  pdf.line(MARGIN, top, RIGHT, top, RULE, 0.8);
+  pdf.line(MARGIN, top, RIGHT, top, LINE_RULE, 0.8);
   pdf.text(fit(parts.join("   |   "), CONTENT, 7.2, "mono"), MARGIN, top + 12, {
     size: 7.2,
     font: "mono",
     colour: BLACK,
   });
-  pdf.line(MARGIN, top + 17, RIGHT, top + 17, RULE, 0.8);
+  pdf.line(MARGIN, top + 17, RIGHT, top + 17, LINE_RULE, 0.8);
 
   return top + 30;
 }
@@ -534,7 +549,7 @@ function drawParties(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
   panels.forEach(([title, party], index) => {
     const x = MARGIN + index * (width + gap);
     pdf.rect(x, top, width, height, WHITE);
-    pdf.strokeRect(x, top, width, height, RULE, 0.7);
+    pdf.strokeRect(x, top, width, height, LINE_RULE, 0.7);
     drawParty(pdf, x, top, width, title, party);
   });
 
@@ -576,7 +591,7 @@ function drawParty(
   pdf.text(title.toUpperCase(), x + 8, y, {
     size: LABEL_SIZE,
     font: "sansBold",
-    colour: MUTED,
+    colour: SOFT,
     tracking: 0.35,
   });
   y += 14;
@@ -584,12 +599,12 @@ function drawParty(
   pdf.text(fit(party.name, inner, 9.5, "sansBold"), x + 8, y, {
     size: 9.5,
     font: "sansBold",
-    colour: INK,
+    colour: TEXT_INK,
   });
   y += 12;
 
   for (const line of party.addressLines.flatMap((entry) => wrap(entry, inner, 7))) {
-    pdf.text(line, x + 8, y, { size: 7, colour: MUTED });
+    pdf.text(line, x + 8, y, { size: 7, colour: SOFT });
     y += 8.4;
   }
 
@@ -597,8 +612,8 @@ function drawParty(
 
   const labelWidth = 46;
   for (const [label, value] of partyRows(party)) {
-    pdf.text(label, x + 8, y, { size: 6.6, colour: MUTED });
-    pdf.text(":", x + 8 + labelWidth, y, { size: 6.6, colour: MUTED });
+    pdf.text(label, x + 8, y, { size: 6.6, colour: SOFT });
+    pdf.text(":", x + 8 + labelWidth, y, { size: 6.6, colour: SOFT });
     pdf.text(fit(value, inner - labelWidth - 8, 7, "sansBold"), x + 8 + labelWidth + 6, y, {
       size: 7,
       font: "sansBold",
@@ -639,7 +654,7 @@ function drawSalutation(pdf: PdfDocument, input: QuotationPdfInput, top: number)
 function drawTableHeader(pdf: PdfDocument, top: number): number {
   const height = 22;
   pdf.rect(MARGIN, top, CONTENT, height, PANEL);
-  pdf.strokeRect(MARGIN, top, CONTENT, height, RULE, 0.7);
+  pdf.strokeRect(MARGIN, top, CONTENT, height, LINE_RULE, 0.7);
 
   for (const column of COLUMNS) {
     const box = COLUMN_X[column.key];
@@ -661,19 +676,19 @@ function drawTableHeader(pdf: PdfDocument, top: number): number {
         pdf.textRight(line, box.right - CELL_PAD, y, {
           size: LABEL_SIZE,
           font: "sansBold",
-          colour: MUTED,
+          colour: SOFT,
         });
       } else if (column.align === "centre") {
         pdf.textCentre(line, box.left + box.width / 2, y, {
           size: LABEL_SIZE,
           font: "sansBold",
-          colour: MUTED,
+          colour: SOFT,
         });
       } else {
         pdf.text(line, box.left + CELL_PAD, y, {
           size: LABEL_SIZE,
           font: "sansBold",
-          colour: MUTED,
+          colour: SOFT,
         });
       }
       y += 7.4;
@@ -743,7 +758,7 @@ function drawLineItems(pdf: PdfDocument, input: QuotationPdfInput, top: number):
 
     cell("sno", String(index + 1));
     product.forEach((text, row) => cell("product", text, { bold: true, row }));
-    description.forEach((text, row) => cell("description", text, { row, colour: MUTED }));
+    description.forEach((text, row) => cell("description", text, { row, colour: SOFT }));
     brand.forEach((text, row) => cell("brand", text, { row }));
     sku.forEach((text, row) => cell("sku", text, { font: "mono", row }));
     // A dash, not a blank and never a guess: an HSN code this application chose
@@ -780,12 +795,12 @@ function drawLineItems(pdf: PdfDocument, input: QuotationPdfInput, top: number):
 function closeTable(pdf: PdfDocument, top: number, bottom: number): void {
   for (const column of COLUMNS) {
     const box = COLUMN_X[column.key];
-    if (box.left > MARGIN) pdf.line(box.left, top, box.left, bottom, RULE, 0.5);
+    if (box.left > MARGIN) pdf.line(box.left, top, box.left, bottom, LINE_RULE, 0.5);
   }
 
-  pdf.line(MARGIN, top, MARGIN, bottom, RULE, 0.7);
-  pdf.line(RIGHT, top, RIGHT, bottom, RULE, 0.7);
-  pdf.line(MARGIN, bottom, RIGHT, bottom, RULE, 0.8);
+  pdf.line(MARGIN, top, MARGIN, bottom, LINE_RULE, 0.7);
+  pdf.line(RIGHT, top, RIGHT, bottom, LINE_RULE, 0.7);
+  pdf.line(MARGIN, bottom, RIGHT, bottom, LINE_RULE, 0.8);
 }
 
 // ---------------------------------------------------------------- totals
@@ -844,33 +859,33 @@ function drawTotals(
   pdf.text("Amount in words", MARGIN, y + 12, {
     size: LABEL_SIZE,
     font: "sansBold",
-    colour: MUTED,
+    colour: SOFT,
     tracking: 0.35,
   });
 
   let wordsY = y + 24;
   for (const line of wrap(amountInWords(input.totalMinor, input.currency), wordsWidth, 8, "sansBold")) {
-    pdf.text(line, MARGIN, wordsY, { size: 8, font: "sansBold", colour: INK });
+    pdf.text(line, MARGIN, wordsY, { size: 8, font: "sansBold", colour: TEXT_INK });
     wordsY += 10.5;
   }
 
-  pdf.strokeRect(boxLeft, y, boxWidth, height, RULE, 0.7);
+  pdf.strokeRect(boxLeft, y, boxWidth, height, LINE_RULE, 0.7);
 
   let rowY = y + 16;
   for (const [label, value] of rows) {
-    pdf.text(label, boxLeft + 10, rowY, { size: 7.4, colour: MUTED });
+    pdf.text(label, boxLeft + 10, rowY, { size: 7.4, colour: SOFT });
     pdf.textRight(value, RIGHT - 10, rowY, { size: 7.4, colour: BLACK });
     rowY += 12;
   }
 
   const bandTop = y + listHeight;
   pdf.rect(boxLeft, bandTop, boxWidth, bandHeight, PANEL);
-  pdf.strokeRect(boxLeft, bandTop, boxWidth, bandHeight, RULE, 0.7);
-  pdf.text("Grand Total", boxLeft + 10, bandTop + 16, { size: 9, font: "sansBold", colour: INK });
+  pdf.strokeRect(boxLeft, bandTop, boxWidth, bandHeight, LINE_RULE, 0.7);
+  pdf.text("Grand Total", boxLeft + 10, bandTop + 16, { size: 9, font: "sansBold", colour: TEXT_INK });
   pdf.textRight(pdfMoney(input.totalMinor, input.currency), RIGHT - 10, bandTop + 16, {
     size: 9,
     font: "sansBold",
-    colour: INK,
+    colour: TEXT_INK,
   });
 
   return Math.max(wordsY, y + height) + 20;
@@ -937,7 +952,7 @@ function drawTaxSummary(
   pdf.text("HSN / SAC SUMMARY", MARGIN, y, {
     size: LABEL_SIZE,
     font: "sansBold",
-    colour: MUTED,
+    colour: SOFT,
     tracking: 0.35,
   });
   y += 10;
@@ -964,9 +979,9 @@ function drawTaxSummary(
   ];
 
   pdf.rect(MARGIN, y, CONTENT, 15, PANEL);
-  pdf.strokeRect(MARGIN, y, CONTENT, 15, RULE, 0.7);
+  pdf.strokeRect(MARGIN, y, CONTENT, 15, LINE_RULE, 0.7);
   for (const column of columns) {
-    const style = { size: LABEL_SIZE, font: "sansBold" as const, colour: MUTED };
+    const style = { size: LABEL_SIZE, font: "sansBold" as const, colour: SOFT };
     if (column.align === "right") pdf.textRight(column.label, column.x - 4, y + 10, style);
     else pdf.text(column.label, column.x + 4, y + 10, style);
   }
@@ -1009,7 +1024,7 @@ function drawTaxSummary(
    */
   if (rows.length > 1) {
     pdf.rect(MARGIN, y, CONTENT, 14, PANEL);
-    pdf.text("Total", MARGIN + 4, y + 9.5, { size: 6.8, font: "sansBold", colour: INK });
+    pdf.text("Total", MARGIN + 4, y + 9.5, { size: 6.8, font: "sansBold", colour: TEXT_INK });
     pdf.textRight(pdfAmount(taxableTotal, input.currency), taxableX - 4, y + 9.5, {
       size: 6.8,
       font: "sansBold",
@@ -1021,7 +1036,7 @@ function drawTaxSummary(
     y += 14;
   }
 
-  pdf.line(MARGIN, y, RIGHT, y, RULE, 0.8);
+  pdf.line(MARGIN, y, RIGHT, y, LINE_RULE, 0.8);
   return y + 20;
 }
 
@@ -1034,7 +1049,7 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
     pdf.text(label.toUpperCase(), MARGIN, y, {
       size: LABEL_SIZE,
       font: "sansBold",
-      colour: MUTED,
+      colour: SOFT,
       tracking: 0.35,
     });
     y += 12;
@@ -1083,7 +1098,7 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
     ];
 
     for (const [label, value] of rows) {
-      pdf.text(label, MARGIN, y, { size: 7.2, colour: MUTED });
+      pdf.text(label, MARGIN, y, { size: 7.2, colour: SOFT });
       pdf.text(value, MARGIN + 84, y, { size: 7.2, font: "mono", colour: BLACK });
       y += 10;
     }
@@ -1116,7 +1131,7 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
     room(height + 24);
 
     pdf.rect(MARGIN, y, CONTENT, height, PANEL);
-    pdf.strokeRect(MARGIN, y, CONTENT, height, RULE, 0.7);
+    pdf.strokeRect(MARGIN, y, CONTENT, height, LINE_RULE, 0.7);
 
     // ── the badges, left ──────────────────────────────────────────────────
     let badgeX = MARGIN + 12;
@@ -1137,7 +1152,7 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
       pdf.text("CERTIFIED TO", certificateX, certificateY, {
         size: LABEL_SIZE,
         font: "sansBold",
-        colour: MUTED,
+        colour: SOFT,
         tracking: 0.35,
       });
       certificateY += 10;
@@ -1146,12 +1161,12 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
         pdf.text(fit(certificate.standard, 108, 7, "sansBold"), certificateX, certificateY, {
           size: 7,
           font: "sansBold",
-          colour: INK,
+          colour: TEXT_INK,
         });
         pdf.textRight(fit(certificate.reference, 90, 6.8, "mono"), RIGHT - 12, certificateY, {
           size: 6.8,
           font: "mono",
-          colour: MUTED,
+          colour: SOFT,
         });
         certificateY += 10;
       }
@@ -1166,11 +1181,11 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
   pdf.text(`For ${input.config.entityName}`, RIGHT - 190, y + 4, {
     size: 8,
     font: "sansBold",
-    colour: INK,
+    colour: TEXT_INK,
   });
 
-  pdf.line(RIGHT - 190, y + 46, RIGHT - 40, y + 46, RULE, 0.7);
-  pdf.text("Authorised signatory", RIGHT - 190, y + 56, { size: 7, colour: MUTED });
+  pdf.line(RIGHT - 190, y + 46, RIGHT - 40, y + 46, LINE_RULE, 0.7);
+  pdf.text("Authorised signatory", RIGHT - 190, y + 56, { size: 7, colour: SOFT });
 
   pdf.text(
     "This is a quotation, not an invoice. No tax is payable on it and no goods or services are supplied against it.",
