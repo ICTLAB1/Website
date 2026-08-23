@@ -5,6 +5,7 @@ import { orgScope, type Scoped } from "@/lib/auth/scope";
 import { getSiteConfig } from "@/lib/site-config";
 import { getBankingDetails } from "@/lib/banking-config";
 import { letterheadImage, loadPublicImage } from "@/lib/pdf/assets";
+import { certificationLogo } from "@/lib/certification-logo";
 import { currentPartnerBadge, currentPartnerLabel } from "@/lib/brand-partner";
 import { renderQuotationPdf, type QuotationParty } from "@/lib/pdf/quotation";
 
@@ -306,7 +307,18 @@ export async function buildQuotationPdf(
     shipping,
     lines: quote.items,
     config,
-    certifications,
+    /*
+     * Each certification with its own wordmark, where one has been supplied.
+     *
+     * Resolved here rather than in the renderer, which never touches a
+     * filesystem — the same arrangement as the letterhead and the partner
+     * badges above. A standard with no artwork on file gets `null` and the
+     * letterhead falls back to setting the standards in type.
+     */
+    certifications: certifications.map((entry) => ({
+      ...entry,
+      image: loadPublicImage(certificationLogo(entry.standard)),
+    })),
     logo: letterheadImage(),
     accreditations,
     banking: getBankingDetails(),

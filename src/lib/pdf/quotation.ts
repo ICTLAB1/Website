@@ -2,6 +2,7 @@ import type { SiteConfig } from "@/lib/site-config";
 import { amountInWords, pdfAmount, pdfDate, pdfMoney } from "@/lib/pdf/money";
 import { drawMark } from "@/lib/pdf/letterhead";
 import type { EmbeddedImage } from "@/lib/pdf/image";
+import { CERTIFICATION_MARK_HEIGHT } from "@/lib/certification-logo";
 import { panFromGstin, placeOfSupply, taxHeads, taxTreatment, type TaxTreatment } from "@/lib/gstin";
 import {
   ACCENT,
@@ -107,7 +108,19 @@ export type QuotationPdfInput = {
    * that issued it, and a procurement office reading a quotation is exactly the
    * reader who will.
    */
-  certifications: Array<{ standard: string; title: string; reference: string }>;
+  certifications: Array<{
+    standard: string;
+    title: string;
+    reference: string;
+    /**
+     * The certificate's own wordmark, decoded, where one has been supplied.
+     *
+     * Resolved by the caller for the same reason as `logo` and
+     * `accreditations`: this module never reads a file, which is what keeps it
+     * renderable from a test with no filesystem and no `public/` directory.
+     */
+    image?: EmbeddedImage | null;
+  }>;
   /**
    * The company's own logo, decoded. Null falls back to the drawn mark.
    *
@@ -302,13 +315,24 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
   let issuerY = top + 10;
 
   /*
-   * The registered name, wrapped rather than cut.
+   * The registered name: in full, on one line where one line will hold it.
    *
-   * "TechZoid Technologies Private Li..." is not a company. A legal name is the
-   * one string on a commercial document that must appear in full, so it takes
-   * a second line and, if it needs it, a smaller size — never an ellipsis.
+   * "TechZoid Technologies Private Li..." is not a company, so an ellipsis is
+   * never an option here — a legal name is the one string on a commercial
+   * document that must appear complete.
+   *
+   * What it used to do was pick 10.5pt unless the name would not fit in *two*
+   * lines, which meant "TechZoid Technologies Private Limited" set at 10.5 and
+   * broke after "Private". A company name split across a line break reads as a
+   * layout that ran out of room, which is exactly what it was.
+   *
+   * So: the largest size in the ladder that fits on one line, and only if none
+   * of them do does it wrap — at the smallest, where a two-line name is a
+   * deliberate setting rather than an overflow.
    */
-  const nameSize = textWidth(config.entityName, 10.5, "sansBold") > issuerWidth * 2 ? 9 : 10.5;
+  const nameSize =
+    [10.5, 9.6, 8.8].find((size) => textWidth(config.entityName, size, "sansBold") <= issuerWidth) ??
+    8.8;
   for (const line of wrap(config.entityName, issuerWidth, nameSize, "sansBold")) {
     pdf.text(line, ISSUER_X, issuerY, { size: nameSize, font: "sansBold", colour: INK });
     issuerY += nameSize + 1.5;
@@ -355,30 +379,6 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
     }
   }
 
-  /*
-   * The certifications, exactly as they are held.
-   *
-   * Printed from the records that carry a certificate number and an issuing
-   * body, never as a bare claim. "ISO 27001 certified" with nothing behind it
-   * is the sort of line this whole application exists not to print.
-   */
-  if (input.certifications.length > 0) {
-    issuerY += 7;
-
-    /*
-     * The standards on one accented line rather than three faint grey ones.
-     *
-     * At the top of a document these are a trust signal and should read as
-     * one; the certificate numbers that make them checkable are set out
-     * properly further down, where there is room for them.
-     */
-    const standards = input.certifications.map((entry) => entry.standard).join("   ·   ");
-    for (const line of wrap(standards, issuerWidth, 6.8, "sansBold")) {
-      pdf.text(line, ISSUER_X, issuerY, { size: 6.8, font: "sansBold", colour: ACCENT });
-      issuerY += 8.4;
-    }
-  }
-
   // ── what the document is ────────────────────────────────────────────────
   pdf.textRight("QUOTATION", RIGHT, top + 16, { size: 20, font: "sansBold", colour: ACCENT });
 
@@ -417,7 +417,71 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
     if (lines.length === 0) metaY += 9.5;
   }
 
-  return Math.max(logoY, issuerY, metaY) + 10;
+  /*
+   * ── The certifications, as the marks themselves ────────────────────────
+   *
+   * A row across the full width, under all three columns, because that is the
+   * only place on this letterhead where three wide wordmarks can sit at equal
+   * size on a shared baseline. They used to be a line of accented text inside
+   * the issuer column — a hundred and eighty points wide, which "ISO 9001:2015
+   * · ISO 27001:2022 · ISO/IEC 20000-1:2018" does not fit into, so it wrapped
+   * mid-list under an address that had already wrapped.
+   *
+   * Equal widths and equal gaps computed from the count rather than fixed, so
+   * two certifications or four are as square as three. Every mark shares the
+   * same height and the same baseline, which is what "aligned" has to mean for
+   * artwork that is otherwise only as tall as its own text.
+   *
+   * Where a standard has no artwork the whole row falls back to the text line —
+   * not a mixture. A row of two pictures and one piece of text is worse than
+   * either, and the text version says exactly the same thing.
+   */
+  let bandBottom = Math.max(logoY, issuerY, metaY) + 10;
+
+  if (input.certifications.length > 0) {
+    const marks = input.certifications
+      .map((entry) => entry.image)
+      .filter((image): image is EmbeddedImage => Boolean(image));
+
+    if (marks.length === input.certifications.length) {
+      /*
+       * Equal cells, each mark set to a common height and centred in its own.
+       *
+       * Height, not width: the files are trimmed to their own ink, so
+       * "ISO 9001:2015" is a narrower image than "ISO/IEC 20000-1:2018" and
+       * fitting both to the same *width* would set the shorter one's type
+       * larger. Sizing by height gives all of them one cap height and one
+       * baseline, which is what a row of wordmarks has to share to look like a
+       * set rather than three pictures.
+       *
+       * A mark wider than its cell is scaled down to fit and stays centred, so
+       * a long standard added later cannot overrun its neighbour.
+       */
+      const gap = 18;
+      const cell = (CONTENT - gap * (marks.length - 1)) / marks.length;
+      const height = Math.min(
+        CERTIFICATION_MARK_HEIGHT,
+        ...marks.map((mark) => (cell * mark.height) / mark.width),
+      );
+
+      marks.forEach((mark, index) => {
+        const width = (height * mark.width) / mark.height;
+        const cellLeft = MARGIN + index * (cell + gap);
+        pdf.image(mark, cellLeft + (cell - width) / 2, bandBottom, width, height);
+      });
+      bandBottom += height + 6;
+    } else {
+      const standards = input.certifications.map((entry) => entry.standard).join("   ·   ");
+      pdf.text(standards, MARGIN, bandBottom + 6, {
+        size: 7.4,
+        font: "sansBold",
+        colour: ACCENT,
+      });
+      bandBottom += 14;
+    }
+  }
+
+  return bandBottom;
 }
 
 // ------------------------------------------------------ statutory identity

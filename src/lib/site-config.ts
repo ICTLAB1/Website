@@ -249,16 +249,21 @@ export const getSiteConfig = cache(async () => {
      */
     profileUrls: parseProfileUrls(stored(row?.profileUrls)),
     /*
-     * A second legal entity or overseas office for the letterhead.
+     * A second legal entity or overseas office — the letterhead, the contact
+     * page, the footer and the Organization structured data.
      *
-     * Both or neither: a name with no address is a claim to a presence nobody
-     * can write to, and a document is the wrong place to make one.
+     * Name and address are both or neither: a name with no address is a claim
+     * to a presence nobody can write to, and a document is the wrong place to
+     * make one. The telephone stands alone, because a branch on the head
+     * office's line is an ordinary arrangement and an address is worth
+     * publishing with or without a second number.
      */
     secondaryEntity:
       stored(row?.secondaryEntityName) && stored(row?.secondaryEntityAddress)
         ? {
             name: stored(row?.secondaryEntityName)!,
             address: stored(row?.secondaryEntityAddress)!,
+            phone: stored(row?.secondaryEntityPhone),
           }
         : null,
     /*

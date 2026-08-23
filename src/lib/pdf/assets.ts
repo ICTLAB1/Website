@@ -30,7 +30,7 @@ const cache = new Map<string, EmbeddedImage | null>();
  * a browser: no traversal, no absolute paths, and only the directories that
  * hold artwork.
  */
-const ALLOWED = ["/brands/", "/badges/", "/marks/", "/uploads/"];
+const ALLOWED = ["/brands/", "/badges/", "/marks/", "/certifications/", "/uploads/"];
 
 export function loadPublicImage(publicPath: string | null | undefined): EmbeddedImage | null {
   if (!publicPath) return null;

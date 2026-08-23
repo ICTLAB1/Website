@@ -1920,13 +1920,22 @@ model SiteSettings {
   /// on the documents it has issued so far. See `lib/document-number`.
   quoteNumberFormat String?
 
-  /// A second legal entity or overseas office, printed under the letterhead.
+  /// A second legal entity or overseas office: on the letterhead, on the
+  /// contact page, in the footer and in the Organization structured data.
   ///
-  /// Both or neither: a name with no address is a claim to a presence nobody
-  /// can write to. Left blank on a business that trades as one entity, which
-  /// is most of them.
+  /// Name and address are both or neither — a name with no address is a claim
+  /// to a presence nobody can write to. Left blank on a business that trades
+  /// from one place, which is most of them.
   secondaryEntityName    String?
   secondaryEntityAddress String?
+
+  /// The number that reaches that office, when it has its own.
+  ///
+  /// Optional where the other two are not, because a branch sharing the head
+  /// office's line is an ordinary arrangement — and an address a customer can
+  /// write to is useful with or without a second number. Shown only when set,
+  /// so a blank never renders as an empty "Telephone" row.
+  secondaryEntityPhone   String?
 
   /// Profile URLs elsewhere that belong to this business — one per line.
   ///

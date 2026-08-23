@@ -89,7 +89,15 @@ export default async function ContactPage() {
 
           {config.formattedAddress ? (
             <div className="rounded-[--radius-lg] border border-line bg-white p-5">
-              <h2 className="text-[15px] font-semibold text-graphite-900">Office</h2>
+              {/*
+                "India office" only once there is a second one to tell it apart
+                from. On a business trading from one place the heading stays
+                "Office", because naming a country there implies a network that
+                may not exist.
+              */}
+              <h2 className="text-[15px] font-semibold text-graphite-900">
+                {config.secondaryEntity ? "India office" : "Office"}
+              </h2>
               <address className="mt-2 text-[13px] not-italic leading-relaxed text-ink-600">
                 {config.formattedAddress}
               </address>
@@ -98,6 +106,32 @@ export default async function ContactPage() {
                   GSTIN {config.gstin}
                 </p>
               ) : null}
+            </div>
+          ) : null}
+
+          {config.secondaryEntity ? (
+            <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <h2 className="text-[15px] font-semibold text-graphite-900">
+                {config.secondaryEntity.name}
+              </h2>
+              <address className="mt-2 whitespace-pre-line text-[13px] not-italic leading-relaxed text-ink-600">
+                {config.secondaryEntity.address}
+              </address>
+              {config.secondaryEntity.phone ? (
+                <p className="mt-3 border-t border-line pt-3 text-[13px]">
+                  <a
+                    href={`tel:${config.secondaryEntity.phone.replace(/[^+\d]/g, "")}`}
+                    className="text-accent-700 hover:underline"
+                  >
+                    {config.secondaryEntity.phone}
+                  </a>
+                </p>
+              ) : null}
+              {/*
+                No GSTIN here. It is an Indian registration and belongs to the
+                Indian entity; repeating it under an overseas address would
+                attach a tax identifier to the wrong jurisdiction.
+              */}
             </div>
           ) : null}
 

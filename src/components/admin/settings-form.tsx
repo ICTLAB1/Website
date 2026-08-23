@@ -44,6 +44,7 @@ type StoredSettings = {
   quoteNumberFormat: string | null;
   secondaryEntityName: string | null;
   secondaryEntityAddress: string | null;
+  secondaryEntityPhone: string | null;
   usdRatePaise: number | null;
   aedRatePaise: number | null;
   profileUrls: string | null;
@@ -244,8 +245,8 @@ export function SettingsForm({
       </Fieldset>
 
       <Fieldset
-        legend="Second entity"
-        description="An overseas office or a second registered company, printed under your letterhead on quotations. Leave both blank if you trade as one entity."
+        legend="Second office or entity"
+        description="An overseas office or a second registered company. Shown on the contact page, in the footer, in the Organization structured data search engines read, and under your letterhead on quotations. Leave the name and address blank if you trade from one place."
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Entity name" name="secondaryEntityName">
@@ -265,6 +266,18 @@ export function SettingsForm({
               rows={3}
               maxLength={300}
               defaultValue={stored?.secondaryEntityAddress ?? ""}
+            />
+          </Field>
+          <Field
+            label="Telephone"
+            name="secondaryEntityPhone"
+            hint="Optional. Leave blank if this office is reached on the main number — nothing is shown rather than an empty row."
+          >
+            <Input
+              name="secondaryEntityPhone"
+              type="tel"
+              maxLength={40}
+              defaultValue={stored?.secondaryEntityPhone ?? ""}
             />
           </Field>
         </div>

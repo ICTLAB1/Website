@@ -137,6 +137,7 @@ const settingsSchema = z.object({
   ),
   secondaryEntityName: optionalText(120),
   secondaryEntityAddress: optionalText(300),
+  secondaryEntityPhone: optionalPhone,
   /*
    * Entered as a decimal — "83.50" is what a person reads off a rate board —
    * and stored as paise. Bounded well outside any plausible rate rather than

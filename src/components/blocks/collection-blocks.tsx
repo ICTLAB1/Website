@@ -9,6 +9,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ProductListItem } from "@/lib/queries/catalogue";
+import { certificationLogo } from "@/lib/certification-logo";
 import { formatDate } from "@/lib/utils";
 
 /**
@@ -99,14 +100,40 @@ type CertificationRow = {
  * which is exactly the assumption that goes wrong.
  */
 function CertificationCard({ certification }: { certification: CertificationRow }) {
+  const mark = certificationLogo(certification.standard);
+
   return (
     <div className="flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5">
-      <p className="text-label font-semibold uppercase tracking-[0.1em] text-accent-700">
-        {certification.title}
-      </p>
-      <p className="mt-1.5 text-lead font-semibold leading-tight text-graphite-900">
-        {certification.standard}
-      </p>
+      {mark ? (
+        /*
+          The certificate's own wordmark where there is one, and it already
+          carries both the standard and its scope — so the two text lines it
+          replaces would be the same words twice.
+
+          A fixed height with `object-contain`, not a width. These marks are all
+          the same 1800×520 canvas but their type is different lengths, and
+          sizing three of them by width would set "ISO 9001:2015" larger than
+          "ISO/IEC 20000-1:2018" beside it. Height is what makes a row of them
+          read as one set.
+        */
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={mark}
+          alt={`${certification.standard} — ${certification.title}`}
+          className="h-11 w-auto max-w-full self-start object-contain object-left"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <>
+          <p className="text-label font-semibold uppercase tracking-[0.1em] text-accent-700">
+            {certification.title}
+          </p>
+          <p className="mt-1.5 text-lead font-semibold leading-tight text-graphite-900">
+            {certification.standard}
+          </p>
+        </>
+      )}
 
       {certification.scope ? (
         <p className="clamp-3 mt-3 text-meta leading-relaxed text-ink-600">

@@ -43,8 +43,30 @@ export async function Footer() {
               ) : null}
               {config.formattedAddress ? (
                 <div className="flex gap-2">
-                  <dt className="shrink-0 text-graphite-400">Office</dt>
+                  {/* Named by country only once there is a second office. */}
+                  <dt className="shrink-0 text-graphite-400">
+                    {config.secondaryEntity ? "India" : "Office"}
+                  </dt>
                   <dd className="text-graphite-300">{config.formattedAddress}</dd>
+                </div>
+              ) : null}
+              {config.secondaryEntity ? (
+                <div className="flex gap-2">
+                  <dt className="shrink-0 text-graphite-400">UAE</dt>
+                  <dd className="text-graphite-300">
+                    <span className="whitespace-pre-line">{config.secondaryEntity.address}</span>
+                    {config.secondaryEntity.phone ? (
+                      <>
+                        {" "}
+                        <a
+                          href={`tel:${config.secondaryEntity.phone.replace(/[^+\d]/g, "")}`}
+                          className="whitespace-nowrap hover:text-white hover:underline"
+                        >
+                          {config.secondaryEntity.phone}
+                        </a>
+                      </>
+                    ) : null}
+                  </dd>
                 </div>
               ) : null}
               {config.gstin ? (

@@ -208,6 +208,39 @@ export async function organizationSchema() {
           },
         }
       : {}),
+    /*
+     * A second office, as a `location` rather than a second `address`.
+     *
+     * `address` is the organisation's own registered address and there is one
+     * of those — the Indian entity's, which is what the GSTIN above belongs to.
+     * A branch is a place the organisation operates from, which is what
+     * `location` means, and keeping them apart is what stops a parser reading
+     * an overseas office as the registered seat of an Indian company.
+     *
+     * Unparsed, deliberately. The address is one free-text field an
+     * administrator types, and splitting it into `addressLocality`,
+     * `addressRegion` and `addressCountry` would mean guessing which comma is
+     * the city — a guess that is wrong the first time somebody enters an
+     * address in a format this code did not anticipate. `streetAddress` alone
+     * is valid, and it says only what is actually known.
+     */
+    ...(config.secondaryEntity
+      ? {
+          location: [
+            {
+              "@type": "Place",
+              name: config.secondaryEntity.name,
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: config.secondaryEntity.address.replace(/\s*\n\s*/g, ", "),
+              },
+              ...(config.secondaryEntity.phone
+                ? { telephone: config.secondaryEntity.phone }
+                : {}),
+            },
+          ],
+        }
+      : {}),
   };
 }
 
