@@ -99,7 +99,15 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
           <h2 className="font-mono text-[1.35rem] text-graphite-900">{quote.reference}</h2>
           <StatusBadge status={expired && quote.status === "SENT" ? "EXPIRED" : quote.status} />
         </div>
-        <p className="mt-1.5 text-[13px] text-ink-500">
+        <p className="mt-3">
+          <a
+            href={`/account/quotes/${quote.reference}/pdf`}
+            className="inline-flex h-9 items-center rounded-[--radius-md] border border-line-strong px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-400"
+          >
+            Download PDF
+          </a>
+        </p>
+        <p className="mt-2 text-[13px] text-ink-500">
           Issued {formatDate(quote.sentAt ?? quote.createdAt)}
           {quote.validUntil ? ` · valid until ${formatDate(quote.validUntil)}` : ""}
           {quote.enquiry ? ` · from enquiry ${quote.enquiry.reference}` : ""}

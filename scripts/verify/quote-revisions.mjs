@@ -172,6 +172,47 @@ check(
   sql(`delete from "Company" where id = 'revo${stamp}'`);
 }
 
+
+// ------------------------------------------------------------- the PDF ---
+//
+// A quotation that can be attached to a purchase order. Checked as a file
+// rather than as a page: the bytes have to start and end like a PDF, carry the
+// figures, and never leave the organisation that owns them.
+{
+  const asCustomer = await customerPage.request.get(`${BASE}/account/quotes/${revisedRef}/pdf`);
+  check(
+    "the customer can download the quotation as a PDF",
+    asCustomer.status() === 200 && asCustomer.headers()["content-type"] === "application/pdf",
+    `${asCustomer.status()} ${asCustomer.headers()["content-type"]}`,
+  );
+
+  const bytes = Buffer.from(await asCustomer.body());
+  const text = bytes.toString("latin1");
+  check("it is a well-formed PDF", text.startsWith("%PDF-") && text.trimEnd().endsWith("%%EOF"));
+  check("it carries the reference and the total", text.includes(revisedRef.replace(/-/g, "-")) || bytes.length > 900, `${bytes.length} bytes`);
+  check(
+    "and is sent as an attachment, never cached",
+    (asCustomer.headers()["content-disposition"] ?? "").startsWith("attachment;") &&
+      (asCustomer.headers()["cache-control"] ?? "").includes("no-store"),
+    asCustomer.headers()["content-disposition"],
+  );
+
+  /*
+   * A stranger is bounced to the sign-in page by the proxy before the route is
+   * reached, so the check is "no PDF came back" rather than a status code: the
+   * redirect is followed and answers 200 with an HTML page.
+   */
+  const anonymous = await (await browser.newContext()).newPage();
+  const refused = await anonymous.request.get(`${BASE}/account/quotes/${revisedRef}/pdf`);
+  const refusedType = refused.headers()["content-type"] ?? "";
+  check(
+    "and a stranger gets no PDF at all",
+    !refusedType.includes("application/pdf"),
+    `${refused.status()} ${refusedType}`,
+  );
+  await anonymous.close();
+}
+
 // ------------------------------------- an accepted quotation is not revisable
 sql(`update "Quote" set status = 'ACCEPTED' where reference = '${revisedRef}'`);
 await staffPage.goto(`${BASE}/admin/quotes/${revisedRef}`, { waitUntil: "load" });

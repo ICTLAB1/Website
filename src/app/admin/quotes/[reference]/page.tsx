@@ -85,7 +85,15 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
         </Link>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
           <h1 className="font-mono text-2xl">{quote.reference}</h1>
-          <StatusBadge status={quote.status} />
+          <span className="flex items-center gap-3">
+            <a
+              href={`/account/quotes/${quote.reference}/pdf`}
+              className="inline-flex h-9 items-center rounded-[--radius-md] border border-line-strong px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-400"
+            >
+              Download PDF
+            </a>
+            <StatusBadge status={quote.status} />
+          </span>
         </div>
         <p className="mt-1.5 text-[13px] text-ink-600">
           {quote.enquiry ? (
