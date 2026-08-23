@@ -86,6 +86,16 @@ const RECLAIMED = [
   ["/product-page/adobe-creative-cloud-all-apps", "/products/adobe-creative-cloud-all-apps-teams", 1],
   ["/post/windows-11-in-2026-still-worth-buying-or-already-outdated", "/products/windows-11-pro-upgrade", 1],
   ["/post/top-5-reasons-businesses-should-upgrade-to-windows-11-pro-in-2025", "/products/windows-11-pro-upgrade", 1],
+  /*
+   * The three below are not linked by anybody — they rank. Every keyword this
+   * domain holds in India sits on a `/product-page/*` URL that no longer
+   * exists, so these carry search positions rather than links, and the count
+   * column is monthly search volume instead. Losing one of these redirects
+   * loses a position that took years to earn.
+   */
+  ["/product-page/microsoft-visual-studio-enterprise", "/brands/microsoft", 0],
+  ["/product-page/microsoft-visio-plan-1", "/brands/microsoft", 0],
+  ["/product-page/windows-11-pro-business-license", "/products/windows-11-pro-upgrade", 0],
 ];
 
 let reclaimed = 0;

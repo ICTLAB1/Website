@@ -192,6 +192,44 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
 
+      /*
+       * ── The ones that rank rather than the ones that are linked ────────
+       *
+       * A second list, from the search index rather than the link index, and it
+       * matters more than it looks. Every keyword this domain ranks for in
+       * India — all seventeen of them — is held by a `/product-page/*` URL that
+       * no longer exists. Google is still serving the Wix site. Whatever the
+       * catch-all sends to `/products` is what it will eventually decide is a
+       * soft 404, and those positions go with it.
+       *
+       * These three are the ranking URLs nobody links to, so the list above
+       * missed them entirely. Positions and volumes are the India readings on
+       * 23 August 2026.
+       */
+      {
+        // Position 10 for "microsoft visio plan 1", 720 searches a month.
+        // Visio is not in this catalogue; the brand page is the true answer.
+        source: "/product-page/microsoft-visio-plan-1",
+        destination: "/brands/microsoft",
+        permanent: true,
+      },
+      {
+        // Position 13 for "visual studio enterprise", 8,100 searches a month —
+        // by volume the most valuable position this domain holds, and by some
+        // distance. Visual Studio is not in the catalogue either. Listing it
+        // would be worth more than this redirect is.
+        source: "/product-page/microsoft-visual-studio-enterprise",
+        destination: "/brands/microsoft",
+        permanent: true,
+      },
+      {
+        // Position 18 for "windows 11 pro for business", 260 a month, and this
+        // one has an exact match.
+        source: "/product-page/windows-11-pro-business-license",
+        destination: "/products/windows-11-pro-upgrade",
+        permanent: true,
+      },
+
       // ── Autodesk (15 links) ─────────────────────────────────────────────
       {
         // 5 links
