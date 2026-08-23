@@ -404,6 +404,7 @@ model User {
   savedSettings  SiteSettings[]
   savedPayments  PaymentSettings[]
   savedMail      MailSettings[]
+  savedCrm       CrmSettings[]            @relation("CrmSettingsEditor")
   quoteMessages  QuoteMessage[]
   ticketMessages TicketMessage[]
   devices        Device[]
@@ -2189,4 +2190,93 @@ model Activity {
   @@index([userId, dueAt])
   /// Outstanding follow-ups, oldest first. The query behind "what is overdue".
   @@index([completedAt, dueAt])
+}
+
+/// Where an event stands on its way out to the customer's own CRM.
+enum CrmEventStatus {
+  /// Recorded, not yet sent.
+  PENDING
+  /// Accepted by the endpoint.
+  DELIVERED
+  /// Tried and refused. `lastError` says how.
+  FAILED
+  /// Given up on after too many attempts, or abandoned by hand. Kept rather
+  /// than deleted: a business asking "why did our CRM never see that deal"
+  /// deserves an answer.
+  ABANDONED
+}
+
+/// One thing that happened here, queued for the CRM this business already runs.
+///
+/// ## The queue exists whether or not anything is listening
+///
+/// Events are recorded from the moment the pipeline is used, even with no
+/// endpoint configured. Two reasons, and neither is optimism: the rows are a
+/// truthful log of what changed and when, useful on their own; and when an
+/// endpoint is eventually configured the history is there to send rather than
+/// lost. What does *not* happen without an endpoint is any delivery, and the
+/// settings screen says "Not connected" rather than implying otherwise.
+///
+/// ## Why a table rather than an HTTP call at the point of the change
+///
+/// A salesperson moving a deal must not wait on somebody else's server, and
+/// must not have their change fail because that server is down. So the write
+/// and the send are separated: the change commits, the event is a row, and
+/// delivery is somebody else's problem — retried, visible, and never able to
+/// roll back the thing it is reporting.
+model CrmEvent {
+  id     String         @id @default(cuid())
+  status CrmEventStatus @default(PENDING)
+
+  /// What happened, as a dotted name: `deal.created`, `deal.stage_changed`.
+  /// A closed vocabulary in `lib/crm/events`, not free text — the receiving
+  /// system switches on it.
+  kind String
+
+  /// What it happened to, so a receiver can correlate without parsing the body.
+  entityType String
+  entityId   String
+
+  /// The body, exactly as it will be sent. Frozen at the moment of the event
+  /// rather than rebuilt at delivery time: an event describes what was true
+  /// when it happened, and re-reading the deal an hour later would send a
+  /// different story than the one that occurred.
+  payload Json
+
+  attempts      Int       @default(0)
+  lastAttemptAt DateTime?
+  /// The failure, in the receiver's words, truncated. Kept so a misconfigured
+  /// endpoint is diagnosable from this screen rather than from a server log.
+  lastError     String?
+  deliveredAt   DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
+  @@index([entityType, entityId])
+}
+
+/// Where events go, if anywhere.
+///
+/// Singleton, like the other integration settings. Absent or incomplete means
+/// **not connected**, and every surface says so in those words rather than
+/// implying a link that does not exist.
+model CrmSettings {
+  id String @id @default("singleton")
+
+  /// The HTTPS endpoint events are posted to. Null means nothing is sent.
+  endpointUrl String?
+
+  /// Shared secret for the HMAC signature on each delivery, so the receiver can
+  /// tell a real event from anyone who guessed the URL.
+  /// AES-256-GCM, keyed from AUTH_SECRET. Never rendered.
+  signingSecret String?
+
+  /// Off by default. Configured is not the same as wanted — a business may set
+  /// the endpoint up before the far end is ready.
+  enabled Boolean @default(false)
+
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  updatedBy   User?    @relation("CrmSettingsEditor", fields: [updatedById], references: [id], onDelete: SetNull)
 }

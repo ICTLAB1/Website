@@ -52,6 +52,7 @@ export const DATE_KEYS = new Set([
   "firstReplyAt",
   "fulfilledAt",
   "issuedAt",
+  "lastAttemptAt",
   "lastLoginAt",
   "lastSeenAt",
   "lockedUntil",

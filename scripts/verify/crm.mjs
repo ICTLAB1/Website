@@ -249,6 +249,90 @@ check(
   !(await page.locator("body").innerText()).includes(`Call them back ${stamp}`),
 );
 
+// ── events out ──────────────────────────────────────────────────────────────
+/*
+ * The queue is real; the integration is not, until credentials are. What is
+ * checked here is that both halves of that sentence are true: events were
+ * recorded from ordinary use of the pipeline, and the screen says plainly that
+ * nothing is being delivered.
+ *
+ * Live delivery is not exercised. There is no CRM to deliver to, and a suite
+ * that stood up a fake one would be proving that the fake works. The wire
+ * format and the signature are covered by `tests/crm-events.test.ts` instead,
+ * which needs no network.
+ */
+const events = sql(
+  `select count(*) from "CrmEvent" where "entityId" = '${reference}'`,
+);
+check(
+  "using the pipeline records events for the customer's own CRM",
+  Number(events) >= 4,
+  `${events} recorded — expected at least deal.created, two stage changes and a deal.lost`,
+);
+check(
+  "a close records the specific event as well as the stage change",
+  sql(`select count(*) from "CrmEvent" where "entityId" = '${reference}' and kind = 'deal.lost'`) === "1",
+);
+check(
+  "every recorded event is waiting rather than claiming to have been sent",
+  sql(
+    `select count(*) from "CrmEvent" where "entityId" = '${reference}' and status <> 'PENDING'`,
+  ) === "0",
+);
+
+const adminContext = await browser.newContext({ viewport: { width: 1400, height: 1100 } });
+await signIn(adminContext, process.env.SEED_ADMIN_EMAIL ?? "admin@example.test", process.env.SEED_ADMIN_PASSWORD ?? "");
+const adminPage = await adminContext.newPage();
+await adminPage.goto(`${BASE}/admin/settings/crm`, { waitUntil: "load" });
+const crmScreen = (await adminPage.locator("body").innerText()).replace(/\s+/g, " ");
+
+check(
+  "the integration screen says Not connected rather than implying a link",
+  // Case-insensitive: badges are uppercased in CSS, so `innerText` returns
+  // "NOT CONNECTED" on a page that reads exactly as intended.
+  /not connected/i.test(crmScreen),
+  crmScreen.slice(0, 200),
+);
+check(
+  "and says what that means for the events already queued",
+  /recorded/i.test(crmScreen) && /sent nowhere|sent in order/i.test(crmScreen),
+);
+check("the outbox lists the queued events", crmScreen.includes("deal.stage_changed"));
+
+// A plaintext endpoint would put deal values and customer names on the wire.
+await adminPage.getByLabel("Endpoint URL").fill("http://crm.example.com/hooks");
+await adminPage.getByRole("button", { name: "Save" }).first().click();
+await adminPage.waitForTimeout(2000);
+check(
+  "a plaintext http endpoint is refused",
+  sql(`select count(*) from "CrmSettings" where "endpointUrl" = 'http://crm.example.com/hooks'`) === "0",
+);
+
+// A sales account must not be able to point the business's data at a URL.
+const salesAtSettings = await page.goto(`${BASE}/admin/settings/crm`, { waitUntil: "load" });
+check(
+  "a sales account cannot open the CRM integration settings",
+  !page.url().endsWith("/admin/settings/crm") || salesAtSettings?.status() === 404,
+  `landed on ${page.url()} with ${salesAtSettings?.status()}`,
+);
+
+// The scheduled endpoint must not be open.
+const unauth = await adminContext.request.post(`${BASE}/api/crm/deliver`, { failOnStatusCode: false });
+check(
+  "the scheduled delivery route refuses a caller with no token",
+  unauth.status() === 404,
+  `status ${unauth.status()}`,
+);
+const wrongToken = await adminContext.request.post(`${BASE}/api/crm/deliver`, {
+  headers: { "x-crm-token": "not-the-token" },
+  failOnStatusCode: false,
+});
+check(
+  "and refuses a wrong token",
+  wrongToken.status() === 404,
+  `status ${wrongToken.status()}`,
+);
+
 // ── nothing reaches a customer ──────────────────────────────────────────────
 const customer = await browser.newContext();
 await signIn(customer, customerEmail, password);
@@ -294,6 +378,7 @@ check(
 await browser.close();
 
 // ── clean up ────────────────────────────────────────────────────────────────
+sql(`delete from "CrmEvent" where "entityId" = '${reference}'`);
 sql(`delete from "Activity" where "dealId" in (select id from "Deal" where reference = '${reference}')`);
 sql(`delete from "AuditLog" where "entityId" = '${reference}'`);
 sql(`delete from "Deal" where reference = '${reference}'`);

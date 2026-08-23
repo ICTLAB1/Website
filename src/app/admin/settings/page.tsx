@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
@@ -10,6 +11,7 @@ import { TestEmailForm } from "@/components/admin/test-email-form";
 import { getPaymentSettingsView } from "@/lib/payments/config";
 import { getUnconfiguredIdentityKeys } from "@/lib/admin/config-status";
 import { isMailConfigured } from "@/lib/mail";
+import { crmConnection } from "@/lib/crm/outbox";
 import { getMailConfig, getMailSettingsView } from "@/lib/mail-config";
 import { MailSettingsForm } from "@/components/admin/mail-settings-form";
 import { listAuditLog } from "@/lib/queries/admin";
@@ -32,7 +34,7 @@ export const metadata: Metadata = { title: "Settings" };
  */
 export default async function AdminSettingsPage() {
   const admin = await requireAdmin();
-  const [config, stored, missing, audit, payments, mail, mailReady] = await Promise.all([
+  const [config, stored, missing, audit, payments, mail, mailReady, crmState] = await Promise.all([
     getSiteConfig(),
     getStoredSettings(),
     getUnconfiguredIdentityKeys(),
@@ -40,6 +42,7 @@ export default async function AdminSettingsPage() {
     getPaymentSettingsView(),
     getMailSettingsView(),
     isMailConfigured(),
+    crmConnection(),
   ]);
   // What the From header will actually say, after the stored-then-environment
   // fallback — not what is typed in the form, which may be blank and inheriting.
@@ -178,6 +181,25 @@ export default async function AdminSettingsPage() {
                   {mailReady
                     ? "A server is set. Whether it accepts our messages is a different question — send a test email above to find out."
                     : "Messages are logged server-side instead of sent. Enquiries are still stored and visible here."}
+                </Td>
+              </Tr>
+              <Tr>
+                <Td className="font-medium text-graphite-900">
+                  <Link href="/admin/settings/crm" className="text-accent-700 hover:underline">
+                    CRM integration
+                  </Link>
+                </Td>
+                <Td>
+                  {crmState.connected ? (
+                    <Badge tone="success">Connected</Badge>
+                  ) : (
+                    <Badge tone="warning">Not connected</Badge>
+                  )}
+                </Td>
+                <Td className="text-[13px] text-ink-600">
+                  {crmState.connected
+                    ? "Pipeline events are being sent to the configured endpoint."
+                    : crmState.detail}
                 </Td>
               </Tr>
               <Tr>

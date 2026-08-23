@@ -5,6 +5,7 @@ import type { ActivityKind, DealSource, DealStage, Prisma } from "@prisma/client
 import { prisma } from "@/lib/db";
 import { publicReference } from "@/lib/auth/tokens";
 import { isClosed } from "@/lib/crm/pipeline";
+import { recordCrmEvent } from "@/lib/crm/outbox";
 
 /**
  * Deals and their history: everything that writes to the pipeline.
@@ -109,6 +110,27 @@ export async function createDeal(input: {
       },
     });
 
+    /*
+     * Inside the transaction, so the event and the thing it describes either
+     * both happen or neither does. An event written outside it can describe a
+     * deal that then rolled back, and the far end believes in a deal that does
+     * not exist.
+     */
+    await recordCrmEvent(tx, {
+      kind: "deal.created",
+      entityType: "Deal",
+      entityId: created.reference,
+      data: {
+        reference: created.reference,
+        title,
+        stage,
+        source: input.source ?? "DIRECT",
+        organisation: input.companyName?.trim() || null,
+        expectedValueMinor: Math.max(0, Math.round(input.expectedValueMinor ?? 0)),
+        currency: "INR",
+      },
+    });
+
     return created;
   });
 
@@ -170,6 +192,28 @@ export async function moveDealStage(input: {
         userId: input.actorId,
       },
     });
+
+    /*
+     * Two events on a close, not one. `deal.stage_changed` is the fact; the
+     * `deal.won` / `deal.lost` pair are what a receiving system actually
+     * subscribes to, and making it derive them from a string comparison on the
+     * stage is how the far end ends up with its own copy of this file's rules.
+     */
+    await recordCrmEvent(tx, {
+      kind: "deal.stage_changed",
+      entityType: "Deal",
+      entityId: deal.reference,
+      data: { reference: deal.reference, from: deal.stage, to: input.stage },
+    });
+
+    if (isClosed(input.stage)) {
+      await recordCrmEvent(tx, {
+        kind: input.stage === "WON" ? "deal.won" : "deal.lost",
+        entityType: "Deal",
+        entityId: deal.reference,
+        data: { reference: deal.reference, lostReason },
+      });
+    }
   });
 
   return { ok: true, id: deal.id, reference: deal.reference };
