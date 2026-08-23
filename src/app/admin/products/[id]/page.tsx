@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { ProductForm } from "@/components/admin/product-form";
+import { ProductPhotoForm } from "@/components/admin/product-photo-form";
 import { VariantForm } from "@/components/admin/variant-form";
 import { AdminForm } from "@/components/admin/admin-form";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
@@ -66,6 +67,24 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
           />
         </div>
       </header>
+
+      {/*
+        Above the details form, not below it.
+
+        The picture is the first thing a buyer sees on the card and the first
+        thing missing from a listing that looks unfinished, so it is the first
+        thing offered here. It is also the only part of this screen that cannot
+        be done from the form below, which is exactly why it would otherwise be
+        overlooked.
+      */}
+      <section className="max-w-3xl">
+        <ProductPhotoForm
+          productId={product.id}
+          productName={product.name}
+          imageUrl={product.imageUrl}
+          formFactor={product.formFactor}
+        />
+      </section>
 
       <section className="max-w-3xl">
         <h2 className="mb-5 text-[1.15rem]">Product details</h2>

@@ -21,6 +21,24 @@ const nextConfig: NextConfig = {
   experimental: {
     // Keeps large server-only dependencies out of the client graph.
     optimizePackageImports: ["@prisma/client"],
+
+    /*
+     * Server Actions accept 1 MB by default, and product photographs are
+     * uploaded through one.
+     *
+     * Without this, `MAX_PHOTO_BYTES` was a limit the code stated and could not
+     * enforce: a 1.5 MB photograph — an ordinary size for one — was rejected by
+     * the framework before the action ran, so the person uploading it got an
+     * opaque failure instead of the message explaining what to do. A stated
+     * limit that is not the real limit is worse than a lower one.
+     *
+     * Set above `MAX_PHOTO_BYTES` (2 MB) with room for multipart framing and
+     * the other fields in the form, not generously above it. This applies to
+     * every Server Action, so it is a ceiling on what any of them can be handed
+     * — the individual limits that matter are still enforced per action, and a
+     * brand logo is still refused past 512 KB.
+     */
+    serverActions: { bodySizeLimit: "3mb" },
   },
 
   async headers() {

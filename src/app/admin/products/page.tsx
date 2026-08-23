@@ -34,7 +34,18 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
             {total} {total === 1 ? "product" : "products"} in the catalogue.
           </p>
         </div>
-        <ButtonLink href="/admin/products/new">New product</ButtonLink>
+        <span className="flex flex-wrap gap-3">
+          {/*
+            Beside "New product" rather than buried on each edit screen. The
+            catalogue's photographs are a body of work in their own right, and
+            one somebody sits down to do in a session — not something they
+            remember to do while editing a specification.
+          */}
+          <ButtonLink href="/admin/products/photos" variant="outline">
+            Photographs
+          </ButtonLink>
+          <ButtonLink href="/admin/products/new">New product</ButtonLink>
+        </span>
       </header>
 
       <DeletedNotice reference={params.deleted} noun="product" />
