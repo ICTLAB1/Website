@@ -282,7 +282,22 @@ export async function buildQuotationPdf(
      * against, so echoing it back is what makes the quotation findable at their
      * end. Our enquiry reference is the fallback, not the preference.
      */
-    referenceNo: quote.customerReference ?? quote.enquiry?.reference ?? null,
+    /*
+     * Two different references, kept apart.
+     *
+     * `referenceNo` is our enquiry number and `customerReference` is theirs —
+     * the purchase order or tender the quotation answers. They used to collapse
+     * into one field, which meant a customer's own number displaced ours and a
+     * reader could not tell which of the two they were looking at.
+     */
+    referenceNo: quote.enquiry?.reference ?? null,
+    customerReference: quote.customerReference ?? null,
+    /*
+     * Not held anywhere yet: the quotation carries payment terms but has no
+     * delivery-terms field, and inventing "As specified" would be filler on a
+     * commercial document. The cell is simply absent until there is one.
+     */
+    deliveryTerms: null,
     version: quote.version,
     status: quote.status,
     currency: quote.currency,

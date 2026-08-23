@@ -29,6 +29,8 @@ const bytes = renderQuotationPdf({
     "Thank you for your enquiry. We are pleased to submit our best offer for the Microsoft licensing and endpoint security requirement discussed. All pricing below is inclusive of deployment support.",
   status: "SENT",
   paymentTerms: "50% advance, balance on delivery",
+  customerReference: "PO/MITADT/2425/078",
+  deliveryTerms: "4-6 weeks from confirmed order",
   salesExecutive: "Abhinav Jain",
   quotedTo: party,
   billing: party,

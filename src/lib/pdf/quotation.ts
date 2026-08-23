@@ -33,6 +33,8 @@ const NAVY: Colour = { r: 0.051, g: 0.169, b: 0.333 };
 const TEXT_INK: Colour = { r: 0.094, g: 0.125, b: 0.165 };
 const SOFT: Colour = { r: 0.392, g: 0.455, b: 0.545 };
 const LINE_RULE: Colour = { r: 0.843, g: 0.863, b: 0.886 };
+/** The tint behind a header strip, a shade off white so it reads as a band. */
+const TINT: Colour = { r: 0.957, g: 0.965, b: 0.973 };
 
 
 /**
@@ -107,6 +109,10 @@ export type QuotationPdfInput = {
   notes: string | null;
   status: string;
   paymentTerms: string | null;
+  /** What the customer calls this on their side: their PO or tender number. */
+  customerReference: string | null;
+  /** Free text, e.g. "4-6 weeks from order". Nothing prints when unset. */
+  deliveryTerms: string | null;
   salesExecutive: string | null;
   /** Who it is addressed to, who is billed, and where it goes. */
   quotedTo: QuotationParty;
@@ -272,10 +278,9 @@ export function renderQuotationPdf(input: QuotationPdfInput): Buffer {
   const supplierGstin = clean(config.gstin);
   const treatment = taxTreatment(supplierGstin, input.billing.gstin);
 
-  let y = drawLetterheadBlock(pdf, input);
-  y = drawStatutoryStrip(pdf, config, y);
-  y = drawParties(pdf, input, y);
-  y = drawSalutation(pdf, input, y);
+  let y = drawHeader(pdf, input);
+  y = drawDetails(pdf, input, y);
+  y = drawCommercialStrip(pdf, input, y);
   y = drawLineItems(pdf, input, y);
   y = drawTotals(pdf, input, treatment, y);
   y = drawTaxSummary(pdf, input, treatment, y);
@@ -288,272 +293,158 @@ export function renderQuotationPdf(input: QuotationPdfInput): Buffer {
 
 // ----------------------------------------------------------- the letterhead
 
-function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number {
+/**
+ * The masthead: who is issuing this, and what it is.
+ *
+ * Left is identity — the artwork, the registered name, the strapline. Right is
+ * the document — the word QUOTATION, its number in a filled chip, and the three
+ * facts a purchasing officer checks before reading anything else: when it was
+ * issued, how long it stands, and what currency it is in.
+ *
+ * The strapline is `config.tagline`, the line an administrator controls. The
+ * design pack shows a different one in its mock, and its own README says the
+ * reference "contains illustrative data. Never hard-code it." — so the line
+ * that prints is the business's, not the mock's.
+ */
+function drawHeader(pdf: PdfDocument, input: QuotationPdfInput): number {
   const { config } = input;
   const top = 40;
 
-  /*
-   * The company's own artwork where it exists, and the drawn mark where it
-   * does not.
-   *
-   * A real logo file is always the better answer — it is the artwork the
-   * business actually uses, on letterheads a customer has seen before. The
-   * drawn mark is the fallback that keeps a document from having a blank
-   * corner on a deployment where nobody has supplied one.
-   */
   const artwork = input.logo;
   if (artwork) {
-    pdf.image(artwork, MARGIN, top, LOGO_WIDTH, 44);
+    pdf.image(artwork, MARGIN, top, LOGO_WIDTH, 34);
   } else {
-    drawMark(pdf, MARGIN, top, 38);
+    drawMark(pdf, MARGIN, top, 30);
   }
+
+  let left = top + 44;
+  pdf.text(fit(config.entityName.toUpperCase(), 300, 10.5, "sansBold"), MARGIN, left, {
+    size: 10.5,
+    font: "sansBold",
+    colour: NAVY,
+  });
+  left += 13;
+
+  if (config.tagline) {
+    pdf.text(fit(config.tagline, 300, 7.6), MARGIN, left, { size: 7.6, colour: SOFT });
+    left += 11;
+  }
+
+  // ── the document, right ─────────────────────────────────────────────────
+  pdf.textRight("QUOTATION", RIGHT, top + 15, { size: 19, font: "sansBold", colour: NAVY });
 
   /*
-   * The strapline, only where the artwork does not already carry one.
+   * The number in a filled chip rather than as another label/value row.
    *
-   * A supplied logo file is a finished lockup: the wordmark and the line under
-   * it, drawn together, kerned together and aligned to each other. Setting a
-   * second strapline in italic underneath it printed the same idea twice, and
-   * the two never lined up — the text sits at the image's left edge and the
-   * artwork's own ink sits inside its transparent margin, so the italic line
-   * always looked indented by an amount nothing in the code knew about.
-   *
-   * The drawn fallback mark has no strapline of its own, so there the text is
-   * the only place the line appears and it is printed.
+   * It is the one string on the page that gets quoted back — in a purchase
+   * order, in an email, over the telephone — so it is the one thing that should
+   * be findable without reading. The chip is sized to its own text so a longer
+   * series does not overflow a fixed box.
    */
-  let logoY = top + (artwork ? 56 : 50);
-  if (!artwork && config.tagline) {
-    for (const line of wrap(config.tagline, LOGO_WIDTH, 7, "italic")) {
-      pdf.text(line, MARGIN, logoY, { size: 7, font: "italic", colour: SOFT });
-      logoY += 9;
-    }
-  }
+  const number = input.documentNo ?? input.reference;
+  const chipSize = 9;
+  const chipWidth = Math.min(textWidth(number, chipSize, "sansBold") + 20, 220);
+  const chipY = top + 22;
+  pdf.rect(RIGHT - chipWidth, chipY, chipWidth, 17, NAVY);
+  pdf.textCentre(number, RIGHT - chipWidth / 2, chipY + 12, {
+    size: chipSize,
+    font: "sansBold",
+    colour: WHITE,
+  });
 
-  // ── who is issuing it ───────────────────────────────────────────────────
-  const issuerWidth = META_LABEL_X - ISSUER_X - 14;
-  let issuerY = top + 10;
-
-  /*
-   * The registered name: in full, on one line where one line will hold it.
-   *
-   * "TechZoid Technologies Private Li..." is not a company, so an ellipsis is
-   * never an option here — a legal name is the one string on a commercial
-   * document that must appear complete.
-   *
-   * What it used to do was pick 10.5pt unless the name would not fit in *two*
-   * lines, which meant "TechZoid Technologies Private Limited" set at 10.5 and
-   * broke after "Private". A company name split across a line break reads as a
-   * layout that ran out of room, which is exactly what it was.
-   *
-   * So: the largest size in the ladder that fits on one line, and only if none
-   * of them do does it wrap — at the smallest, where a two-line name is a
-   * deliberate setting rather than an overflow.
-   */
-  const nameSize =
-    [10.5, 9.6, 8.8].find((size) => textWidth(config.entityName, size, "sansBold") <= issuerWidth) ??
-    8.8;
-  for (const line of wrap(config.entityName, issuerWidth, nameSize, "sansBold")) {
-    pdf.text(line, ISSUER_X, issuerY, { size: nameSize, font: "sansBold", colour: TEXT_INK });
-    issuerY += nameSize + 1.5;
-  }
-  issuerY += 2;
-
-  const issuerDetail = [
-    ...issuerAddress(config),
-    config.phone.sales,
-    config.email.sales,
-    config.url.replace(/^https?:\/\//, ""),
-  ].filter((line): line is string => Boolean(clean(line)));
-
-  for (const line of issuerDetail) {
-    for (const wrapped of wrap(line, issuerWidth, 7.2)) {
-      pdf.text(wrapped, ISSUER_X, issuerY, { size: 7.2, colour: SOFT });
-      issuerY += 8.6;
-    }
-  }
-
-  /*
-   * A second entity, where the business has one.
-   *
-   * Under the registered one and visibly subordinate to it, because that is
-   * what it is: the quotation is issued by the entity whose GSTIN is on the
-   * statutory strip below, and a second name set at the same weight would
-   * leave a customer unsure which of them they are contracting with.
-   */
-  if (config.secondaryEntity) {
-    issuerY += 6;
-    pdf.line(ISSUER_X, issuerY - 4, ISSUER_X + 90, issuerY - 4, LINE_RULE, 0.7);
-    issuerY += 6;
-
-    pdf.text(fit(config.secondaryEntity.name, issuerWidth, 8.5, "sansBold"), ISSUER_X, issuerY, {
-      size: 8.5,
-      font: "sansBold",
-      colour: TEXT_INK,
-    });
-    issuerY += 10;
-
-    for (const line of wrap(config.secondaryEntity.address, issuerWidth, 7.2)) {
-      pdf.text(line, ISSUER_X, issuerY, { size: 7.2, colour: SOFT });
-      issuerY += 8.6;
-    }
-
-    if (config.secondaryEntity.phone) {
-      pdf.text(config.secondaryEntity.phone, ISSUER_X, issuerY, { size: 7.2, colour: SOFT });
-      issuerY += 8.6;
-    }
-
-    /*
-     * The branch's own registration numbers, each beside the label its
-     * jurisdiction uses.
-     *
-     * A quotation from a UAE free-zone office is expected to carry its Business
-     * Licence number and its TRN, for the same reason the Indian entity's strip
-     * below carries a CIN and a GSTIN: they are what a customer's finance team
-     * checks the supplier against before raising a purchase order. Printed only
-     * where both the label and the number are set, so an unconfigured branch
-     * prints nothing rather than a bare number nobody can identify.
-     */
-    for (const registration of config.secondaryEntity.registrations) {
-      pdf.text(`${registration.label}: ${registration.value}`, ISSUER_X, issuerY, {
-        size: 7.2,
-        colour: SOFT,
-      });
-      issuerY += 8.6;
-    }
-  }
-
-  // ── what the document is ────────────────────────────────────────────────
-  pdf.textRight("QUOTATION", RIGHT, top + 16, { size: 20, font: "sansBold", colour: NAVY });
-
+  let metaY = chipY + 30;
   const meta: Array<[string, string | null]> = [
-    ["Quotation No.", input.documentNo ?? input.reference],
-    ["Reference No.", input.referenceNo],
-    /*
-     * Always printed, including on the first version.
-     *
-     * "Revision No. 1" tells a purchasing officer they are holding the
-     * original; a blank tells them nothing, and they cannot distinguish it from
-     * a field somebody forgot to fill in.
-     */
-    ["Revision No.", String(input.version)],
     ["Date", pdfDate(input.issuedAt)],
-    ["Valid Till", input.validUntil ? pdfDate(input.validUntil) : null],
-    ["Sales Executive", input.salesExecutive],
-    ["Payment Terms", input.paymentTerms],
+    ["Valid Until", input.validUntil ? pdfDate(input.validUntil) : null],
+    /*
+     * Only once there is a revision to distinguish. "Revision 1" on a first
+     * issue answers a question nobody asked; "Revision 2" answers one somebody
+     * is about to.
+     */
+    ["Revision", input.version > 1 ? String(input.version) : null],
     ["Currency", input.currency],
   ];
 
-  let metaY = top + 36;
-  const valueWidth = RIGHT - META_LABEL_X - 76;
-
   for (const [label, value] of meta) {
     if (!clean(value)) continue;
-
-    pdf.text(label, META_LABEL_X, metaY, { size: 7, colour: SOFT });
-
-    // Long terms wrap under themselves rather than running into the label.
-    const lines = wrap(value!, valueWidth + 70, 7.2, "sansBold");
-    for (const line of lines) {
-      pdf.textRight(line, RIGHT, metaY, { size: 7.2, font: "sansBold", colour: TEXT_INK });
-      metaY += 9.5;
-    }
-    if (lines.length === 0) metaY += 9.5;
+    pdf.textRight(label, RIGHT - 96, metaY, { size: 7.4, colour: SOFT });
+    pdf.text(":", RIGHT - 92, metaY, { size: 7.4, colour: SOFT });
+    pdf.textRight(value!, RIGHT, metaY, { size: 7.8, font: "sansBold", colour: TEXT_INK });
+    metaY += 11;
   }
 
-  /*
-   * ── The certifications, as a line of type ──────────────────────────────
-   *
-   * One accented line under all three columns. This was, for a while, a row of
-   * the certificates' own certified-company badges at equal height on a shared
-   * baseline — and it was taken out again: three framed marks under an address
-   * block dominated the letterhead, and the standards band at the foot of the
-   * document already states the same three certificates *with their numbers*,
-   * which is the version a procurement officer can actually check.
-   *
-   * The full content width, because "ISO 9001:2015 · ISO 27001:2022 ·
-   * ISO/IEC 20000-1:2018" does not fit the issuer column and wrapped mid-list
-   * under an address that had already wrapped. That was the original defect and
-   * this still fixes it.
-   */
-  let bandBottom = Math.max(logoY, issuerY, metaY) + 10;
-
-  if (input.certifications.length > 0) {
-    const standards = input.certifications.map((entry) => entry.standard).join("   ·   ");
-    pdf.text(standards, MARGIN, bandBottom + 6, {
-      size: 7.4,
-      font: "sansBold",
-      colour: NAVY,
-    });
-    bandBottom += 14;
-  }
-
-  return bandBottom;
+  const bottom = Math.max(left, metaY) + 4;
+  pdf.line(MARGIN, bottom, RIGHT, bottom, NAVY, 1.6);
+  return bottom + 14;
 }
 
-// ------------------------------------------------------ statutory identity
+// ------------------------------------------------------------- the details
 
 /**
- * CIN, GSTIN and PAN, between two rules.
+ * Three columns: what the document is, who is billed, where it goes.
  *
- * Set in a monospaced face because these are read character by character and
- * checked against another copy — a proportional capital I beside a 1 is a
- * genuine hazard on a document somebody is reconciling.
+ * The first is a plain label/value list under a navy heading; the other two are
+ * boxed with a filled header, because they are addresses and a box is what
+ * stops an address running visually into the one beside it.
  *
- * The PAN is read out of the GSTIN rather than stored twice. It is literally
- * the middle ten characters, so there is nothing to keep in step and no second
- * field to get wrong.
+ * The shipping column appears only when the delivery address genuinely differs
+ * from the billing one. A third identical panel is not thoroughness, it is
+ * noise, and it makes the case that matters — goods going somewhere else —
+ * harder to spot rather than easier.
  */
-function drawStatutoryStrip(pdf: PdfDocument, config: SiteConfig, top: number): number {
-  const parts = [
-    config.cin ? `CIN: ${config.cin}` : null,
-    config.gstin ? `GSTIN: ${config.gstin}` : null,
-    panFromGstin(config.gstin) ? `PAN: ${panFromGstin(config.gstin)}` : null,
-  ].filter((part): part is string => Boolean(part));
-
-  if (parts.length === 0) return top;
-
-  pdf.line(MARGIN, top, RIGHT, top, LINE_RULE, 0.8);
-  pdf.text(fit(parts.join("   |   "), CONTENT, 7.2, "mono"), MARGIN, top + 12, {
-    size: 7.2,
-    font: "mono",
-    colour: BLACK,
-  });
-  pdf.line(MARGIN, top + 17, RIGHT, top + 17, LINE_RULE, 0.8);
-
-  return top + 30;
-}
-
-// -------------------------------------------------------------- the parties
-
-function drawParties(pdf: PdfDocument, input: QuotationPdfInput, top: number): number {
+function drawDetails(pdf: PdfDocument, input: QuotationPdfInput, top: number): number {
   /*
-   * Three panels, or two.
+   * The first column is wider than the address panels beside it.
    *
-   * The shipping panel appears only when the delivery address genuinely differs
-   * from the billing one. A third identical column is not thoroughness, it is
-   * noise, and it makes the one case that matters — goods going somewhere else
-   * — harder to spot rather than easier.
+   * It carries label-and-value pairs where the value is a document number that
+   * must not be abbreviated — "TZ/QT/2026-27/00…" is not a quotation number,
+   * and it is the string the customer quotes back. The addresses wrap; a
+   * reference cannot.
    */
-  const panels: Array<[string, QuotationParty]> = [
-    ["Quoted to (Bill to)", input.quotedTo],
-    ["Billing address", input.billing],
-  ];
-  if (input.shipping) panels.push(["Shipping address (if different)", input.shipping]);
+  const gap = 10;
+  const parties: Array<[string, QuotationParty]> = [["BILL TO", input.billing]];
+  if (input.shipping) parties.push(["SHIP TO", input.shipping]);
 
-  const gap = 8;
-  const width = (CONTENT - gap * (panels.length - 1)) / panels.length;
+  const usable = CONTENT - gap * parties.length;
+  const detailWidth = usable * 0.38;
+  const width = (usable - detailWidth) / parties.length;
 
-  const heights = panels.map(([, party]) => partyHeight(party, width));
-  const height = Math.max(...heights, 96);
+  const detail = (
+    [
+      ["Quotation No.", input.documentNo ?? input.reference],
+      ["Quotation Date", pdfDate(input.issuedAt)],
+      ["Valid Until", input.validUntil ? pdfDate(input.validUntil) : null],
+      ["Sales Executive", input.salesExecutive],
+      ["Enquiry Reference", input.referenceNo],
+    ] as Array<[string, string | null]>
+  ).filter((row): row is [string, string] => Boolean(clean(row[1])));
 
-  panels.forEach(([title, party], index) => {
-    const x = MARGIN + index * (width + gap);
-    pdf.rect(x, top, width, height, WHITE);
-    pdf.strokeRect(x, top, width, height, LINE_RULE, 0.7);
-    drawParty(pdf, x, top, width, title, party);
+  const detailHeight = 18 + detail.length * 11 + 6;
+  const height = Math.max(detailHeight, ...parties.map(([, party]) => partyPanelHeight(party, width)));
+
+  // ── column one: the document's own facts ────────────────────────────────
+  pdf.text("QUOTATION DETAILS", MARGIN, top + 10, {
+    size: LABEL_SIZE,
+    font: "sansBold",
+    colour: NAVY,
+    tracking: 0.4,
   });
 
-  return top + height + 18;
+  let y = top + 26;
+  for (const [label, value] of detail) {
+    pdf.text(label, MARGIN, y, { size: 7.4, colour: SOFT });
+    pdf.text(":", MARGIN + 86, y, { size: 7.4, colour: SOFT });
+    pdf.text(value, MARGIN + 94, y, { size: 7.6, font: "sansBold", colour: TEXT_INK });
+    y += 11;
+  }
+
+  // ── columns two and three: the addresses ────────────────────────────────
+  parties.forEach(([title, party], index) => {
+    const x = MARGIN + detailWidth + gap + index * (width + gap);
+    drawPartyPanel(pdf, x, top, width, height, title, party);
+  });
+
+  return top + height + 12;
 }
 
 /** The label/value rows a party panel carries, in the order they are read. */
@@ -561,92 +452,126 @@ function partyRows(party: QuotationParty): Array<[string, string]> {
   return (
     [
       ["GSTIN", party.gstin],
-      ["PAN", party.pan ?? panFromGstin(party.gstin)],
       ["Contact", party.contactName],
-      ["Mobile", party.phone],
       ["Email", party.email],
-      ["State", party.state],
-      ["Place of Supply", placeOfSupply(party.gstin)],
+      ["Phone", party.phone],
     ] as Array<[string, string | null]>
   ).filter((row): row is [string, string] => Boolean(clean(row[1])));
 }
 
-function partyHeight(party: QuotationParty, width: number): number {
-  const inner = width - 16;
-  const addressLines = party.addressLines.flatMap((line) => wrap(line, inner, 7));
-  return 14 + 14 + addressLines.length * 8.4 + 4 + partyRows(party).length * 9.6 + 10;
+function partyPanelHeight(party: QuotationParty, width: number): number {
+  const inner = width - 18;
+  const addressLines = party.addressLines.flatMap((line) => wrap(line, inner, 7.4));
+  const rowLines = partyRows(party).reduce(
+    (sum, [, value]) => sum + wrap(value, inner - 54, 7.4, "sansBold").length,
+    0,
+  );
+  return 18 + 14 + addressLines.length * 9 + 6 + rowLines * 10 + 10;
 }
 
-function drawParty(
+function drawPartyPanel(
   pdf: PdfDocument,
   x: number,
   top: number,
   width: number,
+  height: number,
   title: string,
   party: QuotationParty,
 ): void {
-  const inner = width - 16;
-  let y = top + 13;
+  const inner = width - 18;
 
-  pdf.text(title.toUpperCase(), x + 8, y, {
+  pdf.rect(x, top, width, height, WHITE);
+  pdf.strokeRect(x, top, width, height, LINE_RULE, 0.7);
+  pdf.rect(x, top, width, 15, NAVY);
+  pdf.text(title, x + 9, top + 10.5, {
     size: LABEL_SIZE,
     font: "sansBold",
-    colour: SOFT,
-    tracking: 0.35,
+    colour: WHITE,
+    tracking: 0.4,
   });
-  y += 14;
 
-  pdf.text(fit(party.name, inner, 9.5, "sansBold"), x + 8, y, {
-    size: 9.5,
+  let y = top + 28;
+  pdf.text(fit(party.name, inner, 9, "sansBold"), x + 9, y, {
+    size: 9,
     font: "sansBold",
     colour: TEXT_INK,
   });
-  y += 12;
+  y += 13;
 
-  for (const line of party.addressLines.flatMap((entry) => wrap(entry, inner, 7))) {
-    pdf.text(line, x + 8, y, { size: 7, colour: SOFT });
-    y += 8.4;
+  for (const line of party.addressLines.flatMap((entry) => wrap(entry, inner, 7.4))) {
+    pdf.text(line, x + 9, y, { size: 7.4, colour: SOFT });
+    y += 9;
   }
 
-  y += 4;
-
-  const labelWidth = 46;
+  y += 5;
   for (const [label, value] of partyRows(party)) {
-    pdf.text(label, x + 8, y, { size: 6.6, colour: SOFT });
-    pdf.text(":", x + 8 + labelWidth, y, { size: 6.6, colour: SOFT });
-    pdf.text(fit(value, inner - labelWidth - 8, 7, "sansBold"), x + 8 + labelWidth + 6, y, {
-      size: 7,
-      font: "sansBold",
-      colour: BLACK,
-    });
-    y += 9.6;
+    pdf.text(label, x + 9, y, { size: 7.2, colour: SOFT });
+    pdf.text(":", x + 54, y, { size: 7.2, colour: SOFT });
+    /*
+     * Wrapped, not abbreviated. An email address with an ellipsis in it is not
+     * an address anybody can write to, and a GSTIN missing its last characters
+     * is worse than one that is absent.
+     */
+    for (const line of wrap(value, inner - 54, 7.4, "sansBold")) {
+      pdf.text(line, x + 60, y, { size: 7.4, font: "sansBold", colour: TEXT_INK });
+      y += 10;
+    }
   }
 }
 
-// ------------------------------------------------------------- salutation
+// --------------------------------------------------------- the commercials
 
-function drawSalutation(pdf: PdfDocument, input: QuotationPdfInput, top: number): number {
-  let y = top;
+/**
+ * The four commercial references, as equal cells across the width.
+ *
+ * Only the ones that are actually held: the cells share the width between
+ * whichever survive, so a quotation with no customer purchase-order number
+ * gets three wider cells rather than a labelled blank. A blank cell on a
+ * commercial document reads as an omission somebody has to chase.
+ */
+function drawCommercialStrip(pdf: PdfDocument, input: QuotationPdfInput, top: number): number {
+  const cells: Array<[string, string]> = (
+    [
+      ["CUSTOMER REFERENCE", input.customerReference],
+      ["ENQUIRY REFERENCE", input.referenceNo],
+      ["PAYMENT TERMS", input.paymentTerms],
+      ["DELIVERY TERMS", input.deliveryTerms],
+    ] as Array<[string, string | null]>
+  ).filter((row): row is [string, string] => Boolean(clean(row[1])));
 
-  pdf.text("Dear Sir / Madam,", MARGIN, y, { size: 8.5, colour: BLACK });
-  y += 13;
+  if (cells.length === 0) return top;
 
-  /*
-   * The covering sentence is whatever was written on the quotation, or a
-   * neutral one. The fallback says only what is certainly true of every
-   * quotation this system produces — it makes no claim about discounts,
-   * relationships or terms that somebody would have to honour.
-   */
-  const intro =
-    clean(input.notes) ??
-    "Thank you for your enquiry. We are pleased to submit our offer for the requirement discussed. Please see the items and commercial terms set out below.";
+  const width = CONTENT / cells.length;
+  const headerHeight = 15;
+  const valueLines = cells.map(([, value]) => wrap(value, width - 14, 7.6, "sansBold"));
+  const bodyHeight = Math.max(16, ...valueLines.map((lines) => lines.length * 9 + 8));
+  const height = headerHeight + bodyHeight;
 
-  for (const line of wrap(intro, CONTENT, 8, "sans")) {
-    pdf.text(line, MARGIN, y, { size: 8, colour: BLACK });
-    y += 10.5;
-  }
+  pdf.rect(MARGIN, top, CONTENT, headerHeight, TINT);
+  pdf.strokeRect(MARGIN, top, CONTENT, height, LINE_RULE, 0.7);
+  pdf.line(MARGIN, top + headerHeight, RIGHT, top + headerHeight, LINE_RULE, 0.7);
 
-  return y + 12;
+  cells.forEach(([label], index) => {
+    const x = MARGIN + index * width;
+    if (index > 0) pdf.line(x, top, x, top + height, LINE_RULE, 0.7);
+    pdf.textCentre(label, x + width / 2, top + 10.5, {
+      size: LABEL_SIZE,
+      font: "sansBold",
+      colour: NAVY,
+      tracking: 0.35,
+    });
+  });
+
+  valueLines.forEach((lines, index) => {
+    const x = MARGIN + index * width;
+    let y = top + headerHeight + 11;
+    for (const line of lines) {
+      pdf.textCentre(line, x + width / 2, y, { size: 7.6, font: "sansBold", colour: TEXT_INK });
+      y += 9;
+    }
+  });
+
+  return top + height + 14;
 }
 
 // ------------------------------------------------------------- line items
