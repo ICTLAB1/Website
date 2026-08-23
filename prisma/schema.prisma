@@ -405,6 +405,7 @@ model User {
   savedSettings  SiteSettings[]
   savedPayments  PaymentSettings[]
   savedMail      MailSettings[]
+  savedGstinLookup GstinLookupSettings[]
   savedCrm       CrmSettings[]            @relation("CrmSettingsEditor")
   quoteMessages  QuoteMessage[]
   ticketMessages TicketMessage[]
@@ -2036,6 +2037,58 @@ model PaymentSettings {
   /// Also encrypted. Used to authenticate Razorpay's webhook calls, which is
   /// the only trustworthy signal that a payment was actually captured.
   razorpayWebhookSecret String?
+
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
+/// Credentials for the GST taxpayer APIs, when this deployment has them.
+///
+/// A singleton, alongside the mail and payment settings and for the same
+/// reason: it is an integration credential rather than business identity, it is
+/// edited by an administrator, and its secret half must never be rendered back.
+///
+/// Nothing here is defaulted to a working value. There is no free public GSTN
+/// endpoint — access comes through a GST Suvidha Provider, whose host and
+/// credentials this business holds and this repository does not. Until a host
+/// is entered the feature reports itself as not connected, which is true; it
+/// never invents a taxpayer's details, and a lookup that cannot be made is
+/// reported as a lookup that was not made.
+model GstinLookupSettings {
+  id String @id @default("singleton")
+
+  /// The provider's host, e.g. `https://api.example.com`. Empty means the
+  /// whole feature is off — there is nothing to call.
+  baseUrl String?
+
+  /// The two documented endpoints, as paths under `baseUrl`. Held as settings
+  /// rather than constants because the version in the path is the provider's
+  /// choice: the published documentation shows `v1.0` for one and `v1.3` for
+  /// the other, and a provider on a different release should not need a code
+  /// change. Both take `?gstin=&action=TP`.
+  ///
+  /// `statusPath` answers "is this a real, live registration"; `searchPath`
+  /// answers that *and* returns the legal name, trade name and principal
+  /// address. A deployment entitled to only the first still gets verification.
+  statusPath String? @default("/commonapi/v1.0/tpstatus")
+  searchPath String? @default("/commonapi/v1.3/search")
+
+  /// Whatever the provider authenticates with, as header name and value pairs.
+  ///
+  /// Deliberately not modelled as `apiKey`: GSPs differ, and the ones in common
+  /// use want two or three headers with names of their own choosing —
+  /// `client-id` and `client-secret`, or a bearer token, or a subscription key.
+  /// Naming the fields after one provider's scheme would mean a schema change
+  /// for the next one.
+  ///
+  /// Values are AES-256-GCM, keyed from AUTH_SECRET, and never rendered.
+  headerOneName  String?
+  headerOneValue String?
+  headerTwoName  String?
+  headerTwoValue String?
+  headerThreeName  String?
+  headerThreeValue String?
 
   updatedAt   DateTime @updatedAt
   updatedById String?

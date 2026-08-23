@@ -3,12 +3,13 @@ import type { ContactKind } from "@prisma/client";
 
 import { AccountForm } from "@/components/account/account-form";
 import { CompanyTabs } from "@/components/account/company-tabs";
-import { Field, Fieldset, Input } from "@/components/ui/form";
-import { updateCompany } from "@/app/account/actions";
+import { Checkbox, Field, Fieldset, Input } from "@/components/ui/form";
+import { fillCompanyFromGstin, updateCompany } from "@/app/account/actions";
 import { saveContact } from "@/app/account/company/actions";
 import { requireUser } from "@/lib/auth/guards";
 import { canInCompany } from "@/lib/auth/capabilities";
 import { prisma } from "@/lib/db";
+import { gstinLookupConfigured, gstinLookupReturnsDetails } from "@/lib/gstin-lookup";
 
 export const metadata: Metadata = { title: "Company" };
 
@@ -44,6 +45,21 @@ export default async function AccountCompanyPage() {
     : null;
 
   const mayEdit = canInCompany(session, "company.manage");
+
+  /*
+   * Whether the button is worth showing at all.
+   *
+   * There is no free public GSTN endpoint, so a deployment with no provider
+   * configured cannot look anything up — and a "Fetch my details" button that
+   * always fails is worse than no button. Both questions are asked because the
+   * answers differ: a provider may sell verification without the taxpayer
+   * search, and then the panel promises the state and the PAN rather than an
+   * address it cannot fetch.
+   */
+  const [lookupAvailable, lookupReturnsDetails] = await Promise.all([
+    gstinLookupConfigured(),
+    gstinLookupReturnsDetails(),
+  ]);
   const contactByKind = new Map(company?.contacts.map((contact) => [contact.kind, contact]) ?? []);
 
   return (
@@ -61,6 +77,59 @@ export default async function AccountCompanyPage() {
         <p className="mt-6 rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
           Your access is read-only. A company administrator can change these details.
         </p>
+      ) : null}
+
+      {/*
+        Fill it in from the GSTIN, rather than typing it a fourth time.
+
+        Above the form and not inside it, because it is a different action with
+        a different outcome: this one writes to the record and reloads the page
+        with the values in place, which is what "auto-populated" has to mean on
+        a form built out of uncontrolled inputs.
+
+        Shown only to somebody who may edit, and only when a lookup is possible.
+        Offering a button that cannot work is worse than not offering one.
+      */}
+      {mayEdit && lookupAvailable ? (
+        <div className="mt-8 rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+          <h2 className="text-[15px] font-semibold text-graphite-900">
+            Fill this in from your GSTIN
+          </h2>
+          <p className="mt-1 text-[13px] leading-relaxed text-ink-600">
+            {lookupReturnsDetails
+              ? "Enter your GST number and we will bring in the registered name and address the tax authority holds. Nothing already filled in is replaced unless you ask."
+              : "Enter your GST number and we will confirm the registration and fill in your state and PAN. This site cannot read the registered address, so the rest is yours to fill in."}
+          </p>
+          <div className="mt-4">
+            <AccountForm
+              action={fillCompanyFromGstin}
+              submitLabel={lookupReturnsDetails ? "Fetch my details" : "Check my GSTIN"}
+              pendingLabel="Asking the GST system…"
+            >
+              <Field label="GSTIN" name="gstin" hint="15 characters">
+                <Input
+                  name="gstin"
+                  maxLength={15}
+                  placeholder="22AAAAA0000A1ZC"
+                  className="max-w-[16rem] uppercase"
+                  defaultValue={company?.gstin ?? ""}
+                />
+              </Field>
+              <Checkbox
+                name="replaceExisting"
+                label={
+                  <>
+                    Replace details I have already entered
+                    <span className="mt-0.5 block text-ink-500">
+                      A registered address is often an accountant&rsquo;s office rather than where
+                      you actually sit, so by default we only fill in what is blank.
+                    </span>
+                  </>
+                }
+              />
+            </AccountForm>
+          </div>
+        </div>
       ) : null}
 
       <div className="mt-8">

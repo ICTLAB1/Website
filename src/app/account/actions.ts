@@ -12,6 +12,8 @@ import { recordAudit } from "@/lib/audit";
 import { clientIp } from "@/lib/auth/request";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { decideOnQuote } from "@/lib/quote-service";
+import { lookupGstin, registrationIsActive } from "@/lib/gstin-lookup";
+import { gstStateName, isValidGstin, normaliseGstin, panFromGstin } from "@/lib/gstin";
 import { createOrderFromQuote } from "@/lib/order-service";
 import { z } from "zod";
 
@@ -155,6 +157,171 @@ export async function updateCompany(
 
   revalidatePath("/account/company");
   return { status: "success", message: "Your company details have been updated." };
+}
+
+/**
+ * Fills the company profile in from the GST registration behind a GSTIN.
+ *
+ * The thing a person actually wants when they are typing their own company's
+ * details into a form for the fourth time this month: give the number, get the
+ * name and the address that the tax authority already holds.
+ *
+ * ## What it will and will not overwrite
+ *
+ * Empty fields are filled; filled ones are left alone unless the person ticks
+ * the box that says otherwise. A registered address is the *registered* one,
+ * which is often a chartered accountant's office rather than where the
+ * organisation actually sits, and quietly replacing a delivery address somebody
+ * typed with the address on a certificate is how a consignment goes to the
+ * wrong building. So the default is additive and replacing is a deliberate act.
+ *
+ * ## What it says when it cannot
+ *
+ * Every failure names what happened and what to do about it. "Not connected"
+ * is not the same as "no such GSTIN", and neither is the same as "the provider
+ * is down" — the person reading this has to know whether to check their number,
+ * wait, or tell somebody. The PAN and the state are still filled in either
+ * way: both are arithmetic on the number they typed, and neither needs anybody
+ * to be reachable.
+ */
+export async function fillCompanyFromGstin(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const user = await requireUser("/account/company");
+
+  if (!canInCompany(user, "company.manage")) {
+    return {
+      status: "error",
+      message:
+        "Only a company administrator can change these details. Ask whoever manages your organisation's account.",
+    };
+  }
+
+  const limit = hit(`gstinfill:${user.id}`, 15, 600);
+  if (!limit.allowed) {
+    return { status: "error", message: "Too many lookups just now. Please wait a moment." };
+  }
+
+  const entered = normaliseGstin(String(formData.get("gstin") ?? "").toUpperCase());
+  if (!entered || !isValidGstin(entered)) {
+    return {
+      status: "error",
+      message: "That is not a valid GSTIN. Check the fifteen characters and try again.",
+      fieldErrors: { gstin: ["Fails its own check digit."] },
+    };
+  }
+
+  const replace = formData.get("replaceExisting") === "on";
+  const existing = user.companyId
+    ? await prisma.company.findUnique({
+        where: { id: user.companyId },
+        select: {
+          name: true,
+          addressLine1: true,
+          addressLine2: true,
+          city: true,
+          state: true,
+          postcode: true,
+        },
+      })
+    : null;
+
+  const result = await lookupGstin(entered);
+
+  /*
+   * The offline half happens regardless.
+   *
+   * The state is the first two digits of the number and the PAN is the middle
+   * ten; neither needs a provider, and both are worth writing even when the
+   * lookup could not be made — the state in particular decides whether a
+   * quotation carries IGST or CGST and SGST.
+   */
+  const offline: Record<string, string> = { gstin: entered };
+  const pan = panFromGstin(entered);
+  if (pan) offline.pan = pan;
+  const stateFromNumber = gstStateName(entered);
+  if (stateFromNumber && (replace || !existing?.state)) offline.state = stateFromNumber;
+
+  if (!result.ok) {
+    if (user.companyId) {
+      await prisma.company.update({ where: { id: user.companyId }, data: offline });
+      revalidatePath("/account/company");
+    }
+
+    const message =
+      result.reason === "not_configured"
+        ? "We cannot look GST registrations up on this site yet, so please fill the rest in yourself. Your GSTIN, PAN and state have been saved."
+        : result.reason === "not_found"
+          ? "The GST system has no record of that number. Please check it — the rest of the form is yours to fill in."
+          : result.reason === "malformed"
+            ? "That is not a valid GSTIN."
+            : "The GST system could not be reached just now. Your GSTIN, PAN and state have been saved; please fill the rest in, or try again later.";
+
+    return { status: "error", message };
+  }
+
+  const { details } = result;
+
+  const filled: Record<string, string> = { ...offline };
+  const take = (field: string, value: string | null, current: string | null | undefined) => {
+    if (!value) return;
+    if (!replace && current) return;
+    filled[field] = value;
+  };
+
+  take("name", details.legalName, existing?.name);
+  take("addressLine1", details.address?.line1 ?? null, existing?.addressLine1);
+  take("addressLine2", details.address?.line2 ?? null, existing?.addressLine2);
+  take("city", details.address?.city ?? null, existing?.city);
+  take("state", details.address?.state ?? details.stateName ?? null, existing?.state);
+  take("postcode", details.address?.postcode ?? null, existing?.postcode);
+
+  if (user.companyId) {
+    await prisma.company.update({ where: { id: user.companyId }, data: filled });
+  } else {
+    const company = await prisma.company.create({
+      data: { name: filled.name ?? details.legalName ?? "", ...filled, country: "India" },
+      select: { id: true },
+    });
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { companyId: company.id, companyRole: "ADMIN" },
+    });
+  }
+
+  await recordAudit({
+    actorId: user.id,
+    action: "account.company_filled_from_gstin",
+    entityType: "Company",
+    entityId: user.companyId,
+    metadata: { source: details.source, status: details.status },
+    ip: await clientIp(),
+  });
+
+  revalidatePath("/account/company");
+
+  /*
+   * A cancelled registration is said out loud.
+   *
+   * Filling the form in and staying quiet about the status would be the worst
+   * outcome: everything looks right, and the first anybody hears of it is a
+   * rejected input-tax-credit claim months later.
+   */
+  if (!registrationIsActive(details.status)) {
+    return {
+      status: "error",
+      message: `We filled in what we could, but the GST system reports this registration as ${details.status ?? "not active"}. Please check it before ordering.`,
+    };
+  }
+
+  return {
+    status: "success",
+    message:
+      details.source === "search"
+        ? "Filled in from your GST registration. Please check it over before saving."
+        : "Your GSTIN is registered and active. This site can confirm a registration but not read its address, so please fill the rest in.",
+  };
 }
 
 export async function createSupportTicket(

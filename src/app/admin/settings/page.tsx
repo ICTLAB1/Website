@@ -14,6 +14,8 @@ import { isMailConfigured } from "@/lib/mail";
 import { crmConnection } from "@/lib/crm/outbox";
 import { getMailConfig, getMailSettingsView } from "@/lib/mail-config";
 import { MailSettingsForm } from "@/components/admin/mail-settings-form";
+import { GstinLookupForm } from "@/components/admin/gstin-lookup-form";
+import { getGstinLookupView } from "@/lib/gstin-lookup";
 import { listAuditLog } from "@/lib/queries/admin";
 import { formatDateTime, humanise } from "@/lib/utils";
 
@@ -34,7 +36,7 @@ export const metadata: Metadata = { title: "Settings" };
  */
 export default async function AdminSettingsPage() {
   const admin = await requireAdmin();
-  const [config, stored, missing, audit, payments, mail, mailReady, crmState] = await Promise.all([
+  const [config, stored, missing, audit, payments, mail, mailReady, crmState, gstinLookup] = await Promise.all([
     getSiteConfig(),
     getStoredSettings(),
     getUnconfiguredIdentityKeys(),
@@ -43,6 +45,7 @@ export default async function AdminSettingsPage() {
     getMailSettingsView(),
     isMailConfigured(),
     crmConnection(),
+    getGstinLookupView(),
   ]);
   // What the From header will actually say, after the stored-then-environment
   // fallback — not what is typed in the form, which may be blank and inheriting.
@@ -117,6 +120,19 @@ export default async function AdminSettingsPage() {
         <div className="max-w-2xl space-y-6">
           <MailSettingsForm settings={mail} />
           <TestEmailForm address={admin.email} from={mailFrom} />
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-4 text-[1.05rem]">GSTIN lookup</h2>
+        <p className="mb-4 max-w-2xl text-[13px] leading-relaxed text-ink-600">
+          When a customer enters their GSTIN, this fills in their registered name and address and
+          flags a registration that has been cancelled &mdash; before you quote against it. It
+          needs an account with a GST Suvidha Provider: there is no free public GSTN endpoint, and
+          nothing here works until a host and its credentials are entered.
+        </p>
+        <div className="max-w-2xl">
+          <GstinLookupForm settings={gstinLookup} />
         </div>
       </section>
 
