@@ -146,6 +146,15 @@ export async function buildQuotationPdf(
           discountMinor: true,
           gstRatePercent: true,
           lineTotalMinor: true,
+          /*
+           * The brand's mark, for the table's Brand column.
+           *
+           * Reached through the product rather than matched on `brandName`,
+           * which is the line's own frozen copy and may have been edited to
+           * whatever a tender calls it. A line added by hand has no product and
+           * so no mark, and prints its brand name instead.
+           */
+          product: { select: { brand: { select: { name: true, logoUrl: true } } } },
         },
       },
     },
@@ -347,7 +356,12 @@ export async function buildQuotationPdf(
     quotedTo,
     billing,
     shipping,
-    lines: quote.items,
+    lines: quote.items.map((item) => ({
+      ...item,
+      brandLogo: item.product?.brand.logoUrl
+        ? loadPublicImage(item.product.brand.logoUrl)
+        : null,
+    })),
     config,
     /*
      * Each certification with its own wordmark, where one has been supplied.

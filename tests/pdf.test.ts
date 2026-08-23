@@ -235,7 +235,7 @@ describe("the quotation table", () => {
     const { TABLE_COLUMNS, TABLE_WIDTH } = await import("@/lib/pdf/quotation");
     const { COLUMN_EDGES } = await import("@/lib/pdf/quotation");
 
-    expect(TABLE_COLUMNS.length).toBe(13);
-    expect(COLUMN_EDGES.total.right - COLUMN_EDGES.sno.left).toBeCloseTo(TABLE_WIDTH, 5);
+    expect(TABLE_COLUMNS.length).toBe(9);
+    expect(COLUMN_EDGES.taxable.right - COLUMN_EDGES.sno.left).toBeCloseTo(TABLE_WIDTH, 5);
   });
 });

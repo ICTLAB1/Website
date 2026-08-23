@@ -76,6 +76,15 @@ export type QuotationLine = {
   productName: string;
   description: string | null;
   brandName: string | null;
+  /**
+   * The brand's own mark, decoded, where the catalogue holds one.
+   *
+   * Resolved by the caller, like every other image here, so this module never
+   * reads a file. A line with no mark falls back to the brand's name in type;
+   * a line with neither — a service, a delivery charge — leaves the cell empty
+   * rather than printing a dash for a brand that does not exist.
+   */
+  brandLogo?: EmbeddedImage | null;
   sku: string;
   hsnCode: string | null;
   quantity: number;
@@ -199,26 +208,28 @@ const FOOTER_RULE = 806;
 /**
  * The line-item columns, as widths that sum to the content width.
  *
- * Thirteen columns on A4 portrait is tight, and the widths are apportioned by
- * what each one has to hold rather than evenly: a part number and an HSN code
- * are fixed-length and narrow, a product name and its description are neither.
+ * Nine, down from thirteen. The four that went — HSN, tax rate, tax amount and
+ * an inclusive total — were each a real fact squeezed into twenty points, and
+ * together they left the description column too narrow to hold a product name
+ * without wrapping three times. Every one of them still appears: the HSN codes
+ * and the tax split are in the summary beneath the table, where they have room
+ * to be read, and where a customer's accounts department expects to find them.
+ *
+ * What the table is for is the offer itself: what, whose, which part number,
+ * how many, at what price, less what, equals what.
  */
 const COLUMNS = [
-  { key: "sno", label: "S.No.", width: 24, align: "centre" },
-  { key: "product", label: "Product Description", width: 80, align: "left" },
-  { key: "description", label: "Description", width: 58, align: "left" },
-  { key: "brand", label: "Brand", width: 40, align: "left" },
-  { key: "sku", label: "SKU / Part No.", width: 54, align: "left" },
-  { key: "hsn", label: "HSN", width: 32, align: "centre" },
-  { key: "qty", label: "Qty", width: 20, align: "right" },
-  { key: "unit", label: "Unit", width: 30, align: "left" },
-  { key: "price", label: "Unit Price", width: 45, align: "right" },
-  { key: "disc", label: "Disc. (%)", width: 22, align: "right" },
-  { key: "tax", label: "Tax %", width: 19, align: "right" },
-  { key: "gst", label: "GST Amount", width: 46, align: "right" },
+  { key: "sno", label: "SR. NO.", width: 26, align: "centre" },
+  { key: "description", label: "PRODUCT / SERVICE DESCRIPTION", width: 130, align: "left" },
+  { key: "brand", label: "BRAND", width: 52, align: "centre" },
+  { key: "sku", label: "PART / SKU", width: 58, align: "left" },
+  { key: "qty", label: "QTY", width: 26, align: "centre" },
+  { key: "unit", label: "UNIT", width: 32, align: "centre" },
+  { key: "price", label: "UNIT PRICE", width: 56, align: "right" },
+  { key: "disc", label: "DISCOUNT", width: 52, align: "right" },
   // The last column takes whatever is left, so the table's right edge lands
   // exactly on the margin however the others are re-apportioned.
-  { key: "total", label: "Total", width: 0, align: "right" },
+  { key: "taxable", label: "TAXABLE VALUE", width: 0, align: "right" },
 ] as const;
 
 type ColumnKey = (typeof COLUMNS)[number]["key"];
@@ -272,13 +283,6 @@ function termLines(terms: string | null): string[] {
     .map((line) => line.replace(/^\s*[-*•]\s*/, "").trim())
     .filter(Boolean)
     .slice(0, 40);
-}
-
-/** The discount as the percentage it was set as, for the column that shows one. */
-function discountPercent(line: QuotationLine): number {
-  const gross = line.unitPriceMinor * line.quantity;
-  if (gross <= 0 || line.discountMinor <= 0) return 0;
-  return (line.discountMinor / gross) * 100;
 }
 
 function lineTax(line: QuotationLine): number {
@@ -603,66 +607,62 @@ function drawCommercialStrip(pdf: PdfDocument, input: QuotationPdfInput, top: nu
 
 // ------------------------------------------------------------- line items
 
-function drawTableHeader(pdf: PdfDocument, top: number): number {
-  const height = 22;
-  pdf.rect(MARGIN, top, CONTENT, height, PANEL);
-  pdf.strokeRect(MARGIN, top, CONTENT, height, LINE_RULE, 0.7);
+function drawTableHeader(pdf: PdfDocument, top: number, currency: string): number {
+  const height = 24;
+  pdf.rect(MARGIN, top, CONTENT, height, NAVY);
 
   for (const column of COLUMNS) {
     const box = COLUMN_X[column.key];
 
     /*
      * The money headings carry the currency, so the cells beneath them do not
-     * have to. Thirteen columns on A4 cannot spare "INR " on every figure, and
+     * have to. Nine columns on A4 cannot spare "INR " on every figure, and
      * stating the unit once at the top of a column is how a ledger does it.
      */
-    const label = ["price", "gst", "total"].includes(column.key)
-      ? `${column.label} (INR)`
-      : column.label;
+    const money = ["price", "disc", "taxable"].includes(column.key);
+    const lines = wrap(column.label, box.width - CELL_PAD * 2, LABEL_SIZE, "sansBold").slice(0, 2);
+    if (money) lines.push(`(${currency})`);
 
-    const lines = wrap(label, box.width - CELL_PAD * 2, LABEL_SIZE, "sansBold").slice(0, 2);
-    let y = top + (lines.length > 1 ? 9 : 13);
+    let y = top + (lines.length > 1 ? 10 : 14);
 
     for (const line of lines) {
-      if (column.align === "right") {
-        pdf.textRight(line, box.right - CELL_PAD, y, {
-          size: LABEL_SIZE,
-          font: "sansBold",
-          colour: SOFT,
-        });
-      } else if (column.align === "centre") {
-        pdf.textCentre(line, box.left + box.width / 2, y, {
-          size: LABEL_SIZE,
-          font: "sansBold",
-          colour: SOFT,
-        });
-      } else {
-        pdf.text(line, box.left + CELL_PAD, y, {
-          size: LABEL_SIZE,
-          font: "sansBold",
-          colour: SOFT,
-        });
-      }
+      const style = { size: LABEL_SIZE, font: "sansBold" as const, colour: WHITE, tracking: 0.25 };
+      if (column.align === "right") pdf.textRight(line, box.right - CELL_PAD, y, style);
+      else if (column.align === "centre") pdf.textCentre(line, box.left + box.width / 2, y, style);
+      else pdf.text(line, box.left + CELL_PAD, y, style);
       y += 7.4;
     }
-
   }
 
   return top + height;
 }
 
 function drawLineItems(pdf: PdfDocument, input: QuotationPdfInput, top: number): number {
-  let y = drawTableHeader(pdf, top);
+  let y = drawTableHeader(pdf, top, input.currency);
   let segmentTop = y;
 
+  /** The box a brand mark is fitted into, and the room a text fallback needs. */
+  const BRAND_HEIGHT = 16;
+
   input.lines.forEach((line, index) => {
-    const product = wrap(line.productName, COLUMN_X.product.width - CELL_PAD * 2, BODY_SIZE, "sansBold");
-    const description = line.description
-      ? wrap(line.description, COLUMN_X.description.width - CELL_PAD * 2, BODY_SIZE)
-      : [];
-    const brand = line.brandName
-      ? wrap(line.brandName, COLUMN_X.brand.width - CELL_PAD * 2, BODY_SIZE)
-      : [];
+    /*
+     * Name and description share one column, stacked.
+     *
+     * They are one thought — "HP EliteBook 840 G11", then the configuration
+     * that says which one — and the design gives them the width to be read as
+     * one. Split across two narrow columns, as they were, a name wrapped three
+     * times beside a description wrapping four.
+     */
+    const inner = COLUMN_X.description.width - CELL_PAD * 2;
+    const name = wrap(line.productName, inner, BODY_SIZE, "sansBold");
+    const description = line.description ? wrap(line.description, inner, BODY_SIZE) : [];
+
+    const brandText = line.brandLogo
+      ? []
+      : line.brandName
+        ? wrap(line.brandName, COLUMN_X.brand.width - CELL_PAD * 2, BODY_SIZE)
+        : [];
+
     /*
      * The part number wraps rather than being cut.
      *
@@ -672,8 +672,11 @@ function drawLineItems(pdf: PdfDocument, input: QuotationPdfInput, top: number):
      */
     const sku = wrap(line.sku, COLUMN_X.sku.width - CELL_PAD * 2, BODY_SIZE, "mono");
 
-    const rows = Math.max(product.length, description.length, brand.length, sku.length, 1);
-    const height = Math.max(20, rows * 8.4 + 10);
+    const textRows = Math.max(name.length + description.length, brandText.length, sku.length, 1);
+    const height = Math.max(
+      line.brandLogo ? BRAND_HEIGHT + 12 : 20,
+      textRows * 8.4 + 10,
+    );
 
     /*
      * A page break before a row, never through one. A line item split across
@@ -683,7 +686,7 @@ function drawLineItems(pdf: PdfDocument, input: QuotationPdfInput, top: number):
     if (y + height > PAGE_BOTTOM) {
       closeTable(pdf, segmentTop, y);
       pdf.addPage();
-      y = drawTableHeader(pdf, 48);
+      y = drawTableHeader(pdf, 48, input.currency);
       segmentTop = y;
     }
 
@@ -700,7 +703,7 @@ function drawLineItems(pdf: PdfDocument, input: QuotationPdfInput, top: number):
       const style = {
         size: BODY_SIZE,
         font: options.font ?? (options.bold ? ("sansBold" as const) : ("sans" as const)),
-        colour: options.colour ?? BLACK,
+        colour: options.colour ?? TEXT_INK,
       };
 
       if (column.align === "right") pdf.textRight(value, box.right - CELL_PAD, lineY, style);
@@ -709,25 +712,43 @@ function drawLineItems(pdf: PdfDocument, input: QuotationPdfInput, top: number):
     };
 
     cell("sno", String(index + 1));
-    product.forEach((text, row) => cell("product", text, { bold: true, row }));
-    description.forEach((text, row) => cell("description", text, { row, colour: SOFT }));
-    brand.forEach((text, row) => cell("brand", text, { row }));
-    sku.forEach((text, row) => cell("sku", text, { font: "mono", row }));
-    // A dash, not a blank and never a guess: an HSN code this application chose
-    // would be a tax classification the business never made.
-    cell("hsn", line.hsnCode ? fit(line.hsnCode, COLUMN_X.hsn.width - 4, BODY_SIZE, "mono") : "—", {
-      font: line.hsnCode ? "mono" : undefined,
-      colour: line.hsnCode ? BLACK : FAINT,
-    });
-    cell("qty", String(line.quantity));
-    cell("unit", fit(line.unitLabel ?? "", COLUMN_X.unit.width - CELL_PAD * 2, BODY_SIZE));
-    cell("price", pdfAmount(line.unitPriceMinor, input.currency));
+    name.forEach((text, row) => cell("description", text, { bold: true, row }));
+    description.forEach((text, row) =>
+      cell("description", text, { row: name.length + row, colour: SOFT }),
+    );
 
-    const percent = discountPercent(line);
-    cell("disc", percent > 0 ? percent.toFixed(2) : "0.00", { colour: percent > 0 ? BLACK : FAINT });
-    cell("tax", `${line.gstRatePercent}%`);
-    cell("gst", pdfAmount(lineTax(line), input.currency));
-    cell("total", pdfAmount(line.lineTotalMinor + lineTax(line), input.currency), { bold: true });
+    /*
+     * The brand as its own mark where there is one, and its name otherwise.
+     *
+     * A mark is recognised before it is read, which is the whole reason this
+     * column exists on a document somebody is scanning for what is in it. It is
+     * fitted into a fixed box rather than scaled to the column, so an Acer
+     * wordmark and an HP roundel — one four times wider than the other — end up
+     * at the same optical weight instead of one dwarfing the next.
+     */
+    if (line.brandLogo) {
+      const box = COLUMN_X.brand;
+      pdf.image(
+        line.brandLogo,
+        box.left + CELL_PAD,
+        y + (height - BRAND_HEIGHT) / 2,
+        box.width - CELL_PAD * 2,
+        BRAND_HEIGHT,
+      );
+    } else {
+      brandText.forEach((text, row) => cell("brand", text, { row }));
+    }
+
+    sku.forEach((text, row) => cell("sku", text, { font: "mono", row }));
+    cell("qty", String(line.quantity));
+    cell("unit", fit(line.unitLabel ?? "—", COLUMN_X.unit.width - CELL_PAD * 2, BODY_SIZE), {
+      colour: line.unitLabel ? TEXT_INK : FAINT,
+    });
+    cell("price", pdfAmount(line.unitPriceMinor, input.currency));
+    cell("disc", line.discountMinor > 0 ? pdfAmount(line.discountMinor, input.currency) : "—", {
+      colour: line.discountMinor > 0 ? TEXT_INK : FAINT,
+    });
+    cell("taxable", pdfAmount(line.lineTotalMinor, input.currency), { bold: true });
 
     y += height;
     pdf.line(MARGIN, y, RIGHT, y, HAIRLINE, 0.5);
