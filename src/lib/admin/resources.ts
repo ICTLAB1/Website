@@ -21,6 +21,7 @@ export type ResourceKey =
   | "faqs"
   | "banners"
   | "certifications"
+  | "testimonials"
   | "jobs";
 
 export type ListColumn = {
@@ -44,6 +45,7 @@ export type ResourceConfig = {
     | "faq"
     | "banner"
     | "certification"
+    | "testimonial"
     | "jobPosting";
   label: { singular: string; plural: string };
   description: string;
@@ -297,6 +299,130 @@ export const RESOURCES: Record<ResourceKey, ResourceConfig> = {
       { kind: "date", name: "issuedAt", label: "Date of certification", required: true, group: PUBLICATION_GROUP },
       { kind: "date", name: "expiresAt", label: "Expires", hint: "After this date it is hidden from the public site.", group: PUBLICATION_GROUP },
       { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
+    ],
+  },
+
+  testimonials: {
+    key: "testimonials",
+    model: "testimonial",
+    label: { singular: "Testimonial", plural: "Testimonials" },
+    description:
+      "Quotes from customers, in their own words. Nothing here reaches the public site without a recorded consent date — publishing a named person, their job title and their employer on our website is something they have to have agreed to, and “they said it in an email” is only a record if somebody wrote it down.",
+    /*
+     * "admin", like the other content that changes what every visitor sees, and
+     * for a sharper reason than most: a testimonial is a claim about a real
+     * named person made on this business's behalf. Getting it wrong is not a
+     * content bug, it is a thing you apologise to a customer for.
+     */
+    guard: "admin",
+    softDelete: true,
+    orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+    searchFields: ["quote", "authorName", "organisation"],
+    tagsFor: () => [tags.testimonials, tags.pages],
+    listColumns: [
+      { header: "Who", path: "authorName", primary: true },
+      { header: "Organisation", path: "organisation" },
+      { header: "About", path: "brand.name" },
+      { header: "Consent", path: "consentOn", format: "date" },
+      { header: "Status", path: "status", format: "badge" },
+      { header: "Featured", path: "featured", format: "boolean" },
+      { header: "Order", path: "displayOrder", format: "number" },
+    ],
+    fields: [
+      {
+        kind: "textarea",
+        name: "quote",
+        label: "What they said",
+        required: true,
+        rows: 5,
+        maxLength: 1200,
+        hint: "Their words, not a tidied version of them. Trim it here if it needs trimming, so the record and the page say the same thing.",
+        group: "The quote",
+      },
+      {
+        kind: "text",
+        name: "authorName",
+        label: "Name",
+        required: true,
+        maxLength: 120,
+        hint: "A first name and an initial is fine if that is what they asked for. Leaving it blank is not — an unattributed testimonial on our own site tells a reader nothing.",
+        group: "The quote",
+      },
+      {
+        kind: "text",
+        name: "authorRole",
+        label: "Their role",
+        maxLength: 120,
+        placeholder: "IT Manager",
+        group: "The quote",
+      },
+      {
+        kind: "text",
+        name: "organisation",
+        label: "Organisation",
+        maxLength: 160,
+        hint: "Only if they agreed to it being named. Some customers will give a quote but not their employer.",
+        group: "The quote",
+      },
+      {
+        kind: "date",
+        name: "consentOn",
+        label: "Consent given on",
+        hint: "Required before this can be published. The date they agreed we could use it.",
+        group: "Consent",
+      },
+      {
+        kind: "textarea",
+        name: "consentNote",
+        label: "How consent was given",
+        rows: 3,
+        maxLength: 600,
+        hint: "Enough that somebody else could check it in a year — e.g. “Email from Priya, 14 August, confirming we can use her name and Vertex Logistics”.",
+        group: "Consent",
+      },
+      {
+        kind: "relation",
+        name: "brandId",
+        label: "About a brand",
+        resource: "brand",
+        hint: "Optional. Shows the quote on that brand's page as well.",
+        group: "Where it appears",
+      },
+      {
+        kind: "relation",
+        name: "serviceId",
+        label: "About a service",
+        resource: "service",
+        hint: "Optional. Shows the quote on that service's page as well.",
+        group: "Where it appears",
+      },
+      {
+        kind: "select",
+        name: "status",
+        label: "Status",
+        required: true,
+        options: [
+          { value: "DRAFT", label: "Draft" },
+          { value: "PUBLISHED", label: "Published" },
+        ],
+        hint: "Publishing without a consent date is refused.",
+        group: PUBLICATION_GROUP,
+      },
+      {
+        kind: "checkbox",
+        name: "featured",
+        label: "Feature it",
+        hint: "Featured quotes come first wherever testimonials are shown.",
+        group: PUBLICATION_GROUP,
+      },
+      {
+        kind: "number",
+        name: "displayOrder",
+        label: "Display order",
+        min: 0,
+        max: 10_000,
+        group: PUBLICATION_GROUP,
+      },
     ],
   },
 

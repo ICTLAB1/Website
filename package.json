@@ -22,7 +22,7 @@
     "verify:responsive": "node scripts/verify/responsive.mjs",
     "verify:a11y": "node scripts/verify/accessibility.mjs",
     "verify:interactions": "node scripts/verify/interactions.mjs",
-    "verify": "npm run verify:responsive && npm run verify:a11y && npm run verify:motion && npm run verify:interactions && npm run verify:faq && npm run verify:lifecycle && npm run verify:admin && npm run verify:cms && npm run verify:page-editor && npm run verify:navigation && npm run verify:uploads && npm run verify:hardware && npm run verify:product-photos && npm run verify:requirements && npm run verify:careers && npm run verify:crm && npm run verify:quote-editing && npm run verify:quote-revisions && npm run verify:purchase-orders && npm run verify:portal && npm run verify:organisations && npm run verify:partners && npm run verify:users && npm run verify:settings && npm run verify:payment-settings && npm run verify:payments && npm run verify:authz && npm run verify:attack && npm run verify:acceptance && npm run verify:crawl && npm run verify:seo",
+    "verify": "npm run verify:responsive && npm run verify:a11y && npm run verify:motion && npm run verify:interactions && npm run verify:faq && npm run verify:lifecycle && npm run verify:admin && npm run verify:cms && npm run verify:page-editor && npm run verify:navigation && npm run verify:uploads && npm run verify:hardware && npm run verify:product-photos && npm run verify:requirements && npm run verify:careers && npm run verify:reviews && npm run verify:crm && npm run verify:quote-editing && npm run verify:quote-revisions && npm run verify:purchase-orders && npm run verify:portal && npm run verify:organisations && npm run verify:partners && npm run verify:users && npm run verify:settings && npm run verify:payment-settings && npm run verify:payments && npm run verify:authz && npm run verify:attack && npm run verify:acceptance && npm run verify:crawl && npm run verify:seo",
     "check": "npm run typecheck && npm run lint && npm test && npm run build",
     "verify:lifecycle": "node scripts/verify/lifecycle.mjs",
     "verify:attack": "bash scripts/verify/attack.sh",
@@ -53,7 +53,8 @@
     "verify:quote-editing": "node scripts/verify/quote-editing.mjs",
     "verify:quote-revisions": "node scripts/verify/quote-revisions.mjs",
     "verify:purchase-orders": "node scripts/verify/purchase-orders.mjs",
-    "verify:portal": "node scripts/verify/portal.mjs"
+    "verify:portal": "node scripts/verify/portal.mjs",
+    "verify:reviews": "node scripts/verify/reviews.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

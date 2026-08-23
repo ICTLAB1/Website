@@ -237,6 +237,33 @@ export const companyInfoSchema = z.object({
   footnote: optionalText(1200),
 });
 
+/**
+ * Customer testimonials, pulled live from the testimonial table.
+ *
+ * The block carries no quotes of its own — only which ones to show and how many.
+ * That is deliberate and it is the same decision `PRODUCT_GRID` makes: a quote
+ * typed into a page block would be a testimonial with no consent record behind
+ * it, and consent is the thing that makes publishing one permissible. Everything
+ * here comes from a row that has one.
+ *
+ * `source` picks the set. "featured" is the handful marked for the front page;
+ * "all" is everything published, newest first, for a dedicated page.
+ */
+export const testimonialsSchema = z.object({
+  eyebrow: optionalText(80),
+  heading: optionalText(200),
+  description: optionalText(800),
+  source: z.enum(["featured", "all"]).optional().default("featured"),
+  limit: z.coerce.number().int().min(1).max(24).optional().default(3),
+  /**
+   * What to say when there are none — which is the state this site ships in,
+   * and will stay in until real customers have given real quotes. Empty means
+   * the block renders nothing at all rather than an empty heading, so a page
+   * with this on it does not look broken before the first testimonial arrives.
+   */
+  emptyText: optionalText(400),
+});
+
 export const noticeSchema = z.object({
   tone: z.enum(["info", "warning"]).optional().default("info"),
   heading: optionalText(200),
@@ -293,6 +320,7 @@ export const BLOCK_SCHEMAS = {
   NOTICE: noticeSchema,
   CTA_BANNER: ctaBannerSchema,
   PLANS: plansSchema,
+  TESTIMONIALS: testimonialsSchema,
 } as const;
 
 export type BlockType = keyof typeof BLOCK_SCHEMAS;
@@ -348,6 +376,7 @@ export const BLOCK_SEEDS: { [T in BlockType]: BlockData<T> } = {
   NOTICE: noticeSchema.parse({ tone: "info", markdown: "Something worth saying before the rest of the page." }),
   CTA_BANNER: ctaBannerSchema.parse({ heading: "New call to action", tone: "dark" }),
   PLANS: plansSchema.parse({ items: [{ name: "Plan", summary: "What it includes." }] }),
+  TESTIMONIALS: testimonialsSchema.parse({ heading: "What our customers say", source: "featured", limit: 3 }),
 };
 
 /** Human labels for the block picker in the admin panel. */
@@ -369,4 +398,5 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
   NOTICE: "Notice",
   CTA_BANNER: "Call to action",
   PLANS: "Plan comparison",
+  TESTIMONIALS: "Testimonials",
 };

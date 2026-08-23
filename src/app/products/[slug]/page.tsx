@@ -21,6 +21,9 @@ import { getProductBySlug, getRelatedProducts } from "@/lib/queries/catalogue";
 import { effectivePriceMinor } from "@/lib/money";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { metaDescription } from "@/lib/seo-description";
+import { productRating, productReviews } from "@/lib/queries/reviews";
+import { mayPublishAggregateRating, MAX_RATING, MIN_RATING } from "@/lib/reviews";
+import { ReviewList } from "@/components/reviews/review-list";
 import { getSiteConfig } from "@/lib/site-config";
 import { getDisplayCurrency } from "@/lib/display-currency";
 
@@ -99,6 +102,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
     4,
   );
   const config = await getSiteConfig();
+  const [reviews, rating] = await Promise.all([
+    productReviews(product.slug),
+    productRating(product.slug),
+  ]);
 
   const defaultVariant = product.variants[0];
   const lowestPrice = product.variants
@@ -150,6 +157,37 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   ? "https://schema.org/Discontinued"
                   : "https://schema.org/PreOrder",
             seller: { "@type": "Organization", name: config.entityName },
+          },
+        }
+      : {}),
+    /*
+     * `aggregateRating`, and only when there is something to aggregate.
+     *
+     * Review markup is the most abused structured data on the web, and search
+     * engines police it in proportion: stars on a page with no visible reviews,
+     * or reviews a business wrote about itself, cost a domain its rich results
+     * and sometimes more than that. Three things have to hold before this is
+     * emitted, and all three are enforced rather than assumed —
+     *
+     *   the reviews are APPROVED, which `productRating` requires;
+     *   each one traces to an order placed by the account that wrote it, which
+     *     `submitReview` establishes and the schema's non-null `orderId` keeps;
+     *   they are rendered on this page, immediately below, so a reader can
+     *     check the number against the reviews it came from.
+     *
+     * `mayPublishAggregateRating` is the gate. It says no on zero reviews,
+     * which is the case this exists for: an empty `aggregateRating` with a
+     * `ratingValue` of 0 is a product advertised to Google as universally
+     * disliked.
+     */
+    ...(mayPublishAggregateRating(rating) && rating.average !== null
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: rating.average,
+            reviewCount: rating.count,
+            bestRating: MAX_RATING,
+            worstRating: MIN_RATING,
           },
         }
       : {}),
@@ -492,6 +530,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <FaqList items={product.faqs.map((faq) => ({ question: faq.question, answer: faq.answer }))} />
         </section>
       ) : null}
+
+      {/*
+        Above related products, below the FAQs. A reader who has got this far
+        is deciding, and what other buyers said belongs in that decision rather
+        than after the invitation to go and look at something else.
+      */}
+      <ReviewList reviews={reviews} summary={rating} />
 
       {related.length > 0 ? (
         <section className="mt-16">

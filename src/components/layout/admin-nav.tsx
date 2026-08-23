@@ -29,6 +29,13 @@ const SECTIONS: Array<{ heading: string; links: Array<{ href: string; label: str
       { href: "/admin/renewals", label: "Renewals" },
       { href: "/admin/devices", label: "Devices" },
       { href: "/admin/support", label: "Support" },
+      /*
+       * Under Sales rather than Content, and open to SALES rather than
+       * admin-only. A pending review is a customer waiting on somebody, which
+       * is the same shape of thing as an enquiry — and a queue only an
+       * administrator can clear is a queue that sits for a week.
+       */
+      { href: "/admin/reviews", label: "Reviews" },
     ],
   },
   {
@@ -49,6 +56,7 @@ const SECTIONS: Array<{ heading: string; links: Array<{ href: string; label: str
       { href: "/admin/banners", label: "Banners", adminOnly: true },
       { href: "/admin/posts", label: "Articles", adminOnly: true },
       { href: "/admin/jobs", label: "Jobs", adminOnly: true },
+      { href: "/admin/testimonials", label: "Testimonials", adminOnly: true },
     ],
   },
   {

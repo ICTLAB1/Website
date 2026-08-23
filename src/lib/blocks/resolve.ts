@@ -4,7 +4,11 @@ import { cached } from "@/lib/queries/cached";
 import { tags } from "@/lib/cache";
 import { productListSelect, type ProductListItem } from "@/lib/queries/catalogue";
 import { getFaqsByBrandSlug, getFaqsByTopic } from "@/lib/queries/content";
+import { publishedTestimonials } from "@/lib/queries/reviews";
 import type { ParsedBlock } from "@/lib/blocks/schemas";
+
+/** One row as `publishedTestimonials` returns it. */
+export type PublishedTestimonial = Awaited<ReturnType<typeof publishedTestimonials>>[number];
 
 /**
  * Resolves the live data a page's blocks need.
@@ -22,6 +26,12 @@ export type ResolvedBlockData = {
   products: Map<string, ProductListItem[]>;
   collections: Map<string, unknown[]>;
   faqs: Map<string, Array<{ question: string; answer: string }>>;
+  /**
+   * Testimonials per block. Read here rather than in the component for the
+   * same reason as products and FAQs — the renderer is synchronous, and a
+   * block that fetched its own data would fetch it once per render.
+   */
+  testimonials: Map<string, PublishedTestimonial[]>;
   counts: {
     productCount: number;
     skuCount: number;
@@ -234,6 +244,7 @@ export async function resolveBlocks(
   const products = new Map<string, ProductListItem[]>();
   const collections = new Map<string, unknown[]>();
   const faqs = new Map<string, Array<{ question: string; answer: string }>>();
+  const testimonials = new Map<string, PublishedTestimonial[]>();
 
   // Both STAT_BAR and a hero carrying statistics can request live counts.
   const needsCounts = blocks.some(
@@ -247,6 +258,16 @@ export async function resolveBlocks(
       if (block.type === "PRODUCT_GRID") products.set(block.id, await productsFor(block));
       else if (block.type === "COLLECTION_GRID") collections.set(block.id, await collectionFor(block));
       else if (block.type === "FAQ") faqs.set(block.id, await faqsFor(block, page));
+      else if (block.type === "TESTIMONIALS") {
+        /*
+         * Both sources read the same published-and-consented set; "featured"
+         * simply narrows it. Nothing here can reach a quote without a consent
+         * date, because `publishedTestimonials` will not return one.
+         */
+        const all = await publishedTestimonials();
+        const chosen = block.data.source === "featured" ? all.slice(0, block.data.limit) : all;
+        testimonials.set(block.id, chosen.slice(0, block.data.limit));
+      }
     }),
   ]);
 
@@ -254,6 +275,7 @@ export async function resolveBlocks(
     products,
     collections,
     faqs,
+    testimonials,
     counts: needsCounts
       ? await getCounts()
       : { productCount: 0, skuCount: 0, brandCount: 0, categoryCount: 0 },

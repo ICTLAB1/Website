@@ -128,7 +128,31 @@ async function becomeAdmin(context) {
   const after = sql('select count(*) from "NavigationItem"');
   check("control: the same submission as ADMIN does write",
     Number(after) === Number(before) + 1, `${before} -> ${after}`);
-  sql(`delete from "NavigationItem" where label='Control ${stamp}'`);
+
+  /*
+   * Removed through the editor rather than with a DELETE.
+   *
+   * A raw delete takes the row and leaves `tags.navigation` holding it, so the
+   * header goes on rendering a link to a page that does not exist — which is
+   * what `verify:crawl` then reports as a broken link, from a fixture that the
+   * database says was cleaned up. A cache is only invalidated by the code that
+   * knows it should be.
+   */
+  const itemId = sql(`select id from "NavigationItem" where label='Control ${stamp}'`);
+  // By id, not by text: each row's Remove form holds only a hidden `itemId` and
+  // its button, so the label sits outside the form and `hasText` never matches.
+  const remove = page
+    .locator("main")
+    .locator("form")
+    .filter({ has: page.getByRole("button", { name: "Remove" }) })
+    .filter({ has: page.locator(`input[name="itemId"][value="${itemId}"]`) })
+    .first();
+  await remove.getByRole("button", { name: "Remove" }).click();
+  await page.waitForTimeout(2500);
+  check(
+    "control: and the editor removes it, invalidating the cached menu",
+    sql(`select count(*) from "NavigationItem" where label='Control ${stamp}'`) === "0",
+  );
 
   await becomeSales(admin);
   await page.goto(`${BASE}/admin`, { waitUntil: "load" });

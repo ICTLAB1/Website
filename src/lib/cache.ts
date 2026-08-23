@@ -36,6 +36,19 @@ export const tags = {
   /** Independently issued certifications shown on the homepage and about page. */
   certifications: "certifications",
   /**
+   * Customer testimonials, which appear on the homepage, brand pages and
+   * service pages — so one tag rather than per-page, since a single quote can
+   * be shown in several of those at once.
+   */
+  testimonials: "testimonials",
+  /**
+   * Approved product reviews. Per product as well as globally: moderating one
+   * review must refresh that product's page and the listing that shows its
+   * star rating, without discarding every other product's cached reviews.
+   */
+  reviews: "reviews",
+  productReviews: (slug: string) => `reviews:${slug}`,
+  /**
    * The company's business identity: contact details, registered address,
    * statutory identifiers and the grievance officer. Its own tag because it is
    * read by the header and the footer, so by every page — invalidating it after

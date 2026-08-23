@@ -21,6 +21,8 @@ import { getSiteConfig } from "@/lib/site-config";
 import { productListSelect } from "@/lib/queries/catalogue";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { metaDescription } from "@/lib/seo-description";
+import { testimonialsForBrand } from "@/lib/queries/reviews";
+import { Testimonials } from "@/components/reviews/testimonials";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -88,7 +90,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       "Sourced and quoted by TechZoid alongside the rest of your software and hardware.",
     ),
     path: `/brands/${brand.slug}`,
-    keywords: [brand.name, `${brand.name} licensing`, `buy ${brand.name}`],
+    /*
+     * Shape-aware too, and for the same reason as the title.
+     *
+     * "Lenovo licensing" was in the keywords of all forty of these pages after
+     * the heading had already been fixed — the same claim, one tag lower down,
+     * which is exactly where a corrected claim survives. A keyword is a
+     * statement about what the page is for, and "Lenovo licensing" describes a
+     * thing that does not exist.
+     */
+    keywords: [
+      brand.name,
+      ...(shape.licences > 0 ? [`${brand.name} licensing`] : []),
+      ...(shape.hardware > 0 ? [`${brand.name} business hardware`] : []),
+      `buy ${brand.name}`,
+      `${brand.name} India`,
+    ],
   });
 }
 
@@ -97,7 +114,7 @@ export default async function BrandPage({ params }: PageProps) {
   const brand = await getBrandBySlug(slug);
   if (!brand) notFound();
 
-  const [categories, featured, allServices, hardware, config, shape] = await Promise.all([
+  const [categories, featured, allServices, hardware, config, shape, quotes] = await Promise.all([
     getBrandCategories(brand.id),
     prisma.product.findMany({
       where: { brandId: brand.id, status: "ACTIVE", deletedAt: null },
@@ -109,6 +126,7 @@ export default async function BrandPage({ params }: PageProps) {
     getBrandHardware(brand.slug),
     getSiteConfig(),
     getBrandCatalogueShape(brand.id),
+    testimonialsForBrand(brand.slug),
   ]);
 
   /*
@@ -365,7 +383,8 @@ export default async function BrandPage({ params }: PageProps) {
         <section className="border-t border-line py-14">
           <SectionHeader
             title="Enterprise solutions"
-            description={`How ${brand.name} licensing is handled at organisational scale.`}
+            /* Fourth instance. "Procurement" is true for a licence and a laptop alike. */
+            description={`How ${brand.name} procurement is handled at organisational scale.`}
             as="h2"
           />
           <div className="grid gap-4 md:grid-cols-3">
@@ -416,9 +435,26 @@ export default async function BrandPage({ params }: PageProps) {
           </section>
         ) : null}
 
+        {quotes.length > 0 ? (
+          <section className="border-t border-line py-14">
+            <Testimonials
+              items={quotes}
+              heading={`What customers say about ${brand.name} through us`}
+              description="Published with their permission."
+            />
+          </section>
+        ) : null}
+
         {brand.faqs.length > 0 ? (
           <section id="faq" className="max-w-3xl scroll-mt-32 border-t border-line py-14">
-            <SectionHeader title={`${brand.name} licensing questions`} as="h2" className="mb-6" />
+            {/*
+              Third instance of the same wrong claim, found after the title and
+              the heading had both been fixed. "Lenovo licensing questions" is
+              about a thing that does not exist, and a corrected claim survives
+              in exactly this kind of place — a heading nobody thinks of as a
+              claim. Neutral wording, so it cannot be wrong for any brand.
+            */}
+            <SectionHeader title={`${brand.name} questions`} as="h2" className="mb-6" />
             <FaqList items={brand.faqs.map((faq) => ({ question: faq.question, answer: faq.answer }))} />
           </section>
         ) : null}

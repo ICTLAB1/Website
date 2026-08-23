@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SectionHeader } from "@/components/ui/section-header";
+import { Testimonials } from "@/components/reviews/testimonials";
+import { testimonialsForService } from "@/lib/queries/reviews";
 import { FaqList } from "@/components/ui/accordion";
 import { ButtonLink } from "@/components/ui/button";
 import { getServiceBySlug, parseProcess } from "@/lib/queries/content";
@@ -55,7 +57,10 @@ export default async function ServicePage({ params }: PageProps) {
   if (!service) notFound();
 
   const steps = parseProcess(service.process);
-  const config = await getSiteConfig();
+  const [config, quotes] = await Promise.all([
+    getSiteConfig(),
+    testimonialsForService(service.slug),
+  ]);
 
   return (
     <div className="pb-16">
@@ -180,6 +185,16 @@ export default async function ServicePage({ params }: PageProps) {
         ) : null}
 
         {/* FAQ */}
+        {quotes.length > 0 ? (
+          <section className="border-t border-line py-14">
+            <Testimonials
+              items={quotes}
+              heading={`What customers say about ${service.name}`}
+              description="Published with their permission."
+            />
+          </section>
+        ) : null}
+
         {service.faqs.length > 0 ? (
           <section id="faq" className="max-w-3xl scroll-mt-32 border-b border-line py-14">
             <SectionHeader title="Frequently asked questions" as="h2" className="mb-6" />

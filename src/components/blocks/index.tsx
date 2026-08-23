@@ -18,6 +18,8 @@ import {
   StatBarBlock,
 } from "@/components/blocks/content-blocks";
 import { CollectionGridBlock, ProductGridBlock } from "@/components/blocks/collection-blocks";
+import { BlockSection } from "@/components/blocks/primitives";
+import { Testimonials } from "@/components/reviews/testimonials";
 import type { ParsedBlock } from "@/lib/blocks/schemas";
 import type { ResolvedBlockData } from "@/lib/blocks/resolve";
 import type { ProductListItem } from "@/lib/queries/catalogue";
@@ -56,6 +58,7 @@ const BANDED = new Set([
   "PLANS",
   "STAT_BAR",
   "COMPANY_INFO",
+  "TESTIMONIALS",
 ]);
 
 export function BlockRenderer({
@@ -174,6 +177,18 @@ export function BlockRenderer({
             return <CompanyInfoBlock key={block.id} data={block.data} tone={tone} />;
           case "NOTICE":
             return <NoticeBlock key={block.id} data={block.data} tone={tone} />;
+          case "TESTIMONIALS":
+            return (
+              <BlockSection key={block.id} tone={tone}>
+                <Testimonials
+                  items={resolved.testimonials.get(block.id) ?? []}
+                  eyebrow={block.data.eyebrow}
+                  heading={block.data.heading}
+                  description={block.data.description}
+                  emptyText={block.data.emptyText}
+                />
+              </BlockSection>
+            );
         }
       })}
     </>

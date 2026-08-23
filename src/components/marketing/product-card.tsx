@@ -9,6 +9,9 @@ import { humanise } from "@/lib/utils";
 import { hardwareClassLabel, isHardware } from "@/lib/catalogue/hardware";
 import { ProductPhoto } from "@/components/catalogue/product-photo";
 import type { ProductListItem } from "@/lib/queries/catalogue";
+import { ratingsForProducts } from "@/lib/queries/reviews";
+import { RatingSummary } from "@/components/reviews/stars";
+import type { Aggregate } from "@/lib/reviews";
 
 /**
  * Catalogue product card.
@@ -19,6 +22,7 @@ import type { ProductListItem } from "@/lib/queries/catalogue";
 export function ProductCard({
   product,
   display,
+  rating,
 }: {
   product: ProductListItem;
   /**
@@ -26,6 +30,13 @@ export function ProductCard({
    * only ever show rupees need not thread it through; absent means rupees.
    */
   display?: PriceDisplay;
+  /**
+   * The star summary, when the caller has loaded one. Optional and absent by
+   * default: a card that fetched its own would issue a query per card, and
+   * `RatingSummary` renders nothing at all for a product with no reviews, so a
+   * caller that does not pass it loses nothing but the stars.
+   */
+  rating?: Aggregate | null;
 }) {
   const variant = product.variants[0];
   const price = variant ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) : 0;
@@ -84,6 +95,14 @@ export function ProductCard({
             {product.name}
           </Link>
         </h3>
+
+        {/*
+          Directly under the name, where a shopper looks for it — and rendered
+          only when there is something to render. `RatingSummary` returns null
+          for an unreviewed product rather than an empty row of stars, which
+          would read as a bad product rather than an unrated one.
+        */}
+        {rating ? <RatingSummary average={rating.average} count={rating.count} className="mt-2" /> : null}
 
         <p className="clamp-2 mt-2 text-meta leading-relaxed text-ink-600">
           {product.shortDescription}
@@ -232,7 +251,11 @@ export function ProductCard({
  * request-cached, so a page with three grids on it still reads the cookie once.
  */
 export async function ProductGrid({ products }: { products: ProductListItem[] }) {
-  const display = await getDisplayCurrency();
+  const [display, ratings] = await Promise.all([
+    getDisplayCurrency(),
+    // One grouped query for the whole grid rather than one per card.
+    ratingsForProducts(products.map((product) => product.id)),
+  ]);
 
   return (
     /*
@@ -248,7 +271,12 @@ export async function ProductGrid({ products }: { products: ProductListItem[] })
      */
     <RevealGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" step={50} max={200}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} display={display} />
+        <ProductCard
+          key={product.id}
+          product={product}
+          display={display}
+          rating={ratings.get(product.id) ?? null}
+        />
       ))}
     </RevealGroup>
   );

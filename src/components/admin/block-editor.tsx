@@ -53,6 +53,7 @@ const SHAPES: Record<BlockType, string> = {
   PLANS: `{ "eyebrow"?, "heading"?, "description"?, "items": [{ "name", "summary", "points"?: ["…"], "productSlug"? }] }`,
   COMPANY_INFO: `{ "eyebrow"?, "heading"?, "description"?, "fields"?: "identity" | "grievance" | "all", "footnote"? }  — the values themselves come from server configuration, not from here`,
   NOTICE: `{ "tone"?: "info" | "warning", "heading"?, "markdown" }`,
+  TESTIMONIALS: `{ "eyebrow"?, "heading"?, "description"?, "source"?: "featured" | "all", "limit"?, "emptyText"? }  — the quotes themselves come from Testimonials, not from here: a quote typed in a block would have no consent record behind it`,
 };
 
 export function BlockEditor({ pageId, blocks }: { pageId: string; blocks: Block[] }) {

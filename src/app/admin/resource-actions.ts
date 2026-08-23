@@ -154,6 +154,31 @@ export async function saveResource(
     }
   }
 
+  /*
+   * A testimonial cannot be published without a recorded consent.
+   *
+   * Refused here rather than defaulted, which is the difference between this
+   * and the rule above it: a missing publish date on an article is a slip with
+   * an obvious right answer, and a missing consent date on a testimonial is the
+   * absence of the one thing that makes publishing it permissible. Filling it
+   * in with today's date would manufacture the record it is asking for.
+   *
+   * `publishedTestimonials` asks for `consentOn: { not: null }` as well, so a
+   * row edited straight in the database still cannot reach a visitor. This is
+   * the half that tells a person why.
+   */
+  if (config.key === "testimonials" && data.status === "PUBLISHED" && !data.consentOn) {
+    return {
+      status: "error",
+      message: "Record the consent before publishing this.",
+      fieldErrors: {
+        consentOn: [
+          "Enter the date this customer agreed we could publish their words, name and organisation.",
+        ],
+      },
+    };
+  }
+
   const saved = recordId
     ? await delegate.update({ where: { id: recordId }, data, select: { id: true } })
     : await delegate.create({ data, select: { id: true } });

@@ -14,6 +14,7 @@ const LINKS = [
   { href: "/account/licences", label: "Licences" },
   { href: "/account/devices", label: "Devices" },
   { href: "/account/renewals", label: "Renewals" },
+  { href: "/account/reviews", label: "Reviews" },
   { href: "/account/support", label: "Support" },
 ];
 

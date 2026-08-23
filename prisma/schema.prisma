@@ -339,6 +339,7 @@ enum PageSectionType {
   NOTICE
   CTA_BANNER
   PLANS
+  TESTIMONIALS
 }
 
 enum BannerTone {
@@ -408,6 +409,8 @@ model User {
   quoteMessages  QuoteMessage[]
   ticketMessages TicketMessage[]
   devices        Device[]
+  reviews        ProductReview[]
+  reviewsModerated ProductReview[] @relation("ReviewModerator")
 
   @@index([companyId])
   @@index([role])
@@ -631,10 +634,11 @@ model Brand {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  products   Product[]
-  categories Category[]
-  faqs       Faq[]
-  pages      Page[]
+  products     Product[]
+  categories   Category[]
+  faqs         Faq[]
+  pages        Page[]
+  testimonials Testimonial[]
 
   @@index([featured])
   @@index([deletedAt])
@@ -763,6 +767,7 @@ model Product {
   quoteItems   QuoteItem[]
   orderItems   OrderItem[]
   licences     Licence[]
+  reviews      ProductReview[]
 
   @@index([brandId])
   @@index([categoryId])
@@ -1179,6 +1184,7 @@ model Order {
   payments  Payment[]
   documents Document[]
   devices   Device[]
+  reviews   ProductReview[]
 
   @@index([status])
   @@index([userId])
@@ -1461,7 +1467,8 @@ model Service {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  faqs Faq[]
+  faqs         Faq[]
+  testimonials Testimonial[]
 
   @@index([category])
   @@index([published, deletedAt])
@@ -1579,6 +1586,153 @@ model Certification {
   @@unique([standard, reference])
   @@index([displayOrder])
   @@index([expiresAt])
+}
+
+// ------------------------- reviews and testimonials -------------------------
+
+/// A named quote from a customer, published as marketing.
+///
+/// Entered by staff, because that is how a testimonial actually arrives — in an
+/// email, at the end of a call, in a renewal conversation — rather than through
+/// a form. That makes it the more dangerous of the two review types on this
+/// site, and the fields below are shaped around the two ways it goes wrong.
+///
+/// ## Consent is a column, not a convention
+///
+/// Publishing a named person's words, their job title and their employer, on a
+/// supplier's website, is a thing you need their permission to do. `consentOn`
+/// and `consentNote` record that permission, and `status` cannot be PUBLISHED
+/// without them — enforced in the write path and again in the query that reads
+/// them, so a row edited directly in the database still cannot reach a visitor.
+///
+/// ## Nothing here is seeded
+///
+/// There is no fixture testimonial and no example row, in this file or in the
+/// seed. A plausible-looking quote attributed to a plausible-looking customer
+/// is a fabricated endorsement whatever the intention behind it, and it would
+/// be indistinguishable from the real ones the moment it shipped.
+model Testimonial {
+  id String @id @default(cuid())
+
+  /// What they said, in their words. Not edited for length here — trim it
+  /// before entering it, so the record and the page agree.
+  quote String
+
+  /// Who said it. A first name and an initial is a legitimate choice a customer
+  /// may ask for; an empty name is not, because an anonymous testimonial on a
+  /// supplier's own site carries no information at all.
+  authorName   String
+  /// Their role, and the organisation they said it about working for. Both
+  /// optional: some customers will give a quote but not their employer's name.
+  authorRole   String?
+  organisation String?
+
+  /// Where the quote belongs, when it is about something specific. Both null
+  /// means it is about the business as a whole, which most are.
+  brandId   String?
+  brand     Brand?   @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  serviceId String?
+  service   Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+
+  /// When permission to publish was given, and how it was obtained — "email
+  /// from Priya, 14 Aug", "confirmed on the renewal call". Free text because
+  /// the point is that a person can check it, not that a machine can parse it.
+  consentOn   DateTime?
+  consentNote String?
+
+  status       PostStatus @default(DRAFT)
+  featured     Boolean    @default(false)
+  displayOrder Int        @default(100)
+
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([status, deletedAt])
+  @@index([displayOrder])
+  @@index([brandId])
+  @@index([serviceId])
+}
+
+/// Where a product review is in moderation.
+///
+/// PENDING is the default and the only state a customer can put a review into.
+/// Nothing reaches the public site until somebody has read it.
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+/// A rating and a comment on one product, from a customer who bought it.
+///
+/// ## Why `orderId` is not nullable
+///
+/// It is the whole design. A review here can only be written by the account
+/// that bought the product, against the order it was bought on, and that is
+/// checked when the review is created rather than trusted from the form. An
+/// open review form on a reseller's catalogue collects competitor sabotage and
+/// supplier astroturf in roughly equal measure, and neither is distinguishable
+/// from a real opinion once it is in the table.
+///
+/// It is also what makes the `AggregateRating` structured data defensible.
+/// Review markup that a search engine finds to be self-serving or invented
+/// costs a site its rich results and can cost it more; every star this site
+/// publishes traces to a row here with an order behind it.
+///
+/// ## What staff can and cannot do
+///
+/// Approve, reject, and reply in public. Not edit the customer's words — there
+/// is no field for it, deliberately, because a review a supplier can rewrite is
+/// not a review. `moderationNote` is internal and never rendered.
+model ProductReview {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  /// The reviewer. Cascades: an account that is deleted takes its reviews with
+  /// it, which is what a deletion request means.
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Their organisation at the time of writing, denormalised so a reviewer
+  /// changing employer does not silently re-attribute an old review.
+  organisation String?
+
+  /// The order this product was bought on. Restrict rather than cascade: an
+  /// order is a financial record that is not deleted, and a review whose
+  /// purchase evidence vanished is a review that can no longer be defended.
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  /// One to five. Validated in the write path; there is no zero and no half.
+  rating Int
+  title  String?
+  body   String
+
+  status         ReviewStatus @default(PENDING)
+  moderatedAt    DateTime?
+  moderatedById  String?
+  moderatedBy    User?        @relation("ReviewModerator", fields: [moderatedById], references: [id], onDelete: SetNull)
+  /// Internal. Why it was rejected, or anything the next person should know.
+  /// Never rendered publicly.
+  moderationNote String?
+
+  /// The business's public reply, shown under the review.
+  response    String?
+  respondedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// One review per person per product. A customer who buys the same licence
+  /// again is not a second opinion, and stacking them is the cheapest way to
+  /// move an average.
+  @@unique([productId, userId])
+  @@index([productId, status])
+  @@index([status, createdAt])
+  @@index([userId])
+  @@index([orderId])
 }
 
 model Banner {
