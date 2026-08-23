@@ -165,15 +165,21 @@ export async function organizationSchema() {
      */
     ...(config.gstin ? { taxID: config.gstin } : {}),
     /*
-     * `sameAs` is deliberately absent.
+     * `sameAs`: the profiles this organisation also appears on.
      *
-     * It is the property Google uses to tie this organisation to its profiles
-     * elsewhere, and it is the one thing here that cannot be derived from the
-     * codebase — there is not a single social or directory URL anywhere in this
-     * repository. Guessing one would assert that a profile is this company's
-     * when nobody has checked, in the machine-readable block search engines
-     * trust most. Supply the real URLs and they go here.
+     * This is the property Google uses to decide that a LinkedIn page, a GeM
+     * seller profile and this domain are one business rather than three — which
+     * is what makes a mention somewhere else count towards this site at all.
+     * There is a field for it on the settings screen and it ships empty,
+     * because not one social or directory URL exists anywhere in this
+     * repository and a guessed one would assert, in the block search engines
+     * trust most, that somebody else's page belongs to this company.
+     *
+     * Omitted entirely when nothing is configured. An empty `sameAs` array is
+     * not "we have no profiles" to a parser — it is a malformed claim to have
+     * some, and Google's validator says so.
      */
+    ...(config.profileUrls.length > 0 ? { sameAs: config.profileUrls } : {}),
     description:
       "Enterprise software licensing, cloud and IT solutions across Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure manufacturers.",
     ...(config.email.sales || config.phone.sales

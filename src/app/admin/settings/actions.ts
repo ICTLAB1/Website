@@ -147,10 +147,42 @@ const settingsSchema = z.object({
   usdRatePaise: rateField,
   aedRatePaise: rateField,
 
+  /*
+   * Profile URLs, one per line, for `sameAs` on the Organization schema.
+   *
+   * Validated to `https` here rather than only when read, so the person typing
+   * them is told which line was wrong while they still have it in front of
+   * them. An entry that reaches the database malformed would simply vanish from
+   * the structured data, silently, which is the worst way to learn about it.
+   *
+   * Nothing checks that a URL exists or that it is this business's — no
+   * automated check can, and pretending otherwise would be worse than saying
+   * so. That is the administrator's judgement, and it is why this field is
+   * empty rather than pre-filled.
+   */
+  profileUrls: optionalText(1200).refine(
+    (value) => value === null || badProfileUrl(value) === null,
+    (value) => ({ message: `"${badProfileUrl(value ?? "")}" is not an https:// URL.` }),
+  ),
+
   grievanceName: optionalText(120),
   grievanceEmail: optionalEmail,
   grievancePhone: optionalPhone,
 });
+
+/** The first line that is not a well-formed `https` URL, or null. */
+function badProfileUrl(value: string): string | null {
+  for (const line of value.split(/[\r\n]+/)) {
+    const candidate = line.trim();
+    if (!candidate) continue;
+    try {
+      if (new URL(candidate).protocol !== "https:") return candidate;
+    } catch {
+      return candidate;
+    }
+  }
+  return null;
+}
 
 /*
  * A second entity is both fields or neither.

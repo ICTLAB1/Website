@@ -1774,6 +1774,23 @@ model SiteSettings {
   secondaryEntityName    String?
   secondaryEntityAddress String?
 
+  /// Profile URLs elsewhere that belong to this business — one per line.
+  ///
+  /// These become `sameAs` on the Organization structured data, which is how a
+  /// search engine ties this domain to the same business's LinkedIn page, its
+  /// GeM seller profile, its Google Business Profile, its listing in a trade
+  /// directory. It is the property that turns a scatter of separate mentions
+  /// into one entity, and it is also the one thing in that block that cannot be
+  /// derived from anything in this repository.
+  ///
+  /// So it is empty until somebody who knows fills it in, and the property is
+  /// omitted entirely rather than emitted empty. A guessed URL is an assertion,
+  /// in the machine-readable block search engines trust most, that a profile
+  /// belongs to this company when nobody has checked — and if it is wrong it is
+  /// wrong about somebody else's page. Only URLs the business actually controls
+  /// or is actually listed on belong here.
+  profileUrls String?
+
   /// Publishing a named grievance officer and their contact details is required
   /// of an online seller in India by the Consumer Protection (E-Commerce) Rules
   /// 2020. It is a statutory appointment rather than marketing copy, which is

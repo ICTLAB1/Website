@@ -106,6 +106,44 @@ function stored(value: string | null | undefined): string | null {
 }
 
 /**
+ * One profile URL per line, `https` only, deduplicated, order preserved.
+ *
+ * These end up in `sameAs`, which is an assertion that each page listed is
+ * this organisation's. Anything that is not a well-formed `https` URL is
+ * dropped rather than repaired: a typed-in "linkedin.com/company/…" with no
+ * scheme is not a URL, and turning it into one would be guessing which site
+ * the administrator meant. Dropping it makes the omission visible on the
+ * settings screen, where it can be fixed by the person who knows.
+ *
+ * `http` is dropped for the same reason it is not offered anywhere else here —
+ * a profile link published over plain HTTP in 2026 is a redirect at best, and
+ * `sameAs` entries that redirect are worth less than none.
+ */
+function parseProfileUrls(value: string | null): string[] {
+  if (!value) return [];
+  const seen = new Set<string>();
+  const urls: string[] = [];
+
+  for (const line of value.split(/[\r\n]+/)) {
+    const candidate = line.trim();
+    if (!candidate) continue;
+    let parsed: URL;
+    try {
+      parsed = new URL(candidate);
+    } catch {
+      continue;
+    }
+    if (parsed.protocol !== "https:") continue;
+    const normalised = parsed.toString();
+    if (seen.has(normalised)) continue;
+    seen.add(normalised);
+    urls.push(normalised);
+  }
+
+  return urls;
+}
+
+/**
  * Everything, database first and environment second.
  *
  * The per-field fallback is what makes this safe to deploy onto a running
@@ -193,6 +231,23 @@ export const getSiteConfig = cache(async () => {
      * reference, which is what they did before this existed.
      */
     quoteNumberFormat: stored(row?.quoteNumberFormat) ?? null,
+    /*
+     * Profiles elsewhere that belong to this business, for `sameAs`.
+     *
+     * Stored only, with no environment fallback and no default, and empty
+     * until an administrator enters URLs they have actually checked. `sameAs`
+     * is what ties this domain to the same company's LinkedIn page, GeM seller
+     * profile or directory listing, so it is the property that makes a mention
+     * elsewhere count towards this site rather than sitting on its own — and
+     * it is also an assertion, made in the block search engines trust most,
+     * that a page out there is this company's. A guess that is wrong is a
+     * claim about somebody else's page.
+     *
+     * Only `https` survives, and only one entry per URL: an `http` profile
+     * link published in 2026 is a redirect at best, and a duplicate in
+     * `sameAs` is a signal that the list was generated rather than curated.
+     */
+    profileUrls: parseProfileUrls(stored(row?.profileUrls)),
     /*
      * A second legal entity or overseas office for the letterhead.
      *

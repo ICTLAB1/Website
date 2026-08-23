@@ -77,7 +77,7 @@ async function save() {
 /** What the original values were, so this suite puts them back when it finishes. */
 await open();
 const original = {};
-for (const name of ["grievanceName", "grievanceEmail", "addressLine1", "gstin"]) {
+for (const name of ["grievanceName", "grievanceEmail", "addressLine1", "gstin", "profileUrls"]) {
   original[name] = await field(name).inputValue();
 }
 
@@ -199,6 +199,74 @@ if (envOfficer) {
 } else {
   check("environment fallback not asserted (no officer set in the environment)", true);
 }
+
+/*
+ * ── 3b. Profile URLs reach `sameAs`, and only real ones do ─────────────────
+ *
+ * `sameAs` is the property that decides whether a mention of this business
+ * somewhere else counts towards this domain, and every entry in it is an
+ * assertion that the page listed belongs to this company. So there are two
+ * things to prove and they pull in opposite directions: a URL an administrator
+ * enters must actually be published, and anything that is not a well-formed
+ * https URL must never be — silently dropping one would put a gap in the
+ * structured data that nobody would find, and repairing one would guess which
+ * site was meant.
+ *
+ * The third property is the default: with the field empty, `sameAs` must be
+ * absent from the JSON-LD rather than present and empty. An empty array is not
+ * "no profiles" to a parser, it is a malformed claim to have some.
+ */
+const organisationSchema = async () => {
+  await page.goto(`${BASE}/`, { waitUntil: "load" });
+  const html = await page.content();
+  for (const match of html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)) {
+    const parsed = JSON.parse(match[1].replaceAll("\\u003c", "<"));
+    if (parsed["@type"] === "Organization") return parsed;
+  }
+  return null;
+};
+
+check("the organisation schema is published", (await organisationSchema()) !== null);
+check(
+  "with no profiles configured, sameAs is absent rather than empty",
+  (await organisationSchema())?.sameAs === undefined,
+);
+
+await open();
+const goodProfile = "https://example.test/company/verify-probe";
+await field("profileUrls").fill(`${goodProfile}\n\n${goodProfile}`);
+await save();
+
+const withProfiles = await organisationSchema();
+check("a configured profile URL reaches sameAs", withProfiles?.sameAs?.includes(goodProfile), JSON.stringify(withProfiles?.sameAs));
+check(
+  "and a repeated line is published once, not twice",
+  withProfiles?.sameAs?.filter((url) => url === goodProfile).length === 1,
+  JSON.stringify(withProfiles?.sameAs),
+);
+
+for (const [what, value] of [
+  ["a URL with no scheme", "www.example.test/company"],
+  ["an http:// URL", "http://example.test/company"],
+  ["free text", "our LinkedIn page"],
+]) {
+  await open();
+  await field("profileUrls").fill(value);
+  await save();
+  const refused = await form()
+    .getByText(/is not an https:\/\/ URL/i)
+    .isVisible()
+    .catch(() => false);
+  check(`${what} is refused with a field-level message`, refused, value);
+}
+
+await open();
+await field("profileUrls").fill("");
+await save();
+check(
+  "clearing the field removes sameAs again",
+  (await organisationSchema())?.sameAs === undefined,
+);
 
 /*
  * ── 4. The form itself is accessible ────────────────────────────────────────

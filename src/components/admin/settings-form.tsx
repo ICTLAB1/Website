@@ -46,6 +46,7 @@ type StoredSettings = {
   secondaryEntityAddress: string | null;
   usdRatePaise: number | null;
   aedRatePaise: number | null;
+  profileUrls: string | null;
   grievanceName: string | null;
   grievanceEmail: string | null;
   grievancePhone: string | null;
@@ -267,6 +268,26 @@ export function SettingsForm({
             />
           </Field>
         </div>
+      </Fieldset>
+
+      <Fieldset
+        legend="Profiles elsewhere"
+        description="Where else this business appears online — your LinkedIn company page, GeM seller profile, Google Business Profile, a trade directory listing. These are published as sameAs in the structured data, which is how a search engine decides those pages and this site are one business rather than several. That is what makes a mention somewhere else count towards this site. One https:// URL per line, and only pages you have checked: this is an assertion that the page is yours, so a wrong one is a claim about somebody else's."
+      >
+        <Field
+          label="Profile URLs"
+          name="profileUrls"
+          hint="One per line. Left blank, no sameAs is published at all — which is correct, and better than a guess."
+        >
+          <Textarea
+            name="profileUrls"
+            rows={5}
+            maxLength={1200}
+            spellCheck={false}
+            defaultValue={stored?.profileUrls ?? ""}
+            placeholder={"https://www.linkedin.com/company/…\nhttps://…"}
+          />
+        </Field>
       </Fieldset>
 
       <Fieldset
