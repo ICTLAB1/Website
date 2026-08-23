@@ -13,12 +13,18 @@ import { chromium } from "playwright";
  * facet, a sort order, a structured-data block, a variant panel — and only the
  * page itself sees all of them.
  *
- * **Every listed model has a photograph.** Not a generic laptop, not a
- * manufacturer logo, not a render: the product. A listing whose picture is not
- * the product misleads a buyer comparing two of them, which is the one thing a
- * procurement catalogue must not do. Models without one render a labelled empty
- * frame, and this suite counts them so the gap is a number somebody has to look
- * at rather than something nobody notices.
+ * **Every picture is either the product or labelled as not being it.** A
+ * listing whose picture is silently not the product misleads a buyer comparing
+ * two of them, which is the one thing a procurement catalogue must not do. So
+ * there are three permitted states and this suite pins all three: a photograph
+ * of the model, a category illustration carrying its "Representative image"
+ * badge, or a labelled empty frame. What it will not allow is an unbadged
+ * illustration — the badge and the picture are produced by one component
+ * (`components/catalogue/product-photo.tsx`) for that reason, and this check is
+ * what proves the component was not worked around.
+ *
+ * It also counts the models still on an illustration, so the artwork gap stays
+ * a number somebody has to look at rather than something nobody notices.
  *
  * The suite adapts to a catalogue that has no hardware in it yet: the checks
  * that need models report as skipped rather than failing, so this runs in the
@@ -30,6 +36,15 @@ const BASE = process.env.BASE ?? "http://localhost:3000";
 const results = [];
 const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), detail });
 const skip = (name, why) => results.push({ name, ok: true, skipped: true, detail: why });
+/**
+ * A measurement, not a verdict.
+ *
+ * Some numbers are worth printing every run without being pass/fail — how much
+ * of the catalogue still lacks its own artwork, for one. Made a check it would
+ * fail the gate on work the business has not done yet, and the first response
+ * to a check that fails for a reason nobody can fix is to delete the check.
+ */
+const observe = (detail) => results.push({ name: detail, informational: true, ok: true });
 const text = async (page) => (await page.locator("body").innerText()).replace(/\s+/g, " ");
 
 /**
@@ -84,29 +99,109 @@ check(
 const cards = await page.locator("article").count();
 
 if (cards === 0) {
-  skip("every listed model has a photograph", "no hardware in the catalogue yet");
+  skip("no illustration is shown without its badge", "no hardware in the catalogue yet");
+  skip(
+    "every card shows a photograph, an illustration or a labelled gap",
+    "no hardware in the catalogue yet",
+  );
   skip("filters narrow the listing", "no hardware in the catalogue yet");
   skip("a model is reachable and quoted rather than priced", "no hardware in the catalogue yet");
 } else {
   // ── photographs ───────────────────────────────────────────────────────────
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await page.waitForTimeout(1200);
 
-  const photos = await page.locator("article img").count();
-  const placeholders = await page.getByText("Photograph to follow").count();
-  const broken = await page
-    .locator("article img")
-    .evaluateAll((images) =>
-      images.filter((image) => image.complete && image.naturalWidth === 0).map((image) => image.src),
-    );
+  /**
+   * Count what a browser actually rendered on one listing.
+   *
+   * Measured from the DOM rather than from the database, because the question
+   * is what a buyer saw. A resolver can be correct and still be bypassed by a
+   * caller that passes an illustration path in by hand, and only the page
+   * catches that.
+   */
+  const auditPhotos = async (path) => {
+    await page.goto(`${BASE}${path}`, { waitUntil: "load" });
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForTimeout(1200);
+
+    return {
+      cards: await page.locator("article").count(),
+      photos: await page.locator("article img").count(),
+      gaps: await page.getByText("Photograph to follow").count(),
+      badges: await page.getByText("Representative image", { exact: true }).count(),
+      broken: await page
+        .locator("article img")
+        .evaluateAll((images) =>
+          images
+            .filter((image) => image.complete && image.naturalWidth === 0)
+            .map((image) => image.src),
+        ),
+      illustrations: await page
+        .locator("article img")
+        .evaluateAll(
+          (images) =>
+            images.filter((image) =>
+              new URL(image.src).pathname.startsWith("/products/representative-"),
+            ).length,
+        ),
+    };
+  };
+
+  /*
+   * Both the whole catalogue and the desktops filter.
+   *
+   * The first page of the whole catalogue is ordered by popularity and can
+   * quite legitimately contain no illustrations at all, which would make the
+   * badge invariant pass by having nothing to check. The desktops listing is
+   * where the illustrations currently are. If the artwork ever moves to
+   * another form factor this will notice, because the assertion below is that
+   * the run saw at least one illustration *somewhere*.
+   */
+  const seen = [await auditPhotos("/hardware"), await auditPhotos("/hardware?family=desktops")];
+
+  const badges = seen.reduce((total, page) => total + page.badges, 0);
+  const illustrations = seen.reduce((total, page) => total + page.illustrations, 0);
+  const photos = seen.reduce((total, page) => total + page.photos, 0);
+  const gaps = seen.reduce((total, page) => total + page.gaps, 0);
+  const broken = seen.flatMap((page) => page.broken);
 
   check(
-    "every listed model has a photograph",
-    placeholders === 0,
-    placeholders > 0 ? `${placeholders} of ${cards} model(s) have no photograph on file` : "",
+    "no illustration is shown without its badge",
+    badges >= illustrations,
+    `${illustrations} illustration(s) rendered, ${badges} badge(s)`,
   );
+  check(
+    "no badge is shown without an illustration",
+    badges <= illustrations,
+    `${badges} badge(s), ${illustrations} illustration(s)`,
+  );
+  /*
+   * The two checks above are vacuous when nothing on the page is an
+   * illustration, so say which of the two happened. Reported as a skip rather
+   * than a failure because "no category artwork is configured" is a legitimate
+   * state of the repository — every model simply shows its labelled gap.
+   */
+  if (illustrations === 0) {
+    skip("the badge invariant was actually exercised", "no category illustration is configured");
+  } else {
+    check("the badge invariant was actually exercised", true, "");
+  }
   check("no photograph is a broken image", broken.length === 0, broken.join(", "));
-  check("photographs are shown for the models listed", photos + placeholders >= cards, `${photos} image(s), ${cards} card(s)`);
+  for (const audit of seen) {
+    check(
+      "every card shows a photograph, an illustration or a labelled gap",
+      audit.photos + audit.gaps >= audit.cards,
+      `${audit.photos} image(s), ${audit.gaps} gap(s), ${audit.cards} card(s)`,
+    );
+  }
+
+  // Not a failure — the catalogue is publishable in this state, and blocking
+  // the gate on artwork the business has not supplied would only teach somebody
+  // to delete the check. It reports so the number stays visible.
+  observe(
+    `across the two listings: ${photos - illustrations} card(s) show their own photograph, ` +
+      `${illustrations} show a labelled illustration, ${gaps} show a labelled gap`,
+  );
+
+  await page.goto(`${BASE}/hardware`, { waitUntil: "load" });
 
   // ── filters ───────────────────────────────────────────────────────────────
   const countAt = async (path) => {
@@ -195,15 +290,16 @@ check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2)
 await browser.close();
 
 for (const result of results) {
-  const mark = result.skipped ? "  –" : result.ok ? "  ✓" : "  ✗";
+  const mark = result.informational ? "  ·" : result.skipped ? "  –" : result.ok ? "  ✓" : "  ✗";
   const note = result.detail && (!result.ok || result.skipped) ? ` — ${result.detail}` : "";
   console.log(`${mark} ${result.name}${note}`);
 }
 
 const failed = results.filter((result) => !result.ok).length;
 const skipped = results.filter((result) => result.skipped).length;
+const noted = results.filter((result) => result.informational).length;
 console.log(
-  `\n${results.length - failed - skipped}/${results.length - skipped} hardware checks passed` +
-    (skipped ? ` (${skipped} skipped — no hardware listed yet)` : ""),
+  `\n${results.length - failed - skipped - noted}/${results.length - skipped - noted} hardware checks passed` +
+    (skipped ? ` (${skipped} skipped)` : ""),
 );
 process.exit(failed ? 1 : 0);

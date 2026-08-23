@@ -11,10 +11,12 @@ import { ButtonLink } from "@/components/ui/button";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { VariantSelector } from "@/components/catalogue/variant-selector";
 import { ProductPhoto } from "@/components/catalogue/product-photo";
+import { RepresentativeImageNotice } from "@/components/catalogue/representative-image-notice";
 import { SpecTable } from "@/components/catalogue/spec-table";
 import { ConfigurationTable } from "@/components/catalogue/configuration-table";
 import { HardwareQuotePanel } from "@/components/catalogue/hardware-quote-panel";
 import { hardwareClassLabel, isHardware } from "@/lib/catalogue/hardware";
+import { resolveProductPhoto } from "@/lib/representative-image";
 import { getProductBySlug, getRelatedProducts } from "@/lib/queries/catalogue";
 import { effectivePriceMinor } from "@/lib/money";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
@@ -89,6 +91,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   const parentCategory = product.category.parent;
   const hardware = isHardware(product);
+
+  /*
+   * Asked of the same resolver the picture uses, so the notice appears exactly
+   * when the illustration does. Deriving it a second way here — "no imageUrl",
+   * say — is how a page ends up with a caveat over a real photograph, or worse,
+   * an illustration with nothing said about it.
+   */
+  const showsRepresentativeImage = resolveProductPhoto(product).representative;
 
   const productSchema = {
     "@context": "https://schema.org",
@@ -188,11 +198,21 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <div className="mt-8 rounded-[--radius-lg] border border-line p-6">
               <ProductPhoto
                 src={product.imageUrl}
+                formFactor={product.formFactor}
                 alt={product.name}
                 ratio="16/10"
                 sizes="(min-width: 1024px) 46rem, 92vw"
                 priority
               />
+              {/*
+                Directly under the picture it qualifies, not at the foot of the
+                page. This is the surface a buyer builds their expectation of
+                the goods from, and a caveat they have to go looking for is a
+                caveat they were not given.
+              */}
+              {showsRepresentativeImage ? (
+                <RepresentativeImageNotice className="mt-4 border-t border-line pt-4" />
+              ) : null}
             </div>
           ) : (
             /* Visual identity without reproducing brand artwork: the product's

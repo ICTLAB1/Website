@@ -59,7 +59,11 @@ export function ProductCard({
     <article className="group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white transition-colors hover:border-line-strong">
       {hardware ? (
         <div className="border-b border-line p-4 pb-0">
-          <ProductPhoto src={product.imageUrl} alt={product.name} />
+          <ProductPhoto
+            src={product.imageUrl}
+            formFactor={product.formFactor}
+            alt={product.name}
+          />
         </div>
       ) : null}
       <div className="flex flex-1 flex-col p-5">
