@@ -1,0 +1,6 @@
+-- CreateEnum
+CREATE TYPE "BrandSegment" AS ENUM ('SOFTWARE_CLOUD', 'BUSINESS_HARDWARE', 'ENTERPRISE_INFRASTRUCTURE', 'CYBERSECURITY');
+
+-- AlterTable
+ALTER TABLE "Brand" ADD COLUMN     "segment" "BrandSegment";
+

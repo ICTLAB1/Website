@@ -18,6 +18,7 @@ import { blogPosts } from "./seed-data/blog";
 import { pageSeeds, navigationSeeds } from "./seed-data/pages";
 import { certifications } from "./seed-data/certifications";
 import { partnerStatus } from "./seed-data/partner-status";
+import { brandSegments } from "./seed-data/brand-segments";
 import { applyHardwareFile, hardwareFiles } from "./seed-data/hardware";
 
 const prisma = new PrismaClient();
@@ -413,6 +414,23 @@ async function main() {
     if (updated.count === 0) console.log(`No brand ${entry.slug} for its partner designation.`);
   }
   console.log(`Partner designations: ${partnerStatus.length}`);
+
+  /*
+   * Which part of the offer each brand belongs to.
+   *
+   * Applied unconditionally: it is a classification of the company, not a claim
+   * about the relationship, so there is nothing an operator would have typed
+   * here that this should defer to.
+   */
+  let segmented = 0;
+  for (const [slug, segment] of Object.entries(brandSegments)) {
+    const updated = await prisma.brand.updateMany({
+      where: { slug, deletedAt: null },
+      data: { segment },
+    });
+    segmented += updated.count;
+  }
+  console.log(`Brand segments: ${segmented}`);
 
   const adminEmail = process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase();
   const adminPassword = process.env.SEED_ADMIN_PASSWORD;

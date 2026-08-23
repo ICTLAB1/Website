@@ -111,6 +111,24 @@ enum Availability {
   DISCONTINUED
 }
 
+/// Where a brand sits in what this business sells.
+///
+/// Used to group the brands page, because "authorised to resell licensing
+/// from" is the wrong heading over a laptop manufacturer and the right one
+/// over a software publisher. A classification of the company, not a claim
+/// about the relationship with it — that is `partnerLabel`, and the two must
+/// not be confused.
+enum BrandSegment {
+  /// Publishers whose product is a licence or a subscription.
+  SOFTWARE_CLOUD
+  /// Manufacturers of commercial laptops, desktops and workstations.
+  BUSINESS_HARDWARE
+  /// Servers, storage, networking, virtualisation and the platforms under them.
+  ENTERPRISE_INFRASTRUCTURE
+  /// Endpoint, network and threat protection.
+  CYBERSECURITY
+}
+
 enum PurchaseMode {
   DIRECT
   ENQUIRY
@@ -565,6 +583,10 @@ model Brand {
   logoUrl      String?
   accentColor  String    @default("#1e3a8a")
   website      String?
+
+  /// Which part of the offer this brand belongs to. Null groups it under
+  /// "other", which is a prompt to classify it rather than a resting place.
+  segment      BrandSegment?
 
   /*
    * Partner status.
