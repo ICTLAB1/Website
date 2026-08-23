@@ -231,10 +231,30 @@ if (freshCode) {
   await theirContext.close();
 
   const done = await enter(freshCode);
+  /*
+   * The check that was missing, and the one a customer met.
+   *
+   * The suite used to look for a success message in the page text, which the
+   * action duly returned — while leaving the code form on screen underneath
+   * it. The verification had worked and the screen still read as a form that
+   * had not been submitted. What proves it worked is *leaving*: a page whose
+   * entire purpose is to confirm an address has no business still being shown
+   * to somebody who has just confirmed one.
+   */
   check(
-    "the right code on the right account verifies it",
-    /ready to use|already confirmed/i.test(done),
-    done.slice(0, 140),
+    "a correct code sends the customer to their account, not back to the form",
+    new URL(page.url()).pathname === "/account",
+    page.url(),
+  );
+  check(
+    "and says the address is confirmed, rather than moving them silently",
+    /email address is confirmed/i.test(done),
+    done.slice(0, 200),
+  );
+  check(
+    "the code form is gone",
+    !/Enter your code/i.test(done),
+    done.slice(0, 160),
   );
   check(
     "and the account is marked verified",

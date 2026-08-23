@@ -67,6 +67,7 @@ export default async function VerificationRequiredPage() {
             <Field
               label="Six-digit code"
               name="code"
+              required
               hint={`It expires ${CODE_TTL_MINUTES} minutes after we send it. Spaces and dashes are fine.`}
             >
               <Input

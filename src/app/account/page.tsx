@@ -10,8 +10,22 @@ import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Overview" };
 
-export default async function AccountOverviewPage() {
+export default async function AccountOverviewPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ verified?: string }>;
+}) {
   const user = await requireUser("/account");
+  /*
+   * The one acknowledgement that confirming an address actually worked.
+   *
+   * The code screen redirects here on success rather than reporting it and
+   * staying put — a customer who has just confirmed needs their account, not a
+   * message telling them they may now go and find it. But arriving somewhere
+   * new with no word at all is the other half of the same mistake, so the
+   * thing they just did is said once, here.
+   */
+  const justVerified = (await searchParams).verified === "1" && Boolean(user.emailVerified);
   const [summary, enquiries] = await Promise.all([
     getAccountSummary(user),
     listUserEnquiries(user),
@@ -31,6 +45,13 @@ export default async function AccountOverviewPage() {
 
   return (
     <div className="space-y-10">
+      {justVerified ? (
+        <p className="rounded-[--radius-md] border border-success-600/40 bg-success-50 px-4 py-3 text-[14px] text-ink-700">
+          <strong className="text-graphite-900">Your email address is confirmed.</strong> You can
+          now request quotations, accept them and place orders.
+        </p>
+      ) : null}
+
       <section>
         <h2 className="sr-only">Account summary</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

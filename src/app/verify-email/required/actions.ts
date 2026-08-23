@@ -1,5 +1,7 @@
 "use server";
 
+import { redirect } from "next/navigation";
+
 import { requireUser } from "@/lib/auth/guards";
 import { sendVerificationEmail, verifyEmailCode } from "@/lib/auth/email-verification";
 import { CODE_TTL_MINUTES, MAX_CODE_ATTEMPTS } from "@/lib/auth/otp";
@@ -26,9 +28,9 @@ export async function resendVerificationEmail(
 ): Promise<AdminActionState> {
   const user = await requireUser("/verify-email/required");
 
-  if (user.emailVerified) {
-    return { status: "success", message: "This address is already confirmed." };
-  }
+  // Same reasoning as the code form: an account that is already confirmed has
+  // no business on a page about confirming it.
+  if (user.emailVerified) redirect("/account");
 
   const limit = hit(
     `verify:${user.id}`,
@@ -81,9 +83,16 @@ export async function confirmVerificationCode(
 ): Promise<AdminActionState> {
   const user = await requireUser("/verify-email/required");
 
-  if (user.emailVerified) {
-    return { status: "success", message: "This address is already confirmed." };
-  }
+  /*
+   * Already confirmed is a reason to leave, not a message to sit under.
+   *
+   * This page exists to be a door. Reporting "already confirmed" and leaving
+   * the code form on screen is the state a customer met after entering a
+   * correct code: the verification had worked, the page said so, and the form
+   * they had just finished with was still in front of them — which reads as
+   * having failed.
+   */
+  if (user.emailVerified) redirect("/account");
 
   const limit = hit(`verify-code:${user.id}`, 12, 600);
   if (!limit.allowed) {
@@ -104,7 +113,15 @@ export async function confirmVerificationCode(
       metadata: { method: "code" },
       ip: await clientIp(),
     });
-    return { status: "success", message: "Confirmed. Your account is ready to use." };
+    /*
+     * Straight to the account, rather than a success message on the form.
+     *
+     * `redirect` throws, so nothing below runs and the client navigates —
+     * which is the point: the next thing the customer needs is their account,
+     * not a confirmation that they may now go and find it. The account page
+     * greets a freshly verified customer.
+     */
+    redirect("/account?verified=1");
   }
 
   /*
