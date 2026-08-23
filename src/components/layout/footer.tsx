@@ -3,7 +3,6 @@ import { Logo } from "@/components/layout/logo";
 import { getNavigation } from "@/lib/queries/navigation";
 import { getSiteConfig } from "@/lib/site-config";
 import { CertificationStrip } from "@/components/layout/certification-strip";
-import { AccreditationStrip } from "@/components/layout/accreditation-strip";
 
 export async function Footer() {
   const config = await getSiteConfig();
@@ -97,8 +96,16 @@ export async function Footer() {
         </div>
       </div>
 
-      {/* Above the small print, below the link columns: seen on every page. */}
-      <AccreditationStrip />
+      {/*
+        Above the small print, below the link columns: seen on every page.
+
+        The partner badges used to sit here too, on white plates, because they
+        are issued as artwork on a light ground and a charcoal footer leaves no
+        other lawful way to show one. They are in the white band under the
+        navigation now, where they need no plate — see `layout/trust-bar`. The
+        certificate numbers stay here, where a reader who wants to verify one
+        has gone looking for exactly that.
+      */}
       <CertificationStrip />
 
       <div className="border-t border-graphite-800">

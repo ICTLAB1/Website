@@ -8,20 +8,19 @@ import { tags } from "@/lib/cache";
 import { currentPartnerBadge, currentPartnerLabel } from "@/lib/brand-partner";
 
 /**
- * The partner programme badges this business holds, on every page.
+ * The partner programme badges this business may currently show.
  *
- * Beside the certification strip rather than merged into it, because they
- * answer different questions. A certification is an independent body's
- * statement about how this company works; a partner badge is a publisher's
- * statement about its relationship with it. A buyer weighs them differently and
- * the site should not blur them into one row of logos.
+ * Only brands whose designation may be stated appear here, and only those with
+ * issued artwork on file — see `lib/brand-partner`. A brand recorded with the
+ * placeholder designation "Partner" and no badge shows nothing at all, which is
+ * correct: a badge is the evidence, not the claim.
  *
- * Only brands whose designation may currently be stated appear here, and only
- * those with issued artwork on file — see `lib/brand-partner`. A brand recorded
- * with the placeholder designation "Partner" and no badge shows nothing at all,
- * which is correct: this strip is the evidence, not the claim.
+ * Rendered by `components/layout/trust-bar`, in the white band under the
+ * navigation. It used to have its own component here, in the charcoal footer,
+ * where the only lawful way to show artwork drawn for a light ground was to sit
+ * it on a white plate — see that file for why that is gone.
  */
-const currentBadges = cache(
+export const currentPartnerBadges = cache(
   cached(
     async () => {
       const brands = await prisma.brand.findMany({
@@ -54,42 +53,7 @@ const currentBadges = cache(
           Boolean(brand.label && brand.badge),
         );
     },
-    ["footer-partner-badges"],
+    ["partner-badges"],
     [tags.brands],
   ),
 );
-
-export async function AccreditationStrip() {
-  const badges = await currentBadges();
-  if (badges.length === 0) return null;
-
-  return (
-    <div className="border-t border-graphite-800">
-      <div className="container-page flex flex-wrap items-center gap-x-6 gap-y-4 py-5">
-        <p className="text-label font-semibold uppercase tracking-[0.12em] text-graphite-400">
-          Partner programmes
-        </p>
-        <ul className="flex flex-wrap items-center gap-4">
-          {badges.map((brand) => (
-            <li key={brand.slug}>
-              {/*
-                On white, because that is how these badges are issued and how
-                their programmes require them to be shown. Reversing one out or
-                tinting it to suit a dark footer is the kind of alteration every
-                one of these agreements prohibits.
-              */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={brand.badge}
-                alt={`${brand.name} ${brand.label}`}
-                className="h-12 w-auto rounded-[--radius-sm] bg-white px-3 py-2 object-contain"
-                loading="lazy"
-                decoding="async"
-              />
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-}
