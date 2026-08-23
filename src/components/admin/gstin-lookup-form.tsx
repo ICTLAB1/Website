@@ -177,9 +177,9 @@ export function GstinLookupForm({ settings }: { settings: GstinLookupView }) {
             variant="outline"
             compact
           >
-            <Field label="GSTIN" name="gstin">
+            <Field label="GSTIN to try" name="testGstin">
               <Input
-                name="gstin"
+                name="testGstin"
                 maxLength={15}
                 placeholder="07AAICT5606J1Z4"
                 className="max-w-[16rem] font-mono uppercase"

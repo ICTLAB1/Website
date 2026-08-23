@@ -195,12 +195,12 @@ export async function testGstinLookup(
     return { status: "error", message: "Too many lookups in a short period. Please wait a moment." };
   }
 
-  const entered = String(formData.get("gstin") ?? "").trim().toUpperCase();
+  const entered = String(formData.get("testGstin") ?? "").trim().toUpperCase();
   if (!isValidGstin(entered)) {
     return {
       status: "error",
       message: "That is not a valid GSTIN — check the fifteen characters and try again.",
-      fieldErrors: { gstin: ["Fails its own check digit."] },
+      fieldErrors: { testGstin: ["Fails its own check digit."] },
     };
   }
 
