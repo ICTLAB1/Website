@@ -12,6 +12,7 @@ import { homepageTitle } from "./2026-08-homepage-title";
 import { careersLink } from "./2026-08-careers-link";
 import { profileUrls } from "./2026-08-profile-urls";
 import { uaeBranch } from "./2026-08-uae-branch";
+import { quoteCopy } from "./2026-08-quote-copy";
 import type { ContentMigration } from "./types";
 
 /**
@@ -37,6 +38,7 @@ export const contentMigrations: ContentMigration[] = [
   careersLink,
   profileUrls,
   uaeBranch,
+  quoteCopy,
 ];
 
 export type { ContentMigration };

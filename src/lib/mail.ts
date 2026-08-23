@@ -150,9 +150,11 @@ export async function sendMailVerbose(message: MailMessage): Promise<VerboseMail
       mailer.sendMail({
         from,
         to: message.to,
+        ...(message.cc?.length ? { cc: message.cc } : {}),
         subject: message.subject,
         text: message.text,
         html: message.html,
+        ...(message.attachments?.length ? { attachments: message.attachments } : {}),
       }),
     );
     return { delivered: true };
@@ -178,12 +180,37 @@ export function resetMailTransport(): void {
   resetGraphToken();
 }
 
+/**
+ * A file sent with a message.
+ *
+ * Held in memory as bytes rather than as a path, because the one thing that
+ * gets attached here — a quotation — is generated per request and never written
+ * to disk. Anything that took a path would need a file to exist, and a file
+ * that exists is a file somebody else can read.
+ */
+export type MailAttachment = {
+  filename: string;
+  content: Buffer;
+  contentType: string;
+};
+
 export type MailMessage = {
   to: string;
+  /**
+   * Visible copies. Empty and absent mean the same thing.
+   *
+   * Cc rather than Bcc: on a commercial document the customer should be able to
+   * see who else at the supplier is on the thread, and reply-all should reach
+   * them. Never used for authentication mail — a verification code or a reset
+   * link belongs to one person, and copying it to a colleague's mailbox would
+   * hand them somebody else's credential.
+   */
+  cc?: string[];
   subject: string;
   text: string;
   html?: string;
   replyTo?: string;
+  attachments?: MailAttachment[];
 };
 
 export async function sendMail(message: MailMessage): Promise<{ delivered: boolean }> {
@@ -225,10 +252,12 @@ export async function sendMail(message: MailMessage): Promise<{ delivered: boole
     await mailer.sendMail({
       from,
       to: message.to,
+      ...(message.cc?.length ? { cc: message.cc } : {}),
       subject: message.subject,
       text: message.text,
       html: message.html,
       replyTo: message.replyTo,
+      ...(message.attachments?.length ? { attachments: message.attachments } : {}),
     });
     return { delivered: true };
   } catch (error) {

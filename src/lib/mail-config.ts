@@ -38,6 +38,8 @@ export type MailConfig = {
   password: string | null;
   from: string | null;
   salesNotification: string | null;
+  /** Copied on every quotation. Null means nobody is. */
+  quoteCopy: string | null;
 };
 
 const load = cache(async () => {
@@ -126,6 +128,7 @@ export const getMailConfig = cache(async (): Promise<MailConfig> => {
     password: decryptSecret(row?.password) ?? smtp.password() ?? null,
     from,
     salesNotification: pick(row?.salesNotificationEmail, smtp.salesNotification()),
+    quoteCopy: row?.quoteCopyEmail?.trim() || null,
   };
 });
 
@@ -152,6 +155,7 @@ export type MailSettingsView = {
   fromAddress: string;
   fromName: string;
   salesNotificationEmail: string;
+  quoteCopyEmail: string;
   /**
    * True when a field is coming from the environment rather than from a stored
    * value, so the form can say so instead of showing a value that looks stored
@@ -188,6 +192,7 @@ export async function getMailSettingsView(): Promise<MailSettingsView> {
     fromAddress: row?.fromAddress ?? "",
     fromName: row?.fromName ?? "",
     salesNotificationEmail: row?.salesNotificationEmail ?? "",
+    quoteCopyEmail: row?.quoteCopyEmail ?? "",
     usingEnvironment: !row?.host && Boolean(smtp.host()),
     updatedAt: row?.updatedAt ?? null,
   };

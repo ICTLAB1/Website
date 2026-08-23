@@ -63,6 +63,20 @@ export type QuotationEmailInput = {
   config: SiteConfig;
   /** Set at /admin/settings. Empty means no terms are printed. */
   terms: string | null;
+  /**
+   * The member of staff answerable for the quotation, when one is named on it.
+   *
+   * Signs the message. A quotation from a named person is answerable in a way
+   * that one from an address is not — and the name is the quotation's own
+   * `owner`, so the person who signs it is the person the screen says owns it.
+   * Null when nobody has been named, and then the message signs off as the
+   * business rather than inventing a sender.
+   */
+  sender: { name: string } | null;
+  /** Standards currently held, e.g. "ISO 9001:2015". Empty when none are recorded. */
+  certifications: string[];
+  /** Filename of the attached PDF, when one is attached. */
+  attachmentName: string | null;
 };
 
 const INK = "#3f3a33";
@@ -106,6 +120,75 @@ function termLines(terms: string | null): string[] {
     .map((line) => line.replace(/^\s*[-*•]\s*/, "").trim())
     .filter(Boolean)
     .slice(0, 40);
+}
+
+/**
+ * The sign-off, assembled from what is actually configured.
+ *
+ * A signature is where invented facts get into correspondence: a job title
+ * nobody holds, a mobile number that rings nowhere, a certification the company
+ * does not have. Every line here comes from the settings an administrator has
+ * entered or from the certificates recorded against the business, and a field
+ * that is not set produces no line at all rather than a placeholder.
+ *
+ * Deliberately not included: a job title for the sender. The application knows
+ * a person's role in *this system*, which is not their role in the business,
+ * and printing "Admin" under somebody's name on a commercial document is worse
+ * than printing nothing.
+ */
+function signature(input: QuotationEmailInput): {
+  name: string | null;
+  entity: string;
+  offices: { label: string; lines: string[] }[];
+  contact: string[];
+  certifications: string | null;
+  notice: string;
+} {
+  const { config } = input;
+
+  const offices: { label: string; lines: string[] }[] = [];
+  if (config.formattedAddress) {
+    offices.push({
+      label: config.secondaryEntity ? "India" : "Registered office",
+      lines: [config.formattedAddress],
+    });
+  }
+  if (config.secondaryEntity) {
+    offices.push({
+      label: config.secondaryEntity.name,
+      lines: [
+        config.secondaryEntity.address,
+        ...(config.secondaryEntity.phone ? [config.secondaryEntity.phone] : []),
+      ],
+    });
+  }
+
+  return {
+    name: input.sender?.name ?? null,
+    entity: config.entityName,
+    offices,
+    contact: [
+      config.phone.sales ? `T ${config.phone.sales}` : null,
+      config.email.sales ? `E ${config.email.sales}` : null,
+      `W ${config.url}`,
+      config.gstin ? `GSTIN ${config.gstin}` : null,
+      config.cin ? `CIN ${config.cin}` : null,
+    ].filter((line): line is string => line !== null),
+    certifications:
+      input.certifications.length > 0
+        ? `Certified to ${input.certifications.join(", ")}`
+        : null,
+    /*
+     * A confidentiality note, not a legal disclaimer.
+     *
+     * It says what this message contains and who it is for, both of which are
+     * true. It deliberately stops short of the boilerplate that claims a
+     * recipient is bound by terms they never agreed to — that is unenforceable
+     * and everybody who reads it knows.
+     */
+    notice:
+      "This message and any attachment carry commercial terms intended for the addressee. If it has reached you in error, please tell us and delete it.",
+  };
 }
 
 export function quotationSubject(input: QuotationEmailInput): string {
@@ -160,10 +243,26 @@ export function quotationText(input: QuotationEmailInput): string {
     "",
     `To accept this quotation: ${input.acceptUrl}`,
     "",
+    input.attachmentName
+      ? `A PDF of this quotation is attached as ${input.attachmentName}, for your records\nand for your purchase order.`
+      : null,
+    input.attachmentName ? "" : null,
     "This quotation is an offer to supply and is not a tax invoice. A GST invoice",
     "is issued once the order is confirmed.",
     "",
-    config.tradingName,
+    ...(() => {
+      const sign = signature(input);
+      return [
+        "─".repeat(56),
+        sign.name ? sign.name : null,
+        sign.entity,
+        ...sign.offices.flatMap((office) => [`${office.label}: ${office.lines[0]}`, ...office.lines.slice(1)]),
+        ...sign.contact,
+        sign.certifications,
+        "",
+        sign.notice,
+      ];
+    })(),
   ]
     .filter((line): line is string => line !== null)
     .join("\n");
@@ -278,14 +377,55 @@ export function quotationHtml(input: QuotationEmailInput): string {
       : ""
   }
 
-  <tr><td style="padding:20px 28px 26px">
+  <tr><td style="padding:20px 28px 0">
     <div style="font-size:12px;color:${MUTED};line-height:1.6;border-top:1px solid ${RULE};padding-top:14px">
+      ${
+        input.attachmentName
+          ? `A PDF of this quotation is attached as <strong style="color:${INK}">${escapeHtml(input.attachmentName)}</strong>, for your records and for your purchase order.<br />`
+          : ""
+      }
       Our full terms of business apply and are published at
       <a href="${escapeHtml(input.termsUrl)}" style="color:${DARK}">${escapeHtml(input.termsUrl)}</a>.
       This quotation is an offer to supply and is not a tax invoice; a GST invoice is issued once the order is confirmed.
     </div>
-    <div style="font-size:12px;color:${MUTED};margin-top:12px">${escapeHtml(config.tradingName)}</div>
   </td></tr>
+
+  ${(() => {
+    /*
+     * The sign-off.
+     *
+     * A table rather than a block with margins, because Outlook collapses the
+     * one and not the other, and a signature that stacks on top of the terms
+     * above it is the most visible way an email can look unprofessional.
+     */
+    const sign = signature(input);
+    return `<tr><td style="padding:22px 28px 26px">
+    <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-top:2px solid ${DARK}">
+      <tr><td style="padding-top:14px">
+        ${sign.name ? `<div style="font-size:14px;font-weight:600;color:${DARK}">${escapeHtml(sign.name)}</div>` : ""}
+        <div style="font-size:13px;font-weight:600;color:${INK};margin-top:${sign.name ? "2px" : "0"}">${escapeHtml(sign.entity)}</div>
+        ${sign.offices
+          .map(
+            (office) => `<div style="font-size:12px;color:${MUTED};line-height:1.6;margin-top:8px">
+          <span style="color:${INK};font-weight:600">${escapeHtml(office.label)}</span><br />${office.lines
+            .map((part) => escapeHtml(part))
+            .join("<br />")}
+        </div>`,
+          )
+          .join("")}
+        <div style="font-size:12px;color:${MUTED};line-height:1.7;margin-top:10px">
+          ${sign.contact.map((part) => escapeHtml(part)).join("<br />")}
+        </div>
+        ${
+          sign.certifications
+            ? `<div style="font-size:11px;letter-spacing:0.04em;color:${MUTED};margin-top:10px">${escapeHtml(sign.certifications)}</div>`
+            : ""
+        }
+        <div style="font-size:11px;color:${MUTED};line-height:1.6;margin-top:14px">${escapeHtml(sign.notice)}</div>
+      </td></tr>
+    </table>
+  </td></tr>`;
+  })()}
 
 </table>
 </td></tr></table>

@@ -2082,6 +2082,19 @@ model MailSettings {
   /// Where a copy of each new enquiry and order is sent internally.
   salesNotificationEmail String?
 
+  /// Who is copied on every quotation sent to a customer.
+  ///
+  /// A visible Cc rather than a Bcc, deliberately: the customer sees who else
+  /// at the supplier is on the thread, and a reply-all reaches them. That is
+  /// the point of copying somebody on a commercial document, and a hidden copy
+  /// on a quotation would be a different and less honest thing.
+  ///
+  /// Quotations only. Authentication mail — verification codes, password reset
+  /// links — is never copied anywhere: those are single-use credentials
+  /// belonging to the person who asked for them, and a colleague's mailbox is
+  /// exactly where they must not go.
+  quoteCopyEmail String?
+
   updatedAt   DateTime @updatedAt
   updatedById String?
   updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)

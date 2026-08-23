@@ -11,7 +11,10 @@ import {
   priceLine,
   totalsAreStorable,
 } from "@/lib/pricing";
-import { sendMail } from "@/lib/mail";
+import { sendMail, type MailAttachment } from "@/lib/mail";
+import { getMailConfig } from "@/lib/mail-config";
+import { buildQuotationPdf } from "@/lib/pdf/quote-document";
+import { currentCertifications } from "@/lib/queries/certifications";
 import {
   quotationHtml,
   quotationSubject,
@@ -296,6 +299,8 @@ export async function sendQuote(reference: string, actorId: string): Promise<Quo
       taxMinor: true,
       notes: true,
       enquiryId: true,
+      documentNo: true,
+      owner: { select: { name: true } },
       enquiry: { select: { contactEmail: true, contactName: true, companyName: true } },
       company: { select: { name: true, gstin: true } },
       items: {
@@ -338,6 +343,47 @@ export async function sendQuote(reference: string, actorId: string): Promise<Quo
   if (recipient) {
     const config = await getSiteConfig();
     const sentAt = new Date();
+    const certifications = (await currentCertifications()).map((row) => row.standard);
+
+    /*
+     * The document itself, attached.
+     *
+     * The body of the email is readable and the PDF is fileable, and a customer
+     * needs both: a purchase order gets raised against an attachment, not
+     * against something forwarded out of a mail client. It is built by the same
+     * `buildQuotationPdf` the download route and the admin preview use, so the
+     * file a customer receives is byte-for-byte the one staff previewed before
+     * pressing send.
+     *
+     * Built as staff, which is correct rather than a shortcut: authorisation
+     * happened before this function was called, and the customer's own scope
+     * would refuse a quotation that is still DRAFT at the moment the bytes are
+     * produced.
+     *
+     * A failure here must not stop the quotation going out. The email carries
+     * every figure the PDF does and a link to download it, so a missing
+     * attachment is a degraded message rather than a lost one — the wrong
+     * trade would be to withhold a quotation because a font failed to load.
+     */
+    let attachment: MailAttachment | null = null;
+    try {
+      const pdf = await buildQuotationPdf(reference, {
+        user: { id: actorId },
+        staff: true,
+      });
+      if (pdf) {
+        attachment = {
+          filename: pdf.filename,
+          content: pdf.bytes,
+          contentType: "application/pdf",
+        };
+      }
+    } catch (error) {
+      logger.error("quote_pdf_not_attached", {
+        reference,
+        message: error instanceof Error ? error.message.split("\n")[0] : String(error),
+      });
+    }
 
     /*
      * A quotation, not a notification.
@@ -369,13 +415,31 @@ export async function sendQuote(reference: string, actorId: string): Promise<Quo
       termsUrl: `${appUrl()}/terms`,
       config,
       terms: config.quoteTerms,
+      sender: quote.owner ? { name: quote.owner.name } : null,
+      certifications,
+      attachmentName: attachment?.filename ?? null,
     };
+
+    /*
+     * Who else gets a copy.
+     *
+     * A visible Cc, set at /admin/settings, so that whoever the business wants
+     * on every quotation is on the thread the customer can reply to. Bcc would
+     * hide them, and a hidden copy on a document that quotes a price is a
+     * different and less honest thing than being on the correspondence.
+     *
+     * Only ever on quotations. Verification codes and password reset links are
+     * single-use credentials belonging to one person and are copied nowhere.
+     */
+    const copyTo = (await getMailConfig()).quoteCopy;
 
     void sendMail({
       to: recipient,
+      ...(copyTo && copyTo.toLowerCase() !== recipient.toLowerCase() ? { cc: [copyTo] } : {}),
       subject: quotationSubject(input),
       text: quotationText(input),
       html: quotationHtml(input),
+      ...(attachment ? { attachments: [attachment] } : {}),
     });
   }
 

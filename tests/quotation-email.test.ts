@@ -31,6 +31,12 @@ const config = {
   },
   hasAddress: true,
   addressLines: [],
+  formattedAddress: "407, Pearl Business Park, New Delhi, Delhi 110034, India",
+  secondaryEntity: {
+    name: "UAE branch",
+    address: "Office C1-1F-SF2571, Ajman Free Zone",
+    phone: "+971 58 000 0000",
+  },
   gstin: "07AAICT5606J1Z4",
   cin: null,
   supportHours: null,
@@ -70,6 +76,9 @@ const base = {
   termsUrl: "https://www.example.test/terms",
   config,
   terms: null,
+  sender: null,
+  certifications: [],
+  attachmentName: null,
 };
 
 describe("the quotation document", () => {
@@ -228,5 +237,100 @@ describe("the quotation document", () => {
     const { quotationSubject } = await load();
     expect(quotationSubject(base)).toContain("QTE-2026-AB12CD");
     expect(quotationSubject(base)).toContain("TechZoid");
+  });
+});
+
+describe("the signature", () => {
+  it("signs off with the person the quotation names, when one is named", async () => {
+    const { quotationHtml, quotationText } = await load();
+    const signed = { ...base, sender: { name: "Rahul Verma" } };
+
+    expect(quotationHtml(signed)).toContain("Rahul Verma");
+    expect(quotationText(signed)).toContain("Rahul Verma");
+  });
+
+  it("signs off as the business when nobody is named, rather than inventing a sender", async () => {
+    const { quotationHtml, quotationText } = await load();
+
+    // No owner on this quotation, so no personal name — and nothing standing
+    // in for one. A signature with a made-up name on a priced document is a
+    // worse failure than a signature with no name.
+    expect(quotationHtml(base)).toContain("TechZoid Technologies Private Limited");
+    expect(quotationText(base)).toContain("TechZoid Technologies Private Limited");
+    expect(quotationHtml(base)).not.toMatch(/Sales (?:Manager|Executive|Team Lead)/i);
+  });
+
+  it("carries both offices, the contact details and the registration numbers", async () => {
+    const { quotationHtml, quotationText } = await load();
+    const html = quotationHtml(base);
+    const text = quotationText(base);
+
+    for (const body of [html, text]) {
+      expect(body).toContain("407, Pearl Business Park");
+      expect(body).toContain("Ajman Free Zone");
+      expect(body).toContain("+971 58 000 0000");
+      expect(body).toContain("sales@example.test");
+      expect(body).toContain("07AAICT5606J1Z4");
+      expect(body).toContain("https://www.example.test");
+    }
+  });
+
+  it("omits a line entirely when its value is not configured", async () => {
+    const { quotationHtml } = await load();
+
+    /*
+     * The rule the whole signature turns on. A CIN is not set here, so no CIN
+     * line appears — not an empty one, not a placeholder. A signature is
+     * exactly where invented facts get into correspondence.
+     */
+    const html = quotationHtml(base);
+    expect(html).not.toContain("CIN");
+
+    const bare = {
+      ...base,
+      config: {
+        ...config,
+        formattedAddress: null,
+        secondaryEntity: null,
+        gstin: null,
+        phone: { sales: null, support: null },
+      } as unknown as import("@/lib/site-config").SiteConfig,
+    };
+    const minimal = quotationHtml(bare);
+    // Our own GSTIN is gone. The customer's stays — that is their number, on
+    // their side of the document, and it is set.
+    expect(minimal).not.toContain("07AAICT5606J1Z4");
+    expect(minimal).toContain("29AABCU9603R1ZX");
+    expect(minimal).not.toContain("Ajman");
+    // But the entity and the website survive, because those are always known.
+    expect(minimal).toContain("TechZoid Technologies Private Limited");
+  });
+
+  it("names the certifications held, and states none when there are none", async () => {
+    const { quotationHtml } = await load();
+
+    expect(quotationHtml({ ...base, certifications: ["ISO 9001:2015", "ISO 27001:2022"] })).toContain(
+      "Certified to ISO 9001:2015, ISO 27001:2022",
+    );
+    expect(quotationHtml(base)).not.toContain("Certified to");
+  });
+});
+
+describe("the attachment", () => {
+  it("tells the customer the PDF is attached, and what it is called", async () => {
+    const { quotationHtml, quotationText } = await load();
+    const withFile = { ...base, attachmentName: "Quotation-TZ-QT-2026-0007.pdf" };
+
+    expect(quotationHtml(withFile)).toContain("Quotation-TZ-QT-2026-0007.pdf");
+    expect(quotationText(withFile)).toContain("Quotation-TZ-QT-2026-0007.pdf");
+  });
+
+  it("says nothing about an attachment when there is not one", async () => {
+    const { quotationHtml, quotationText } = await load();
+
+    // The PDF build is allowed to fail without stopping the quotation. What it
+    // may not do is leave the email promising a file that is not there.
+    expect(quotationHtml(base)).not.toMatch(/attached/i);
+    expect(quotationText(base)).not.toMatch(/attached/i);
   });
 });

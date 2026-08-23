@@ -76,6 +76,10 @@ const schema = z.object({
     (value) => value === null || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value),
     { message: "Enter a single email address." },
   ),
+  quoteCopyEmail: blankToNull(200).refine(
+    (value) => value === null || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value),
+    { message: "Enter a single email address." },
+  ),
 });
 
 export async function saveMailSettings(
@@ -105,6 +109,7 @@ export async function saveMailSettings(
     fromAddress: formData.get("fromAddress") ?? "",
     fromName: formData.get("fromName") ?? "",
     salesNotificationEmail: formData.get("salesNotificationEmail") ?? "",
+    quoteCopyEmail: formData.get("quoteCopyEmail") ?? "",
   });
 
   if (!parsed.success) {
@@ -183,6 +188,7 @@ export async function saveMailSettings(
     fromAddress: input.fromAddress,
     fromName: input.fromName,
     salesNotificationEmail: input.salesNotificationEmail,
+    quoteCopyEmail: input.quoteCopyEmail,
     updatedById: admin.id,
   };
 

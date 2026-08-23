@@ -234,6 +234,19 @@ export function MailSettingsForm({ settings }: { settings: MailSettingsView }) {
             autoComplete="off"
           />
         </Field>
+        <Field
+          label="Copy every quotation to"
+          name="quoteCopyEmail"
+          hint="Optional. A visible Cc on each quotation, so a reply-all reaches them. Verification codes and password resets are never copied."
+        >
+          <Input
+            name="quoteCopyEmail"
+            type="email"
+            defaultValue={settings.quoteCopyEmail}
+            placeholder="director@example.com"
+            autoComplete="off"
+          />
+        </Field>
       </Fieldset>
       </div>
     </AdminForm>

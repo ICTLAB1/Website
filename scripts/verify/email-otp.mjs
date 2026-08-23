@@ -57,12 +57,24 @@ const theirs = `otp_b${stamp}@example.test`;
  * Safe to write with SQL: `getMailConfig` is memoised with React's per-request
  * `cache`, not the persistent one, so there is no stale entry to invalidate.
  */
-const hadMailSettings = sql(`select count(*) from "MailSettings"`) !== "0";
-if (hadMailSettings) {
-  console.log("  ! MailSettings already configured — leaving it alone and using it as is");
+const priorHost = sql(
+  `select coalesce(host,'') || '|' || coalesce(port::text,'') || '|' || coalesce(secure::text,'') || '|' || coalesce("fromAddress",'')
+     from "MailSettings" where id = 'singleton'`,
+);
+const hadRow = priorHost !== "";
+const hadHost = priorHost.split("|")[0] !== "" && priorHost !== "";
+
+if (hadHost) {
+  console.log("  ! a mail server is already configured — using it as it stands");
 } else {
+  // Only the transport fields are touched. A row may already exist carrying
+  // other settings — who is copied on quotations, for one — and replacing it
+  // would quietly undo them.
   sql(
-    `insert into "MailSettings" (id, provider, host, port, secure, "fromAddress", "fromName", "updatedAt") values ('singleton', 'SMTP', '127.0.0.1', 2525, false, 'no-reply@example.test', 'OTP Probe', now())`,
+    `insert into "MailSettings" (id, provider, host, port, secure, "fromAddress", "fromName", "updatedAt")
+     values ('singleton', 'SMTP', '127.0.0.1', 2525, false, 'no-reply@example.test', 'OTP Probe', now())
+     on conflict (id) do update set provider = 'SMTP', host = '127.0.0.1', port = 2525, secure = false,
+       "fromAddress" = 'no-reply@example.test', "fromName" = 'OTP Probe', "updatedAt" = now()`,
   );
 }
 
@@ -242,7 +254,17 @@ await browser.close();
 sql(`delete from "AuditLog" where "actorId" in ('otpa${stamp}','otpb${stamp}')`);
 sql(`delete from "Session" where "userId" in ('otpa${stamp}','otpb${stamp}')`);
 sql(`delete from "User" where id in ('otpa${stamp}','otpb${stamp}')`);
-if (!hadMailSettings) sql(`delete from "MailSettings" where id = 'singleton'`);
+if (!hadHost) {
+  // Put the transport back exactly as it was, and remove the row entirely only
+  // if this suite is what created it.
+  if (hadRow) {
+    sql(
+      `update "MailSettings" set host = null, port = null, secure = null, "fromAddress" = null, "fromName" = null where id = 'singleton'`,
+    );
+  } else {
+    sql(`delete from "MailSettings" where id = 'singleton'`);
+  }
+}
 rmSync(scratch, { force: true });
 
 const failed = results.filter((result) => !result.ok).length;
