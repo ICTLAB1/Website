@@ -110,17 +110,15 @@ function CertificationCard({ certification }: { certification: CertificationRow 
           carries both the standard and its scope — so the two text lines it
           replaces would be the same words twice.
 
-          A fixed height with `object-contain`, not a width. These marks are all
-          the same 1800×520 canvas but their type is different lengths, and
-          sizing three of them by width would set "ISO 9001:2015" larger than
-          "ISO/IEC 20000-1:2018" beside it. Height is what makes a row of them
-          read as one set.
+          A fixed height with `object-contain`, not a width. All three share one
+          canvas and one layout, so a common height puts their frames and their
+          type on exactly the same footing wherever they sit together.
         */
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={mark}
           alt={`${certification.standard} — ${certification.title}`}
-          className="h-11 w-auto max-w-full self-start object-contain object-left"
+          className="h-14 w-auto max-w-full self-start object-contain object-left"
           loading="lazy"
           decoding="async"
         />

@@ -18,6 +18,12 @@
  *
  * Add a file to `public/certifications/` and a line here to switch one on.
  *
+ * ## The artwork
+ *
+ * One supplied badge, and two built from it by substituting the number — see
+ * `scripts/build-certification-badges` for why only one of the three files
+ * originally sent could be used.
+ *
  * ## The variants
  *
  * "ISO 27001:2022" and "ISO/IEC 27001:2022" are the same standard written two
@@ -35,13 +41,17 @@ const LOGOS: Record<string, string> = {
 };
 
 /**
- * How tall a mark is printed on a document, in points.
+ * How tall a badge is printed on a document, in points.
  *
- * A height rather than a width, because the files are trimmed to their own ink
- * and so have different widths — see `scripts/rasterise-certification-marks`.
- * One height is what gives a row of them a shared cap height and baseline.
+ * A height rather than a width. All three share one canvas and one layout — see
+ * `scripts/build-certification-badges` — so height alone keeps a row of them on
+ * a common baseline whatever else changes.
+ *
+ * Larger than the wordmarks these replaced needed. Those were a line of type
+ * two ems tall; a badge is a tick, a frame and two lines stacked, and at thirty
+ * points its number was smaller than the address beside it.
  */
-export const CERTIFICATION_MARK_HEIGHT = 30;
+export const CERTIFICATION_MARK_HEIGHT = 42;
 
 /** The artwork for a standard, or null where none has been supplied. */
 export function certificationLogo(standard: string): string | null {

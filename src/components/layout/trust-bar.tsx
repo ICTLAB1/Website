@@ -114,12 +114,12 @@ export async function TrustBar() {
                       levels of seriousness, and the independently audited half
                       was the one that looked like a footnote.
 
-                      Set a shade taller than the partner badges rather than
-                      matching them. These are two-line lockups carrying a
-                      standard over its scope, so the same overall height puts
-                      their type at roughly half the size of a single-line
-                      badge's; the extra height is what makes the two read as
-                      equals rather than making these look bigger.
+                      Set taller than the partner badges rather than matching
+                      them. A partner badge is a single line of type; these are
+                      a tick, a frame and two stacked lines, so at the same
+                      overall height their type lands at a fraction of the
+                      size. The extra height is what makes the two read as
+                      equals rather than what makes these look bigger.
 
                       Stepped down on a phone, where the extra height stops
                       helping and starts shouting: at 390px the partner badges
@@ -131,7 +131,7 @@ export async function TrustBar() {
                     <img
                       src={mark}
                       alt={`${certification.standard} — ${certification.title}`}
-                      className="h-8 w-auto object-contain sm:h-10 lg:h-11"
+                      className="h-10 w-auto object-contain sm:h-12 lg:h-14"
                       loading="lazy"
                       decoding="async"
                     />
