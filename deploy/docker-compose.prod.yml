@@ -73,14 +73,19 @@ services:
       COMPANY_GRIEVANCE_OFFICER_EMAIL: ${COMPANY_GRIEVANCE_OFFICER_EMAIL:-}
       COMPANY_GRIEVANCE_OFFICER_PHONE: ${COMPANY_GRIEVANCE_OFFICER_PHONE:-}
 
-      # Files uploaded from the admin panel — brand logos today. Kept on a
-      # volume rather than under public/, which is baked into the image and so
-      # would lose every upload at the next rebuild.
+      # Files uploaded from the admin panel — brand logos and product
+      # photographs. Kept on a volume rather than under public/, which is baked
+      # into the image and so would lose every upload at the next rebuild.
       UPLOAD_DIR: /data/uploads
       # Customer documents — purchase orders, bills of quantities, quotations.
       # A separate volume from the public artwork above, because these are never
       # served from a guessable path and must not end up somewhere that is.
       DOCUMENT_DIR: /data/documents
+
+      # Guards the scheduled CRM delivery route. Unset means the route refuses
+      # everything, which is the safe default — set it only when a scheduler is
+      # actually going to call it. See deploy/README.md.
+      CRM_DELIVER_TOKEN: ${CRM_DELIVER_TOKEN:-}
 
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}

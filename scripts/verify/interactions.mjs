@@ -97,7 +97,18 @@ const check = (name, condition, detail = "") =>
   );
   check("quantities persisted per line", quantities.join(",") === "50,25,10", quantities.join(","));
 
-  const summary = await page.getByRole("complementary").innerText();
+  /*
+   * Named, not "the complementary landmark". This originally assumed the page
+   * had exactly one `aside`, which broke the moment a second landmark was
+   * added anywhere in the layout — a locator that depends on nothing else on
+   * the page existing is a locator that fails for reasons unrelated to what it
+   * is testing.
+   */
+  const summary = await page
+    .locator("aside")
+    .filter({ hasText: "Enquiry summary" })
+    .first()
+    .innerText();
   check("summary totals the quantities", summary.includes("85"), summary.replace(/\n/g, " | "));
 
   // Client-side validation must reject an obviously bad email.

@@ -392,6 +392,56 @@ moved on is reported and left alone.
 
 ---
 
+## Sending pipeline events to your own CRM
+
+Optional. Skip the whole section if you do not want the site pushing events
+anywhere — nothing about the pipeline depends on it, and the admin panel says
+"Not connected" rather than pretending otherwise.
+
+Events (deals raised, stages moved, deals won and lost) are recorded from the
+day the pipeline is used, whether or not any of this is set up. Nothing is lost
+by configuring it later: the backlog is sent in order once it is switched on.
+
+**1. Point it at your CRM.** In the admin panel, *Settings → CRM integration*.
+Set the HTTPS endpoint your CRM listens on and a signing secret of your own
+choosing, then tick "Send events". The page documents the exact request your
+CRM will receive — headers, signature scheme and the event names.
+
+The endpoint must be `https`. A private address (`https://crm.internal…`, or an
+IP on your own network) is fine and is the expected case; plaintext `http` is
+refused, because deal values and customer names would otherwise cross the
+network in the clear.
+
+**2. Give the scheduler a token.** Delivery runs when something asks it to. The
+admin screen has a "Send what is waiting" button for doing it by hand; for a
+schedule, set a token and point cron at the route.
+
+```bash
+# On the server, in /srv/techzoid/deploy — generate a token and record it
+openssl rand -hex 32
+# Add it to the .env file used by docker compose:
+#   CRM_DELIVER_TOKEN=<the value you just generated>
+cd /srv/techzoid/deploy && docker compose -f docker-compose.prod.yml up -d
+```
+
+Then add a cron entry — every five minutes is ample:
+
+```bash
+crontab -e
+# */5 * * * * curl -sS -X POST -H "x-crm-token: <the value>" https://techzoidtechnologies.com/api/crm/deliver >/dev/null
+```
+
+Without `CRM_DELIVER_TOKEN` set, that route refuses everything and answers 404,
+which is the safe default: it both triggers outbound requests and reports what
+is queued, so it is not one to leave open because a variable was forgotten.
+
+**If a delivery fails** the event is retried with a growing delay and given up
+on after eight attempts, staying visible on the settings screen either way with
+the error your CRM returned. A misconfigured endpoint is diagnosable from that
+screen without reading a server log.
+
+---
+
 ## Housekeeping
 
 Two functions are safe to run on a schedule, and neither is a correctness

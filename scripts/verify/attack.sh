@@ -144,6 +144,24 @@ done
 code=$(curl -s -o /dev/null -w "%{http_code}" -b "$SJ" "$BASE/admin/settings")
 [ "$code" != "200" ] && ok "SALES cannot reach the business identity settings (got $code)" || no "SALES settings access" "got 200"
 
+# The CRM integration points this business's commercial data at a URL. That is
+# an integration credential, not a sales screen, so it sits with the others.
+code=$(curl -s -o /dev/null -w "%{http_code}" -b "$SJ" "$BASE/admin/settings/crm")
+[ "$code" != "200" ] && ok "SALES cannot reach the CRM integration settings (got $code)" || no "SALES CRM settings access" "got 200"
+
+# The pipeline is the opposite case: sales work happens there all day, and an
+# admin-only pipeline is one the sales team keeps in a spreadsheet instead.
+code=$(curl -s -o /dev/null -w "%{http_code}" -b "$SJ" "$BASE/admin/pipeline")
+[ "$code" = "200" ] && ok "SALES keeps the pipeline" || no "SALES pipeline access" "got $code"
+
+# The scheduled delivery route both triggers outbound HTTP and reports what is
+# queued. It must not be reachable by a signed-in staff session either — the
+# token is the only key, and 404 rather than 401 so a prober learns nothing.
+code=$(curl -s -o /dev/null -w "%{http_code}" -X POST -b "$SJ" "$BASE/api/crm/deliver")
+[ "$code" = "404" ] && ok "CRM delivery route is closed to a staff session with no token" || no "CRM delivery route" "got $code"
+code=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "x-crm-token: guess" "$BASE/api/crm/deliver")
+[ "$code" = "404" ] && ok "CRM delivery route refuses a guessed token" || no "CRM delivery token" "got $code"
+
 # SALES keeps its own commercial surfaces.
 code=$(curl -s -o /dev/null -w "%{http_code}" -b "$SJ" "$BASE/admin/enquiries")
 [ "$code" = "200" ] && ok "SALES keeps its commercial surfaces" || no "SALES enquiries" "got $code"

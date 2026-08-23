@@ -25,7 +25,21 @@ export async function CertificationBar() {
   if (certifications.length === 0) return null;
 
   return (
-    <div className="border-b border-line bg-surface-muted">
+    /*
+     * A landmark, not a bare div.
+     *
+     * This band sits between the header and `<main>`, which leaves it outside
+     * every landmark on the page — content a screen reader user navigating by
+     * region skips over entirely, and an axe-core "region" violation on all 38
+     * pages.
+     *
+     * A named `section` rather than an `aside`. Both satisfy the rule, but
+     * `aside` is the complementary role, and pages here already use it for
+     * their own sidebars — a second one site-wide makes "the complementary
+     * landmark" ambiguous on every page that has a summary panel. A labelled
+     * section is a region of its own and competes with nothing.
+     */
+    <section aria-label="Certifications" className="border-b border-line bg-surface-muted">
       <div className="container-page flex flex-wrap items-center justify-center gap-x-6 gap-y-1 py-2 sm:justify-start">
         <p className="text-label font-semibold uppercase tracking-[0.1em] text-ink-500">
           Certified
@@ -48,6 +62,6 @@ export async function CertificationBar() {
           ))}
         </ul>
       </div>
-    </div>
+    </section>
   );
 }
