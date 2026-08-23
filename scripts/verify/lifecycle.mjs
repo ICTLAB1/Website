@@ -98,10 +98,21 @@ const draftTotal = page.match(/Total\s*₹([\d,]+)/)?.[1];
 check("draft carries a non-zero total", Boolean(draftTotal) && draftTotal !== "0", draftTotal ?? "");
 
 // Apply a 10% discount to the first line and confirm the header recalculates.
-await admin.locator("details").first().click();
+/*
+ * The first *line editor*, not the first disclosure on the page.
+ *
+ * This used to say `locator("details").first()`, which was true right up until
+ * an "Add a line" panel with a disclosure of its own arrived above the line
+ * editors. The discount then went into the new-line form and there was no
+ * "Update line" button to press. A line editor is identified by the hidden
+ * `itemId` it carries — the thing that makes it an editor of an existing line
+ * — rather than by where it happens to sit on the page.
+ */
+const lineEditor = admin.locator('details:has(input[name="itemId"])').first();
+await lineEditor.locator("summary").click();
 await admin.waitForTimeout(300);
-await admin.locator('input[name="discountPercent"]').first().fill("10");
-await admin.getByRole("button", { name: "Update line" }).first().click();
+await lineEditor.locator('input[name="discountPercent"]').fill("10");
+await lineEditor.getByRole("button", { name: "Update line" }).click();
 await admin.waitForTimeout(1200);
 page = await admin.locator("body").innerText();
 const discountedTotal = page.match(/Total\s*₹([\d,]+)/)?.[1];
