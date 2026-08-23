@@ -83,6 +83,8 @@ export async function buildQuotationPdf(
       createdAt: true,
       notes: true,
       paymentTerms: true,
+      documentNo: true,
+      customerReference: true,
       owner: { select: { name: true } },
       company: {
         select: {
@@ -288,7 +290,15 @@ export async function buildQuotationPdf(
 
   const bytes = renderQuotationPdf({
     reference: quote.reference,
-    referenceNo: quote.enquiry?.reference ?? null,
+    documentNo: quote.documentNo,
+    /*
+     * The customer's own number where they gave us one, ours otherwise.
+     *
+     * Their RFQ or tender number is what their procurement system files this
+     * against, so echoing it back is what makes the quotation findable at their
+     * end. Our enquiry reference is the fallback, not the preference.
+     */
+    referenceNo: quote.customerReference ?? quote.enquiry?.reference ?? null,
     version: quote.version,
     status: quote.status,
     currency: quote.currency,

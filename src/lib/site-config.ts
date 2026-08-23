@@ -184,6 +184,29 @@ export const getSiteConfig = cache(async () => {
      */
     quoteTerms: stored(row?.quoteTerms) ?? null,
     /*
+     * How quotation numbers are formed, e.g. "TZ/QT/{FY}/{SEQ:4}".
+     *
+     * Stored only, with no environment fallback and no default. A numbering
+     * series is a business convention, and one this application invented would
+     * collide with whatever the business already prints on the documents it has
+     * issued so far. Unset means quotations keep showing their internal
+     * reference, which is what they did before this existed.
+     */
+    quoteNumberFormat: stored(row?.quoteNumberFormat) ?? null,
+    /*
+     * A second legal entity or overseas office for the letterhead.
+     *
+     * Both or neither: a name with no address is a claim to a presence nobody
+     * can write to, and a document is the wrong place to make one.
+     */
+    secondaryEntity:
+      stored(row?.secondaryEntityName) && stored(row?.secondaryEntityAddress)
+        ? {
+            name: stored(row?.secondaryEntityName)!,
+            address: stored(row?.secondaryEntityAddress)!,
+          }
+        : null,
+    /*
      * What a dollar and a dirham are worth, in paise. Null means the currency
      * is not offered — there is deliberately no default, because a rate this
      * site invented would be a price the business never agreed to.

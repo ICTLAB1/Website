@@ -1,6 +1,17 @@
 import { chromium } from "playwright";
+import { execFileSync } from "node:child_process";
+import { writeFileSync, rmSync } from "node:fs";
 
 const BASE = "http://localhost:3000";
+
+/** Reads a single value straight from the database, for the facts a page hides. */
+const scratch = `/tmp/verify-lifecycle-${process.pid}.sql`;
+const sql = (statement) => {
+  writeFileSync(scratch, statement, { mode: 0o644 });
+  return execFileSync("su", ["postgres", "-c", `psql -tA -d ictlab -f ${scratch}`], {
+    encoding: "utf8",
+  }).trim();
+};
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const results = [];
 const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), detail });
@@ -51,6 +62,35 @@ await admin.getByRole("button", { name: "Draft quotation" }).click();
 await admin.waitForURL("**/admin/quotes/QTE-**", { timeout: 15000 });
 const quoteRef = admin.url().match(/QTE-\d{4}-[A-Z0-9]{6}/)?.[0];
 check("quotation drafted from the enquiry", Boolean(quoteRef), quoteRef ?? admin.url());
+
+/*
+ * The printed number comes from the configured series, and never repeats.
+ *
+ * Checked here because this is the only path that allocates one. The reference
+ * in the URL stays unguessable — that is what stops one customer reading
+ * another's quotations — while the number on the document is sortable, and the
+ * two are deliberately different strings.
+ */
+{
+  const format = sql(`select coalesce("quoteNumberFormat", '') from "SiteSettings" where id = 'singleton'`);
+
+  if (format) {
+    const numbered = sql(`select coalesce("documentNo", '') from "Quote" where reference = '${quoteRef}'`);
+    check("the quotation carries a document number from the series", numbered.length > 0, numbered);
+    check(
+      "which is not the internal reference",
+      numbered !== quoteRef,
+      `${numbered} vs ${quoteRef}`,
+    );
+
+    const duplicates = sql(
+      `select count(*) from (select "documentNo", version from "Quote" where "documentNo" is not null group by "documentNo", version having count(*) > 1) d`,
+    );
+    check("and no two quotations share a number and a version", duplicates === "0", duplicates);
+  } else {
+    check("no numbering series is configured, so the reference is printed", true, "unset");
+  }
+}
 
 let page = await admin.locator("body").innerText();
 check("quote lines were priced from the catalogue", page.includes("Microsoft 365") && page.includes("Acrobat"));
@@ -130,6 +170,7 @@ check("dashboard revenue reflects the fulfilled order",
   Boolean(revenue) && revenue !== "0", `₹${revenue ?? "?"}`);
 
 await browser.close();
+rmSync(scratch, { force: true });
 
 for (const r of results) console.log(`${r.ok ? "  ✓" : "  ✗"} ${r.name}${!r.ok && r.detail ? ` — ${r.detail}` : ""}`);
 const failed = results.filter((r) => !r.ok).length;

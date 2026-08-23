@@ -64,6 +64,8 @@ export async function reviseQuote(
       notes: true,
       paymentTerms: true,
       ownerId: true,
+      documentNo: true,
+      customerReference: true,
       root: { select: { reference: true } },
       /*
        * Every printed column, not just the priced ones.
@@ -142,6 +144,15 @@ export async function reviseQuote(
       // is the same conversation, not a fresh one.
       paymentTerms: source.paymentTerms,
       ownerId: source.ownerId,
+      /*
+       * The document number carries over too, and the version distinguishes
+       * them. That is how a purchasing office expects it: one quotation number
+       * with revisions against it, not three unrelated numbers they have to
+       * work out are the same negotiation. Allocating a fresh number per
+       * revision would also burn the series three times as fast.
+       */
+      documentNo: source.documentNo,
+      customerReference: source.customerReference,
       items: { create: source.items },
     },
   });

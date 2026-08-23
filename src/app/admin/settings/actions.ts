@@ -7,6 +7,7 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { recordAudit } from "@/lib/audit";
 import { clientIp } from "@/lib/auth/request";
 import { fieldErrorsOf } from "@/lib/validation";
+import { TEMPLATE_PROBLEMS, templateProblem } from "@/lib/document-number";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { invalidate, tags } from "@/lib/cache";
 import type { AdminActionState } from "@/lib/admin/types";
@@ -125,6 +126,18 @@ const settingsSchema = z.object({
   // Generous: these are real contract terms, not a strapline.
   quoteTerms: optionalText(4000),
   /*
+   * The quotation numbering series. Validated against the same rules the
+   * renderer applies, so a format that would produce duplicate numbers is
+   * refused here rather than discovered when the second quotation fails to
+   * save.
+   */
+  quoteNumberFormat: optionalText(60).refine(
+    (value) => value === null || templateProblem(value) === null,
+    (value) => ({ message: TEMPLATE_PROBLEMS[templateProblem(value) ?? "bad_characters"] }),
+  ),
+  secondaryEntityName: optionalText(120),
+  secondaryEntityAddress: optionalText(300),
+  /*
    * Entered as a decimal — "83.50" is what a person reads off a rate board —
    * and stored as paise. Bounded well outside any plausible rate rather than
    * tightly, so a currency this business starts quoting in future is not
@@ -137,6 +150,24 @@ const settingsSchema = z.object({
   grievanceName: optionalText(120),
   grievanceEmail: optionalEmail,
   grievancePhone: optionalPhone,
+});
+
+/*
+ * A second entity is both fields or neither.
+ *
+ * Refused rather than half-saved, because a name with no address is a claim to
+ * a presence nobody can write to, and an address with no name is a mystery. The
+ * renderer already declines to print a half-filled pair; this says so at the
+ * point somebody can fix it.
+ */
+const settingsSchemaChecked = settingsSchema.superRefine((value, context) => {
+  if (Boolean(value.secondaryEntityName) === Boolean(value.secondaryEntityAddress)) return;
+
+  context.addIssue({
+    code: "custom",
+    path: [value.secondaryEntityName ? "secondaryEntityAddress" : "secondaryEntityName"],
+    message: "Give the second entity both a name and an address, or leave both blank.",
+  });
 });
 
 const FIELDS = Object.keys(settingsSchema.shape) as Array<keyof typeof settingsSchema.shape>;
@@ -155,7 +186,7 @@ export async function saveSiteSettings(
   // Read only the fields the schema declares. A form field this action does not
   // know about is ignored rather than written, so a crafted request cannot set
   // a column simply by naming it.
-  const parsed = settingsSchema.safeParse(
+  const parsed = settingsSchemaChecked.safeParse(
     Object.fromEntries(FIELDS.map((field) => [field, formData.get(field) ?? ""])),
   );
 

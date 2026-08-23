@@ -41,6 +41,9 @@ type StoredSettings = {
   cin: string | null;
   supportHours: string | null;
   quoteTerms: string | null;
+  quoteNumberFormat: string | null;
+  secondaryEntityName: string | null;
+  secondaryEntityAddress: string | null;
   usdRatePaise: number | null;
   aedRatePaise: number | null;
   grievanceName: string | null;
@@ -213,6 +216,57 @@ export function SettingsForm({
             placeholder={"Prices are valid for 30 days from the date of this quotation.\nPayment is due within 30 days of invoice.\nLicences are provisioned within 2 working days of a confirmed order."}
           />
         </Field>
+      </Fieldset>
+
+      <Fieldset
+        legend="Quotation numbering"
+        description="The number printed at the top of every quotation. Separate from the reference in the web address, which stays unguessable so that nobody can read another customer's quotations by changing a digit."
+      >
+        <Field
+          label="Numbering format"
+          name="quoteNumberFormat"
+          hint="Tokens: {SEQ} the counter, {SEQ:4} padded to four digits, {FY} the financial year short (2627), {FYYYY} long (2026-27), {YYYY}, {YY}, {MM}. Left blank, quotations show their internal reference as they do now."
+        >
+          <Input
+            name="quoteNumberFormat"
+            maxLength={60}
+            defaultValue={stored?.quoteNumberFormat ?? ""}
+            placeholder="TZ/QT/{FY}/{SEQ:4}"
+          />
+        </Field>
+        <p className="text-[12px] leading-relaxed text-ink-500">
+          The counter restarts whenever the part of the format outside {"{SEQ}"} changes, so a
+          format with {"{FY}"} in it starts again each financial year. Numbers already issued keep
+          the format they were issued under; changing this affects the next quotation, not the last
+          one.
+        </p>
+      </Fieldset>
+
+      <Fieldset
+        legend="Second entity"
+        description="An overseas office or a second registered company, printed under your letterhead on quotations. Leave both blank if you trade as one entity."
+      >
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Entity name" name="secondaryEntityName">
+            <Input
+              name="secondaryEntityName"
+              maxLength={120}
+              defaultValue={stored?.secondaryEntityName ?? ""}
+            />
+          </Field>
+          <Field
+            label="Entity address"
+            name="secondaryEntityAddress"
+            hint="One line, or several separated by line breaks."
+          >
+            <Textarea
+              name="secondaryEntityAddress"
+              rows={3}
+              maxLength={300}
+              defaultValue={stored?.secondaryEntityAddress ?? ""}
+            />
+          </Field>
+        </div>
       </Fieldset>
 
       <Fieldset

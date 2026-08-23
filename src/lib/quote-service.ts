@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { orgScope, type Scoped } from "@/lib/auth/scope";
 import { publicReference } from "@/lib/auth/tokens";
+import { allocateDocumentNumber } from "@/lib/document-series";
 import {
   defaultValidUntil,
   documentTotals,
@@ -144,10 +145,28 @@ export async function createQuoteFromEnquiry(
 
   const reference = publicReference("QTE");
 
+  /*
+   * The printed number, from the configured series.
+   *
+   * Allocated at drafting rather than at issue, so the number is on the screen
+   * while somebody is still working on the quotation and is the same one the
+   * customer eventually receives. A draft that is abandoned keeps its number;
+   * a gap in a quotation series is normal and is not worth the alternative,
+   * which is a number that changes under the person quoting.
+   *
+   * Null when no series is configured — the document then prints its internal
+   * reference, exactly as it did before numbering existed.
+   */
+  const config = await getSiteConfig();
+  const documentNo = config.quoteNumberFormat
+    ? await allocateDocumentNumber(config.quoteNumberFormat)
+    : null;
+
   const created = await prisma.quote.create({
     select: { id: true },
     data: {
       reference,
+      documentNo,
       status: "DRAFT",
       enquiryId: enquiry.id,
       userId: enquiry.userId,

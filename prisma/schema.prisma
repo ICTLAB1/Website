@@ -973,6 +973,23 @@ model Quote {
   /// are negotiated per deal and a fixed list would be wrong by the second one.
   paymentTerms String?
 
+  /// The number printed on the document, from the configured series.
+  ///
+  /// Separate from `reference`, which stays the key and the URL. A reference is
+  /// unguessable so that nobody can walk another organisation's quotations by
+  /// incrementing a URL; a document number is sortable so that a purchasing
+  /// office can file it. Those are different jobs and one string cannot do
+  /// both.
+  ///
+  /// Shared by every version of one quotation — a revision keeps the number and
+  /// increments `version` — so the constraint is on the pair.
+  documentNo String?
+
+  /// The customer's own reference for this requirement: their RFQ or tender
+  /// number. Echoed back on the document, because that is what their
+  /// procurement system files it against. Ours is not a substitute for theirs.
+  customerReference String?
+
   /// Who at TechZoid is answerable for this quotation, printed on it so the
   /// customer knows whom to ring. Separate from whoever happened to click
   /// "draft": that is in the audit log, and it is not the same question.
@@ -1008,9 +1025,13 @@ model Quote {
   documents Document[]
   messages  QuoteMessage[]
 
+  /// One document number per version, so a revision keeps the number it was
+  /// issued under and the pair still identifies exactly one row.
+  @@unique([documentNo, version])
   @@index([status])
   @@index([userId])
   @@index([enquiryId])
+  @@index([documentNo])
 }
 
 /// A question or a revision request on a quotation, and the answer to it.
@@ -1646,6 +1667,22 @@ model NavigationItem {
 /// That is what lets an already-running deployment upgrade without losing a
 /// single value: until someone edits a field in the panel, the environment
 /// still supplies it.
+/// A numbering series, and where it has got to.
+///
+/// One row per series — "TZ/QT/2627/" — holding the next number to hand out.
+/// Incremented atomically in the same statement that reads it, so two
+/// quotations raised at the same instant cannot be given the same number; see
+/// `lib/document-series`.
+///
+/// The key is the rendered template with the counter removed, so what a series
+/// resets on is decided by the template alone and there is no second setting
+/// to keep in step with it.
+model DocumentSeries {
+  key       String   @id
+  next      Int      @default(1)
+  updatedAt DateTime @updatedAt
+}
+
 model SiteSettings {
   id String @id @default("singleton")
 
@@ -1689,6 +1726,23 @@ model SiteSettings {
   /// sending none. Until it is set, quotations link to the published terms page
   /// instead. Markdown; one point per line.
   quoteTerms String?
+
+  /// How quotation numbers are formed, e.g. "TZ/QT/{FY}/{SEQ:4}".
+  ///
+  /// Blank means no series: the document prints the internal reference, which
+  /// is what it did before this existed. Deliberately not defaulted to a
+  /// pattern — a numbering series is a business convention, and one this
+  /// application chose would collide with whatever the business already uses
+  /// on the documents it has issued so far. See `lib/document-number`.
+  quoteNumberFormat String?
+
+  /// A second legal entity or overseas office, printed under the letterhead.
+  ///
+  /// Both or neither: a name with no address is a claim to a presence nobody
+  /// can write to. Left blank on a business that trades as one entity, which
+  /// is most of them.
+  secondaryEntityName    String?
+  secondaryEntityAddress String?
 
   /// Publishing a named grievance officer and their contact details is required
   /// of an online seller in India by the Consumer Protection (E-Commerce) Rules

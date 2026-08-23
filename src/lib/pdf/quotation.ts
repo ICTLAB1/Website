@@ -72,6 +72,13 @@ export type QuotationLine = {
 
 export type QuotationPdfInput = {
   reference: string;
+  /**
+   * The number printed as "Quotation No.", from the configured series.
+   *
+   * Falls back to the internal reference when no series is configured, which
+   * is the state a fresh deployment is in.
+   */
+  documentNo: string | null;
   /** The enquiry or RFQ this answers, where there is one. */
   referenceNo: string | null;
   version: number;
@@ -331,6 +338,32 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
   }
 
   /*
+   * A second entity, where the business has one.
+   *
+   * Under the registered one and visibly subordinate to it, because that is
+   * what it is: the quotation is issued by the entity whose GSTIN is on the
+   * statutory strip below, and a second name set at the same weight would
+   * leave a customer unsure which of them they are contracting with.
+   */
+  if (config.secondaryEntity) {
+    issuerY += 6;
+    pdf.line(ISSUER_X, issuerY - 4, ISSUER_X + 90, issuerY - 4, RULE, 0.7);
+    issuerY += 6;
+
+    pdf.text(fit(config.secondaryEntity.name, issuerWidth, 8.5, "sansBold"), ISSUER_X, issuerY, {
+      size: 8.5,
+      font: "sansBold",
+      colour: INK,
+    });
+    issuerY += 10;
+
+    for (const line of wrap(config.secondaryEntity.address, issuerWidth, 7.2)) {
+      pdf.text(line, ISSUER_X, issuerY, { size: 7.2, colour: MUTED });
+      issuerY += 8.6;
+    }
+  }
+
+  /*
    * The certifications, exactly as they are held.
    *
    * Printed from the records that carry a certificate number and an issuing
@@ -351,9 +384,16 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
   pdf.textRight("QUOTATION", RIGHT, top + 16, { size: 20, font: "sansBold", colour: ACCENT });
 
   const meta: Array<[string, string | null]> = [
-    ["Quotation No.", input.reference],
+    ["Quotation No.", input.documentNo ?? input.reference],
     ["Reference No.", input.referenceNo],
-    ["Revision No.", input.version > 1 ? String(input.version) : null],
+    /*
+     * Always printed, including on the first version.
+     *
+     * "Revision No. 1" tells a purchasing officer they are holding the
+     * original; a blank tells them nothing, and they cannot distinguish it from
+     * a field somebody forgot to fill in.
+     */
+    ["Revision No.", String(input.version)],
     ["Date", pdfDate(input.issuedAt)],
     ["Valid Till", input.validUntil ? pdfDate(input.validUntil) : null],
     ["Sales Executive", input.salesExecutive],
@@ -1121,7 +1161,7 @@ function drawFooters(pdf: PdfDocument, input: QuotationPdfInput): void {
 
       pdf.text(input.config.entityName, MARGIN, FOOTER_RULE + 11, { size: 6.8, colour: FAINT });
 
-      const right = `${input.reference}   ·   Page ${page + 1} of ${pageCount}`;
+      const right = `${input.documentNo ?? input.reference}   ·   Page ${page + 1} of ${pageCount}`;
       pdf.textRight(right, RIGHT, FOOTER_RULE + 11, { size: 6.8, colour: FAINT });
     });
   }

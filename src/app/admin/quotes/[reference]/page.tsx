@@ -97,7 +97,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
           &larr; Quotes
         </Link>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-          <h1 className="font-mono text-2xl">{quote.reference}</h1>
+          <h1 className="font-mono text-2xl">{quote.documentNo ?? quote.reference}</h1>
           <span className="flex items-center gap-3">
             <a
               href={`/account/quotes/${quote.reference}/pdf`}
@@ -395,6 +395,17 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                   type="date"
                   required
                   defaultValue={quote.validUntil?.toISOString().slice(0, 10) ?? ""}
+                />
+              </Field>
+              <Field
+                label="Their reference"
+                name="customerReference"
+                hint="The customer's own RFQ or tender number. Printed as the reference on the quotation, in place of ours."
+              >
+                <Input
+                  name="customerReference"
+                  maxLength={80}
+                  defaultValue={quote.customerReference ?? ""}
                 />
               </Field>
               <Field

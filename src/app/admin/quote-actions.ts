@@ -227,6 +227,13 @@ const validitySchema = z.object({
   paymentTerms: z.string().trim().max(160).optional(),
   /** The member of staff answerable for it. Empty means nobody is named. */
   ownerId: z.string().trim().max(60).optional(),
+  /**
+   * The customer's own RFQ or tender number.
+   *
+   * Printed as "Reference No." in place of ours, because that is what their
+   * procurement system files the quotation against.
+   */
+  customerReference: z.string().trim().max(80).optional(),
 });
 
 export async function updateQuoteTerms(
@@ -242,6 +249,7 @@ export async function updateQuoteTerms(
     notes: formData.get("notes"),
     paymentTerms: formData.get("paymentTerms"),
     ownerId: formData.get("ownerId"),
+    customerReference: formData.get("customerReference"),
   });
   if (!parsed.success) {
     return {
@@ -282,6 +290,7 @@ export async function updateQuoteTerms(
       validUntil,
       notes: parsed.data.notes?.trim() || null,
       paymentTerms: parsed.data.paymentTerms?.trim() || null,
+      customerReference: parsed.data.customerReference?.trim() || null,
       ownerId,
     },
   });
