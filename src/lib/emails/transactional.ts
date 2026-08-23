@@ -312,3 +312,82 @@ export async function notifyTicketUpdated(ticket: {
     action: { label: "Open this request", url: `${appUrl()}/account/support` },
   });
 }
+
+/**
+ * A consignment is on its way, or has arrived.
+ *
+ * Separate from `notifyOrderStatus` because it is not a status change: an order
+ * can be confirmed and undelivered, or fulfilled and still in a van. Only two
+ * moments are worth an email — it left, and it arrived — and every later
+ * correction to a courier name is made quietly.
+ */
+export async function notifyOrderDelivery(order: {
+  reference: string;
+  moment: "DISPATCHED" | "DELIVERED";
+  courier: string | null;
+  trackingNumber: string | null;
+  expectedAt: Date | null;
+  billingName: string;
+  billingEmail: string;
+}): Promise<void> {
+  const dispatched = order.moment === "DISPATCHED";
+
+  const details: Array<[string, string]> = [["Order reference", order.reference]];
+  if (order.courier) details.push(["Courier", order.courier]);
+  if (order.trackingNumber) details.push(["Consignment number", order.trackingNumber]);
+  if (dispatched && order.expectedAt) {
+    details.push(["Expected", order.expectedAt.toLocaleDateString("en-GB", { dateStyle: "medium" })]);
+  }
+
+  await deliver(
+    order.billingEmail,
+    dispatched
+      ? `Order ${order.reference} has been dispatched`
+      : `Order ${order.reference} has been delivered`,
+    {
+      heading: dispatched ? "Your order is on its way" : "Your order has been delivered",
+      greetingName: order.billingName,
+      paragraphs: dispatched
+        ? [
+            "Your order has left us. Where a consignment number is shown below, the courier's own tracking is the live one.",
+            "Any date we have given is our best estimate and not a guarantee.",
+          ]
+        : [
+            "Your order has been recorded as delivered.",
+            "Please tell us within a working day if anything is missing or damaged, so we can raise it with the courier while they will still act on it.",
+          ],
+      details,
+      action: { label: "View this order", url: `${appUrl()}/account/orders/${order.reference}` },
+    },
+  );
+}
+
+/**
+ * Somebody here has written on a ticket.
+ *
+ * The message itself goes in the email, because a notification that only says
+ * "you have a reply" makes the customer sign in to read one sentence. What they
+ * cannot do from the email is answer — the reply belongs on the ticket, where
+ * whoever picks it up next will find it.
+ */
+export async function notifyTicketReply(ticket: {
+  reference: string;
+  subject: string;
+  body: string;
+  customerName: string;
+  customerEmail: string;
+}): Promise<void> {
+  await deliver(ticket.customerEmail, `Re: ${ticket.subject} (${ticket.reference})`, {
+    heading: "We have replied to your request",
+    greetingName: ticket.customerName,
+    paragraphs: [ticket.body],
+    details: [
+      ["Reference", ticket.reference],
+      ["Subject", ticket.subject],
+    ],
+    action: {
+      label: "Open this request",
+      url: `${appUrl()}/account/support/${ticket.reference}`,
+    },
+  });
+}

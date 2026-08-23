@@ -39,6 +39,28 @@ export function formatDateTime(value: Date | string | null | undefined): string 
 }
 
 /**
+ * A date in the format `<input type="date">` insists on.
+ *
+ * Read in UTC, because these are calendar dates — a warranty ends on the 14th
+ * everywhere — and rendering them in the server's local zone would shift some
+ * of them a day when the server sits west of UTC.
+ */
+export function dateInputValue(value: Date | string | null | undefined): string {
+  if (!value) return "";
+  const date = typeof value === "string" ? new Date(value) : value;
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toISOString().slice(0, 10);
+}
+
+/** The same, for `<input type="datetime-local">`, which wants minutes too. */
+export function dateTimeInputValue(value: Date | string | null | undefined): string {
+  if (!value) return "";
+  const date = typeof value === "string" ? new Date(value) : value;
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toISOString().slice(0, 16);
+}
+
+/**
  * Industry acronyms that must not be title-cased. Without this, a licence type
  * of CSP renders as "Csp", which reads as a typo on a commercial page.
  */

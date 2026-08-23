@@ -136,7 +136,14 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
                         {formatDateTime(ticket.createdAt)}
                       </span>
                     </Td>
-                    <Td className="font-medium text-graphite-900">{ticket.subject}</Td>
+                    <Td className="font-medium text-graphite-900">
+                      <Link
+                        href={`/admin/support/${ticket.reference}`}
+                        className="underline underline-offset-2 hover:text-accent-700"
+                      >
+                        {ticket.subject}
+                      </Link>
+                    </Td>
                     <Td className="text-[13px]">{ticket.user?.email ?? "Not signed in"}</Td>
                     <Td className="text-[13px]">{humanise(ticket.category)}</Td>
                     <Td>

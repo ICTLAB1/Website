@@ -23,6 +23,7 @@ export default async function AccountOverviewPage() {
     { label: "Orders", value: summary.orders, href: "/account/orders" },
     { label: "Active licences", value: summary.licences, href: "/account/licences" },
     { label: "Renewals due (90 days)", value: summary.renewals, href: "/account/renewals" },
+    { label: "Warranties ending (60 days)", value: summary.warrantyExpiring, href: "/account/devices" },
     { label: "Open tickets", value: summary.tickets, href: "/account/support" },
   ];
 

@@ -5,12 +5,13 @@ import type { Metadata } from "next";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/badge";
 import { AdminForm } from "@/components/admin/admin-form";
-import { Field, Select, Textarea } from "@/components/ui/form";
+import { Field, Input, Select, Textarea } from "@/components/ui/form";
 import {
   fulfilOrderAction,
   updateOrderStatus,
   verifyPurchaseOrder,
 } from "@/app/admin/quote-actions";
+import { recordDelivery } from "@/app/admin/service-actions";
 import { DangerZone } from "@/components/admin/danger-zone";
 import { DocumentList } from "@/components/documents/document-list";
 import { DELETABLE } from "@/lib/admin/deletable";
@@ -18,7 +19,7 @@ import { isAdmin, requireStaff } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { priceLine } from "@/lib/pricing";
-import { formatDate, formatDateTime, humanise } from "@/lib/utils";
+import { dateTimeInputValue, formatDate, formatDateTime, humanise } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Order" };
 
@@ -329,6 +330,78 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           )}
         </aside>
       </div>
+
+      <section className="max-w-3xl rounded-[--radius-lg] border border-line bg-white p-5">
+        <h2 className="text-[1.05rem]">Delivery</h2>
+        <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
+          Everything here is shown to the customer. The tracking link must be an ordinary web
+          address — anything else is refused rather than rendered. They are emailed once when a
+          dispatch date is first entered and once when a delivery date is; later corrections are
+          saved quietly.
+        </p>
+
+        <div className="mt-5">
+          <AdminForm
+            action={recordDelivery}
+            submitLabel="Save delivery details"
+            pendingLabel="Saving…"
+            hidden={{ reference: order.reference }}
+          >
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Courier" name="courier">
+                <Input name="courier" maxLength={80} defaultValue={order.courier ?? ""} />
+              </Field>
+              <Field label="Consignment number" name="trackingNumber">
+                <Input
+                  name="trackingNumber"
+                  maxLength={120}
+                  defaultValue={order.trackingNumber ?? ""}
+                />
+              </Field>
+              <Field
+                label="Tracking link"
+                name="trackingUrl"
+                hint="The courier's own tracking page, starting http:// or https://"
+              >
+                <Input name="trackingUrl" maxLength={500} defaultValue={order.trackingUrl ?? ""} />
+              </Field>
+              <Field label="Dispatched" name="dispatchedAt">
+                <Input
+                  name="dispatchedAt"
+                  type="datetime-local"
+                  defaultValue={dateTimeInputValue(order.dispatchedAt)}
+                />
+              </Field>
+              <Field label="Expected" name="expectedAt" hint="Our estimate, shown as one.">
+                <Input
+                  name="expectedAt"
+                  type="datetime-local"
+                  defaultValue={dateTimeInputValue(order.expectedAt)}
+                />
+              </Field>
+              <Field label="Delivered" name="deliveredAt">
+                <Input
+                  name="deliveredAt"
+                  type="datetime-local"
+                  defaultValue={dateTimeInputValue(order.deliveredAt)}
+                />
+              </Field>
+            </div>
+            <Field
+              label="Note to the customer"
+              name="deliveryNote"
+              hint="Shown on their order. Not for anything internal."
+            >
+              <Textarea
+                name="deliveryNote"
+                rows={3}
+                maxLength={500}
+                defaultValue={order.deliveryNote ?? ""}
+              />
+            </Field>
+          </AdminForm>
+        </div>
+      </section>
 
       <section className="max-w-3xl">
         <h2 className="mb-4 text-[1.05rem]">Documents</h2>

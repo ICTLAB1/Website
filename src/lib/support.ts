@@ -19,6 +19,10 @@ export const TICKET_CATEGORIES = [
   { value: "LICENSING", label: "Licensing question" },
   { value: "BILLING", label: "Billing or invoice" },
   { value: "TECHNICAL", label: "Technical issue" },
+  // Raised from the device register as well as from this list, which is why it
+  // is here rather than folded into "technical": a ticket about a machine can
+  // carry its serial number, and one about a mail rule cannot.
+  { value: "HARDWARE", label: "Hardware fault or warranty" },
   { value: "RENEWAL", label: "Renewal" },
   { value: "OTHER", label: "Something else" },
 ] as const;

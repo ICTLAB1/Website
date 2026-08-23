@@ -60,3 +60,33 @@ describe("reviveDates", () => {
     expect(out.createdAt).toBeInstanceOf(Date);
   });
 });
+
+/**
+ * The allowlist against the schema it exists to mirror.
+ *
+ * Read from `prisma/schema.prisma` rather than from the generated client,
+ * because the schema is where somebody adds a column and the moment they do is
+ * the moment this must fail. The list had already drifted by ten columns once,
+ * silently, which is exactly what a hand-maintained mirror does.
+ */
+describe("the date allowlist", () => {
+  it("covers every DateTime column in the schema", async () => {
+    const { readFile } = await import("node:fs/promises");
+    const { DATE_KEYS } = await import("@/lib/queries/cached");
+
+    const schema = await readFile(
+      new URL("../prisma/schema.prisma", import.meta.url),
+      "utf8",
+    );
+
+    const columns = new Set<string>();
+    for (const match of schema.matchAll(/^\s{2}(\w+)\s+DateTime\b/gm)) {
+      columns.add(match[1]!);
+    }
+
+    expect(columns.size).toBeGreaterThan(20);
+
+    const missing = [...columns].filter((column) => !DATE_KEYS.has(column)).sort();
+    expect(missing).toEqual([]);
+  });
+});

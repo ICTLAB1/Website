@@ -134,7 +134,7 @@ export const companySchema = z.object({
 
 export const supportTicketSchema = z.object({
   subject: trimmed(160).min(4, "Enter a subject."),
-  category: z.enum(["LICENSING", "BILLING", "TECHNICAL", "RENEWAL", "OTHER"]),
+  category: z.enum(["LICENSING", "BILLING", "TECHNICAL", "HARDWARE", "RENEWAL", "OTHER"]),
   message: trimmed(4000).min(10, "Describe the issue in a little more detail."),
 });
 

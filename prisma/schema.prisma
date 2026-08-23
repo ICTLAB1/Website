@@ -258,6 +258,19 @@ enum RenewalStatus {
   DECLINED
 }
 
+/// Where a device is in its life.
+enum DeviceStatus {
+  /// In use by somebody.
+  IN_SERVICE
+  /// Held as a spare, or waiting to be issued.
+  IN_STOCK
+  /// Away being repaired.
+  IN_REPAIR
+  /// Withdrawn from use.
+  RETIRED
+  LOST
+}
+
 enum TicketStatus {
   OPEN
   IN_PROGRESS
@@ -369,8 +382,10 @@ model User {
   authoredPosts BlogPost[]
   savedSettings SiteSettings[]
   savedPayments PaymentSettings[]
-  savedMail     MailSettings[]
-  quoteMessages QuoteMessage[]
+  savedMail      MailSettings[]
+  quoteMessages  QuoteMessage[]
+  ticketMessages TicketMessage[]
+  devices        Device[]
 
   @@index([companyId])
   @@index([role])
@@ -418,6 +433,7 @@ model Company {
   addresses CompanyAddress[]
   contacts  CompanyContact[]
   documents Document[]
+  devices   Device[]
 
   @@index([name])
   @@index([gstin])
@@ -682,6 +698,7 @@ model Product {
   sourceCheckedAt DateTime?
 
   specs ProductSpec[]
+  devices Device[]
 
   // Denormalised lowercase haystack (name + sku + brand + keywords) backing
   // catalogue search without a separate search service.
@@ -1035,6 +1052,22 @@ model Order {
   billingAddress String?
   internalNotes  String?
 
+  /*
+   * Delivery, for the orders that ship something.
+   *
+   * All nullable and all supplied by a person. Nothing here is derived or
+   * predicted: an expected date this site invented would be a promise nobody
+   * made, and a tracking number it guessed would be worse.
+   */
+  courier        String?
+  trackingNumber String?
+  /// Where the courier's own tracking lives. Validated as an https URL.
+  trackingUrl    String?
+  dispatchedAt   DateTime?
+  expectedAt     DateTime?
+  deliveredAt    DateTime?
+  deliveryNote   String?
+
   placedAt    DateTime  @default(now())
   fulfilledAt DateTime?
   createdAt   DateTime  @default(now())
@@ -1044,6 +1077,7 @@ model Order {
   licences  Licence[]
   payments  Payment[]
   documents Document[]
+  devices   Device[]
 
   @@index([status])
   @@index([userId])
@@ -1184,6 +1218,70 @@ model Document {
   @@index([kind])
 }
 
+/// A piece of hardware a customer owns.
+///
+/// The register a customer asks us for when the laptop on somebody's desk stops
+/// working: what it is, when it was bought, whether it is still under warranty,
+/// and who has it. Kept as its own model rather than derived from order lines,
+/// because a device has a serial number and a person against it and an order
+/// line has neither — one order line of forty laptops becomes forty devices.
+///
+/// Nothing here is inferred. A warranty date that nobody supplied stays null
+/// and the interface says "not recorded" rather than assuming a year.
+model Device {
+  id        String       @id @default(cuid())
+  reference String       @unique
+  companyId String?
+  company   Company?     @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  /// Who recorded it, so an account with no organisation still has a register.
+  /// Every other customer record carries both columns and is read through the
+  /// same organisation scope; a device that carried only a company would be
+  /// invisible to the sole trader who bought it.
+  userId    String?
+  user      User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  /// What it is, as it will be recognised on a desk.
+  brandName String
+  model     String
+  /// The manufacturer's serial, which is what a warranty claim needs.
+  serial    String?
+  /// The customer's own asset tag, where they run one.
+  assetTag  String?
+
+  status    DeviceStatus @default(IN_SERVICE)
+
+  purchasedAt      DateTime?
+  warrantyStartsAt DateTime?
+  /// Null means "not recorded", never "no warranty" — see the comment above.
+  warrantyEndsAt   DateTime?
+  warrantyNote     String?
+
+  /// Who has it, in the customer's words. Not a User: most people holding a
+  /// company laptop have no account on this site and need none.
+  assignedTo String?
+  department String?
+  location   String?
+
+  /// Where it came from, where that is known.
+  orderId   String?
+  order     Order?    @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  productId String?
+  product   Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  tickets SupportTicket[]
+
+  @@index([companyId])
+  @@index([userId])
+  @@index([warrantyEndsAt])
+  @@index([serial])
+  @@index([orderId])
+}
+
 model SupportTicket {
   id        String         @id @default(cuid())
   reference String         @unique
@@ -1198,14 +1296,47 @@ model SupportTicket {
   message   String
   status    TicketStatus   @default(OPEN)
   priority  TicketPriority @default(NORMAL)
+  /// The device it is about, where it is about one.
+  deviceId  String?
+  device    Device?        @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  /// Set when somebody here first replied. What "we have not answered yet"
+  /// actually means, and the only honest basis for a response-time figure.
+  firstReplyAt DateTime?
+  resolvedAt   DateTime?
+
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
 
   documents Document[]
+  messages  TicketMessage[]
 
   @@index([userId])
   @@index([companyId])
   @@index([status])
+  @@index([deviceId])
+}
+
+/// One message on a support ticket.
+///
+/// The ticket's `message` column is the first thing the customer wrote and is
+/// left exactly where it is; everything after it lives here. A ticket that is
+/// one field is a ticket whose conversation happened in email, which is the
+/// thing customers complain about — "I sent that three days ago" with no way to
+/// tell whether they did.
+model TicketMessage {
+  id        String        @id @default(cuid())
+  ticketId  String
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  body      String
+  userId    String?
+  user      User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  /// Which side wrote it, recorded at the time rather than derived from a role
+  /// that may change later.
+  fromStaff Boolean       @default(false)
+  createdAt DateTime      @default(now())
+
+  @@index([ticketId])
 }
 
 // ------------------------------ content ------------------------------------

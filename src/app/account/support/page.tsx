@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 
 import { AccountForm } from "@/components/account/account-form";
@@ -80,7 +81,14 @@ export default async function AccountSupportPage() {
                 {tickets.map((ticket) => (
                   <Tr key={ticket.reference}>
                     <Td className="font-mono text-[12px]">{ticket.reference}</Td>
-                    <Td className="font-medium text-graphite-900">{ticket.subject}</Td>
+                    <Td className="font-medium text-graphite-900">
+                      <Link
+                        href={`/account/support/${ticket.reference}`}
+                        className="underline underline-offset-2 hover:text-accent-700"
+                      >
+                        {ticket.subject}
+                      </Link>
+                    </Td>
                     <Td>{humanise(ticket.category)}</Td>
                     <Td>{formatDate(ticket.createdAt)}</Td>
                     <Td>

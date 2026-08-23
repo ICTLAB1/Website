@@ -24,16 +24,29 @@ import { unstable_cache } from "next/cache";
  */
 
 /** Prisma `DateTime` columns in this schema. Keep in step with the models. */
-const DATE_KEYS = new Set([
+/**
+ * Every `DateTime` column in the schema, by name.
+ *
+ * Exported so a test can hold it against `prisma/schema.prisma` and fail when
+ * the two drift. They have drifted before: ten columns were added over several
+ * months and none of them was added here, so anything cached came back with a
+ * string where the rest of the code expected a Date, and only the pages that
+ * happened to format one noticed.
+ */
+export const DATE_KEYS = new Set([
   "appliedAt",
   "capturedAt",
   "createdAt",
   "deletedAt",
+  "deliveredAt",
+  "dispatchedAt",
   "dueAt",
   "effectiveFrom",
   "emailVerified",
   "endsAt",
+  "expectedAt",
   "expiresAt",
+  "firstReplyAt",
   "fulfilledAt",
   "issuedAt",
   "lastLoginAt",
@@ -42,15 +55,21 @@ const DATE_KEYS = new Set([
   "partnerConfirmedAt",
   "placedAt",
   "publishedAt",
+  "purchasedAt",
   "renewedAt",
   "resolvedAt",
   "revokedAt",
   "sentAt",
   "sourceCheckedAt",
   "startsAt",
+  "submittedAt",
+  "supersededAt",
   "updatedAt",
   "usedAt",
   "validUntil",
+  "verifiedAt",
+  "warrantyEndsAt",
+  "warrantyStartsAt",
 ]);
 
 const ISO_8601 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/;

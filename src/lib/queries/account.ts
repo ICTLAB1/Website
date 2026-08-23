@@ -18,7 +18,7 @@ export async function getAccountSummary(user: Scoped) {
   const scope = orgScope(user);
   const licenceScope = orgScopeVia("licence", user);
 
-  const [enquiries, quotes, orders, licences, renewals, tickets] = await Promise.all([
+  const [enquiries, quotes, orders, licences, renewals, tickets, warrantyExpiring] = await Promise.all([
     prisma.enquiry.count({ where: scope }),
     prisma.quote.count({ where: scope }),
     prisma.order.count({ where: scope }),
@@ -27,9 +27,23 @@ export async function getAccountSummary(user: Scoped) {
       where: { ...licenceScope, status: "UPCOMING", dueAt: { lte: addDays(90) } },
     }),
     prisma.supportTicket.count({ where: { ...scope, status: { notIn: ["CLOSED", "RESOLVED"] } } }),
+    /*
+     * Devices whose warranty runs out inside the window, and only those. A
+     * device with no end date on file is deliberately not counted here: it is
+     * not expiring, it is unrecorded, and a tile that lumped the two together
+     * would be telling a customer they are about to lose cover we never
+     * checked they had.
+     */
+    prisma.device.count({
+      where: {
+        ...scope,
+        deletedAt: null,
+        warrantyEndsAt: { gte: new Date(), lte: addDays(60) },
+      },
+    }),
   ]);
 
-  return { enquiries, quotes, orders, licences, renewals, tickets };
+  return { enquiries, quotes, orders, licences, renewals, tickets, warrantyExpiring };
 }
 
 function addDays(days: number): Date {

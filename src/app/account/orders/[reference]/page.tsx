@@ -6,6 +6,7 @@ import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/badge";
 import { AccountForm } from "@/components/account/account-form";
 import { DocumentList } from "@/components/documents/document-list";
+import { DeliveryPanel } from "@/components/portal/delivery-panel";
 import { Field, Input } from "@/components/ui/form";
 import { uploadPurchaseOrder } from "@/app/account/orders/actions";
 import { requireUser } from "@/lib/auth/guards";
@@ -48,6 +49,13 @@ export default async function AccountOrderPage({ params }: PageProps) {
       billingName: true,
       billingGstin: true,
       billingAddress: true,
+      courier: true,
+      trackingNumber: true,
+      trackingUrl: true,
+      dispatchedAt: true,
+      expectedAt: true,
+      deliveredAt: true,
+      deliveryNote: true,
       quote: { select: { reference: true } },
       items: {
         orderBy: { productName: "asc" },
@@ -147,6 +155,8 @@ export default async function AccountOrderPage({ params }: PageProps) {
           </div>
         </dl>
       </section>
+
+      <DeliveryPanel order={order} />
 
       <section>
         <h3 className="mb-4 text-[15px] font-semibold text-graphite-900">Documents</h3>
