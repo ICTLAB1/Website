@@ -169,7 +169,16 @@ const bytes = renderQuotationPdf({
     ifsc: "SMPL0000001",
     branch: "Pitampura",
   },
-  terms: null,
+  terms: [
+    "Quotation is valid for 30 days from the date of issue unless otherwise specified.",
+    "Prices are exclusive of applicable GST, taxes, duties, freight and other charges unless specifically stated otherwise.",
+    "Product, service and availability are subject to confirmation at the time of order.",
+    "Order confirmation is subject to receipt and acceptance of a valid Purchase Order and/or payment, as applicable.",
+    "Delivery timelines are indicative and may vary depending on product availability, manufacturer/distributor schedules and logistics.",
+    "Product specifications, models and availability may be subject to change by the respective manufacturer without prior notice.",
+    "Hardware products are subject to the applicable manufacturer's warranty and support terms.",
+    "All disputes shall be subject to the jurisdiction of the courts at New Delhi, India.",
+  ].join("\n"),
 });
 
 writeFileSync(process.argv[2] ?? "/tmp/quotation.pdf", bytes);

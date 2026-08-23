@@ -784,84 +784,129 @@ function drawTotals(
   treatment: TaxTreatment,
   top: number,
 ): number {
-  const boxWidth = 236;
+  /*
+   * Terms on the left, the money on the right, side by side.
+   *
+   * They used to run one under the other down the full width, which put
+   * fourteen numbered clauses between the table and the figure the reader
+   * opened the document for. Beside each other, the grand total sits level
+   * with the top of the terms — where the eye lands after the table — and the
+   * terms are there to be read rather than scrolled past.
+   */
+  const gap = 16;
+  const boxWidth = 210;
   const boxLeft = RIGHT - boxWidth;
+  const termsWidth = boxLeft - MARGIN - gap;
 
   const gross = input.subtotalMinor + input.discountMinor;
 
-  const rows: Array<[string, string, boolean]> = [
-    ["Gross value", pdfAmount(gross, input.currency), false],
-  ];
+  const rows: Array<[string, string]> = [["Subtotal", pdfAmount(gross, input.currency)]];
   if (input.discountMinor > 0) {
-    rows.push(["Less discount", `- ${pdfAmount(input.discountMinor, input.currency)}`, false]);
+    rows.push(["Total Discount", `- ${pdfAmount(input.discountMinor, input.currency)}`]);
   }
-  rows.push(["Taxable value", pdfAmount(input.subtotalMinor, input.currency), false]);
+  rows.push(["Taxable Value", pdfAmount(input.subtotalMinor, input.currency)]);
 
   /*
    * The tax split into the heads it is actually charged under.
    *
-   * One rate is the common case and is shown as one pair of lines; a quotation
+   * One rate is the common case and shows as one pair of lines; a quotation
    * mixing 18% licences with 5% hardware shows each rate separately, because
-   * that is what the customer's accounts department has to post.
+   * that is what the customer's accounts department has to post. A head that
+   * does not apply is absent rather than printed as zero — a zero IGST line on
+   * an intra-state supply is a classification this document should not be
+   * making on the customer's behalf.
    */
   for (const [rate, amount] of taxByRate(input.lines)) {
     for (const head of taxHeads(amount, rate, treatment)) {
       rows.push([
-        `${head.label} @ ${formatRate(head.ratePercent)}%`,
+        `${head.label} (${formatRate(head.ratePercent)}%)`,
         pdfAmount(head.amountMinor, input.currency),
-        false,
       ]);
     }
   }
 
-  // The rules stack, then the grand-total band sits flush on the bottom of the
-  // box. Computed rather than guessed, so an extra tax rate does not leave a
-  // gap under the total.
+  const words = wrap(amountInWords(input.totalMinor, input.currency), boxWidth - 20, 7, "sansBold");
+  const headerHeight = 16;
   const listHeight = 8 + rows.length * 12 + 4;
-  const bandHeight = 24;
-  const height = listHeight + bandHeight;
+  const bandHeight = 26;
+  const wordsHeight = 12 + words.length * 9 + 8;
+  const boxHeight = headerHeight + listHeight + bandHeight + wordsHeight;
+
+  const terms = termLines(input.terms);
+  const termLayout = terms.map((term, index) => wrap(`${index + 1}.  ${term}`, termsWidth, 7, "sans"));
+  const termsHeight = terms.length > 0 ? 16 + termLayout.reduce((sum, l) => sum + l.length * 8.8, 0) + 6 : 0;
 
   let y = top;
-  if (y + height > PAGE_BOTTOM) {
+  /*
+   * The summary is never split across a page.
+   *
+   * A grand total on its own on page three, with the figures it is the sum of
+   * on page two, is the one thing on this document nobody should have to
+   * assemble. The terms may break; the money may not.
+   */
+  if (y + boxHeight > PAGE_BOTTOM) {
     pdf.addPage();
     y = 48;
   }
 
-  // The words go on the left, level with the figures they spell out.
-  const wordsWidth = boxLeft - MARGIN - 16;
-  pdf.text("Amount in words", MARGIN, y + 12, {
+  // ── the summary, right ──────────────────────────────────────────────────
+  pdf.rect(boxLeft, y, boxWidth, headerHeight, NAVY);
+  pdf.text("SUMMARY", boxLeft + 10, y + 11, {
     size: LABEL_SIZE,
     font: "sansBold",
-    colour: SOFT,
-    tracking: 0.35,
+    colour: WHITE,
+    tracking: 0.4,
   });
+  pdf.strokeRect(boxLeft, y, boxWidth, boxHeight, LINE_RULE, 0.7);
 
-  let wordsY = y + 24;
-  for (const line of wrap(amountInWords(input.totalMinor, input.currency), wordsWidth, 8, "sansBold")) {
-    pdf.text(line, MARGIN, wordsY, { size: 8, font: "sansBold", colour: TEXT_INK });
-    wordsY += 10.5;
-  }
-
-  pdf.strokeRect(boxLeft, y, boxWidth, height, LINE_RULE, 0.7);
-
-  let rowY = y + 16;
+  let rowY = y + headerHeight + 14;
   for (const [label, value] of rows) {
     pdf.text(label, boxLeft + 10, rowY, { size: 7.4, colour: SOFT });
-    pdf.textRight(value, RIGHT - 10, rowY, { size: 7.4, colour: BLACK });
+    pdf.textRight(value, RIGHT - 10, rowY, { size: 7.4, colour: TEXT_INK });
     rowY += 12;
   }
 
-  const bandTop = y + listHeight;
-  pdf.rect(boxLeft, bandTop, boxWidth, bandHeight, PANEL);
-  pdf.strokeRect(boxLeft, bandTop, boxWidth, bandHeight, LINE_RULE, 0.7);
-  pdf.text("Grand Total", boxLeft + 10, bandTop + 16, { size: 9, font: "sansBold", colour: TEXT_INK });
-  pdf.textRight(pdfMoney(input.totalMinor, input.currency), RIGHT - 10, bandTop + 16, {
-    size: 9,
+  const bandTop = y + headerHeight + listHeight;
+  pdf.rect(boxLeft, bandTop, boxWidth, bandHeight, TINT);
+  pdf.line(boxLeft, bandTop, RIGHT, bandTop, NAVY, 1);
+  pdf.text(`GRAND TOTAL (${input.currency})`, boxLeft + 10, bandTop + 17, {
+    size: 8.4,
     font: "sansBold",
-    colour: TEXT_INK,
+    colour: NAVY,
+  });
+  pdf.textRight(pdfMoney(input.totalMinor, input.currency), RIGHT - 10, bandTop + 17, {
+    size: 9.4,
+    font: "sansBold",
+    colour: NAVY,
   });
 
-  return Math.max(wordsY, y + height) + 20;
+  let wordsY = bandTop + bandHeight + 12;
+  pdf.text("Amount in Words:", boxLeft + 10, wordsY, { size: 6.6, colour: SOFT });
+  wordsY += 9;
+  for (const line of words) {
+    pdf.text(line, boxLeft + 10, wordsY, { size: 7, font: "sansBold", colour: TEXT_INK });
+    wordsY += 9;
+  }
+
+  // ── the terms, left ─────────────────────────────────────────────────────
+  if (terms.length > 0) {
+    pdf.text("TERMS & CONDITIONS", MARGIN, y + 11, {
+      size: LABEL_SIZE,
+      font: "sansBold",
+      colour: NAVY,
+      tracking: 0.4,
+    });
+
+    let termY = y + 26;
+    for (const lines of termLayout) {
+      for (const line of lines) {
+        pdf.text(line, MARGIN, termY, { size: 7, colour: TEXT_INK });
+        termY += 8.8;
+      }
+    }
+  }
+
+  return Math.max(y + boxHeight, y + termsHeight) + 18;
 }
 
 /** Taxable value grouped by GST rate, so each rate gets its own tax line. */
@@ -1035,23 +1080,6 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
     }
   };
 
-  const terms = termLines(input.terms);
-  if (terms.length > 0) {
-    room(40);
-    heading("Terms and conditions");
-    let index = 1;
-    for (const term of terms) {
-      const lines = wrap(`${index}.  ${term}`, CONTENT - 10, 7.4);
-      room(lines.length * 9.4 + 6);
-      for (const line of lines) {
-        pdf.text(line, MARGIN, y, { size: 7.4, colour: BLACK });
-        y += 9.4;
-      }
-      index += 1;
-    }
-    y += 10;
-  }
-
   /*
    * Bank details, when they are configured — all of them or none.
    *
@@ -1072,7 +1100,7 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
 
     for (const [label, value] of rows) {
       pdf.text(label, MARGIN, y, { size: 7.2, colour: SOFT });
-      pdf.text(value, MARGIN + 84, y, { size: 7.2, font: "mono", colour: BLACK });
+      pdf.text(value, MARGIN + 84, y, { size: 7.2, font: "mono", colour: TEXT_INK });
       y += 10;
     }
     y += 10;
