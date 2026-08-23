@@ -6,6 +6,7 @@ import { hardwareCatalogue } from "./2026-08-hardware-catalogue";
 import { hardwareModels } from "./2026-08-hardware-models";
 import { serverMenu } from "./2026-08-server-menu";
 import { homepageAndCertifications } from "./2026-08-homepage-and-certifications";
+import { suppliedBrandArtwork } from "./2026-08-supplied-brand-artwork";
 import type { ContentMigration } from "./types";
 
 /**
@@ -25,6 +26,7 @@ export const contentMigrations: ContentMigration[] = [
   gemMark,
   partnerStatusMigration,
   requirementMenu,
+  suppliedBrandArtwork,
 ];
 
 export type { ContentMigration };

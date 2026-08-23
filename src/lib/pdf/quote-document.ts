@@ -167,22 +167,20 @@ export async function buildQuotationPdf(
       select: { standard: true, title: true, reference: true },
     }),
     /*
-     * Every brand this business deals in, and the partner designations among
-     * them.
+     * The partner designations, and nothing else about brands.
      *
-     * Not filtered by product count, deliberately. On a quotation this is a
-     * statement of what can be sourced, not a listing of what is on the shelf —
-     * a customer asking for Fortinet wants to know we can supply it, and the
-     * absence of a public catalogue page for it says nothing about that. The
-     * caption under the strip is what keeps the claim accurate: these are
-     * brands we supply, and the accreditations above are stated separately.
+     * An earlier version fetched every brand so the quotation could print a
+     * wall of logos. It read as a logo dump on a page that was two-thirds
+     * empty: a quotation is a priced offer, and the brands relevant to it are
+     * the ones on its own lines, which the table already names. The full
+     * supplier list belongs on the website, where a reader has gone looking
+     * for it.
      */
     prisma.brand.findMany({
-      where: { deletedAt: null },
+      where: { deletedAt: null, partnerPublic: true, partnerBadgeUrl: { not: null } },
       orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
       select: {
         name: true,
-        logoUrl: true,
         partnerLabel: true,
         partnerConfirmedAt: true,
         partnerPublic: true,
@@ -206,20 +204,6 @@ export async function buildQuotationPdf(
     .filter((entry): entry is { name: string; label: string; image: NonNullable<typeof entry>["image"] } =>
       entry !== null,
     );
-
-  /*
-   * Then the catalogue. Most brand artwork on this site is SVG, which a PDF
-   * cannot hold, so the ones that will print are shown and the rest are named
-   * — a complete list either way, which is the point.
-   */
-  const brandLogos: Array<{ name: string; image: NonNullable<ReturnType<typeof loadPublicImage>> }> = [];
-  const otherBrands: string[] = [];
-
-  for (const brand of brands) {
-    const image = loadPublicImage(brand.logoUrl);
-    if (image) brandLogos.push({ name: brand.name, image });
-    else otherBrands.push(brand.name);
-  }
 
   const company = quote.company;
 
@@ -325,8 +309,6 @@ export async function buildQuotationPdf(
     certifications,
     logo: letterheadImage(),
     accreditations,
-    brandLogos,
-    otherBrands,
     banking: getBankingDetails(),
     terms: config.quoteTerms,
   });

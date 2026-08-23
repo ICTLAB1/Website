@@ -124,21 +124,6 @@ export type QuotationPdfInput = {
    * office, and it is exactly the claim that gets checked.
    */
   accreditations: Array<{ name: string; label: string; image: EmbeddedImage }>;
-  /**
-   * Brands whose products this business supplies.
-   *
-   * Deliberately separate from the accreditations above, and captioned as
-   * supply rather than partnership. Reselling a publisher's products and being
-   * accredited by that publisher are different facts, and a strip of logos
-   * under a heading that blurred them would be the site making a claim nobody
-   * authorised.
-   *
-   * Split in two because most brand artwork on this site is SVG, which a PDF
-   * cannot hold: the ones with printable artwork are shown, and the rest are
-   * named.
-   */
-  brandLogos: Array<{ name: string; image: EmbeddedImage }>;
-  otherBrands: string[];
   /** From `lib/banking-config`. All of it or none of it. */
   banking: {
     bankName: string;
@@ -1051,154 +1036,73 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
   }
 
   /*
-   * Accreditations, then brands, in that order and never merged.
+   * One trust band, not three sections.
    *
-   * The order is the argument: a badge is a publisher's statement about this
-   * business, a logo strip is this business's statement about its catalogue,
-   * and a reader who sees them as one band has been told something nobody
-   * said. The caption under the brands says so in words as well.
-   */
-  /*
-   * The certifications, set out so they can be checked.
+   * The first version of this printed the certifications, the accreditations
+   * and twenty-six brand marks as three stacked blocks, and it read as a logo
+   * dump on a page that was two-thirds empty. A commercial document does not
+   * do that: the evidence a procurement office needs is a badge and a
+   * certificate number, and both fit on one line.
    *
-   * Each one gets the standard, what it covers and its certificate number,
-   * because the number is the only part a buyer can independently verify. A
-   * bordered chip rather than a bullet list: on a document that a compliance
-   * officer skims, these need to be findable in one glance.
+   * What is *not* here any more is the wall of brand logos. A quotation is a
+   * priced offer, not a capability brochure — the brands relevant to it are the
+   * ones on the lines above, and they are named in their own column. The full
+   * supplier list belongs on the website, where a reader has come looking for
+   * it.
    */
-  if (input.certifications.length > 0) {
-    room(72);
-    heading("Certifications");
+  const badges = input.accreditations;
+  const certificates = input.certifications.slice(0, 4);
 
-    const gap = 8;
-    const width = (CONTENT - gap * 2) / 3;
-    const height = 34;
-    let column = 0;
+  if (badges.length > 0 || certificates.length > 0) {
+    const badgeHeight = 22;
+    const rows = Math.max(1, certificates.length);
+    const height = Math.max(badgeHeight + 22, 20 + rows * 11);
 
-    for (const certification of input.certifications.slice(0, 6)) {
-      if (column === 3) {
-        column = 0;
-        y += height + gap;
-        room(height + 20);
-      }
+    room(height + 24);
 
-      const x = MARGIN + column * (width + gap);
-      pdf.rect(x, y, width, height, PANEL);
-      pdf.strokeRect(x, y, width, height, RULE, 0.7);
+    pdf.rect(MARGIN, y, CONTENT, height, PANEL);
+    pdf.strokeRect(MARGIN, y, CONTENT, height, RULE, 0.7);
 
-      pdf.text(fit(certification.standard, width - 16, 8, "sansBold"), x + 8, y + 13, {
-        size: 8,
+    // ── the badges, left ──────────────────────────────────────────────────
+    let badgeX = MARGIN + 12;
+    const badgeY = y + (height - badgeHeight) / 2;
+
+    for (const badge of badges) {
+      const width = (badge.image.width / badge.image.height) * badgeHeight;
+      if (badgeX + width > MARGIN + CONTENT / 2) break;
+      pdf.image(badge.image, badgeX, badgeY, width, badgeHeight);
+      badgeX += width + 12;
+    }
+
+    // ── the certificates, right, each with the number that proves it ──────
+    const certificateX = MARGIN + CONTENT / 2 + 8;
+    let certificateY = y + 14;
+
+    if (certificates.length > 0) {
+      pdf.text("CERTIFIED TO", certificateX, certificateY, {
+        size: LABEL_SIZE,
         font: "sansBold",
-        colour: INK,
-      });
-      pdf.text(fit(certification.title, width - 16, 6.4), x + 8, y + 22, {
-        size: 6.4,
         colour: MUTED,
+        tracking: 0.35,
       });
-      pdf.text(fit(certification.reference, width - 16, 6.6, "mono"), x + 8, y + 30, {
-        size: 6.6,
-        font: "mono",
-        colour: BLACK,
-      });
+      certificateY += 10;
 
-      column += 1;
+      for (const certificate of certificates) {
+        pdf.text(fit(certificate.standard, 108, 7, "sansBold"), certificateX, certificateY, {
+          size: 7,
+          font: "sansBold",
+          colour: INK,
+        });
+        pdf.textRight(fit(certificate.reference, 90, 6.8, "mono"), RIGHT - 12, certificateY, {
+          size: 6.8,
+          font: "mono",
+          colour: MUTED,
+        });
+        certificateY += 10;
+      }
     }
 
     y += height + 18;
-  }
-
-  if (input.accreditations.length > 0) {
-    room(64);
-    heading("Partner and reseller accreditations");
-
-    let x = MARGIN;
-    const badgeHeight = 26;
-
-    for (const accreditation of input.accreditations) {
-      const width = (accreditation.image.width / accreditation.image.height) * badgeHeight;
-
-      if (x + width > RIGHT) {
-        x = MARGIN;
-        y += badgeHeight + 8;
-        room(badgeHeight + 20);
-      }
-
-      pdf.image(accreditation.image, x, y, width, badgeHeight);
-      x += width + 14;
-    }
-
-    y += badgeHeight + 10;
-
-    pdf.text(
-      input.accreditations
-        .map((accreditation) => `${accreditation.name} ${accreditation.label}`)
-        .join("   ·   "),
-      MARGIN,
-      y,
-      { size: 6.8, colour: MUTED },
-    );
-    y += 18;
-  }
-
-  if (input.brandLogos.length > 0 || input.otherBrands.length > 0) {
-    room(60);
-    heading("Brands we supply");
-
-    /*
-     * A common height, not a common box.
-     *
-     * Publishers' marks are not one shape: a monogram is square and a wordmark
-     * can be six times wider than it is tall. Fitting both into a square makes
-     * the wordmark five points tall and unreadable, so every mark is set to the
-     * same height and takes whatever width that gives it. The cap is generous
-     * enough that almost nothing reaches it, which is the point — a logo wall
-     * where two marks are optically different sizes looks like a mistake.
-     */
-    let x = MARGIN;
-    const logoHeight = 16;
-    const maxLogoWidth = 96;
-    const logoGap = 14;
-
-    for (const brand of input.brandLogos) {
-      const width = Math.min(maxLogoWidth, (brand.image.width / brand.image.height) * logoHeight);
-
-      if (x + width > RIGHT) {
-        x = MARGIN;
-        y += logoHeight + 10;
-        room(logoHeight + 22);
-      }
-
-      pdf.image(brand.image, x, y, width, logoHeight);
-      x += width + logoGap;
-    }
-
-    if (input.brandLogos.length > 0) y += logoHeight + 12;
-
-    if (input.otherBrands.length > 0) {
-      for (const line of wrap(input.otherBrands.join(" · "), CONTENT, 7)) {
-        room(12);
-        pdf.text(line, MARGIN, y, { size: 7, colour: MUTED });
-        y += 9.5;
-      }
-      y += 2;
-    }
-
-    /*
-     * The sentence that keeps the strip honest.
-     *
-     * Without it a page carrying a customer's name, our accreditations and
-     * thirty publishers' logos reads as thirty partnerships. This says plainly
-     * which of the two things above it is a partnership and which is a
-     * catalogue.
-     */
-    room(20);
-    pdf.text(
-      "We supply the products of the brands shown above. Partner and reseller designations are stated only where a badge is shown for them.",
-      MARGIN,
-      y,
-      { size: 6.5, colour: FAINT },
-    );
-    y += 18;
   }
 
   // ── the signature block ─────────────────────────────────────────────────
