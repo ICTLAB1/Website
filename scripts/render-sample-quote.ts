@@ -2,6 +2,25 @@ import { writeFileSync } from "node:fs";
 
 import { renderQuotationPdf } from "@/lib/pdf/quotation";
 
+
+/**
+ * The sample's lines, repeated to whatever length is being tested.
+ *
+ * The layout suite renders this at 1, 5, 10, 20 and 50-odd items, because a
+ * table that is right for six can be wrong for one and wrong for fifty — and
+ * each of those failures is invisible until somebody quotes that many things.
+ * The part numbers are made distinct so a page-break bug shows up as a missing
+ * or repeated line rather than as an identical one nobody notices.
+ */
+function repeat<T extends { sku: string }>(source: T[], count = Number(process.argv[3] ?? source.length)): T[] {
+  const out: T[] = [];
+  for (let index = 0; index < count; index += 1) {
+    const base = source[index % source.length]!;
+    out.push({ ...base, sku: `${base.sku}-${String(index + 1).padStart(2, "0")}` });
+  }
+  return out;
+}
+
 const party = {
   name: "MIT ADT University",
   addressLines: ["Loni Kalbhor, Solapur Highway", "Pune, Maharashtra 412201", "India"],
@@ -38,7 +57,7 @@ const bytes = renderQuotationPdf({
     ...party,
     addressLines: ["Rajbaug Campus, Gate No. 2", "Loni Kalbhor, Maharashtra 412201", "India"],
   },
-  lines: [
+  lines: repeat([
     {
       productName: "Microsoft 365 Business Standard",
       description: "Annual subscription - includes Office apps, Exchange, Teams, SharePoint",
@@ -117,7 +136,7 @@ const bytes = renderQuotationPdf({
       gstRatePercent: 18,
       lineTotalMinor: 17124600,
     },
-  ],
+  ]),
   config: {
     tradingName: "TechZoid",
     legalName: "TechZoid Technologies Private Limited",
