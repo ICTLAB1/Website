@@ -98,13 +98,29 @@ Modules follow the brief's own phasing, and each one ships complete: schema,
 migration, server actions, screens, tests, verification, and no regression in
 the existing gate.
 
-1. **Organisation and roles.** Companies with addresses, contacts and their own
-   users; customer roles; internal roles; every record scoped to its
+1. **Organisation and roles.** *Shipped.* Companies with addresses, contacts and
+   their own users; customer roles; internal roles; every record scoped to its
    organisation. Everything after this depends on it.
-2. **RFQ and quotation.** Requirement builder, BOQ upload, RFQ statuses, quote
-   versioning, customer quote actions, PDFs.
-3. **Customer portal.** Documents, devices, warranty, delivery tracking,
-   ticket threads, renewal cadence and calendar.
+2. **RFQ and quotation.** *Shipped.* Requirement builder, BOQ upload, RFQ
+   statuses, quote versioning, customer quote actions, PDFs.
+3. **Customer portal.** *Shipped.* Documents, devices, warranty, delivery
+   tracking, ticket threads, renewal cadence and calendar.
+
+   Two decisions worth recording, because both are places the obvious
+   implementation would have lied to a customer. A device with no warranty end
+   date on file is **not recorded** — never "out of warranty", which costs
+   somebody a repair they were entitled to, and never "covered", which promises
+   cover nobody checked; `lib/warranty` exists to hold that single rule.
+   Delivery state is derived from dates somebody entered rather than from a
+   status column somebody has to remember to update, so an order with nothing
+   entered shows no progress rather than an empty three-step bar reading as
+   "step one complete".
+
+   Nothing here sends a scheduled reminder. The renewal cadence — 120, 90, 60,
+   30, 15, 7 and 1 day — is expressed once, in `lib/renewals`, and drives the
+   dashboards; the staff view says plainly that it sends nothing by itself,
+   because a page implying otherwise would be worse than one that names whose
+   job it is. Scheduled dispatch belongs to module 6.
 4. **CRM.** Leads, pipeline, tasks, customer timeline, margin, approvals,
    reporting.
 5. **Operations.** Import architecture, suppliers, procurement, comparison.
