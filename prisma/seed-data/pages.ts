@@ -9069,6 +9069,15 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 30
   },
   {
+    "key": "footer:company.careers",
+    "parentKey": "footer:company",
+    "menu": "FOOTER",
+    "label": "Careers",
+    "href": "/careers",
+    "description": null,
+    "displayOrder": 45
+  },
+  {
     "key": "footer:company.about-us",
     "parentKey": "footer:company",
     "menu": "FOOTER",

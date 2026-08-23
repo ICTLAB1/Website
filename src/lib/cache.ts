@@ -24,6 +24,7 @@ export const tags = {
   categories: "categories",
   /** A CMS page and its blocks. */
   page: (slug: string) => `page:${slug}`,
+  jobs: "jobs",
   pages: "pages",
   navigation: "navigation",
   banners: "banners",

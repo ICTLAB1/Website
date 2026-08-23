@@ -102,16 +102,14 @@ const nextConfig: NextConfig = {
       { source: "/techzoid", destination: "/products", permanent: true },
       { source: "/about-1", destination: "/about", permanent: true },
       /*
-       * `/careers` is the one here I would argue about.
+       * `/careers` is deliberately *not* redirected.
        *
-       * A 301 is cached by browsers indefinitely, so if this business ever
-       * publishes a careers page, every visitor who followed this redirect
-       * once will keep being sent to /about and there is no way to reach them.
-       * A 307 costs a little ranking transfer and stays reversible. It is
-       * permanent because that is what was asked for — say the word and it
-       * becomes temporary.
+       * It was, briefly, and it is the exact hazard a permanent redirect
+       * carries: a 301 is cached by browsers indefinitely, so had it shipped,
+       * every visitor who followed it once would have been sent to /about
+       * forever — including after the careers page existed, with no way to
+       * reach them. The page now exists, and it answers this URL.
        */
-      { source: "/careers", destination: "/about", permanent: true },
       { source: "/corel-draw-software-services", destination: "/brands/corel", permanent: true },
       {
         source: "/product-page/autocad-business-license",

@@ -9,6 +9,7 @@ import { homepageAndCertifications } from "./2026-08-homepage-and-certifications
 import { suppliedBrandArtwork } from "./2026-08-supplied-brand-artwork";
 import { brandSegmentsMigration } from "./2026-08-brand-segments";
 import { homepageTitle } from "./2026-08-homepage-title";
+import { careersLink } from "./2026-08-careers-link";
 import type { ContentMigration } from "./types";
 
 /**
@@ -31,6 +32,7 @@ export const contentMigrations: ContentMigration[] = [
   suppliedBrandArtwork,
   brandSegmentsMigration,
   homepageTitle,
+  careersLink,
 ];
 
 export type { ContentMigration };

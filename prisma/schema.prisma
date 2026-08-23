@@ -2280,3 +2280,108 @@ model CrmSettings {
   updatedById String?
   updatedBy   User?    @relation("CrmSettingsEditor", fields: [updatedById], references: [id], onDelete: SetNull)
 }
+
+/// Where a role is based, and how much of it is on site.
+///
+/// Not free text: Google's job listings read this, and "Hybrid — 3 days in
+/// Pitampura" is a sentence rather than a value. The detail belongs in the
+/// description; this is the filter.
+enum WorkArrangement {
+  ON_SITE
+  HYBRID
+  REMOTE
+}
+
+/// How the role is engaged.
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+}
+
+/// An open role.
+///
+/// ## Why a model rather than a CMS page
+///
+/// A job is a record with a lifecycle, not a piece of copy: it opens, it is
+/// filled, and it has to stop being advertised on a particular date whether or
+/// not anybody remembers. It also carries structured fields that a page cannot
+/// — Google reads `JobPosting` markup and will not index a role without a
+/// title, a location, a date posted and an employment type.
+///
+/// ## Closing is a date, not a deletion
+///
+/// A filled role is closed, not deleted, and `closesOn` retires it without
+/// anyone acting. That matters more than it looks: Google penalises a job
+/// listing that stays up after the role is gone, and the commonest way that
+/// happens is that the person who posted it has moved on.
+model JobPosting {
+  id    String @id @default(cuid())
+  slug  String @unique
+  title String
+
+  /// "Sales", "Technical", "Operations". Groups the listing; free text because
+  /// a small company's departments are not a closed set and inventing one
+  /// would put a name on the page nobody uses internally.
+  team String?
+
+  employmentType  EmploymentType  @default(FULL_TIME)
+  workArrangement WorkArrangement @default(ON_SITE)
+
+  /// Where the role sits, as a person would say it: "New Delhi", "Pitampura,
+  /// New Delhi". Null on a fully remote role, which is the one case where a
+  /// city would be a fiction.
+  location String?
+
+  /// What the job is, in Markdown. One field rather than
+  /// responsibilities/requirements/benefits columns: every company splits
+  /// those differently and a fixed set forces empty headings onto roles that
+  /// do not need them.
+  description String
+
+  /// A sentence for the listing card and the meta description.
+  summary String
+
+  /// Years of experience expected, as a range. Both optional — "no experience
+  /// required" and "we will talk about it" are both real positions, and a zero
+  /// would read as the first when it meant the second.
+  experienceMinYears Int?
+  experienceMaxYears Int?
+
+  /**
+   * Pay, in minor units, and deliberately optional.
+   * Published where the business chooses to publish it and absent otherwise —
+   * never guessed, and never rendered as a range with one end missing. Indian
+   * job advertisements frequently omit it; a site that invented a figure would
+   * be making an offer it had not agreed.
+   */
+  salaryMinMinor Int?
+  salaryMaxMinor Int?
+  salaryCurrency String  @default("INR")
+  /// "year" or "month". Indian salaries are quoted both ways and the number is
+  /// meaningless without it.
+  salaryPeriod   String?
+
+  /// Where applications go. Required: a listing nobody can reply to is worse
+  /// than no listing, and there is no sensible default to fall back on.
+  applyEmail String
+
+  /// When it went up. Google requires this and ranks a stale one down.
+  postedOn DateTime  @default(now())
+  /// When it comes down on its own. Null means it runs until closed by hand.
+  closesOn DateTime?
+
+  /// Filled or withdrawn. Kept rather than deleted so an old advertisement can
+  /// still be produced if somebody asks what was advertised.
+  closedAt DateTime?
+
+  displayOrder Int @default(100)
+
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([closedAt, displayOrder])
+  @@index([slug])
+}

@@ -20,7 +20,8 @@ export type ResourceKey =
   | "posts"
   | "faqs"
   | "banners"
-  | "certifications";
+  | "certifications"
+  | "jobs";
 
 export type ListColumn = {
   header: string;
@@ -35,7 +36,15 @@ export type ListColumn = {
 export type ResourceConfig = {
   key: ResourceKey;
   /** Prisma delegate name; must be a model with a matching shape. */
-  model: "brand" | "category" | "service" | "blogPost" | "faq" | "banner" | "certification";
+  model:
+    | "brand"
+    | "category"
+    | "service"
+    | "blogPost"
+    | "faq"
+    | "banner"
+    | "certification"
+    | "jobPosting";
   label: { singular: string; plural: string };
   description: string;
   /**
@@ -287,6 +296,74 @@ export const RESOURCES: Record<ResourceKey, ResourceConfig> = {
       { kind: "textarea", name: "scope", label: "Scope", rows: 4, maxLength: 1000, hint: "The scope printed on the certificate, word for word.", group: "Content" },
       { kind: "date", name: "issuedAt", label: "Date of certification", required: true, group: PUBLICATION_GROUP },
       { kind: "date", name: "expiresAt", label: "Expires", hint: "After this date it is hidden from the public site.", group: PUBLICATION_GROUP },
+      { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
+    ],
+  },
+
+  jobs: {
+    key: "jobs",
+    model: "jobPosting",
+    label: { singular: "Job", plural: "Jobs" },
+    description:
+      "Open roles, listed on the careers page. A role with a closing date comes down on its own — which is the point of setting one, because Google downranks a site that leaves filled roles advertised.",
+    /*
+     * "admin", not "staff". A job advertisement states what this business
+     * offers to pay and commits it to a hiring process; that is a different
+     * kind of decision from moving a deal along, and it belongs with the other
+     * content that changes what every visitor sees.
+     */
+    guard: "admin",
+    slugField: "slug",
+    softDelete: true,
+    orderBy: [{ displayOrder: "asc" }, { postedOn: "desc" }],
+    searchFields: ["title", "slug", "team", "location"],
+    tagsFor: () => [tags.jobs, tags.pages],
+    listColumns: [
+      { header: "Role", path: "title", primary: true },
+      { header: "Team", path: "team" },
+      { header: "Where", path: "location" },
+      { header: "Type", path: "employmentType", format: "badge" },
+      { header: "Posted", path: "postedOn", format: "date" },
+      { header: "Closes", path: "closesOn", format: "date" },
+      { header: "Closed", path: "closedAt", format: "date" },
+    ],
+    fields: [
+      { kind: "text", name: "title", label: "Role title", required: true, maxLength: 120, hint: "As a candidate would search for it: “Inside Sales Executive”, not “ISE-2”.", group: "Identity" },
+      { kind: "slug", name: "slug", label: "URL", from: "title", group: "Identity" },
+      { kind: "text", name: "team", label: "Team", maxLength: 60, hint: "Sales, Technical, Operations. Optional.", group: "Identity" },
+      { kind: "textarea", name: "summary", label: "Summary", required: true, rows: 2, maxLength: 300, hint: "One or two sentences. Shown on the careers list and used as the page description.", group: "Content" },
+      { kind: "textarea", name: "description", label: "The role", required: true, rows: 14, maxLength: 20_000, markdown: true, hint: "Markdown. What the job is, what you are looking for, and what you offer — in whatever order suits the role.", group: "Content" },
+      { kind: "select", name: "employmentType", label: "Employment type", required: true, options: [
+        { value: "FULL_TIME", label: "Full time" },
+        { value: "PART_TIME", label: "Part time" },
+        { value: "CONTRACT", label: "Contract" },
+        { value: "INTERNSHIP", label: "Internship" },
+      ], group: "Where and how" },
+      { kind: "select", name: "workArrangement", label: "Arrangement", required: true, options: [
+        { value: "ON_SITE", label: "On site" },
+        { value: "HYBRID", label: "Hybrid" },
+        { value: "REMOTE", label: "Remote" },
+      ], group: "Where and how" },
+      { kind: "text", name: "location", label: "Location", maxLength: 120, hint: "The city or office. Leave blank only on a fully remote role.", group: "Where and how" },
+      { kind: "number", name: "experienceMinYears", label: "Experience from (years)", min: 0, max: 60, hint: "0 means no experience required. Leave blank to say nothing.", group: "Where and how" },
+      { kind: "number", name: "experienceMaxYears", label: "Experience to (years)", min: 0, max: 60, group: "Where and how" },
+      /*
+       * Pay is in whole rupees here and stored in paise, like every other
+       * amount in this application. Both ends optional, and the page prints
+       * nothing at all unless there is a complete statement to make — an
+       * amount with no period is a different offer depending on how it is
+       * read. See `payRange` in `lib/careers`.
+       */
+      { kind: "number", name: "salaryMinMinor", label: "Salary from (₹, minor units)", min: 0, hint: "In paise. Leave both blank not to advertise pay — most roles here do not.", group: "Pay" },
+      { kind: "number", name: "salaryMaxMinor", label: "Salary to (₹, minor units)", min: 0, group: "Pay" },
+      { kind: "select", name: "salaryPeriod", label: "Per", options: [
+        { value: "year", label: "Year" },
+        { value: "month", label: "Month" },
+      ], group: "Pay" },
+      { kind: "text", name: "applyEmail", label: "Applications to", required: true, maxLength: 160, hint: "The mailbox that will actually be read. A listing nobody can reply to is worse than no listing.", group: PUBLICATION_GROUP },
+      { kind: "date", name: "postedOn", label: "Posted", required: true, hint: "A future date holds the role back until then.", group: PUBLICATION_GROUP },
+      { kind: "date", name: "closesOn", label: "Closes", hint: "The role comes off the site after this date without anyone acting. Strongly recommended.", group: PUBLICATION_GROUP },
+      { kind: "date", name: "closedAt", label: "Closed on", hint: "Set this when the role is filled or withdrawn. It stops being advertised immediately.", group: PUBLICATION_GROUP },
       { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
     ],
   },

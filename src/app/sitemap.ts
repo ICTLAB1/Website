@@ -5,6 +5,7 @@ import { tags } from "@/lib/cache";
 import { cached } from "@/lib/queries/cached";
 import { getNavigationPaths } from "@/lib/queries/navigation";
 import { getPublishedPageSlugs, getUnservedPageSlugs } from "@/lib/queries/pages";
+import { liveJobSlugs } from "@/lib/queries/careers";
 
 /**
  * Sitemap.
@@ -59,11 +60,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = appUrl();
   const now = new Date();
 
-  const [rows, cmsPages, navPaths, unservedPages] = await Promise.all([
+  const [rows, cmsPages, navPaths, unservedPages, jobs] = await Promise.all([
     getSitemapRows(),
     getPublishedPageSlugs(),
     getNavigationPaths(),
     getUnservedPageSlugs(),
+    liveJobSlugs(),
   ]);
   const { products, brands, services, posts } = rows;
 
@@ -148,6 +150,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${base}/blog/${post.slug}`,
       lastModified: post.updatedAt,
       changeFrequency: "yearly",
+      priority: 0.6,
+    });
+  }
+
+  /*
+   * Open roles, asked of the same query the careers pages use.
+   *
+   * Not a second copy of the "is it live" rule: a closed role that stayed in
+   * the sitemap would be submitted to Google as a live vacancy while the page
+   * itself says it has closed, and a job listing that contradicts its own
+   * sitemap entry is how a site's `JobPosting` markup stops being trusted.
+   *
+   * `daily`, because a vacancy has a short life and Google Jobs revisits
+   * aggressively — there is no point telling it to come back next month for a
+   * page that will be gone by then.
+   */
+  for (const job of jobs) {
+    add({
+      url: `${base}/careers/${job.slug}`,
+      lastModified: job.updatedAt,
+      changeFrequency: "daily",
       priority: 0.6,
     });
   }
