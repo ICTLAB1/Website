@@ -21,7 +21,21 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl()),
   title: {
-    default: "Enterprise Software Licensing, Cloud & IT Solutions",
+    /*
+     * The fallback for a route that sets no title of its own.
+     *
+     * It carries the trading name because the template below cannot reach
+     * every case: `template` applies only to *child* segments, so a title set
+     * by `app/page.tsx` — which sits in this same segment — never receives the
+     * suffix. That is why the homepage was the one page on the site with no
+     * brand name in its title.
+     *
+     * The homepage is not fixed here, though. Its title is CMS content, stored
+     * on the `Page` row for the empty slug and editable in the admin panel; see
+     * the content migration that corrected it. This value is the safety net for
+     * a route that has neither.
+     */
+    default: `${getSiteIdentity().tradingName} | Enterprise Software Licensing & IT Solutions`,
     /*
      * The suffix is the trading name, not a description of the business.
      *
@@ -37,7 +51,25 @@ export const metadata: Metadata = {
   description:
     "Microsoft, Adobe, Autodesk, Zoho and enterprise technology solutions from one trusted procurement partner. Consolidated quotations, GST invoicing and licence management.",
   applicationName: "Enterprise Technology Marketplace",
-  formatDetection: { telephone: false, address: false, email: false },
+  /*
+   * Let a phone number be a phone number.
+   *
+   * `telephone: false` tells iOS Safari not to turn digit strings into call
+   * links. It was presumably set to stop order references and GSTINs being
+   * mistaken for numbers — but the cost is that a real number written in prose
+   * is inert on the device most likely to be used to ring it.
+   *
+   * Note what this does *not* change: every place the site prints its own
+   * number already wraps it in an explicit `tel:` anchor (the footer, contact,
+   * services, the enquiry confirmation, account support), and an explicit
+   * anchor has always worked regardless of this tag. This only affects numbers
+   * that appear as plain text.
+   *
+   * `address` and `email` stay off. Address detection produces a maps link from
+   * anything shaped like a street, which on an invoice-heavy site fires on
+   * order lines; email detection is redundant beside real `mailto:` links.
+   */
+  formatDetection: { telephone: true, address: false, email: false },
   robots: { index: true, follow: true },
 };
 

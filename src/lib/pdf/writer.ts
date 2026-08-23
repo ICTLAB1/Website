@@ -247,7 +247,8 @@ export const PANEL: Colour = { r: 0.97, g: 0.965, b: 0.955 };
 export const ZEBRA: Colour = { r: 0.985, g: 0.982, b: 0.977 };
 
 /**
- * The three mark colours and the ink, matching `public/logo.svg`.
+ * The three mark colours and the ink, matching the brand lockup in
+ * `public/brand-assets/`.
  *
  * Duplicated from the SVG rather than parsed out of it: this file is written
  * once and read by a renderer that cannot fetch anything, and a colour that

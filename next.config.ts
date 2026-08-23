@@ -84,6 +84,88 @@ const nextConfig: NextConfig = {
       { source: "/about-us", destination: "/about", permanent: true },
       { source: "/privacy-policy", destination: "/privacy", permanent: true },
       { source: "/terms-and-conditions", destination: "/terms", permanent: true },
+
+      /*
+       * ── URLs from the Wix site this one replaces ────────────────────────
+       *
+       * These are indexed, and the pages behind them carry contact details
+       * that are no longer correct — an old number and an old address on a
+       * techzoidgroup.com mailbox. Left to 404 they would keep that
+       * information in front of anyone who found them, and lose whatever
+       * ranking they hold. A 301 moves both.
+       *
+       * Each of these points at the closest live equivalent, verified to
+       * return 200. Where there is no equivalent — a product page for a
+       * licence that is now quoted rather than listed — the brand page is the
+       * honest destination: it answers the question the searcher had.
+       */
+      { source: "/techzoid", destination: "/products", permanent: true },
+      { source: "/about-1", destination: "/about", permanent: true },
+      /*
+       * `/careers` is the one here I would argue about.
+       *
+       * A 301 is cached by browsers indefinitely, so if this business ever
+       * publishes a careers page, every visitor who followed this redirect
+       * once will keep being sent to /about and there is no way to reach them.
+       * A 307 costs a little ranking transfer and stays reversible. It is
+       * permanent because that is what was asked for — say the word and it
+       * becomes temporary.
+       */
+      { source: "/careers", destination: "/about", permanent: true },
+      { source: "/corel-draw-software-services", destination: "/brands/corel", permanent: true },
+      {
+        source: "/product-page/autocad-business-license",
+        destination: "/products/autocad",
+        permanent: true,
+      },
+      {
+        source: "/product-page/buycoreldrawgraphicssuite2025lifetimelicense",
+        destination: "/brands/corel",
+        permanent: true,
+      },
+      {
+        source: "/product-page/microsoft-sharepoint-online-plan-2",
+        destination: "/brands/microsoft",
+        permanent: true,
+      },
+      {
+        source: "/product-page/microsoft-windows-10-pro-64-bit-system-builder-oem",
+        destination: "/brands/microsoft",
+        permanent: true,
+      },
+
+      /*
+       * ── The ones nobody has a list of ──────────────────────────────────
+       *
+       * There is no Wix export, no archived sitemap and nothing in this
+       * repository's history recording what the old site published, so the
+       * seven above are the ones somebody happened to notice. The rest are
+       * still indexed and still 404.
+       *
+       * A catch-all is a blunt instrument and is the right one here. Sending
+       * an unknown `/product-page/*` to the catalogue is not a great answer,
+       * but it is a live page in the right section rather than a dead end, and
+       * Google treats a 301 to a relevant page far better than a 404.
+       *
+       * Ordered last on purpose: Next matches redirects top to bottom, so the
+       * specific slugs above win and only what they miss falls through here.
+       */
+      { source: "/product-page/:slug*", destination: "/products", permanent: true },
+
+      /*
+       * Wix's own reserved paths, which it published on every site and which
+       * do not exist here.
+       */
+      { source: "/blog-1/:path*", destination: "/blog", permanent: true },
+      /*
+       * `:slug` and not `:slug*`. A repeated parameter has to occupy its own
+       * path segment — `/copy-of-:slug*` is rejected at build time with "Can
+       * not repeat slug without a prefix and suffix", because the `copy-of-`
+       * prefix leaves it nowhere to repeat into. These pages are always a
+       * single segment anyway.
+       */
+      { source: "/copy-of-:slug", destination: "/", permanent: true },
+      { source: "/_partials/:path*", destination: "/", permanent: true },
     ];
   },
 };

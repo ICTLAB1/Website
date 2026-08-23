@@ -227,7 +227,22 @@ export function CollectionGridBlock({
       ) : data.kind === "brands" ? (
         <Reveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {(rows as BrandRow[]).map((brand) => (
-            <BrandCard key={brand.slug} brand={{ ...brand, productCount: brand._count.products }} />
+            /*
+             * The count only where there is one worth printing.
+             *
+             * "0 products" on a brand card says the site is unfinished. What it
+             * actually means is that this business can source the brand and has
+             * not published a price list for it — which the brand's own page now
+             * says properly. Passing `undefined` drops the line rather than
+             * printing a zero, and the card still leads somewhere useful.
+             */
+            <BrandCard
+              key={brand.slug}
+              brand={{
+                ...brand,
+                productCount: brand._count.products > 0 ? brand._count.products : undefined,
+              }}
+            />
           ))}
         </Reveal>
       ) : data.kind === "categories" ? (

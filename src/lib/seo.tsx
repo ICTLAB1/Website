@@ -15,6 +15,46 @@ export function absoluteUrl(path: string): string {
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
+/**
+ * The card a link to this site unfurls into.
+ *
+ * ## Why this file exists at all
+ *
+ * There was no image, and `twitter:card` was already declared as
+ * `summary_large_image` — a card type that requires one. So every share of
+ * every page was asking for a large-image card and supplying nothing, which is
+ * worse than the small card it would otherwise have got.
+ *
+ * ## Why it is not the logo on its own
+ *
+ * A lockup is 3:1 and every platform crops to roughly 1.91:1, so the bare logo
+ * arrives as a thin strip floating in padding. The card places the supplied
+ * lockup in a composition that fills the frame instead.
+ *
+ * It is a PNG for a second reason: **SVG is not accepted for `og:image` by
+ * Facebook, LinkedIn or X**. They fetch the URL and give up.
+ *
+ * ## One card, not one per page
+ *
+ * A per-page image would be better and is not free: it needs either a designed
+ * asset per route or a runtime renderer, and a wrong-but-present image is not
+ * an improvement on a right-but-generic one. The title and description in the
+ * card's text come from the page itself, which is where the per-page
+ * information actually lives.
+ */
+const SOCIAL_CARD = {
+  path: "/og/techzoid-card.png",
+  width: 1200,
+  height: 630,
+  type: "image/png",
+  /*
+   * Describes the card, not the company. This is read aloud by a screen reader
+   * on platforms that surface it, and "TechZoid Technologies logo" would be
+   * wrong — the card is a titled banner, and the logo is one part of it.
+   */
+  alt: "TechZoid — enterprise software licensing, cloud and IT solutions",
+} as const;
+
 export function buildMetadata(input: {
   title: string;
   description: string;
@@ -56,11 +96,23 @@ export function buildMetadata(input: {
       locale: "en_IN",
       ...(input.publishedTime ? { publishedTime: new Date(input.publishedTime).toISOString() } : {}),
       ...(input.modifiedTime ? { modifiedTime: new Date(input.modifiedTime).toISOString() } : {}),
+      // Absolute. `metadataBase` would resolve a relative path, but a share
+      // scraper is not a browser and several fetch the raw attribute.
+      images: [
+        {
+          url: absoluteUrl(SOCIAL_CARD.path),
+          width: SOCIAL_CARD.width,
+          height: SOCIAL_CARD.height,
+          type: SOCIAL_CARD.type,
+          alt: SOCIAL_CARD.alt,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: input.title,
       description: input.description,
+      images: [{ url: absoluteUrl(SOCIAL_CARD.path), alt: SOCIAL_CARD.alt }],
     },
   };
 }
@@ -83,6 +135,16 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   );
 }
 
+/**
+ * The logo Google reads, as a raster.
+ *
+ * A 900 px reduction of the supplied master, not a separate drawing, so this
+ * and the lockup in the header cannot diverge into different marks. It shares
+ * the path with the quotation letterhead, which looks for exactly this name —
+ * see `lib/pdf/assets.ts`.
+ */
+const ORGANISATION_LOGO = "/logo.png";
+
 export async function organizationSchema() {
   const config = await getSiteConfig();
   return {
@@ -91,6 +153,27 @@ export async function organizationSchema() {
     name: config.entityName,
     alternateName: config.tradingName,
     url: config.url,
+    logo: absoluteUrl(ORGANISATION_LOGO),
+    /*
+     * The GSTIN, which is what `taxID` means for an Indian business.
+     *
+     * Worth publishing: a buyer's finance team checks it before raising a
+     * purchase order, and a registration number that is machine-readable is
+     * one they do not have to retype off a PDF. Omitted entirely rather than
+     * emitted empty when it is not configured — an empty `taxID` is a claim to
+     * have one and to have lost it.
+     */
+    ...(config.gstin ? { taxID: config.gstin } : {}),
+    /*
+     * `sameAs` is deliberately absent.
+     *
+     * It is the property Google uses to tie this organisation to its profiles
+     * elsewhere, and it is the one thing here that cannot be derived from the
+     * codebase — there is not a single social or directory URL anywhere in this
+     * repository. Guessing one would assert that a profile is this company's
+     * when nobody has checked, in the machine-readable block search engines
+     * trust most. Supply the real URLs and they go here.
+     */
     description:
       "Enterprise software licensing, cloud and IT solutions across Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure manufacturers.",
     ...(config.email.sales || config.phone.sales

@@ -36,7 +36,7 @@ export type NavigationSeed = {
 export const pageSeeds: PageSeed[] = [
   {
     "slug": "",
-    "title": "Enterprise Software Licensing, Cloud & IT Solutions",
+    "title": "TechZoid | Enterprise Software Licensing & IT Solutions",
     "description": "Microsoft, Adobe, Autodesk, Zoho and enterprise technology from one procurement partner. Consolidated quotations, GST invoicing and licence management.",
     "keywords": [
       "enterprise software licensing",

@@ -21,7 +21,25 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
-    theme_color: "#0e1b38",
+    /*
+     * Charcoal, the brand's own ground colour, and the same value the header
+     * and footer are painted in. It was `#0e1b38` — a navy that appears
+     * nowhere else in this design and predates the brand being settled. On
+     * Android this is the colour drawn behind the status bar of an installed
+     * app, so a wrong value here is a visible seam nobody sees in a browser.
+     */
+    theme_color: "#1C1F1E",
+    /*
+     * The aperture alone rather than the full lockup: an installed icon is
+     * shown at 48–192 px and square, and a 3:1 wordmark scaled into that is a
+     * grey smudge. `maskable` lets Android crop it to whatever shape the
+     * launcher uses without clipping the mark, which is why the source is
+     * padded.
+     */
+    icons: [
+      { src: "/brand-assets/techzoid-icon.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/brand-assets/techzoid-icon.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+    ],
     categories: ["business", "productivity"],
   };
 }

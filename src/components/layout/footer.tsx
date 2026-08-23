@@ -15,7 +15,7 @@ export async function Footer() {
       <div className="container-page py-14">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(4,minmax(0,1fr))]">
           <div className="max-w-sm">
-            <Logo name={config.tradingName} onDark />
+            <Logo name={config.tradingName} onDark withStrapline className="h-auto" />
             <p className="mt-5 text-meta leading-relaxed text-graphite-300">
               Enterprise software licensing, cloud and IT solutions. Software publishers and
               hardware manufacturers consolidated into a single procurement relationship.

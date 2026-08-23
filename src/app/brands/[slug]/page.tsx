@@ -83,6 +83,32 @@ export default async function BrandPage({ params }: PageProps) {
 
   const services = relatedServices.length > 0 ? relatedServices : allServices.filter((s) => s.featured).slice(0, 3);
 
+  /*
+   * Whether there is anything on this page to browse.
+   *
+   * Both lists, not a count column: `featured` is the software catalogue and
+   * `hardware` is the models, and a brand can have one without the other. HP
+   * has hardware and no software listings; Zoho is the reverse. Asking the two
+   * arrays that are already loaded is also the only reading that cannot
+   * disagree with what the page goes on to render.
+   */
+  const hasCatalogue = featured.length > 0 || hardware.length > 0;
+
+  /*
+   * The copy below deliberately names no category of goods.
+   *
+   * The obvious version said "licensing" or "hardware" depending on the brand's
+   * segment, and it was wrong on the first brand it was tested against: VMware
+   * sits under enterprise infrastructure, which also holds Dell and Synology,
+   * so it announced "VMware hardware". Segment groups brands the way a buyer
+   * looks for them; it is not a statement about what they manufacture, and
+   * nothing in the schema is.
+   *
+   * Rather than add a column, or an exception list that will be wrong again the
+   * next time a brand is added, the sentence simply does not make the claim.
+   * "Get a quote for VMware" is true of software and hardware alike.
+   */
+
   return (
     <div className="pb-16">
       <div className="container-page">
@@ -126,14 +152,42 @@ export default async function BrandPage({ params }: PageProps) {
               className="mt-4 rounded-[--radius-md] bg-white px-3 py-2"
             />
             <p className="mt-5 text-[16px] leading-relaxed text-graphite-200">{brand.summary}</p>
+
+            {/*
+              "Browse products" only where there are products to browse.
+
+              This button used to be unconditional, and for the thirty brands
+              with no published catalogue it sent a buyer to a listing with
+              nothing in it. A dead-end click is worse than no button: it reads
+              as a broken site rather than as what it actually is — a supplier
+              this business can source from and has not published a price list
+              for. Those brands lead with the quote instead, which is the real
+              next step for them anyway.
+            */}
             <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href={`/products?brand=${brand.slug}`}>
-                Browse {brand.name} products
-              </ButtonLink>
-              <ButtonLink href="/enquiry" variant="onDark">
-                Request pricing
-              </ButtonLink>
+              {hasCatalogue ? (
+                <>
+                  <ButtonLink href={`/products?brand=${brand.slug}`}>
+                    Browse {brand.name} products
+                  </ButtonLink>
+                  <ButtonLink href="/enquiry" variant="onDark">
+                    Request pricing
+                  </ButtonLink>
+                </>
+              ) : (
+                <ButtonLink href={`/enquiry?brand=${brand.slug}`}>
+                  Get a quote for {brand.name}
+                </ButtonLink>
+              )}
             </div>
+
+            {hasCatalogue ? null : (
+              <p className="mt-4 max-w-xl text-[14px] leading-relaxed text-graphite-300">
+                There is no published catalogue for {brand.name} yet. Tell us what you need and we
+                will quote it — {brand.name} is sourced and supplied on the same terms as
+                everything else here.
+              </p>
+            )}
           </div>
         </div>
       </section>

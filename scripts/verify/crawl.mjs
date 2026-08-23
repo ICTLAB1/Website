@@ -122,12 +122,22 @@ while (queue.length > 0) {
     problems.push(`${path}: console error — ${error.slice(0, 160)}`);
   }
 
-  // Body text only. Script and style contents are not what a visitor reads, and
-  // JSON-LD legitimately repeats the copy that is already being checked.
+  /*
+   * Body text only. Script and style contents are not what a visitor reads, and
+   * JSON-LD legitimately repeats the copy that is already being checked.
+   *
+   * Both `innerText` and `textContent`, because they disagree in a way that hid
+   * a real defect: `innerText` is what a page *looks* like — it inserts
+   * whitespace at layout boundaries — while `textContent` is what a copy-paste
+   * or a search engine's extractor actually gets. The wordmark rendered two
+   * adjacent spans reading "TECHZ" and "ID" with a graphic between them, so
+   * `innerText` produced "TECHZ ID" and sailed past the check for the very
+   * typo it exists to catch, while `textContent` said "TECHZID".
+   */
   const text = await page.evaluate(() => {
     const clone = document.body.cloneNode(true);
     for (const node of clone.querySelectorAll("script, style, noscript")) node.remove();
-    return clone.innerText;
+    return `${clone.innerText}\n${clone.textContent}`;
   });
 
   if (!isPrivate(path)) {

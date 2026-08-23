@@ -3,89 +3,100 @@ import { cn } from "@/lib/utils";
 /**
  * The TechZoid brand lockup.
  *
- * Drawn as vector geometry rather than shipped as an image file: it stays crisp
- * at any size, costs no network request, and — the part that matters most here —
- * the wordmark and the counter of the O are painted in `currentColor`, so the
- * same component sits correctly on the light header and on the dark footer
- * without a second asset.
+ * ## This used to be drawn, and is now the artwork
  *
- * The three arcs keep their brand colours in both themes. They carry the
- * identity; the letterforms carry the contrast.
+ * Until the brand files existed, this file built an approximation out of type
+ * and three SVG arcs — the only honest option when nobody had supplied a logo.
+ * The real one is nothing like it: bevelled letterforms, circuit traces running
+ * through the Z, and a five-blade aperture in place of the O. An approximation
+ * of a logo is a different logo, so the drawing is gone.
  *
- * This is the one file that is deliberately specific to the operating company.
- * Everything else about the site reads its identity from configuration, but a
- * logo is artwork, not data — replacing it means replacing this file.
+ * ## Two files, because one cannot work on both grounds
+ *
+ * The supplied lockup's letterforms are near-black. On the charcoal footer they
+ * disappear. The reversed variant lifts only the neutral dark pixels towards
+ * white and leaves the aperture and the orange ampersand exactly as they are —
+ * so it is the same mark, not a recoloured one. Both are derived from the
+ * single supplied master; see `public/brand/README.md`.
+ *
+ * ## Why an `<img>` and not `next/image`
+ *
+ * The optimiser wants an intrinsic size for artwork that is already local,
+ * already sized for its slot, and served from the same origin. What matters for
+ * layout stability is the fixed height below, which is here regardless. The
+ * width is `auto` so the lockup keeps its own proportions rather than being
+ * squeezed by a container.
  */
 
-const ARC_BLUE = "#2F7DD1";
-const ARC_AMBER = "#F2A33C";
-const ARC_TEAL = "#2BB3A3";
-
-/**
- * The circular mark alone — three arcs turning around a ring.
+/*
+ * Two cuts of the same lockup.
  *
- * Sized in `em` so it scales with whatever type it sits beside, which is what
- * keeps the lockup aligned when the wordmark changes size.
+ * The supplied master carries the strapline beneath the wordmark. At the size
+ * a header allows — 44 px of vertical space — that strapline renders about five
+ * pixels tall: not small, illegible, and it drags the wordmark down with it to
+ * make room. So navigation gets the wordmark alone, which is what a brand kit
+ * would call the compact lockup, and the full one is available where there is
+ * room for it to be read.
+ *
+ * Cut from the master rather than re-set as type: the letterforms are bevelled
+ * and the Z carries circuit traces, neither of which can be reproduced with a
+ * font.
  */
-export function BrandMark({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 100 100"
-      className={cn("h-[1em] w-[1em]", className)}
-      role="presentation"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <g fill="none" strokeLinecap="round" strokeWidth="10">
-        <path d="M10.22 45.82A40 40 0 0 1 58.32 10.87" stroke={ARC_BLUE} />
-        <path d="M73.51 17.64A40 40 0 0 1 79.73 76.77" stroke={ARC_AMBER} />
-        <path d="M66.27 86.54A40 40 0 0 1 11.96 62.36" stroke={ARC_TEAL} />
-      </g>
-      {/* The counter of the O. `currentColor` so it inverts with the wordmark. */}
-      <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="9" />
-    </svg>
-  );
-}
+/** Wordmark and aperture, no strapline. For headers and anywhere tight. */
+const WORDMARK_LIGHT = "/brand-assets/techzoid-wordmark.png";
+const WORDMARK_DARK = "/brand-assets/techzoid-wordmark-reversed.png";
 
-/**
- * Wordmark and mark together.
- *
- * "TECHZOID" is set as text rather than outlined paths so it stays selectable,
- * searchable and readable to a screen reader, and so it reflows with the user's
- * own font settings instead of being frozen at one size.
- *
- * The mark replaces the O, which means the accessible name has to be supplied
- * separately — the visible letters spell "TECHZ" and "ID" with a graphic
- * between them.
- */
+/** The full lockup including the strapline. Needs ~80 px of height to read. */
+const LOCKUP_LIGHT = "/brand-assets/techzoid-logo.png";
+const LOCKUP_DARK = "/brand-assets/techzoid-logo-reversed.png";
+
+/** The aperture alone, square and centred. Favicons, app icons, avatars. */
+export const BRAND_ICON = "/brand-assets/techzoid-icon.png";
+
 export function BrandLogo({
-  showTagline = true,
+  onDark = false,
+  withStrapline = false,
   className,
 }: {
-  /** The strapline under the wordmark. Dropped where vertical space is tight. */
-  showTagline?: boolean;
+  /** True on the charcoal footer, where the near-black letterforms vanish. */
+  onDark?: boolean;
+  /**
+   * Include the strapline. Only worth it above roughly 80 px of height —
+   * below that it is a grey smear that makes the wordmark smaller for nothing.
+   */
+  withStrapline?: boolean;
   className?: string;
 }) {
+  const src = withStrapline
+    ? onDark
+      ? LOCKUP_DARK
+      : LOCKUP_LIGHT
+    : onDark
+      ? WORDMARK_DARK
+      : WORDMARK_LIGHT;
   return (
-    <span className={cn("inline-flex min-w-0 flex-col", className)}>
-      <span
-        aria-hidden="true"
-        className="flex items-center text-[1.35rem] font-extrabold leading-none tracking-[-0.01em]"
-      >
-        <span>TECHZ</span>
-        {/* Optically tightened: the mark is a circle and reads wider than an O. */}
-        <BrandMark className="mx-[0.015em] text-[1.12em]" />
-        <span>ID</span>
-      </span>
-
-      {showTagline ? (
-        <span
-          aria-hidden="true"
-          className="mt-1 hidden truncate font-serif text-[10.5px] italic leading-none tracking-[0.005em] opacity-70 min-[420px]:block"
-        >
-          Connect, Communicate &amp; Collaborate
-        </span>
-      ) : null}
-    </span>
+    /*
+     * `alt=""` and `aria-hidden`: the accessible name is supplied by the link
+     * that wraps this (`components/layout/logo.tsx`), which says "TechZoid —
+     * home". An alt here as well would make a screen reader announce the
+     * company name twice for one control.
+     *
+     * The tagline is part of the artwork rather than separate text, which is
+     * how the master was supplied. It is decorative either way — the words are
+     * on the about page, in prose, where they can be read.
+     */
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt=""
+      aria-hidden="true"
+      className={cn("h-11 w-auto max-w-full object-contain object-left", className)}
+      // The intrinsic size of whichever cut is being used, so the browser
+      // reserves the right box before the file arrives and the header does not
+      // jump as it loads.
+      width={2167}
+      height={withStrapline ? 725 : 314}
+      decoding="async"
+    />
   );
 }

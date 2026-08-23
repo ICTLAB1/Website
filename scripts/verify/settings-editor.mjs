@@ -227,17 +227,47 @@ check(
   audit.violations.map((v) => `${v.id} (${v.nodes.length})`).join(", "),
 );
 
-// ── 5. Put back whatever was there before ───────────────────────────────────
-await open();
-for (const [name, value] of Object.entries(original)) {
-  await field(name).fill(value);
+/*
+ * ── 5. Put back whatever was there before ──────────────────────────────────
+ *
+ * In a `finally`, because this suite writes to the row that holds the
+ * business's registered address, GSTIN and statutory grievance officer. Every
+ * step above can throw — a selector moves, a save is slow, a check fails — and
+ * a throw used to skip this block and leave "412297 Verification House" as the
+ * company's published address.
+ *
+ * That failure is quietly self-perpetuating: the next run captures the fixture
+ * as `original` and faithfully restores it, so one aborted run poisons every
+ * run after it. It took a structured-data audit to notice the address on the
+ * live pages was a test string.
+ */
+let restoreFailed = null;
+try {
+  await open();
+  for (const [name, value] of Object.entries(original)) {
+    await field(name).fill(value);
+  }
+  await save();
+  await open();
+  const restored = await field("addressLine1").inputValue();
+  check("the original values were restored", restored === original.addressLine1, restored);
+} catch (error) {
+  restoreFailed = error;
 }
-await save();
-await open();
-const restored = await field("addressLine1").inputValue();
-check("the original values were restored", restored === original.addressLine1, restored);
 
 await browser.close();
+
+/*
+ * Loud, and fatal. A suite that has left the company's address as a fixture
+ * must not exit 0 — the whole point of the block above is that somebody finds
+ * out immediately rather than from a search result weeks later.
+ */
+if (restoreFailed) {
+  console.error("\n  ✗ COULD NOT RESTORE SITE SETTINGS — check the address, GSTIN and");
+  console.error("    grievance officer in the admin panel before deploying.");
+  console.error(`    ${restoreFailed instanceof Error ? restoreFailed.message : restoreFailed}`);
+  process.exit(1);
+}
 
 for (const r of results) console.log(`${r.ok ? "  ✓" : "  ✗"} ${r.name}${!r.ok && r.detail ? ` — ${r.detail}` : ""}`);
 const failed = results.filter((r) => !r.ok).length;
