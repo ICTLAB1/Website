@@ -125,6 +125,48 @@ export async function notifyQuoteDecision(quote: {
   );
 }
 
+
+/**
+ * A customer wrote on a quotation.
+ *
+ * Goes to the sales inbox rather than to the customer: they have just typed it
+ * and can see it on the page. What matters is that it reaches somebody here
+ * quickly — a revision request sitting unread for three days is how a live
+ * requirement goes elsewhere.
+ */
+export async function notifyQuoteMessage(message: {
+  reference: string;
+  kind: "QUESTION" | "REVISION_REQUEST";
+  body: string;
+  customerName: string;
+  customerEmail: string;
+}): Promise<void> {
+  const internal = await salesInbox();
+  if (!internal) return;
+
+  const revision = message.kind === "REVISION_REQUEST";
+
+  await deliver(
+    internal,
+    `${revision ? "Revision requested" : "Question"} on ${message.reference} — ${message.customerName}`,
+    {
+      heading: revision
+        ? `${message.customerName} has asked for changes to ${message.reference}`
+        : `${message.customerName} has a question about ${message.reference}`,
+      paragraphs: [message.body],
+      details: [
+        ["Quotation", message.reference],
+        ["Customer", `${message.customerName} <${message.customerEmail}>`],
+      ],
+      action: {
+        label: "Open the quotation",
+        url: `${appUrl()}/admin/quotes/${message.reference}`,
+      },
+    },
+    message.customerEmail,
+  );
+}
+
 /** An order moving to a state the customer would want to know about. */
 export async function notifyOrderStatus(order: {
   reference: string;

@@ -1,10 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { notifyQuoteDecision, notifyTicketRaised } from "@/lib/emails/transactional";
+import { notifyQuoteDecision, notifyQuoteMessage, notifyTicketRaised } from "@/lib/emails/transactional";
 import { prisma } from "@/lib/db";
 import { canTransact, requireUser } from "@/lib/auth/guards";
 import { canInCompany } from "@/lib/auth/capabilities";
+import { addQuoteMessage } from "@/lib/quote-revision";
 import { companySchema, fieldErrorsOf, profileSchema, supportTicketSchema } from "@/lib/validation";
 import { publicReference } from "@/lib/auth/tokens";
 import { recordAudit } from "@/lib/audit";
@@ -419,4 +420,99 @@ export async function decideQuote(
     status: "success",
     message: `Quotation accepted. Your order reference is ${order.reference} — we will confirm provisioning shortly.`,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Talking about a quotation
+// ---------------------------------------------------------------------------
+
+const quoteMessageSchema = z.object({
+  reference: z.string().trim().regex(/^QTE-\d{4}-[A-Z0-9]{6}(-\d+)?$/, "Invalid reference."),
+  body: z.string().trim().min(2, "Write your message first.").max(4000),
+});
+
+/**
+ * A question, or a request for the quotation to be changed.
+ *
+ * Both go into the same thread beside the quotation rather than into an inbox,
+ * so the conversation about a document lives with the document. Neither
+ * changes the quotation: somebody here reads it and decides, because a
+ * customer's message silently invalidating a document their finance team is
+ * holding would be worse for everybody.
+ */
+async function writeOnQuote(
+  formData: FormData,
+  kind: "QUESTION" | "REVISION_REQUEST",
+): Promise<ActionState> {
+  const user = await requireUser("/account/quotes");
+
+  if (!canInCompany(user, "quotes.act")) {
+    return {
+      status: "error",
+      message:
+        "Your access does not include responding to quotations. Ask a colleague with procurement access.",
+    };
+  }
+
+  const parsed = quoteMessageSchema.safeParse({
+    reference: formData.get("reference"),
+    body: formData.get("body"),
+  });
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: "Please correct the highlighted fields.",
+      fieldErrors: fieldErrorsOf(parsed.error),
+    };
+  }
+
+  const limit = hit(`quote-message:${user.id}`, LIMITS.contact.limit, LIMITS.contact.windowSeconds);
+  if (!limit.allowed) {
+    return { status: "error", message: "Too many messages in a short period. Please try again shortly." };
+  }
+
+  const result = await addQuoteMessage(parsed.data.reference, user, {
+    kind,
+    body: parsed.data.body,
+  });
+  if (!result.ok) return { status: "error", message: result.reason };
+
+  await recordAudit({
+    actorId: user.id,
+    action: kind === "QUESTION" ? "quote.question_asked" : "quote.revision_requested",
+    entityType: "Quote",
+    entityId: parsed.data.reference,
+    ip: await clientIp(),
+  });
+
+  await notifyQuoteMessage({
+    reference: parsed.data.reference,
+    kind,
+    body: parsed.data.body,
+    customerName: user.name,
+    customerEmail: user.email,
+  });
+
+  revalidatePath(`/account/quotes/${parsed.data.reference}`);
+  return {
+    status: "success",
+    message:
+      kind === "QUESTION"
+        ? "Thank you — your question is with us and we will answer it here."
+        : "Thank you — we will look at this and come back with a revised quotation.",
+  };
+}
+
+export async function askAboutQuote(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  return await writeOnQuote(formData, "QUESTION");
+}
+
+export async function requestQuoteRevision(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  return await writeOnQuote(formData, "REVISION_REQUEST");
 }

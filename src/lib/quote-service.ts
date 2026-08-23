@@ -121,7 +121,8 @@ export async function createQuoteFromEnquiry(
 
   const reference = publicReference("QTE");
 
-  await prisma.quote.create({
+  const created = await prisma.quote.create({
+    select: { id: true },
     data: {
       reference,
       status: "DRAFT",
@@ -149,6 +150,15 @@ export async function createQuoteFromEnquiry(
       },
     },
   });
+
+  /*
+   * Version 1 is the root of its own history.
+   *
+   * Written after the insert because the id it points at is its own. A row with
+   * no root would be a version of nothing, and every "show me the other
+   * versions" query would need a special case for the first one.
+   */
+  await prisma.quote.update({ where: { id: created.id }, data: { rootId: created.id } });
 
   /*
    * Preparing, not sent.

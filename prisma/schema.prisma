@@ -219,6 +219,18 @@ enum QuoteStatus {
   ACCEPTED
   DECLINED
   EXPIRED
+  /// Replaced by a later version. Kept, never edited, never deleted.
+  SUPERSEDED
+}
+
+/// Why somebody wrote on a quotation.
+enum QuoteMessageKind {
+  /// The customer asked something about it.
+  QUESTION
+  /// The customer wants it changed and said how.
+  REVISION_REQUEST
+  /// Somebody here answered.
+  REPLY
 }
 
 enum OrderStatus {
@@ -358,6 +370,7 @@ model User {
   savedSettings SiteSettings[]
   savedPayments PaymentSettings[]
   savedMail     MailSettings[]
+  quoteMessages QuoteMessage[]
 
   @@index([companyId])
   @@index([role])
@@ -916,16 +929,61 @@ model Quote {
   validUntil DateTime?
   notes      String?
   sentAt     DateTime?
+
+  /*
+   * Versions.
+   *
+   * A revised quotation is a new row, never an edit. The old figures were sent
+   * to somebody who may have acted on them, forwarded them to finance or
+   * attached them to a purchase order, and a system that overwrites them cannot
+   * answer the only question that matters afterwards: what did we actually
+   * quote, and when.
+   *
+   * Every version of one quotation shares a `rootId` — the id of version 1,
+   * which carries its own — so the whole history is one query.
+   */
+  version      Int       @default(1)
+  rootId       String?
+  root         Quote?    @relation("QuoteVersions", fields: [rootId], references: [id], onDelete: SetNull)
+  versions     Quote[]   @relation("QuoteVersions")
+  /// Set when a later version replaced this one.
+  supersededAt DateTime?
+  /// What changed, in words, written by whoever revised it.
+  revisionNote String?
+
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
   items     QuoteItem[]
   orders    Order[]
   documents Document[]
+  messages  QuoteMessage[]
 
   @@index([status])
   @@index([userId])
   @@index([enquiryId])
+}
+
+/// A question or a revision request on a quotation, and the answer to it.
+///
+/// A thread rather than an email, so the conversation about a quotation lives
+/// beside the quotation instead of in four inboxes — which is the difference
+/// between "we never received that" and a record of what was asked and when.
+model QuoteMessage {
+  id        String           @id @default(cuid())
+  quoteId   String
+  quote     Quote            @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  kind      QuoteMessageKind
+  body      String
+  /// Who wrote it. Null where an account was deleted; the message stays.
+  userId    String?
+  user      User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  /// Which side wrote it, recorded at the time rather than derived later — a
+  /// salesperson's role can change, and what they wrote cannot.
+  fromStaff Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([quoteId])
 }
 
 model QuoteItem {

@@ -5,10 +5,13 @@ import type { Metadata } from "next";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/badge";
 import { AccountForm } from "@/components/account/account-form";
-import { Field, Input } from "@/components/ui/form";
-import { decideQuote } from "@/app/account/actions";
+import { Field, Input, Textarea } from "@/components/ui/form";
+import { askAboutQuote, decideQuote, requestQuoteRevision } from "@/app/account/actions";
 import { requireUser } from "@/lib/auth/guards";
 import { orgScope } from "@/lib/auth/scope";
+import { quoteVersions } from "@/lib/quote-revision";
+import { QuoteThread } from "@/components/quotes/quote-thread";
+import { QuoteVersions } from "@/components/quotes/quote-versions";
 import { prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { isQuoteExpired, priceLine } from "@/lib/pricing";
@@ -43,8 +46,24 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
       discountMinor: true,
       taxMinor: true,
       totalMinor: true,
+      id: true,
+      rootId: true,
+      version: true,
+      revisionNote: true,
+      supersededAt: true,
       enquiry: { select: { reference: true } },
       orders: { select: { reference: true, status: true } },
+      messages: {
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          kind: true,
+          body: true,
+          fromStaff: true,
+          createdAt: true,
+          user: { select: { name: true } },
+        },
+      },
       items: {
         orderBy: { productName: "asc" },
         select: {
@@ -64,6 +83,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
 
   const expired = isQuoteExpired(quote.validUntil);
   const decidable = quote.status === "SENT" && !expired;
+  const versions = await quoteVersions(quote.rootId ?? quote.id);
 
   return (
     <div className="space-y-8">
@@ -81,6 +101,17 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
           {quote.enquiry ? ` · from enquiry ${quote.enquiry.reference}` : ""}
         </p>
       </div>
+
+      {versions.length > 1 ? (
+        <section>
+          <h3 className="mb-4 text-[15px] font-semibold text-graphite-900">Versions</h3>
+          <QuoteVersions
+            versions={versions}
+            current={quote.reference}
+            basePath="/account/quotes"
+          />
+        </section>
+      ) : null}
 
       <section>
         <h3 className="mb-4 text-[15px] font-semibold text-graphite-900">Quoted items</h3>
@@ -145,6 +176,47 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
             <dd className="tabular-nums">{formatMoney(quote.totalMinor, quote.currency)}</dd>
           </div>
         </dl>
+      </section>
+
+      <section className="max-w-2xl">
+        <h3 className="mb-4 text-[15px] font-semibold text-graphite-900">Questions on this quotation</h3>
+        <QuoteThread messages={quote.messages} />
+
+        <div className="mt-6 grid gap-6 sm:grid-cols-2">
+          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <AccountForm
+              action={askAboutQuote}
+              submitLabel="Send question"
+              pendingLabel="Sending…"
+              variant="outline"
+              hidden={{ reference: quote.reference }}
+              compact
+            >
+              <Field label="Ask a question" name="body">
+                <Textarea name="body" rows={3} maxLength={4000} />
+              </Field>
+            </AccountForm>
+          </div>
+
+          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <AccountForm
+              action={requestQuoteRevision}
+              submitLabel="Request a revision"
+              pendingLabel="Sending…"
+              variant="outline"
+              hidden={{ reference: quote.reference }}
+              compact
+            >
+              <Field
+                label="Ask for changes"
+                name="body"
+                hint="Say what should change. We will issue a revised version; this one stays as it is."
+              >
+                <Textarea name="body" rows={3} maxLength={4000} />
+              </Field>
+            </AccountForm>
+          </div>
+        </div>
       </section>
 
       {quote.notes ? (

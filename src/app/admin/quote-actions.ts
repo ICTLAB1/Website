@@ -12,6 +12,7 @@ import { clientIp } from "@/lib/auth/request";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { fieldErrorsOf } from "@/lib/validation";
 import { createQuoteFromEnquiry, recalculateQuote, sendQuote } from "@/lib/quote-service";
+import { addQuoteMessage, reviseQuote } from "@/lib/quote-revision";
 import { fulfilOrder } from "@/lib/order-service";
 import { discountFromPercent, priceLine } from "@/lib/pricing";
 import type { AdminActionState } from "@/app/admin/actions";
@@ -250,6 +251,93 @@ export async function issueQuote(
   revalidatePath(`/admin/quotes/${parsed.data}`);
   revalidatePath("/admin/quotes");
   return { status: "success", message: "Quotation issued and sent to the customer." };
+}
+
+
+const revisionSchema = z.object({
+  reference: referenceSchema("QTE"),
+  note: z.string().trim().max(600).optional(),
+});
+
+/**
+ * Raises the next version of a quotation.
+ *
+ * A copy, never an edit: see `lib/quote-revision` for why. Redirects to the new
+ * version, because the old one is now history and editing it is exactly what
+ * this exists to prevent.
+ */
+export async function reviseQuotation(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const staff = await guard();
+  if (isFailure(staff)) return staff;
+
+  const parsed = revisionSchema.safeParse({
+    reference: formData.get("reference"),
+    note: formData.get("note"),
+  });
+  if (!parsed.success) return { status: "error", message: "That revision could not be raised." };
+
+  const result = await reviseQuote(parsed.data.reference, staff.id, parsed.data.note ?? null);
+  if (!result.ok) return { status: "error", message: result.reason };
+
+  await recordAudit({
+    actorId: staff.id,
+    action: "admin.quote_revised",
+    entityType: "Quote",
+    entityId: result.reference,
+    metadata: { from: parsed.data.reference, version: result.version },
+    ip: await clientIp(),
+  });
+
+  revalidatePath("/admin/quotes");
+  revalidatePath(`/admin/quotes/${parsed.data.reference}`);
+  redirect(`/admin/quotes/${result.reference}`);
+}
+
+const replySchema = z.object({
+  reference: referenceSchema("QTE"),
+  body: z.string().trim().min(2, "Write your reply.").max(4000),
+});
+
+/** Answers a customer's question on a quotation, in the thread they asked in. */
+export async function replyOnQuote(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const staff = await guard();
+  if (isFailure(staff)) return staff;
+
+  const parsed = replySchema.safeParse({
+    reference: formData.get("reference"),
+    body: formData.get("body"),
+  });
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: "Please correct the highlighted fields.",
+      fieldErrors: fieldErrorsOf(parsed.error),
+    };
+  }
+
+  const result = await addQuoteMessage(
+    parsed.data.reference,
+    { id: staff.id, staff: true },
+    { kind: "REPLY", body: parsed.data.body },
+  );
+  if (!result.ok) return { status: "error", message: result.reason };
+
+  await recordAudit({
+    actorId: staff.id,
+    action: "admin.quote_replied",
+    entityType: "Quote",
+    entityId: parsed.data.reference,
+    ip: await clientIp(),
+  });
+
+  revalidatePath(`/admin/quotes/${parsed.data.reference}`);
+  return { status: "success", message: "Reply added to the quotation." };
 }
 
 const orderStatusSchema = z.object({

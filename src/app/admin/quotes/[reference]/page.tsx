@@ -9,6 +9,8 @@ import { Field, Input, Textarea } from "@/components/ui/form";
 import {
   issueQuote,
   removeQuoteLine,
+  replyOnQuote,
+  reviseQuotation,
   updateQuoteLine,
   updateQuoteTerms,
 } from "@/app/admin/quote-actions";
@@ -16,6 +18,9 @@ import { DangerZone } from "@/components/admin/danger-zone";
 import { DELETABLE } from "@/lib/admin/deletable";
 import { isAdmin, requireStaff } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db";
+import { quoteVersions } from "@/lib/quote-revision";
+import { QuoteThread } from "@/components/quotes/quote-thread";
+import { QuoteVersions } from "@/components/quotes/quote-versions";
 import { formatMoney } from "@/lib/money";
 import { priceLine } from "@/lib/pricing";
 import { formatDate, humanise } from "@/lib/utils";
@@ -47,11 +52,30 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
         },
       },
       orders: { select: { reference: true, status: true } },
+      messages: {
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          kind: true,
+          body: true,
+          fromStaff: true,
+          createdAt: true,
+          user: { select: { name: true } },
+        },
+      },
     },
   });
   if (!quote) notFound();
 
   const isDraft = quote.status === "DRAFT";
+  const versions = await quoteVersions(quote.rootId ?? quote.id);
+  /*
+   * Revising is offered on anything that has left the drafting stage and has
+   * not been accepted. A draft is still editable in place — that is what a
+   * draft is — and an accepted quotation is the agreement, so it is never
+   * superseded by an edit.
+   */
+  const revisable = !isDraft && quote.status !== "ACCEPTED";
 
   return (
     <div className="space-y-8">
@@ -317,6 +341,31 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
             </p>
           </section>
 
+          {revisable ? (
+            <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <h2 className="text-[15px] font-semibold text-graphite-900">Revise</h2>
+              <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
+                Raises version {(versions[0]?.version ?? quote.version) + 1} as a new draft with
+                these lines copied in. This version is kept exactly as it is — the customer may be
+                holding a copy of it.
+              </p>
+              <div className="mt-4">
+                <AdminForm
+                  action={reviseQuotation}
+                  submitLabel="Raise a revision"
+                  pendingLabel="Raising…"
+                  variant="outline"
+                  hidden={{ reference: quote.reference }}
+                  compact
+                >
+                  <Field label="What changed" name="note" hint="Shown to the customer beside the version.">
+                    <Input name="note" maxLength={600} />
+                  </Field>
+                </AdminForm>
+              </div>
+            </section>
+          ) : null}
+
           {isDraft ? (
             <section className="rounded-[--radius-lg] border border-accent-600/40 bg-accent-50 p-5">
               <h2 className="text-[15px] font-semibold text-graphite-900">Issue this quotation</h2>
@@ -337,6 +386,32 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
           ) : null}
         </aside>
       </div>
+
+      {versions.length > 1 ? (
+        <section>
+          <h2 className="mb-4 text-[1.05rem]">Versions</h2>
+          <QuoteVersions versions={versions} current={quote.reference} basePath="/admin/quotes" />
+        </section>
+      ) : null}
+
+      <section className="max-w-3xl">
+        <h2 className="mb-4 text-[1.05rem]">Questions from the customer</h2>
+        <QuoteThread messages={quote.messages} />
+        <div className="mt-5 rounded-[--radius-lg] border border-line bg-white p-5">
+          <AdminForm
+            action={replyOnQuote}
+            submitLabel="Send reply"
+            pendingLabel="Sending…"
+            variant="outline"
+            hidden={{ reference: quote.reference }}
+            compact
+          >
+            <Field label="Reply" name="body" hint="The customer sees this on their copy of the quotation.">
+              <Textarea name="body" rows={3} maxLength={4000} />
+            </Field>
+          </AdminForm>
+        </div>
+      </section>
 
       {isAdmin(staff) ? (
         <DangerZone config={DELETABLE.quotes} id={quote.id} reference={quote.reference} />
