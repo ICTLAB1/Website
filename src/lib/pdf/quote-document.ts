@@ -325,5 +325,19 @@ export async function buildQuotationPdf(
     terms: config.quoteTerms,
   });
 
-  return { filename: `${quote.reference}.pdf`, bytes };
+  /*
+   * A filename somebody can find again.
+   *
+   * This file now arrives as an attachment as well as a download, so it lands
+   * in a customer's inbox among a dozen others and in their downloads folder
+   * among a hundred. "QTE-2026-AB12CD.pdf" says nothing about what it is;
+   * "Quotation-TZ-QT-2026-0007.pdf" says both what it is and which one.
+   *
+   * The printed document number when there is one, because that is the number
+   * the customer's purchase order will quote, and the internal reference when
+   * there is not. Anything a filesystem or a mail client would object to is
+   * replaced rather than dropped, so two documents cannot collapse to one name.
+   */
+  const label = (quote.documentNo ?? quote.reference).replace(/[^A-Za-z0-9._-]+/g, "-");
+  return { filename: `Quotation-${label}.pdf`, bytes };
 }

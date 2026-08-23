@@ -371,7 +371,18 @@ export async function sendQuote(reference: string, actorId: string): Promise<Quo
         user: { id: actorId },
         staff: true,
       });
-      if (pdf) {
+      /*
+       * Bounded, because Graph carries an inline attachment only up to about
+       * four megabytes of request; past that it needs an upload session
+       * against a draft. Nothing produced here comes close — a quotation is
+       * tens of kilobytes — so rather than build that machinery for a case
+       * that does not occur, an implausibly large file is left off and logged.
+       * The email still carries every figure and a link to the document.
+       */
+      const LIMIT = 3 * 1024 * 1024;
+      if (pdf && pdf.bytes.length > LIMIT) {
+        logger.warn("quote_pdf_too_large_to_attach", { reference, bytes: pdf.bytes.length });
+      } else if (pdf) {
         attachment = {
           filename: pdf.filename,
           content: pdf.bytes,

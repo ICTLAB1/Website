@@ -356,7 +356,12 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                     className="rounded-[--radius-lg] border border-line bg-white p-5"
                   >
                     <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
-                      Edit {item.sku}
+                      {/*
+                        A line added by hand has no SKU, and the em dash that
+                        stands in for one on the printed document makes every
+                        such line look identical here. Those are named instead.
+                      */}
+                      Edit {item.sku === "—" ? item.productName : item.sku}
                     </summary>
                     <div className="mt-5 space-y-5">
                       <AdminForm
