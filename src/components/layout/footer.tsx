@@ -54,6 +54,20 @@ export async function Footer() {
                   <dd className="font-mono text-label text-graphite-300">{config.gstin}</dd>
                 </div>
               ) : null}
+              {/*
+                Beside the GSTIN, not in the copyright line.
+
+                Both are statutory identifiers of the same company and a reader
+                checking one is checking the other; a CIN tacked onto "all
+                rights reserved" reads as legal boilerplate rather than as a
+                number somebody can look up at the MCA.
+              */}
+              {config.cin ? (
+                <div className="flex gap-2">
+                  <dt className="text-graphite-400">CIN</dt>
+                  <dd className="font-mono text-label text-graphite-300">{config.cin}</dd>
+                </div>
+              ) : null}
             </dl>
 
             {/*
@@ -91,7 +105,6 @@ export async function Footer() {
         <div className="container-page flex flex-col gap-3 py-5 text-label text-graphite-400 sm:flex-row sm:items-center sm:justify-between">
           <p>
             &copy; {year} {config.entityName}. All rights reserved.
-            {config.cin ? <span className="ml-2 font-mono">CIN {config.cin}</span> : null}
           </p>
           <p className="max-w-2xl text-graphite-300">
             Third-party product names, logos and trademarks are the property of their

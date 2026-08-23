@@ -5,6 +5,7 @@ import "./globals.css";
 
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { CertificationBar } from "@/components/layout/certification-bar";
 import { BasketProvider } from "@/components/enquiry/basket-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { JsonLd, organizationSchema, websiteSchema } from "@/lib/seo";
@@ -85,6 +86,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ToastProvider>
           <BasketProvider>
             <Header />
+            {/*
+              Under the navigation rather than inside it: the header is sticky
+              and this is not, so the bar introduces the page once and then
+              gets out of the way as the reader scrolls.
+            */}
+            <CertificationBar />
             <main id="main-content" className="flex-1">
               {children}
             </main>

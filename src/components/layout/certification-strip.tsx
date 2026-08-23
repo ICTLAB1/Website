@@ -1,10 +1,6 @@
 import "server-only";
 
-import { cache } from "react";
-
-import { prisma } from "@/lib/db";
-import { cached } from "@/lib/queries/cached";
-import { tags } from "@/lib/cache";
+import { currentCertifications } from "@/lib/queries/certifications";
 
 /**
  * The certifications this company holds, shown on every page.
@@ -18,19 +14,6 @@ import { tags } from "@/lib/cache";
  * about a period; showing a lapsed one on every page of the site would be the
  * most thorough possible way to make a false statement.
  */
-const currentCertifications = cache(
-  cached(
-    async () =>
-      prisma.certification.findMany({
-        where: { OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
-        orderBy: [{ displayOrder: "asc" }, { standard: "asc" }],
-        select: { standard: true, title: true, reference: true },
-      }),
-    ["footer-certifications"],
-    [tags.certifications],
-  ),
-);
-
 export async function CertificationStrip() {
   const certifications = await currentCertifications();
   if (certifications.length === 0) return null;
