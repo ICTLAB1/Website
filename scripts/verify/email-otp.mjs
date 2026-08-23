@@ -83,21 +83,41 @@ if (hadHost) {
  *
  * `sendVerificationEmail` logs it when delivery fails, which is the state
  * arranged above — and is the only way this suite can learn a code it is by
- * design not able to derive. The newest log file is the running server's; older
- * ones are from servers this session has already stopped.
+ * design not able to derive.
+ *
+ * ## Why it reads every log and filters, rather than picking the newest file
+ *
+ * It used to take the newest file that mentioned a code at all. That is a
+ * guess about which process wrote it, and the guess is wrong whenever the
+ * server's output goes somewhere else — as it does the moment somebody
+ * restarts it with a redirect. The suite then read a code from a *previous*
+ * run's log, entered it, was correctly refused, and reported six failures
+ * about a resend that had in fact worked.
+ *
+ * So the line is matched on the account it was issued to and chosen by the
+ * timestamp it carries. A stale line from another run belongs to another user
+ * id and cannot be picked up, and there is nothing left to guess about.
  */
-const LOG_GLOB = process.env.SERVER_LOG ?? "/tmp/claude-*/*/*/tasks/*.output";
+const LOG_GLOB = process.env.SERVER_LOG ?? "/tmp/claude-*/*/*/tasks/*.output /tmp/claude-*/*/*/scratchpad/*.out";
 
-function lastIssuedCode() {
-  const line = execFileSync(
+/** The most recent code issued to one account, across every readable log. */
+function lastIssuedCode(userId) {
+  const lines = execFileSync(
     "bash",
-    [
-      "-lc",
-      `for f in $(ls -t ${LOG_GLOB} 2>/dev/null); do m=$(grep -o 'verification_not_emailed.*' "$f" 2>/dev/null | tail -1); if [ -n "$m" ]; then printf '%s' "$m"; break; fi; done`,
-    ],
+    ["-lc", `grep -ho 'verification_not_emailed.*' ${LOG_GLOB} 2>/dev/null || true`],
     { encoding: "utf8" },
-  ).trim();
-  return line.match(/"code":\s*"(\d{6})"/)?.[1] ?? null;
+  )
+    .split("\n")
+    .filter((line) => line.includes(`"userId":"${userId}"`));
+
+  let best = null;
+  for (const line of lines) {
+    const code = line.match(/"code":\s*"(\d{6})"/)?.[1];
+    const time = line.match(/"time":\s*"([^"]+)"/)?.[1];
+    if (!code || !time) continue;
+    if (!best || time > best.time) best = { code, time };
+  }
+  return best?.code ?? null;
 }
 
 // Sweep anything an aborted run left behind.
@@ -152,7 +172,7 @@ check(
   stored.slice(0, 24),
 );
 
-const realCode = lastIssuedCode();
+const realCode = lastIssuedCode(`otpa${stamp}`);
 check("the code is recoverable for this test", realCode !== null, `log glob ${LOG_GLOB}`);
 
 // ── wrong codes cost attempts ──────────────────────────────────────────────
@@ -206,7 +226,7 @@ await page.goto(`${BASE}/verify-email/required`, { waitUntil: "load" });
 await page.getByRole("button", { name: /Send a new code/ }).click();
 await page.waitForTimeout(3000);
 
-const freshCode = lastIssuedCode();
+const freshCode = lastIssuedCode(`otpa${stamp}`);
 check("a new code replaces the old one", freshCode !== null && freshCode !== realCode);
 
 if (freshCode) {
