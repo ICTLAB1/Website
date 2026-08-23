@@ -1955,6 +1955,27 @@ model SiteSettings {
   /// so a blank never renders as an empty "Telephone" row.
   secondaryEntityPhone   String?
 
+  /// The branch's own registration numbers, as its jurisdiction issues them.
+  ///
+  /// Free text and deliberately unlabelled by country: a UAE free-zone office
+  /// has a Business Licence number and a Tax Registration Number, an Indian
+  /// office has a CIN and a GSTIN, and a schema that named one country's
+  /// documents would be wrong for the next branch. The labels are supplied
+  /// beside the values so a document can print "Business License 42287"
+  /// without this table having an opinion about what a licence is.
+  secondaryEntityRegistrationLabel String?
+  secondaryEntityRegistrationNo    String?
+  secondaryEntityTaxLabel          String?
+  secondaryEntityTaxNo             String?
+
+  /// The line under the wordmark, e.g. "Connect, Communicate & Collaborate".
+  ///
+  /// Stored so it can be changed without a redeploy, falling back to
+  /// `COMPANY_TAGLINE` for a deployment that has never saved the settings form.
+  /// It was environment-only, which meant the one line of copy most likely to
+  /// be reworded was the one that needed a server login to reword.
+  tagline String?
+
   /// Profile URLs elsewhere that belong to this business — one per line.
   ///
   /// These become `sameAs` on the Organization structured data, which is how a

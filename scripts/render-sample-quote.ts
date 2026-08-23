@@ -1,7 +1,5 @@
-import { readFileSync, writeFileSync } from "node:fs";
-import { readImage } from "@/lib/pdf/image";
+import { writeFileSync } from "node:fs";
 
-const mark = (file: string) => readImage(readFileSync(`public/certifications/${file}`));
 import { renderQuotationPdf } from "@/lib/pdf/quotation";
 
 const party = {
@@ -147,13 +145,17 @@ const bytes = renderQuotationPdf({
       name: "TechZoid Technologies \u2014 UAE office",
       address: "Office C1-1F-SF2571, Ajman Free Zone C1 Building, Ajman Free Zone, Dubai",
       phone: "+971 58 939 7239",
+      registrations: [
+        { label: "Business License", value: "42287" },
+        { label: "Tax Registration Number", value: "105122230300001" },
+      ],
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any,
   certifications: [
-    { standard: "ISO 9001:2015", title: "Quality Management System", reference: "QMS-0001", image: mark("ISO-9001-2015.png") },
-    { standard: "ISO 27001:2022", title: "Information Security Management System", reference: "ISMS-0001", image: mark("ISO-27001-2022.png") },
-    { standard: "ISO/IEC 20000-1:2018", title: "IT Service Management System", reference: "ITSM-0001", image: mark("ISO-IEC-20000-1-2018.png") },
+    { standard: "ISO 9001:2015", title: "Quality Management System", reference: "QMS-0001" },
+    { standard: "ISO 27001:2022", title: "Information Security Management System", reference: "ISMS-0001" },
+    { standard: "ISO/IEC 20000-1:2018", title: "IT Service Management System", reference: "ITSM-0001" },
   ],
   accreditations: [],
   logo: null,

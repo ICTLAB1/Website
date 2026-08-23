@@ -45,6 +45,11 @@ type StoredSettings = {
   secondaryEntityName: string | null;
   secondaryEntityAddress: string | null;
   secondaryEntityPhone: string | null;
+  secondaryEntityRegistrationLabel: string | null;
+  secondaryEntityRegistrationNo: string | null;
+  secondaryEntityTaxLabel: string | null;
+  secondaryEntityTaxNo: string | null;
+  tagline: string | null;
   usdRatePaise: number | null;
   aedRatePaise: number | null;
   profileUrls: string | null;
@@ -245,6 +250,20 @@ export function SettingsForm({
       </Fieldset>
 
       <Fieldset
+        legend="Strapline"
+        description="The line under the wordmark — in the bar at the top of every page, and under your logo on quotations. Blank falls back to COMPANY_TAGLINE in the environment."
+      >
+        <Field label="Strapline" name="tagline">
+          <Input
+            name="tagline"
+            maxLength={120}
+            placeholder="Connect, Communicate & Collaborate"
+            defaultValue={stored?.tagline ?? ""}
+          />
+        </Field>
+      </Fieldset>
+
+      <Fieldset
         legend="Second office or entity"
         description="An overseas office or a second registered company. Shown on the contact page, in the footer, in the Organization structured data search engines read, and under your letterhead on quotations. Leave the name and address blank if you trade from one place."
       >
@@ -278,6 +297,57 @@ export function SettingsForm({
               type="tel"
               maxLength={40}
               defaultValue={stored?.secondaryEntityPhone ?? ""}
+            />
+          </Field>
+        </div>
+
+        {/*
+          The branch's own registrations, each as a label and a number.
+
+          Asked for as a pair because a number with no label is unreadable on a
+          document — "42287" beside an address tells a reader nothing — and
+          because the right label depends on where the office is. A UAE free
+          zone issues a Business License and a Tax Registration Number; a second
+          Indian entity would have a CIN and a GSTIN. Neither is printed unless
+          both halves are filled in.
+        */}
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <Field
+            label="Registration label"
+            name="secondaryEntityRegistrationLabel"
+            hint="What the number is called where the office is, e.g. Business License."
+          >
+            <Input
+              name="secondaryEntityRegistrationLabel"
+              maxLength={60}
+              placeholder="Business License"
+              defaultValue={stored?.secondaryEntityRegistrationLabel ?? ""}
+            />
+          </Field>
+          <Field label="Registration number" name="secondaryEntityRegistrationNo">
+            <Input
+              name="secondaryEntityRegistrationNo"
+              maxLength={60}
+              defaultValue={stored?.secondaryEntityRegistrationNo ?? ""}
+            />
+          </Field>
+          <Field
+            label="Tax registration label"
+            name="secondaryEntityTaxLabel"
+            hint="e.g. Tax Registration Number."
+          >
+            <Input
+              name="secondaryEntityTaxLabel"
+              maxLength={60}
+              placeholder="Tax Registration Number"
+              defaultValue={stored?.secondaryEntityTaxLabel ?? ""}
+            />
+          </Field>
+          <Field label="Tax registration number" name="secondaryEntityTaxNo">
+            <Input
+              name="secondaryEntityTaxNo"
+              maxLength={60}
+              defaultValue={stored?.secondaryEntityTaxNo ?? ""}
             />
           </Field>
         </div>

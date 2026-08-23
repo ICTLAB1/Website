@@ -2,7 +2,6 @@ import "server-only";
 
 import { currentCertifications } from "@/lib/queries/certifications";
 import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
-import { certificationLogo } from "@/lib/certification-logo";
 
 /**
  * Certifications and partner badges, in one band under the navigation.
@@ -99,58 +98,25 @@ export async function TrustBar() {
         ) : null}
 
         {certifications.length > 0 ? (
-          <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
-            {certifications.map((certification) => {
-              const mark = certificationLogo(certification.standard);
-              return (
-                <li key={certification.reference} className="flex items-center">
-                  {mark ? (
-                    /*
-                      The mark, on the same footing as the partner badges beside
-                      it — which is the point. This band used to give Microsoft
-                      and Adobe their artwork and set the three ISO standards as
-                      text, so the two things a buyer weighs when deciding
-                      whether to trust a supplier appeared at two different
-                      levels of seriousness, and the independently audited half
-                      was the one that looked like a footnote.
+          /*
+            The standards in type, not as artwork.
 
-                      Set taller than the partner badges rather than matching
-                      them. A partner badge is a single line of type; these are
-                      a tick, a frame and two stacked lines, so at the same
-                      overall height their type lands at a fraction of the
-                      size. The extra height is what makes the two read as
-                      equals rather than what makes these look bigger.
-
-                      Stepped down on a phone, where the extra height stops
-                      helping and starts shouting: at 390px the partner badges
-                      have wrapped onto their own line already, so the ISO marks
-                      are no longer beside anything to be balanced against —
-                      they are simply the largest thing on the screen.
-                    */
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={mark}
-                      alt={`${certification.standard} — ${certification.title}`}
-                      className="h-10 w-auto object-contain sm:h-12 lg:h-14"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    /*
-                      A standard added later with no artwork on file still gets
-                      stated — in type, beside the marks. Per certification and
-                      not for the whole row, unlike the quotation letterhead: a
-                      row of images with one text label in it is untidy on a
-                      page and unreadable on a printed document, and only the
-                      second is worth failing the whole row over.
-                    */
-                    <span className="text-label font-semibold text-graphite-900">
-                      {certification.standard}
-                    </span>
-                  )}
-                </li>
-              );
-            })}
+            The three ISO marks were shown here as their certified-company
+            badges and were taken out again: three framed ticks beside two
+            publisher badges read as a row of five logos, and at any height that
+            let their numbers be read they were the largest thing in the band.
+            The standard number is the whole content of that badge — a reader
+            gets exactly the same fact from "ISO 27001:2022" set in type, in a
+            band that stays quiet.
+          */
+          <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2">
+            {certifications.map((certification) => (
+              <li key={certification.reference} className="flex items-center">
+                <span className="text-label font-semibold text-graphite-900">
+                  {certification.standard}
+                </span>
+              </li>
+            ))}
           </ul>
         ) : null}
 

@@ -138,6 +138,16 @@ const settingsSchema = z.object({
   secondaryEntityName: optionalText(120),
   secondaryEntityAddress: optionalText(300),
   secondaryEntityPhone: optionalPhone,
+  secondaryEntityRegistrationLabel: optionalText(60),
+  secondaryEntityRegistrationNo: optionalText(60),
+  secondaryEntityTaxLabel: optionalText(60),
+  secondaryEntityTaxNo: optionalText(60),
+  /*
+   * The line under the wordmark. Stored here so it can be reworded from the
+   * panel; blank hands it back to `COMPANY_TAGLINE`, like every other field on
+   * this form.
+   */
+  tagline: optionalText(120),
   /*
    * Entered as a decimal — "83.50" is what a person reads off a rate board —
    * and stored as paise. Bounded well outside any plausible rate rather than

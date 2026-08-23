@@ -59,7 +59,6 @@ export default async function AdminSettingsPage() {
   const fixed: Array<[string, string | null]> = [
     ["Trading name", identity.tradingName],
     ["Registered legal name", identity.legalName],
-    ["Tagline", identity.tagline],
     ["Canonical URL", identity.url],
   ];
 
@@ -80,7 +79,7 @@ export default async function AdminSettingsPage() {
           <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
             These are not set anywhere. The public site leaves the corresponding details out
             rather than inventing them, and says nothing to visitors about their absence.
-            Everything except the name and tagline can be set in the form below.
+            Everything except the name can be set in the form below.
           </p>
           <ul className="mt-3 flex flex-wrap gap-2">
             {missing.map((key) => (

@@ -169,6 +169,18 @@ export const getSiteConfig = cache(async () => {
 
   return {
     ...identity,
+    /*
+     * The stored tagline wins over the environment's.
+     *
+     * `getSiteIdentity` still reads `COMPANY_TAGLINE` synchronously, because 46
+     * route files build their metadata at module scope where nothing can be
+     * awaited. But the line under the wordmark is the single piece of copy most
+     * likely to be reworded, and it needed a server login and a redeploy to
+     * reword. Overriding it here makes it an admin-panel edit everywhere the
+     * config is read asynchronously — which is every page a visitor sees, the
+     * quotation letterhead included.
+     */
+    tagline: stored(row?.tagline) ?? identity.tagline,
     email: {
       sales: stored(row?.emailSales) ?? optionalEnv("COMPANY_EMAIL_SALES") ?? null,
       support: stored(row?.emailSupport) ?? optionalEnv("COMPANY_EMAIL_SUPPORT") ?? null,
@@ -264,6 +276,31 @@ export const getSiteConfig = cache(async () => {
             name: stored(row?.secondaryEntityName)!,
             address: stored(row?.secondaryEntityAddress)!,
             phone: stored(row?.secondaryEntityPhone),
+            /*
+             * The branch's own registration numbers, each with the label its
+             * jurisdiction uses.
+             *
+             * A number with no label is unreadable — "42287" beside an address
+             * tells nobody what it is — so a value only counts when it has a
+             * label to print beside it, and an unlabelled one is dropped rather
+             * than guessed at. A UAE free-zone office issues a Business Licence
+             * and a Tax Registration Number; the next branch will issue
+             * something else, and neither this type nor the document knows or
+             * needs to know which.
+             */
+            registrations: [
+              {
+                label: stored(row?.secondaryEntityRegistrationLabel),
+                value: stored(row?.secondaryEntityRegistrationNo),
+              },
+              {
+                label: stored(row?.secondaryEntityTaxLabel),
+                value: stored(row?.secondaryEntityTaxNo),
+              },
+            ].filter(
+              (entry): entry is { label: string; value: string } =>
+                Boolean(entry.label) && Boolean(entry.value),
+            ),
           }
         : null,
     /*

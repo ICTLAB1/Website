@@ -2,7 +2,6 @@ import type { SiteConfig } from "@/lib/site-config";
 import { amountInWords, pdfAmount, pdfDate, pdfMoney } from "@/lib/pdf/money";
 import { drawMark } from "@/lib/pdf/letterhead";
 import type { EmbeddedImage } from "@/lib/pdf/image";
-import { CERTIFICATION_MARK_HEIGHT } from "@/lib/certification-logo";
 import { panFromGstin, placeOfSupply, taxHeads, taxTreatment, type TaxTreatment } from "@/lib/gstin";
 import {
   ACCENT,
@@ -112,14 +111,6 @@ export type QuotationPdfInput = {
     standard: string;
     title: string;
     reference: string;
-    /**
-     * The certificate's own wordmark, decoded, where one has been supplied.
-     *
-     * Resolved by the caller for the same reason as `logo` and
-     * `accreditations`: this module never reads a file, which is what keeps it
-     * renderable from a test with no filesystem and no `public/` directory.
-     */
-    image?: EmbeddedImage | null;
   }>;
   /**
    * The company's own logo, decoded. Null falls back to the drawn mark.
@@ -302,8 +293,21 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
     drawMark(pdf, MARGIN, top, 38);
   }
 
+  /*
+   * The strapline, only where the artwork does not already carry one.
+   *
+   * A supplied logo file is a finished lockup: the wordmark and the line under
+   * it, drawn together, kerned together and aligned to each other. Setting a
+   * second strapline in italic underneath it printed the same idea twice, and
+   * the two never lined up — the text sits at the image's left edge and the
+   * artwork's own ink sits inside its transparent margin, so the italic line
+   * always looked indented by an amount nothing in the code knew about.
+   *
+   * The drawn fallback mark has no strapline of its own, so there the text is
+   * the only place the line appears and it is printed.
+   */
   let logoY = top + (artwork ? 56 : 50);
-  if (config.tagline) {
+  if (!artwork && config.tagline) {
     for (const line of wrap(config.tagline, LOGO_WIDTH, 7, "italic")) {
       pdf.text(line, MARGIN, logoY, { size: 7, font: "italic", colour: MUTED });
       logoY += 9;
@@ -377,6 +381,30 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
       pdf.text(line, ISSUER_X, issuerY, { size: 7.2, colour: MUTED });
       issuerY += 8.6;
     }
+
+    if (config.secondaryEntity.phone) {
+      pdf.text(config.secondaryEntity.phone, ISSUER_X, issuerY, { size: 7.2, colour: MUTED });
+      issuerY += 8.6;
+    }
+
+    /*
+     * The branch's own registration numbers, each beside the label its
+     * jurisdiction uses.
+     *
+     * A quotation from a UAE free-zone office is expected to carry its Business
+     * Licence number and its TRN, for the same reason the Indian entity's strip
+     * below carries a CIN and a GSTIN: they are what a customer's finance team
+     * checks the supplier against before raising a purchase order. Printed only
+     * where both the label and the number are set, so an unconfigured branch
+     * prints nothing rather than a bare number nobody can identify.
+     */
+    for (const registration of config.secondaryEntity.registrations) {
+      pdf.text(`${registration.label}: ${registration.value}`, ISSUER_X, issuerY, {
+        size: 7.2,
+        colour: MUTED,
+      });
+      issuerY += 8.6;
+    }
   }
 
   // ── what the document is ────────────────────────────────────────────────
@@ -418,67 +446,30 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
   }
 
   /*
-   * ── The certifications, as the marks themselves ────────────────────────
+   * ── The certifications, as a line of type ──────────────────────────────
    *
-   * A row across the full width, under all three columns, because that is the
-   * only place on this letterhead where three wide wordmarks can sit at equal
-   * size on a shared baseline. They used to be a line of accented text inside
-   * the issuer column — a hundred and eighty points wide, which "ISO 9001:2015
-   * · ISO 27001:2022 · ISO/IEC 20000-1:2018" does not fit into, so it wrapped
-   * mid-list under an address that had already wrapped.
+   * One accented line under all three columns. This was, for a while, a row of
+   * the certificates' own certified-company badges at equal height on a shared
+   * baseline — and it was taken out again: three framed marks under an address
+   * block dominated the letterhead, and the standards band at the foot of the
+   * document already states the same three certificates *with their numbers*,
+   * which is the version a procurement officer can actually check.
    *
-   * Equal widths and equal gaps computed from the count rather than fixed, so
-   * two certifications or four are as square as three. Every mark shares the
-   * same height and the same baseline, which is what "aligned" has to mean for
-   * artwork that is otherwise only as tall as its own text.
-   *
-   * Where a standard has no artwork the whole row falls back to the text line —
-   * not a mixture. A row of two pictures and one piece of text is worse than
-   * either, and the text version says exactly the same thing.
+   * The full content width, because "ISO 9001:2015 · ISO 27001:2022 ·
+   * ISO/IEC 20000-1:2018" does not fit the issuer column and wrapped mid-list
+   * under an address that had already wrapped. That was the original defect and
+   * this still fixes it.
    */
   let bandBottom = Math.max(logoY, issuerY, metaY) + 10;
 
   if (input.certifications.length > 0) {
-    const marks = input.certifications
-      .map((entry) => entry.image)
-      .filter((image): image is EmbeddedImage => Boolean(image));
-
-    if (marks.length === input.certifications.length) {
-      /*
-       * Equal cells, each mark set to a common height and centred in its own.
-       *
-       * Height, not width: the files are trimmed to their own ink, so
-       * "ISO 9001:2015" is a narrower image than "ISO/IEC 20000-1:2018" and
-       * fitting both to the same *width* would set the shorter one's type
-       * larger. Sizing by height gives all of them one cap height and one
-       * baseline, which is what a row of wordmarks has to share to look like a
-       * set rather than three pictures.
-       *
-       * A mark wider than its cell is scaled down to fit and stays centred, so
-       * a long standard added later cannot overrun its neighbour.
-       */
-      const gap = 18;
-      const cell = (CONTENT - gap * (marks.length - 1)) / marks.length;
-      const height = Math.min(
-        CERTIFICATION_MARK_HEIGHT,
-        ...marks.map((mark) => (cell * mark.height) / mark.width),
-      );
-
-      marks.forEach((mark, index) => {
-        const width = (height * mark.width) / mark.height;
-        const cellLeft = MARGIN + index * (cell + gap);
-        pdf.image(mark, cellLeft + (cell - width) / 2, bandBottom, width, height);
-      });
-      bandBottom += height + 6;
-    } else {
-      const standards = input.certifications.map((entry) => entry.standard).join("   ·   ");
-      pdf.text(standards, MARGIN, bandBottom + 6, {
-        size: 7.4,
-        font: "sansBold",
-        colour: ACCENT,
-      });
-      bandBottom += 14;
-    }
+    const standards = input.certifications.map((entry) => entry.standard).join("   ·   ");
+    pdf.text(standards, MARGIN, bandBottom + 6, {
+      size: 7.4,
+      font: "sansBold",
+      colour: ACCENT,
+    });
+    bandBottom += 14;
   }
 
   return bandBottom;

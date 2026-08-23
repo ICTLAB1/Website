@@ -9,7 +9,6 @@ import { ButtonLink } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ProductListItem } from "@/lib/queries/catalogue";
-import { certificationLogo } from "@/lib/certification-logo";
 import { formatDate } from "@/lib/utils";
 
 /**
@@ -100,38 +99,23 @@ type CertificationRow = {
  * which is exactly the assumption that goes wrong.
  */
 function CertificationCard({ certification }: { certification: CertificationRow }) {
-  const mark = certificationLogo(certification.standard);
-
   return (
     <div className="flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5">
-      {mark ? (
-        /*
-          The certificate's own wordmark where there is one, and it already
-          carries both the standard and its scope — so the two text lines it
-          replaces would be the same words twice.
+      {/*
+        The title and the standard as type.
 
-          A fixed height with `object-contain`, not a width. All three share one
-          canvas and one layout, so a common height puts their frames and their
-          type on exactly the same footing wherever they sit together.
-        */
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={mark}
-          alt={`${certification.standard} — ${certification.title}`}
-          className="h-14 w-auto max-w-full self-start object-contain object-left"
-          loading="lazy"
-          decoding="async"
-        />
-      ) : (
-        <>
-          <p className="text-label font-semibold uppercase tracking-[0.1em] text-accent-700">
-            {certification.title}
-          </p>
-          <p className="mt-1.5 text-lead font-semibold leading-tight text-graphite-900">
-            {certification.standard}
-          </p>
-        </>
-      )}
+        This card carried the certificate's own certified-company badge for a
+        while. It went back to type because the badge says one thing — the
+        standard number — and says it inside a frame that competes with every
+        other card on the page, while the two lines it replaced also carry the
+        title, which the badge does not.
+      */}
+      <p className="text-label font-semibold uppercase tracking-[0.1em] text-accent-700">
+        {certification.title}
+      </p>
+      <p className="mt-1.5 text-lead font-semibold leading-tight text-graphite-900">
+        {certification.standard}
+      </p>
 
       {certification.scope ? (
         <p className="clamp-3 mt-3 text-meta leading-relaxed text-ink-600">

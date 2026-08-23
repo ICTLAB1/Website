@@ -66,6 +66,21 @@ export async function Footer() {
                         </a>
                       </>
                     ) : null}
+                    {/*
+                      The branch's registrations, on their own line under the
+                      address. A free-zone licence number and a TRN are what a
+                      customer's finance team checks a foreign supplier against,
+                      and they are worth as little use as a GSTIN is without a
+                      label to say what they are — so each prints only when both
+                      halves are set.
+                    */}
+                    {config.secondaryEntity.registrations.length > 0 ? (
+                      <span className="mt-1 block font-mono text-label text-graphite-400">
+                        {config.secondaryEntity.registrations
+                          .map((entry) => `${entry.label} ${entry.value}`)
+                          .join(" · ")}
+                      </span>
+                    ) : null}
                   </dd>
                 </div>
               ) : null}
