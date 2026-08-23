@@ -99,6 +99,23 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
           <h1 className="font-mono text-2xl">{quote.documentNo ?? quote.reference}</h1>
           <span className="flex items-center gap-3">
+            {/*
+              A new tab, not a panel on this page.
+
+              Embedding it would mean relaxing `frame-src` on the admin pages
+              and the frame headers on the document route, to show a document
+              in a box a fraction of its own size. A tab renders it at full
+              width in the browser's own viewer, which is how somebody actually
+              reads a two-page tax document before committing to it.
+            */}
+            <a
+              href={`/account/quotes/${quote.reference}/pdf?inline=1`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-9 items-center rounded-[--radius-md] border border-line-strong px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-400"
+            >
+              Preview PDF
+            </a>
             <a
               href={`/account/quotes/${quote.reference}/pdf`}
               className="inline-flex h-9 items-center rounded-[--radius-md] border border-line-strong px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-400"
@@ -191,6 +208,30 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                         pendingLabel="Updating…"
                         hidden={{ itemId: item.id }}
                       >
+                        {/*
+                          First, and full width. It is the line — everything
+                          below qualifies it — and it is what the customer reads
+                          first on the printed quotation.
+
+                          Editing it changes this quotation only. The line holds
+                          its own copy of the name precisely so that the
+                          catalogue and a document already sent to a customer can
+                          never contradict each other.
+                        */}
+                        <Field
+                          label="Product name"
+                          name="productName"
+                          hint="As printed on the quotation. Editing it here does not rename the catalogue product."
+                          required
+                        >
+                          <Input
+                            name="productName"
+                            maxLength={200}
+                            defaultValue={item.productName}
+                            required
+                          />
+                        </Field>
+
                         <div className="grid gap-4 sm:grid-cols-3">
                           <Field label="Quantity" name="quantity" required>
                             <Input
@@ -474,6 +515,25 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                 Sending emails the customer a link to review and accept it, and freezes these
                 prices for the validity period.
               </p>
+              {/*
+                The preview is repeated here, above the button that cannot be
+                undone. It is the same link as the one in the header, and that
+                duplication is the point: this is the moment somebody wants to
+                check the document, and making them scroll back up to find it is
+                how a quotation goes out unread.
+
+                It opens the same route the customer's copy is built from, so
+                what is checked here is the document itself rather than a
+                rendering of it.
+              */}
+              <a
+                href={`/account/quotes/${quote.reference}/pdf?inline=1`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex h-9 items-center rounded-[--radius-md] border border-graphite-400 bg-white px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-900"
+              >
+                Preview the PDF first
+              </a>
               <div className="mt-4">
                 <AdminForm
                   action={issueQuote}

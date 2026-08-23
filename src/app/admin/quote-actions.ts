@@ -72,6 +72,21 @@ export async function draftQuote(
 const lineSchema = z.object({
   itemId: z.string().trim().min(1),
   /*
+   * The name as printed, which is not always the name in the catalogue.
+   *
+   * A quotation line already carries its own copy of the name rather than
+   * reading it back through the product, so that renaming a product next March
+   * cannot change what a quotation said last October. This makes that copy
+   * editable, which is what the copy was for: a tender wants the name written
+   * the way the tender writes it, a re-badged part is sold under a different
+   * description, and a service line has no catalogue row behind it at all.
+   *
+   * Required, unlike the optional columns below. Those clear to null and print
+   * nothing; a line with no name prints a blank row, so an empty value is a
+   * mistake rather than an instruction.
+   */
+  productName: z.string().trim().min(1, "A line needs a name.").max(200),
+  /*
    * The columns the printed document carries beside the price.
    *
    * Editable here because the catalogue does not always have them and a
@@ -106,6 +121,7 @@ export async function updateQuoteLine(
 
   const parsed = lineSchema.safeParse({
     itemId: formData.get("itemId"),
+    productName: formData.get("productName"),
     description: formData.get("description"),
     brandName: formData.get("brandName"),
     hsnCode: formData.get("hsnCode"),
@@ -153,6 +169,7 @@ export async function updateQuoteLine(
         unitPriceMinor: line.unitPriceMinor,
         discountMinor: line.discountMinor,
         lineTotalMinor: line.lineTotalMinor,
+        productName: parsed.data.productName,
         // Cleared rather than left standing when emptied: a blank field means
         // "we do not have this", and the document prints nothing for it.
         description: parsed.data.description || null,
@@ -169,7 +186,14 @@ export async function updateQuoteLine(
     action: "admin.quote_line_updated",
     entityType: "QuoteItem",
     entityId: item.id,
-    metadata: { quote: item.quote.reference, unitPriceMinor: line.unitPriceMinor },
+    // The name is in the audit record because it is now editable, and a line
+    // whose name was changed after pricing is exactly the thing somebody will
+    // later need to reconstruct.
+    metadata: {
+      quote: item.quote.reference,
+      productName: parsed.data.productName,
+      unitPriceMinor: line.unitPriceMinor,
+    },
     ip: await clientIp(),
   });
 
