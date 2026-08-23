@@ -43,6 +43,20 @@ const adminEmail = `cr_admin${stamp}@example.test`;
 const salesEmail = `cr_sales${stamp}@example.test`;
 const slug = `probe-role-${stamp}`;
 
+/*
+ * Sweep any role an earlier aborted run left open.
+ *
+ * The cleanup at the bottom only runs if the script gets there, and a role
+ * posted by this suite is live: on the careers page, on its own URL and in the
+ * sitemap. `scripts/verify/product-photos.mjs` leaked a fixture product exactly
+ * this way and it sat in the sitemap for a day. `scripts/verify/seo.mjs` fails
+ * the gate on a fixture-shaped slug now; this keeps the window to one run.
+ */
+const swept = sql(
+  `with gone as (delete from "JobPosting" where slug like 'probe-role-%' returning id) select count(*) from gone`,
+);
+if (swept !== "0") console.log(`  (swept ${swept} role(s) left by an earlier run)`);
+
 sql(
   `insert into "User" (id, email, "passwordHash", name, role, "emailVerified", "createdAt", "updatedAt") values ('cra${stamp}', '${adminEmail}', '${FIXTURE_HASH}', 'Careers Probe Admin', 'ADMIN', now(), now(), now())`,
 );

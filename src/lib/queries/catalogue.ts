@@ -470,27 +470,88 @@ export const getProductBySlug = cache(
   cached(getProductBySlugUncached, ["product-by-slug"], [tags.catalogue]),
 );
 
+/**
+ * The neighbours of a product in its category, then in its brand.
+ *
+ * ## Why this is a ring and not a top-four
+ *
+ * It used to take the four most popular siblings, ordered `featured desc,
+ * popularity desc`, which reads as the obvious thing and quietly produces a
+ * star: the same four products are related to *everything* in the category, and
+ * a product outside that four is nobody's neighbour. Nothing on the site links
+ * to it. `windows-11-pro-upgrade` was the case that surfaced it — sole member
+ * of its category, so the fallback ran, and the brand's top four did not
+ * include it. It sat in the sitemap reachable from no page on the site, which
+ * is a URL submitted to Google with no internal signal that it matters at all.
+ *
+ * Twenty-two more products had exactly two inbound links for the same reason,
+ * one bad edit away from the same state.
+ *
+ * So the order stays — it is a sensible order, and the first neighbour shown is
+ * still a good one — but the window slides. Each product takes the `limit`
+ * siblings that follow it in that order, wrapping past the end. Every product
+ * then has `limit` outbound neighbours and is the neighbour of `limit` others,
+ * so in any category of two or more nothing can be left unlinked. The ring is
+ * deterministic, so the same page renders the same neighbours between deploys
+ * and the link graph does not churn.
+ *
+ * Ordering is by id where popularity ties, so two products with the same score
+ * cannot swap places between queries and break the ring.
+ */
+async function neighbourRing(
+  productId: string,
+  where: { categoryId: string } | { brandId: string },
+  limit: number,
+  exclude: string[],
+): Promise<ProductListItem[]> {
+  // Ids only: the ring has to be computed over the whole set, and the whole set
+  // is what we do not want to hydrate.
+  const ring = await prisma.product.findMany({
+    where: { status: "ACTIVE", deletedAt: null, ...where },
+    select: { id: true },
+    orderBy: [{ featured: "desc" }, { popularity: "desc" }, { id: "asc" }],
+  });
+
+  const at = ring.findIndex((row) => row.id === productId);
+  // A brand ring does not contain the product when the product's own category
+  // already supplied some neighbours; starting at its position in the category
+  // order is meaningless there, so start at the top.
+  const from = at === -1 ? 0 : at + 1;
+
+  const skip = new Set([productId, ...exclude]);
+  const picked: string[] = [];
+  for (let step = 0; step < ring.length && picked.length < limit; step += 1) {
+    const candidate = ring[(from + step) % ring.length]?.id;
+    if (!candidate || skip.has(candidate)) continue;
+    skip.add(candidate);
+    picked.push(candidate);
+  }
+  if (picked.length === 0) return [];
+
+  const rows = await prisma.product.findMany({
+    where: { id: { in: picked } },
+    select: productListSelect,
+  });
+  // `in` does not preserve order, and the order is the whole point.
+  const byId = new Map(rows.map((row) => [row.id, row]));
+  return picked.map((id) => byId.get(id)).filter((row) => row !== undefined);
+}
+
 export async function getRelatedProducts(
   productId: string,
   categoryId: string,
   brandId: string,
   limit = 4,
 ): Promise<ProductListItem[]> {
-  const sameCategory = await prisma.product.findMany({
-    where: { status: "ACTIVE", deletedAt: null, categoryId, id: { not: productId } },
-    select: productListSelect,
-    orderBy: [{ featured: "desc" }, { popularity: "desc" }],
-    take: limit,
-  });
+  const sameCategory = await neighbourRing(productId, { categoryId }, limit, []);
   if (sameCategory.length >= limit) return sameCategory;
 
-  const seen = new Set([productId, ...sameCategory.map((product) => product.id)]);
-  const sameBrand = await prisma.product.findMany({
-    where: { status: "ACTIVE", deletedAt: null, brandId, id: { notIn: [...seen] } },
-    select: productListSelect,
-    orderBy: [{ popularity: "desc" }],
-    take: limit - sameCategory.length,
-  });
+  const sameBrand = await neighbourRing(
+    productId,
+    { brandId },
+    limit - sameCategory.length,
+    sameCategory.map((product) => product.id),
+  );
   return [...sameCategory, ...sameBrand];
 }
 

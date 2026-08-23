@@ -108,8 +108,29 @@ async function main() {
     check("the invalid block itself does not render", !html.includes("an old shape"));
   }
 
+  /*
+   * Delete it, and delete any that an earlier run abandoned.
+   *
+   * This ran only if everything above it succeeded, so a failed assertion or a
+   * slow response left a PUBLISHED page behind — and a published page is in the
+   * sitemap, which means it was being submitted to Google. One had been sitting
+   * there since 21 August: six words of fixture text, indexed as real content.
+   *
+   * The sweep is what makes this self-healing rather than merely correct from
+   * now on. `verify-cms-` is this suite's own prefix and nothing else uses it.
+   */
   await prisma.page.delete({ where: { id: page.id } });
+  const abandoned = await prisma.page.deleteMany({
+    where: { slug: { startsWith: "verify-cms-" } },
+  });
+  if (abandoned.count > 0) {
+    console.log(`    (removed ${abandoned.count} page(s) left by an earlier run)`);
+  }
   check("cleanup removed the test page", (await prisma.page.count({ where: { slug } })) === 0);
+  check(
+    "and no fixture page is left published anywhere",
+    (await prisma.page.count({ where: { slug: { startsWith: "verify-cms-" } } })) === 0,
+  );
 
   /*
    * Every curated product grid still has products in it.

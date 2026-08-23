@@ -99,16 +99,34 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                   ) : null}
                 </div>
 
-                {hasPanel && isOpen ? (
+                {hasPanel ? (
                   <div
                     id={`megamenu-${index}`}
+                    /*
+                     * Rendered always, hidden when closed — not mounted on open.
+                     *
+                     * It used to be `hasPanel && isOpen`, which meant the panels
+                     * existed only after a hover or a click. A crawler does
+                     * neither. Every link in this menu — ninety of them, and the
+                     * only route to forty product pages — was absent from the
+                     * HTML the site actually served, so the entire primary
+                     * navigation contributed nothing: the only internal links
+                     * Google could see were the footer's dozen. Fifteen product
+                     * pages were reachable from no served page at all.
+                     *
+                     * `hidden` keeps them out of the accessibility tree and out
+                     * of the tab order while closed, which is what conditional
+                     * mounting was buying. The animation moves onto the class
+                     * below so it still restarts on each open: the property
+                     * goes from `animation: none` to the keyframe, and that is
+                     * what re-triggers it.
+                     */
+                    hidden={!isOpen}
                     onMouseEnter={cancelClose}
                     onMouseLeave={scheduleClose}
                     className={cn(
                       "absolute top-full z-50 border border-line bg-white shadow-[--shadow-overlay]",
-                      // Panels are mounted only while open, so a keyframe runs on
-                      // each open without needing exit-animation bookkeeping.
-                      "animate-slide-down origin-top",
+                      isOpen && "animate-slide-down origin-top",
                       "rounded-b-[--radius-lg]",
                       item.megaMenu
                         // Spans the page container, so its edges are the

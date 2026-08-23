@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import type { BrandSegment } from "@prisma/client";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -107,20 +108,30 @@ export default async function BrandsPage() {
           />
 
           {/*
-            Named rather than carded.
+            Named rather than carded — but linked.
 
-            A card promises a page with something on it, and these pages carry
-            the brand's own description and no products. A list is the honest
-            shape for "ask us", and it puts thirty-one suppliers in front of a
+            A card promises a page with a catalogue on it, and these pages have
+            the brand's own description and no products; a list is the honest
+            shape for "ask us", and it puts thirty suppliers in front of a
             reader in the space four cards would take.
+
+            The links are not decoration. These were plain text for a few
+            hours, and it orphaned fifteen brand pages: still in the sitemap,
+            still submitted to Google, and reachable from nowhere on the site.
+            A page a crawler can only find through the sitemap is a page with
+            no internal signal of importance at all — and a reader who wants
+            Fortinet has to guess the URL. Every page in the sitemap needs a
+            path to it from a page a person can reach.
           */}
           <ul className="flex flex-wrap gap-x-3 gap-y-2">
             {onRequest.map((brand) => (
-              <li
-                key={brand.slug}
-                className="rounded-[--radius-md] border border-line bg-white px-3 py-1.5 text-meta text-ink-700"
-              >
-                {brand.name}
+              <li key={brand.slug}>
+                <Link
+                  href={`/brands/${brand.slug}`}
+                  className="block rounded-[--radius-md] border border-line bg-white px-3 py-1.5 text-meta text-ink-700 transition-colors hover:border-graphite-400 hover:text-graphite-900"
+                >
+                  {brand.name}
+                </Link>
               </li>
             ))}
           </ul>

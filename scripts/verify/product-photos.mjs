@@ -47,6 +47,25 @@ const password = "CorrectHorse9";
 const staffEmail = `pp_staff${stamp}@example.test`;
 const slug = `photo-probe-${stamp}`;
 
+/*
+ * Sweep anything an earlier run left behind, before adding one more.
+ *
+ * The cleanup at the bottom of this file only runs if the script reaches it. A
+ * Playwright timeout throws, and the fixture product — created ACTIVE, because
+ * that is the state the photograph worklist is written against — survives as a
+ * live catalogue row. One did: `photo-probe-052311` sat in the sitemap for a
+ * day, an indexable product page for a product that does not exist.
+ *
+ * `scripts/verify/seo.mjs` now fails the gate on a fixture-shaped slug in the
+ * sitemap, which is the check that catches this whoever leaked it. This sweep
+ * is the other half: it means a leak cannot outlive the next run of the suite
+ * that caused it.
+ */
+const swept = sql(
+  `with gone as (delete from "Product" where slug like 'photo-probe-%' returning id) select count(*) from gone`,
+);
+if (swept !== "0") console.log(`  (swept ${swept} product(s) left by an earlier run)`);
+
 // ── fixtures on disk ────────────────────────────────────────────────────────
 const dir = mkdtempSync(join(tmpdir(), "photo-"));
 const files = {
