@@ -6,8 +6,13 @@ import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/badge";
 import { AdminForm } from "@/components/admin/admin-form";
 import { Field, Select, Textarea } from "@/components/ui/form";
-import { fulfilOrderAction, updateOrderStatus } from "@/app/admin/quote-actions";
+import {
+  fulfilOrderAction,
+  updateOrderStatus,
+  verifyPurchaseOrder,
+} from "@/app/admin/quote-actions";
 import { DangerZone } from "@/components/admin/danger-zone";
+import { DocumentList } from "@/components/documents/document-list";
 import { DELETABLE } from "@/lib/admin/deletable";
 import { isAdmin, requireStaff } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db";
@@ -40,6 +45,20 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
        * showing nothing looks identical to a customer who never tried.
        */
       payments: { orderBy: { createdAt: "desc" } },
+      documents: {
+        where: { deletedAt: null },
+        orderBy: { createdAt: "desc" },
+        select: {
+          reference: true,
+          kind: true,
+          filename: true,
+          bytes: true,
+          note: true,
+          verifiedAt: true,
+          createdAt: true,
+          user: { select: { name: true } },
+        },
+      },
     },
   });
   if (!order) notFound();
@@ -310,6 +329,38 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           )}
         </aside>
       </div>
+
+      <section className="max-w-3xl">
+        <h2 className="mb-4 text-[1.05rem]">Documents</h2>
+        <DocumentList
+          documents={order.documents}
+          emptyMessage="The customer has not sent a purchase order yet."
+        />
+
+        {order.documents
+          .filter((document) => document.kind === "PURCHASE_ORDER" && !document.verifiedAt)
+          .map((document) => (
+            <div
+              key={document.reference}
+              className="mt-4 rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-4"
+            >
+              <p className="text-[13px] leading-relaxed text-ink-700">
+                Open <span className="font-medium">{document.filename}</span> and check it against
+                this order before confirming. Uploading it did not confirm anything.
+              </p>
+              <div className="mt-3">
+                <AdminForm
+                  action={verifyPurchaseOrder}
+                  submitLabel="Mark as verified"
+                  pendingLabel="Saving…"
+                  variant="outline"
+                  hidden={{ reference: document.reference }}
+                  compact
+                />
+              </div>
+            </div>
+          ))}
+      </section>
 
       {isAdmin(staff) ? (
         <DangerZone

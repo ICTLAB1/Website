@@ -340,6 +340,52 @@ export async function replyOnQuote(
   return { status: "success", message: "Reply added to the quotation." };
 }
 
+
+const verifySchema = z.object({
+  reference: z.string().trim().regex(/^DOC-\d{4}-[A-Z0-9]{6}$/, "Invalid reference."),
+});
+
+/**
+ * Marks a customer's purchase order as checked.
+ *
+ * The point of the flag: an order confirmed on the strength of an upload
+ * nobody opened is an order confirmed on somebody's word. Until this is set,
+ * both sides see "awaiting verification", which is the truth.
+ */
+export async function verifyPurchaseOrder(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const staff = await guard();
+  if (isFailure(staff)) return staff;
+
+  const parsed = verifySchema.safeParse({ reference: formData.get("reference") });
+  if (!parsed.success) return { status: "error", message: "That reference is not valid." };
+
+  const document = await prisma.document.findFirst({
+    where: { reference: parsed.data.reference, kind: "PURCHASE_ORDER", deletedAt: null },
+    select: { id: true, verifiedAt: true, order: { select: { reference: true } } },
+  });
+  if (!document) return { status: "error", message: "That document no longer exists." };
+  if (document.verifiedAt) return { status: "error", message: "That purchase order is already verified." };
+
+  await prisma.document.update({
+    where: { id: document.id },
+    data: { verifiedAt: new Date() },
+  });
+
+  await recordAudit({
+    actorId: staff.id,
+    action: "admin.purchase_order_verified",
+    entityType: "Document",
+    entityId: parsed.data.reference,
+    ip: await clientIp(),
+  });
+
+  if (document.order) revalidatePath(`/admin/orders/${document.order.reference}`);
+  return { status: "success", message: "Purchase order marked as verified." };
+}
+
 const orderStatusSchema = z.object({
   reference: referenceSchema("ORD"),
   status: z.enum(["PENDING", "CONFIRMED", "PROVISIONING", "CANCELLED", "REFUNDED"]),

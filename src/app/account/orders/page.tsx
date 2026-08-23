@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
@@ -51,7 +52,14 @@ export default async function AccountOrdersPage() {
           <tbody>
             {orders.map((order) => (
               <Tr key={order.reference}>
-                <Td className="font-mono text-[13px] font-medium text-graphite-900">{order.reference}</Td>
+                <Td className="font-mono text-[13px] font-medium text-graphite-900">
+                  <Link
+                    href={`/account/orders/${order.reference}`}
+                    className="underline underline-offset-2 hover:text-accent-700"
+                  >
+                    {order.reference}
+                  </Link>
+                </Td>
                 <Td>{formatDate(order.placedAt)}</Td>
                 <Td>{order.poNumber ?? "—"}</Td>
                 <Td className="tabular-nums">{order._count.items}</Td>
