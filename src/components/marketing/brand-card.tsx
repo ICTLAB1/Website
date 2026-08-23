@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { safeBrandLogo } from "@/lib/brand-logo";
+import { PartnerBadge } from "@/components/marketing/partner-badge";
 
 /**
  * Brand tiles.
@@ -88,6 +89,9 @@ export function BrandCard({
     accentColor: string;
     logoUrl?: string | null;
     productCount?: number;
+    partnerLabel?: string | null;
+    partnerConfirmedAt?: Date | string | null;
+    partnerPublic?: boolean | null;
   };
 }) {
   return (
@@ -106,8 +110,16 @@ export function BrandCard({
           {brand.tagline}
         </span>
       ) : null}
+      <span className="mt-auto" />
+
+      {/*
+        Under the description rather than beside the name: a designation is a
+        fact about the relationship, not part of the brand's title.
+      */}
+      <PartnerBadge brand={brand} className="mt-4 self-start" />
+
       {typeof brand.productCount === "number" ? (
-        <span className="mt-4 text-label font-medium text-ink-500">
+        <span className="mt-3 text-label font-medium text-ink-500">
           {brand.productCount} {brand.productCount === 1 ? "product" : "products"}
         </span>
       ) : null}

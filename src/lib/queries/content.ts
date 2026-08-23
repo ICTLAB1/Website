@@ -23,6 +23,10 @@ export const getBrands = cache(
       return prisma.brand.findMany({
         where: { deletedAt: null },
         orderBy: { displayOrder: "asc" },
+        // The partner reference is internal. Omitted at the query rather than
+        // at the component, so it cannot reach a client component's payload by
+        // somebody passing the row one level further down than expected.
+        omit: { partnerReference: true },
         include: {
           _count: { select: { products: { where: { status: "ACTIVE", deletedAt: null } } } },
         },
@@ -39,6 +43,7 @@ export const getBrandBySlug = cache(
     async (slug: string) => {
       return prisma.brand.findFirst({
         where: { slug, deletedAt: null },
+        omit: { partnerReference: true },
         include: { faqs: { orderBy: { displayOrder: "asc" } } },
       });
     },

@@ -85,7 +85,7 @@ async function signIn(context, email, secret = password) {
 
   try {
     await page.waitForURL(/\/(admin|account)/, { timeout: 15000 });
-  } catch (error) {
+  } catch {
     // The most likely cause by far, and the one worth naming: sign-in is rate
     // limited per address, and a run repeated within five minutes spends it.
     const text = await page.locator("body").innerText();

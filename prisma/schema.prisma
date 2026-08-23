@@ -487,6 +487,31 @@ model Brand {
   logoUrl      String?
   accentColor  String    @default("#1e3a8a")
   website      String?
+
+  /*
+   * Partner status.
+   *
+   * Four columns rather than one string, because "we are a partner" is a claim
+   * a buyer may put to the manufacturer, and the difference between a claim
+   * somebody typed and one somebody stands behind has to be visible in the
+   * data. Nothing appears publicly unless it has been confirmed *and*
+   * deliberately published: see `lib/brand-partner`, which is the only place
+   * that decides.
+   */
+
+  /// The designation exactly as the programme words it, e.g. the tier name.
+  /// Never composed from the brand name in code — that is how "HP Partner"
+  /// becomes a statement HP never made.
+  partnerLabel     String?
+  /// Partner or programme identifier. Internal: a buyer verifies with the
+  /// manufacturer, not with a number on our own website.
+  partnerReference String?
+  /// When somebody here last confirmed the designation is current.
+  partnerConfirmedAt DateTime?
+  /// Whether to state it publicly. Off by default, including for a brand whose
+  /// label has been filled in.
+  partnerPublic    Boolean   @default(false)
+
   displayOrder Int       @default(100)
   featured     Boolean   @default(false)
   deletedAt    DateTime?

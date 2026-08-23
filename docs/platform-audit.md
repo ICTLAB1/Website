@@ -84,7 +84,7 @@ The table below is what is **missing or partial**, and it is the work plan.
 | 6–7, 53 | Import architecture for manufacturer catalogues | Partial — JSON files applied by a content migration; no admin import, no validation report | 5 |
 | 10 | Product comparison | Missing | 5 |
 | 12 | Product images | **Blocked** — the catalogue is image-ready, but no photographs have been supplied and none may be invented | 5 |
-| 59, 61–65 | WhatsApp, accounting, CRM, Microsoft, Google integrations | Missing — to be built as abstractions, marked "not connected" | 6 |
+| 59, 61–65 | WhatsApp, accounting, CRM, Microsoft, Google integrations | Missing — to be built as abstractions, marked "not connected". **TechZoid runs its own custom CRM**, so §62 is an integration rather than a replacement: the platform emits lead and RFQ events, and the CRM consumes them. Whether the internal pipeline (§39–46) is still wanted alongside it is an open question. | 6 |
 | 66 | Government and PSU procurement workflow | Partial — GeM is positioning only | 6 |
 | 67–69 | BOQ extraction and AI advisors | Missing | 6 |
 | 70–71 | Notification centres | Missing | 6 |

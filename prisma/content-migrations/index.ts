@@ -1,5 +1,6 @@
 import { brandLogos } from "./2026-08-brand-logos";
 import { gemMark } from "./2026-08-gem-mark";
+import { partnerStatusMigration } from "./2026-08-partner-status";
 import { hardwareCatalogue } from "./2026-08-hardware-catalogue";
 import { hardwareModels } from "./2026-08-hardware-models";
 import { serverMenu } from "./2026-08-server-menu";
@@ -21,6 +22,7 @@ export const contentMigrations: ContentMigration[] = [
   serverMenu,
   hardwareModels,
   gemMark,
+  partnerStatusMigration,
 ];
 
 export type { ContentMigration };

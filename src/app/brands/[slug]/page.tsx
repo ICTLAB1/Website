@@ -6,6 +6,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SectionHeader } from "@/components/ui/section-header";
 import { FaqList } from "@/components/ui/accordion";
 import { ButtonLink } from "@/components/ui/button";
+import { PartnerBadge } from "@/components/marketing/partner-badge";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { prisma } from "@/lib/db";
 import { getBrandBySlug, getBrandCategories, getServices } from "@/lib/queries/content";
@@ -110,6 +111,7 @@ export default async function BrandPage({ params }: PageProps) {
             {brand.tagline ? (
               <p className="mt-3 text-[15px] font-medium text-accent-300">{brand.tagline}</p>
             ) : null}
+            <PartnerBadge brand={brand} tone="dark" className="mt-4" />
             <p className="mt-5 text-[16px] leading-relaxed text-graphite-200">{brand.summary}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href={`/products?brand=${brand.slug}`}>

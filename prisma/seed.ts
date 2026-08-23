@@ -17,6 +17,7 @@ import { services } from "./seed-data/services";
 import { blogPosts } from "./seed-data/blog";
 import { pageSeeds, navigationSeeds } from "./seed-data/pages";
 import { certifications } from "./seed-data/certifications";
+import { partnerStatus } from "./seed-data/partner-status";
 import { applyHardwareFile, hardwareFiles } from "./seed-data/hardware";
 
 const prisma = new PrismaClient();
@@ -389,6 +390,26 @@ async function main() {
       update: data,
     });
   }
+
+  /*
+   * Partner designations, after the brands they belong to.
+   *
+   * Shared with the content migration that carries the same list to a database
+   * already serving, so a freshly seeded site and an upgraded one make the same
+   * claims rather than two sets that drifted.
+   */
+  for (const entry of partnerStatus) {
+    const updated = await prisma.brand.updateMany({
+      where: { slug: entry.slug, deletedAt: null },
+      data: {
+        partnerLabel: entry.label,
+        partnerConfirmedAt: new Date(entry.confirmedAt),
+        partnerPublic: entry.isPublic,
+      },
+    });
+    if (updated.count === 0) console.log(`No brand ${entry.slug} for its partner designation.`);
+  }
+  console.log(`Partner designations: ${partnerStatus.length}`);
 
   const adminEmail = process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase();
   const adminPassword = process.env.SEED_ADMIN_PASSWORD;
