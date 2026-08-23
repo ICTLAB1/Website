@@ -178,6 +178,12 @@ export async function getAdminEnquiry(reference: string) {
       user: { select: { id: true, name: true, email: true } },
       company: { select: { name: true, gstin: true } },
       quotes: { select: { reference: true, status: true, totalMinor: true, currency: true } },
+      /*
+       * Whether this enquiry is already on the pipeline. One row is enough:
+       * the screen offers to add it or links to what is there, and neither
+       * needs the rest.
+       */
+      deals: { select: { reference: true, title: true, stage: true }, take: 1 },
       documents: {
         where: { deletedAt: null },
         orderBy: { createdAt: "desc" },

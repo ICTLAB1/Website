@@ -10,6 +10,7 @@ import { AdminForm } from "@/components/admin/admin-form";
 import { Field, Select, Textarea } from "@/components/ui/form";
 import { updateEnquiry } from "@/app/admin/actions";
 import { draftQuote } from "@/app/admin/quote-actions";
+import { createDealFromEnquiryAction } from "@/app/admin/crm-actions";
 import { DangerZone } from "@/components/admin/danger-zone";
 import { DELETABLE } from "@/lib/admin/deletable";
 import { isAdmin, requireStaff } from "@/lib/auth/guards";
@@ -128,6 +129,48 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
                 {enquiry.requirements || "No additional requirements were provided."}
               </p>
             </div>
+          </section>
+
+          {/*
+            Offered beside the quotation, not instead of it.
+
+            Not every enquiry deserves a pipeline entry — a one-line request
+            for two licences is quoted and done. The ones worth tracking are
+            the ones that will take weeks and several conversations, and that
+            is a judgement a person makes, so this is a button rather than
+            something that happens automatically to every enquiry.
+          */}
+          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <h2 className="text-[15px] font-semibold text-graphite-900">Pipeline</h2>
+            {enquiry.deals.length > 0 ? (
+              <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
+                Tracked as{" "}
+                <Link
+                  href={`/admin/pipeline/${enquiry.deals[0]!.reference}`}
+                  className="text-accent-700 hover:underline"
+                >
+                  {enquiry.deals[0]!.title}
+                </Link>
+                , currently {enquiry.deals[0]!.stage.toLowerCase()}.
+              </p>
+            ) : (
+              <>
+                <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-ink-700">
+                  Track this on the pipeline if it is going to take more than one conversation.
+                  The contact details and requirement are copied across.
+                </p>
+                <div className="mt-4">
+                  <AdminForm
+                    action={createDealFromEnquiryAction}
+                    submitLabel="Add to pipeline"
+                    pendingLabel="Adding…"
+                    variant="outline"
+                    hidden={{ reference: enquiry.reference }}
+                    compact
+                  />
+                </div>
+              </>
+            )}
           </section>
 
           <section className="rounded-[--radius-lg] border border-accent-600/40 bg-accent-50 p-5">

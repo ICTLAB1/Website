@@ -362,12 +362,12 @@ enum PurchaseTimeline {
 // ------------------------------ identity -----------------------------------
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
+  id            String      @id @default(cuid())
+  email         String      @unique
   passwordHash  String
   name          String
   phone         String?
-  role          UserRole  @default(CUSTOMER)
+  role          UserRole    @default(CUSTOMER)
   /// Only meaningful when the account belongs to a company. An account with no
   /// company sees its own records and nobody else's, which is what a sole
   /// trader signing up on the website should get.
@@ -375,32 +375,34 @@ model User {
   emailVerified DateTime?
   lastLoginAt   DateTime?
   // Counts consecutive failed sign-in attempts; cleared on success.
-  failedLogins  Int       @default(0)
+  failedLogins  Int         @default(0)
   lockedUntil   DateTime?
   companyId     String?
-  company       Company?  @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  company       Company?    @relation(fields: [companyId], references: [id], onDelete: SetNull)
   deletedAt     DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
   /// Companies this member of staff looks after. Every lead, quotation, order,
   /// renewal and ticket for those companies has a name against it.
-  accountsManaged Company[] @relation("AccountManager")
-  quotesOwned     Quote[]   @relation("QuoteOwner")
+  accountsManaged Company[]  @relation("AccountManager")
+  quotesOwned     Quote[]    @relation("QuoteOwner")
+  dealsOwned      Deal[]     @relation("DealOwner")
+  activities      Activity[] @relation("ActivityAuthor")
 
-  sessions      Session[]
-  resetTokens   PasswordResetToken[]
-  verifyTokens  EmailVerificationToken[]
-  enquiries     Enquiry[]
-  quotes        Quote[]
-  orders        Order[]
-  licences      Licence[]
-  tickets       SupportTicket[]
-  documents     Document[]
-  auditLogs     AuditLog[]
-  authoredPosts BlogPost[]
-  savedSettings SiteSettings[]
-  savedPayments PaymentSettings[]
+  sessions       Session[]
+  resetTokens    PasswordResetToken[]
+  verifyTokens   EmailVerificationToken[]
+  enquiries      Enquiry[]
+  quotes         Quote[]
+  orders         Order[]
+  licences       Licence[]
+  tickets        SupportTicket[]
+  documents      Document[]
+  auditLogs      AuditLog[]
+  authoredPosts  BlogPost[]
+  savedSettings  SiteSettings[]
+  savedPayments  PaymentSettings[]
   savedMail      MailSettings[]
   quoteMessages  QuoteMessage[]
   ticketMessages TicketMessage[]
@@ -420,7 +422,7 @@ model User {
 /// of it and it goes on the tax invoice. Delivery addresses are a list, because
 /// an organisation ordering forty laptops routinely ships them to four sites.
 model Company {
-  id            String   @id @default(cuid())
+  id            String  @id @default(cuid())
   name          String
   /// PAN, where the customer supplies it. Kept beside the GSTIN because
   /// procurement departments are routinely asked for both.
@@ -433,26 +435,28 @@ model Company {
   city          String?
   state         String?
   postcode      String?
-  country       String   @default("India")
+  country       String  @default("India")
   employeeCount Int?
 
   /// The member of staff who owns this relationship.
   accountManagerId String?
   accountManager   User?   @relation("AccountManager", fields: [accountManagerId], references: [id], onDelete: SetNull)
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  users     User[]
-  enquiries Enquiry[]
-  quotes    Quote[]
-  orders    Order[]
-  licences  Licence[]
-  tickets   SupportTicket[]
-  addresses CompanyAddress[]
-  contacts  CompanyContact[]
-  documents Document[]
-  devices   Device[]
+  users      User[]
+  enquiries  Enquiry[]
+  quotes     Quote[]
+  orders     Order[]
+  licences   Licence[]
+  tickets    SupportTicket[]
+  addresses  CompanyAddress[]
+  contacts   CompanyContact[]
+  documents  Document[]
+  devices    Device[]
+  deals      Deal[]
+  activities Activity[]
 
   @@index([name])
   @@index([gstin])
@@ -504,6 +508,8 @@ model CompanyContact {
   note      String?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
+
+  activities Activity[]
 
   @@unique([companyId, kind, email])
   @@index([companyId])
@@ -566,13 +572,13 @@ model PasswordResetToken {
 // ------------------------------ catalogue ----------------------------------
 
 model Brand {
-  id           String    @id @default(cuid())
-  slug         String    @unique
-  name         String
-  tagline      String?
-  summary      String
-  description  String
-  logoText     String
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  name        String
+  tagline     String?
+  summary     String
+  description String
+  logoText    String
   /// Path to the publisher's own logo, served from `public/brands/`.
   ///
   /// Local only, and validated as such: an admin-entered value ends up in an
@@ -580,17 +586,16 @@ model Brand {
   /// rather than rendered. Null falls back to the styled wordmark, which is
   /// what every brand showed before this existed and what any brand without
   /// artwork on file still shows.
-  logoUrl      String?
-  accentColor  String    @default("#1e3a8a")
-  website      String?
+  logoUrl     String?
+  accentColor String  @default("#1e3a8a")
+  website     String?
 
   /// Which part of the offer this brand belongs to. Null groups it under
   /// "other", which is a prompt to classify it rather than a resting place.
-  segment      BrandSegment?
+  segment BrandSegment?
 
-  /*
+  /**
    * Partner status.
-   *
    * Four columns rather than one string, because "we are a partner" is a claim
    * a buyer may put to the manufacturer, and the difference between a claim
    * somebody typed and one somebody stands behind has to be visible in the
@@ -602,22 +607,22 @@ model Brand {
   /// The designation exactly as the programme words it, e.g. the tier name.
   /// Never composed from the brand name in code — that is how "HP Partner"
   /// becomes a statement HP never made.
-  partnerLabel     String?
+  partnerLabel       String?
   /// Partner or programme identifier. Internal: a buyer verifies with the
   /// manufacturer, not with a number on our own website.
-  partnerReference String?
+  partnerReference   String?
   /// When somebody here last confirmed the designation is current.
   partnerConfirmedAt DateTime?
   /// Whether to state it publicly. Off by default, including for a brand whose
   /// label has been filled in.
-  partnerPublic    Boolean   @default(false)
+  partnerPublic      Boolean   @default(false)
   /// The programme badge, as the publisher issues it. A file under
   /// `public/badges/` — see the README there.
   ///
   /// Shown only when the designation itself may be shown, so it lapses on the
   /// same clock: a badge is evidence for a claim, and it must never outlive the
   /// claim it is evidence for.
-  partnerBadgeUrl  String?
+  partnerBadgeUrl    String?
 
   displayOrder Int       @default(100)
   featured     Boolean   @default(false)
@@ -740,7 +745,7 @@ model Product {
   /// admin panel so a stale entry is visible as stale.
   sourceCheckedAt DateTime?
 
-  specs ProductSpec[]
+  specs   ProductSpec[]
   devices Device[]
 
   // Denormalised lowercase haystack (name + sku + brand + keywords) backing
@@ -801,10 +806,10 @@ model ProductSpec {
 }
 
 model ProductVariant {
-  id          String      @id @default(cuid())
+  id          String          @id @default(cuid())
   productId   String
-  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  sku         String      @unique
+  product     Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku         String          @unique
   name        String
   licenceType LicenceType
   /// Who may buy at this price. Only COMMERCIAL is shown to everyone and
@@ -813,8 +818,8 @@ model ProductVariant {
   // Term length in months; null for perpetual licences.
   termMonths  Int?
   // Seats included in a single unit of this SKU.
-  seats       Int         @default(1)
-  isDefault   Boolean     @default(false)
+  seats       Int             @default(1)
+  isDefault   Boolean         @default(false)
 
   // Current price, denormalised for catalogue queries. Historical changes live
   // in the Price table.
@@ -836,15 +841,15 @@ model ProductVariant {
 
   /// The manufacturer's part number. Distinct from `sku`, which is this site's
   /// unique key and exists even when the source names no part number.
-  partNumber      String?
-  processor       String?
-  memory          String?
-  storage         String?
-  graphics        String?
-  operatingSystem String?
-  opticalDrive    String?
-  powerSupply     String?
-  warranty        String?
+  partNumber       String?
+  processor        String?
+  memory           String?
+  storage          String?
+  graphics         String?
+  operatingSystem  String?
+  opticalDrive     String?
+  powerSupply      String?
+  warranty         String?
   /// Servers. A workstation has graphics where a server has a RAID controller
   /// and a management processor, and calling either by the other's name would
   /// put a PERC card under a "Graphics" heading.
@@ -852,7 +857,7 @@ model ProductVariant {
   systemManagement String?
   /// "Made in India", "Modified" — qualifications the source attaches to a
   /// specific build, kept verbatim rather than folded into another field.
-  configNote      String?
+  configNote       String?
 
   deletedAt DateTime?
   createdAt DateTime  @default(now())
@@ -917,7 +922,6 @@ model Enquiry {
 
   /**
    * The structured requirement, for the ones described rather than picked.
-   *
    * JSON rather than twelve columns because it is a snapshot of a form: what a
    * customer was asked for laptops in August is not what they will be asked
    * next year, and a column per question turns every wording change into a
@@ -942,6 +946,7 @@ model Enquiry {
   items     EnquiryItem[]
   quotes    Quote[]
   documents Document[]
+  deals     Deal[]
 
   @@index([status])
   @@index([userId])
@@ -979,6 +984,12 @@ model Quote {
   user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   companyId String?
   company   Company?    @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  /// The deal this quotation belongs to, where the business is tracked as one.
+  /// Optional: quotations predate the pipeline and a quotation raised straight
+  /// off an enquiry need not have a deal behind it.
+  dealId String?
+  deal   Deal?   @relation(fields: [dealId], references: [id], onDelete: SetNull)
 
   currency      String @default("INR")
   subtotalMinor Int    @default(0)
@@ -1018,15 +1029,13 @@ model Quote {
   ownerId String?
   owner   User?   @relation("QuoteOwner", fields: [ownerId], references: [id], onDelete: SetNull)
 
-  /*
+  /**
    * Versions.
-   *
    * A revised quotation is a new row, never an edit. The old figures were sent
    * to somebody who may have acted on them, forwarded them to finance or
    * attached them to a purchase order, and a system that overwrites them cannot
    * answer the only question that matters afterwards: what did we actually
    * quote, and when.
-   *
    * Every version of one quotation shares a `rootId` — the id of version 1,
    * which carries its own — so the whole history is one query.
    */
@@ -1039,8 +1048,8 @@ model Quote {
   /// What changed, in words, written by whoever revised it.
   revisionNote String?
 
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   items     QuoteItem[]
   orders    Order[]
@@ -1095,10 +1104,9 @@ model QuoteItem {
   gstRatePercent Int    @default(18)
   lineTotalMinor Int
 
-  /*
+  /**
    * What the printed document needs beside the name, captured onto the line
    * rather than read back through the product.
-   *
    * Copied at drafting time and then owned by the quotation. A product renamed
    * or reclassified next March must not silently change what a quotation said
    * last October — the customer has a copy, and the two must not disagree.
@@ -1145,9 +1153,8 @@ model Order {
   billingAddress String?
   internalNotes  String?
 
-  /*
+  /**
    * Delivery, for the orders that ship something.
-   *
    * All nullable and all supplied by a person. Nothing here is derived or
    * predicted: an expected date this site invented would be a promise nobody
    * made, and a tracking number it guessed would be worse.
@@ -1267,30 +1274,30 @@ model Document {
 
   /// What the person called it. Shown, and used for the download name — never
   /// used to find the file.
-  filename  String
+  filename   String
   /// The type detected from the bytes, never the one the upload claimed.
-  mimeType  String
-  bytes     Int
+  mimeType   String
+  bytes      Int
   /// Where it is on disk: a digest of the contents plus an extension.
   storageKey String
   /// SHA-256 of the contents in full, for integrity and de-duplication.
-  digest    String
+  digest     String
 
   /// Who it belongs to. The organisation is the unit of access, as everywhere.
   companyId String?
-  company   Company?     @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
   /// Who put it there — a customer, or a member of staff acting for them.
   userId    String?
-  user      User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   /// What it is about. All optional: a document may be attached to any of
   /// these, or to none while it is being sorted out.
   enquiryId String?
-  enquiry   Enquiry?     @relation(fields: [enquiryId], references: [id], onDelete: SetNull)
+  enquiry   Enquiry?       @relation(fields: [enquiryId], references: [id], onDelete: SetNull)
   quoteId   String?
-  quote     Quote?       @relation(fields: [quoteId], references: [id], onDelete: SetNull)
+  quote     Quote?         @relation(fields: [quoteId], references: [id], onDelete: SetNull)
   orderId   String?
-  order     Order?       @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  order     Order?         @relation(fields: [orderId], references: [id], onDelete: SetNull)
   ticketId  String?
   ticket    SupportTicket? @relation(fields: [ticketId], references: [id], onDelete: SetNull)
 
@@ -1299,8 +1306,8 @@ model Document {
   verifiedAt DateTime?
   note       String?
 
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   @@index([companyId])
@@ -1322,16 +1329,16 @@ model Document {
 /// Nothing here is inferred. A warranty date that nobody supplied stays null
 /// and the interface says "not recorded" rather than assuming a year.
 model Device {
-  id        String       @id @default(cuid())
-  reference String       @unique
+  id        String   @id @default(cuid())
+  reference String   @unique
   companyId String?
-  company   Company?     @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
   /// Who recorded it, so an account with no organisation still has a register.
   /// Every other customer record carries both columns and is read through the
   /// same organisation scope; a device that carried only a company would be
   /// invisible to the sole trader who bought it.
   userId    String?
-  user      User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   /// What it is, as it will be recognised on a desk.
   brandName String
@@ -1341,7 +1348,7 @@ model Device {
   /// The customer's own asset tag, where they run one.
   assetTag  String?
 
-  status    DeviceStatus @default(IN_SERVICE)
+  status DeviceStatus @default(IN_SERVICE)
 
   purchasedAt      DateTime?
   warrantyStartsAt DateTime?
@@ -1357,9 +1364,9 @@ model Device {
 
   /// Where it came from, where that is known.
   orderId   String?
-  order     Order?    @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  order     Order?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
   productId String?
-  product   Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
 
   notes     String?
   createdAt DateTime  @default(now())
@@ -1398,8 +1405,8 @@ model SupportTicket {
   firstReplyAt DateTime?
   resolvedAt   DateTime?
 
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   documents Document[]
   messages  TicketMessage[]
@@ -1547,17 +1554,17 @@ model Certification {
   id String @id @default(cuid())
 
   /// The standard, exactly as written on the certificate: "ISO 9001:2015".
-  standard String
+  standard  String
   /// What the standard covers: "Quality Management System".
   title     String
   /// The certificate's own reference number.
   reference String
   /// The certification body that issued it.
-  issuer String
+  issuer    String
   /// Where a visitor can check it is still valid.
   verifyUrl String?
   /// The scope the certificate was granted for, as printed on it.
-  scope String?
+  scope     String?
 
   issuedAt  DateTime
   /// Past this date the certificate is not displayed. Null means no expiry
@@ -1774,11 +1781,11 @@ model SiteSettings {
   grievanceEmail String?
   grievancePhone String?
 
-  updatedAt DateTime @updatedAt
+  updatedAt   DateTime @updatedAt
   /// The administrator who last saved. Nullable so a row written by a migration
   /// or a restore does not have to invent an author.
   updatedById String?
-  updatedBy   User?   @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+  updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
 /// Which payment gateway is configured, and its credentials.
@@ -1803,12 +1810,12 @@ model PaymentSettings {
   /// pointing at live keys is a deliberate act with its own audit entry.
   mode PaymentMode @default(TEST)
 
-  razorpayKeyId           String?
+  razorpayKeyId         String?
   /// AES-256-GCM, keyed from AUTH_SECRET. Never rendered.
-  razorpayKeySecret       String?
+  razorpayKeySecret     String?
   /// Also encrypted. Used to authenticate Razorpay's webhook calls, which is
   /// the only trustworthy signal that a payment was actually captured.
-  razorpayWebhookSecret   String?
+  razorpayWebhookSecret String?
 
   updatedAt   DateTime @updatedAt
   updatedById String?
@@ -1858,8 +1865,8 @@ model MailSettings {
   /// restricting in Entra with an application access policy as well.
   graphSender       String?
 
-  host String?
-  port Int?
+  host   String?
+  port   Int?
   /// Implicit TLS on connect (port 465). Most providers use STARTTLS on 587,
   /// where this is false.
   secure Boolean?
@@ -1970,4 +1977,216 @@ model ContentMigration {
   summary String
 
   appliedAt DateTime @default(now())
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CRM
+//
+// Everything below is internal. No customer-facing route reads any of it, and
+// `scripts/verify/crm.mjs` asserts that — a deal's expected value, its stage and
+// the reason a previous one was lost are the business's own commercial
+// position, and none of it belongs on a page a customer can reach.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Where a piece of business stands.
+///
+/// Five stages, and the number is the point. A pipeline with twelve stages is a
+/// pipeline nobody keeps current, and a stage that is never the answer to
+/// "where is this?" is a stage that gets set once and left. These map onto what
+/// actually happens here: somebody asks, we work out what they need, we quote
+/// it, they argue about it, it lands or it does not.
+enum DealStage {
+  /// Identified, not yet worked. The inbox of the pipeline.
+  NEW
+  /// Being worked out: what they need, whether it is real, who decides.
+  QUALIFYING
+  /// A quotation has gone out.
+  QUOTED
+  /// They have come back on it. Price, terms, or a competitor.
+  NEGOTIATION
+  WON
+  LOST
+}
+
+/// How a deal came to exist.
+///
+/// Recorded because it is the one thing that tells the business where to spend
+/// its effort, and it cannot be reconstructed later — six months on, nobody
+/// remembers whether a customer found the site or was called.
+enum DealSource {
+  /// An enquiry submitted through the site.
+  WEBSITE_ENQUIRY
+  /// A call or email that arrived without an enquiry.
+  DIRECT
+  /// Somebody we approached.
+  OUTBOUND
+  /// An existing customer's renewal.
+  RENEWAL
+  /// Passed to us by a customer or partner.
+  REFERRAL
+  /// A published tender or a GeM bid.
+  TENDER
+  OTHER
+}
+
+/// A piece of business being pursued.
+///
+/// ## Why this is not an Enquiry
+///
+/// An enquiry is a thing a customer sent. A deal is a thing this business is
+/// working on, and the two are genuinely different: a renewal has no enquiry, an
+/// outbound approach has no enquiry, and one large enquiry can become three
+/// deals closing in three different quarters. Folding deals into `Enquiry` would
+/// mean either inventing enquiries nobody sent, or losing every piece of
+/// business that did not start with a form.
+///
+/// The link is optional and one-way for that reason: a deal may point at the
+/// enquiry it came from, and usually does.
+///
+/// ## Money on a deal is a forecast, not a price
+///
+/// `expectedValueMinor` is what somebody thinks this will be worth. It is not a
+/// quotation, it is never shown to a customer, and it must not be confused with
+/// the figures on `Quote` — those are an offer the business has made and stands
+/// behind. Kept in minor units like every other amount in this schema.
+model Deal {
+  id        String     @id @default(cuid())
+  reference String     @unique
+  title     String
+  stage     DealStage  @default(NEW)
+  source    DealSource @default(DIRECT)
+
+  /// When the stage last changed.
+  ///
+  /// Not derivable from `updatedAt`, which moves when somebody fixes a typo in
+  /// the title. This is what "sitting in Negotiation for five weeks" is
+  /// measured from, and that number is the main thing a pipeline is read for.
+  stageChangedAt DateTime @default(now())
+
+  /**
+   * Who this is with.
+   * `companyId` is optional so a deal can exist before the company record does
+   * — the first call from a prospect is a deal, and stopping to create a
+   * company row first is how a deal does not get logged at all. The contact
+   * fields carry what is known in the meantime, exactly as `Enquiry` does.
+   */
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  contactName  String?
+  contactEmail String?
+  contactPhone String?
+  /// The organisation's name as given, for a deal with no company row yet.
+  companyName  String?
+
+  /// The member of staff responsible. A deal with no owner is nobody's job.
+  ownerId String?
+  owner   User?   @relation("DealOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  /// What this is expected to be worth, in minor units. A forecast — see above.
+  expectedValueMinor Int    @default(0)
+  currency           String @default("INR")
+
+  /// When it is expected to close. A date, because a forecast without one
+  /// cannot be summed into a quarter and is therefore not a forecast.
+  expectedCloseOn DateTime?
+
+  /// Why it was lost. Only meaningful on a LOST deal, and the service layer
+  /// requires it there — "we lost it" with no reason teaches the business
+  /// nothing, which is the whole point of recording losses.
+  lostReason String?
+
+  /// When it reached WON or LOST. Null while it is still open.
+  closedAt DateTime?
+
+  /// The enquiry this came from, where it came from one.
+  enquiryId String?
+  enquiry   Enquiry? @relation(fields: [enquiryId], references: [id], onDelete: SetNull)
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  activities Activity[]
+  quotes     Quote[]
+
+  @@index([stage])
+  @@index([ownerId])
+  @@index([companyId])
+  @@index([expectedCloseOn])
+  @@index([stage, expectedCloseOn])
+  @@index([createdAt])
+}
+
+/// What kind of thing happened, or is due to happen.
+enum ActivityKind {
+  CALL
+  EMAIL
+  MEETING
+  NOTE
+  /// Something still to be done. The only kind with a due date that matters.
+  TASK
+  /// Written by the application rather than a person — a stage change, a
+  /// quotation sent. Kept in the same timeline because a person reading a deal
+  /// wants one story, not two lists to interleave by hand.
+  SYSTEM
+}
+
+/// One entry in the history of a relationship.
+///
+/// Calls, emails, meetings, notes and follow-ups in one model rather than four.
+/// They are the same shape — who, when, what was said, what happens next — and
+/// splitting them would mean four queries and four joins to render the one
+/// thing anybody ever wants, which is the timeline.
+///
+/// ## Why a task is an activity
+///
+/// "Call them back on Tuesday" is the same record as "called them on Tuesday",
+/// a few days apart. Making tasks a separate model means a completed task has
+/// to be copied into the history, and a system that copies rows between tables
+/// is a system where the copy eventually stops happening.
+///
+/// So: `dueAt` set means it is outstanding, `completedAt` set means it is done,
+/// and `occurredAt` is when it actually happened. A NOTE has only `occurredAt`.
+model Activity {
+  id      String       @id @default(cuid())
+  kind    ActivityKind @default(NOTE)
+  subject String
+  body    String?
+
+  /// When it happened. Set on the way in rather than defaulted at read time,
+  /// because a call logged on Friday about a conversation on Wednesday is
+  /// ordinary and the timeline must show Wednesday.
+  occurredAt DateTime @default(now())
+
+  /// When it is due, for a task. Null for anything already in the past.
+  dueAt       DateTime?
+  /// When it was done. Null while it is still outstanding.
+  completedAt DateTime?
+
+  /**
+   * What it is about. At least one of these, enforced in the service layer —
+   * an activity attached to nothing cannot be found again, which makes logging
+   * it worse than not logging it.
+   */
+  dealId    String?
+  deal      Deal?           @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  companyId String?
+  company   Company?        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  contactId String?
+  contact   CompanyContact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+
+  /// Who logged it, or who owns the follow-up.
+  userId String?
+  user   User?   @relation("ActivityAuthor", fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dealId, occurredAt])
+  @@index([companyId, occurredAt])
+  @@index([userId, dueAt])
+  /// Outstanding follow-ups, oldest first. The query behind "what is overdue".
+  @@index([completedAt, dueAt])
 }

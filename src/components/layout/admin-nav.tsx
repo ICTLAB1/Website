@@ -12,6 +12,15 @@ const SECTIONS: Array<{ heading: string; links: Array<{ href: string; label: str
   {
     heading: "Sales",
     links: [
+      /*
+       * Above enquiries, because it is the screen somebody opens first.
+       *
+       * An enquiry is one thing a customer sent; the pipeline is everything
+       * being worked on, inbound and not. Ordering it second would say the
+       * business is what arrives in its inbox.
+       */
+      { href: "/admin/pipeline", label: "Pipeline" },
+      { href: "/admin/follow-ups", label: "Follow-ups" },
       { href: "/admin/enquiries", label: "Enquiries" },
       { href: "/admin/quotes", label: "Quotes" },
       { href: "/admin/orders", label: "Orders" },
