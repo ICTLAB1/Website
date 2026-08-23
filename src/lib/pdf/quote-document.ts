@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db";
 import { orgScope, type Scoped } from "@/lib/auth/scope";
 import { getSiteConfig } from "@/lib/site-config";
 import { getBankingDetails } from "@/lib/banking-config";
+import { letterheadImage, loadPublicImage } from "@/lib/pdf/assets";
+import { currentPartnerBadge, currentPartnerLabel } from "@/lib/brand-partner";
 import { renderQuotationPdf, type QuotationParty } from "@/lib/pdf/quotation";
 
 /**
@@ -148,7 +150,7 @@ export async function buildQuotationPdf(
 
   if (!quote) return null;
 
-  const [config, certifications] = await Promise.all([
+  const [config, certifications, brands] = await Promise.all([
     getSiteConfig(),
     /*
      * Only certificates that are current.
@@ -162,7 +164,60 @@ export async function buildQuotationPdf(
       orderBy: { displayOrder: "asc" },
       select: { standard: true, title: true },
     }),
+    /*
+     * Every brand the catalogue actually carries, and the partner designations
+     * among them.
+     *
+     * Filtered to brands with at least one live product: a quotation that
+     * advertised a brand this business no longer stocks would be a claim about
+     * the catalogue that the catalogue does not support.
+     */
+    prisma.brand.findMany({
+      where: {
+        deletedAt: null,
+        products: { some: { status: "ACTIVE", deletedAt: null } },
+      },
+      orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
+      select: {
+        name: true,
+        logoUrl: true,
+        partnerLabel: true,
+        partnerConfirmedAt: true,
+        partnerPublic: true,
+        partnerBadgeUrl: true,
+      },
+    }),
   ]);
+
+  /*
+   * Accreditations first, and only where the designation may currently be
+   * stated. `currentPartnerBadge` applies the same lapse rule as the website,
+   * so a designation that has come down there cannot still be printing here.
+   */
+  const accreditations = brands
+    .map((brand) => {
+      const label = currentPartnerLabel(brand);
+      const badge = currentPartnerBadge(brand);
+      const image = badge ? loadPublicImage(badge) : null;
+      return label && image ? { name: brand.name, label, image } : null;
+    })
+    .filter((entry): entry is { name: string; label: string; image: NonNullable<typeof entry>["image"] } =>
+      entry !== null,
+    );
+
+  /*
+   * Then the catalogue. Most brand artwork on this site is SVG, which a PDF
+   * cannot hold, so the ones that will print are shown and the rest are named
+   * — a complete list either way, which is the point.
+   */
+  const brandLogos: Array<{ name: string; image: NonNullable<ReturnType<typeof loadPublicImage>> }> = [];
+  const otherBrands: string[] = [];
+
+  for (const brand of brands) {
+    const image = loadPublicImage(brand.logoUrl);
+    if (image) brandLogos.push({ name: brand.name, image });
+    else otherBrands.push(brand.name);
+  }
 
   const company = quote.company;
 
@@ -260,6 +315,10 @@ export async function buildQuotationPdf(
     certifications: certifications.map(
       (certification) => `${certification.standard} - ${certification.title}`,
     ),
+    logo: letterheadImage(),
+    accreditations,
+    brandLogos,
+    otherBrands,
     banking: getBankingDetails(),
     terms: config.quoteTerms,
   });

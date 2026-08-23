@@ -135,3 +135,59 @@ describe("the designations on file", () => {
     expect(partnerStatus.length).toBeLessThan(brands.length / 2);
   });
 });
+
+describe("the badge that evidences a designation", () => {
+  it("comes down with the words it evidences", async () => {
+    /*
+     * The failure this rules out: a lapsed designation disappearing as text
+     * and staying up as a picture, which leaves the more convincing half of
+     * the claim in place.
+     */
+    const { currentPartnerBadge } = await import("@/lib/brand-partner");
+
+    const badge = "/badges/microsoft-solutions-partner.png";
+    const live = {
+      partnerLabel: "Solutions Partner",
+      partnerConfirmedAt: new Date("2026-08-01"),
+      partnerPublic: true,
+      partnerBadgeUrl: badge,
+    };
+
+    expect(currentPartnerBadge(live, new Date("2026-08-23"))).toBe(badge);
+
+    // Never published.
+    expect(currentPartnerBadge({ ...live, partnerPublic: false })).toBeNull();
+    // Never confirmed.
+    expect(currentPartnerBadge({ ...live, partnerConfirmedAt: null })).toBeNull();
+    // Confirmed too long ago.
+    expect(currentPartnerBadge(live, new Date("2028-01-01"))).toBeNull();
+    // A badge with no designation behind it is not a designation.
+    expect(currentPartnerBadge({ ...live, partnerLabel: null })).toBeNull();
+  });
+
+  it("refuses a path that is not artwork in the badge directory", async () => {
+    const { currentPartnerBadge } = await import("@/lib/brand-partner");
+
+    const base = {
+      partnerLabel: "Certified Reseller",
+      partnerConfirmedAt: new Date("2026-08-01"),
+      partnerPublic: true,
+    };
+    const at = new Date("2026-08-23");
+
+    for (const path of [
+      "https://example.test/badge.png",
+      "//example.test/badge.png",
+      "/badges/../../etc/passwd",
+      "/brands/microsoft.png",
+      "/badges/badge.exe",
+      "javascript:alert(1)",
+    ]) {
+      expect(currentPartnerBadge({ ...base, partnerBadgeUrl: path }, at)).toBeNull();
+    }
+
+    expect(
+      currentPartnerBadge({ ...base, partnerBadgeUrl: "/badges/adobe-certified-reseller.png" }, at),
+    ).toBe("/badges/adobe-certified-reseller.png");
+  });
+});

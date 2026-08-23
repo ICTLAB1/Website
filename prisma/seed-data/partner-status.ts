@@ -35,6 +35,15 @@ export type PartnerStatusSeed = {
   confirmedAt: string;
   /** Whether the designation is stated publicly. */
   isPublic: boolean;
+  /**
+   * The programme badge, where the publisher has issued one and the business
+   * has supplied it. A file under `public/badges/`.
+   *
+   * Absent is the normal case and is not a gap to be filled: a badge belongs to
+   * a designation, and a brand whose exact designation is still recorded as the
+   * placeholder "Partner" has no badge to show.
+   */
+  badgeUrl?: string;
 };
 
 /**
@@ -43,12 +52,31 @@ export type PartnerStatusSeed = {
  * Six of the brands named. The client also said "and many more"; those are not
  * here, because a designation nobody has named is not a designation this site
  * can state.
+ *
+ * Two of the six are now recorded with the designation the programme actually
+ * uses, because the business supplied the issued badge for each: Microsoft
+ * words it "Solutions Partner" and Adobe words it "Certified Reseller". The
+ * other four keep the placeholder "Partner" — the weakest claim that is still
+ * true — until their programme wording is supplied the same way. Upgrading them
+ * on the strength of these two would be inventing a tier.
  */
 export const partnerStatus: PartnerStatusSeed[] = [
   { slug: "hp", label: "Partner", confirmedAt: "2026-08-23", isPublic: true },
   { slug: "cisco", label: "Partner", confirmedAt: "2026-08-23", isPublic: true },
-  { slug: "microsoft", label: "Partner", confirmedAt: "2026-08-23", isPublic: true },
-  { slug: "adobe", label: "Partner", confirmedAt: "2026-08-23", isPublic: true },
+  {
+    slug: "microsoft",
+    label: "Solutions Partner",
+    confirmedAt: "2026-08-23",
+    isPublic: true,
+    badgeUrl: "/badges/microsoft-solutions-partner.png",
+  },
+  {
+    slug: "adobe",
+    label: "Certified Reseller",
+    confirmedAt: "2026-08-23",
+    isPublic: true,
+    badgeUrl: "/badges/adobe-certified-reseller.png",
+  },
   { slug: "acer", label: "Partner", confirmedAt: "2026-08-23", isPublic: true },
   { slug: "zoho", label: "Partner", confirmedAt: "2026-08-23", isPublic: true },
 ];

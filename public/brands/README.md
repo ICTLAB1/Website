@@ -11,7 +11,7 @@ site that tells buyers who it is authorised to supply, it is worse than useless.
 
 ## What is here, and where it came from
 
-Twenty-six marks, taken from [Simple Icons](https://simpleicons.org) v16.28.0
+Twenty-three marks, taken from [Simple Icons](https://simpleicons.org) v16.28.0
 and recoloured to each brand's own published hex. Simple Icons releases the
 icon files under CC0, which is what makes redistributing them possible; the
 **trademarks remain the property of their owners**, and CC0 does not and cannot
@@ -30,14 +30,39 @@ Two changes are made to each file, and no others:
 To regenerate the set: `npm pack simple-icons`, take `icons/<slug>.svg`, set
 `fill` from the `hex` field in `data/simple-icons.json`, then run the script.
 
+## Artwork supplied by the business
+
+Five files are PNG rather than SVG, because they are the publishers' own
+artwork supplied through this business's partner relationships rather than
+anything an icon set carries:
+
+> `microsoft.png` · `adobe.png` · `hp.png` · `lenovo.png` · `acer.png`
+
+Microsoft and Adobe are two of the publishers named below as unobtainable from
+an icon set; these came from the right place instead. HP, Lenovo and Acer
+previously used the Simple Icons marks, which are correct but monochrome
+single-glyph versions — the supplied files are the full-colour lockups, so they
+replaced them.
+
+Each was trimmed of its transparent margin and scaled to 128 pixels tall, which
+is four times the height they render at and keeps every one under 26 KB. The
+originals are unmodified otherwise: no recolouring, no cropping into the
+lockup, no recomposition. Several publishers' brand programmes prohibit exactly
+that, and a mark altered by us is no longer the mark they licensed.
+
+Two of them — Adobe and Microsoft — are stacked lockups, taller than they are
+wide. They render legibly, but a horizontal variant would read better in a
+32-pixel-tall slot; if the brand programme offers one, replace the file and
+nothing else needs to change.
+
 ## What is deliberately missing
 
 Simple Icons no longer carries several of the largest publishers, having
 removed icons whose owners do not permit redistribution. Among the brands this
 site supplies, that means:
 
-> Microsoft · Adobe · Oracle · IBM · Salesforce · Google Workspace · Corel ·
-> ESET · Sophos · WatchGuard · CrowdStrike · HPE · APC · Logitech · SOLIDWORKS
+> Oracle · IBM · Salesforce · Google Workspace · Corel · ESET · Sophos ·
+> WatchGuard · CrowdStrike · HPE · APC · Logitech · SOLIDWORKS
 
 These are **not** to be sourced from an icon site or a search engine. Each of
 those publishers distributes its own artwork through its partner or brand-assets

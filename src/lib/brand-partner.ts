@@ -1,3 +1,5 @@
+import { safeLocalImage } from "@/lib/local-image";
+
 /**
  * Whether a partner designation may be stated publicly, and in what words.
  *
@@ -72,4 +74,31 @@ export function currentPartnerLabel(
 ): string | null {
   if (!partnerConfirmationCurrent(brand, now)) return null;
   return publicPartnerLabel(brand);
+}
+
+/**
+ * The badge to show, or nothing.
+ *
+ * Gated on `currentPartnerLabel` rather than on its own field, and that is the
+ * whole point of putting it here. A badge is evidence for a claim; if the claim
+ * may not be printed — never published, never confirmed, or confirmed too long
+ * ago — then neither may the evidence. Otherwise a lapsed designation comes
+ * down in words and stays up as a picture, which is the more convincing half.
+ *
+ * The path is checked the same way every other local image on this site is, so
+ * a value edited into the database cannot become an arbitrary `src`.
+ */
+export function currentPartnerBadge(
+  brand: (PartnerFields & { partnerBadgeUrl?: string | null }) | null | undefined,
+  now: Date = new Date(),
+): string | null {
+  if (!currentPartnerLabel(brand, now)) return null;
+  return safeBadgeImage(brand?.partnerBadgeUrl);
+}
+
+/** Where a programme badge may be loaded from. See `public/badges/README.md`. */
+export const BADGE_DIR = "/badges/";
+
+export function safeBadgeImage(value: string | null | undefined): string | null {
+  return safeLocalImage(value, BADGE_DIR);
 }

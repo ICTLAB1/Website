@@ -27,6 +27,8 @@
  * prints sharp at any size and adds nothing to the file.
  */
 
+import type { EmbeddedImage } from "@/lib/pdf/image";
+
 const PAGE = { width: 595.28, height: 841.89 }; // A4 in points.
 
 type Op = string;
@@ -273,6 +275,15 @@ export class PdfDocument {
   private pages: Op[][] = [[]];
   private current = 0;
 
+  /**
+   * Images placed in the document, in the order they were first used.
+   *
+   * Held once and referenced from every page that draws them, so a logo on
+   * four pages is four references to one stream rather than four copies of a
+   * quarter of a megabyte.
+   */
+  private images: EmbeddedImage[] = [];
+
   /** Starts a new page and returns to the top of it. */
   addPage(): void {
     this.pages.push([]);
@@ -438,6 +449,32 @@ export class PdfDocument {
     this.push(`${rgb(colour)} RG ${thickness} w ${cap} J ${path} S`);
   }
 
+  /**
+   * Places an image, scaled into a box `width` × `height` points.
+   *
+   * The image keeps its own aspect ratio and is centred in the box, because
+   * the caller reserves a slot on the letterhead and the artwork that lands in
+   * it is whatever the business supplied — a square mark and a seven-to-one
+   * wordmark both have to sit correctly in the same space.
+   */
+  image(picture: EmbeddedImage, x: number, y: number, width: number, height: number): void {
+    let index = this.images.indexOf(picture);
+    if (index === -1) index = this.images.push(picture) - 1;
+
+    const scale = Math.min(width / picture.width, height / picture.height);
+    const drawWidth = picture.width * scale;
+    const drawHeight = picture.height * scale;
+    const left = x + (width - drawWidth) / 2;
+    const top = y + (height - drawHeight) / 2;
+
+    // `cm` sets the image's box: PDF draws every image into a unit square, so
+    // the transform is the size and position in one.
+    this.push(
+      `q ${drawWidth.toFixed(2)} 0 0 ${drawHeight.toFixed(2)} ` +
+        `${left.toFixed(2)} ${this.flip(top + drawHeight).toFixed(2)} cm /Im${index} Do Q`,
+    );
+  }
+
   /** A stroked circle. Four arcs, which is what a circle is in PostScript. */
   circle(
     cx: number,
@@ -472,12 +509,40 @@ export class PdfDocument {
       italic: font("Times-Italic"),
     };
 
+    /*
+     * Images, once each, however many pages draw them.
+     *
+     * Emitted before the pages so the page objects can name them, and listed
+     * in every page's resources rather than tracked per page — a duplicated
+     * dictionary entry costs a dozen bytes, and per-page bookkeeping for it
+     * would be more code than it saves.
+     */
+    const imageIds = this.images.map((picture) => {
+      const maskId = picture.mask
+        ? add(
+            `<< /Type /XObject /Subtype /Image /Width ${picture.mask.width} /Height ${picture.mask.height} ` +
+              `/ColorSpace /DeviceGray /BitsPerComponent 8 /Filter /FlateDecode ` +
+              `/Length ${picture.mask.data.length} >>\nstream\n${picture.mask.data.toString("latin1")}\nendstream`,
+          )
+        : null;
+
+      return add(
+        `<< /Type /XObject /Subtype /Image /Width ${picture.width} /Height ${picture.height} ` +
+          `/ColorSpace /${picture.colourSpace} /BitsPerComponent 8 /Filter /${picture.filter} ` +
+          (maskId ? `/SMask ${maskId} 0 R ` : "") +
+          `/Length ${picture.data.length} >>\nstream\n${picture.data.toString("latin1")}\nendstream`,
+      );
+    });
+
     const resources =
       "/Font << " +
       (Object.keys(FONT_SLOTS) as FontName[])
         .map((name) => `${FONT_SLOTS[name]} ${fontIds[name]} 0 R`)
         .join(" ") +
-      " >>";
+      " >>" +
+      (imageIds.length > 0
+        ? ` /XObject << ${imageIds.map((id, index) => `/Im${index} ${id} 0 R`).join(" ")} >>`
+        : "");
 
     const pageIds: number[] = [];
     for (const ops of this.pages) {

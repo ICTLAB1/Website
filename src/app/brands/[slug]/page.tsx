@@ -6,7 +6,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SectionHeader } from "@/components/ui/section-header";
 import { FaqList } from "@/components/ui/accordion";
 import { ButtonLink } from "@/components/ui/button";
-import { PartnerBadge } from "@/components/marketing/partner-badge";
+import { PartnerBadge, PartnerBadgeArtwork } from "@/components/marketing/partner-badge";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { prisma } from "@/lib/db";
 import { getBrandBySlug, getBrandCategories, getServices } from "@/lib/queries/content";
@@ -112,6 +112,19 @@ export default async function BrandPage({ params }: PageProps) {
               <p className="mt-3 text-[15px] font-medium text-accent-300">{brand.tagline}</p>
             ) : null}
             <PartnerBadge brand={brand} tone="dark" className="mt-4" />
+
+            {/*
+              The issued badge beneath the words, on white.
+              
+              These are supplied by the publisher on a light ground and their
+              programmes require them to be shown that way; the tile is what
+              lets one sit on a dark hero without being altered.
+            */}
+            <PartnerBadgeArtwork
+              brand={brand}
+              height="h-11"
+              className="mt-4 rounded-[--radius-md] bg-white px-3 py-2"
+            />
             <p className="mt-5 text-[16px] leading-relaxed text-graphite-200">{brand.summary}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href={`/products?brand=${brand.slug}`}>

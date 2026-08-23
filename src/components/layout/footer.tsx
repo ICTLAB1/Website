@@ -3,6 +3,7 @@ import { Logo } from "@/components/layout/logo";
 import { getNavigation } from "@/lib/queries/navigation";
 import { getSiteConfig } from "@/lib/site-config";
 import { CertificationStrip } from "@/components/layout/certification-strip";
+import { AccreditationStrip } from "@/components/layout/accreditation-strip";
 
 export async function Footer() {
   const config = await getSiteConfig();
@@ -83,6 +84,7 @@ export async function Footer() {
       </div>
 
       {/* Above the small print, below the link columns: seen on every page. */}
+      <AccreditationStrip />
       <CertificationStrip />
 
       <div className="border-t border-graphite-800">

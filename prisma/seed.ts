@@ -405,6 +405,9 @@ async function main() {
         partnerLabel: entry.label,
         partnerConfirmedAt: new Date(entry.confirmedAt),
         partnerPublic: entry.isPublic,
+        // Cleared when the seed carries none, so removing a badge from the
+        // seed removes it from the site rather than leaving the artwork up.
+        partnerBadgeUrl: entry.badgeUrl ?? null,
       },
     });
     if (updated.count === 0) console.log(`No brand ${entry.slug} for its partner designation.`);

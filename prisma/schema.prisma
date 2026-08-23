@@ -589,6 +589,13 @@ model Brand {
   /// Whether to state it publicly. Off by default, including for a brand whose
   /// label has been filled in.
   partnerPublic    Boolean   @default(false)
+  /// The programme badge, as the publisher issues it. A file under
+  /// `public/badges/` — see the README there.
+  ///
+  /// Shown only when the designation itself may be shown, so it lapses on the
+  /// same clock: a badge is evidence for a claim, and it must never outlive the
+  /// claim it is evidence for.
+  partnerBadgeUrl  String?
 
   displayOrder Int       @default(100)
   featured     Boolean   @default(false)

@@ -8,25 +8,6 @@ import {
   textWidth,
 } from "@/lib/pdf/writer";
 
-/**
- * The letterhead lockup, drawn rather than embedded.
- *
- * This writer has no image support and does not want any: a raster logo means
- * decoding a PNG, deflating pixels and shipping a few hundred kilobytes into
- * every document, and it prints soft. The mark in `public/logo.svg` is three
- * arcs and a ring, which is four path operators, prints sharp at any size and
- * costs about a hundred bytes.
- *
- * ## Keeping it in step with the SVG
- *
- * The geometry below is read off `public/logo.svg` directly. In that file the
- * mark lives in a 100×100 box: a ring of radius 20 at the centre, and three
- * 96-degree arcs of radius 40 starting at 186, 306 and 66 degrees — evenly
- * spaced a third of a turn apart. Change the SVG and this needs the same
- * change; there is no way to derive one from the other at render time, because
- * this code runs where nothing can be fetched.
- */
-
 /** The mark's own coordinate system, matching the SVG's inner group. */
 const BOX = 100;
 const RING_RADIUS = 20;

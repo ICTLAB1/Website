@@ -1,4 +1,8 @@
-import { currentPartnerLabel, type PartnerFields } from "@/lib/brand-partner";
+import {
+  currentPartnerBadge,
+  currentPartnerLabel,
+  type PartnerFields,
+} from "@/lib/brand-partner";
 
 /**
  * A partner designation, where one may be stated.
@@ -40,5 +44,43 @@ export function PartnerBadge({
       <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-current" />
       {label}
     </span>
+  );
+}
+
+/**
+ * The badge the publisher actually issued.
+ *
+ * Gated on exactly the same rule as the wording above it, through
+ * `currentPartnerBadge`: a designation that may not be stated in words may not
+ * be stated in artwork either. The opposite — a lapsed claim coming down as
+ * text and staying up as a picture — would leave the more convincing half in
+ * place.
+ *
+ * The badge already contains the publisher's own mark and the designation, so
+ * the alt text names both. This is not decorative: it is the evidence, and a
+ * reader who cannot see it should be told what it says.
+ */
+export function PartnerBadgeArtwork({
+  brand,
+  className,
+  height = "h-10",
+}: {
+  brand: (PartnerFields & { name?: string; partnerBadgeUrl?: string | null }) | null | undefined;
+  className?: string;
+  height?: string;
+}) {
+  const badge = currentPartnerBadge(brand);
+  const label = currentPartnerLabel(brand);
+  if (!badge || !label) return null;
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={badge}
+      alt={brand?.name ? `${brand.name} ${label}` : label}
+      className={`${height} w-auto object-contain object-left ${className ?? ""}`}
+      loading="lazy"
+      decoding="async"
+    />
   );
 }

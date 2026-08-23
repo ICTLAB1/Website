@@ -41,6 +41,7 @@ export const brands: BrandSeed[] = [
     description:
       "Microsoft licensing spans several purchasing programmes, and the right one depends on your organisation's size, contract appetite and how quickly your seat count changes. We supply Microsoft 365 and Office subscriptions, Windows and Windows Server, SQL Server, Dynamics 365 and Azure consumption, and we advise on whether a Cloud Solution Provider subscription, a volume licensing agreement or a perpetual purchase gives you the better commercial position over a three-year horizon.\n\nOur team handles tenant provisioning, licence assignment, mid-term seat changes and renewal planning, so the licensing you buy stays aligned with the people who actually need it.",
     logoText: "Microsoft",
+    logoUrl: "/brands/microsoft.png",
     accentColor: "#0f6cbd",
     displayOrder: 10,
     featured: true,
@@ -54,6 +55,7 @@ export const brands: BrandSeed[] = [
     description:
       "Adobe's business licensing separates named-user entitlements from the admin console that manages them, which is what makes it workable at scale: seats can be reassigned when people change roles, and deployment can be packaged rather than installed by hand.\n\nWe supply Creative Cloud for teams and enterprise, Acrobat for document workflows, and single applications where a full suite is not warranted. We help you decide which of those is genuinely cheaper for your mix of full-time designers, occasional users and reviewers who only need to comment on a PDF.",
     logoText: "Adobe",
+    logoUrl: "/brands/adobe.png",
     accentColor: "#e0342c",
     displayOrder: 20,
     featured: true,
@@ -424,7 +426,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "lenovo",
-    logoUrl: "/brands/lenovo.svg",
+    logoUrl: "/brands/lenovo.png",
     name: "Lenovo",
     tagline: "Servers, workstations and laptops",
     summary:
@@ -438,7 +440,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "hp",
-    logoUrl: "/brands/hp.svg",
+    logoUrl: "/brands/hp.png",
     name: "HP",
     tagline: "Workstations, laptops and printing",
     summary:
@@ -452,7 +454,7 @@ export const brands: BrandSeed[] = [
   },
   {
     slug: "acer",
-    logoUrl: "/brands/acer.svg",
+    logoUrl: "/brands/acer.png",
     name: "Acer",
     tagline: "Laptops, desktops and displays",
     summary:

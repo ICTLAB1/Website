@@ -1,6 +1,7 @@
 import type { SiteConfig } from "@/lib/site-config";
 import { amountInWords, pdfAmount, pdfDate, pdfMoney } from "@/lib/pdf/money";
 import { drawMark } from "@/lib/pdf/letterhead";
+import type { EmbeddedImage } from "@/lib/pdf/image";
 import { panFromGstin, placeOfSupply, taxHeads, taxTreatment, type TaxTreatment } from "@/lib/gstin";
 import {
   ACCENT,
@@ -93,6 +94,37 @@ export type QuotationPdfInput = {
   config: SiteConfig;
   /** Exactly as printed, e.g. "ISO 9001:2015 - Quality Management System". */
   certifications: string[];
+  /**
+   * The company's own logo, decoded. Null falls back to the drawn mark.
+   *
+   * Passed in rather than read here, so this module never touches a
+   * filesystem and stays renderable from a test.
+   */
+  logo: EmbeddedImage | null;
+  /**
+   * Partner programme badges, as the publishers issued them.
+   *
+   * Only designations that may currently be stated reach this list — the
+   * gating is `lib/brand-partner`, applied where the data is fetched. A badge
+   * on a quotation is a claim about a relationship made to a procurement
+   * office, and it is exactly the claim that gets checked.
+   */
+  accreditations: Array<{ name: string; label: string; image: EmbeddedImage }>;
+  /**
+   * Brands whose products this business supplies.
+   *
+   * Deliberately separate from the accreditations above, and captioned as
+   * supply rather than partnership. Reselling a publisher's products and being
+   * accredited by that publisher are different facts, and a strip of logos
+   * under a heading that blurred them would be the site making a claim nobody
+   * authorised.
+   *
+   * Split in two because most brand artwork on this site is SVG, which a PDF
+   * cannot hold: the ones with printable artwork are shown, and the rest are
+   * named.
+   */
+  brandLogos: Array<{ name: string; image: EmbeddedImage }>;
+  otherBrands: string[];
   /** From `lib/banking-config`. All of it or none of it. */
   banking: {
     bankName: string;
@@ -242,10 +274,23 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
   const { config } = input;
   const top = 40;
 
-  // ── the mark, and the tagline beneath it ────────────────────────────────
-  drawMark(pdf, MARGIN, top, 38);
+  /*
+   * The company's own artwork where it exists, and the drawn mark where it
+   * does not.
+   *
+   * A real logo file is always the better answer — it is the artwork the
+   * business actually uses, on letterheads a customer has seen before. The
+   * drawn mark is the fallback that keeps a document from having a blank
+   * corner on a deployment where nobody has supplied one.
+   */
+  const artwork = input.logo;
+  if (artwork) {
+    pdf.image(artwork, MARGIN, top, LOGO_WIDTH, 44);
+  } else {
+    drawMark(pdf, MARGIN, top, 38);
+  }
 
-  let logoY = top + 50;
+  let logoY = top + (artwork ? 56 : 50);
   if (config.tagline) {
     for (const line of wrap(config.tagline, LOGO_WIDTH, 7, "italic")) {
       pdf.text(line, MARGIN, logoY, { size: 7, font: "italic", colour: MUTED });
@@ -949,6 +994,96 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
       y += 10;
     }
     y += 10;
+  }
+
+  /*
+   * Accreditations, then brands, in that order and never merged.
+   *
+   * The order is the argument: a badge is a publisher's statement about this
+   * business, a logo strip is this business's statement about its catalogue,
+   * and a reader who sees them as one band has been told something nobody
+   * said. The caption under the brands says so in words as well.
+   */
+  if (input.accreditations.length > 0) {
+    room(64);
+    heading("Partner and reseller accreditations");
+
+    let x = MARGIN;
+    const badgeHeight = 26;
+
+    for (const accreditation of input.accreditations) {
+      const width = (accreditation.image.width / accreditation.image.height) * badgeHeight;
+
+      if (x + width > RIGHT) {
+        x = MARGIN;
+        y += badgeHeight + 8;
+        room(badgeHeight + 20);
+      }
+
+      pdf.image(accreditation.image, x, y, width, badgeHeight);
+      x += width + 14;
+    }
+
+    y += badgeHeight + 10;
+
+    pdf.text(
+      input.accreditations
+        .map((accreditation) => `${accreditation.name} ${accreditation.label}`)
+        .join("   ·   "),
+      MARGIN,
+      y,
+      { size: 6.8, colour: MUTED },
+    );
+    y += 18;
+  }
+
+  if (input.brandLogos.length > 0 || input.otherBrands.length > 0) {
+    room(60);
+    heading("Brands we supply");
+
+    let x = MARGIN;
+    const logoHeight = 20;
+
+    for (const brand of input.brandLogos) {
+      const width = Math.min(72, (brand.image.width / brand.image.height) * logoHeight);
+
+      if (x + width > RIGHT) {
+        x = MARGIN;
+        y += logoHeight + 8;
+        room(logoHeight + 20);
+      }
+
+      pdf.image(brand.image, x, y, width, logoHeight);
+      x += width + 16;
+    }
+
+    if (input.brandLogos.length > 0) y += logoHeight + 10;
+
+    if (input.otherBrands.length > 0) {
+      for (const line of wrap(input.otherBrands.join(" · "), CONTENT, 7)) {
+        room(12);
+        pdf.text(line, MARGIN, y, { size: 7, colour: MUTED });
+        y += 9.5;
+      }
+      y += 2;
+    }
+
+    /*
+     * The sentence that keeps the strip honest.
+     *
+     * Without it a page carrying a customer's name, our accreditations and
+     * thirty publishers' logos reads as thirty partnerships. This says plainly
+     * which of the two things above it is a partnership and which is a
+     * catalogue.
+     */
+    room(20);
+    pdf.text(
+      "We supply the products of the brands shown above. Partner and reseller designations are stated only where a badge is shown for them.",
+      MARGIN,
+      y,
+      { size: 6.5, colour: FAINT },
+    );
+    y += 18;
   }
 
   // ── the signature block ─────────────────────────────────────────────────
