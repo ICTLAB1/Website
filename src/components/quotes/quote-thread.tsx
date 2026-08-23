@@ -26,7 +26,19 @@ const KIND_LABELS: Record<string, string> = {
  * same thread must see the same messages in the same order — the alternative is
  * two accounts of one conversation.
  */
-export function QuoteThread({ messages }: { messages: ThreadMessage[] }) {
+export function QuoteThread({
+  messages,
+  staffLabel = "Our team",
+}: {
+  messages: ThreadMessage[];
+  /**
+   * What to call us when a staff message has no author on it — because the
+   * account was archived, or the message was written by an automation. "Someone"
+   * is right for a customer-side gap and wrong here: the customer knows which
+   * side it came from and should see that.
+   */
+  staffLabel?: string;
+}) {
   if (messages.length === 0) {
     return <p className="text-meta text-ink-500">No questions have been raised on this quotation.</p>;
   }
@@ -47,7 +59,8 @@ export function QuoteThread({ messages }: { messages: ThreadMessage[] }) {
               {KIND_LABELS[message.kind] ?? message.kind}
             </span>
             <span className="text-label text-ink-500">
-              {message.user?.name ?? "Someone"} · {formatDateTime(message.createdAt)}
+              {message.user?.name ?? (message.fromStaff ? staffLabel : "Someone")} ·{" "}
+              {formatDateTime(message.createdAt)}
             </span>
           </div>
           <p className="mt-2 whitespace-pre-line text-meta leading-relaxed text-ink-700">

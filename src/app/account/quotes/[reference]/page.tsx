@@ -10,6 +10,7 @@ import { askAboutQuote, decideQuote, requestQuoteRevision } from "@/app/account/
 import { requireUser } from "@/lib/auth/guards";
 import { orgScope } from "@/lib/auth/scope";
 import { quoteVersions } from "@/lib/quote-revision";
+import { getSiteConfig } from "@/lib/site-config";
 import { QuoteThread } from "@/components/quotes/quote-thread";
 import { QuoteVersions } from "@/components/quotes/quote-versions";
 import { prisma } from "@/lib/db";
@@ -83,7 +84,10 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
 
   const expired = isQuoteExpired(quote.validUntil);
   const decidable = quote.status === "SENT" && !expired;
-  const versions = await quoteVersions(quote.rootId ?? quote.id);
+  const [versions, config] = await Promise.all([
+    quoteVersions(quote.rootId ?? quote.id),
+    getSiteConfig(),
+  ]);
 
   return (
     <div className="space-y-8">
@@ -180,7 +184,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
 
       <section className="max-w-2xl">
         <h3 className="mb-4 text-[15px] font-semibold text-graphite-900">Questions on this quotation</h3>
-        <QuoteThread messages={quote.messages} />
+        <QuoteThread messages={quote.messages} staffLabel={config.tradingName} />
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
           <div className="rounded-[--radius-lg] border border-line bg-white p-5">
