@@ -30,11 +30,28 @@ const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), d
   const hidden = await page.locator('[data-revealed="false"]').count();
   check("below-the-fold sections start hidden when motion is allowed", hidden > 0, `${hidden} pending`);
 
-  // Scrolling reveals them, and they stay revealed.
+  /*
+   * Scrolling reveals them, and they stay revealed.
+   *
+   * Waited for rather than slept through. A fixed 1400ms was long enough
+   * almost always, which is the worst kind of long enough: the suite failed
+   * about one run in three on a loaded machine, reporting a single section
+   * still hidden, and passed on the retry. A flaky gate is a gate people stop
+   * reading. The assertion is not weakened — a section that genuinely never
+   * reveals still fails, five seconds later.
+   */
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await page.waitForTimeout(1400);
+  await page
+    .waitForFunction(() => document.querySelectorAll('[data-revealed="false"]').length === 0, undefined, {
+      timeout: 5000,
+    })
+    .catch(() => {});
   const stillHidden = await page.locator('[data-revealed="false"]').count();
   check("every revealed section becomes visible after scrolling", stillHidden === 0, `${stillHidden} still hidden`);
+
+  // The attribute flips first and the opacity transition runs after it, so the
+  // next check needs the transition's own duration rather than the observer's.
+  await page.waitForTimeout(800);
 
   // No content is left with zero opacity.
   const invisible = await page.evaluate(() =>
