@@ -164,21 +164,21 @@ export async function buildQuotationPdf(
     prisma.certification.findMany({
       where: { OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
       orderBy: { displayOrder: "asc" },
-      select: { standard: true, title: true },
+      select: { standard: true, title: true, reference: true },
     }),
     /*
-     * Every brand the catalogue actually carries, and the partner designations
-     * among them.
+     * Every brand this business deals in, and the partner designations among
+     * them.
      *
-     * Filtered to brands with at least one live product: a quotation that
-     * advertised a brand this business no longer stocks would be a claim about
-     * the catalogue that the catalogue does not support.
+     * Not filtered by product count, deliberately. On a quotation this is a
+     * statement of what can be sourced, not a listing of what is on the shelf —
+     * a customer asking for Fortinet wants to know we can supply it, and the
+     * absence of a public catalogue page for it says nothing about that. The
+     * caption under the strip is what keeps the claim accurate: these are
+     * brands we supply, and the accreditations above are stated separately.
      */
     prisma.brand.findMany({
-      where: {
-        deletedAt: null,
-        products: { some: { status: "ACTIVE", deletedAt: null } },
-      },
+      where: { deletedAt: null },
       orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
       select: {
         name: true,
@@ -322,9 +322,7 @@ export async function buildQuotationPdf(
     shipping,
     lines: quote.items,
     config,
-    certifications: certifications.map(
-      (certification) => `${certification.standard} - ${certification.title}`,
-    ),
+    certifications,
     logo: letterheadImage(),
     accreditations,
     brandLogos,

@@ -99,8 +99,15 @@ export type QuotationPdfInput = {
   shipping: QuotationParty | null;
   lines: QuotationLine[];
   config: SiteConfig;
-  /** Exactly as printed, e.g. "ISO 9001:2015 - Quality Management System". */
-  certifications: string[];
+  /**
+   * The certifications this business holds, with their numbers.
+   *
+   * The number is the substantive part. "ISO 27001 certified" is a claim
+   * anybody can type; a certificate number is one a buyer can put to the body
+   * that issued it, and a procurement office reading a quotation is exactly the
+   * reader who will.
+   */
+  certifications: Array<{ standard: string; title: string; reference: string }>;
   /**
    * The company's own logo, decoded. Null falls back to the drawn mark.
    *
@@ -371,12 +378,19 @@ function drawLetterheadBlock(pdf: PdfDocument, input: QuotationPdfInput): number
    * is the sort of line this whole application exists not to print.
    */
   if (input.certifications.length > 0) {
-    issuerY += 5;
-    for (const certification of input.certifications.slice(0, 4)) {
-      for (const wrapped of wrap(`- ${certification}`, issuerWidth, 6.4)) {
-        pdf.text(wrapped, ISSUER_X, issuerY, { size: 6.4, colour: FAINT });
-        issuerY += 7.6;
-      }
+    issuerY += 7;
+
+    /*
+     * The standards on one accented line rather than three faint grey ones.
+     *
+     * At the top of a document these are a trust signal and should read as
+     * one; the certificate numbers that make them checkable are set out
+     * properly further down, where there is room for them.
+     */
+    const standards = input.certifications.map((entry) => entry.standard).join("   ·   ");
+    for (const line of wrap(standards, issuerWidth, 6.8, "sansBold")) {
+      pdf.text(line, ISSUER_X, issuerY, { size: 6.8, font: "sansBold", colour: ACCENT });
+      issuerY += 8.4;
     }
   }
 
@@ -1044,6 +1058,55 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
    * and a reader who sees them as one band has been told something nobody
    * said. The caption under the brands says so in words as well.
    */
+  /*
+   * The certifications, set out so they can be checked.
+   *
+   * Each one gets the standard, what it covers and its certificate number,
+   * because the number is the only part a buyer can independently verify. A
+   * bordered chip rather than a bullet list: on a document that a compliance
+   * officer skims, these need to be findable in one glance.
+   */
+  if (input.certifications.length > 0) {
+    room(72);
+    heading("Certifications");
+
+    const gap = 8;
+    const width = (CONTENT - gap * 2) / 3;
+    const height = 34;
+    let column = 0;
+
+    for (const certification of input.certifications.slice(0, 6)) {
+      if (column === 3) {
+        column = 0;
+        y += height + gap;
+        room(height + 20);
+      }
+
+      const x = MARGIN + column * (width + gap);
+      pdf.rect(x, y, width, height, PANEL);
+      pdf.strokeRect(x, y, width, height, RULE, 0.7);
+
+      pdf.text(fit(certification.standard, width - 16, 8, "sansBold"), x + 8, y + 13, {
+        size: 8,
+        font: "sansBold",
+        colour: INK,
+      });
+      pdf.text(fit(certification.title, width - 16, 6.4), x + 8, y + 22, {
+        size: 6.4,
+        colour: MUTED,
+      });
+      pdf.text(fit(certification.reference, width - 16, 6.6, "mono"), x + 8, y + 30, {
+        size: 6.6,
+        font: "mono",
+        colour: BLACK,
+      });
+
+      column += 1;
+    }
+
+    y += height + 18;
+  }
+
   if (input.accreditations.length > 0) {
     room(64);
     heading("Partner and reseller accreditations");
@@ -1081,23 +1144,35 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
     room(60);
     heading("Brands we supply");
 
+    /*
+     * A common height, not a common box.
+     *
+     * Publishers' marks are not one shape: a monogram is square and a wordmark
+     * can be six times wider than it is tall. Fitting both into a square makes
+     * the wordmark five points tall and unreadable, so every mark is set to the
+     * same height and takes whatever width that gives it. The cap is generous
+     * enough that almost nothing reaches it, which is the point — a logo wall
+     * where two marks are optically different sizes looks like a mistake.
+     */
     let x = MARGIN;
-    const logoHeight = 20;
+    const logoHeight = 16;
+    const maxLogoWidth = 96;
+    const logoGap = 14;
 
     for (const brand of input.brandLogos) {
-      const width = Math.min(72, (brand.image.width / brand.image.height) * logoHeight);
+      const width = Math.min(maxLogoWidth, (brand.image.width / brand.image.height) * logoHeight);
 
       if (x + width > RIGHT) {
         x = MARGIN;
-        y += logoHeight + 8;
-        room(logoHeight + 20);
+        y += logoHeight + 10;
+        room(logoHeight + 22);
       }
 
       pdf.image(brand.image, x, y, width, logoHeight);
-      x += width + 16;
+      x += width + logoGap;
     }
 
-    if (input.brandLogos.length > 0) y += logoHeight + 10;
+    if (input.brandLogos.length > 0) y += logoHeight + 12;
 
     if (input.otherBrands.length > 0) {
       for (const line of wrap(input.otherBrands.join(" · "), CONTENT, 7)) {

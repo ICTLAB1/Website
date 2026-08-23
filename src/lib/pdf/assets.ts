@@ -40,11 +40,27 @@ export function loadPublicImage(publicPath: string | null | undefined): Embedded
   const existing = cache.get(publicPath);
   if (existing !== undefined) return existing;
 
+  /*
+   * An SVG is served to the browser and rasterised for print.
+   *
+   * Most brand artwork on this site is SVG, which is right for a web page and
+   * impossible in a PDF. `scripts/rasterise-brand-logos.mjs` writes a PNG of
+   * each one into `brands/print/`, so a quotation shows the publisher's own
+   * mark rather than its name in text. Falling back rather than requiring it
+   * means a newly added SVG degrades to a name until somebody runs the script.
+   */
+  const candidates = publicPath.toLowerCase().endsWith(".svg")
+    ? [publicPath.replace(/^\/brands\//, "/brands/print/").replace(/\.svg$/i, ".png"), publicPath]
+    : [publicPath];
+
   let image: EmbeddedImage | null = null;
-  try {
-    image = readImage(readFileSync(join(process.cwd(), "public", publicPath.slice(1))));
-  } catch {
-    image = null;
+  for (const candidate of candidates) {
+    try {
+      image = readImage(readFileSync(join(process.cwd(), "public", candidate.slice(1))));
+      if (image) break;
+    } catch {
+      image = null;
+    }
   }
 
   cache.set(publicPath, image);
