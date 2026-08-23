@@ -169,27 +169,56 @@ export function fit(
 }
 
 /**
- * Splits a single word too long for the width into pieces that fit.
+ * Splits a single word too long for the width into pieces that fit, preferring
+ * the boundaries a reader would choose.
  *
- * Not an ellipsis. The strings this happens to are part numbers, SKUs and
- * order references — things somebody pastes into a supplier portal — and a
- * truncated one looks exactly like a real one while being useless. Two lines
- * are always better than a plausible wrong value.
+ * Never an ellipsis. The strings this happens to are part numbers, SKUs, email
+ * addresses and order references — things somebody pastes into a supplier
+ * portal — and a truncated one looks exactly like a real one while being
+ * useless. Two lines are always better than a plausible wrong value.
+ *
+ * Character-by-character is the fallback, not the first move. An email address
+ * split blindly comes out as `itpurchase@example.e` / `du.in`, which stops
+ * looking like an address at all; broken after its `@` and its dots it stays
+ * legible, and so do URLs and long part numbers. The separator stays on the
+ * line it ends, the way a hyphenated break does.
  */
 function breakWord(word: string, width: number, size: number, font: FontName): string[] {
-  const pieces: string[] = [];
-  let piece = "";
-
-  for (const character of word) {
-    if (piece.length > 0 && textWidth(piece + character, size, font) > width) {
-      pieces.push(piece);
-      piece = character;
-    } else {
-      piece += character;
+  const chars = (value: string): string[] => {
+    const pieces: string[] = [];
+    let piece = "";
+    for (const character of value) {
+      if (piece.length > 0 && textWidth(piece + character, size, font) > width) {
+        pieces.push(piece);
+        piece = character;
+      } else {
+        piece += character;
+      }
     }
-  }
+    if (piece.length > 0) pieces.push(piece);
+    return pieces;
+  };
 
-  if (piece.length > 0) pieces.push(piece);
+  // Segments end *after* a separator, so `a@b.c` becomes `a@`, `b.`, `c`.
+  const segments = word.match(/[^@./_-]*[@./_-]+|[^@./_-]+/g) ?? [word];
+
+  const pieces: string[] = [];
+  let line = "";
+  for (const segment of segments) {
+    if (line.length > 0 && textWidth(line + segment, size, font) > width) {
+      pieces.push(line);
+      line = "";
+    }
+    if (textWidth(segment, size, font) > width) {
+      const split = chars(line + segment);
+      pieces.push(...split.slice(0, -1));
+      line = split[split.length - 1] ?? "";
+      continue;
+    }
+    line += segment;
+  }
+  if (line.length > 0) pieces.push(line);
+
   return pieces.length > 0 ? pieces : [word];
 }
 

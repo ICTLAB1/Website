@@ -128,6 +128,21 @@ for (const count of [1, 5, 10, 20, 55]) {
   check(`${count}: and on the same page as the figures it sums`,
     summaryPages[0]?.includes("Taxable Value") && summaryPages[0]?.includes("Amount in Words"));
 
+  /*
+   * The issuing company block closes the document, once, at the foot of the
+   * last page.
+   *
+   * It used to be drawn wherever the content happened to end, which on a short
+   * final page left it floating halfway up and the document looking cut off.
+   * The position is asserted rather than eyeballed: within the bottom third of
+   * the last page, and on no other.
+   */
+  const closingPages = pages.filter((page) => page.includes("CIN") || page.includes("PAN"));
+  check(`${count}: the issuing company block appears once`, closingPages.length === 1,
+    `${closingPages.length} pages`);
+  check(`${count}: and closes the last page`,
+    pages[pages.length - 1] === closingPages[0]);
+
   // Every page is numbered, and the count is right.
   const numbered = pages.filter((page, index) => page.includes(`Page ${index + 1} of ${pages.length}`));
   check(`${count}: every page says which of how many it is`, numbered.length === pages.length,

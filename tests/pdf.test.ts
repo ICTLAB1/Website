@@ -179,6 +179,35 @@ describe("wrapping a string that has no spaces in it", () => {
     const lines = wrap("Order ABCDEFGHIJKLMNOPQRSTUVWXYZ now", 40, 8);
     expect(lines.join(" ").replace(/\s+/g, "")).toBe("OrderABCDEFGHIJKLMNOPQRSTUVWXYZnow");
   });
+
+  it("breaks an email address at its @ rather than mid-domain", () => {
+    /*
+     * `itpurchase@example.e` / `du.in` is what a blind character break makes of
+     * a customer's address in the narrow Bill To panel, and it stops reading as
+     * an address at all. Broken after the @ it still does.
+     */
+    const lines = wrap("itpurchase@example.edu.in", 60, 7.4, "sansBold");
+
+    expect(lines.join("")).toBe("itpurchase@example.edu.in");
+    expect(lines[0]).toBe("itpurchase@");
+    for (const line of lines) expect(textWidth(line, 7.4, "sansBold")).toBeLessThanOrEqual(60);
+  });
+
+  it("breaks a URL after a slash or a dot, and loses nothing", () => {
+    const lines = wrap("https://www.techzoidtechnologies.com/quotations", 70, 7);
+
+    expect(lines.join("")).toBe("https://www.techzoidtechnologies.com/quotations");
+    for (const line of lines) expect(textWidth(line, 7)).toBeLessThanOrEqual(70);
+    // Every line but the last ends on a boundary a reader recognises.
+    for (const line of lines.slice(0, -1)) expect(line).toMatch(/[@./_-]$/);
+  });
+
+  it("still breaks a segment that is itself too long for the width", () => {
+    const lines = wrap("ABCDEFGHIJKLMNOPQRSTUVWXYZ.zip", 30, 8);
+
+    expect(lines.join("")).toBe("ABCDEFGHIJKLMNOPQRSTUVWXYZ.zip");
+    for (const line of lines) expect(textWidth(line, 8)).toBeLessThanOrEqual(30);
+  });
 });
 
 describe("the faces", () => {

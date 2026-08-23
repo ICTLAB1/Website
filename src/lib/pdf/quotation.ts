@@ -490,11 +490,27 @@ function partyRows(party: QuotationParty): Array<[string, string]> {
   ).filter((row): row is [string, string] => Boolean(clean(row[1])));
 }
 
+/**
+ * How wide the label column has to be, measured rather than assumed.
+ *
+ * It was 45 points, and "Place of Supply" sets 50 at this size — so the label
+ * ran under its own colon and straight into the value beside it. The column is
+ * now as wide as the widest label it actually has to carry, and no wider.
+ */
+const PARTY_LABEL_SIZE = 7.2;
+function partyLabelWidth(party: QuotationParty): number {
+  return Math.max(
+    22,
+    ...partyRows(party).map(([label]) => textWidth(label, PARTY_LABEL_SIZE) + 4),
+  );
+}
+
 function partyPanelHeight(party: QuotationParty, width: number): number {
   const inner = width - 18;
+  const valueLeft = partyLabelWidth(party) + 10;
   const addressLines = party.addressLines.flatMap((line) => wrap(line, inner, 7.4));
   const rowLines = partyRows(party).reduce(
-    (sum, [, value]) => sum + wrap(value, inner - 54, 7.4, "sansBold").length,
+    (sum, [, value]) => sum + wrap(value, inner - valueLeft, 7.4, "sansBold").length,
     0,
   );
   return 18 + 14 + addressLines.length * 9 + 6 + rowLines * 10 + 10;
@@ -535,16 +551,17 @@ function drawPartyPanel(
   }
 
   y += 5;
+  const labelWidth = partyLabelWidth(party);
   for (const [label, value] of partyRows(party)) {
-    pdf.text(label, x + 9, y, { size: 7.2, colour: SOFT });
-    pdf.text(":", x + 54, y, { size: 7.2, colour: SOFT });
+    pdf.text(label, x + 9, y, { size: PARTY_LABEL_SIZE, colour: SOFT });
+    pdf.text(":", x + 9 + labelWidth, y, { size: PARTY_LABEL_SIZE, colour: SOFT });
     /*
      * Wrapped, not abbreviated. An email address with an ellipsis in it is not
      * an address anybody can write to, and a GSTIN missing its last characters
      * is worse than one that is absent.
      */
-    for (const line of wrap(value, inner - 54, 7.4, "sansBold")) {
-      pdf.text(line, x + 60, y, { size: 7.4, font: "sansBold", colour: TEXT_INK });
+    for (const line of wrap(value, inner - labelWidth - 10, 7.4, "sansBold")) {
+      pdf.text(line, x + 19 + labelWidth, y, { size: 7.4, font: "sansBold", colour: TEXT_INK });
       y += 10;
     }
   }
@@ -1244,17 +1261,48 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
   pdf.line(RIGHT - 190, y + 46, RIGHT - 40, y + 46, LINE_RULE, 0.7);
   pdf.text("Authorised signatory", RIGHT - 190, y + 56, { size: 7, colour: SOFT });
 
-  pdf.text(
-    "This is a quotation, not an invoice. No tax is payable on it and no goods or services are supplied against it.",
-    MARGIN,
-    y + 56,
-    { size: 6.8, colour: FAINT },
+  /*
+   * Wrapped into the column left of the signature, not run across the width.
+   *
+   * Set on one line it reached 340 points from a margin 331 short of the
+   * signature block, so the sentence and "Authorised signatory" ended up on
+   * the same baseline, touching — one run-on line where there should be two
+   * separate statements.
+   */
+  const disclaimer =
+    "This is a quotation, not an invoice. No tax is payable on it and no goods or services are supplied against it.";
+  const disclaimerWidth = RIGHT - 190 - MARGIN - 16;
+  /*
+   * Set at whatever size keeps it on one line, down to a floor of six points,
+   * and wrapped below that. It overruns 6.8 by six points, and a sentence that
+   * wraps to leave "it." alone on the second line is a worse answer than a
+   * sentence set a fraction smaller.
+   */
+  const disclaimerSize = Math.min(
+    6.8,
+    Math.max(6, disclaimerWidth / textWidth(disclaimer, 1)),
   );
+  let disclaimerY = y + 46;
+  for (const line of wrap(disclaimer, disclaimerWidth, disclaimerSize)) {
+    pdf.text(line, MARGIN, disclaimerY, { size: disclaimerSize, colour: FAINT });
+    disclaimerY += disclaimerSize + 2.2;
+  }
 
-  y += 76;
+  y = Math.max(y + 76, disclaimerY + 8);
 
-  // ── who issued it, and how to reach them ────────────────────────────────
-  room(58);
+  /*
+   * ── who issued it, and how to reach them ──────────────────────────────
+   *
+   * Pushed to the foot of the page when the page has room for it. The block
+   * closes the document, and a closing block floating halfway up an otherwise
+   * empty last page reads as though the document was cut short.
+   */
+  const footerHeight = 58;
+  if (y + footerHeight > PAGE_BOTTOM) {
+    pdf.addPage();
+    y = 48;
+  }
+  y = Math.max(y, PAGE_BOTTOM - footerHeight);
   y = drawCompanyFooter(pdf, input, y);
 
   return y;
