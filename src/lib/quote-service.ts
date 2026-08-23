@@ -79,6 +79,29 @@ export async function createQuoteFromEnquiry(
   });
   const variantById = new Map(variants.map((variant) => [variant.id, variant]));
 
+  /*
+   * What the printed quotation needs beside the price.
+   *
+   * Copied onto the line here and owned by it from then on. A product renamed
+   * or reclassified next March must not change what a quotation said last
+   * October: the customer has a copy of that document and the two must agree.
+   */
+  const productIds = enquiry.items
+    .map((item) => item.productId)
+    .filter((id): id is string => id !== null);
+
+  const products = await prisma.product.findMany({
+    where: { id: { in: productIds } },
+    select: {
+      id: true,
+      shortDescription: true,
+      hsnCode: true,
+      unitLabel: true,
+      brand: { select: { name: true } },
+    },
+  });
+  const productById = new Map(products.map((product) => [product.id, product]));
+
   const priced = enquiry.items.map((item) => {
     const variant = item.variantId ? variantById.get(item.variantId) : undefined;
     const unitPriceMinor =
@@ -136,17 +159,26 @@ export async function createQuoteFromEnquiry(
       totalMinor: totals.totalMinor,
       validUntil: defaultValidUntil(),
       items: {
-        create: priced.map(({ item, line }) => ({
-          productId: item.productId,
-          variantId: item.variantId,
-          productName: item.productName,
-          sku: item.sku,
-          quantity: line.quantity,
-          unitPriceMinor: line.unitPriceMinor,
-          discountMinor: line.discountMinor,
-          gstRatePercent: line.gstRatePercent,
-          lineTotalMinor: line.lineTotalMinor,
-        })),
+        create: priced.map(({ item, line }) => {
+          const product = item.productId ? productById.get(item.productId) : undefined;
+          return {
+            productId: item.productId,
+            variantId: item.variantId,
+            productName: item.productName,
+            sku: item.sku,
+            // Null where the catalogue does not hold it. The document prints a
+            // dash; it never fills an HSN code in for itself.
+            description: product?.shortDescription ?? null,
+            brandName: product?.brand.name ?? null,
+            hsnCode: product?.hsnCode ?? null,
+            unitLabel: product?.unitLabel ?? null,
+            quantity: line.quantity,
+            unitPriceMinor: line.unitPriceMinor,
+            discountMinor: line.discountMinor,
+            gstRatePercent: line.gstRatePercent,
+            lineTotalMinor: line.lineTotalMinor,
+          };
+        }),
       },
     },
   });

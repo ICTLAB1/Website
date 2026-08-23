@@ -71,6 +71,22 @@ export async function draftQuote(
 
 const lineSchema = z.object({
   itemId: z.string().trim().min(1),
+  /*
+   * The columns the printed document carries beside the price.
+   *
+   * Editable here because the catalogue does not always have them and a
+   * salesperson often does: a service line has no product row to inherit an SAC
+   * code from, and a re-badged part number differs from the catalogue's.
+   */
+  description: z.string().trim().max(300).optional(),
+  brandName: z.string().trim().max(80).optional(),
+  hsnCode: z
+    .string()
+    .trim()
+    .max(12)
+    .regex(/^[0-9]*$/, "An HSN or SAC code is digits only.")
+    .optional(),
+  unitLabel: z.string().trim().max(24).optional(),
   quantity: z.coerce.number().int().min(1).max(100_000),
   unitPrice: z
     .string()
@@ -90,6 +106,10 @@ export async function updateQuoteLine(
 
   const parsed = lineSchema.safeParse({
     itemId: formData.get("itemId"),
+    description: formData.get("description"),
+    brandName: formData.get("brandName"),
+    hsnCode: formData.get("hsnCode"),
+    unitLabel: formData.get("unitLabel"),
     quantity: formData.get("quantity"),
     unitPrice: formData.get("unitPrice"),
     discountPercent: formData.get("discountPercent") || 0,
@@ -133,6 +153,12 @@ export async function updateQuoteLine(
         unitPriceMinor: line.unitPriceMinor,
         discountMinor: line.discountMinor,
         lineTotalMinor: line.lineTotalMinor,
+        // Cleared rather than left standing when emptied: a blank field means
+        // "we do not have this", and the document prints nothing for it.
+        description: parsed.data.description || null,
+        brandName: parsed.data.brandName || null,
+        hsnCode: parsed.data.hsnCode || null,
+        unitLabel: parsed.data.unitLabel || null,
       },
     });
     await recalculateQuote(item.quote.id, tx);
@@ -191,6 +217,16 @@ const validitySchema = z.object({
   reference: referenceSchema("QTE"),
   validUntil: z.string().trim().regex(/^\d{4}-\d{2}-\d{2}$/, "Use the date picker."),
   notes: z.string().max(4000).optional(),
+  /*
+   * What the customer is agreeing to on payment, printed on the document.
+   *
+   * Free text, and deliberately not defaulted: terms are negotiated per deal,
+   * and a default printed on a quotation is a commitment nobody made. Blank
+   * prints no line at all.
+   */
+  paymentTerms: z.string().trim().max(160).optional(),
+  /** The member of staff answerable for it. Empty means nobody is named. */
+  ownerId: z.string().trim().max(60).optional(),
 });
 
 export async function updateQuoteTerms(
@@ -204,6 +240,8 @@ export async function updateQuoteTerms(
     reference: formData.get("reference"),
     validUntil: formData.get("validUntil"),
     notes: formData.get("notes"),
+    paymentTerms: formData.get("paymentTerms"),
+    ownerId: formData.get("ownerId"),
   });
   if (!parsed.success) {
     return {
@@ -218,9 +256,34 @@ export async function updateQuoteTerms(
     return { status: "error", message: "That validity date could not be read." };
   }
 
+  /*
+   * The named owner has to be somebody who works here.
+   *
+   * A customer ringing the name on a quotation expects to reach the person it
+   * names, so an id that does not resolve to a member of staff clears the field
+   * rather than being stored — a name on a document is a promise about who will
+   * answer.
+   */
+  let ownerId: string | null = null;
+  if (parsed.data.ownerId) {
+    const owner = await prisma.user.findFirst({
+      where: { id: parsed.data.ownerId, role: { not: "CUSTOMER" } },
+      select: { id: true },
+    });
+    if (!owner) {
+      return { status: "error", message: "That sales executive could not be found." };
+    }
+    ownerId = owner.id;
+  }
+
   await prisma.quote.update({
     where: { reference: parsed.data.reference },
-    data: { validUntil, notes: parsed.data.notes?.trim() || null },
+    data: {
+      validUntil,
+      notes: parsed.data.notes?.trim() || null,
+      paymentTerms: parsed.data.paymentTerms?.trim() || null,
+      ownerId,
+    },
   });
 
   revalidatePath(`/admin/quotes/${parsed.data.reference}`);

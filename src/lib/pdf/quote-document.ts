@@ -3,7 +3,8 @@ import "server-only";
 import { prisma } from "@/lib/db";
 import { orgScope, type Scoped } from "@/lib/auth/scope";
 import { getSiteConfig } from "@/lib/site-config";
-import { renderQuotationPdf } from "@/lib/pdf/quotation";
+import { getBankingDetails } from "@/lib/banking-config";
+import { renderQuotationPdf, type QuotationParty } from "@/lib/pdf/quotation";
 
 /**
  * The quotation PDF, built from the row.
@@ -18,6 +19,46 @@ import { renderQuotationPdf } from "@/lib/pdf/quotation";
  * the customer: an unsent draft is internal working material, and a PDF of one
  * is the same thing in a more forwardable form.
  */
+
+type AddressRow = {
+  attention: string | null;
+  line1: string;
+  line2: string | null;
+  city: string;
+  state: string;
+  postcode: string;
+  country: string;
+  gstin: string | null;
+};
+
+/** An address in postal order, skipping the parts that are not held. */
+function addressLines(address: AddressRow | null, fallback: string[] = []): string[] {
+  if (!address) return fallback;
+
+  return [
+    address.attention,
+    address.line1,
+    address.line2,
+    [[address.city, address.state].filter(Boolean).join(", "), address.postcode]
+      .filter(Boolean)
+      .join(" "),
+    address.country,
+  ].filter((line): line is string => Boolean(line && line.trim()));
+}
+
+/**
+ * Whether two addresses are actually different.
+ *
+ * Compared on the text that gets printed rather than on the row ids, because a
+ * customer who has saved the same address twice under two labels has one
+ * address, and a shipping panel repeating the billing one is noise that hides
+ * the case it exists to show.
+ */
+function differs(a: string[], b: string[]): boolean {
+  const flatten = (lines: string[]) => lines.join("|").toLowerCase().replace(/\s+/g, " ").trim();
+  return flatten(a) !== flatten(b);
+}
+
 export async function buildQuotationPdf(
   reference: string,
   actor: { user: Scoped; staff: boolean },
@@ -39,26 +80,63 @@ export async function buildQuotationPdf(
       sentAt: true,
       createdAt: true,
       notes: true,
+      paymentTerms: true,
+      owner: { select: { name: true } },
       company: {
         select: {
           name: true,
           gstin: true,
+          pan: true,
+          phone: true,
           addressLine1: true,
           addressLine2: true,
           city: true,
           state: true,
           postcode: true,
           country: true,
+          accountManager: { select: { name: true } },
+          addresses: {
+            where: { deletedAt: null },
+            orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }],
+            select: {
+              kind: true,
+              isDefault: true,
+              attention: true,
+              line1: true,
+              line2: true,
+              city: true,
+              state: true,
+              postcode: true,
+              country: true,
+              gstin: true,
+            },
+          },
+          contacts: {
+            orderBy: { createdAt: "asc" },
+            select: { kind: true, name: true, email: true, phone: true },
+          },
         },
       },
-      enquiry: { select: { contactName: true, contactEmail: true, companyName: true } },
-      user: { select: { name: true, email: true } },
+      enquiry: {
+        select: {
+          reference: true,
+          contactName: true,
+          contactEmail: true,
+          contactPhone: true,
+          companyName: true,
+        },
+      },
+      user: { select: { name: true, email: true, phone: true } },
       items: {
         orderBy: { productName: "asc" },
         select: {
           productName: true,
+          description: true,
+          brandName: true,
           sku: true,
+          hsnCode: true,
           quantity: true,
+          unitLabel: true,
           unitPriceMinor: true,
           discountMinor: true,
           gstRatePercent: true,
@@ -70,22 +148,92 @@ export async function buildQuotationPdf(
 
   if (!quote) return null;
 
-  const config = await getSiteConfig();
+  const [config, certifications] = await Promise.all([
+    getSiteConfig(),
+    /*
+     * Only certificates that are current.
+     *
+     * An expired certificate on a live quotation is a claim the business can no
+     * longer support, and it goes to exactly the sort of reader — a customer's
+     * compliance officer — who will check it.
+     */
+    prisma.certification.findMany({
+      where: { OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
+      orderBy: { displayOrder: "asc" },
+      select: { standard: true, title: true },
+    }),
+  ]);
 
-  const address = quote.company
+  const company = quote.company;
+
+  const companyAddress = company
     ? [
-        quote.company.addressLine1,
-        quote.company.addressLine2,
-        [quote.company.city, quote.company.state].filter(Boolean).join(", "),
-        quote.company.postcode,
-        quote.company.country,
-      ]
-        .filter((part): part is string => Boolean(part && part.trim()))
-        .join("\n")
-    : null;
+        company.addressLine1,
+        company.addressLine2,
+        [[company.city, company.state].filter(Boolean).join(", "), company.postcode]
+          .filter(Boolean)
+          .join(" "),
+        company.country,
+      ].filter((line): line is string => Boolean(line && line.trim()))
+    : [];
+
+  const stored = company?.addresses ?? [];
+  const billingRow =
+    stored.find((row) => row.kind === "BILLING" && row.isDefault) ??
+    stored.find((row) => row.kind === "BILLING") ??
+    stored.find((row) => row.kind === "BOTH") ??
+    null;
+  const deliveryRow =
+    stored.find((row) => row.kind === "DELIVERY" && row.isDefault) ??
+    stored.find((row) => row.kind === "DELIVERY") ??
+    null;
+
+  const procurement = company?.contacts.find((contact) => contact.kind === "PROCUREMENT") ?? null;
+  const finance = company?.contacts.find((contact) => contact.kind === "FINANCE") ?? null;
+
+  const name = company?.name ?? quote.enquiry?.companyName ?? quote.user?.name ?? "Customer";
+  const contactName = quote.user?.name ?? quote.enquiry?.contactName ?? procurement?.name ?? null;
+  const contactEmail = quote.user?.email ?? quote.enquiry?.contactEmail ?? procurement?.email ?? null;
+  const contactPhone =
+    quote.user?.phone ?? quote.enquiry?.contactPhone ?? procurement?.phone ?? company?.phone ?? null;
+
+  const quotedTo: QuotationParty = {
+    name,
+    addressLines: companyAddress,
+    gstin: company?.gstin ?? null,
+    pan: company?.pan ?? null,
+    contactName,
+    phone: contactPhone,
+    email: contactEmail,
+    state: company?.state ?? null,
+  };
+
+  const billingLines = addressLines(billingRow, companyAddress);
+  const billing: QuotationParty = {
+    ...quotedTo,
+    addressLines: billingLines,
+    // A place of business with its own registration is billed under that one.
+    gstin: billingRow?.gstin ?? company?.gstin ?? null,
+    state: billingRow?.state ?? company?.state ?? null,
+    contactName: finance?.name ?? contactName,
+    email: finance?.email ?? contactEmail,
+    phone: finance?.phone ?? contactPhone,
+  };
+
+  const deliveryLines = addressLines(deliveryRow, []);
+  const shipping: QuotationParty | null =
+    deliveryLines.length > 0 && differs(deliveryLines, billingLines)
+      ? {
+          ...quotedTo,
+          addressLines: deliveryLines,
+          gstin: deliveryRow?.gstin ?? company?.gstin ?? null,
+          state: deliveryRow?.state ?? company?.state ?? null,
+        }
+      : null;
 
   const bytes = renderQuotationPdf({
     reference: quote.reference,
+    referenceNo: quote.enquiry?.reference ?? null,
     version: quote.version,
     status: quote.status,
     currency: quote.currency,
@@ -96,17 +244,23 @@ export async function buildQuotationPdf(
     validUntil: quote.validUntil,
     issuedAt: quote.sentAt ?? quote.createdAt,
     notes: quote.notes,
-    customer: {
-      // Whoever the quotation is actually addressed to, in the order it is
-      // known: the account that holds it, then the enquiry it came from.
-      name: quote.user?.name ?? quote.enquiry?.contactName ?? "Customer",
-      companyName: quote.company?.name ?? quote.enquiry?.companyName ?? null,
-      email: quote.user?.email ?? quote.enquiry?.contactEmail ?? "",
-      gstin: quote.company?.gstin ?? null,
-      address,
-    },
+    paymentTerms: quote.paymentTerms,
+    /*
+     * Whoever owns the quotation, then whoever owns the relationship. Both are
+     * people who have actually been assigned; nobody is named by default,
+     * because a customer ringing the name on a quotation expects that person to
+     * know about it.
+     */
+    salesExecutive: quote.owner?.name ?? company?.accountManager?.name ?? null,
+    quotedTo,
+    billing,
+    shipping,
     lines: quote.items,
     config,
+    certifications: certifications.map(
+      (certification) => `${certification.standard} - ${certification.title}`,
+    ),
+    banking: getBankingDetails(),
     terms: config.quoteTerms,
   });
 

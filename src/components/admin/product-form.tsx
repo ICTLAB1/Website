@@ -26,6 +26,8 @@ export type ProductFormValues = {
   licensingNotes: string | null;
   deliveryNotes: string | null;
   supportNotes: string | null;
+  hsnCode: string | null;
+  unitLabel: string | null;
 
   // Hardware. Null on software, which is most of the catalogue.
   formFactor?: string | null;
@@ -207,6 +209,28 @@ export function ProductForm({
 </Field>
               <Field name="supportNotes" label="Support notes">
 <Textarea name="supportNotes" rows={4} defaultValue={product?.supportNotes ?? ""} />
+</Field>
+            </div>
+
+            {/*
+              Copied onto every quotation line drafted from this product, which
+              is why they belong here rather than being retyped per deal. Both
+              print nothing when blank.
+            */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                name="hsnCode"
+                label="HSN / SAC code"
+                hint="Digits only. Printed on the quotation and in its tax summary; blank prints a dash."
+              >
+<Input name="hsnCode" inputMode="numeric" maxLength={12} defaultValue={product?.hsnCode ?? ""} />
+</Field>
+              <Field
+                name="unitLabel"
+                label="Unit of measure"
+                hint="What a quantity of this counts: Users, Nos, Nodes, Licences."
+              >
+<Input name="unitLabel" maxLength={24} defaultValue={product?.unitLabel ?? ""} />
 </Field>
             </div>
           </Fieldset>

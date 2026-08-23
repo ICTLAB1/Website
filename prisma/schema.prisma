@@ -368,6 +368,7 @@ model User {
   /// Companies this member of staff looks after. Every lead, quotation, order,
   /// renewal and ticket for those companies has a name against it.
   accountsManaged Company[] @relation("AccountManager")
+  quotesOwned     Quote[]   @relation("QuoteOwner")
 
   sessions      Session[]
   resetTokens   PasswordResetToken[]
@@ -659,6 +660,19 @@ model Product {
   deliveryNotes  String?
   supportNotes   String?
 
+  /// The HSN or SAC code this is taxed under, and what its quantity counts.
+  ///
+  /// Both belong on the catalogue rather than being typed onto every quotation:
+  /// a product's classification does not change per deal, and re-entering it
+  /// each time is how two quotations for the same licence end up under two
+  /// different HSN codes. Copied onto the quotation line at drafting time, and
+  /// from then on the line owns its copy.
+  ///
+  /// Null prints nothing. An HSN code this application guessed would be a tax
+  /// classification the business never made.
+  hsnCode   String?
+  unitLabel String?
+
   // ── hardware ──────────────────────────────────────────────────────────────
   // All null for software. A hardware model is a Product and its configurations
   // are ProductVariants, which is the same shape licensing already uses.
@@ -947,6 +961,17 @@ model Quote {
   notes      String?
   sentAt     DateTime?
 
+  /// What the customer is being asked to agree to on payment, in words, as it
+  /// is printed on the document. Free text rather than an enum because these
+  /// are negotiated per deal and a fixed list would be wrong by the second one.
+  paymentTerms String?
+
+  /// Who at TechZoid is answerable for this quotation, printed on it so the
+  /// customer knows whom to ring. Separate from whoever happened to click
+  /// "draft": that is in the audit log, and it is not the same question.
+  ownerId String?
+  owner   User?   @relation("QuoteOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
   /*
    * Versions.
    *
@@ -1019,6 +1044,24 @@ model QuoteItem {
   discountMinor  Int    @default(0)
   gstRatePercent Int    @default(18)
   lineTotalMinor Int
+
+  /*
+   * What the printed document needs beside the name, captured onto the line
+   * rather than read back through the product.
+   *
+   * Copied at drafting time and then owned by the quotation. A product renamed
+   * or reclassified next March must not silently change what a quotation said
+   * last October — the customer has a copy, and the two must not disagree.
+   */
+  /// A sentence of what it is: "Annual subscription, includes Exchange".
+  description String?
+  /// Whose product it is, as printed. Denormalised from the brand for the same
+  /// reason as everything else here.
+  brandName   String?
+  /// The HSN or SAC code the tax is charged under.
+  hsnCode     String?
+  /// What the quantity counts: users, nodes, devices, a project.
+  unitLabel   String?
 
   @@index([quoteId])
 }

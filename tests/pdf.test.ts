@@ -156,3 +156,86 @@ describe("the document itself", () => {
     expect(bytes.subarray(offset, offset + 4).toString("latin1")).toBe("xref");
   });
 });
+
+describe("wrapping a string that has no spaces in it", () => {
+  it("breaks it rather than truncating it", async () => {
+    /*
+     * The bug this pins down: `wrap` used to ellipsise a word too long for the
+     * column. The strings that happens to are part numbers — the thing a
+     * customer pastes into a supplier portal — and "CFQ7TTC0..." looks exactly
+     * like a real one while being useless. Two lines beat a plausible wrong
+     * value every time.
+     */
+    const { wrap } = await import("@/lib/pdf/writer");
+
+    const lines = wrap("CFQ7TTC0LH18", 40, 6.8, "mono");
+    expect(lines.join("")).toBe("CFQ7TTC0LH18");
+    expect(lines.join("")).not.toContain(".");
+    for (const line of lines) expect(textWidth(line, 6.8, "mono")).toBeLessThanOrEqual(40);
+  });
+
+  it("loses nothing from a long word inside a sentence either", async () => {
+    const { wrap } = await import("@/lib/pdf/writer");
+    const lines = wrap("Order ABCDEFGHIJKLMNOPQRSTUVWXYZ now", 40, 8);
+    expect(lines.join(" ").replace(/\s+/g, "")).toBe("OrderABCDEFGHIJKLMNOPQRSTUVWXYZnow");
+  });
+});
+
+describe("the faces", () => {
+  it("measures the monospaced one as monospaced", async () => {
+    const { textWidth: measure } = await import("@/lib/pdf/writer");
+    expect(measure("iii", 10, "mono")).toBe(measure("WWW", 10, "mono"));
+    expect(measure("iii", 10, "sans")).toBeLessThan(measure("WWW", 10, "sans"));
+  });
+
+  it("measures bold from its own table rather than a fudge factor", async () => {
+    const { textWidth: measure } = await import("@/lib/pdf/writer");
+    // 'f' is 278 regular and 333 bold; a blanket factor cannot produce both.
+    expect(measure("f", 1000, "sansBold")).toBe(333);
+    expect(measure("f", 1000, "sans")).toBe(278);
+  });
+
+  it("still accepts the boolean the older callers pass", async () => {
+    const { textWidth: measure } = await import("@/lib/pdf/writer");
+    expect(measure("Total", 10, true)).toBe(measure("Total", 10, "sansBold"));
+    expect(measure("Total", 10, false)).toBe(measure("Total", 10, "sans"));
+  });
+
+  it("embeds every face it offers", () => {
+    const pdf = new PdfDocument();
+    pdf.text("a", 10, 10, { font: "mono" });
+    const text = pdf.build().toString("latin1");
+
+    for (const face of ["Helvetica", "Helvetica-Bold", "Courier", "Courier-Bold", "Times-Italic"]) {
+      expect(text).toContain(`/BaseFont /${face}`);
+    }
+  });
+});
+
+describe("drawing the mark", () => {
+  it("emits curves rather than an image", async () => {
+    // No raster support, on purpose: a vector mark prints sharp at any size and
+    // adds a hundred bytes rather than a hundred kilobytes.
+    const { drawMark } = await import("@/lib/pdf/letterhead");
+
+    const pdf = new PdfDocument();
+    drawMark(pdf, 40, 40, 38);
+    const text = pdf.build().toString("latin1");
+
+    expect(text).toMatch(/\d c /); // cubic Bézier segments
+    expect(text).not.toContain("/Image");
+    expect(text).not.toContain("/DCTDecode");
+  });
+});
+
+describe("the quotation table", () => {
+  it("apportions its columns across the exact content width", async () => {
+    // The right-hand edge of the last column has to land on the margin, or the
+    // table's outer box and its cells disagree by a visible sliver.
+    const { TABLE_COLUMNS, TABLE_WIDTH } = await import("@/lib/pdf/quotation");
+    const { COLUMN_EDGES } = await import("@/lib/pdf/quotation");
+
+    expect(TABLE_COLUMNS.length).toBe(13);
+    expect(COLUMN_EDGES.total.right - COLUMN_EDGES.sno.left).toBeCloseTo(TABLE_WIDTH, 5);
+  });
+});

@@ -62,13 +62,26 @@ export async function reviseQuote(
       totalMinor: true,
       validUntil: true,
       notes: true,
+      paymentTerms: true,
+      ownerId: true,
       root: { select: { reference: true } },
+      /*
+       * Every printed column, not just the priced ones.
+       *
+       * A revision that dropped the HSN codes and units would produce a
+       * document that looked materially different from the one it replaced, on
+       * the fields a customer's accounts department reads most closely.
+       */
       items: {
         select: {
           productId: true,
           variantId: true,
           productName: true,
+          description: true,
+          brandName: true,
           sku: true,
+          hsnCode: true,
+          unitLabel: true,
           quantity: true,
           unitPriceMinor: true,
           discountMinor: true,
@@ -125,6 +138,10 @@ export async function reviseQuote(
       totalMinor: source.totalMinor,
       validUntil: source.validUntil,
       notes: source.notes,
+      // The commercial terms and the person answerable carry over; a revision
+      // is the same conversation, not a fresh one.
+      paymentTerms: source.paymentTerms,
+      ownerId: source.ownerId,
       items: { create: source.items },
     },
   });

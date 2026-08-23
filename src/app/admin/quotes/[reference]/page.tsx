@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/badge";
 import { AdminForm } from "@/components/admin/admin-form";
-import { Field, Input, Textarea } from "@/components/ui/form";
+import { Field, Input, Select, Textarea } from "@/components/ui/form";
 import {
   issueQuote,
   removeQuoteLine,
@@ -37,6 +37,19 @@ function toMajor(minor: number): string {
 export default async function AdminQuoteDetailPage({ params }: PageProps) {
   const staff = await requireStaff();
   const { reference } = await params;
+
+  /*
+   * Who may be named on a quotation: anybody who works here.
+   *
+   * Listed rather than typed, because the name printed on the document is a
+   * promise about who will answer the telephone when the customer rings it.
+   */
+  const colleagues = await prisma.user.findMany({
+    where: { role: { not: "CUSTOMER" } },
+    orderBy: { name: "asc" },
+    take: 200,
+    select: { id: true, name: true },
+  });
 
   const quote = await prisma.quote.findUnique({
     where: { reference },
@@ -220,6 +233,50 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                             />
                           </Field>
                         </div>
+
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <Field
+                            label="Description"
+                            name="description"
+                            hint="The sentence printed beside the name on the PDF."
+                          >
+                            <Input
+                              name="description"
+                              maxLength={300}
+                              defaultValue={item.description ?? ""}
+                            />
+                          </Field>
+                          <Field label="Brand" name="brandName">
+                            <Input
+                              name="brandName"
+                              maxLength={80}
+                              defaultValue={item.brandName ?? ""}
+                            />
+                          </Field>
+                          <Field
+                            label="HSN / SAC code"
+                            name="hsnCode"
+                            hint="Digits only. Left blank it prints a dash, never a guess."
+                          >
+                            <Input
+                              name="hsnCode"
+                              inputMode="numeric"
+                              maxLength={12}
+                              defaultValue={item.hsnCode ?? ""}
+                            />
+                          </Field>
+                          <Field
+                            label="Unit"
+                            name="unitLabel"
+                            hint="What the quantity counts: Users, Nos, Nodes, Project."
+                          >
+                            <Input
+                              name="unitLabel"
+                              maxLength={24}
+                              defaultValue={item.unitLabel ?? ""}
+                            />
+                          </Field>
+                        </div>
                       </AdminForm>
 
                       <div className="border-t border-line pt-4">
@@ -339,6 +396,31 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                   required
                   defaultValue={quote.validUntil?.toISOString().slice(0, 10) ?? ""}
                 />
+              </Field>
+              <Field
+                label="Payment terms"
+                name="paymentTerms"
+                hint="Printed on the document, e.g. 50% advance, balance on delivery. Blank prints no line."
+              >
+                <Input
+                  name="paymentTerms"
+                  maxLength={160}
+                  defaultValue={quote.paymentTerms ?? ""}
+                />
+              </Field>
+              <Field
+                label="Sales executive"
+                name="ownerId"
+                hint="Named on the quotation. Whoever is chosen should expect the customer's call."
+              >
+                <Select name="ownerId" defaultValue={quote.ownerId ?? ""}>
+                  <option value="">Nobody named</option>
+                  {colleagues.map((colleague) => (
+                    <option key={colleague.id} value={colleague.id}>
+                      {colleague.name}
+                    </option>
+                  ))}
+                </Select>
               </Field>
               <Field label="Notes on the quotation" name="notes">
                 <Textarea name="notes" rows={4} maxLength={4000} defaultValue={quote.notes ?? ""} />

@@ -95,6 +95,8 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
             licensingNotes: product.licensingNotes,
             deliveryNotes: product.deliveryNotes,
             supportNotes: product.supportNotes,
+            hsnCode: product.hsnCode,
+            unitLabel: product.unitLabel,
           }}
         />
       </section>

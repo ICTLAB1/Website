@@ -1,18 +1,19 @@
 /**
  * A very small PDF writer.
  *
- * Written rather than installed. The job is one page-layout of text, rules and
- * a table — a quotation — and every library that does that brings a font
- * subsetter, a stream encoder and a few megabytes of dependency surface with
- * it. This is about two hundred lines and there is nothing in it to keep up to
- * date.
+ * Written rather than installed. The job is a handful of page layouts — a
+ * quotation, and whatever commercial documents follow it — and every library
+ * that does that brings a font subsetter, a stream encoder and a few megabytes
+ * of dependency surface with it. This is a few hundred lines and there is
+ * nothing in it to keep up to date.
  *
  * ## What it can do
  *
- * Text in Helvetica and Helvetica-Bold at any size and position, straight
- * lines, filled rectangles, and page breaks. Positions are in points from the
- * top-left, because thinking upwards from the bottom-left — which is what PDF
- * actually does — is a reliable way to place things wrongly.
+ * Text in five of the standard fourteen faces at any size and position;
+ * straight lines, filled and stroked rectangles, circles and circular arcs.
+ * Positions are in points from the top-left, because thinking upwards from the
+ * bottom-left — which is what PDF actually does — is a reliable way to place
+ * things wrongly.
  *
  * ## What it cannot do
  *
@@ -20,11 +21,33 @@
  * assume, and none of them contains the rupee sign: printing ₹ would emit a
  * byte that renders as something else entirely, differently in each reader.
  * Callers write "INR" instead — see `lib/pdf/money`.
+ *
+ * No raster images either, which is why the letterhead mark is drawn as vector
+ * paths rather than embedded. That turns out to be the better answer anyway: it
+ * prints sharp at any size and adds nothing to the file.
  */
 
 const PAGE = { width: 595.28, height: 841.89 }; // A4 in points.
 
 type Op = string;
+
+/**
+ * The faces this writer offers, and what each is for.
+ *
+ * `mono` exists because an identifier — a GSTIN, a PAN, a part number — is
+ * read character by character and compared against another copy of itself.
+ * Proportional digits and a proportional capital I make that harder than it
+ * needs to be on a document somebody is checking against a purchase order.
+ */
+export type FontName = "sans" | "sansBold" | "mono" | "monoBold" | "italic";
+
+const FONT_SLOTS: Record<FontName, string> = {
+  sans: "/F1",
+  sansBold: "/F2",
+  mono: "/F3",
+  monoBold: "/F4",
+  italic: "/F5",
+};
 
 /** Escapes a string for a PDF literal, and drops what the fonts cannot show. */
 export function pdfText(value: string): string {
@@ -52,12 +75,9 @@ export function pdfText(value: string): string {
  * Helvetica's advance widths, in 1/1000 em, for the printable ASCII range.
  *
  * Needed because a table has to know whether a product name fits before it is
- * drawn. Taken from the Adobe Font Metrics for Helvetica; the bold face is
- * close enough at this size that one table is used for both, with a small
- * factor applied — a heading that measures one per cent narrow costs nothing,
- * and the alternative is a second table nobody will ever check.
+ * drawn. Taken from the Adobe Font Metrics for Helvetica.
  */
-const WIDTHS: Record<string, number> = {
+const HELVETICA: Record<string, number> = {
   " ": 278, "!": 278, '"': 355, "#": 556, $: 556, "%": 889, "&": 667, "'": 191,
   "(": 333, ")": 333, "*": 389, "+": 584, ",": 278, "-": 333, ".": 278, "/": 278,
   "0": 556, "1": 556, "2": 556, "3": 556, "4": 556, "5": 556, "6": 556, "7": 556,
@@ -71,27 +91,115 @@ const WIDTHS: Record<string, number> = {
   v: 500, w: 722, x: 500, y: 500, z: 500, "{": 334, "|": 260, "}": 334, "~": 584,
 };
 
+/**
+ * Helvetica-Bold's, likewise.
+ *
+ * A real table rather than a factor applied to the regular one. The line-item
+ * table is thirteen columns wide and several of them are bold; a systematic
+ * one-per-cent error in a fitted string is the difference between a part number
+ * that fits and one that is silently truncated.
+ */
+const HELVETICA_BOLD: Record<string, number> = {
+  " ": 278, "!": 333, '"': 474, "#": 556, $: 556, "%": 889, "&": 722, "'": 238,
+  "(": 333, ")": 333, "*": 389, "+": 584, ",": 278, "-": 333, ".": 278, "/": 278,
+  "0": 556, "1": 556, "2": 556, "3": 556, "4": 556, "5": 556, "6": 556, "7": 556,
+  "8": 556, "9": 556, ":": 333, ";": 333, "<": 584, "=": 584, ">": 584, "?": 611,
+  "@": 975, A: 722, B: 722, C: 722, D: 722, E: 667, F: 611, G: 778, H: 722,
+  I: 278, J: 556, K: 722, L: 611, M: 833, N: 722, O: 778, P: 667, Q: 778, R: 722,
+  S: 667, T: 611, U: 722, V: 667, W: 944, X: 667, Y: 667, Z: 611, "[": 333,
+  "\\": 278, "]": 333, "^": 584, _: 556, "`": 333, a: 556, b: 611, c: 556,
+  d: 611, e: 556, f: 333, g: 611, h: 611, i: 278, j: 278, k: 556, l: 278,
+  m: 889, n: 611, o: 611, p: 611, q: 611, r: 389, s: 556, t: 333, u: 611,
+  v: 556, w: 778, x: 556, y: 556, z: 500, "{": 389, "|": 280, "}": 389, "~": 584,
+};
+
+/** Courier is monospaced, so there is nothing to look up. */
+const COURIER_WIDTH = 600;
+
+function widthsFor(font: FontName): Record<string, number> | number {
+  switch (font) {
+    case "sansBold":
+      return HELVETICA_BOLD;
+    case "mono":
+    case "monoBold":
+      return COURIER_WIDTH;
+    // Times-Italic sets a little narrower than Helvetica. It is used for one
+    // unfitted line — the tagline under the mark — so measuring it as
+    // Helvetica errs on the side of leaving room, which is the safe direction.
+    case "italic":
+    case "sans":
+    default:
+      return HELVETICA;
+  }
+}
+
+function normaliseFont(font: FontName | boolean | undefined): FontName {
+  if (font === true) return "sansBold";
+  if (font === false || font === undefined) return "sans";
+  return font;
+}
+
 /** How wide a string is, in points, at a given size. */
-export function textWidth(value: string, size: number, bold = false): number {
+export function textWidth(value: string, size: number, font: FontName | boolean = "sans"): number {
+  const table = widthsFor(normaliseFont(font));
+
+  if (typeof table === "number") return (value.length * table * size) / 1000;
+
   let units = 0;
-  for (const character of value) units += WIDTHS[character] ?? 556;
-  return (units / 1000) * size * (bold ? 1.03 : 1);
+  for (const character of value) units += table[character] ?? 556;
+  return (units / 1000) * size;
 }
 
 /** Cuts a string to fit a width, ending with an ellipsis where it had to. */
-export function fit(value: string, width: number, size: number, bold = false): string {
-  if (textWidth(value, size, bold) <= width) return value;
+export function fit(
+  value: string,
+  width: number,
+  size: number,
+  font: FontName | boolean = "sans",
+): string {
+  if (textWidth(value, size, font) <= width) return value;
 
   let cut = value;
-  while (cut.length > 1 && textWidth(`${cut}...`, size, bold) > width) {
+  while (cut.length > 1 && textWidth(`${cut}...`, size, font) > width) {
     cut = cut.slice(0, -1);
   }
   return `${cut.trimEnd()}...`;
 }
 
+/**
+ * Splits a single word too long for the width into pieces that fit.
+ *
+ * Not an ellipsis. The strings this happens to are part numbers, SKUs and
+ * order references — things somebody pastes into a supplier portal — and a
+ * truncated one looks exactly like a real one while being useless. Two lines
+ * are always better than a plausible wrong value.
+ */
+function breakWord(word: string, width: number, size: number, font: FontName): string[] {
+  const pieces: string[] = [];
+  let piece = "";
+
+  for (const character of word) {
+    if (piece.length > 0 && textWidth(piece + character, size, font) > width) {
+      pieces.push(piece);
+      piece = character;
+    } else {
+      piece += character;
+    }
+  }
+
+  if (piece.length > 0) pieces.push(piece);
+  return pieces.length > 0 ? pieces : [word];
+}
+
 /** Wraps a paragraph to a width, at word boundaries. */
-export function wrap(value: string, width: number, size: number, bold = false): string[] {
+export function wrap(
+  value: string,
+  width: number,
+  size: number,
+  font: FontName | boolean = "sans",
+): string[] {
   const lines: string[] = [];
+  const face = normaliseFont(font);
 
   for (const paragraph of value.split(/\r?\n/)) {
     if (paragraph.trim().length === 0) {
@@ -102,11 +210,20 @@ export function wrap(value: string, width: number, size: number, bold = false): 
     let line = "";
     for (const word of paragraph.split(/\s+/)) {
       const candidate = line.length === 0 ? word : `${line} ${word}`;
-      if (textWidth(candidate, size, bold) <= width) {
+      if (textWidth(candidate, size, face) <= width) {
         line = candidate;
+        continue;
+      }
+
+      if (line.length > 0) lines.push(line);
+
+      if (textWidth(word, size, face) <= width) {
+        line = word;
       } else {
-        if (line.length > 0) lines.push(line);
-        line = textWidth(word, size, bold) <= width ? word : fit(word, width, size, bold);
+        // Every piece but the last is a complete line; the last carries on.
+        const pieces = breakWord(word, width, size, face);
+        lines.push(...pieces.slice(0, -1));
+        line = pieces[pieces.length - 1]!;
       }
     }
     if (line.length > 0) lines.push(line);
@@ -119,15 +236,35 @@ export type Colour = { r: number; g: number; b: number };
 
 export const BLACK: Colour = { r: 0.13, g: 0.11, b: 0.09 };
 export const MUTED: Colour = { r: 0.42, g: 0.38, b: 0.35 };
-export const RULE: Colour = { r: 0.89, g: 0.87, b: 0.84 };
+export const FAINT: Colour = { r: 0.58, g: 0.55, b: 0.52 };
+export const RULE: Colour = { r: 0.82, g: 0.8, b: 0.77 };
+export const HAIRLINE: Colour = { r: 0.89, g: 0.87, b: 0.84 };
 export const ACCENT: Colour = { r: 0.48, g: 0.35, b: 0.05 };
+export const WHITE: Colour = { r: 1, g: 1, b: 1 };
+export const PANEL: Colour = { r: 0.97, g: 0.965, b: 0.955 };
+export const ZEBRA: Colour = { r: 0.985, g: 0.982, b: 0.977 };
+
+/**
+ * The three mark colours and the ink, matching `public/logo.svg`.
+ *
+ * Duplicated from the SVG rather than parsed out of it: this file is written
+ * once and read by a renderer that cannot fetch anything, and a colour that
+ * silently stopped matching would be visible on the next document anybody
+ * opened.
+ */
+export const MARK_BLUE: Colour = { r: 0.184, g: 0.49, b: 0.82 };
+export const MARK_AMBER: Colour = { r: 0.949, g: 0.639, b: 0.235 };
+export const MARK_TEAL: Colour = { r: 0.169, g: 0.702, b: 0.639 };
+export const INK: Colour = { r: 0.11, g: 0.122, b: 0.118 };
+
+const rgb = (colour: Colour) => `${colour.r.toFixed(3)} ${colour.g.toFixed(3)} ${colour.b.toFixed(3)}`;
 
 /**
  * One document being built.
  *
- * Deliberately imperative: a quotation is drawn top to bottom, the caller keeps
- * a cursor, and a layout engine would be a great deal of machinery for one
- * document shape.
+ * Deliberately imperative: a document is drawn top to bottom, the caller keeps
+ * a cursor, and a layout engine would be a great deal of machinery for a
+ * handful of document shapes.
  */
 export class PdfDocument {
   readonly width = PAGE.width;
@@ -164,20 +301,30 @@ export class PdfDocument {
     this.pages[this.current]!.push(op);
   }
 
+  /** Turns a top-down y into the upward-counting one PDF wants. */
+  private flip(y: number): number {
+    return PAGE.height - y;
+  }
+
   /** Draws text with its baseline at `y` points from the top. */
   text(
     value: string,
     x: number,
     y: number,
-    options: { size?: number; bold?: boolean; colour?: Colour } = {},
+    options: { size?: number; bold?: boolean; font?: FontName; colour?: Colour; tracking?: number } = {},
   ): void {
     const size = options.size ?? 10;
     const colour = options.colour ?? BLACK;
-    const font = options.bold ? "/F2" : "/F1";
+    const font = FONT_SLOTS[options.font ?? normaliseFont(options.bold)];
+
+    // Letter-spacing, for the small uppercase labels a form uses. Set on every
+    // run rather than left standing, because Tc persists in the graphics state
+    // and a stray value would space out the next thing drawn.
+    const tracking = options.tracking ?? 0;
 
     this.push(
-      `BT ${colour.r.toFixed(3)} ${colour.g.toFixed(3)} ${colour.b.toFixed(3)} rg ${font} ${size} Tf ` +
-        `1 0 0 1 ${x.toFixed(2)} ${(PAGE.height - y).toFixed(2)} Tm (${pdfText(value)}) Tj ET`,
+      `BT ${rgb(colour)} rg ${font} ${size} Tf ${tracking.toFixed(2)} Tc ` +
+        `1 0 0 1 ${x.toFixed(2)} ${this.flip(y).toFixed(2)} Tm (${pdfText(value)}) Tj ET`,
     );
   }
 
@@ -186,24 +333,119 @@ export class PdfDocument {
     value: string,
     x: number,
     y: number,
-    options: { size?: number; bold?: boolean; colour?: Colour } = {},
+    options: { size?: number; bold?: boolean; font?: FontName; colour?: Colour; tracking?: number } = {},
   ): void {
-    const width = textWidth(value, options.size ?? 10, options.bold ?? false);
+    const font = options.font ?? normaliseFont(options.bold);
+    const tracking = (options.tracking ?? 0) * value.length;
+    const width = textWidth(value, options.size ?? 10, font) + tracking;
     this.text(value, x - width, y, options);
+  }
+
+  /** Draws text centred on `x`. */
+  textCentre(
+    value: string,
+    x: number,
+    y: number,
+    options: { size?: number; bold?: boolean; font?: FontName; colour?: Colour; tracking?: number } = {},
+  ): void {
+    const font = options.font ?? normaliseFont(options.bold);
+    const tracking = (options.tracking ?? 0) * value.length;
+    const width = textWidth(value, options.size ?? 10, font) + tracking;
+    this.text(value, x - width / 2, y, options);
   }
 
   line(x1: number, y1: number, x2: number, y2: number, colour: Colour = RULE, thickness = 0.6): void {
     this.push(
-      `${colour.r.toFixed(3)} ${colour.g.toFixed(3)} ${colour.b.toFixed(3)} RG ${thickness} w ` +
-        `${x1.toFixed(2)} ${(PAGE.height - y1).toFixed(2)} m ${x2.toFixed(2)} ${(PAGE.height - y2).toFixed(2)} l S`,
+      `${rgb(colour)} RG ${thickness} w 0 J ` +
+        `${x1.toFixed(2)} ${this.flip(y1).toFixed(2)} m ${x2.toFixed(2)} ${this.flip(y2).toFixed(2)} l S`,
     );
   }
 
   rect(x: number, y: number, width: number, height: number, colour: Colour): void {
     this.push(
-      `${colour.r.toFixed(3)} ${colour.g.toFixed(3)} ${colour.b.toFixed(3)} rg ` +
-        `${x.toFixed(2)} ${(PAGE.height - y - height).toFixed(2)} ${width.toFixed(2)} ${height.toFixed(2)} re f`,
+      `${rgb(colour)} rg ` +
+        `${x.toFixed(2)} ${this.flip(y + height).toFixed(2)} ${width.toFixed(2)} ${height.toFixed(2)} re f`,
     );
+  }
+
+  /** An outlined rectangle, for the panels and table cells. */
+  strokeRect(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    colour: Colour = RULE,
+    thickness = 0.6,
+  ): void {
+    this.push(
+      `${rgb(colour)} RG ${thickness} w ` +
+        `${x.toFixed(2)} ${this.flip(y + height).toFixed(2)} ${width.toFixed(2)} ${height.toFixed(2)} re S`,
+    );
+  }
+
+  /**
+   * A circular arc, given in the same top-down space as everything else.
+   *
+   * Angles are degrees clockwise from east, which is what reading them off a
+   * screen-coordinate drawing gives you. Cubic Béziers approximate the arc in
+   * segments of at most a quarter turn — the standard construction, and exact
+   * enough that no printer will resolve the difference.
+   */
+  arc(
+    cx: number,
+    cy: number,
+    radius: number,
+    startDegrees: number,
+    endDegrees: number,
+    options: { colour?: Colour; thickness?: number; round?: boolean } = {},
+  ): void {
+    const colour = options.colour ?? BLACK;
+    const thickness = options.thickness ?? 1;
+    const cap = options.round ? 1 : 0;
+
+    const total = ((endDegrees - startDegrees) * Math.PI) / 180;
+    const segments = Math.max(1, Math.ceil(Math.abs(total) / (Math.PI / 2)));
+    const step = total / segments;
+    const k = (4 / 3) * Math.tan(step / 4);
+
+    const at = (angle: number) => ({
+      x: cx + radius * Math.cos(angle),
+      y: cy + radius * Math.sin(angle),
+    });
+
+    let angle = (startDegrees * Math.PI) / 180;
+    let point = at(angle);
+    let path = `${point.x.toFixed(2)} ${this.flip(point.y).toFixed(2)} m`;
+
+    for (let index = 0; index < segments; index += 1) {
+      const next = angle + step;
+      const from = at(angle);
+      const to = at(next);
+
+      // Control points lie along the tangents, at k times the radius.
+      const c1 = { x: from.x - k * radius * Math.sin(angle), y: from.y + k * radius * Math.cos(angle) };
+      const c2 = { x: to.x + k * radius * Math.sin(next), y: to.y - k * radius * Math.cos(next) };
+
+      path +=
+        ` ${c1.x.toFixed(2)} ${this.flip(c1.y).toFixed(2)}` +
+        ` ${c2.x.toFixed(2)} ${this.flip(c2.y).toFixed(2)}` +
+        ` ${to.x.toFixed(2)} ${this.flip(to.y).toFixed(2)} c`;
+
+      angle = next;
+      point = to;
+    }
+
+    this.push(`${rgb(colour)} RG ${thickness} w ${cap} J ${path} S`);
+  }
+
+  /** A stroked circle. Four arcs, which is what a circle is in PostScript. */
+  circle(
+    cx: number,
+    cy: number,
+    radius: number,
+    options: { colour?: Colour; thickness?: number } = {},
+  ): void {
+    this.arc(cx, cy, radius, 0, 360, options);
   }
 
   /** Serialises the document. */
@@ -214,12 +456,28 @@ export class PdfDocument {
       return objects.length; // 1-based object numbers
     };
 
-    // 1: catalogue, 2: page tree, 3 and 4: the two fonts. Fixed, so the page
-    // objects below can refer to them before they are written.
+    // The catalogue, the page tree and the fonts come first at fixed numbers,
+    // so the page objects below can refer to them before they are written.
     const catalogueId = add("");
     const pagesId = add("");
-    const regularId = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
-    const boldId = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
+
+    const font = (base: string) =>
+      add(`<< /Type /Font /Subtype /Type1 /BaseFont /${base} /Encoding /WinAnsiEncoding >>`);
+
+    const fontIds: Record<FontName, number> = {
+      sans: font("Helvetica"),
+      sansBold: font("Helvetica-Bold"),
+      mono: font("Courier"),
+      monoBold: font("Courier-Bold"),
+      italic: font("Times-Italic"),
+    };
+
+    const resources =
+      "/Font << " +
+      (Object.keys(FONT_SLOTS) as FontName[])
+        .map((name) => `${FONT_SLOTS[name]} ${fontIds[name]} 0 R`)
+        .join(" ") +
+      " >>";
 
     const pageIds: number[] = [];
     for (const ops of this.pages) {
@@ -228,7 +486,7 @@ export class PdfDocument {
       pageIds.push(
         add(
           `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${PAGE.width} ${PAGE.height}] ` +
-            `/Resources << /Font << /F1 ${regularId} 0 R /F2 ${boldId} 0 R >> >> /Contents ${streamId} 0 R >>`,
+            `/Resources << ${resources} >> /Contents ${streamId} 0 R >>`,
         ),
       );
     }

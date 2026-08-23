@@ -56,6 +56,23 @@ const productSchema = z.object({
   deliveryNotes: z.string().max(4000).optional(),
   supportNotes: z.string().max(4000).optional(),
 
+  /*
+   * Tax classification and unit of measure.
+   *
+   * Held on the catalogue so a quotation inherits them rather than having them
+   * retyped per deal — which is how two quotations for the same licence end up
+   * under two different HSN codes. Digits only, and blank is a valid answer:
+   * a code this application invented would be a classification the business
+   * never made.
+   */
+  hsnCode: z
+    .string()
+    .trim()
+    .max(12)
+    .regex(/^[0-9]*$/, "An HSN or SAC code is digits only.")
+    .optional(),
+  unitLabel: z.string().trim().max(24).optional(),
+
   // Hardware. All optional and all blank on software, which is most of the
   // catalogue — an empty form factor is what says "this is a licence".
   formFactor: z
@@ -114,6 +131,8 @@ export async function saveProduct(
     licensingNotes: formData.get("licensingNotes"),
     deliveryNotes: formData.get("deliveryNotes"),
     supportNotes: formData.get("supportNotes"),
+    hsnCode: formData.get("hsnCode"),
+    unitLabel: formData.get("unitLabel"),
     // An empty select posts "", which is not a member of the enum — mapped to
     // undefined so "not hardware" validates rather than failing the form.
     formFactor: formData.get("formFactor") || undefined,
@@ -175,6 +194,8 @@ export async function saveProduct(
     licensingNotes: input.licensingNotes?.trim() || null,
     deliveryNotes: input.deliveryNotes?.trim() || null,
     supportNotes: input.supportNotes?.trim() || null,
+    hsnCode: input.hsnCode?.trim() || null,
+    unitLabel: input.unitLabel?.trim() || null,
     formFactor: input.formFactor ?? null,
     series: input.series?.trim() || null,
     partNumber: input.partNumber?.trim() || null,
