@@ -980,13 +980,40 @@ function drawTaxSummary(
    * table above them however many tax heads there are.
    */
   const heads = treatment === "intra_state" ? ["CGST", "SGST"] : ["IGST"];
-  const headWidth = 84;
+
+  /*
+   * Laid out from the right by what the figures actually measure.
+   *
+   * These columns are right-aligned, so the space a column needs is the width
+   * of its own widest value — and the gap to its left-hand neighbour has to be
+   * at least that, or the two run together. Fixed gaps were used here and the
+   * rate column collided with the tax beside it the first time a figure ran to
+   * lakhs: "18%1,56,046.50", which is two correct numbers and one unreadable
+   * document.
+   *
+   * Measured rather than guessed, so a crore figure widens its own column
+   * instead of overrunning the next one.
+   */
+  const money = (minor: number) => pdfAmount(minor, input.currency);
+  const widest = (values: string[], font: "sans" | "sansBold" = "sans") =>
+    Math.max(0, ...values.map((value) => textWidth(value, BODY_SIZE, font)));
+
+  const perGroup = [...groups.values()];
+  const headValues = perGroup.flatMap((group) =>
+    taxHeads(group.tax, group.rate, treatment).map((head) => money(head.amountMinor)),
+  );
+
+  const PAD = 10;
+  const totalWidth = Math.max(widest([...perGroup.map((g) => money(g.tax)), "Total tax"], "sansBold"), 44);
+  const headCellWidth = Math.max(widest([...headValues, ...heads]), 40) + PAD;
+  const rateWidth = Math.max(widest([...perGroup.map((g) => `${g.rate}%`), "Rate"]), 22) + PAD;
+
   const totalX = RIGHT;
-  const headXs = heads.map((_, index) => totalX - headWidth * (heads.length - index));
-  // Each gap is wide enough for the widest thing that ends at it: a rate is
-  // three or four characters, a taxable value can be a crore.
-  const rateX = headXs[0]! - 34;
-  const taxableX = rateX - 44;
+  const headXs = heads.map(
+    (_, index) => totalX - totalWidth - PAD - headCellWidth * (heads.length - 1 - index),
+  );
+  const rateX = headXs[0]! - headCellWidth;
+  const taxableX = rateX - rateWidth;
 
   const columns: Array<{ label: string; x: number; align: "left" | "right" }> = [
     { label: "HSN / SAC", x: MARGIN, align: "left" },
