@@ -15,13 +15,14 @@ export const POST = withErrorHandling("auth.register", async (request: Request) 
     return jsonError("forbidden", "Your session has expired. Please reload the page and try again.");
   }
 
-  const ip = ipFromRequest(request);
-  const limit = hit(`register:${ip}`, LIMITS.register.limit, LIMITS.register.windowSeconds);
-  if (!limit.allowed) {
-    return jsonError("rate_limited", "Too many sign-up attempts. Please try again later.", {
-      headers: { "retry-after": String(limit.retryAfterSeconds) },
+  const tooMany = (retryAfterSeconds: number) =>
+    jsonError("rate_limited", "Too many sign-up attempts. Please try again later.", {
+      headers: { "retry-after": String(retryAfterSeconds) },
     });
-  }
+
+  const ip = ipFromRequest(request);
+  const byIp = hit(`register:ip:${ip}`, LIMITS.registerIp.limit, LIMITS.registerIp.windowSeconds);
+  if (!byIp.allowed) return tooMany(byIp.retryAfterSeconds);
 
   let body: unknown;
   try {
@@ -38,6 +39,17 @@ export const POST = withErrorHandling("auth.register", async (request: Request) 
   }
 
   const { name, email, password, companyName, phone } = parsed.data;
+
+  /*
+   * And again on the address itself.
+   *
+   * This is the limit that actually protects somebody: the address is what an
+   * attacker repeats, whether to find out that it already has an account or to
+   * bury its owner in confirmation mail. Keyed after validation so a malformed
+   * body cannot spend another person's budget.
+   */
+  const byEmail = hit(`register:email:${email}`, LIMITS.register.limit, LIMITS.register.windowSeconds);
+  if (!byEmail.allowed) return tooMany(byEmail.retryAfterSeconds);
 
   const existing = await prisma.user.findUnique({ where: { email }, select: { id: true } });
   if (existing) {

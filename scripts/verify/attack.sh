@@ -132,6 +132,22 @@ STJ=$(grep -oP 'csrf_token\s+\K\S+' "$SJ"|tail -1)
 curl -s -b "$SJ" -c "$SJ" -X POST "$BASE/api/auth/login" -H "content-type: application/json" -H "origin: $BASE" -H "x-csrf-token: $STJ" \
   --data "{\"email\":\"$SALES_EMAIL\",\"password\":\"CorrectHorse9\"}" >/dev/null
 
+# The fixture, before anything is concluded from it.
+#
+# Every check below reads a status code from this session, and a session that
+# never signed in returns 307 to /login for all of them — which reads as "SALES
+# cannot reach the admin content" (correct, for the wrong reason) and as "SALES
+# has lost the pipeline" (wrong, and nothing to do with roles). That is exactly
+# what happened when the sign-up limiter ran out mid-gate. A broken fixture is
+# now named as one.
+SALES_ROLE=$(su postgres -c "psql -tA -d ictlab -c \"select role from \\\"User\\\" where email='$SALES_EMAIL'\"" 2>/dev/null | tr -d '[:space:]')
+code=$(curl -s -o /dev/null -w "%{http_code}" -b "$SJ" "$BASE/account")
+if [ "$SALES_ROLE" = "SALES" ] && [ "$code" = "200" ]; then
+  ok "the SALES fixture exists and is signed in"
+else
+  no "SALES fixture" "role='$SALES_ROLE', /account returned $code — the checks below cannot mean anything"
+fi
+
 blocked=1
 for r in brands categories services posts faqs banners; do
   code=$(curl -s -o /dev/null -w "%{http_code}" -b "$SJ" "$BASE/admin/$r")
@@ -173,6 +189,29 @@ code=$(curl -s -o /dev/null -w "%{http_code}" -b "$ADM" "$BASE/admin/users-secre
 # Products are not in the generic registry, so the generic route must not serve them.
 code=$(curl -s -o /dev/null -w "%{http_code}" -b "$ADM" "$BASE/admin/products/new")
 [ "$code" = "200" ] && ok "products keep their bespoke screens" || no "products screen" "got $code"
+
+echo "== Sign-up cannot be used to hammer one address =="
+
+# The per-address limit, which is the one that protects a person: repeating a
+# sign-up at somebody else's address is how you find out whether they have an
+# account, and how you bury them in confirmation mail. Four attempts at one
+# address; the fourth must be refused.
+FLOOD_EMAIL="atk_flood$RANDOM@example.test"
+FC=$(mktemp); curl -s -c "$FC" -o /dev/null "$BASE/"
+FTC=$(grep -oP 'csrf_token\s+\K\S+' "$FC"|tail -1)
+flood_code() {
+  curl -s -o /dev/null -w "%{http_code}" -b "$FC" -X POST "$BASE/api/auth/register" \
+    -H "content-type: application/json" -H "origin: $BASE" -H "x-csrf-token: $FTC" \
+    --data "{\"name\":\"Atk Flood\",\"email\":\"$FLOOD_EMAIL\",\"password\":\"CorrectHorse9\",\"companyName\":\"Atk Ltd\"}"
+}
+first=$(flood_code); flood_code >/dev/null; flood_code >/dev/null; fourth=$(flood_code)
+[ "$first" = "200" ] && ok "a first sign-up at a fresh address is accepted" || no "sign-up" "got $first"
+[ "$fourth" = "429" ] && ok "a fourth sign-up at the same address is refused" || no "sign-up flood" "got $fourth"
+
+# And exactly one account exists, however many times it was asked for.
+count=$(su postgres -c "psql -tA -d ictlab -c \"select count(*) from \\\"User\\\" where email='$FLOOD_EMAIL'\"" 2>/dev/null | tr -d '[:space:]')
+[ "$count" = "1" ] && ok "and only one account was ever created" || no "duplicate accounts" "$count rows"
+su postgres -c "psql -tA -d ictlab -c \"delete from \\\"User\\\" where email like 'atk_flood%'\"" >/dev/null 2>&1
 
 echo "== Payments: an order cannot be marked paid without a gateway signature =="
 

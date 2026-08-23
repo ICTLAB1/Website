@@ -54,7 +54,23 @@ export function reset(key: string) {
 
 export const LIMITS = {
   login: { limit: 8, windowSeconds: 300 },
-  register: { limit: 5, windowSeconds: 3600 },
+  /*
+   * Sign-up, limited in two places for two different reasons.
+   *
+   * `register` is the per-address limit and is the strict one: repeated
+   * sign-ups at one email address are somebody probing whether it already has
+   * an account, or trying to bury its owner in confirmation mail. Three an
+   * hour is more than anybody needs.
+   *
+   * `registerIp` is deliberately loose, because an IP address is not a person.
+   * A customer's procurement team sits behind one office NAT, and at five an
+   * hour the sixth colleague to sign up was told "too many sign-up attempts"
+   * with nothing they could do about it — this limiter's own gate ran into it,
+   * which is how it was found. Twenty still stops a script, and an account is
+   * inert until its address is verified.
+   */
+  register: { limit: 3, windowSeconds: 3600 },
+  registerIp: { limit: 20, windowSeconds: 3600 },
   passwordReset: { limit: 5, windowSeconds: 3600 },
   enquiry: { limit: 10, windowSeconds: 3600 },
   contact: { limit: 6, windowSeconds: 3600 },
