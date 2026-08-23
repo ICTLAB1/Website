@@ -2,6 +2,7 @@ import "server-only";
 
 import { currentCertifications } from "@/lib/queries/certifications";
 import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
+import { certificationLogo } from "@/lib/certification-logo";
 
 /**
  * Certifications and partner badges, in one band under the navigation.
@@ -98,35 +99,61 @@ export async function TrustBar() {
         ) : null}
 
         {certifications.length > 0 ? (
-          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
-            <p className="text-label font-semibold uppercase tracking-[0.1em] text-ink-500">
-              Certified
-            </p>
-            <ul className="flex flex-wrap items-center gap-x-5 gap-y-1">
-              {certifications.map((certification) => (
-                <li key={certification.reference} className="flex items-baseline gap-1.5">
-                  <span className="text-label font-semibold text-graphite-900">
-                    {certification.standard}
-                  </span>
-                  {/*
-                    The scope, above 1536px only.
+          <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
+            {certifications.map((certification) => {
+              const mark = certificationLogo(certification.standard);
+              return (
+                <li key={certification.reference} className="flex items-center">
+                  {mark ? (
+                    /*
+                      The mark, on the same footing as the partner badges beside
+                      it — which is the point. This band used to give Microsoft
+                      and Adobe their artwork and set the three ISO standards as
+                      text, so the two things a buyer weighs when deciding
+                      whether to trust a supplier appeared at two different
+                      levels of seriousness, and the independently audited half
+                      was the one that looked like a footnote.
 
-                    Three standards with their scopes spelled out run to about
-                    nine hundred pixels, which is what pushed the badges onto a
-                    second row on an ordinary laptop. The standard numbers alone
-                    are the signal; anyone who wants the scope and the
-                    certificate number has the strip in the footer, where a
-                    reader who means to verify one has gone looking for exactly
-                    that.
-                  */}
-                  <span className="hidden text-label text-ink-500 2xl:inline">
-                    {certification.title}
-                  </span>
+                      Set a shade taller than the partner badges rather than
+                      matching them. These are two-line lockups carrying a
+                      standard over its scope, so the same overall height puts
+                      their type at roughly half the size of a single-line
+                      badge's; the extra height is what makes the two read as
+                      equals rather than making these look bigger.
+
+                      Stepped down on a phone, where the extra height stops
+                      helping and starts shouting: at 390px the partner badges
+                      have wrapped onto their own line already, so the ISO marks
+                      are no longer beside anything to be balanced against —
+                      they are simply the largest thing on the screen.
+                    */
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={mark}
+                      alt={`${certification.standard} — ${certification.title}`}
+                      className="h-8 w-auto object-contain sm:h-10 lg:h-11"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    /*
+                      A standard added later with no artwork on file still gets
+                      stated — in type, beside the marks. Per certification and
+                      not for the whole row, unlike the quotation letterhead: a
+                      row of images with one text label in it is untidy on a
+                      page and unreadable on a printed document, and only the
+                      second is worth failing the whole row over.
+                    */
+                    <span className="text-label font-semibold text-graphite-900">
+                      {certification.standard}
+                    </span>
+                  )}
                 </li>
-              ))}
-            </ul>
-          </div>
+              );
+            })}
+          </ul>
         ) : null}
+
       </div>
     </section>
   );
