@@ -6,6 +6,7 @@ import { getSiteConfig } from "@/lib/site-config";
 import { getBankingDetails } from "@/lib/banking-config";
 import { letterheadImage, loadPublicImage } from "@/lib/pdf/assets";
 import { currentPartnerBadge, currentPartnerLabel } from "@/lib/brand-partner";
+import { certificationLogo } from "@/lib/certification-logo";
 import { renderQuotationPdf, type QuotationParty } from "@/lib/pdf/quotation";
 
 /**
@@ -176,11 +177,22 @@ export async function buildQuotationPdf(
      * supplier list belongs on the website, where a reader has gone looking
      * for it.
      */
+    /*
+     * Every brand this business is recorded as a partner of, badge or no badge.
+     *
+     * Two rows come out of one query. A brand with an issued badge appears as a
+     * designation, in the publisher's own artwork and wording. A brand with a
+     * recorded designation but no badge appears as its plain mark under
+     * "our technology partners" — which says this business supplies it without
+     * putting words in the publisher's mouth. A brand with neither appears
+     * nowhere: the catalogue is not a partner list.
+     */
     prisma.brand.findMany({
-      where: { deletedAt: null, partnerPublic: true, partnerBadgeUrl: { not: null } },
+      where: { deletedAt: null, partnerPublic: true, partnerLabel: { not: null } },
       orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
       select: {
         name: true,
+        logoUrl: true,
         partnerLabel: true,
         partnerConfirmedAt: true,
         partnerPublic: true,
@@ -204,6 +216,22 @@ export async function buildQuotationPdf(
     .filter((entry): entry is { name: string; label: string; image: NonNullable<typeof entry>["image"] } =>
       entry !== null,
     );
+
+  /*
+   * The partner marks, excluding anybody already shown as a designation.
+   *
+   * Printing Microsoft's badge in one area and its logo in the next says the
+   * same thing twice and makes the row look padded. The designation is the
+   * stronger statement, so the brand keeps that and drops out of this row.
+   */
+  const designated = new Set(accreditations.map((entry) => entry.name));
+  const technologyPartners = brands
+    .filter((brand) => currentPartnerLabel(brand) && !designated.has(brand.name))
+    .map((brand) => {
+      const image = brand.logoUrl ? loadPublicImage(brand.logoUrl) : null;
+      return image ? { name: brand.name, image } : null;
+    })
+    .filter((entry): entry is { name: string; image: NonNullable<typeof entry>["image"] } => entry !== null);
 
   const company = quote.company;
 
@@ -329,7 +357,15 @@ export async function buildQuotationPdf(
      * badges above. A standard with no artwork on file gets `null` and the
      * letterhead falls back to setting the standards in type.
      */
-    certifications,
+    /*
+     * The certificates, each with its mark where one is on file. Resolved here
+     * rather than in the renderer, which never touches a filesystem.
+     */
+    certifications: certifications.map((entry) => ({
+      ...entry,
+      image: loadPublicImage(certificationLogo(entry.standard)),
+    })),
+    technologyPartners,
     logo: letterheadImage(),
     accreditations,
     banking: getBankingDetails(),

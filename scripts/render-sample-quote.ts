@@ -160,6 +160,7 @@ const bytes = renderQuotationPdf({
     { standard: "ISO/IEC 20000-1:2018", title: "IT Service Management System", reference: "ITSM-0001" },
   ],
   accreditations: [],
+  technologyPartners: [],
   logo: null,
   banking: {
     bankName: "Sample Bank",

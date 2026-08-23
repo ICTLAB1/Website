@@ -132,6 +132,16 @@ export type QuotationPdfInput = {
     standard: string;
     title: string;
     reference: string;
+    /**
+     * The certificate's own mark, decoded, where one is on file.
+     *
+     * Resolved by the caller for the same reason as `logo` and the badges:
+     * this module never reads a file, which is what keeps it renderable from a
+     * test with no filesystem. A standard with no artwork prints as type; the
+     * band falls back for the whole row rather than mixing the two, because a
+     * row of two pictures and one piece of text is worse than either.
+     */
+    image?: EmbeddedImage | null;
   }>;
   /**
    * The company's own logo, decoded. Null falls back to the drawn mark.
@@ -149,6 +159,16 @@ export type QuotationPdfInput = {
    * office, and it is exactly the claim that gets checked.
    */
   accreditations: Array<{ name: string; label: string; image: EmbeddedImage }>;
+  /**
+   * Brands this business is recorded as a partner of, as their own marks.
+   *
+   * Distinct from `accreditations`, which are the publishers' issued badges
+   * carrying a designation in words. These are plain brand marks under a
+   * heading that says what the row is, and they come from the same stored
+   * partner records — so the row prints what the business actually holds, and
+   * a brand it merely sells is not quietly promoted to a partner.
+   */
+  technologyPartners: Array<{ name: string; image: EmbeddedImage }>;
   /** From `lib/banking-config`. All of it or none of it. */
   banking: {
     bankName: string;
@@ -169,10 +189,8 @@ const MARGIN = 38;
 const CONTENT = 595.28 - MARGIN * 2;
 const RIGHT = MARGIN + CONTENT;
 
-/** The letterhead's three columns: mark, issuer, document meta. */
+/** The masthead's artwork box. */
 const LOGO_WIDTH = 128;
-const ISSUER_X = MARGIN + LOGO_WIDTH + 12;
-const META_LABEL_X = MARGIN + 336;
 
 /** Where the page stops and a new one starts. */
 const PAGE_BOTTOM = 792;
@@ -452,6 +470,15 @@ function partyRows(party: QuotationParty): Array<[string, string]> {
   return (
     [
       ["GSTIN", party.gstin],
+      /*
+       * Kept on the panel even though the design's mock does not show it.
+       *
+       * Place of supply is what decides whether the tax below is one IGST line
+       * or a CGST and an SGST line, and a customer's accounts department checks
+       * it against their own state before claiming credit. It is derived from
+       * the GSTIN, so it costs nothing and cannot disagree with it.
+       */
+      ["Place of Supply", placeOfSupply(party.gstin)],
       ["Contact", party.contactName],
       ["Email", party.email],
       ["Phone", party.phone],
@@ -1031,73 +1058,102 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
   }
 
   /*
-   * One trust band, not three sections.
+   * Three areas across one band: designations, partners, certifications.
    *
-   * The first version of this printed the certifications, the accreditations
-   * and twenty-six brand marks as three stacked blocks, and it read as a logo
-   * dump on a page that was two-thirds empty. A commercial document does not
-   * do that: the evidence a procurement office needs is a badge and a
-   * certificate number, and both fit on one line.
+   * They are separated by rules and by heading because a reader weighs them
+   * differently. A designation is a publisher's statement about its
+   * relationship with this business. A brand mark is a statement that this
+   * business supplies it. A certification is an independent body's statement
+   * about how the business works. Running them together as one row of logos —
+   * which is what this used to be — invites a reader to treat the weakest
+   * claim as though it carried the weight of the strongest.
    *
-   * What is *not* here any more is the wall of brand logos. A quotation is a
-   * priced offer, not a capability brochure — the brands relevant to it are the
-   * ones on the lines above, and they are named in their own column. The full
-   * supplier list belongs on the website, where a reader has come looking for
-   * it.
+   * Every area is driven by stored data. An area with nothing in it is not
+   * drawn and the others share the width, so this prints what the business
+   * actually holds and never a heading over an empty space.
    */
   const badges = input.accreditations;
+  const partners = input.technologyPartners;
   const certificates = input.certifications.slice(0, 4);
 
-  if (badges.length > 0 || certificates.length > 0) {
-    const badgeHeight = 22;
-    const rows = Math.max(1, certificates.length);
-    const height = Math.max(badgeHeight + 22, 20 + rows * 11);
+  const areas: Array<{ title: string; draw: (x: number, width: number, top: number) => void }> = [];
 
+  if (badges.length > 0) {
+    areas.push({
+      title: "TECHNOLOGY PARTNER DESIGNATIONS",
+      draw: (x, width, bandTop) => {
+        drawLogoRow(pdf, badges.map((badge) => badge.image), x, width, bandTop, 24);
+      },
+    });
+  }
+
+  if (partners.length > 0) {
+    areas.push({
+      title: "OUR TECHNOLOGY PARTNERS",
+      draw: (x, width, bandTop) => {
+        drawLogoRow(pdf, partners.map((partner) => partner.image), x, width, bandTop, 18);
+      },
+    });
+  }
+
+  if (certificates.length > 0) {
+    areas.push({
+      title: "CERTIFIED MANAGEMENT SYSTEMS",
+      draw: (x, width, bandTop) => {
+        /*
+         * The mark and the number that proves it.
+         *
+         * "ISO 27001 certified" is a claim anybody can type; a certificate
+         * number is one a procurement office can put to the body that issued
+         * it, and this is exactly the reader who will. The marks already carry
+         * the standard, so the type beneath is the reference and nothing else.
+         */
+        const marked = certificates.filter((entry) => entry.image);
+        const cellWidth = width / certificates.length;
+
+        certificates.forEach((certificate, index) => {
+          const cellX = x + index * cellWidth;
+          const image = certificate.image;
+          if (marked.length === certificates.length && image) {
+            pdf.image(image, cellX, bandTop, cellWidth - 6, 22);
+          } else {
+            pdf.textCentre(certificate.standard, cellX + cellWidth / 2, bandTop + 12, {
+              size: 6.6,
+              font: "sansBold",
+              colour: TEXT_INK,
+            });
+          }
+          pdf.textCentre(certificate.reference, cellX + cellWidth / 2, bandTop + 32, {
+            size: 6,
+            font: "mono",
+            colour: SOFT,
+          });
+        });
+      },
+    });
+  }
+
+  if (areas.length > 0) {
+    const height = 52;
     room(height + 24);
 
-    pdf.rect(MARGIN, y, CONTENT, height, PANEL);
+    pdf.rect(MARGIN, y, CONTENT, height, WHITE);
     pdf.strokeRect(MARGIN, y, CONTENT, height, LINE_RULE, 0.7);
 
-    // ── the badges, left ──────────────────────────────────────────────────
-    let badgeX = MARGIN + 12;
-    const badgeY = y + (height - badgeHeight) / 2;
-
-    for (const badge of badges) {
-      const width = (badge.image.width / badge.image.height) * badgeHeight;
-      if (badgeX + width > MARGIN + CONTENT / 2) break;
-      pdf.image(badge.image, badgeX, badgeY, width, badgeHeight);
-      badgeX += width + 12;
-    }
-
-    // ── the certificates, right, each with the number that proves it ──────
-    const certificateX = MARGIN + CONTENT / 2 + 8;
-    let certificateY = y + 14;
-
-    if (certificates.length > 0) {
-      pdf.text("CERTIFIED TO", certificateX, certificateY, {
-        size: LABEL_SIZE,
+    const areaWidth = CONTENT / areas.length;
+    areas.forEach((area, index) => {
+      const x = MARGIN + index * areaWidth;
+      if (index > 0) pdf.line(x, y + 6, x, y + height - 6, LINE_RULE, 0.6);
+      pdf.textCentre(area.title, x + areaWidth / 2, y + 12, {
+        size: 5.8,
         font: "sansBold",
-        colour: SOFT,
-        tracking: 0.35,
+        colour: NAVY,
+        tracking: 0.3,
       });
-      certificateY += 10;
+      area.draw(x + 8, areaWidth - 16, y + 17);
+    });
 
-      for (const certificate of certificates) {
-        pdf.text(fit(certificate.standard, 108, 7, "sansBold"), certificateX, certificateY, {
-          size: 7,
-          font: "sansBold",
-          colour: TEXT_INK,
-        });
-        pdf.textRight(fit(certificate.reference, 90, 6.8, "mono"), RIGHT - 12, certificateY, {
-          size: 6.8,
-          font: "mono",
-          colour: SOFT,
-        });
-        certificateY += 10;
-      }
-    }
-
-    y += height + 18;
+    y += height + 16;
   }
 
   // ── the signature block ─────────────────────────────────────────────────
@@ -1119,7 +1175,109 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
     { size: 6.8, colour: FAINT },
   );
 
-  return y + 70;
+  y += 76;
+
+  // ── who issued it, and how to reach them ────────────────────────────────
+  room(58);
+  y = drawCompanyFooter(pdf, input, y);
+
+  return y;
+}
+
+/**
+ * The company block that closes the document.
+ *
+ * Everything a customer needs to act on the quotation without going back to
+ * the email it arrived in: who issued it, where they are, how to reach them,
+ * and the three registration numbers a finance team checks a supplier against.
+ *
+ * The registration numbers are set in a monospaced face because they are read
+ * character by character and compared against another copy — a proportional
+ * capital I beside a 1 is a real hazard on a document somebody is reconciling.
+ */
+function drawCompanyFooter(pdf: PdfDocument, input: QuotationPdfInput, top: number): number {
+  const { config } = input;
+
+  pdf.line(MARGIN, top, RIGHT, top, NAVY, 1.2);
+  const y = top + 13;
+
+  pdf.text(config.entityName.toUpperCase(), MARGIN, y, {
+    size: 8.4,
+    font: "sansBold",
+    colour: NAVY,
+  });
+
+  const columnTwo = MARGIN + 250;
+  const columnThree = MARGIN + 400;
+
+  let addressY = y + 12;
+  for (const line of issuerAddress(config).flatMap((entry) => wrap(entry, 230, 7))) {
+    pdf.text(line, MARGIN, addressY, { size: 7, colour: SOFT });
+    addressY += 9;
+  }
+
+  let contactY = y;
+  for (const contact of [config.email.sales, config.phone.sales, config.url].filter(
+    (entry): entry is string => Boolean(entry),
+  )) {
+    pdf.text(fit(contact, 145, 7), columnTwo, contactY, { size: 7, colour: SOFT });
+    contactY += 9.5;
+  }
+
+  let numberY = y;
+  const registrations: Array<[string, string | null]> = [
+    ["GSTIN", config.gstin],
+    ["PAN", panFromGstin(config.gstin)],
+    ["CIN", config.cin],
+  ];
+  for (const [label, value] of registrations) {
+    if (!clean(value)) continue;
+    pdf.text(label, columnThree, numberY, { size: 6.6, colour: SOFT });
+    pdf.text(value!, columnThree + 30, numberY, { size: 6.8, font: "mono", colour: TEXT_INK });
+    numberY += 9.5;
+  }
+
+  return Math.max(addressY, contactY, numberY) + 6;
+}
+
+/**
+ * A row of marks, centred, each at a common height and its own aspect ratio.
+ *
+ * Height rather than width: these files are trimmed to their own ink, so an
+ * Adobe badge is a different shape from an HP roundel, and fitting both to one
+ * *width* would set one of them at a fraction of the other's size. A common
+ * height gives them one optical weight, which is what makes a row of marks
+ * read as a set rather than as several pictures.
+ *
+ * Anything that will not fit the width is left out rather than shrunk into
+ * illegibility — a mark too small to read is worse than an absent one.
+ */
+function drawLogoRow(
+  pdf: PdfDocument,
+  images: EmbeddedImage[],
+  x: number,
+  width: number,
+  top: number,
+  height: number,
+): void {
+  const gap = 10;
+  const fitted: Array<{ image: EmbeddedImage; width: number }> = [];
+  let used = 0;
+
+  for (const image of images) {
+    const drawn = (image.width / image.height) * height;
+    if (used + drawn > width) break;
+    fitted.push({ image, width: drawn });
+    used += drawn + gap;
+  }
+
+  if (fitted.length === 0) return;
+
+  let cursor = x + (width - (used - gap)) / 2;
+  for (const entry of fitted) {
+    pdf.image(entry.image, cursor, top, entry.width, height);
+    cursor += entry.width + gap;
+  }
 }
 
 // ---------------------------------------------------------------- footers
@@ -1133,7 +1291,20 @@ function drawFooters(pdf: PdfDocument, input: QuotationPdfInput): void {
     pdf.onPage(page, () => {
       pdf.line(MARGIN, FOOTER_RULE, RIGHT, FOOTER_RULE, HAIRLINE, 0.5);
 
-      pdf.text(input.config.entityName, MARGIN, FOOTER_RULE + 11, { size: 6.8, colour: FAINT });
+      /*
+       * The thank-you centred and the page count right, as the design has it.
+       *
+       * The document number stays beside the page number rather than being
+       * dropped for the tidier look: a page separated from its quotation — and
+       * pages do get separated, by printers and by staplers — has to be able to
+       * say which quotation it belongs to.
+       */
+      pdf.textCentre(
+        "Thank you for the opportunity to submit this quotation.",
+        MARGIN + CONTENT / 2,
+        FOOTER_RULE + 11,
+        { size: 6.8, colour: FAINT },
+      );
 
       const right = `${input.documentNo ?? input.reference}   ·   Page ${page + 1} of ${pageCount}`;
       pdf.textRight(right, RIGHT, FOOTER_RULE + 11, { size: 6.8, colour: FAINT });
