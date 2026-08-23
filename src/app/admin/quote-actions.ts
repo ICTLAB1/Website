@@ -11,10 +11,21 @@ import { recordAudit } from "@/lib/audit";
 import { clientIp } from "@/lib/auth/request";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { fieldErrorsOf } from "@/lib/validation";
-import { createQuoteFromEnquiry, recalculateQuote, sendQuote } from "@/lib/quote-service";
+import {
+  createQuoteFromEnquiry,
+  recalculateQuote,
+  sendQuote,
+  variantUnitPrice,
+} from "@/lib/quote-service";
 import { addQuoteMessage, reviseQuote } from "@/lib/quote-revision";
 import { fulfilOrder } from "@/lib/order-service";
-import { discountFromPercent, priceLine } from "@/lib/pricing";
+import {
+  discountFromPercent,
+  documentTotals,
+  lineIsStorable,
+  priceLine,
+  totalsAreStorable,
+} from "@/lib/pricing";
 import type { AdminActionState } from "@/app/admin/actions";
 
 /**
@@ -111,6 +122,253 @@ const lineSchema = z.object({
   discountPercent: z.coerce.number().min(0).max(100).default(0),
 });
 
+/*
+ * A line added by hand, which is most of them after the first draft.
+ *
+ * A quotation is drafted from what the customer asked for and then almost
+ * always grows: the licences they did not know they needed, the migration
+ * service that goes with them, the freight. Until now the only way to add one
+ * was to send the customer back to the catalogue to enquire again, which is not
+ * something a salesperson can ask of somebody who has just given them a
+ * requirement over the telephone.
+ *
+ * Two kinds of line, one form. Give a SKU and the catalogue fills in the name,
+ * the price, the tax rate, the HSN code and the unit — the same values, from
+ * the same rules, as drafting from an enquiry. Leave it blank and it is a free
+ * line: a service, a re-badged part, a delivery charge, none of which has a
+ * catalogue row and all of which belong on quotations.
+ *
+ * Anything typed wins over anything looked up, because the person quoting knows
+ * things the catalogue does not.
+ */
+const newLineSchema = z.object({
+  reference: referenceSchema("QTE"),
+  /** Empty for a free line. Matched against the catalogue exactly, case-insensitively. */
+  sku: z.string().trim().max(64).optional(),
+  productName: z.string().trim().max(200).optional(),
+  description: z.string().trim().max(300).optional(),
+  brandName: z.string().trim().max(80).optional(),
+  hsnCode: z
+    .string()
+    .trim()
+    .max(12)
+    .regex(/^[0-9]*$/, "An HSN or SAC code is digits only.")
+    .optional(),
+  unitLabel: z.string().trim().max(24).optional(),
+  quantity: z.coerce.number().int().min(1).max(100_000),
+  /*
+   * Optional, unlike on an edit. Blank against a SKU means "whatever the
+   * catalogue says today", which is the common case and saves retyping a figure
+   * that is already on the screen. Blank without one is zero — a placeholder
+   * line somebody is about to price, which is exactly what drafting from an
+   * enquiry produces for an item with no variant.
+   */
+  unitPrice: z
+    .string()
+    .trim()
+    .regex(/^(\d+(\.\d{1,2})?)?$/, "Enter an amount such as 1250 or 1250.50")
+    .optional(),
+  discountPercent: z.coerce.number().min(0).max(100).default(0),
+  /** Overrides the catalogue rate, and is the only way to set one on a free line. */
+  gstRatePercent: z.coerce.number().int().min(0).max(100).optional(),
+});
+
+/** Adds a line to a draft quotation, from the catalogue or by hand. */
+export async function addQuoteLine(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const staff = await guard();
+  if (isFailure(staff)) return staff;
+
+  const parsed = newLineSchema.safeParse({
+    reference: formData.get("reference"),
+    sku: formData.get("sku"),
+    productName: formData.get("productName"),
+    description: formData.get("description"),
+    brandName: formData.get("brandName"),
+    hsnCode: formData.get("hsnCode"),
+    unitLabel: formData.get("unitLabel"),
+    quantity: formData.get("quantity") || 1,
+    unitPrice: formData.get("unitPrice"),
+    discountPercent: formData.get("discountPercent") || 0,
+    gstRatePercent: formData.get("gstRatePercent") || undefined,
+  });
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: "Please correct the highlighted fields.",
+      fieldErrors: fieldErrorsOf(parsed.error),
+    };
+  }
+
+  const quote = await prisma.quote.findUnique({
+    where: { reference: parsed.data.reference },
+    select: {
+      id: true,
+      reference: true,
+      status: true,
+      items: {
+        select: {
+          unitPriceMinor: true,
+          quantity: true,
+          discountMinor: true,
+          gstRatePercent: true,
+        },
+      },
+    },
+  });
+  if (!quote) return { status: "error", message: "That quotation no longer exists." };
+  if (quote.status !== "DRAFT") {
+    return {
+      status: "error",
+      message: "Only a draft quotation can be edited. Raise a new quotation instead.",
+    };
+  }
+
+  /*
+   * The catalogue row behind the SKU, if there is one.
+   *
+   * `mode: "insensitive"` because a SKU read off a purchase order or a line
+   * card arrives in whatever case it was printed in, and refusing
+   * `ms-m365-bs-a1` for `MS-M365-BS-A1` teaches nobody anything.
+   */
+  const variant = parsed.data.sku
+    ? await prisma.productVariant.findFirst({
+        where: { sku: { equals: parsed.data.sku, mode: "insensitive" } },
+        select: {
+          id: true,
+          sku: true,
+          listPriceMinor: true,
+          salePriceMinor: true,
+          gstRatePercent: true,
+          product: {
+            select: {
+              id: true,
+              name: true,
+              shortDescription: true,
+              hsnCode: true,
+              unitLabel: true,
+              brand: { select: { name: true } },
+            },
+          },
+        },
+      })
+    : null;
+
+  if (parsed.data.sku && !variant) {
+    return {
+      status: "error",
+      message: `No catalogue product has the SKU ${parsed.data.sku}. Check it, or leave the SKU blank to add a line of your own.`,
+      fieldErrors: { sku: ["Not in the catalogue."] },
+    };
+  }
+
+  // The name is the line. It can come from the catalogue or from the person
+  // quoting, but a line with neither would print a blank row.
+  const productName = parsed.data.productName || variant?.product.name || "";
+  if (!productName) {
+    return {
+      status: "error",
+      message: "Give the line a name, or a SKU to take one from.",
+      fieldErrors: { productName: ["A line needs a name."] },
+    };
+  }
+
+  const unitPriceMinor =
+    parsed.data.unitPrice != null && parsed.data.unitPrice !== ""
+      ? Math.round(Number(parsed.data.unitPrice) * 100)
+      : variant
+        ? variantUnitPrice(variant)
+        : 0;
+
+  const gross = unitPriceMinor * parsed.data.quantity;
+  const line = priceLine({
+    unitPriceMinor,
+    quantity: parsed.data.quantity,
+    discountMinor: discountFromPercent(gross, parsed.data.discountPercent),
+    gstRatePercent: parsed.data.gstRatePercent ?? variant?.gstRatePercent ?? 18,
+  });
+
+  /*
+   * The 32-bit ceiling, checked before the write rather than discovered by it.
+   *
+   * Every amount here is an `Int`. Adding a line that takes the document over
+   * would otherwise fail inside the transaction with a Postgres range error,
+   * which tells a salesperson nothing they can act on. Splitting the quotation
+   * is a normal thing to do; it just has to be said.
+   */
+  if (!lineIsStorable(line)) {
+    return {
+      status: "error",
+      message: "That line alone is worth more than a quotation can hold (about ₹2.14 crore).",
+    };
+  }
+  const projected = documentTotals([...quote.items.map(priceLine), line]);
+  if (!totalsAreStorable(projected)) {
+    return {
+      status: "error",
+      message:
+        "Adding that line would take this quotation over what one document can hold (about ₹2.14 crore). Please split it across two quotations.",
+    };
+  }
+
+  const created = await prisma.$transaction(async (tx) => {
+    const item = await tx.quoteItem.create({
+      select: { id: true },
+      data: {
+        quoteId: quote.id,
+        productId: variant?.product.id ?? null,
+        variantId: variant?.id ?? null,
+        productName,
+        /*
+         * A free line still needs a SKU: the column is not nullable, and the
+         * printed document has a column for it. An em dash is what the PDF
+         * already prints for "we do not have this", so it is what goes in
+         * rather than an invented code.
+         */
+        sku: variant?.sku ?? "—",
+        // Typed values win over the catalogue's; blank falls through to it, and
+        // null where neither has it. The document prints nothing for a null.
+        description: parsed.data.description || variant?.product.shortDescription || null,
+        brandName: parsed.data.brandName || variant?.product.brand.name || null,
+        hsnCode: parsed.data.hsnCode || variant?.product.hsnCode || null,
+        unitLabel: parsed.data.unitLabel || variant?.product.unitLabel || null,
+        quantity: line.quantity,
+        unitPriceMinor: line.unitPriceMinor,
+        discountMinor: line.discountMinor,
+        gstRatePercent: line.gstRatePercent,
+        lineTotalMinor: line.lineTotalMinor,
+      },
+    });
+    await recalculateQuote(quote.id, tx);
+    return item;
+  });
+
+  await recordAudit({
+    actorId: staff.id,
+    action: "admin.quote_line_added",
+    entityType: "QuoteItem",
+    entityId: created.id,
+    metadata: {
+      quote: quote.reference,
+      productName,
+      sku: variant?.sku ?? null,
+      quantity: line.quantity,
+      unitPriceMinor: line.unitPriceMinor,
+    },
+    ip: await clientIp(),
+  });
+
+  revalidatePath(`/admin/quotes/${quote.reference}`);
+  return {
+    status: "success",
+    message: variant
+      ? `Added ${productName} and recalculated the totals.`
+      : `Added ${productName} as a line of its own, and recalculated the totals.`,
+  };
+}
+
 /** Edits one quotation line, then recomputes the document totals. */
 export async function updateQuoteLine(
   _previous: AdminActionState,
@@ -140,7 +398,26 @@ export async function updateQuoteLine(
 
   const item = await prisma.quoteItem.findUnique({
     where: { id: parsed.data.itemId },
-    select: { id: true, gstRatePercent: true, quote: { select: { id: true, reference: true, status: true } } },
+    select: {
+      id: true,
+      gstRatePercent: true,
+      quote: {
+        select: {
+          id: true,
+          reference: true,
+          status: true,
+          items: {
+            select: {
+              id: true,
+              unitPriceMinor: true,
+              quantity: true,
+              discountMinor: true,
+              gstRatePercent: true,
+            },
+          },
+        },
+      },
+    },
   });
   if (!item) return { status: "error", message: "That line no longer exists." };
 
@@ -160,6 +437,26 @@ export async function updateQuoteLine(
     discountMinor: discountFromPercent(gross, parsed.data.discountPercent),
     gstRatePercent: item.gstRatePercent,
   });
+
+  // The same ceiling `addQuoteLine` checks. A quantity typed with an extra zero
+  // reaches it just as easily as an extra line, and the Postgres range error it
+  // would otherwise raise says nothing a salesperson can act on.
+  if (!lineIsStorable(line)) {
+    return {
+      status: "error",
+      message: "That line alone is worth more than a quotation can hold (about ₹2.14 crore).",
+    };
+  }
+  const projected = documentTotals(
+    item.quote.items.map((other) => (other.id === item.id ? line : priceLine(other))),
+  );
+  if (!totalsAreStorable(projected)) {
+    return {
+      status: "error",
+      message:
+        "That change would take this quotation over what one document can hold (about ₹2.14 crore). Please split it across two quotations.",
+    };
+  }
 
   await prisma.$transaction(async (tx) => {
     await tx.quoteItem.update({

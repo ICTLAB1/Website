@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/badge";
 import { AdminForm } from "@/components/admin/admin-form";
 import { Field, Input, Select, Textarea } from "@/components/ui/form";
 import {
+  addQuoteLine,
   issueQuote,
   removeQuoteLine,
   replyOnQuote,
@@ -81,6 +82,28 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
   if (!quote) notFound();
 
   const isDraft = quote.status === "DRAFT";
+
+  /*
+   * The catalogue, offered as type-ahead against the SKU field.
+   *
+   * A `<datalist>` rather than a `<select>`: the list filters as the person
+   * types, which a native select does not do beyond its first letter, and a
+   * SKU that is not on the list can still be typed — the action resolves it,
+   * and says so plainly when it does not exist. That matters as the catalogue
+   * grows past what is worth putting in one page.
+   *
+   * Bounded, and bounded honestly: past the cap the field still works, it
+   * simply stops suggesting. Loading every variant into every quotation screen
+   * is not a trade worth making for a list nobody scrolls.
+   */
+  const quotableVariants = isDraft
+    ? await prisma.productVariant.findMany({
+        where: { product: { status: "ACTIVE" } },
+        orderBy: [{ product: { name: "asc" } }, { name: "asc" }],
+        take: 500,
+        select: { sku: true, name: true, product: { select: { name: true } } },
+      })
+    : [];
   const versions = await quoteVersions(quote.rootId ?? quote.id);
   /*
    * Revising is offered on anything that has left the drafting stage and has
@@ -192,8 +215,142 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
             </TableWrap>
 
             {isDraft ? (
-              <div className="mt-6 grid gap-4 lg:grid-cols-2">
-                {quote.items.map((item) => (
+              <>
+                {/*
+                  Adding comes before editing, and is not folded away.
+
+                  A quotation is drafted from what the customer asked for and
+                  then grows — the licence they forgot, the migration service,
+                  the freight. Making that the first thing on the screen matches
+                  what the screen is for; hiding it behind a disclosure, next to
+                  fifteen collapsed line editors, is how it went unnoticed.
+                */}
+                <section className="mt-6 rounded-[--radius-lg] border border-line-strong bg-surface-muted p-5">
+                  <h3 className="text-[15px] font-semibold text-graphite-900">Add a line</h3>
+                  <p className="mt-1 text-[13px] leading-relaxed text-ink-600">
+                    Give a SKU and the catalogue fills in the rest. Leave it blank for a service,
+                    a delivery charge or anything else with no catalogue entry — then the name and
+                    price are yours to type.
+                  </p>
+
+                  <datalist id="catalogue-skus">
+                    {quotableVariants.map((variant) => (
+                      <option
+                        key={variant.sku}
+                        value={variant.sku}
+                        label={`${variant.product.name} — ${variant.name}`}
+                      />
+                    ))}
+                  </datalist>
+
+                  <div className="mt-5">
+                    <AdminForm
+                      action={addQuoteLine}
+                      submitLabel="Add line"
+                      pendingLabel="Adding…"
+                      hidden={{ reference: quote.reference }}
+                    >
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <Field
+                          label="Catalogue SKU"
+                          name="sku"
+                          hint="Start typing a product or SKU. Blank adds a line of your own."
+                        >
+                          <Input
+                            name="sku"
+                            list="catalogue-skus"
+                            maxLength={64}
+                            autoComplete="off"
+                            placeholder="MS-M365-BS-A1"
+                          />
+                        </Field>
+                        <Field
+                          label="Product name"
+                          name="productName"
+                          hint="Taken from the catalogue when you give a SKU. Required otherwise."
+                        >
+                          <Input name="productName" maxLength={200} />
+                        </Field>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-4">
+                        <Field label="Quantity" name="quantity" required>
+                          <Input
+                            name="quantity"
+                            type="number"
+                            min={1}
+                            max={100000}
+                            defaultValue={1}
+                            required
+                          />
+                        </Field>
+                        <Field
+                          label="Unit price (₹)"
+                          name="unitPrice"
+                          hint="Blank takes today's catalogue price."
+                        >
+                          <Input name="unitPrice" inputMode="decimal" />
+                        </Field>
+                        <Field
+                          label="Discount (%)"
+                          name="discountPercent"
+                          hint="Applied before GST"
+                        >
+                          <Input
+                            name="discountPercent"
+                            type="number"
+                            min={0}
+                            max={100}
+                            step="0.01"
+                            defaultValue="0"
+                          />
+                        </Field>
+                        <Field
+                          label="GST (%)"
+                          name="gstRatePercent"
+                          hint="Blank uses the catalogue rate, or 18% on a line of your own."
+                        >
+                          <Input name="gstRatePercent" type="number" min={0} max={100} />
+                        </Field>
+                      </div>
+
+                      <details className="rounded-[--radius-md] border border-line bg-white p-4">
+                        <summary className="cursor-pointer text-[13px] font-medium text-graphite-900">
+                          Description, brand, HSN and unit
+                        </summary>
+                        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                          <Field
+                            label="Description"
+                            name="description"
+                            hint="The sentence printed beside the name on the PDF."
+                          >
+                            <Input name="description" maxLength={300} />
+                          </Field>
+                          <Field label="Brand" name="brandName">
+                            <Input name="brandName" maxLength={80} />
+                          </Field>
+                          <Field
+                            label="HSN / SAC code"
+                            name="hsnCode"
+                            hint="Digits only. Left blank it prints a dash, never a guess."
+                          >
+                            <Input name="hsnCode" inputMode="numeric" maxLength={12} />
+                          </Field>
+                          <Field
+                            label="Unit"
+                            name="unitLabel"
+                            hint="What the quantity counts: Users, Nos, Nodes, Project."
+                          >
+                            <Input name="unitLabel" maxLength={24} />
+                          </Field>
+                        </div>
+                      </details>
+                    </AdminForm>
+                  </div>
+                </section>
+
+                <div className="mt-6 grid gap-4 lg:grid-cols-2">
+                  {quote.items.map((item) => (
                   <details
                     key={item.id}
                     className="rounded-[--radius-lg] border border-line bg-white p-5"
@@ -332,8 +489,9 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                       </div>
                     </div>
                   </details>
-                ))}
-              </div>
+                  ))}
+                </div>
+              </>
             ) : (
               <p className="mt-4 rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
                 This quotation has been issued, so its lines are frozen. The customer was given a

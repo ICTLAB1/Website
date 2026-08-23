@@ -218,10 +218,149 @@ for (const [label, response] of [
   );
 }
 
+/*
+ * ── adding a line ──────────────────────────────────────────────────────────
+ *
+ * A quotation is drafted from what the customer asked for and then grows. The
+ * screen could edit and remove lines and not add one, so the only way to put
+ * something else on a quotation was to ask the customer to enquire again.
+ *
+ * Two paths, and they fail differently. From the catalogue the risk is that the
+ * looked-up values are not the ones the catalogue would have charged — a second
+ * copy of the pricing rule that drifts from the first. By hand the risk is the
+ * opposite: a line with no name, no price and no tax rate written anyway,
+ * printing a blank row on a tax document.
+ */
+const addForm = page.locator('form:has(input[name="sku"])').first();
+await page.goto(`${BASE}/admin/quotes/${quoteRef}`, { waitUntil: "load" });
+check("the draft offers a way to add a line", (await addForm.count()) > 0);
+
+const linesNow = () =>
+  Number(sql(`select count(*) from "QuoteItem" where "quoteId" = 'qeq${stamp}'`));
+
+async function submitAdd(fields) {
+  await page.goto(`${BASE}/admin/quotes/${quoteRef}`, { waitUntil: "load" });
+  for (const [name, value] of Object.entries(fields)) {
+    await addForm.locator(`[name="${name}"]`).fill(value);
+  }
+  await addForm.getByRole("button", { name: "Add line" }).click();
+  await page.waitForTimeout(2500);
+  return addForm.innerText();
+}
+
+// A real catalogue variant, so the looked-up values are the catalogue's own
+// rather than a fixture written to agree with the code under test.
+const [catalogueSku, listPrice, salePrice, gstRate, catalogueName] = sql(
+  `select v.sku, v."listPriceMinor", coalesce(v."salePriceMinor"::text,''), v."gstRatePercent", p.name
+     from "ProductVariant" v join "Product" p on p.id = v."productId"
+    where p.status = 'ACTIVE' order by v.sku limit 1`,
+).split("|");
+const expectedPrice =
+  salePrice !== "" && Number(salePrice) > 0 && Number(salePrice) < Number(listPrice)
+    ? Number(salePrice)
+    : Number(listPrice);
+
+const before = linesNow();
+await submitAdd({ sku: catalogueSku, quantity: "3" });
+check("a catalogue SKU adds a line", linesNow() === before + 1);
+
+const added = sql(
+  `select "productName", "unitPriceMinor", "gstRatePercent", quantity, "lineTotalMinor"
+     from "QuoteItem" where "quoteId" = 'qeq${stamp}' and sku = '${catalogueSku}'`,
+).split("|");
+check(
+  "and takes its name from the catalogue",
+  added[0] === catalogueName,
+  `${added[0]} vs ${catalogueName}`,
+);
+check(
+  "and the price the catalogue would charge today",
+  Number(added[1]) === expectedPrice,
+  `${added[1]} vs ${expectedPrice}`,
+);
+check("and the catalogue's tax rate", Number(added[2]) === Number(gstRate), added[2]);
+check("and the quantity that was asked for", Number(added[3]) === 3, added[3]);
+
+/*
+ * The header must agree with the lines. A quotation whose total does not
+ * reconcile against what is printed under it is not a document anybody can act
+ * on, and recalculating on every write is the only reason it ever does.
+ */
+const reconciles = sql(
+  `select (q."subtotalMinor" - q."discountMinor" + q."taxMinor") = q."totalMinor"
+     and q."subtotalMinor" = (select coalesce(sum(i."unitPriceMinor" * i.quantity), 0)
+                                from "QuoteItem" i where i."quoteId" = q.id)
+     from "Quote" q where q.id = 'qeq${stamp}'`,
+);
+check("the document totals are recalculated to match the lines", reconciles === "t", reconciles);
+
+check(
+  "the addition is in the audit trail",
+  sql(
+    `select count(*) from "AuditLog" where action = 'admin.quote_line_added' and metadata::text like '%${quoteRef}%'`,
+  ) !== "0",
+);
+
+// A line of its own: no catalogue row behind it, which is what a service,
+// a delivery charge or a re-badged part actually is.
+const freeName = `Migration service ${stamp}`;
+const withFree = linesNow();
+await submitAdd({ productName: freeName, quantity: "1", unitPrice: "25000.50", gstRatePercent: "18" });
+check("a line with no SKU can be added by hand", linesNow() === withFree + 1);
+check(
+  "and keeps the price that was typed, to the paisa",
+  sql(
+    `select "unitPriceMinor" from "QuoteItem" where "quoteId" = 'qeq${stamp}' and "productName" = '${freeName}'`,
+  ) === "2500050",
+);
+check(
+  "and carries no product or variant, because there is none",
+  sql(
+    `select coalesce("productId",'') || coalesce("variantId",'') from "QuoteItem" where "quoteId" = 'qeq${stamp}' and "productName" = '${freeName}'`,
+  ) === "",
+);
+
+// ── what must be refused ───────────────────────────────────────────────────
+const beforeRefusals = linesNow();
+
+const unknown = await submitAdd({ sku: `NO-SUCH-SKU-${stamp}`, quantity: "1" });
+check("a SKU that is not in the catalogue is refused", /No catalogue product/i.test(unknown), unknown.slice(0, 120));
+
+const nameless = await submitAdd({ quantity: "1" });
+check("a line with neither a SKU nor a name is refused", /needs a name|name, or a SKU/i.test(nameless), nameless.slice(0, 120));
+
+check("and neither refusal wrote a line", linesNow() === beforeRefusals);
+
+/*
+ * The server's own guard, not the screen's.
+ *
+ * The form is filled while the quotation is still a draft and submitted after
+ * it has been issued, so the request arrives looking exactly like a legitimate
+ * one. Hiding the form on a sent quotation is presentation; refusing the write
+ * is the rule, and only this distinguishes them.
+ */
+await page.goto(`${BASE}/admin/quotes/${quoteRef}`, { waitUntil: "load" });
+await addForm.locator('[name="productName"]').fill(`Too late ${stamp}`);
+await addForm.locator('[name="unitPrice"]').fill("100");
+sql(`update "Quote" set status = 'SENT' where id = 'qeq${stamp}'`);
+const beforeSent = linesNow();
+await addForm.getByRole("button", { name: "Add line" }).click();
+await page.waitForTimeout(2500);
+check(
+  "a line cannot be added to a quotation that has been sent",
+  linesNow() === beforeSent &&
+    /Only a draft quotation/i.test(await addForm.innerText()),
+  (await addForm.innerText()).slice(0, 120),
+);
+sql(`update "Quote" set status = 'DRAFT' where id = 'qeq${stamp}'`);
+
 await browser.close();
 
 // ── clean up ────────────────────────────────────────────────────────────────
 sql(`delete from "AuditLog" where "entityId" = 'qei${stamp}'`);
+sql(
+  `delete from "AuditLog" where action = 'admin.quote_line_added' and metadata::text like '%${quoteRef}%'`,
+);
 sql(`delete from "QuoteItem" where "quoteId" = 'qeq${stamp}'`);
 sql(`delete from "Quote" where id = 'qeq${stamp}'`);
 sql(`delete from "Session" where "userId" in ('qes${stamp}', 'qeu${stamp}')`);

@@ -35,6 +35,28 @@ export type QuoteResult =
   | { ok: true; reference: string }
   | { ok: false; reason: string };
 
+/**
+ * What one seat of a variant costs today.
+ *
+ * The sale price only when it is both set and genuinely lower — a "sale" price
+ * above the list price is a data-entry mistake, and honouring it would quote a
+ * customer more than the catalogue advertises.
+ *
+ * Shared by drafting from an enquiry and by adding a line to a draft by hand,
+ * because those two are the same question asked twice. They were separate for
+ * one commit and that is exactly long enough for them to disagree.
+ */
+export function variantUnitPrice(variant: {
+  listPriceMinor: number;
+  salePriceMinor: number | null;
+}): number {
+  return variant.salePriceMinor != null &&
+    variant.salePriceMinor > 0 &&
+    variant.salePriceMinor < variant.listPriceMinor
+    ? variant.salePriceMinor
+    : variant.listPriceMinor;
+}
+
 /** Drafts a quotation from an enquiry, pricing every line from the catalogue. */
 export async function createQuoteFromEnquiry(
   enquiryReference: string,
@@ -105,14 +127,7 @@ export async function createQuoteFromEnquiry(
 
   const priced = enquiry.items.map((item) => {
     const variant = item.variantId ? variantById.get(item.variantId) : undefined;
-    const unitPriceMinor =
-      variant == null
-        ? 0
-        : variant.salePriceMinor != null &&
-            variant.salePriceMinor > 0 &&
-            variant.salePriceMinor < variant.listPriceMinor
-          ? variant.salePriceMinor
-          : variant.listPriceMinor;
+    const unitPriceMinor = variant == null ? 0 : variantUnitPrice(variant);
 
     const line = priceLine({
       unitPriceMinor,
