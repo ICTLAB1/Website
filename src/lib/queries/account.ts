@@ -88,6 +88,20 @@ export async function getUserEnquiry(user: Scoped, reference: string) {
       quotes: {
         select: { reference: true, status: true, totalMinor: true, currency: true, validUntil: true },
       },
+      documents: {
+        where: { deletedAt: null },
+        orderBy: { createdAt: "desc" },
+        select: {
+          reference: true,
+          kind: true,
+          filename: true,
+          bytes: true,
+          note: true,
+          verifiedAt: true,
+          createdAt: true,
+          user: { select: { name: true } },
+        },
+      },
     },
   });
 }

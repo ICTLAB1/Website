@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/badge";
 import { RequirementSummary } from "@/components/enquiry/requirement-summary";
+import { DocumentList } from "@/components/documents/document-list";
 import { RFQ_STATUS_LABELS } from "@/lib/rfq";
 import { ButtonLink } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/guards";
@@ -45,6 +46,13 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
           Submitted {formatDate(enquiry.createdAt)}
         </p>
       </div>
+
+      {enquiry.documents.length > 0 ? (
+        <section>
+          <h3 className="mb-4 text-[15px] font-semibold text-graphite-900">Attached</h3>
+          <DocumentList documents={enquiry.documents} />
+        </section>
+      ) : null}
 
       {enquiry.requirement ? (
         <section>

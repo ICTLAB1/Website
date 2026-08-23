@@ -178,6 +178,20 @@ export async function getAdminEnquiry(reference: string) {
       user: { select: { id: true, name: true, email: true } },
       company: { select: { name: true, gstin: true } },
       quotes: { select: { reference: true, status: true, totalMinor: true, currency: true } },
+      documents: {
+        where: { deletedAt: null },
+        orderBy: { createdAt: "desc" },
+        select: {
+          reference: true,
+          kind: true,
+          filename: true,
+          bytes: true,
+          note: true,
+          verifiedAt: true,
+          createdAt: true,
+          user: { select: { name: true } },
+        },
+      },
     },
   });
 }

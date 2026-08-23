@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/badge";
 import { RequirementSummary } from "@/components/enquiry/requirement-summary";
+import { DocumentList } from "@/components/documents/document-list";
 import { AdminForm } from "@/components/admin/admin-form";
 import { Field, Select, Textarea } from "@/components/ui/form";
 import { updateEnquiry } from "@/app/admin/actions";
@@ -54,6 +55,13 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="space-y-8">
+          {enquiry.documents.length > 0 ? (
+            <section>
+              <h2 className="mb-4 text-[1.05rem]">Attached</h2>
+              <DocumentList documents={enquiry.documents} />
+            </section>
+          ) : null}
+
           {enquiry.requirement ? (
             <section>
               <h2 className="mb-4 text-[1.05rem]">

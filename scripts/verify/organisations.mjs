@@ -1,6 +1,8 @@
 import { chromium } from "playwright";
 import { execFileSync } from "node:child_process";
-import { writeFileSync, rmSync } from "node:fs";
+import { mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { join } from "node:path";
 
 /**
  * Organisations: colleagues share, strangers do not.
@@ -239,6 +241,40 @@ check(
   `status ${betaDetail?.status()}`,
 );
 
+// ---------------------------- a document belongs to the organisation too
+//
+// Same rule, different table, and the one where getting it wrong leaks a
+// purchase order rather than a line item. The file is written where the
+// application would have written it — named after a digest of its contents —
+// and the row is attributed to Alpha.
+
+const documentBody = "Item,Qty\nLaptop,10\n";
+const documentDigest = createHash("sha256").update(documentBody).digest("hex");
+const storageKey = `${documentDigest.slice(0, 32)}.csv`;
+mkdirSync(join(process.cwd(), ".documents"), { recursive: true });
+writeFileSync(join(process.cwd(), ".documents", storageKey), documentBody);
+
+const documentReference = `DOC-2026-OR${stamp.slice(-4)}`;
+sql(
+  `insert into "Document" (id, reference, kind, filename, "mimeType", bytes, "storageKey", digest, "companyId", "userId", "createdAt", "updatedAt") values ('orgd${stamp}', '${documentReference}', 'BOQ', 'alpha-requirement.csv', 'text/plain; charset=utf-8', ${documentBody.length}, '${storageKey}', '${documentDigest}', '${alphaCompanyId}', '${alphaUserId}', now(), now())`,
+);
+
+{
+  const asColleague = await colleaguePage.request.get(`${BASE}/documents/${documentReference}`);
+  check(
+    "a colleague can fetch a document belonging to their organisation",
+    asColleague.status() === 200,
+    `status ${asColleague.status()}`,
+  );
+
+  const asOutsider = await betaPage.request.get(`${BASE}/documents/${documentReference}`);
+  check(
+    "another organisation gets a 404 for the same document",
+    asOutsider.status() === 404,
+    `status ${asOutsider.status()}`,
+  );
+}
+
 // -------------------------------------- a viewer may look and may not act
 // No fresh sign-in: the session is resolved against the user row on every
 // request, so the demotion is in force on the next one.
@@ -281,6 +317,7 @@ check(
 );
 
 // ---------------------------------------------------------------- clean up
+sql(`delete from "Document" where reference = '${documentReference}'`);
 sql(`delete from "Quote" where reference = '${quoteRef}'`);
 sql(
   `delete from "Session" where "userId" in (select id from "User" where email in ('${alphaEmail}','${betaEmail}','${colleagueEmail}'))`,

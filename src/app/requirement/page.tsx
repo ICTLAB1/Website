@@ -55,7 +55,11 @@ export default async function RequirementPage() {
           <Link href="/products" className="text-accent-700 underline underline-offset-2">
             Browse the catalogue
           </Link>{" "}
-          and build an enquiry instead.
+          and build an enquiry instead. Have it as a file already?{" "}
+          <Link href="/requirement/upload" className="text-accent-700 underline underline-offset-2">
+            Upload a bill of quantities
+          </Link>
+          .
         </p>
       </header>
 

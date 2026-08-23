@@ -77,6 +77,10 @@ services:
       # volume rather than under public/, which is baked into the image and so
       # would lose every upload at the next rebuild.
       UPLOAD_DIR: /data/uploads
+      # Customer documents — purchase orders, bills of quantities, quotations.
+      # A separate volume from the public artwork above, because these are never
+      # served from a guessable path and must not end up somewhere that is.
+      DOCUMENT_DIR: /data/documents
 
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}
@@ -97,6 +101,9 @@ services:
     volumes:
       # Admin uploads (brand logos). Outside the image, so a rebuild keeps them.
       - uploads:/data/uploads
+      # Customer documents. Same reasoning, different volume: losing a purchase
+      # order to a rebuild is not the same order of mistake as losing a logo.
+      - documents:/data/documents
     # Also no `ports:`. Only Caddy talks to the app, over the internal network.
     healthcheck:
       # Asks the app whether it can reach its database, which is the failure
@@ -151,5 +158,6 @@ services:
 volumes:
   db-data:
   uploads:
+  documents:
   caddy-data:
   caddy-config:

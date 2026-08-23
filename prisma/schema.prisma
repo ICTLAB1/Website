@@ -181,6 +181,28 @@ enum EnquiryStatus {
   CLOSED
 }
 
+/// What a stored document is.
+///
+/// Not a free-text label: what a document *is* decides who may see it, whether
+/// it may be replaced, and which screen it belongs on, so it is a closed set
+/// rather than something typed at upload time.
+enum DocumentKind {
+  /// A bill of quantities or requirement list a customer uploaded.
+  BOQ
+  /// A customer's purchase order.
+  PURCHASE_ORDER
+  /// A quotation we generated.
+  QUOTATION
+  INVOICE
+  DELIVERY_NOTE
+  /// Licence certificates, keys and entitlement confirmations.
+  LICENCE
+  WARRANTY
+  /// Something attached to a support ticket.
+  SUPPORT_ATTACHMENT
+  OTHER
+}
+
 /// How a requirement reached us.
 enum EnquiryKind {
   /// Built in the enquiry basket from catalogue lines.
@@ -330,6 +352,7 @@ model User {
   orders        Order[]
   licences      Licence[]
   tickets       SupportTicket[]
+  documents     Document[]
   auditLogs     AuditLog[]
   authoredPosts BlogPost[]
   savedSettings SiteSettings[]
@@ -381,6 +404,7 @@ model Company {
   tickets   SupportTicket[]
   addresses CompanyAddress[]
   contacts  CompanyContact[]
+  documents Document[]
 
   @@index([name])
   @@index([gstin])
@@ -842,8 +866,9 @@ model Enquiry {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  items  EnquiryItem[]
-  quotes Quote[]
+  items     EnquiryItem[]
+  quotes    Quote[]
+  documents Document[]
 
   @@index([status])
   @@index([userId])
@@ -894,8 +919,9 @@ model Quote {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
-  items  QuoteItem[]
-  orders Order[]
+  items     QuoteItem[]
+  orders    Order[]
+  documents Document[]
 
   @@index([status])
   @@index([userId])
@@ -956,9 +982,10 @@ model Order {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  items    OrderItem[]
-  licences Licence[]
-  payments Payment[]
+  items     OrderItem[]
+  licences  Licence[]
+  payments  Payment[]
+  documents Document[]
 
   @@index([status])
   @@index([userId])
@@ -1037,6 +1064,68 @@ model Renewal {
   @@index([status])
 }
 
+/// A file belonging to a customer organisation.
+///
+/// Never served from `public/`. Business documents are quotations, purchase
+/// orders and invoices: putting them on a path anybody could guess would make
+/// every one of them readable by anybody who guessed it, which is the failure
+/// this model exists to make impossible. They are fetched through a route that
+/// resolves the organisation first — see `app/documents/[reference]`.
+///
+/// The bytes live outside the database, named after a digest of their own
+/// contents, so no part of a filename anybody supplied ever reaches the
+/// filesystem.
+model Document {
+  id        String       @id @default(cuid())
+  reference String       @unique
+  kind      DocumentKind
+
+  /// What the person called it. Shown, and used for the download name — never
+  /// used to find the file.
+  filename  String
+  /// The type detected from the bytes, never the one the upload claimed.
+  mimeType  String
+  bytes     Int
+  /// Where it is on disk: a digest of the contents plus an extension.
+  storageKey String
+  /// SHA-256 of the contents in full, for integrity and de-duplication.
+  digest    String
+
+  /// Who it belongs to. The organisation is the unit of access, as everywhere.
+  companyId String?
+  company   Company?     @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  /// Who put it there — a customer, or a member of staff acting for them.
+  userId    String?
+  user      User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  /// What it is about. All optional: a document may be attached to any of
+  /// these, or to none while it is being sorted out.
+  enquiryId String?
+  enquiry   Enquiry?     @relation(fields: [enquiryId], references: [id], onDelete: SetNull)
+  quoteId   String?
+  quote     Quote?       @relation(fields: [quoteId], references: [id], onDelete: SetNull)
+  orderId   String?
+  order     Order?       @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  ticketId  String?
+  ticket    SupportTicket? @relation(fields: [ticketId], references: [id], onDelete: SetNull)
+
+  /// Set when staff have checked it. Meaningful for a purchase order, which
+  /// must not confirm an order on the strength of an upload alone.
+  verifiedAt DateTime?
+  note       String?
+
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime?
+
+  @@index([companyId])
+  @@index([enquiryId])
+  @@index([quoteId])
+  @@index([orderId])
+  @@index([ticketId])
+  @@index([kind])
+}
+
 model SupportTicket {
   id        String         @id @default(cuid())
   reference String         @unique
@@ -1053,6 +1142,8 @@ model SupportTicket {
   priority  TicketPriority @default(NORMAL)
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
+
+  documents Document[]
 
   @@index([userId])
   @@index([companyId])
