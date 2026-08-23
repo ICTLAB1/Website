@@ -6,7 +6,12 @@ import { ButtonLink } from "@/components/ui/button";
 import { buildMetadata } from "@/lib/seo";
 import { requireUser } from "@/lib/auth/guards";
 import { verificationEnforced } from "@/lib/auth/email-verification";
-import { resendVerificationEmail } from "@/app/verify-email/required/actions";
+import { Field, Input } from "@/components/ui/form";
+import { CODE_TTL_MINUTES } from "@/lib/auth/otp";
+import {
+  confirmVerificationCode,
+  resendVerificationEmail,
+} from "@/app/verify-email/required/actions";
 
 export const metadata: Metadata = buildMetadata({
   title: "Confirm your email",
@@ -40,9 +45,51 @@ export default async function VerificationRequiredPage() {
         <h1 className="mt-3 text-3xl">Confirm your email address</h1>
 
         <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
-          We sent a link to <strong className="text-graphite-900">{user.email}</strong> when you
-          registered. Opening it confirms we can reach you.
+          We emailed a six-digit code to{" "}
+          <strong className="text-graphite-900">{user.email}</strong> when you registered. Enter
+          it below, or open the link in the same message.
         </p>
+
+        {/*
+          The code first, and the link second, because the code is the faster
+          path on the device most people register on. Somebody reading their
+          email on a phone and filling this form on a laptop cannot follow a
+          link across the gap; they can read six digits across it.
+        */}
+        <div className="mt-8 rounded-[--radius-lg] border border-line bg-white p-5">
+          <h2 className="text-[15px] font-semibold text-graphite-900">Enter your code</h2>
+          <AdminForm
+            action={confirmVerificationCode}
+            submitLabel="Confirm"
+            pendingLabel="Checking…"
+            compact
+          >
+            <Field
+              label="Six-digit code"
+              name="code"
+              hint={`It expires ${CODE_TTL_MINUTES} minutes after we send it. Spaces and dashes are fine.`}
+            >
+              <Input
+                name="code"
+                /*
+                  `inputMode="numeric"` brings up the number pad on a phone, and
+                  `autoComplete="one-time-code"` is what lets iOS and Android
+                  offer the code straight from the notification — the single
+                  thing that makes an OTP pleasant rather than a chore. Not
+                  `type="number"`, which adds spinners and drops leading zeros.
+                */
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={16}
+                required
+                autoFocus
+                placeholder="123 456"
+                className="max-w-[12rem] font-mono text-lg tracking-[0.3em]"
+              />
+            </Field>
+          </AdminForm>
+        </div>
 
         <div className="mt-8 rounded-[--radius-lg] border border-line bg-white p-5">
           <h2 className="text-[15px] font-semibold text-graphite-900">Why we ask</h2>
@@ -66,15 +113,15 @@ export default async function VerificationRequiredPage() {
 
         <div className="mt-8">
           <h2 className="mb-3 text-[15px] font-semibold text-graphite-900">
-            Not arrived?
+            Not arrived, or expired?
           </h2>
           <p className="mb-4 text-[14px] leading-relaxed text-ink-600">
-            Check your spam folder first — that is where it usually is. Otherwise we will send
-            another.
+            Check your spam folder first — that is where it usually is. Otherwise we will send a
+            new code, which replaces the old one.
           </p>
           <AdminForm
             action={resendVerificationEmail}
-            submitLabel="Send a new link"
+            submitLabel="Send a new code"
             pendingLabel="Sending…"
             variant="outline"
             compact

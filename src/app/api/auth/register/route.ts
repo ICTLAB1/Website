@@ -100,7 +100,20 @@ export const POST = withErrorHandling("auth.register", async (request: Request) 
     ip,
   });
 
-  // The account page reads this to decide whether to say "check your email" or
-  // to stay quiet, so it never promises a message that was not sent.
-  return jsonOk({ redirectTo: verification.delivered ? "/account?verify=sent" : "/account" });
+  /*
+   * Straight to the code screen when a code is actually in flight.
+   *
+   * Registration used to land on the account page with a "check your email"
+   * banner, which is the right shape for a link — the person goes to their
+   * inbox and comes back through it. A code is the other way round: they come
+   * back *here* and type it, so the field to type it into should be the thing
+   * in front of them rather than something to go and find.
+   *
+   * Only when the mail was actually sent. On a deployment with no SMTP that
+   * page would be a form for a code nobody received, so the account page and
+   * its quieter wording remain the honest destination.
+   */
+  return jsonOk({
+    redirectTo: verification.delivered ? "/verify-email/required" : "/account",
+  });
 });

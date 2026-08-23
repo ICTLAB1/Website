@@ -549,12 +549,30 @@ model EmailVerificationToken {
   tokenHash String    @unique
   userId    String
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  /// The address the link was sent to. Checked on use, so a token issued before
+  /// The address the code was sent to. Checked on use, so a token issued before
   /// an address change cannot verify the new one.
   email     String
   expiresAt DateTime
   usedAt    DateTime?
   createdAt DateTime  @default(now())
+
+  /// HMAC of the six-digit code, never the code.
+  ///
+  /// Hashed with the same keyed function as every other bearer secret here, so
+  /// a read-only disclosure of this table cannot be replayed. Six digits is a
+  /// million possibilities and a hash is not much of a wall on its own — the
+  /// wall is `attempts` below and a ten-minute life. The hash is what stops the
+  /// far likelier problem: a live code sitting in a backup, a log or a support
+  /// screen in plain sight.
+  codeHash  String?
+  /// Wrong guesses against this code.
+  ///
+  /// The whole security of a six-digit secret rests here. Unbounded, a
+  /// million tries walks in; bounded at five, an attacker gets five in ten
+  /// minutes and then needs a fresh code, which is rate limited in its own
+  /// right. Counted on the row rather than by IP, because the thing being
+  /// protected is this account and an attacker chooses their own address.
+  attempts  Int       @default(0)
 
   @@index([userId])
   @@index([expiresAt])

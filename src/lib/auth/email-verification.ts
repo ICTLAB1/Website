@@ -1,7 +1,17 @@
 import "server-only";
 import { prisma } from "@/lib/db";
 import { appUrl } from "@/lib/env";
-import { generateToken, hashToken } from "@/lib/auth/tokens";
+import { generateToken, hashToken, safeEqual } from "@/lib/auth/tokens";
+import {
+  CODE_TTL_MINUTES,
+  MAX_CODE_ATTEMPTS,
+  checkCode,
+  formatCodeForDisplay,
+  generateCode,
+  isWellFormedCode,
+  normaliseCode,
+  type CodeCheck,
+} from "@/lib/auth/otp";
 import { escapeHtml, isMailConfigured, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
 import { logger } from "@/lib/logger";
@@ -24,6 +34,19 @@ import { logger } from "@/lib/logger";
  * customer some features, never their access.
  */
 
+/*
+ * The link's life, which is not the code's.
+ *
+ * Two mechanisms in one email with two different lifetimes, deliberately. A
+ * six-digit code has to be short-lived — it is a million possibilities and the
+ * only thing making that enough is that it dies quickly. A link is 256 bits and
+ * does not need to; expiring it in ten minutes would only strand people who
+ * came back to the email later, which is most of them.
+ *
+ * The row carries the link's expiry. The code's is derived from `createdAt`, so
+ * a spent code cannot outlive its own window even though the row it lives on
+ * stays valid for the link.
+ */
 const TOKEN_TTL_HOURS = 48;
 
 /**
@@ -49,11 +72,13 @@ export async function sendVerificationEmail(user: {
   });
 
   const token = generateToken(32);
+  const code = generateCode();
   const expiresAt = new Date(Date.now() + TOKEN_TTL_HOURS * 60 * 60 * 1000);
 
   await prisma.emailVerificationToken.create({
     data: {
       tokenHash: hashToken(token),
+      codeHash: hashToken(code),
       userId: user.id,
       email: user.email,
       expiresAt,
@@ -72,20 +97,31 @@ export async function sendVerificationEmail(user: {
       "Please confirm this address so we can send you quotations, order",
       "confirmations and licence details.",
       "",
+      `Your verification code is ${formatCodeForDisplay(code)}`,
+      "",
+      `It expires in ${CODE_TTL_MINUTES} minutes and can be entered ${MAX_CODE_ATTEMPTS} times.`,
+      "",
+      "Or open this link, which works for longer:",
       link,
       "",
-      `This link works once and expires in ${TOKEN_TTL_HOURS} hours.`,
-      "",
-      "If you did not create an account, you can ignore this message.",
+      "If you did not create an account, you can ignore this message. Nobody",
+      "can use this code without it.",
       "",
       config.tradingName,
     ].join("\n"),
     html: [
       `<p>Hello ${escapeHtml(user.name)},</p>`,
       "<p>Please confirm this address so we can send you quotations, order confirmations and licence details.</p>",
-      `<p><a href="${escapeHtml(link)}">Confirm my email address</a></p>`,
-      `<p>This link works once and expires in ${TOKEN_TTL_HOURS} hours.</p>`,
-      "<p>If you did not create an account, you can ignore this message.</p>",
+      /*
+       * The code as text, not as an image and not in a table with a background
+       * colour. It has to survive a plain-text client, a screen reader and a
+       * long-press copy on a phone, and every one of those is a place a
+       * prettier treatment fails.
+       */
+      `<p style="font-size:28px;font-weight:700;letter-spacing:0.12em;font-family:monospace">${escapeHtml(formatCodeForDisplay(code))}</p>`,
+      `<p>It expires in ${CODE_TTL_MINUTES} minutes and can be entered ${MAX_CODE_ATTEMPTS} times.</p>`,
+      `<p>Or <a href="${escapeHtml(link)}">open this link</a>, which works for longer.</p>`,
+      "<p>If you did not create an account, you can ignore this message. Nobody can use this code without it.</p>",
       `<p>${escapeHtml(config.tradingName)}</p>`,
     ].join(""),
   });
@@ -101,10 +137,92 @@ export async function sendVerificationEmail(user: {
      * is already privileged: it holds session identifiers and reset links for
      * the same reason.
      */
-    logger.info("verification_link_not_emailed", { userId: user.id, link });
+    logger.info("verification_not_emailed", { userId: user.id, link, code });
   }
 
   return { delivered };
+}
+
+/**
+ * Consumes a code, for the signed-in account it was issued to.
+ *
+ * Scoped by `userId` rather than looked up by the code itself, and that is the
+ * design. A code is six digits; a global lookup by code would mean any six
+ * digits that happen to be live for *some* account verify *that* account —
+ * turning a per-account guess into a birthday problem across every pending
+ * registration at once. Bound to one account, five guesses buy five of a
+ * million.
+ *
+ * The attempt is counted before the answer is returned, and counted with a
+ * database increment rather than a read-then-write, so two requests racing the
+ * same code cannot both see `attempts: 4`.
+ */
+export async function verifyEmailCode(
+  userId: string,
+  entered: string,
+): Promise<CodeCheck & { verified?: boolean }> {
+  const code = normaliseCode(entered);
+  if (!isWellFormedCode(code)) return { ok: false, reason: "malformed" };
+
+  const record = await prisma.emailVerificationToken.findFirst({
+    where: { userId, usedAt: null, codeHash: { not: null } },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      email: true,
+      codeHash: true,
+      usedAt: true,
+      attempts: true,
+      createdAt: true,
+      user: { select: { email: true, emailVerified: true, deletedAt: true } },
+    },
+  });
+
+  if (!record || record.user.deletedAt) return { ok: false, reason: "expired" };
+  if (record.user.emailVerified) return { ok: true, verified: true };
+
+  /*
+   * The code's own window, measured from when it was issued.
+   *
+   * Not the row's `expiresAt`, which is the link's forty-eight hours. A code
+   * that inherited that would be a six-digit secret with two days of guessing
+   * against it.
+   */
+  const codeExpiresAt = new Date(record.createdAt.getTime() + CODE_TTL_MINUTES * 60_000);
+
+  const matches = Boolean(record.codeHash) && safeEqual(record.codeHash!, hashToken(code));
+
+  const verdict = checkCode(
+    code,
+    { expiresAt: codeExpiresAt, usedAt: record.usedAt, attempts: record.attempts, codeHash: record.codeHash },
+    matches,
+  );
+
+  if (!verdict.ok) {
+    // Only a genuine wrong guess costs an attempt. An expired or already-locked
+    // record has nothing left to spend, and counting those would let somebody
+    // burn a *new* code by hammering the old one.
+    if (verdict.reason === "wrong") {
+      await prisma.emailVerificationToken.update({
+        where: { id: record.id },
+        data: { attempts: { increment: 1 } },
+      });
+    }
+    return verdict;
+  }
+
+  // The address the code was sent to must still be the account's address.
+  if (record.email !== record.user.email) return { ok: false, reason: "expired" };
+
+  await prisma.$transaction([
+    prisma.emailVerificationToken.update({
+      where: { id: record.id },
+      data: { usedAt: new Date() },
+    }),
+    prisma.user.update({ where: { id: userId }, data: { emailVerified: new Date() } }),
+  ]);
+
+  return { ok: true, verified: true };
 }
 
 export type VerificationResult =
