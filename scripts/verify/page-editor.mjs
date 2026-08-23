@@ -118,9 +118,25 @@ check("a block mark pointing off-site is refused",
 // somebody willing to edit JSON.
 await addBlock("Chip list");
 await page.goto(editorUrl, { waitUntil: "load" });
+/*
+ * Typed after the page has settled, not the instant `load` fires.
+ *
+ * These fields are uncontrolled, so their value lives in the DOM and their
+ * `defaultValue` is re-applied when React hydrates. Filling one in the window
+ * between the HTML arriving and hydration finishing let the seeded value come
+ * back over the top of what had been typed — and because it happened to the
+ * suite roughly one run in two, it read as a defect in the editor rather than
+ * as this. The saved value is checked before the click as well, so a
+ * recurrence fails here, where the cause is, instead of three steps later.
+ */
+await page.waitForLoadState("networkidle");
 const chips = page.locator("ol > li").filter({ hasText: "Chip list" }).first();
-await chips.locator('textarea[name="items"]').fill(`First name ${stamp}\nSecond name ${stamp}`);
+const names = `First name ${stamp}\nSecond name ${stamp}`;
+const items = chips.locator('textarea[name="items"]');
+await items.fill(names);
 await chips.locator('input[name="heading"]').fill(`Named organisations ${stamp}`);
+check("the typed names are in the field before it is submitted", (await items.inputValue()) === names,
+  (await items.inputValue()).replace(/\n/g, " | "));
 await chips.locator('form:has(textarea[name="items"])').getByRole("button", { name: "Save block" }).click();
 await page.waitForTimeout(1500);
 await page.goto(editorUrl, { waitUntil: "load" });
