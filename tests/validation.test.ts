@@ -79,7 +79,7 @@ describe("enquiry schema", () => {
 
 describe("gstin", () => {
   it("accepts a correctly structured 15-character GSTIN", () => {
-    expect(gstinSchema.safeParse("22AAAAA0000A1Z5").success).toBe(true);
+    expect(gstinSchema.safeParse("22AAAAA0000A1ZC").success).toBe(true);
   });
 
   it("rejects wrong length and wrong structure", () => {

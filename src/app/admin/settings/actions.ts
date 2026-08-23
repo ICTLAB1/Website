@@ -91,7 +91,7 @@ const optionalGstin = z
   .nullable()
   .refine(
     (value) => value === null || /^\d{2}[A-Z]{5}\d{4}[A-Z]\d[A-Z][\dA-Z]$/.test(value),
-    { message: "A GSTIN is 15 characters, such as 07AABCU9603R1ZX." },
+    { message: "A GSTIN is 15 characters, such as 07AABCU9603R1ZP." },
   );
 
 /** 21 characters, as issued by the Ministry of Corporate Affairs. */

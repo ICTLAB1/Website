@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  gstinCheckCharacter,
+  isValidGstin,
   gstStateCode,
   gstStateName,
   normaliseGstin,
@@ -20,7 +22,7 @@ import { amountInWords, pdfAmount, pdfMoney } from "@/lib/pdf/money";
  */
 
 const DELHI = "07AAICT5606J1Z4";
-const MAHARASHTRA = "27AAAJM2218H1ZC";
+const MAHARASHTRA = "27AAAJM2218H1ZD";
 
 describe("reading a GSTIN", () => {
   it("takes the state from the first two digits", () => {
@@ -137,5 +139,72 @@ describe("the total in words", () => {
 
   it("says so rather than silently dropping a sign", () => {
     expect(amountInWords(-11800000)).toContain("Minus");
+  });
+});
+
+describe("the check digit", () => {
+  /*
+   * A GSTIN validates itself. The fifteenth character is computed from the
+   * first fourteen, so one mistyped or transposed character is detectable at
+   * the form rather than by a customer's finance team after the invoice has
+   * gone out — which is where it was being detected, because the shape check
+   * that used to stand alone accepts a wrong digit perfectly happily.
+   */
+  it("accepts a real number", () => {
+    // This company's own GSTIN, off its own letterhead.
+    expect(isValidGstin("07AAICT5606J1Z4")).toBe(true);
+  });
+
+  it("computes the same character the GSTN documentation's sample carries", () => {
+    /*
+     * `29AJIPA1572ER2M` is the request sample in the GSTN API documentation and
+     * its check character is right — but `isValidGstin` refuses it, because the
+     * fourteenth character is not `Z` and the shape rule this site has always
+     * used requires one. That rule is the GST portal's own, so the sample is a
+     * documentation artefact rather than a registration anybody holds.
+     *
+     * Asserted through the check-digit function directly, which is the part
+     * being proven here: the arithmetic agrees with the published algorithm on
+     * a number this repository did not choose.
+     */
+    expect(gstinCheckCharacter("29AJIPA1572ER2")).toBe("M");
+  });
+
+  it("rejects the same number with one character wrong", () => {
+    expect(isValidGstin("07AAICT5606J1Z5")).toBe(false);
+    expect(isValidGstin("07AAICT5606J1Z3")).toBe(false);
+  });
+
+  it("rejects a transposition, which a shape check cannot see", () => {
+    // Two adjacent characters swapped: still fifteen characters, still the
+    // right shape, still a state code and a PAN. Only the check digit knows.
+    expect(isValidGstin("07AAICT5066J1Z4")).toBe(false);
+  });
+
+  it("computes the character that would make a prefix valid", () => {
+    expect(gstinCheckCharacter("07AAICT5606J1Z")).toBe("4");
+    expect(gstinCheckCharacter("29AJIPA1572ER2")).toBe("M");
+  });
+
+  it("declines a prefix it cannot read rather than guessing one", () => {
+    expect(gstinCheckCharacter("07AAICT")).toBeNull();
+    expect(gstinCheckCharacter("07aaict5606j1z")).toBeNull();
+  });
+
+  it("rejects anything that is not the right shape before checking the digit", () => {
+    expect(isValidGstin("")).toBe(false);
+    expect(isValidGstin("07AAICT5606J1Z")).toBe(false);
+    expect(isValidGstin(null)).toBe(false);
+  });
+
+  /*
+   * Reading a stored number stays shape-only, deliberately.
+   *
+   * Rows saved before this check existed may hold a number that fails it, and
+   * the place of supply printed on a document already issued should not
+   * silently become blank because the validator got stricter afterwards.
+   */
+  it("does not stop a stored number yielding its state", () => {
+    expect(gstStateName("07AAICT5606J1Z5")).toBe("Delhi");
   });
 });

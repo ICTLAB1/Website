@@ -65,6 +65,55 @@ const STATES: Record<string, string> = {
   "97": "Other Territory",
 };
 
+/**
+ * The check digit, which is the whole point of the fifteenth character.
+ *
+ * A GSTIN is self-validating: the last character is computed from the first
+ * fourteen, so a single mistyped or transposed character is detectable without
+ * asking anybody. Until now this codebase checked only the *shape*, which means
+ * "07AAICT5606J1Z5" — one digit wrong on a number that is otherwise perfect —
+ * was accepted, stored, and printed on a tax document. A customer's finance
+ * team finds that; the form should have.
+ *
+ * The algorithm, which is published and fixed: each of the first fourteen
+ * characters takes its position in `0-9A-Z`, is multiplied by 1 or 2 by
+ * alternating position, and the product's tens and units in base 36 are both
+ * added to a running total. The check character is whatever makes that total a
+ * multiple of 36.
+ *
+ * Worth knowing when reading fixtures: most GSTINs written by hand for examples
+ * fail this. That is not a bug in the check — it is what the check is for.
+ */
+const BASE36 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+export function gstinCheckCharacter(first14: string): string | null {
+  if (first14.length < 14) return null;
+
+  let total = 0;
+  for (let index = 0; index < 14; index += 1) {
+    const value = BASE36.indexOf(first14[index]!);
+    if (value === -1) return null;
+    const product = value * (index % 2 === 0 ? 1 : 2);
+    total += Math.floor(product / 36) + (product % 36);
+  }
+
+  return BASE36[(36 - (total % 36)) % 36] ?? null;
+}
+
+/**
+ * Whether a GSTIN is well-formed *and* passes its own check digit.
+ *
+ * Separate from `normaliseGstin`, which stays shape-only on purpose: it is used
+ * to read the state and the PAN out of numbers that are already stored, and a
+ * row saved before this check existed should still yield its state rather than
+ * silently becoming blank everywhere it is displayed.
+ */
+export function isValidGstin(value: string | null | undefined): boolean {
+  const clean = normaliseGstin(value);
+  if (!clean) return false;
+  return gstinCheckCharacter(clean.slice(0, 14)) === clean[14];
+}
+
 export function normaliseGstin(value: string | null | undefined): string | null {
   const cleaned = value?.replace(/\s+/g, "").toUpperCase();
   if (!cleaned || !GSTIN_SHAPE.test(cleaned)) return null;

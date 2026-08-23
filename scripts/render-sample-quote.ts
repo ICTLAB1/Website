@@ -5,7 +5,7 @@ import { renderQuotationPdf } from "@/lib/pdf/quotation";
 const party = {
   name: "MIT ADT University",
   addressLines: ["Loni Kalbhor, Solapur Highway", "Pune, Maharashtra 412201", "India"],
-  gstin: "27AAAJM2218H1ZC",
+  gstin: "27AAAJM2218H1ZD",
   pan: null,
   contactName: "Dr. Suresh Rao",
   phone: "+91 70888 28088",

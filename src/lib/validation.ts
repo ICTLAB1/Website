@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidGstin } from "@/lib/gstin";
 import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/password-policy";
 
 /**
@@ -19,12 +20,25 @@ export const phoneSchema = trimmed(32)
   .min(6, "Enter a valid phone number.")
   .regex(/^[+()\-.\s0-9]+$/, "Enter a valid phone number.");
 
-/** Indian GSTIN: 2-digit state code, 10-char PAN, entity digit, Z, checksum. */
+/**
+ * Indian GSTIN: 2-digit state code, 10-char PAN, entity digit, Z, check digit.
+ *
+ * The shape *and* the check digit. The fifteenth character is computed from the
+ * first fourteen, so a single mistyped or transposed character is detectable
+ * here rather than by the customer's finance team after the invoice has gone
+ * out — which is where it was being detected, because this used to check the
+ * shape alone and "07AAICT5606J1Z5" has a perfectly good shape.
+ *
+ * The two messages are different on purpose. "Not fifteen characters" and
+ * "fifteen characters, one of them wrong" call for different things from the
+ * person typing: look at the length, or look at the characters.
+ */
 export const gstinSchema = trimmed(15)
   .regex(
     /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/,
     "Enter a valid 15-character GSTIN.",
-  );
+  )
+  .refine(isValidGstin, "That GSTIN fails its own check digit — please check it for a typo.");
 
 export const passwordSchema = z
   .string()

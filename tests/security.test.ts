@@ -12,7 +12,7 @@ describe("log redaction", () => {
       session: { token: "secret-token", expiresAt: "2026-01-01" },
       headers: { authorization: "Bearer abc", cookie: "session=abc" },
       apiKey: "sk-live-123",
-      gstin: "22AAAAA0000A1Z5",
+      gstin: "22AAAAA0000A1ZC",
     }) as Record<string, unknown>;
 
     expect(redacted.email).toBe("user@example.test");

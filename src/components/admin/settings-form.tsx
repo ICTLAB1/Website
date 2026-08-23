@@ -162,7 +162,7 @@ export function SettingsForm({
         legend="Statutory identifiers"
         description="Checked for shape before saving, because both are reproduced on invoices where a typo is a real problem rather than a cosmetic one."
       >
-        {text("gstin", "GSTIN", effective.gstin, { placeholder: "07AABCU9603R1ZX" })}
+        {text("gstin", "GSTIN", effective.gstin, { placeholder: "07AABCU9603R1ZP" })}
         {text("cin", "CIN", effective.cin, { placeholder: "U72900DL2019PTC123456" })}
       </Fieldset>
 

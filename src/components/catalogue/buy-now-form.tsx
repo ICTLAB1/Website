@@ -261,7 +261,7 @@ export function BuyNowForm({
         >
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="GSTIN" name="gstin" hint="15 characters">
-              <Input name="gstin" maxLength={15} placeholder="22AAAAA0000A1Z5" className="uppercase" />
+              <Input name="gstin" maxLength={15} placeholder="22AAAAA0000A1ZC" className="uppercase" />
             </Field>
             <Field label="Purchase order number" name="poNumber">
               <Input name="poNumber" maxLength={64} />

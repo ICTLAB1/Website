@@ -227,9 +227,23 @@ const organisationSchema = async () => {
 };
 
 check("the organisation schema is published", (await organisationSchema()) !== null);
+
+/*
+ * Cleared first, rather than assumed empty.
+ *
+ * This used to read the schema as it found it and assert `sameAs` was absent,
+ * which was true only on a deployment where nobody had ever entered a profile
+ * URL. The moment real ones were configured the check failed — on a site that
+ * was behaving perfectly. A property worth asserting has to be *made* true
+ * here, not waited for.
+ */
+await open();
+await field("profileUrls").fill("");
+await save();
 check(
   "with no profiles configured, sameAs is absent rather than empty",
   (await organisationSchema())?.sameAs === undefined,
+  JSON.stringify((await organisationSchema())?.sameAs),
 );
 
 await open();

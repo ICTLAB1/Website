@@ -59,7 +59,7 @@ const base = {
     name: "Priya Sharma",
     companyName: "Northwind Logistics Private Limited",
     email: "priya@example.test",
-    gstin: "29AABCU9603R1ZX",
+    gstin: "29AABCU9603R1ZJ",
   },
   lines: [
     {
@@ -300,7 +300,7 @@ describe("the signature", () => {
     // Our own GSTIN is gone. The customer's stays — that is their number, on
     // their side of the document, and it is set.
     expect(minimal).not.toContain("07AAICT5606J1Z4");
-    expect(minimal).toContain("29AABCU9603R1ZX");
+    expect(minimal).toContain("29AABCU9603R1ZJ");
     expect(minimal).not.toContain("Ajman");
     // But the entity and the website survive, because those are always known.
     expect(minimal).toContain("TechZoid Technologies Private Limited");

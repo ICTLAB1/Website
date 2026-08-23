@@ -304,7 +304,7 @@ export function EnquiryBasket({
 <Input
                       name="gstin"
                       maxLength={15}
-                      placeholder="22AAAAA0000A1Z5"
+                      placeholder="22AAAAA0000A1ZC"
                       className="uppercase"
                     />
 </Field>
