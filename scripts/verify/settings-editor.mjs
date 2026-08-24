@@ -69,9 +69,42 @@ async function open() {
   await page.goto(settings, { waitUntil: "load" });
 }
 
+/**
+ * Submits the identity form and waits for the form's own answer.
+ *
+ * It used to wait nine hundred milliseconds and carry on. That is fine on an
+ * idle machine and not fine in a full gate run, where the save had not landed
+ * before the next step navigated to the public page and read the structured
+ * data — so "clearing the field removes sameAs again" failed against a
+ * homepage still serving the value from before the save. A fixed sleep is a
+ * guess about how long a server takes; the acknowledgement is the server
+ * saying so.
+ *
+ * Either answer ends the wait. A refusal is a legitimate outcome here — three
+ * checks above submit deliberately invalid URLs and require one — so waiting
+ * only for success would hang for the timeout on every one of them.
+ */
 async function save() {
   await form().getByRole("button", { name: /Save details/i }).click();
-  await page.waitForTimeout(900);
+
+  await page
+    .waitForFunction(
+      () => {
+        const target = [...document.querySelectorAll("form")].find((element) =>
+          element.querySelector('[name="emailSales"]'),
+        );
+        if (!target) return false;
+        const text = target.innerText;
+        return (
+          /public site is showing these details/i.test(text) ||
+          /is not an https/i.test(text) ||
+          /correct the highlighted/i.test(text)
+        );
+      },
+      undefined,
+      { timeout: 15000 },
+    )
+    .catch(() => {});
 }
 
 /** What the original values were, so this suite puts them back when it finishes. */
