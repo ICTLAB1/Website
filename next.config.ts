@@ -279,6 +279,57 @@ const nextConfig: NextConfig = {
       },
 
       /*
+       * ── The ones Merchant Center named ────────────────────────────────
+       *
+       * Six of the eleven URLs in the Merchant Center report were falling
+       * through to the catch-all and landing on `/products`, which the note
+       * above already calls barely better than the 404 it replaces. None of
+       * these six products is in the catalogue, so none gets a product page —
+       * each goes to the page that is honestly about the subject.
+       *
+       * They are not 410d. A 410 is the right answer for a URL nobody wants
+       * and the wrong one for these: Visual Studio Enterprise holds position
+       * 13 for a term with 8,100 searches a month, and returning Gone throws
+       * that away along with every inbound link, in exchange for removing a
+       * feed error that a 410 would not remove either — an item pointing at a
+       * dead URL fails Merchant Center harder than one pointing at a redirect.
+       */
+      {
+        // AutoCAD LT is not in the catalogue. `/autocad` is the page about the
+        // family and is already where the other LT URL goes.
+        source: "/product-page/autocad-lt-business-license",
+        destination: "/autocad",
+        permanent: true,
+      },
+      {
+        source: "/product-page/inventor-business-license",
+        destination: "/brands/autodesk",
+        permanent: true,
+      },
+      {
+        source: "/product-page/microsoft-project-plan-1",
+        destination: "/brands/microsoft",
+        permanent: true,
+      },
+      {
+        source: "/product-page/microsoft-project-plan-3",
+        destination: "/brands/microsoft",
+        permanent: true,
+      },
+      {
+        // Plan 1 already goes here; Plan 2 fell through only because nobody
+        // had listed it.
+        source: "/product-page/microsoft-visio-plan-2",
+        destination: "/brands/microsoft",
+        permanent: true,
+      },
+      {
+        source: "/product-page/microsoft-visual-studio-professional",
+        destination: "/brands/microsoft",
+        permanent: true,
+      },
+
+      /*
        * Whatever the list above misses. Still a blunt instrument, still better
        * than a dead end, and now carrying far less traffic than it used to.
        *

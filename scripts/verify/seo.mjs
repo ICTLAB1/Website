@@ -96,19 +96,68 @@ const RECLAIMED = [
   ["/product-page/microsoft-visual-studio-enterprise", "/brands/microsoft", 0],
   ["/product-page/microsoft-visio-plan-1", "/brands/microsoft", 0],
   ["/product-page/windows-11-pro-business-license", "/products/windows-11-pro-upgrade", 0],
+  /*
+   * And the six Merchant Center named, which were falling through the
+   * catch-all onto `/products` — a listing page, which is the soft-404 pattern
+   * this whole table exists to avoid. None of the six is in the catalogue, so
+   * each goes to the page that is honestly about the subject.
+   */
+  ["/product-page/autocad-lt-business-license", "/autocad", 0],
+  ["/product-page/inventor-business-license", "/brands/autodesk", 0],
+  ["/product-page/microsoft-project-plan-1", "/brands/microsoft", 0],
+  ["/product-page/microsoft-project-plan-3", "/brands/microsoft", 0],
+  ["/product-page/microsoft-visio-plan-2", "/brands/microsoft", 0],
+  ["/product-page/microsoft-visual-studio-professional", "/brands/microsoft", 0],
 ];
 
 let reclaimed = 0;
+let chained = 0;
 for (const [legacy, expected, links] of RECLAIMED) {
-  const response = await fetch(BASE + legacy, { redirect: "follow" });
-  const landed = new URL(response.url).pathname;
-  if (response.status === 200 && landed === expected) {
+  /*
+   * Followed by hand rather than with `redirect: "follow"`, so the number of
+   * hops is visible.
+   *
+   * A chain still lands on the right page and still passes a destination
+   * check, which is why one can sit there for months: every hop loses a little
+   * more of the link's value, and a feed or a crawler that refuses to follow
+   * more than one sees a redirect rather than a product. One hop, or it is a
+   * fault.
+   */
+  let current = legacy;
+  let hops = 0;
+  let status = 0;
+  for (; hops < 5; hops += 1) {
+    const response = await fetch(BASE + current, { redirect: "manual" });
+    status = response.status;
+    const location = response.headers.get("location");
+    if (!location) break;
+    current = new URL(location, BASE).pathname;
+  }
+
+  if (status === 200 && current === expected) {
     reclaimed += links;
+    if (hops > 1) {
+      chained += 1;
+      problems.push(`${legacy} reaches ${expected} in ${hops} hops; a legacy URL must redirect once`);
+    }
   } else {
     problems.push(
-      `${legacy} carries ${links} inbound link(s) and lands on ${landed} (${response.status}), not ${expected}`,
+      `${legacy} carries ${links} inbound link(s) and lands on ${current} (${status}), not ${expected}`,
     );
   }
+}
+
+/*
+ * None of them may land on the catalogue listing.
+ *
+ * That is what the catch-all does with anything not named above, and it is
+ * what put six URLs into a Merchant Center report: a redirect to a listing
+ * page answers a different question from the one the visitor asked, and Google
+ * scores it as a soft 404 rather than as a redirect.
+ */
+const dumped = RECLAIMED.filter(([, expected]) => expected === "/products");
+for (const [legacy] of dumped) {
+  problems.push(`${legacy} is listed as redirecting to the generic catalogue listing`);
 }
 
 const homeHtml = await (await fetch(`${BASE}/`)).text();
