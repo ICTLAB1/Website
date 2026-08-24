@@ -65,8 +65,20 @@ const field = (name) => form().locator(`[name="${name}"]`);
  */
 const identityForm = () => form().locator("form").filter({ has: page.locator('[name="emailSales"]') });
 
+/**
+ * Opens the settings screen and waits for it to be interactive.
+ *
+ * The `networkidle` wait is the whole point. `load` fires before React has
+ * hydrated, and a value typed into a control before hydration is replaced by
+ * the stored one the moment it happens — so clearing the profile URLs and
+ * saving wrote the original three straight back, and the check that no
+ * profiles produce no `sameAs` failed against a page that had never been
+ * cleared. It appeared only under gate load, because that is when hydration is
+ * slow enough to lose the race.
+ */
 async function open() {
   await page.goto(settings, { waitUntil: "load" });
+  await page.waitForLoadState("networkidle");
 }
 
 /**
@@ -84,26 +96,24 @@ async function open() {
  * checks above submit deliberately invalid URLs and require one — so waiting
  * only for success would hang for the timeout on every one of them.
  */
+/**
+ * Submits the identity form and waits for the submission itself.
+ *
+ * Bracketed by the button's own pending state rather than by the words in the
+ * banner: after a successful save the banner stays on screen, so waiting for
+ * its text returns immediately on the next save and reads the page before the
+ * new write has landed. The button says "Saving…" while and only while the
+ * action is in flight.
+ */
 async function save() {
-  await form().getByRole("button", { name: /Save details/i }).click();
+  const button = form().getByRole("button", { name: /Save details|Saving/i }).first();
+  await button.click();
+  await page
+    .waitForFunction(() => /Saving/i.test(document.body.innerText), undefined, { timeout: 5000 })
+    .catch(() => {});
 
   await page
-    .waitForFunction(
-      () => {
-        const target = [...document.querySelectorAll("form")].find((element) =>
-          element.querySelector('[name="emailSales"]'),
-        );
-        if (!target) return false;
-        const text = target.innerText;
-        return (
-          /public site is showing these details/i.test(text) ||
-          /is not an https/i.test(text) ||
-          /correct the highlighted/i.test(text)
-        );
-      },
-      undefined,
-      { timeout: 15000 },
-    )
+    .waitForFunction(() => !/Saving/i.test(document.body.innerText), undefined, { timeout: 20000 })
     .catch(() => {});
 }
 
