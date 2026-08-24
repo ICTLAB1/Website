@@ -40,18 +40,52 @@ const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), d
    * reading. The assertion is not weakened — a section that genuinely never
    * reveals still fails, five seconds later.
    */
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  /*
+   * Scrolled through in steps, not jumped to the bottom.
+   *
+   * `scrollTo(0, scrollHeight)` moves the viewport past every section between
+   * here and there within a single frame, and an IntersectionObserver only
+   * reports what is actually intersecting when it samples. A section the jump
+   * stepped over may therefore never fire — which is what "1 still hidden"
+   * was, appearing only under gate load and passing on every retry, because
+   * whether a given section is caught depends on frame timing.
+   *
+   * A viewport-height step guarantees every section is on screen for at least
+   * one sample. Waiting after each step is still not a sleep: the wait is for
+   * the count to reach zero, and a section that genuinely never reveals still
+   * fails.
+   */
+  await page.evaluate(async () => {
+    const step = window.innerHeight;
+    for (let y = 0; y <= document.body.scrollHeight; y += step) {
+      window.scrollTo(0, y);
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
+    window.scrollTo(0, document.body.scrollHeight);
+  });
   await page
     .waitForFunction(() => document.querySelectorAll('[data-revealed="false"]').length === 0, undefined, {
-      timeout: 5000,
+      timeout: 8000,
     })
     .catch(() => {});
   const stillHidden = await page.locator('[data-revealed="false"]').count();
   check("every revealed section becomes visible after scrolling", stillHidden === 0, `${stillHidden} still hidden`);
 
-  // The attribute flips first and the opacity transition runs after it, so the
-  // next check needs the transition's own duration rather than the observer's.
-  await page.waitForTimeout(800);
+  /*
+   * The attribute flips first and the opacity transition runs after it, so this
+   * waits for the transition to finish rather than for a fixed 800ms — the same
+   * reason as above, and the same failure it produced.
+   */
+  await page
+    .waitForFunction(
+      () =>
+        [...document.querySelectorAll(".reveal")].every(
+          (el) => Number(getComputedStyle(el).opacity) >= 0.99,
+        ),
+      undefined,
+      { timeout: 8000 },
+    )
+    .catch(() => {});
 
   // No content is left with zero opacity.
   const invisible = await page.evaluate(() =>
