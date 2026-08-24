@@ -174,7 +174,23 @@ check(
  * on the real form is swapped for a product this account has never bought,
  * which is exactly what somebody determined would do, and the write must be
  * refused by the server rather than by the missing button.
+ *
+ * ## Why the tampering is re-read before the click
+ *
+ * The field is React-controlled. Writing `.value` from the page context wins
+ * only until React re-renders — hydration finishing, a revalidation landing —
+ * and then the field is quietly the real product again. The submit that
+ * follows is not an attack at all: it is a perfectly ordinary review of the
+ * product the account *did* buy, which succeeds. And then the row count for
+ * the unbought product is zero, so this suite reported a refusal that never
+ * happened, and the damage surfaced two checks later as a form that had gone
+ * because the product had just been reviewed.
+ *
+ * So: wait for hydration first, and read the value back immediately before
+ * clicking. If it has been reset the attempt is abandoned rather than sent,
+ * because sending it writes a real review and destroys the fixture.
  */
+await buyerPage.waitForLoadState("networkidle");
 const forged = await buyerPage.evaluate((productId) => {
   const hidden = document.querySelector('input[name="productId"]');
   if (!hidden) return "no product field";
@@ -186,15 +202,34 @@ if (forged === "ok") {
   await buyerPage.getByLabel("Your review").first().fill(
     "A forged review for a product this account never bought.",
   );
-  await buyerPage.getByRole("button", { name: /Send for review/ }).first().click();
-  await buyerPage.waitForTimeout(2500);
+
+  const stillForged = await buyerPage.evaluate(
+    (productId) => document.querySelector('input[name="productId"]')?.value === productId,
+    notBought.id,
+  );
+
+  if (stillForged) {
+    await buyerPage.getByRole("button", { name: /Send for review/ }).first().click();
+    await buyerPage.waitForTimeout(2500);
+  }
+
+  /*
+   * Counted over every product, not just the unbought one.
+   *
+   * "No row for the product we forged" is also true of a submission that wrote
+   * a perfectly ordinary review for the product the account did buy — which is
+   * exactly what a reset field produces. A refusal writes nothing at all.
+   */
   const leaked = sql(
     `select count(*) from "ProductReview" where "userId" = 'rvb${stamp}' and "productId" = '${notBought.id}'`,
   );
+  const anyWrite = sql(`select count(*) from "ProductReview" where "userId" = 'rvb${stamp}'`);
   check(
     "a review posted for a product the account never bought is refused server-side",
-    leaked === "0",
-    `${leaked} row(s) written`,
+    stillForged && leaked === "0" && anyWrite === "0",
+    stillForged
+      ? `${leaked} row(s) for the unbought product, ${anyWrite} in total`
+      : "the tampered field was reset before the click, so nothing was attacked",
   );
   /*
    * Matched on the action's own wording, not the page's. The explanatory copy
@@ -206,8 +241,8 @@ if (forged === "ok") {
   const refusal = await buyerPage.locator("body").innerText();
   check(
     "and the customer is told why",
-    /bought the product through us/i.test(refusal),
-    refusal.slice(0, 200),
+    stillForged && /bought the product through us/i.test(refusal),
+    stillForged ? refusal.slice(0, 200) : "nothing was sent, so nothing was refused",
   );
 } else {
   check("a review posted for an unbought product is refused server-side", false, forged);
