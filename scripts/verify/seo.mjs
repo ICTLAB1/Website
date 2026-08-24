@@ -224,6 +224,63 @@ for (const path of paths) {
 await browser.close();
 
 /*
+ * A product page's picture, and whether it is claimed as the product's own.
+ *
+ * `image` is a required property of Google's Product type: without it there is
+ * no product rich result at all — no picture, no price, no availability beside
+ * the search result. So it has to be declared when there is a photograph.
+ *
+ * And it must be absent when there is not. Where no photograph exists the page
+ * draws a category illustration under a notice saying it is not the model
+ * supplied; declaring that as `image` tells a crawler the opposite of what the
+ * page tells a reader. Both directions are asserted, because checking only the
+ * first is how the illustration ends up in there as a "fix".
+ *
+ * The product's own figure is found by its alt text, which `ProductPhoto`
+ * writes as the product name — and suffixes when the picture is an
+ * illustration. An earlier version looked for any `<img>` at all and flagged
+ * eleven pages whose only pictures were the site wordmark and two partner
+ * badges.
+ */
+const undeclared = [];
+const overclaimed = [];
+const productPaths = paths.filter((entry) => entry.startsWith("/products/"));
+
+for (const path of productPaths) {
+  const html = await (await fetch(`${BASE}${path}`)).text();
+
+  let node = null;
+  for (const match of html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)) {
+    const parsed = JSON.parse(match[1].replaceAll("\\u003c", "<"));
+    if (parsed["@type"] === "Product") node = parsed;
+  }
+  if (!node?.name) continue;
+
+  const figure = [...html.matchAll(/<img\b[^>]*\salt="([^"]*)"[^>]*>/g)]
+    .map((match) => match[1])
+    .find((alt) => alt.startsWith(node.name));
+
+  // The suffix `ProductPhoto` adds is the page's own statement that what it is
+  // showing depicts the category rather than the model.
+  const isIllustration = Boolean(figure?.includes("representative image"));
+
+  if (node.image && (isIllustration || !figure)) overclaimed.push(path);
+  if (!node.image && figure && !isIllustration) undeclared.push(path);
+}
+
+for (const path of overclaimed) {
+  problems.push(`${path}: declares an image the page does not show as a photograph`);
+}
+for (const path of undeclared) {
+  problems.push(`${path}: shows a photograph the Product schema does not declare`);
+}
+
+console.log(
+  `Product images: ${productPaths.length} product page(s); ` +
+    `${overclaimed.length} overclaiming, ${undeclared.length} with an undeclared photograph.`,
+);
+
+/*
  * A page in the sitemap that nothing links to.
  *
  * This is a failure, not a note. Submitting a URL to Google while giving it no

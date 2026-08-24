@@ -122,7 +122,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
    * say — is how a page ends up with a caveat over a real photograph, or worse,
    * an illustration with nothing said about it.
    */
-  const showsRepresentativeImage = resolveProductPhoto(product).representative;
+  const photo = resolveProductPhoto(product);
+  const showsRepresentativeImage = photo.representative;
 
   const productSchema = {
     "@context": "https://schema.org",
@@ -133,6 +134,22 @@ export default async function ProductDetailPage({ params }: PageProps) {
     category: product.category.name,
     brand: { "@type": "Brand", name: product.brand.name },
     url: absoluteUrl(`/products/${product.slug}`),
+    /*
+     * The photograph, and only a photograph.
+     *
+     * `image` is a required property of Google's Product type — without it the
+     * page gets no product rich result at all, so no picture, no price and no
+     * availability beside the result. Which makes it tempting to put the
+     * category illustration here, and that is exactly what must not happen:
+     * `image` in this block asserts "this is a picture of this product", which
+     * is the claim the representative-image disclaimer three lines up exists
+     * to deny. Saying it to a customer and unsaying it to a crawler is worse
+     * than saying nothing.
+     *
+     * So a real photograph is declared and an illustration is not, and the
+     * rich result arrives when the photograph does.
+     */
+    ...(photo.src && !photo.representative ? { image: absoluteUrl(photo.src) } : {}),
     /*
      * No offer on hardware, deliberately.
      *
