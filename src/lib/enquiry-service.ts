@@ -3,7 +3,9 @@ import type { z } from "zod";
 import { prisma } from "@/lib/db";
 import { publicReference } from "@/lib/auth/tokens";
 import { resolveVariantsBySku } from "@/lib/queries/catalogue";
-import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
+import { salesInbox, sendMail } from "@/lib/mail";
+import { renderEmailHtml, renderEmailText, type EmailContent } from "@/lib/emails/shell";
+import { absoluteUrl } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
 import { logger } from "@/lib/logger";
 import type { enquirySchema } from "@/lib/validation";
@@ -143,37 +145,71 @@ async function notify(
     });
   }
 
+  /*
+   * The acknowledgement, through the same shell as every other transactional
+   * email.
+   *
+   * It was the one that never got there: a handful of `<p>` tags and a `<ul>`,
+   * assembled here, while the ticket, quotation and order emails all went
+   * through `emails/shell`. So the first message a new customer ever receives
+   * from this business was the only one that did not look like it came from it.
+   */
+  const steps = [
+    "A member of the sales team reads the enquiry and checks current publisher pricing for what you asked for.",
+    "We come back to you with a written quotation, itemised, with taxes shown separately.",
+    "If anything in the list needs clarifying first, we will reply to this address before quoting.",
+  ];
+
+  /*
+   * A button only where it leads somewhere.
+   *
+   * `/track-order` deliberately refuses reference-only lookup — status lives
+   * inside the account, because a form that returned an enquiry for any
+   * reference typed into it would hand one customer's enquiry to anyone who
+   * guessed. So the link is offered only when this address already has an
+   * account to sign in to; for everyone else the reference and a reply are the
+   * honest answer, and a button leading to a sign-in wall is not.
+   */
+  const account = await prisma.user.findUnique({
+    where: { email: input.contactEmail },
+    select: { id: true },
+  });
+
+  const content: EmailContent = {
+    heading: "Thank you — we have your enquiry",
+    greetingName: input.contactName,
+    paragraphs: [
+      `Your reference is ${reference}. Quote it in any follow-up and we will find this immediately.`,
+    ],
+    lines: items.map((item) => ({
+      name: item.productName,
+      sku: item.sku,
+      quantity: item.quantity,
+    })),
+    steps,
+    details: [
+      ["Reference", reference],
+      ["Organisation", input.companyName],
+      ["Contact", input.contactName],
+      ["Timeline", input.timeline.replace(/_/g, " ").toLowerCase()],
+      ["Users", input.userCount ? String(input.userCount) : null],
+      ["Location", [input.city, input.country].filter(Boolean).join(", ") || null],
+    ],
+    action: account
+      ? {
+          label: "Follow this enquiry in your account",
+          url: absoluteUrl(`/account/enquiries/${reference}`),
+        }
+      : undefined,
+    footnote:
+      "This is an acknowledgement that your enquiry reached us. It is not a quotation, and no " +
+      "price is committed until we send one.",
+  };
+
   await sendMail({
     to: input.contactEmail,
     subject: `We have received your enquiry (${reference})`,
-    text: [
-      `Hello ${input.contactName},`,
-      "",
-      `Thank you for your enquiry. Your reference is ${reference}.`,
-      "",
-      "You asked us to price the following:",
-      lines,
-      "",
-      "Our team is reviewing this and will come back to you with a written quotation.",
-      "Please quote your reference in any follow-up.",
-      "",
-      config.tradingName,
-      config.email.sales ?? "",
-    ]
-      .filter(Boolean)
-      .join("\n"),
-    html: [
-      `<p>Hello ${escapeHtml(input.contactName)},</p>`,
-      `<p>Thank you for your enquiry. Your reference is <strong>${escapeHtml(reference)}</strong>.</p>`,
-      "<p>You asked us to price the following:</p>",
-      "<ul>",
-      ...items.map(
-        (item) =>
-          `<li>${escapeHtml(item.productName)} (${escapeHtml(item.sku)}) — quantity ${item.quantity}</li>`,
-      ),
-      "</ul>",
-      "<p>Our team is reviewing this and will come back to you with a written quotation. Please quote your reference in any follow-up.</p>",
-      `<p>${escapeHtml(config.tradingName)}</p>`,
-    ].join(""),
+    text: renderEmailText(content, config),
+    html: renderEmailHtml(content, config),
   });
 }
