@@ -76,11 +76,9 @@ const RECLAIMED = [
   ["/product-page/autodesk-civil-3d-business-license", "/products/autodesk-civil-3d", 5],
   ["/product-page/adobeacrobatprodc1yearsubscription", "/products/adobe-acrobat-pro-teams", 4],
   ["/post/where-can-i-buy-a-subscription-for-professional-office-software-bundles-in-india", "/microsoft-365", 4],
-  ["/product-page/microsoft-365-apps-for-business-annual-subscription", "/microsoft-365", 3],
-  ["/product-page/autodesk-vault-business-license", "/brands/autodesk", 3],
-  ["/product-page/3ds-max-business-license", "/brands/autodesk", 3],
   ["/group/techzoid-technologie-group/discussion/be30586d-6eda-4d46-9e63-9360fe5c166e", "/blog", 3],
   ["/product-page/autodesk-autocad-lt-1-year-subscription", "/autocad", 2],
+  ["/product-page/autocad-lt-business-license", "/autocad", 0],
   ["/product-page/autodesk-revit-business-license", "/products/revit", 1],
   ["/product-page/autocad-business-license", "/products/autocad", 1],
   ["/product-page/adobe-creative-cloud-all-apps", "/products/adobe-creative-cloud-all-apps-teams", 1],
@@ -93,8 +91,6 @@ const RECLAIMED = [
    * column is monthly search volume instead. Losing one of these redirects
    * loses a position that took years to earn.
    */
-  ["/product-page/microsoft-visual-studio-enterprise", "/brands/microsoft", 0],
-  ["/product-page/microsoft-visio-plan-1", "/brands/microsoft", 0],
   ["/product-page/windows-11-pro-business-license", "/products/windows-11-pro-upgrade", 0],
   /*
    * And the six Merchant Center named, which were falling through the
@@ -102,16 +98,9 @@ const RECLAIMED = [
    * this whole table exists to avoid. None of the six is in the catalogue, so
    * each goes to the page that is honestly about the subject.
    */
-  ["/product-page/autocad-lt-business-license", "/autocad", 0],
-  ["/product-page/inventor-business-license", "/brands/autodesk", 0],
-  ["/product-page/microsoft-project-plan-1", "/brands/microsoft", 0],
-  ["/product-page/microsoft-project-plan-3", "/brands/microsoft", 0],
-  ["/product-page/microsoft-visio-plan-2", "/brands/microsoft", 0],
-  ["/product-page/microsoft-visual-studio-professional", "/brands/microsoft", 0],
 ];
 
 let reclaimed = 0;
-let chained = 0;
 for (const [legacy, expected, links] of RECLAIMED) {
   /*
    * Followed by hand rather than with `redirect: "follow"`, so the number of
@@ -137,7 +126,6 @@ for (const [legacy, expected, links] of RECLAIMED) {
   if (status === 200 && current === expected) {
     reclaimed += links;
     if (hops > 1) {
-      chained += 1;
       problems.push(`${legacy} reaches ${expected} in ${hops} hops; a legacy URL must redirect once`);
     }
   } else {
@@ -328,6 +316,50 @@ console.log(
   `Product images: ${productPaths.length} product page(s); ` +
     `${overclaimed.length} overclaiming, ${undeclared.length} with an undeclared photograph.`,
 );
+
+/*
+ * The retired shop, which must be Gone rather than merely missing.
+ *
+ * These are products the previous site sold and this one does not, with no page
+ * here that answers the question the URL asks. A brand page is not that answer:
+ * it is a consolation, and Google scores a redirect to one as a soft 404 — which
+ * is what put six of them into a Merchant Center report while looking, from the
+ * outside, like working redirects.
+ *
+ * 410 rather than 404, because 404 means "ask again some time" and a crawler
+ * will, for months. The prefixes are covered too: an unlisted URL under any of
+ * them must not fall through to a listing page, which is the failure this
+ * replaces.
+ */
+const RETIRED = [
+  "/product-page/3ds-max-business-license",
+  "/product-page/autodesk-vault-business-license",
+  "/product-page/inventor-business-license",
+  "/product-page/microsoft-365-apps-for-business-annual-subscription",
+  "/product-page/microsoft-project-plan-1",
+  "/product-page/microsoft-project-plan-3",
+  "/product-page/microsoft-sharepoint-online-plan-2",
+  "/product-page/microsoft-visio-plan-1",
+  "/product-page/microsoft-visio-plan-2",
+  "/product-page/microsoft-visual-studio-enterprise",
+  "/product-page/microsoft-visual-studio-professional",
+  "/product-page/microsoft-windows-10-pro-64-bit-system-builder-oem",
+  "/product-page/buycoreldrawgraphicssuite2025lifetimelicense",
+  // The prefixes, probed with a slug that never existed.
+  "/product-page/nothing-was-ever-here",
+  "/service-page/nothing-was-ever-here",
+  "/blog/categories/nothing-was-ever-here",
+  "/post/nothing-was-ever-here",
+  "/shop-1",
+];
+
+let gone = 0;
+for (const path of RETIRED) {
+  const response = await fetch(BASE + path, { redirect: "manual" });
+  if (response.status === 410) gone += 1;
+  else problems.push(`${path}: answered ${response.status}, not 410 Gone`);
+}
+console.log(`Retired URLs: ${gone} of ${RETIRED.length} answer 410 Gone.`);
 
 /*
  * A page in the sitemap that nothing links to.

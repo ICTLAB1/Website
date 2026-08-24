@@ -151,6 +151,32 @@ export default async function ProductDetailPage({ params }: PageProps) {
      */
     ...(photo.src && !photo.representative ? { image: absoluteUrl(photo.src) } : {}),
     /*
+     * The manufacturer's own part number, where the catalogue holds one.
+     *
+     * `mpn` is one of the global identifiers Google accepts in place of a GTIN,
+     * and it is the only one this business can ever legitimately supply: a GTIN
+     * is assigned by GS1 to the manufacturer, not to a reseller, and a licence
+     * for downloadable software has none at all.
+     *
+     * `partNumber` is the manufacturer's, taken from their line card — never
+     * TechZoid's internal SKU, which is `ProductVariant.sku` and deliberately
+     * not published here. Absent where no part number is recorded, because an
+     * invented identifier is worse than a missing one: Google matches products
+     * across merchants on it, and a wrong value attaches this listing to
+     * somebody else's product.
+     */
+    ...(product.partNumber?.trim() ? { mpn: product.partNumber.trim() } : {}),
+    /*
+     * `manufacturer`, for hardware only.
+     *
+     * On a workstation the brand and the manufacturer are the same company and
+     * saying so is useful. On a software licence they are not reliably the
+     * same thing — the publisher licenses it, somebody else may distribute it —
+     * and asserting one would be stating something this catalogue does not
+     * actually record.
+     */
+    ...(hardware ? { manufacturer: { "@type": "Organization", name: product.brand.name } } : {}),
+    /*
      * No offer on hardware, deliberately.
      *
      * Hardware is quoted, never listed at a price, so there is no figure to

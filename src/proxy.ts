@@ -91,10 +91,63 @@ function buildCsp(nonce: string, isDevelopment: boolean, allowGateway: boolean):
   return isDevelopment ? policy : `${policy}; upgrade-insecure-requests`;
 }
 
+/**
+ * The old shop's URL shapes, and whether anything here answers them.
+ *
+ * A path matching one of these has already failed to match every redirect in
+ * `next.config.ts` — those run first — so by the time it reaches this file it
+ * is a page of the previous site that nothing on this one replaces.
+ *
+ * It is answered 410 Gone rather than 404 Not Found, and the difference is not
+ * cosmetic: 404 means "not here, ask again some time", and a crawler will keep
+ * asking for months. 410 means "this is gone and is not coming back", which is
+ * the truth about a product catalogue that was migrated, and search engines
+ * drop the URL far faster for it.
+ *
+ * It is deliberately *not* a rule about anything else. `/products/nonexistent`
+ * is a 404, because a product slug that does not resolve is far more likely to
+ * be a typo than a page that once existed.
+ */
+const RETIRED_PREFIXES = [
+  "/product-page/",
+  "/service-page/",
+  "/blog/categories/",
+  "/post/",
+];
+
+const RETIRED_EXACT = new Set(["/shop-1"]);
+
+function isRetired(pathname: string): boolean {
+  if (RETIRED_EXACT.has(pathname)) return true;
+  return RETIRED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
+
 export function proxy(request: NextRequest) {
   const isDevelopment = process.env.NODE_ENV === "development";
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const { pathname, search } = request.nextUrl;
+
+  /*
+   * Before anything else, because a retired URL needs no nonce, no CSP and no
+   * session: it needs to stop existing.
+   */
+  if (isRetired(pathname)) {
+    return new NextResponse(
+      "This page has been permanently removed. The current catalogue is at /products.",
+      {
+        status: 410,
+        headers: {
+          "content-type": "text/plain; charset=utf-8",
+          // Not cached at the edge for long: the list above is expected to
+          // grow a redirect where a replacement later appears, and a 410 held
+          // for a year would outlive the decision behind it.
+          "cache-control": "public, max-age=0, s-maxage=3600",
+          "x-robots-tag": "noindex",
+        },
+      },
+    );
+  }
+
   const csp = buildCsp(nonce, isDevelopment, isPaymentPath(pathname));
 
   const requestHeaders = new Headers(request.headers);

@@ -69,21 +69,21 @@ const nextConfig: NextConfig = {
     return [
       // Legacy-style URLs are redirected to their clean equivalents rather than
       // being left to 404, so any existing inbound links keep working.
-      { source: "/shop", destination: "/products", permanent: true },
-      { source: "/shop/:path*", destination: "/products", permanent: true },
-      { source: "/product/:slug", destination: "/products/:slug", permanent: true },
-      { source: "/category/:slug", destination: "/products", permanent: true },
-      { source: "/brand/:slug", destination: "/brands/:slug", permanent: true },
-      { source: "/cart", destination: "/enquiry", permanent: true },
-      { source: "/checkout", destination: "/enquiry", permanent: true },
-      { source: "/my-account", destination: "/account", permanent: true },
-      { source: "/index.php", destination: "/", permanent: true },
-      { source: "/index.html", destination: "/", permanent: true },
-      { source: "/home", destination: "/", permanent: true },
-      { source: "/contact-us", destination: "/contact", permanent: true },
-      { source: "/about-us", destination: "/about", permanent: true },
-      { source: "/privacy-policy", destination: "/privacy", permanent: true },
-      { source: "/terms-and-conditions", destination: "/terms", permanent: true },
+      { source: "/shop", destination: "/products", statusCode: 301 },
+      { source: "/shop/:path*", destination: "/products", statusCode: 301 },
+      { source: "/product/:slug", destination: "/products/:slug", statusCode: 301 },
+      { source: "/category/:slug", destination: "/products", statusCode: 301 },
+      { source: "/brand/:slug", destination: "/brands/:slug", statusCode: 301 },
+      { source: "/cart", destination: "/enquiry", statusCode: 301 },
+      { source: "/checkout", destination: "/enquiry", statusCode: 301 },
+      { source: "/my-account", destination: "/account", statusCode: 301 },
+      { source: "/index.php", destination: "/", statusCode: 301 },
+      { source: "/index.html", destination: "/", statusCode: 301 },
+      { source: "/home", destination: "/", statusCode: 301 },
+      { source: "/contact-us", destination: "/contact", statusCode: 301 },
+      { source: "/about-us", destination: "/about", statusCode: 301 },
+      { source: "/privacy-policy", destination: "/privacy", statusCode: 301 },
+      { source: "/terms-and-conditions", destination: "/terms", statusCode: 301 },
 
       /*
        * ── URLs from the Wix site this one replaces ────────────────────────
@@ -99,8 +99,16 @@ const nextConfig: NextConfig = {
        * licence that is now quoted rather than listed — the brand page is the
        * honest destination: it answers the question the searcher had.
        */
-      { source: "/techzoid", destination: "/products", permanent: true },
-      { source: "/about-1", destination: "/about", permanent: true },
+      /*
+       * `statusCode: 301`, not `permanent: true`.
+       *
+       * `permanent` emits 308, which Google treats identically — but a
+       * shopping feed, a link checker and a good deal of older tooling do not:
+       * several follow 301 and stop at 308. These URLs exist to be followed by
+       * exactly that kind of software, so they say 301.
+       */
+      { source: "/techzoid", destination: "/products", statusCode: 301 },
+      { source: "/about-1", destination: "/about", statusCode: 301 },
       /*
        * `/careers` is deliberately *not* redirected.
        *
@@ -110,26 +118,11 @@ const nextConfig: NextConfig = {
        * forever — including after the careers page existed, with no way to
        * reach them. The page now exists, and it answers this URL.
        */
-      { source: "/corel-draw-software-services", destination: "/brands/corel", permanent: true },
+      { source: "/corel-draw-software-services", destination: "/brands/corel", statusCode: 301 },
       {
         source: "/product-page/autocad-business-license",
         destination: "/products/autocad",
-        permanent: true,
-      },
-      {
-        source: "/product-page/buycoreldrawgraphicssuite2025lifetimelicense",
-        destination: "/brands/corel",
-        permanent: true,
-      },
-      {
-        source: "/product-page/microsoft-sharepoint-online-plan-2",
-        destination: "/brands/microsoft",
-        permanent: true,
-      },
-      {
-        source: "/product-page/microsoft-windows-10-pro-64-bit-system-builder-oem",
-        destination: "/brands/microsoft",
-        permanent: true,
+        statusCode: 301,
       },
 
       /*
@@ -170,26 +163,19 @@ const nextConfig: NextConfig = {
         // 10 links
         source: "/product-page/microsoft-365-business-standard-annual-subscription",
         destination: "/products/microsoft-365-business-standard",
-        permanent: true,
+        statusCode: 301,
       },
       {
         // 10 links
         source: "/product-page/microsoft-365-business-basic-annual-subscription",
         destination: "/products/microsoft-365-business-basic",
-        permanent: true,
+        statusCode: 301,
       },
       {
         // 7 links
         source: "/product-page/m365-business-premium-annual-license",
         destination: "/products/microsoft-365-business-premium",
-        permanent: true,
-      },
-      {
-        // 3 links. Not listed as its own product — the apps-only plan is not in
-        // the catalogue — so this goes to the page that explains the range.
-        source: "/product-page/microsoft-365-apps-for-business-annual-subscription",
-        destination: "/microsoft-365",
-        permanent: true,
+        statusCode: 301,
       },
 
       /*
@@ -207,27 +193,11 @@ const nextConfig: NextConfig = {
        * 23 August 2026.
        */
       {
-        // Position 10 for "microsoft visio plan 1", 720 searches a month.
-        // Visio is not in this catalogue; the brand page is the true answer.
-        source: "/product-page/microsoft-visio-plan-1",
-        destination: "/brands/microsoft",
-        permanent: true,
-      },
-      {
-        // Position 13 for "visual studio enterprise", 8,100 searches a month —
-        // by volume the most valuable position this domain holds, and by some
-        // distance. Visual Studio is not in the catalogue either. Listing it
-        // would be worth more than this redirect is.
-        source: "/product-page/microsoft-visual-studio-enterprise",
-        destination: "/brands/microsoft",
-        permanent: true,
-      },
-      {
         // Position 18 for "windows 11 pro for business", 260 a month, and this
         // one has an exact match.
         source: "/product-page/windows-11-pro-business-license",
         destination: "/products/windows-11-pro-upgrade",
-        permanent: true,
+        statusCode: 301,
       },
 
       // ── Autodesk (15 links) ─────────────────────────────────────────────
@@ -235,33 +205,32 @@ const nextConfig: NextConfig = {
         // 5 links
         source: "/product-page/autodesk-civil-3d-business-license",
         destination: "/products/autodesk-civil-3d",
-        permanent: true,
+        statusCode: 301,
       },
       {
-        // 3 links. Vault is not listed on its own.
-        source: "/product-page/autodesk-vault-business-license",
-        destination: "/brands/autodesk",
-        permanent: true,
-      },
-      {
-        // 3 links. 3ds Max is not listed.
-        source: "/product-page/3ds-max-business-license",
-        destination: "/brands/autodesk",
-        permanent: true,
-      },
-      {
-        // 2 links. LT is a different, cheaper product than AutoCAD and is not
-        // listed; the topic page covers how AutoCAD licensing works, which is
-        // the closest true answer.
+        /*
+         * Both AutoCAD LT URLs, and the only products in this list without a
+         * page of their own that keep a redirect rather than a 410.
+         *
+         * `/autocad` states outright that AutoCAD LT was consolidated into the
+         * main AutoCAD line. That is the answer to the question these URLs
+         * ask, written on the page — which is what separates a replacement
+         * from a brand page offered as a consolation. 2 inbound links.
+         */
         source: "/product-page/autodesk-autocad-lt-1-year-subscription",
         destination: "/autocad",
-        permanent: true,
+        statusCode: 301,
+      },
+      {
+        source: "/product-page/autocad-lt-business-license",
+        destination: "/autocad",
+        statusCode: 301,
       },
       {
         // 1 link
         source: "/product-page/autodesk-revit-business-license",
         destination: "/products/revit",
-        permanent: true,
+        statusCode: 301,
       },
 
       // ── Adobe (5 links) ─────────────────────────────────────────────────
@@ -269,74 +238,28 @@ const nextConfig: NextConfig = {
         // 4 links. The old slug ran the words together; same product.
         source: "/product-page/adobeacrobatprodc1yearsubscription",
         destination: "/products/adobe-acrobat-pro-teams",
-        permanent: true,
+        statusCode: 301,
       },
       {
         // 1 link
         source: "/product-page/adobe-creative-cloud-all-apps",
         destination: "/products/adobe-creative-cloud-all-apps-teams",
-        permanent: true,
+        statusCode: 301,
       },
 
       /*
-       * ── The ones Merchant Center named ────────────────────────────────
+       * There is no catch-all any more.
        *
-       * Six of the eleven URLs in the Merchant Center report were falling
-       * through to the catch-all and landing on `/products`, which the note
-       * above already calls barely better than the 404 it replaces. None of
-       * these six products is in the catalogue, so none gets a product page —
-       * each goes to the page that is honestly about the subject.
+       * `/product-page/:slug*` used to sweep whatever the list above missed to
+       * `/products`. That is the soft-404 pattern in its purest form — a
+       * listing page answering a question about one product — and it is what
+       * put six URLs into a Merchant Center report while looking, from the
+       * outside, like a working redirect.
        *
-       * They are not 410d. A 410 is the right answer for a URL nobody wants
-       * and the wrong one for these: Visual Studio Enterprise holds position
-       * 13 for a term with 8,100 searches a month, and returning Gone throws
-       * that away along with every inbound link, in exchange for removing a
-       * feed error that a 410 would not remove either — an item pointing at a
-       * dead URL fails Merchant Center harder than one pointing at a redirect.
+       * What the list above misses now reaches `proxy.ts` and is answered 410
+       * Gone: the old catalogue is not sold here, and saying so once is worth
+       * more than pointing every dead product at a page of two hundred others.
        */
-      {
-        // AutoCAD LT is not in the catalogue. `/autocad` is the page about the
-        // family and is already where the other LT URL goes.
-        source: "/product-page/autocad-lt-business-license",
-        destination: "/autocad",
-        permanent: true,
-      },
-      {
-        source: "/product-page/inventor-business-license",
-        destination: "/brands/autodesk",
-        permanent: true,
-      },
-      {
-        source: "/product-page/microsoft-project-plan-1",
-        destination: "/brands/microsoft",
-        permanent: true,
-      },
-      {
-        source: "/product-page/microsoft-project-plan-3",
-        destination: "/brands/microsoft",
-        permanent: true,
-      },
-      {
-        // Plan 1 already goes here; Plan 2 fell through only because nobody
-        // had listed it.
-        source: "/product-page/microsoft-visio-plan-2",
-        destination: "/brands/microsoft",
-        permanent: true,
-      },
-      {
-        source: "/product-page/microsoft-visual-studio-professional",
-        destination: "/brands/microsoft",
-        permanent: true,
-      },
-
-      /*
-       * Whatever the list above misses. Still a blunt instrument, still better
-       * than a dead end, and now carrying far less traffic than it used to.
-       *
-       * Ordered last on purpose: Next matches redirects top to bottom, so the
-       * specific slugs above win and only what they miss falls through here.
-       */
-      { source: "/product-page/:slug*", destination: "/products", permanent: true },
 
       /*
        * ── Wix's blog, at `/post/<slug>` ──────────────────────────────────
@@ -355,7 +278,7 @@ const nextConfig: NextConfig = {
         // 6 links: "Why your business needs a Microsoft Office 365 license"
         source: "/post/why-your-business-needs-a-microsoft-office-365-license",
         destination: "/microsoft-365",
-        permanent: true,
+        statusCode: 301,
       },
       {
         // 4 links: "Where can I buy a subscription for professional office
@@ -363,33 +286,32 @@ const nextConfig: NextConfig = {
         source:
           "/post/where-can-i-buy-a-subscription-for-professional-office-software-bundles-in-india",
         destination: "/microsoft-365",
-        permanent: true,
+        statusCode: 301,
       },
       {
         // 1 link: "Windows 11 in 2026 — still worth buying or already outdated"
         source: "/post/windows-11-in-2026-still-worth-buying-or-already-outdated",
         destination: "/products/windows-11-pro-upgrade",
-        permanent: true,
+        statusCode: 301,
       },
       {
         // 1 link: "Top 5 reasons businesses should upgrade to Windows 11 Pro"
         source: "/post/top-5-reasons-businesses-should-upgrade-to-windows-11-pro-in-2025",
         destination: "/products/windows-11-pro-upgrade",
-        permanent: true,
+        statusCode: 301,
       },
-      { source: "/post/:slug*", destination: "/blog", permanent: true },
 
       /*
        * Wix's forum, which this site does not have. Three inbound links, all to
        * one discussion thread. The articles are the nearest thing to it.
        */
-      { source: "/group/:path*", destination: "/blog", permanent: true },
+      { source: "/group/:path*", destination: "/blog", statusCode: 301 },
 
       /*
        * Wix's own reserved paths, which it published on every site and which
        * do not exist here.
        */
-      { source: "/blog-1/:path*", destination: "/blog", permanent: true },
+      { source: "/blog-1/:path*", destination: "/blog", statusCode: 301 },
       /*
        * `:slug` and not `:slug*`. A repeated parameter has to occupy its own
        * path segment — `/copy-of-:slug*` is rejected at build time with "Can
@@ -397,8 +319,8 @@ const nextConfig: NextConfig = {
        * prefix leaves it nowhere to repeat into. These pages are always a
        * single segment anyway.
        */
-      { source: "/copy-of-:slug", destination: "/", permanent: true },
-      { source: "/_partials/:path*", destination: "/", permanent: true },
+      { source: "/copy-of-:slug", destination: "/", statusCode: 301 },
+      { source: "/_partials/:path*", destination: "/", statusCode: 301 },
     ];
   },
 };
