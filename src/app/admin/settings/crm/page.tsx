@@ -10,6 +10,8 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db";
 import { crmConnection, outboxSummary } from "@/lib/crm/outbox";
 import { CRM_EVENT_KINDS, CRM_EVENT_VERSION } from "@/lib/crm/events";
+import { ACCEPTED_INBOUND_KINDS } from "@/lib/crm/inbound";
+import { absoluteUrl } from "@/lib/seo";
 import { formatDateTime } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "CRM integration" };
@@ -35,10 +37,30 @@ export const metadata: Metadata = { title: "CRM integration" };
 export default async function AdminCrmSettingsPage() {
   await requireAdmin();
 
-  const [connection, outbox, settings] = await Promise.all([
+  const [connection, outbox, settings, received] = await Promise.all([
     crmConnection(),
     outboxSummary(),
     prisma.crmSettings.findUnique({ where: { id: "singleton" } }),
+    /*
+     * The last twenty deliveries in, whatever became of them.
+     *
+     * The refusals are the reason this list exists. A change made in the CRM
+     * that never appeared here has two completely different causes — it never
+     * arrived, or it arrived and this side declined it — and without this the
+     * two are indistinguishable from the admin panel.
+     */
+    prisma.crmInboundEvent.findMany({
+      orderBy: { receivedAt: "desc" },
+      take: 20,
+      select: {
+        id: true,
+        kind: true,
+        status: true,
+        entityId: true,
+        detail: true,
+        receivedAt: true,
+      },
+    }),
   ]);
 
   return (
@@ -166,6 +188,11 @@ export default async function AdminCrmSettingsPage() {
         <h2 className="text-[15px] font-semibold text-graphite-900">Endpoint</h2>
         <div className="mt-4">
           <AdminForm action={saveCrmSettings} submitLabel="Save" pendingLabel="Saving…">
+            {/*
+              Which half of this screen is being saved. The other half's
+              columns are left untouched — see `saveCrmSettings`.
+            */}
+            <input type="hidden" name="section" value="send" />
             <Field
               label="Endpoint URL"
               name="endpointUrl"
@@ -203,6 +230,129 @@ export default async function AdminCrmSettingsPage() {
             </p>
           </AdminForm>
         </div>
+      </section>
+
+      {/* ── receiving ──────────────────────────────────────────────────── */}
+      <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+        <h2 className="text-[15px] font-semibold text-graphite-900">
+          Receiving changes from your CRM
+        </h2>
+        <p className="mt-2 text-meta leading-relaxed text-ink-600">
+          The other direction. A stage moved, a deal won or lost, or an activity logged in your
+          CRM is applied to the deal here. Give your CRM this address:
+        </p>
+        <p className="mt-3 break-all rounded-[--radius-md] border border-line bg-surface-muted px-3 py-2 font-mono text-[12px] text-graphite-900">
+          {absoluteUrl("/api/crm/inbound")}
+        </p>
+
+        <div className="mt-4">
+          <AdminForm action={saveCrmSettings} submitLabel="Save" pendingLabel="Saving…">
+            <input type="hidden" name="section" value="receive" />
+            <Field
+              label="Secret your CRM signs with"
+              name="inboundSecret"
+              hint={
+                settings?.inboundSecret
+                  ? "A secret is stored. Leave blank to keep it; type a new one to replace it."
+                  : "A different secret from the sending one, on purpose — rotating one must not break the other direction."
+              }
+            >
+              <Input name="inboundSecret" type="password" maxLength={200} autoComplete="off" />
+            </Field>
+
+            <Checkbox
+              name="inboundEnabled"
+              label="Receive events"
+              defaultChecked={settings?.inboundEnabled ?? false}
+            />
+            <p className="-mt-2 text-meta text-ink-500">
+              Off by default, and separately from sending. This lets another system change this
+              pipeline, so it is switched on deliberately — and switching it off is how you stop an
+              integration behaving oddly without deleting its keys.
+            </p>
+
+
+          </AdminForm>
+        </div>
+
+        <h3 className="mt-6 text-[13px] font-semibold text-graphite-900">
+          What this side will accept
+        </h3>
+        <ul className="mt-2 space-y-2 text-meta leading-relaxed text-ink-600">
+          <li>
+            Kinds:{" "}
+            <span className="font-mono text-graphite-900">
+              {ACCEPTED_INBOUND_KINDS.join(", ")}
+            </span>
+            , on an existing deal, identified by its reference in{" "}
+            <code className="font-mono">entity.id</code>.
+          </li>
+          <li>
+            <strong className="font-semibold text-graphite-900">Not</strong>{" "}
+            <code className="font-mono">deal.created</code>. A deal here needs an owner, a source
+            and a customer record, and none of those can be taken on trust from another system.
+          </li>
+          <li>
+            <strong className="font-semibold text-graphite-900">Not</strong> expected value. The
+            pipeline forecast is set here; a delivery carrying a value has its stage applied and
+            the value refused.
+          </li>
+          <li>
+            An event older than the change already recorded here is ignored, so a late retry
+            cannot undo a newer decision.
+          </li>
+          <li>
+            Signed{" "}
+            <code className="font-mono">x-crm-signature: t=&lt;unix&gt;,v1=&lt;hex&gt;</code> — the
+            same construction as the outgoing direction, over{" "}
+            <code className="font-mono">&quot;&lt;t&gt;.&lt;body&gt;&quot;</code>, within five
+            minutes. Deliveries are applied once per{" "}
+            <code className="font-mono">id</code>, so retrying is safe.
+          </li>
+        </ul>
+
+        <h3 className="mt-6 text-[13px] font-semibold text-graphite-900">Recently received</h3>
+        {received.length === 0 ? (
+          <p className="mt-2 text-meta text-ink-600">Nothing has arrived yet.</p>
+        ) : (
+          <TableWrap className="mt-3">
+            <Table>
+              <thead>
+                <Tr>
+                  <Th>Received</Th>
+                  <Th>Event</Th>
+                  <Th>Deal</Th>
+                  <Th>Outcome</Th>
+                </Tr>
+              </thead>
+              <tbody>
+                {received.map((row) => (
+                  <Tr key={row.id}>
+                    <Td className="whitespace-nowrap">{formatDateTime(row.receivedAt)}</Td>
+                    <Td className="font-mono text-[12px]">{row.kind}</Td>
+                    <Td className="font-mono text-[12px]">{row.entityId}</Td>
+                    <Td>
+                      <Badge
+                        tone={
+                          row.status === "APPLIED"
+                            ? "success"
+                            : row.status === "REFUSED"
+                              ? "danger"
+                              : "neutral"
+                        }
+                      >
+                        {row.status.toLowerCase()}
+                      </Badge>
+                      {row.detail ? (
+                        <span className="ml-2 text-meta text-ink-600">{row.detail}</span>
+                      ) : null}
+                    </Td>
+                  </Tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableWrap>
+        )}
       </section>
 
       {/* ── what the far end receives ──────────────────────────────────── */}

@@ -21,11 +21,35 @@ import { deliverPendingCrmEvents } from "@/lib/crm/outbox";
  * integration credentials.
  */
 
-const settingsSchema = z.object({
+/**
+ * Two forms, one action, and each owns only its own half.
+ *
+ * Sending and receiving are configured in separate sections of the screen, and
+ * a form only submits the fields it renders. So the section says which half is
+ * being saved, and the other half's columns are left untouched — because the
+ * alternatives are both wrong: reading a missing field as empty makes saving
+ * the endpoint silently switch receiving off, and carrying the other half
+ * through as hidden inputs puts a stored secret's field name in the page and
+ * makes every save a write to both.
+ */
+const SECTIONS = ["send", "receive"] as const;
+
+const sendSchema = z.object({
   endpointUrl: z.string().trim().max(500).optional(),
   signingSecret: z.string().trim().max(200).optional(),
-  enabled: z.coerce.boolean().default(false),
+  enabled: z.boolean(),
 });
+
+const receiveSchema = z.object({
+  inboundSecret: z.string().trim().max(200).optional(),
+  inboundEnabled: z.boolean(),
+});
+
+/** A form field that was not rendered is absent, not empty. */
+const text = (formData: FormData, name: string): string | undefined => {
+  const value = formData.get(name);
+  return typeof value === "string" ? value : undefined;
+};
 
 export async function saveCrmSettings(
   _previous: AdminActionState,
@@ -34,49 +58,96 @@ export async function saveCrmSettings(
   const staff = await guard("admin");
   if (isFailure(staff)) return staff;
 
-  const parsed = settingsSchema.safeParse({
-    endpointUrl: formData.get("endpointUrl"),
-    signingSecret: formData.get("signingSecret"),
-    enabled: formData.get("enabled") === "on",
-  });
-  if (!parsed.success) {
-    return { status: "error", message: "Please correct the highlighted fields." };
-  }
+  const requested = text(formData, "section") ?? "send";
+  const section = (SECTIONS as readonly string[]).includes(requested)
+    ? (requested as (typeof SECTIONS)[number])
+    : "send";
 
-  const endpointUrl = parsed.data.endpointUrl?.trim() || null;
-  if (endpointUrl) {
-    const problem = endpointProblem(endpointUrl);
-    if (problem) {
-      return { status: "error", message: problem, fieldErrors: { endpointUrl: ["Not usable"] } };
-    }
-  }
-
-  /*
-   * A blank secret field leaves the stored one alone rather than clearing it.
-   *
-   * The field renders empty because the secret is never sent to the browser,
-   * so "blank" means "not retyped" far more often than it means "remove it".
-   * Treating it as a clear would silently disconnect the integration every time
-   * somebody edited the endpoint.
-   */
-  const secret = parsed.data.signingSecret?.trim();
   const existing = await prisma.crmSettings.findUnique({
     where: { id: "singleton" },
-    select: { signingSecret: true },
+    select: { signingSecret: true, inboundSecret: true },
   });
 
-  const signingSecret = secret ? encryptSecret(secret) : (existing?.signingSecret ?? null);
+  const data: {
+    endpointUrl?: string | null;
+    signingSecret?: string | null;
+    enabled?: boolean;
+    inboundSecret?: string | null;
+    inboundEnabled?: boolean;
+  } = {};
+
+  let secretChanged = false;
+  let inboundSecretChanged = false;
+
+  if (section === "send") {
+    const parsed = sendSchema.safeParse({
+      endpointUrl: text(formData, "endpointUrl"),
+      signingSecret: text(formData, "signingSecret"),
+      enabled: formData.get("enabled") === "on",
+    });
+    if (!parsed.success) {
+      return { status: "error", message: "Please correct the highlighted fields." };
+    }
+
+    const endpointUrl = parsed.data.endpointUrl?.trim() || null;
+    if (endpointUrl) {
+      const problem = endpointProblem(endpointUrl);
+      if (problem) {
+        return { status: "error", message: problem, fieldErrors: { endpointUrl: ["Not usable"] } };
+      }
+    }
+
+    /*
+     * A blank secret field leaves the stored one alone rather than clearing it.
+     *
+     * The field renders empty because the secret is never sent to the browser,
+     * so "blank" means "not retyped" far more often than it means "remove it".
+     * Treating it as a clear would silently disconnect the integration every
+     * time somebody edited the endpoint.
+     */
+    const secret = parsed.data.signingSecret?.trim();
+    secretChanged = Boolean(secret);
+
+    data.endpointUrl = endpointUrl;
+    data.enabled = parsed.data.enabled;
+    data.signingSecret = secret ? encryptSecret(secret) : (existing?.signingSecret ?? null);
+  } else {
+    const parsed = receiveSchema.safeParse({
+      inboundSecret: text(formData, "inboundSecret"),
+      inboundEnabled: formData.get("inboundEnabled") === "on",
+    });
+    if (!parsed.success) {
+      return { status: "error", message: "Please correct the highlighted fields." };
+    }
+
+    const inbound = parsed.data.inboundSecret?.trim();
+    inboundSecretChanged = Boolean(inbound);
+    const inboundSecret = inbound ? encryptSecret(inbound) : (existing?.inboundSecret ?? null);
+
+    /*
+     * Receiving cannot be switched on without a secret to verify with.
+     *
+     * Refused rather than quietly ignored: an administrator who ticks the box,
+     * sees "Saved", and tells the CRM team to go ahead has been misled. The
+     * route would answer 404 to every delivery and the far end would report an
+     * outage nobody here could explain.
+     */
+    if (parsed.data.inboundEnabled && !inboundSecret) {
+      return {
+        status: "error",
+        message: "Set the secret your CRM signs with before switching receiving on.",
+        fieldErrors: { inboundSecret: ["Required to receive"] },
+      };
+    }
+
+    data.inboundSecret = inboundSecret;
+    data.inboundEnabled = parsed.data.inboundEnabled;
+  }
 
   await prisma.crmSettings.upsert({
     where: { id: "singleton" },
-    create: {
-      id: "singleton",
-      endpointUrl,
-      signingSecret,
-      enabled: parsed.data.enabled,
-      updatedById: staff.id,
-    },
-    update: { endpointUrl, signingSecret, enabled: parsed.data.enabled, updatedById: staff.id },
+    create: { id: "singleton", ...data, updatedById: staff.id },
+    update: { ...data, updatedById: staff.id },
   });
 
   await recordAudit({
@@ -86,7 +157,14 @@ export async function saveCrmSettings(
     entityId: "singleton",
     // The endpoint, never the secret. An audit log is read by more people than
     // the settings screen is.
-    metadata: { endpointUrl, enabled: parsed.data.enabled, secretChanged: Boolean(secret) },
+    metadata: {
+      section,
+      endpointUrl: data.endpointUrl,
+      enabled: data.enabled,
+      secretChanged,
+      inboundEnabled: data.inboundEnabled,
+      inboundSecretChanged,
+    },
     ip: await clientIp(),
   });
 

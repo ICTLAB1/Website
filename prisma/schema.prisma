@@ -391,27 +391,27 @@ model User {
   dealsOwned      Deal[]     @relation("DealOwner")
   activities      Activity[] @relation("ActivityAuthor")
 
-  sessions       Session[]
-  resetTokens    PasswordResetToken[]
-  verifyTokens   EmailVerificationToken[]
-  enquiries      Enquiry[]
-  quotes         Quote[]
-  orders         Order[]
-  licences       Licence[]
-  tickets        SupportTicket[]
-  documents      Document[]
-  auditLogs      AuditLog[]
-  authoredPosts  BlogPost[]
-  savedSettings  SiteSettings[]
-  savedPayments  PaymentSettings[]
-  savedMail      MailSettings[]
+  sessions         Session[]
+  resetTokens      PasswordResetToken[]
+  verifyTokens     EmailVerificationToken[]
+  enquiries        Enquiry[]
+  quotes           Quote[]
+  orders           Order[]
+  licences         Licence[]
+  tickets          SupportTicket[]
+  documents        Document[]
+  auditLogs        AuditLog[]
+  authoredPosts    BlogPost[]
+  savedSettings    SiteSettings[]
+  savedPayments    PaymentSettings[]
+  savedMail        MailSettings[]
   savedGstinLookup GstinLookupSettings[]
-  savedCrm       CrmSettings[]            @relation("CrmSettingsEditor")
-  quoteMessages  QuoteMessage[]
-  ticketMessages TicketMessage[]
-  devices        Device[]
-  reviews        ProductReview[]
-  reviewsModerated ProductReview[] @relation("ReviewModerator")
+  savedCrm         CrmSettings[]            @relation("CrmSettingsEditor")
+  quoteMessages    QuoteMessage[]
+  ticketMessages   TicketMessage[]
+  devices          Device[]
+  reviews          ProductReview[]
+  reviewsModerated ProductReview[]          @relation("ReviewModerator")
 
   @@index([companyId])
   @@index([role])
@@ -565,7 +565,7 @@ model EmailVerificationToken {
   /// wall is `attempts` below and a ten-minute life. The hash is what stops the
   /// far likelier problem: a live code sitting in a backup, a log or a support
   /// screen in plain sight.
-  codeHash  String?
+  codeHash String?
   /// Wrong guesses against this code.
   ///
   /// The whole security of a six-digit secret rests here. Unbounded, a
@@ -573,7 +573,7 @@ model EmailVerificationToken {
   /// minutes and then needs a fresh code, which is rate limited in its own
   /// right. Counted on the row rather than by IP, because the thing being
   /// protected is this account and an attacker chooses their own address.
-  attempts  Int       @default(0)
+  attempts Int     @default(0)
 
   @@index([userId])
   @@index([expiresAt])
@@ -1954,7 +1954,7 @@ model SiteSettings {
   /// office's line is an ordinary arrangement — and an address a customer can
   /// write to is useful with or without a second number. Shown only when set,
   /// so a blank never renders as an empty "Telephone" row.
-  secondaryEntityPhone   String?
+  secondaryEntityPhone String?
 
   /// The branch's own registration numbers, as its jurisdiction issues them.
   ///
@@ -2083,10 +2083,10 @@ model GstinLookupSettings {
   /// for the next one.
   ///
   /// Values are AES-256-GCM, keyed from AUTH_SECRET, and never rendered.
-  headerOneName  String?
-  headerOneValue String?
-  headerTwoName  String?
-  headerTwoValue String?
+  headerOneName    String?
+  headerOneValue   String?
+  headerTwoName    String?
+  headerTwoValue   String?
   headerThreeName  String?
   headerThreeValue String?
 
@@ -2557,6 +2557,23 @@ model CrmSettings {
   /// AES-256-GCM, keyed from AUTH_SECRET. Never rendered.
   signingSecret String?
 
+  /// The secret the *other* direction is signed with: what the CRM signs the
+  /// deliveries it sends here with, and what this application verifies them
+  /// against.
+  ///
+  /// Deliberately a second secret rather than the one above. They protect
+  /// opposite directions, and a business rotating the key its CRM sends with
+  /// must not silently stop its own outbound deliveries being trusted — one
+  /// shared value makes every rotation a two-sided outage.
+  /// AES-256-GCM, keyed from AUTH_SECRET. Never rendered.
+  inboundSecret String?
+
+  /// Off by default, and separate from `enabled`. Receiving is a bigger grant
+  /// than sending: it lets another system change this pipeline. It is switched
+  /// on deliberately, and switching it off is how a business stops an
+  /// integration that has started behaving oddly without deleting its keys.
+  inboundEnabled Boolean @default(false)
+
   /// Off by default. Configured is not the same as wanted — a business may set
   /// the endpoint up before the far end is ready.
   enabled Boolean @default(false)
@@ -2564,6 +2581,58 @@ model CrmSettings {
   updatedAt   DateTime @updatedAt
   updatedById String?
   updatedBy   User?    @relation("CrmSettingsEditor", fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
+/// What happened to one delivery from the customer's CRM.
+enum CrmInboundStatus {
+  /// Verified, understood, and the change was made.
+  APPLIED
+  /// Verified and understood, but nothing needed doing — the deal was already
+  /// in that stage, or the event was older than the state it described.
+  IGNORED
+  /// Verified, but this application will not do what it asked.
+  REFUSED
+}
+
+/// One delivery received from the customer's CRM.
+///
+/// Written for every delivery that gets as far as a valid signature, whatever
+/// happens next, and it does two jobs.
+///
+/// **Idempotency.** The far end retries, and a retry of "move to WON" that
+/// arrives after somebody moved it back to NEGOTIATION by hand would undo a
+/// person's decision. The sender's own event id is the primary key, so a
+/// delivery is applied exactly once however many times it arrives.
+///
+/// **An answer to "why did our CRM's change not show up".** A refusal that
+/// leaves no trace is indistinguishable from a delivery that never arrived,
+/// and those two have completely different causes. The reason is recorded in
+/// words a person can read on the settings screen.
+model CrmInboundEvent {
+  /// The *sender's* id for the event, not one generated here. That is what
+  /// makes this table an idempotency key rather than a log.
+  id String @id
+
+  kind   String
+  status CrmInboundStatus
+
+  /// When the sender says it happened, which is what decides whether this
+  /// event is newer than the state it is trying to change.
+  occurredAt DateTime
+
+  receivedAt DateTime @default(now())
+
+  entityType String
+  entityId   String
+
+  /// What was done, or why it was not. Shown to an administrator verbatim.
+  detail String?
+
+  /// The body as received, for diagnosing a disagreement about what was sent.
+  payload Json
+
+  @@index([receivedAt])
+  @@index([status])
 }
 
 /// Where a role is based, and how much of it is on site.

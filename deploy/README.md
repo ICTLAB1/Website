@@ -435,6 +435,28 @@ Without `CRM_DELIVER_TOKEN` set, that route refuses everything and answers 404,
 which is the safe default: it both triggers outbound requests and reports what
 is queued, so it is not one to leave open because a variable was forgotten.
 
+### The other direction
+
+`POST https://techzoidtechnologies.com/api/crm/inbound` is where the CRM sends
+its own changes. Give it that address, and paste the secret it signs with into
+**Secret your CRM signs with** on the same settings screen, then tick **Receive
+events**. Nothing else to configure: no environment variable, no cron.
+
+It is a different secret from the sending one on purpose — rotating the key one
+direction uses must not silently break the other.
+
+What it accepts: `deal.stage_changed`, `deal.won`, `deal.lost` and
+`activity.logged`, on a deal that already exists here, identified by its
+reference. It refuses `deal.created` — a deal here needs an owner, a source and
+a customer record, and none of those can be taken on trust — and it refuses to
+change expected value, because the pipeline forecast is set here. A delivery
+older than the change already recorded is ignored, so a late retry cannot undo a
+newer decision, and each delivery is applied once per `id`, so retrying is safe.
+
+Everything that arrives is listed on the settings screen with what became of it.
+That list is the answer to "why did our CRM's change not show up here" — a
+refusal and a delivery that never arrived look identical without it.
+
 **If a delivery fails** the event is retried with a growing delay and given up
 on after eight attempts, staying visible on the settings screen either way with
 the error your CRM returned. A misconfigured endpoint is diagnosable from that

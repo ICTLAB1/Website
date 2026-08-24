@@ -149,7 +149,31 @@ export async function moveDealStage(input: {
   reference: string;
   stage: DealStage;
   lostReason?: string | null;
-  actorId: string;
+  /**
+   * Who did it, or null when nobody here did.
+   *
+   * Null is the customer's CRM asking for the change through the inbound
+   * webhook. The history entry is still written — the change happened and has
+   * to be visible — with no author, which is the truth. Attributing it to
+   * whichever administrator last saved the integration settings would put a
+   * person's name against a decision they did not make.
+   */
+  actorId: string | null;
+  /**
+   * Whether to tell the customer's CRM about this.
+   *
+   * True for a change somebody made here. False for one the CRM itself just
+   * asked for — otherwise the change goes straight back out to the system that
+   * sent it, which sends it back, and the two halves of a two-way integration
+   * become a loop that neither side can see the start of.
+   *
+   * A flag rather than a separate code path, because everything else about the
+   * change is identical and must stay identical: the loss reason is still
+   * required, `stageChangedAt` still moves, and the history still records who
+   * did it. Duplicating this function for the inbound case is how one of those
+   * rules quietly stops applying to half the changes.
+   */
+  emit?: boolean;
 }): Promise<DealResult> {
   const deal = await prisma.deal.findUnique({
     where: { reference: input.reference },
@@ -189,7 +213,7 @@ export async function moveDealStage(input: {
         occurredAt: now,
         dealId: deal.id,
         companyId: deal.companyId,
-        userId: input.actorId,
+        userId: input.actorId || null,
       },
     });
 
@@ -199,20 +223,22 @@ export async function moveDealStage(input: {
      * subscribes to, and making it derive them from a string comparison on the
      * stage is how the far end ends up with its own copy of this file's rules.
      */
-    await recordCrmEvent(tx, {
-      kind: "deal.stage_changed",
-      entityType: "Deal",
-      entityId: deal.reference,
-      data: { reference: deal.reference, from: deal.stage, to: input.stage },
-    });
-
-    if (isClosed(input.stage)) {
+    if (input.emit !== false) {
       await recordCrmEvent(tx, {
-        kind: input.stage === "WON" ? "deal.won" : "deal.lost",
+        kind: "deal.stage_changed",
         entityType: "Deal",
         entityId: deal.reference,
-        data: { reference: deal.reference, lostReason },
+        data: { reference: deal.reference, from: deal.stage, to: input.stage },
       });
+
+      if (isClosed(input.stage)) {
+        await recordCrmEvent(tx, {
+          kind: input.stage === "WON" ? "deal.won" : "deal.lost",
+          entityType: "Deal",
+          entityId: deal.reference,
+          data: { reference: deal.reference, lostReason },
+        });
+      }
     }
   });
 
@@ -338,7 +364,8 @@ export async function logActivity(input: {
   dealId?: string | null;
   companyId?: string | null;
   contactId?: string | null;
-  actorId: string;
+  /** Null when the entry came from the customer's CRM rather than a person. */
+  actorId: string | null;
 }): Promise<ActivityResult> {
   const subject = input.subject.trim();
   if (subject.length === 0) return { ok: false, reason: "Say what happened." };
@@ -370,7 +397,7 @@ export async function logActivity(input: {
       dealId: input.dealId || null,
       companyId: input.companyId || null,
       contactId: input.contactId || null,
-      userId: input.actorId,
+      userId: input.actorId || null,
     },
     select: { id: true },
   });

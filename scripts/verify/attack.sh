@@ -213,6 +213,27 @@ count=$(su postgres -c "psql -tA -d ictlab -c \"select count(*) from \\\"User\\\
 [ "$count" = "1" ] && ok "and only one account was ever created" || no "duplicate accounts" "$count rows"
 su postgres -c "psql -tA -d ictlab -c \"delete from \\\"User\\\" where email like 'atk_flood%'\"" >/dev/null 2>&1
 
+echo "== The inbound CRM webhook is closed to anyone without the secret =="
+
+# The endpoint that lets another system change this pipeline. `crm-inbound.mjs`
+# proves it works with the secret; this proves it does nothing without one, from
+# the outside, with no fixture and nothing switched on for it.
+for probe in \
+  '-H "content-type: application/json"' \
+  '-H "x-crm-signature: t=1,v1=deadbeef"' \
+  '-H "x-crm-signature: garbage"' ; do
+  code=$(eval curl -s -o /dev/null -w "%{http_code}" -X POST $probe \
+    --data "'"'"{\"version\":1,\"id\":\"atk\",\"kind\":\"deal.won\",\"occurredAt\":\"2026-01-01T00:00:00Z\",\"entity\":{\"type\":\"Deal\",\"id\":\"ANY\"},\"data\":{}}"'"'" \
+    "$BASE/api/crm/inbound")
+  [ "$code" = "404" ] && ok "inbound webhook refuses an unsigned or forged delivery (got $code)" \
+    || no "inbound webhook" "got $code"
+done
+
+# And nothing it refused was recorded as an event, which would otherwise let an
+# outsider fill this table.
+count=$(su postgres -c "psql -tA -d ictlab -c \"select count(*) from \\\"CrmInboundEvent\\\" where id = 'atk'\"" 2>/dev/null | tr -d '[:space:]')
+[ "$count" = "0" ] && ok "and wrote nothing to the inbound log" || no "inbound log" "$count row(s)"
+
 echo "== Payments: an order cannot be marked paid without a gateway signature =="
 
 # A payment attempt, written straight into the database so no gateway is needed.
