@@ -43,27 +43,39 @@ import type { FormFactor } from "@prisma/client";
  */
 export const REPRESENTATIVE_IMAGES: Partial<Record<FormFactor, string>> = {
   /*
-   * Empty, and that is a correct state rather than an unfinished one — every
-   * model keeps its labelled empty frame until artwork arrives. Adding a line
-   * here is the only step needed to switch a form factor on.
+   * Line drawings, not photographs, and that is deliberate rather than a
+   * compromise.
    *
-   * Awaiting artwork (see `public/products/README.md`):
-   *   DESKTOP_TOWER, DESKTOP_WORKSTATION → "/products/representative-desktop-tower.jpg"
-   *   DESKTOP_SFF, DESKTOP_MINI          → "/products/representative-desktop-sff.jpg"
-   *   LAPTOP, MOBILE_WORKSTATION         → "/products/representative-laptop.jpg"
-   *   ALL_IN_ONE                         → "/products/representative-all-in-one.jpg"
+   * A photograph of a machine is a photograph of *a* machine: put one against
+   * forty models and it is wrong about thirty-nine of them, which no caption
+   * repairs. A drawing of the chassis class makes no claim about the model at
+   * all — it is legible at card size, it is obviously an illustration, and it
+   * cannot be mistaken for the unit that will be delivered.
    *
-   * A tower and a desktop workstation deliberately share one illustration: a
-   * workstation of this class *is* a tower — same chassis shape, same
-   * orientation, same thing under a desk — so the picture depicts the category
-   * correctly, and where it differs from a given Z-series or Precision model is
-   * exactly what the notice says it may differ in.
+   * They carry no maker's mark and no port layout precise enough to identify a
+   * chassis, for the same reason.
    *
+   * A tower and a desktop workstation share one: a workstation of this class
+   * *is* a tower — same chassis shape, same orientation, same thing under a
+   * desk — so the picture depicts the category correctly, and where it differs
+   * from a given Z-series or Precision model is exactly what the notice says it
+   * may differ in.
+   */
+  DESKTOP_TOWER: "/products/representative-desktop-tower.png",
+  DESKTOP_WORKSTATION: "/products/representative-desktop-tower.png",
+  DESKTOP_SFF: "/products/representative-desktop-sff.png",
+  DESKTOP_MINI: "/products/representative-desktop-sff.png",
+  LAPTOP: "/products/representative-laptop.png",
+  MOBILE_WORKSTATION: "/products/representative-laptop.png",
+  ALL_IN_ONE: "/products/representative-all-in-one.png",
+
+  /*
    * Permanently absent:
    *   TOWER_SERVER, RACK_SERVER   — a server is bought on its specification and
    *                                 its rack units. A desktop illustration
    *                                 beside one would be wrong about the goods in
-   *                                 a way a caption cannot repair.
+   *                                 a way a caption cannot repair. They keep the
+   *                                 empty frame until real photographs exist.
    */
 };
 

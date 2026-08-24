@@ -24,21 +24,35 @@ no caller can obtain one without the other.
 
 ### Present
 
+Every one of these is a line drawing made for this repository, not a
+photograph. That is the point rather than a shortfall: a photograph of a machine
+is a photograph of *a* machine, and one placed against forty models is wrong
+about thirty-nine of them in a way no caption repairs. A drawing of the chassis
+class makes no claim about the model at all.
+
+They carry no maker's mark and no port detail precise enough to identify a
+chassis, so none of them can be read as a particular unit.
+
 | File | Form factors it stands in for | Provenance |
 |---|---|---|
-| `representative-desktop-tower.jpg` | `DESKTOP_TOWER`, `DESKTOP_WORKSTATION` | Supplied by the business, 23 August 2026. Cropped to the subject and resized to 800px wide; not otherwise altered. |
+| `representative-desktop-tower.png` | `DESKTOP_TOWER`, `DESKTOP_WORKSTATION` | Drawn for this repository, 24 August 2026. Original work; no third-party artwork used. |
+| `representative-desktop-sff.png` | `DESKTOP_SFF`, `DESKTOP_MINI` | Drawn for this repository, 24 August 2026. Original work; no third-party artwork used. |
+| `representative-laptop.png` | `LAPTOP`, `MOBILE_WORKSTATION` | Drawn for this repository, 24 August 2026. Original work; no third-party artwork used. |
+| `representative-all-in-one.png` | `ALL_IN_ONE` | Drawn for this repository, 24 August 2026. Original work; no third-party artwork used. |
 
-### Wanted
+An earlier version of this table listed a supplied tower photograph as present.
+No such file was ever in this directory — the row described an intention. If a
+real photograph arrives, it replaces the drawing for that form factor here, or
+better, goes on the individual model as `Product.imageUrl`, where it needs no
+caveat at all.
 
-These form factors are in the catalogue and currently show "Photograph to
-follow". Each needs one illustration; adding it is a file here plus one line in
-`REPRESENTATIVE_IMAGES`.
+### What these do not do
 
-| Filename to use | Covers | Active models |
-|---|---|---|
-| `representative-laptop.jpg` | `LAPTOP`, `MOBILE_WORKSTATION` | 0 today — the laptop catalogue is not loaded yet |
-| `representative-desktop-sff.jpg` | `DESKTOP_SFF`, `DESKTOP_MINI` | 6 |
-| `representative-all-in-one.jpg` | `ALL_IN_ONE` | 1 |
+They are not product images for Google. `image` in a page's Product structured
+data is only emitted for a real photograph on the model — see the product page —
+because `image` asserts "this is a picture of this product", which is exactly
+what the notice under these drawings denies. A Merchant Center feed needs real
+photographs for the same reason.
 
 Servers (`TOWER_SERVER`, `RACK_SERVER`, 17 models) are deliberately excluded. A
 rack server does not resemble a desktop, and no caption repairs a picture that
