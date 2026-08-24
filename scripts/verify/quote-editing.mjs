@@ -182,10 +182,28 @@ check(
 
 const inlineBytes = await inline.body();
 const downloadBytes = await download.body();
+/*
+ * Reported as *what* differs, not merely that something did.
+ *
+ * "922817 vs 922817 bytes" is what this said the one time it failed, which
+ * narrows the cause to nothing at all — two files of identical length that
+ * disagree somewhere. The offset and the bytes on either side of it name the
+ * field, and a run that cannot be reproduced afterwards still leaves enough in
+ * the log to act on.
+ */
+const firstDifference = () => {
+  const limit = Math.min(inlineBytes.length, downloadBytes.length);
+  let at = 0;
+  while (at < limit && inlineBytes[at] === downloadBytes[at]) at += 1;
+  const window = (buffer) =>
+    buffer.subarray(Math.max(0, at - 60), at + 60).toString("latin1").replace(/[^\x20-\x7e]/g, ".");
+  return `${inlineBytes.length} vs ${downloadBytes.length} bytes, first differing at ${at}\n      preview:  ${window(inlineBytes)}\n      download: ${window(downloadBytes)}`;
+};
+
 check(
   "the preview is byte-for-byte the document that gets sent",
   inlineBytes.equals(downloadBytes),
-  `${inlineBytes.length} vs ${downloadBytes.length} bytes`,
+  inlineBytes.equals(downloadBytes) ? "" : firstDifference(),
 );
 check("the preview is a real PDF", inlineBytes.subarray(0, 5).toString() === "%PDF-", "");
 

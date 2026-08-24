@@ -129,19 +129,23 @@ for (const count of [1, 5, 10, 20, 55]) {
     summaryPages[0]?.includes("Taxable Value") && summaryPages[0]?.includes("Amount in Words"));
 
   /*
-   * The issuing company block closes the document, once, at the foot of the
-   * last page.
+   * The issuer is identified exactly once, in the letterhead.
    *
-   * It used to be drawn wherever the content happened to end, which on a short
-   * final page left it floating halfway up and the document looking cut off.
-   * The position is asserted rather than eyeballed: within the bottom third of
-   * the last page, and on no other.
+   * It used to appear twice — once at the top of page one and again in a block
+   * pinned to the foot of the last page, the same name, address and three
+   * registration numbers both times. This asserts the identity is on page one
+   * and on no other page, so the duplicate cannot come back unnoticed.
    */
-  const closingPages = pages.filter((page) => page.includes("CIN") || page.includes("PAN"));
-  check(`${count}: the issuing company block appears once`, closingPages.length === 1,
-    `${closingPages.length} pages`);
-  check(`${count}: and closes the last page`,
-    pages[pages.length - 1] === closingPages[0]);
+  const identified = pages.filter((page) => page.includes("CIN") && page.includes("GSTIN"));
+  check(`${count}: the issuer is identified exactly once`, identified.length === 1,
+    `${identified.length} pages`);
+  check(`${count}: and it is the letterhead on page one`, identified[0] === pages[0]);
+
+  // The other establishment travels with it, in the same masthead.
+  const branded = pages.filter((page) => page.includes("UAE OFFICE"));
+  check(`${count}: the UAE office is stated once, beside it`,
+    branded.length === 1 && branded[0] === pages[0],
+    `${branded.length} pages`);
 
   // Every page is numbered, and the count is right.
   const numbered = pages.filter((page, index) => page.includes(`Page ${index + 1} of ${pages.length}`));

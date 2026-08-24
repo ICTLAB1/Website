@@ -328,53 +328,91 @@ export function renderQuotationPdf(input: QuotationPdfInput): Buffer {
  * reference "contains illustrative data. Never hard-code it." — so the line
  * that prints is the business's, not the mock's.
  */
+/**
+ * Label/value pairs flowed across a width, wrapping when the next will not fit.
+ *
+ * The registration numbers are the reason this exists. GSTIN, CIN and PAN are
+ * three pairs of wildly different width, they have to sit on one line where
+ * they fit and two where they do not, and each value is set in a monospaced
+ * face because somebody is going to read it character by character against a
+ * purchase order. Laying them out by hand means measuring three strings and
+ * guessing a fourth time when a jurisdiction adds a number.
+ */
+function drawIdentifiers(
+  pdf: PdfDocument,
+  pairs: Array<[string, string]>,
+  x: number,
+  top: number,
+  width: number,
+  labelSize = 6.2,
+  valueSize = 6.8,
+): number {
+  const GAP = 13;
+  const LEADING = 9.5;
+  let cursorX = x;
+  let y = top;
+
+  for (const [label, value] of pairs) {
+    /*
+     * No tracking on these labels, and the gap measured after that decision.
+     *
+     * They were set with letter-spacing, which `textWidth` does not know
+     * about — so "Tax Registration Number" drew wider than it measured and its
+     * value started inside it: "Tax Registration Number105122230300001".
+     */
+    const labelWidth = textWidth(label, labelSize) + 5;
+    const pairWidth = labelWidth + textWidth(value, valueSize, "mono");
+
+    // Wrap before drawing, never after: a pair split across two lines is a
+    // number somebody transcribes wrongly.
+    if (cursorX > x && cursorX + pairWidth > x + width) {
+      cursorX = x;
+      y += LEADING;
+    }
+
+    pdf.text(label, cursorX, y, { size: labelSize, colour: SOFT });
+    pdf.text(value, cursorX + labelWidth, y, {
+      size: valueSize,
+      font: "mono",
+      colour: TEXT_INK,
+    });
+    cursorX += pairWidth + GAP;
+  }
+
+  return y + LEADING;
+}
+
+/**
+ * The masthead: who is issuing this, and what it is.
+ *
+ * Two columns that share a top edge and are separated by a measured gap rather
+ * than a hoped-for one. The left is the letterhead — mark, legal name, the
+ * registered address, how to reach them, and the three registration numbers a
+ * finance team checks a supplier against. The right is the document: what it
+ * is, its number, and the four dates and terms that qualify it.
+ *
+ * ## Why the whole identity is up here
+ *
+ * It was a mark, a name and a strapline, and the identity was left to a block
+ * on the last page. That is fine until somebody prints page one, or forwards
+ * it, or files it — and a quotation whose first page cannot say who issued it
+ * or under which GSTIN is a quotation somebody has to come back and ask about.
+ * A letterhead carries this; that is what a letterhead is for.
+ *
+ * The columns are laid out from the right block's *measured* extent. It was
+ * two independently positioned stacks, and the left one ran short while the
+ * right ran long, so the rule beneath them sat in open space and the whole
+ * masthead read as lopsided.
+ */
 function drawHeader(pdf: PdfDocument, input: QuotationPdfInput): number {
   const { config } = input;
-  const top = 40;
-
-  const artwork = input.logo;
-  if (artwork) {
-    pdf.image(artwork, MARGIN, top, LOGO_WIDTH, 34);
-  } else {
-    drawMark(pdf, MARGIN, top, 30);
-  }
-
-  let left = top + 44;
-  pdf.text(fit(config.entityName.toUpperCase(), 300, 10.5, "sansBold"), MARGIN, left, {
-    size: 10.5,
-    font: "sansBold",
-    colour: NAVY,
-  });
-  left += 13;
-
-  if (config.tagline) {
-    pdf.text(fit(config.tagline, 300, 7.6), MARGIN, left, { size: 7.6, colour: SOFT });
-    left += 11;
-  }
+  const top = 38;
 
   // ── the document, right ─────────────────────────────────────────────────
-  pdf.textRight("QUOTATION", RIGHT, top + 15, { size: 19, font: "sansBold", colour: NAVY });
-
-  /*
-   * The number in a filled chip rather than as another label/value row.
-   *
-   * It is the one string on the page that gets quoted back — in a purchase
-   * order, in an email, over the telephone — so it is the one thing that should
-   * be findable without reading. The chip is sized to its own text so a longer
-   * series does not overflow a fixed box.
-   */
   const number = input.documentNo ?? input.reference;
   const chipSize = 9;
-  const chipWidth = Math.min(textWidth(number, chipSize, "sansBold") + 20, 220);
-  const chipY = top + 22;
-  pdf.rect(RIGHT - chipWidth, chipY, chipWidth, 17, NAVY);
-  pdf.textCentre(number, RIGHT - chipWidth / 2, chipY + 12, {
-    size: chipSize,
-    font: "sansBold",
-    colour: WHITE,
-  });
+  const chipWidth = Math.min(textWidth(number, chipSize, "sansBold") + 20, 200);
 
-  let metaY = chipY + 30;
   const meta: Array<[string, string | null]> = [
     ["Date", pdfDate(input.issuedAt)],
     ["Valid Until", input.validUntil ? pdfDate(input.validUntil) : null],
@@ -386,18 +424,180 @@ function drawHeader(pdf: PdfDocument, input: QuotationPdfInput): number {
     ["Revision", input.version > 1 ? String(input.version) : null],
     ["Currency", input.currency],
   ];
+  const rows = meta.filter((row): row is [string, string] => Boolean(clean(row[1])));
 
-  for (const [label, value] of meta) {
-    if (!clean(value)) continue;
-    pdf.textRight(label, RIGHT - 96, metaY, { size: 7.4, colour: SOFT });
-    pdf.text(":", RIGHT - 92, metaY, { size: 7.4, colour: SOFT });
-    pdf.textRight(value!, RIGHT, metaY, { size: 7.8, font: "sansBold", colour: TEXT_INK });
+  /*
+   * The meta column's own width, measured from its widest label and value, so
+   * the left column knows exactly where it has to stop.
+   */
+  const labelWidth = Math.max(0, ...rows.map(([label]) => textWidth(label, 7.4)));
+  const valueWidth = Math.max(0, ...rows.map(([, value]) => textWidth(value, 7.8, "sansBold")));
+  const metaWidth = labelWidth + 10 + Math.max(valueWidth, 60);
+
+  const rightWidth = Math.max(
+    textWidth("QUOTATION", 19, "sansBold"),
+    chipWidth,
+    metaWidth,
+  );
+  const leftWidth = CONTENT - rightWidth - 26;
+
+  pdf.textRight("QUOTATION", RIGHT, top + 15, { size: 19, font: "sansBold", colour: NAVY });
+
+  /*
+   * The number in a filled chip rather than as another label/value row.
+   *
+   * It is the one string on the page that gets quoted back — in a purchase
+   * order, in an email, over the telephone — so it is the one thing that should
+   * be findable without reading. The chip is sized to its own text so a longer
+   * series does not overflow a fixed box.
+   */
+  const chipY = top + 22;
+  pdf.rect(RIGHT - chipWidth, chipY, chipWidth, 17, NAVY);
+  pdf.textCentre(number, RIGHT - chipWidth / 2, chipY + 12, {
+    size: chipSize,
+    font: "sansBold",
+    colour: WHITE,
+  });
+
+  let metaY = chipY + 30;
+  for (const [label, value] of rows) {
+    pdf.textRight(label, RIGHT - valueWidth - 14, metaY, { size: 7.4, colour: SOFT });
+    pdf.text(":", RIGHT - valueWidth - 10, metaY, { size: 7.4, colour: SOFT });
+    pdf.textRight(value, RIGHT, metaY, { size: 7.8, font: "sansBold", colour: TEXT_INK });
     metaY += 11;
+  }
+
+  // ── the letterhead, left ────────────────────────────────────────────────
+  const artwork = input.logo;
+  if (artwork) {
+    pdf.image(artwork, MARGIN, top, LOGO_WIDTH, 34);
+  } else {
+    drawMark(pdf, MARGIN, top, 30);
+  }
+
+  let left = top + 46;
+  pdf.text(fit(config.entityName.toUpperCase(), leftWidth, 10.5, "sansBold"), MARGIN, left, {
+    size: 10.5,
+    font: "sansBold",
+    colour: NAVY,
+  });
+  left += 12;
+
+  if (config.tagline) {
+    pdf.text(fit(config.tagline, leftWidth, 7.6), MARGIN, left, { size: 7.6, colour: SOFT });
+    left += 12;
+  }
+
+  for (const line of issuerAddress(config).flatMap((entry) => wrap(entry, leftWidth, 7.2))) {
+    pdf.text(line, MARGIN, left, { size: 7.2, colour: TEXT_INK });
+    left += 9;
+  }
+
+  /*
+   * Telephone, mailbox and site on one line, separated by middots.
+   *
+   * Three labelled rows would be three lines of a letterhead spent on labels
+   * nobody needs: an address with an @ in it is an email address.
+   */
+  const contact = [config.phone.sales, config.email.sales, config.url]
+    .filter((entry): entry is string => Boolean(clean(entry)))
+    .join("  \u00b7  ");
+  if (contact) {
+    left += 1;
+    for (const line of wrap(contact, leftWidth, 7.2)) {
+      pdf.text(line, MARGIN, left, { size: 7.2, colour: SOFT });
+      left += 9;
+    }
+  }
+
+  const registrations: Array<[string, string | null]> = [
+    ["GSTIN", config.gstin],
+    ["PAN", panFromGstin(config.gstin)],
+    ["CIN", config.cin],
+  ];
+  const held = registrations.filter((row): row is [string, string] => Boolean(clean(row[1])));
+  if (held.length > 0) {
+    left = drawIdentifiers(pdf, held, MARGIN, left + 4, leftWidth);
   }
 
   const bottom = Math.max(left, metaY) + 4;
   pdf.line(MARGIN, bottom, RIGHT, bottom, NAVY, 1.6);
-  return bottom + 14;
+
+  return drawBranchBand(pdf, input, bottom + 10);
+}
+
+/**
+ * The other office, in its own strip under the rule.
+ *
+ * A second establishment is not decoration on a commercial document: a UAE
+ * customer needs to see that there is somebody in the region, and their
+ * accounts department needs the licence and tax numbers that office trades
+ * under — which are not the Indian company's and cannot be inferred from them.
+ *
+ * Drawn only when one is recorded, and its registration numbers only when they
+ * carry the label their own jurisdiction uses. A bare "42287" beside an address
+ * tells nobody what it is.
+ */
+function drawBranchBand(pdf: PdfDocument, input: QuotationPdfInput, top: number): number {
+  const branch = input.config.secondaryEntity;
+  if (!branch) return top + 4;
+
+  const LABEL_WIDTH = 62;
+  const innerX = MARGIN + 10 + LABEL_WIDTH;
+  const innerWidth = CONTENT - 20 - LABEL_WIDTH;
+
+  const detail = [branch.address, branch.phone]
+    .filter((entry): entry is string => Boolean(clean(entry)))
+    .join("  \u00b7  ");
+  const lines = wrap(detail, innerWidth, 7);
+  const numbers = branch.registrations.filter((entry) => clean(entry.value));
+
+  const height = 12 + lines.length * 9 + (numbers.length > 0 ? 10 : 0) + 8;
+
+  pdf.rect(MARGIN, top, CONTENT, height, TINT);
+  pdf.strokeRect(MARGIN, top, CONTENT, height, LINE_RULE, 0.7);
+  pdf.rect(MARGIN, top, 3, height, NAVY);
+
+  pdf.text(fit(branchLabel(branch.name), LABEL_WIDTH, 6.2, "sansBold"), MARGIN + 10, top + 15, {
+    size: 6.2,
+    font: "sansBold",
+    colour: NAVY,
+    tracking: 0.4,
+  });
+
+  let y = top + 15;
+  for (const line of lines) {
+    pdf.text(line, innerX, y, { size: 7, colour: TEXT_INK });
+    y += 9;
+  }
+
+  if (numbers.length > 0) {
+    drawIdentifiers(
+      pdf,
+      numbers.map((entry) => [entry.label, entry.value] as [string, string]),
+      innerX,
+      y + 1,
+      innerWidth,
+      6,
+      6.6,
+    );
+  }
+
+  return top + height + 14;
+}
+
+/**
+ * The band's heading, from the branch's own name.
+ *
+ * "TechZoid Technologies — UAE office" is the name of the establishment and is
+ * far too long to set as a label beside its own address, so the label is the
+ * part that says *where*: the words after the dash, upper-cased. A name with no
+ * dash keeps its first two words, which is the best a general rule can do
+ * without inventing a place the business never wrote down.
+ */
+function branchLabel(name: string): string {
+  const tail = name.split(/\s[\u2013\u2014-]\s/).pop() ?? name;
+  return tail.trim().split(/\s+/).slice(0, 2).join(" ").toUpperCase();
 }
 
 // ------------------------------------------------------------- the details
@@ -1288,80 +1488,18 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
     disclaimerY += disclaimerSize + 2.2;
   }
 
-  y = Math.max(y + 76, disclaimerY + 8);
-
   /*
-   * ── who issued it, and how to reach them ──────────────────────────────
+   * And that is the end of the document.
    *
-   * Pushed to the foot of the page when the page has room for it. The block
-   * closes the document, and a closing block floating halfway up an otherwise
-   * empty last page reads as though the document was cut short.
+   * There used to be a second company block here — legal name, registered
+   * address, telephone, GSTIN, PAN and CIN, pinned to the foot of the last
+   * page. Every line of it is now in the letterhead, so on a two-page
+   * quotation it printed the same identity twice and on a one-page one it did
+   * so within seven hundred points. What a detached page needs to stay
+   * traceable is its quotation number, and the running footer carries that on
+   * every page.
    */
-  const footerHeight = 58;
-  if (y + footerHeight > PAGE_BOTTOM) {
-    pdf.addPage();
-    y = 48;
-  }
-  y = Math.max(y, PAGE_BOTTOM - footerHeight);
-  y = drawCompanyFooter(pdf, input, y);
-
-  return y;
-}
-
-/**
- * The company block that closes the document.
- *
- * Everything a customer needs to act on the quotation without going back to
- * the email it arrived in: who issued it, where they are, how to reach them,
- * and the three registration numbers a finance team checks a supplier against.
- *
- * The registration numbers are set in a monospaced face because they are read
- * character by character and compared against another copy — a proportional
- * capital I beside a 1 is a real hazard on a document somebody is reconciling.
- */
-function drawCompanyFooter(pdf: PdfDocument, input: QuotationPdfInput, top: number): number {
-  const { config } = input;
-
-  pdf.line(MARGIN, top, RIGHT, top, NAVY, 1.2);
-  const y = top + 13;
-
-  pdf.text(config.entityName.toUpperCase(), MARGIN, y, {
-    size: 8.4,
-    font: "sansBold",
-    colour: NAVY,
-  });
-
-  const columnTwo = MARGIN + 250;
-  const columnThree = MARGIN + 400;
-
-  let addressY = y + 12;
-  for (const line of issuerAddress(config).flatMap((entry) => wrap(entry, 230, 7))) {
-    pdf.text(line, MARGIN, addressY, { size: 7, colour: SOFT });
-    addressY += 9;
-  }
-
-  let contactY = y;
-  for (const contact of [config.email.sales, config.phone.sales, config.url].filter(
-    (entry): entry is string => Boolean(entry),
-  )) {
-    pdf.text(fit(contact, 145, 7), columnTwo, contactY, { size: 7, colour: SOFT });
-    contactY += 9.5;
-  }
-
-  let numberY = y;
-  const registrations: Array<[string, string | null]> = [
-    ["GSTIN", config.gstin],
-    ["PAN", panFromGstin(config.gstin)],
-    ["CIN", config.cin],
-  ];
-  for (const [label, value] of registrations) {
-    if (!clean(value)) continue;
-    pdf.text(label, columnThree, numberY, { size: 6.6, colour: SOFT });
-    pdf.text(value!, columnThree + 30, numberY, { size: 6.8, font: "mono", colour: TEXT_INK });
-    numberY += 9.5;
-  }
-
-  return Math.max(addressY, contactY, numberY) + 6;
+  return Math.max(y + 76, disclaimerY + 8);
 }
 
 /**
