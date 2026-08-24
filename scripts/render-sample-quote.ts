@@ -164,7 +164,7 @@ const bytes = renderQuotationPdf({
     rates: { USD: null, AED: null },
     secondaryEntity: {
       name: "TechZoid Technologies \u2014 UAE office",
-      address: "Office C1-1F-SF2571, Ajman Free Zone C1 Building, Ajman Free Zone, Dubai",
+      address: "Office C1-1F-SF2571, Ajman Free Zone C1 Building, Ajman Free Zone, Ajman",
       phone: "+971 58 939 7239",
       registrations: [
         { label: "Business License", value: "42287" },

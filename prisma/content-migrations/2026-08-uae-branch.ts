@@ -31,7 +31,7 @@ import type { ContentMigration } from "./types";
 const INVENTED_NAME = "TechZoid Technologies F.Z.E";
 
 const NAME = "TechZoid Technologies — UAE office";
-const ADDRESS = "Office C1-1F-SF2571, Ajman Free Zone C1 Building, Ajman Free Zone, Dubai";
+const ADDRESS = "Office C1-1F-SF2571, Ajman Free Zone C1 Building, Ajman Free Zone, Ajman";
 const PHONE = "+971 58 939 7239";
 
 export const uaeBranch: ContentMigration = {
