@@ -13,9 +13,12 @@
  * build does.
  */
 
+import { chromium } from "playwright";
+
 import { request } from "node:http";
 
 const PORT = 3000;
+const BASE = `http://localhost:${PORT}`;
 
 /*
  * The tag is off on localhost by design, so every request here carries the real
@@ -144,6 +147,91 @@ check(
   directive("frame-src").includes("'none'"),
   "frame-src is open on an ordinary request; only a tag debugging session may widen it",
 );
+
+// ────────────────────────────────────────────────── the conversion, end to end
+
+/**
+ * A real enquiry, submitted, and the event read out of the live dataLayer.
+ *
+ * The push is unconditional — the helper creates `dataLayer` if the tag has not
+ * — which is what makes this observable on a machine where the tag itself is
+ * switched off. What is being proved is the part the container depends on: that
+ * the exact string a trigger will be configured against reaches the queue when
+ * the server accepts an enquiry, once, and not before.
+ */
+const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
+const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+const page = await context.newPage();
+
+const dataLayerEvents = () =>
+  page.evaluate(() =>
+    (window.dataLayer ?? [])
+      .map((entry) => (entry && typeof entry === "object" ? entry.event : undefined))
+      .filter(Boolean),
+  );
+
+try {
+  await page.goto(`${BASE}/products/microsoft-365-business-standard`, { waitUntil: "load" });
+  await page.getByLabel("Quantity").fill("10");
+  await page.getByRole("complementary").getByRole("button", { name: "Add to Enquiry" }).click();
+  await page.waitForTimeout(300);
+
+  await page.goto(`${BASE}/enquiry`, { waitUntil: "load" });
+  await page.waitForTimeout(400);
+
+  check(
+    !(await dataLayerEvents()).includes("quote_form_submit"),
+    "the conversion is already in the queue before anything was submitted",
+  );
+
+  await page.getByLabel("Full name", { exact: false }).first().fill("Analytics Probe");
+  await page.getByLabel("Company name").fill("Analytics Probe Pvt Ltd");
+  await page.getByLabel("Business email").fill("analytics-probe@example.test");
+  await page.getByLabel("Phone", { exact: false }).first().fill("+91 99999 99999");
+
+  /*
+   * A failed submit first. The event must follow the server's acceptance, not
+   * the click — a conversion counted on a rejected form is a conversion that
+   * did not happen.
+   */
+  await page.getByLabel("Business email").fill("not-an-email");
+  await page.getByRole("button", { name: "Request Enterprise Quote" }).click();
+  await page.waitForTimeout(800);
+  check(
+    !(await dataLayerEvents()).includes("quote_form_submit"),
+    "a rejected submission counted as a conversion",
+  );
+
+  await page.getByLabel("Business email").fill("analytics-probe@example.test");
+  await page.getByRole("button", { name: "Request Enterprise Quote" }).click();
+  await page.waitForURL("**/enquiry/submitted**", { timeout: 15000 });
+
+  const afterSubmit = await dataLayerEvents();
+  const fired = afterSubmit.filter((name) => name === "quote_form_submit");
+  check(fired.length === 1, `expected one quote_form_submit, saw ${fired.length}`);
+
+  const reference = (await page.locator("body").innerText()).match(/ENQ-\d{4}-[A-Z0-9]{6}/)?.[0];
+  check(Boolean(reference), "the confirmation showed no reference to key the conversion on");
+
+  /*
+   * Refreshing a confirmation page is a thing people do, and the guard against
+   * counting it twice is the reason `pushConversion` writes a flag at all.
+   */
+  await page.reload({ waitUntil: "load" });
+  await page.waitForTimeout(500);
+  const afterReload = (await dataLayerEvents()).filter((name) => name === "quote_form_submit");
+  check(
+    afterReload.length <= 1,
+    `refreshing the confirmation counted the conversion again (${afterReload.length})`,
+  );
+
+  if (reference) {
+    console.log(`  test enquiry ${reference} — mark it internally so it is not chased as a lead.`);
+  }
+} finally {
+  await context.close();
+  await browser.close();
+}
 
 // ───────────────────────────────────────────────────────────────────────── report
 

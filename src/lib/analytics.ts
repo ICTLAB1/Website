@@ -231,6 +231,26 @@ export const CONSENT_DEFAULTS = {
 } as const;
 
 /**
+ * The events the Tag Manager container listens for.
+ *
+ * Named here rather than typed into a call site, because the string is a
+ * contract with a trigger configured in Google's web UI — a rename on this side
+ * is silent on that side, and the only symptom is a conversion that stops being
+ * recorded. Nothing in this file makes them fire; they are pushed from the
+ * place that knows the thing happened.
+ *
+ * `whatsappClick` is reserved, not wired. It is here so the name is settled
+ * before the CTA is instrumented, rather than negotiated afterwards against a
+ * trigger somebody has already built.
+ */
+export const CONVERSION_EVENTS = {
+  /** A quote request the server accepted and issued a reference for. */
+  quoteFormSubmit: "quote_form_submit",
+  /** Reserved for the WhatsApp CTA. Nothing pushes this yet. */
+  whatsappClick: "whatsapp_click",
+} as const;
+
+/**
  * Where a visitor's answer is kept.
  *
  * Their browser, not a cookie and not this application's database. A record of
