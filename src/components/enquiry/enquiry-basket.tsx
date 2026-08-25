@@ -17,6 +17,8 @@ import {
   Textarea,
 } from "@/components/ui/form";
 import { EmptyState } from "@/components/ui/states";
+import { CONVERSION_EVENTS } from "@/lib/analytics";
+import { pushConversion } from "@/lib/analytics-events";
 import { formatMoney } from "@/lib/money";
 import { postJson } from "@/lib/csrf-client";
 import { cn } from "@/lib/utils";
@@ -98,6 +100,17 @@ export function EnquiryBasket({
       document.getElementById("enquiry-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
       return;
     }
+
+    /*
+     * The conversion, counted here rather than on the confirmation page.
+     *
+     * This is the only point that knows the server accepted the enquiry: the
+     * confirmation page performs no lookup by design, so it cannot tell a
+     * reference it was handed from one somebody typed into the address bar,
+     * and counting there would let a guessed URL report a sale. The reference
+     * doubles as the key that stops one enquiry being counted twice.
+     */
+    pushConversion(CONVERSION_EVENTS.quoteFormSubmit, result.data.reference);
 
     clear();
     router.push(`/enquiry/submitted?ref=${encodeURIComponent(result.data.reference)}`);
