@@ -18,6 +18,7 @@ import { quotationTerms } from "./2026-08-quotation-terms";
 import { ajmanEmirate } from "./2026-08-ajman-emirate";
 import { moreBrands } from "./2026-08-more-brands";
 import { analyticsDisclosure } from "./2026-08-analytics-disclosure";
+import { secondAnalyticsProperty } from "./2026-08-second-analytics-property";
 import type { ContentMigration } from "./types";
 
 /**
@@ -49,6 +50,7 @@ export const contentMigrations: ContentMigration[] = [
   ajmanEmirate,
   moreBrands,
   analyticsDisclosure,
+  secondAnalyticsProperty,
 ];
 
 export type { ContentMigration };

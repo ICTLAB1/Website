@@ -2439,7 +2439,11 @@ export const pageSeeds: PageSeed[] = [
             },
             {
               "key": "_ga_P0H1WJDZ7Y",
-              "value": "Google Analytics. Holds the state of the current visit for this site's property"
+              "value": "Google Analytics. Holds the state of the current visit for one of the two properties this site reports to"
+            },
+            {
+              "key": "_ga_2CEL7BH689",
+              "value": "Google Analytics. The same, for the second property"
             },
             {
               "key": "The analytics pair — lifetime",

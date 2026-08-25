@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 
-import { analyticsEnabled, GA_MEASUREMENT_ID } from "@/lib/analytics";
+import { analyticsEnabled, GA_MEASUREMENT_IDS } from "@/lib/analytics";
 
 /**
  * The Google tag, as Google issues it, under this site's content policy.
@@ -31,28 +31,28 @@ export async function GoogleTag() {
   if (!enabled) return null;
 
   /*
-   * The measurement ID is interpolated into a script, so it is checked rather
-   * than trusted. It comes from this repository or from an environment
-   * variable, neither of which a visitor controls — but a value that reaches a
-   * `<script>` body gets validated on principle, because the day somebody
-   * moves it into the settings table is not the day to remember this.
+   * One loader, then one `config` per property.
+   *
+   * gtag.js is fetched with the first ID and configures the rest itself — the
+   * library is the same file whichever ID asks for it, so a second `<script
+   * src>` would download an identical bundle and give the second property
+   * nothing the config line does not.
+   *
+   * The IDs are validated in `lib/analytics` on the way into this list, which
+   * is what makes them safe to interpolate into a script body here.
    */
-  if (!/^G-[A-Z0-9]{6,20}$/.test(GA_MEASUREMENT_ID)) return null;
+  const [loader] = GA_MEASUREMENT_IDS;
 
   return (
     <>
-      <script
-        async
-        nonce={nonce}
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-      />
+      <script async nonce={nonce} src={`https://www.googletagmanager.com/gtag/js?id=${loader}`} />
       <script
         nonce={nonce}
         dangerouslySetInnerHTML={{
           __html: `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', '${GA_MEASUREMENT_ID}');`,
+${GA_MEASUREMENT_IDS.map((id) => `gtag('config', '${id}');`).join("\n")}`,
         }}
       />
     </>

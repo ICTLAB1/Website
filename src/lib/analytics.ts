@@ -25,17 +25,32 @@
  */
 
 /**
- * The measurement ID, supplied by the business on 25 August 2026.
+ * The measurement IDs, supplied by the business on 25 August 2026.
  *
- * Not a secret: it is served to every visitor in the page source, and it
- * identifies a property rather than granting access to one. It is settable by
- * environment for a second property — a staging site somebody genuinely wants
- * to measure — and an empty value switches analytics off entirely, which is the
- * supported way to run this application without it.
+ * Two of them, and two is not a mistake: a business that has run more than one
+ * property — an old site's, a new one's, an agency's — usually wants both fed
+ * while it decides which to keep. gtag.js is loaded once and then configured
+ * per property, which is Google's own answer to this and costs one extra line
+ * rather than a second script.
+ *
+ * Not secret: they are served to every visitor in the page source, and each
+ * identifies a property rather than granting access to one. Settable by
+ * environment as a comma-separated list, and an empty value switches analytics
+ * off entirely — which is the supported way to run this application without it.
  */
-export const GA_MEASUREMENT_ID = (
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-P0H1WJDZ7Y"
-).trim();
+export const GA_MEASUREMENT_IDS = (
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-P0H1WJDZ7Y,G-2CEL7BH689"
+)
+  .split(",")
+  .map((id) => id.trim())
+  /*
+   * Checked here rather than at the point of use, because these end up inside
+   * a `<script>` body. Nothing a visitor controls reaches this list today —
+   * the values come from this file or from the server's environment — but a
+   * value that is interpolated into script is validated on principle, so the
+   * day somebody moves it into the settings table is not the day to remember.
+   */
+  .filter((id) => /^G-[A-Z0-9]{6,20}$/.test(id));
 
 /** Paths analytics never sees. */
 const PRIVATE_PREFIXES = ["/admin", "/account", "/api", "/login", "/register", "/reset-password"];
@@ -77,7 +92,7 @@ export function analyticsEnabled(options: {
   host: string | null;
   isDevelopment: boolean;
 }): boolean {
-  if (!GA_MEASUREMENT_ID) return false;
+  if (GA_MEASUREMENT_IDS.length === 0) return false;
   if (options.isDevelopment) return false;
   if (!options.host || isLocalHost(options.host)) return false;
   return !isPrivatePath(options.pathname);
@@ -97,7 +112,38 @@ export const ANALYTICS_CSP = {
     "https://www.googletagmanager.com",
     "https://www.google-analytics.com",
     "https://*.google-analytics.com",
+    /*
+     * Both the bare host and the wildcard, which are not the same thing.
+     *
+     * A CSP wildcard stands for one or more subdomain labels, so
+     * `*.analytics.google.com` matches `region1.analytics.google.com` and does
+     * *not* match `analytics.google.com` itself. Listing only the wildcard is
+     * what Google's own tag diagnostics reported as a blocked resource on the
+     * live site, and it is an easy thing to get wrong twice.
+     */
+    "https://analytics.google.com",
     "https://*.analytics.google.com",
   ],
   img: ["https://www.googletagmanager.com", "https://*.google-analytics.com"],
 } as const;
+
+/**
+ * Two hosts Google asks for and this site does not allow.
+ *
+ * `stats.g.doubleclick.net` and `www.google.com` are what GA4 contacts when
+ * Google Signals or an Ads link is switched on in the property: cross-device
+ * identity, demographics, and remarketing audiences. They are not measurement,
+ * and nothing in the reports this business actually reads depends on them.
+ *
+ * They stay blocked because the cookie policy says this site carries no
+ * advertising or remarketing pixel, and that sentence should stay true. The
+ * consequence is honest and small: Google's tag diagnostics keeps listing them
+ * as blocked, and the property's Demographics and Interests reports stay empty.
+ *
+ * Turning either on is a business decision, not a CSP fix — it would mean
+ * adding these hosts *and* rewriting that part of the cookie policy.
+ */
+export const ANALYTICS_DECLINED = [
+  "https://stats.g.doubleclick.net",
+  "https://www.google.com",
+] as const;
