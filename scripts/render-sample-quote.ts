@@ -1,6 +1,21 @@
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
+import { certificationLogo } from "@/lib/certification-logo";
+import { readImage } from "@/lib/pdf/image";
 import { renderQuotationPdf } from "@/lib/pdf/quotation";
+
+/**
+ * The same artwork the served document carries, read the same way.
+ *
+ * `lib/pdf/assets` is the real loader and is `server-only`, which a script run
+ * under bare `tsx` cannot import; this is its one useful line without the
+ * cache and the path guards, neither of which a fixed list of files needs.
+ */
+function mark(publicPath: string | null): ReturnType<typeof readImage> {
+  if (!publicPath) return null;
+  return readImage(readFileSync(join(process.cwd(), "public", publicPath.slice(1))));
+}
 
 
 /**
@@ -173,11 +188,19 @@ const bytes = renderQuotationPdf({
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any,
+  /*
+   * The marks are loaded here for the same reason the real path loads them.
+   *
+   * `quote-document` attaches `image` to every certification it passes on, and
+   * the band draws artwork only when all of them have it. A sample that omitted
+   * the field therefore exercised the text fallback — so the preview, and the
+   * layout suite reading it, checked a document no customer ever receives.
+   */
   certifications: [
     { standard: "ISO 9001:2015", title: "Quality Management System", reference: "QMS-0001" },
     { standard: "ISO 27001:2022", title: "Information Security Management System", reference: "ISMS-0001" },
     { standard: "ISO/IEC 20000-1:2018", title: "IT Service Management System", reference: "ITSM-0001" },
-  ],
+  ].map((entry) => ({ ...entry, image: mark(certificationLogo(entry.standard)) })),
   accreditations: [],
   technologyPartners: [],
   logo: null,

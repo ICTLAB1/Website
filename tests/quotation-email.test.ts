@@ -307,12 +307,38 @@ describe("the signature", () => {
   });
 
   it("names the certifications held, and states none when there are none", async () => {
-    const { quotationHtml } = await load();
+    const { quotationHtml, quotationText } = await load();
 
-    expect(quotationHtml({ ...base, certifications: ["ISO 9001:2015", "ISO 27001:2022"] })).toContain(
-      "Certified to ISO 9001:2015, ISO 27001:2022",
-    );
+    /*
+     * Named whether or not the pictures arrive.
+     *
+     * Standards with artwork are drawn as seals, and the seal's `alt` carries
+     * the standard — so a recipient whose client blocks remote images reads
+     * the same words as one whose client does not. That is the property worth
+     * holding: the message states what the business is certified against, in
+     * text, on every path.
+     */
+    const sealed = quotationHtml({
+      ...base,
+      certifications: ["ISO 9001:2015", "ISO 27001:2022"],
+    });
+    expect(sealed).toContain('alt="ISO 9001:2015"');
+    expect(sealed).toContain('alt="ISO 27001:2022"');
+    expect(sealed).toContain("/certifications/ISO-9001-2015.png");
+
+    // A standard with no artwork on file falls back to the whole area in type,
+    // rather than a row where one claim is a seal and the other is a sentence.
+    expect(
+      quotationHtml({ ...base, certifications: ["ISO 9001:2015", "BS 7799-3:2017"] }),
+    ).toContain("Certified to ISO 9001:2015, BS 7799-3:2017");
+
+    // The plain-text part never had pictures and does not gain any.
+    expect(
+      quotationText({ ...base, certifications: ["ISO 9001:2015", "ISO 27001:2022"] }),
+    ).toContain("Certified to ISO 9001:2015, ISO 27001:2022");
+
     expect(quotationHtml(base)).not.toContain("Certified to");
+    expect(quotationHtml(base)).not.toContain("/certifications/");
   });
 });
 

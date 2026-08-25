@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/ui/states";
 import { BlockHeading, BlockSection } from "@/components/blocks/primitives";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
+import { certificationLogo } from "@/lib/certification-logo";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 import { formatDate } from "@/lib/utils";
@@ -99,17 +100,38 @@ type CertificationRow = {
  * which is exactly the assumption that goes wrong.
  */
 function CertificationCard({ certification }: { certification: CertificationRow }) {
+  const seal = certificationLogo(certification.standard);
+
   return (
     <div className="flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5">
       {/*
-        The title and the standard as type.
+        The seal above the title, not instead of it and not beside it.
 
-        This card carried the certificate's own certified-company badge for a
-        while. It went back to type because the badge says one thing — the
-        standard number — and says it inside a frame that competes with every
-        other card on the page, while the two lines it replaced also carry the
-        title, which the badge does not.
+        This card carried a badge once and went back to type, because the
+        artwork then was a framed wordmark that competed with every other card
+        on the page and said less than the two lines it replaced. The
+        certified-company seals that replaced it are round, unframed and read
+        at a glance as a mark rather than as a second heading, so they are back
+        — on their own line, because a seal set beside the title takes fifty
+        points off the line and "Information Security Management System" then
+        wraps in one card and not the others, leaving three cards whose rows no
+        longer line up.
       */}
+      {seal ? (
+        /* Square artwork on a white card, so the dimensions are stated and
+           the browser reserves the space before the file arrives. */
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={seal}
+          alt=""
+          aria-hidden="true"
+          className="mb-3 h-11 w-11 object-contain"
+          width={420}
+          height={420}
+          loading="lazy"
+          decoding="async"
+        />
+      ) : null}
       <p className="text-label font-semibold uppercase tracking-[0.1em] text-accent-700">
         {certification.title}
       </p>

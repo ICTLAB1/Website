@@ -20,9 +20,37 @@
  *
  * ## The artwork
  *
- * One supplied badge, and two built from it by substituting the number — see
- * `scripts/build-certification-badges` for why only one of the three files
- * originally sent could be used.
+ * Three certified-company seals, supplied by the business on 24 August 2026 and
+ * replacing the wide tick-style marks that stood here before. Each was flattened
+ * to a pure white ground, trimmed to the seal and padded to a square, so all
+ * three occupy the same box and a contain-fit renderer draws them at the same
+ * diameter — three circles that each began at a different size read as three
+ * different certifications however carefully the row is spaced.
+ *
+ * They are 420 pixels square on a 128-colour palette. The files arrived at half
+ * a megabyte each, which is more than the rest of the homepage put together and
+ * rode along inside every quotation PDF as well; a flat-colour seal loses
+ * nothing to a palette, and 420 is four times the largest size anything here
+ * draws them at.
+ *
+ * They are drawn only on white. A seal is issued as finished artwork on a light
+ * ground; the dark footer keeps the standard and the certificate number in type
+ * instead, which is the more useful form there anyway.
+ *
+ * ## The trademark question, recorded rather than decided
+ *
+ * These seals carry an ISO-style globe device and name no certification body.
+ * ISO's published position is that a certified organisation states its
+ * certification and uses the mark of the body that issued it, never ISO's own
+ * — which is why an earlier version of this directory built its artwork from
+ * the one supplied file that carried no such device, and why the file that did
+ * was left out.
+ *
+ * The artwork here is what the business supplied and asked to be shown, and
+ * that is the business's call to make. It is written down here so that whoever
+ * next opens this file knows the question was asked. Replacing all three with
+ * the certification body's own accredited mark is a matter of dropping three
+ * files into `public/certifications/` under these names; no code changes.
  *
  * ## The variants
  *
@@ -39,19 +67,6 @@ const LOGOS: Record<string, string> = {
   "ISO 20000-1:2018": "/certifications/ISO-IEC-20000-1-2018.png",
   "ISO/IEC 20000-1:2018": "/certifications/ISO-IEC-20000-1-2018.png",
 };
-
-/**
- * How tall a badge is printed on a document, in points.
- *
- * A height rather than a width. All three share one canvas and one layout — see
- * `scripts/build-certification-badges` — so height alone keeps a row of them on
- * a common baseline whatever else changes.
- *
- * Larger than the wordmarks these replaced needed. Those were a line of type
- * two ems tall; a badge is a tick, a frame and two lines stacked, and at thirty
- * points its number was smaller than the address beside it.
- */
-export const CERTIFICATION_MARK_HEIGHT = 42;
 
 /** The artwork for a standard, or null where none has been supplied. */
 export function certificationLogo(standard: string): string | null {

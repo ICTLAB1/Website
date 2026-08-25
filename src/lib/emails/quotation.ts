@@ -1,6 +1,7 @@
 import "server-only";
 import { escapeHtml } from "@/lib/mail";
 import { formatMoney } from "@/lib/money";
+import { certificationLogo } from "@/lib/certification-logo";
 import type { SiteConfig } from "@/lib/site-config";
 
 /**
@@ -142,6 +143,15 @@ function signature(input: QuotationEmailInput): {
   offices: { label: string; lines: string[] }[];
   contact: string[];
   certifications: string | null;
+  /**
+   * The same standards with their seals, for the HTML part.
+   *
+   * Absolute URLs on the site's own domain: a mail client has no relative base
+   * to resolve against. Every entry keeps its standard so the `alt` text says
+   * what the picture said — a recipient whose client blocks images then reads
+   * the standards rather than seeing three empty boxes.
+   */
+  seals: Array<{ standard: string; src: string }>;
   notice: string;
 } {
   const { config } = input;
@@ -178,6 +188,20 @@ function signature(input: QuotationEmailInput): {
       input.certifications.length > 0
         ? `Certified to ${input.certifications.join(", ")}`
         : null,
+    /*
+     * Nothing without an absolute site address to hang them off.
+     *
+     * `url` comes from settings an administrator types. A relative or empty
+     * value would produce a src no mail client can resolve, and a signature of
+     * broken images is worse than the line of type it replaced.
+     */
+    seals: (config.url.startsWith("http") ? input.certifications : [])
+      .map((standard) => ({ standard, path: certificationLogo(standard) }))
+      .filter((entry): entry is { standard: string; path: string } => entry.path !== null)
+      .map((entry) => ({
+        standard: entry.standard,
+        src: `${config.url.replace(/\/+$/, "")}${entry.path}`,
+      })),
     /*
      * A confidentiality note, not a legal disclaimer.
      *
@@ -416,11 +440,34 @@ export function quotationHtml(input: QuotationEmailInput): string {
         <div style="font-size:12px;color:${MUTED};line-height:1.7;margin-top:10px">
           ${sign.contact.map((part) => escapeHtml(part)).join("<br />")}
         </div>
-        ${
-          sign.certifications
+        ${(() => {
+          /*
+           * The seals, or the same statement in type.
+           *
+           * Drawn only when every standard on the message has artwork: a row
+           * where two are seals and the third is a line of text reads as
+           * though the third were a lesser claim. The `alt` on each carries
+           * the standard, so a client that blocks remote images shows the same
+           * words the text part of this message carries — which is why the
+           * "Certified to ..." line stands down when the seals go in rather
+           * than printing the standards twice.
+           */
+          const sealed =
+            sign.seals.length > 0 && sign.seals.length === input.certifications.length;
+
+          if (sealed) {
+            return `<div style="margin-top:12px">${sign.seals
+              .map(
+                (seal) =>
+                  `<img src="${escapeHtml(seal.src)}" width="38" height="38" alt="${escapeHtml(seal.standard)}" style="width:38px;height:38px;margin-right:10px;vertical-align:middle;font-size:11px;color:${MUTED}" />`,
+              )
+              .join("")}</div>`;
+          }
+
+          return sign.certifications
             ? `<div style="font-size:11px;letter-spacing:0.04em;color:${MUTED};margin-top:10px">${escapeHtml(sign.certifications)}</div>`
-            : ""
-        }
+            : "";
+        })()}
         <div style="font-size:11px;color:${MUTED};line-height:1.6;margin-top:14px">${escapeHtml(sign.notice)}</div>
       </td></tr>
     </table>

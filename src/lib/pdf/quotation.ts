@@ -201,6 +201,16 @@ const RIGHT = MARGIN + CONTENT;
 /** The masthead's artwork box. */
 const LOGO_WIDTH = 128;
 
+/**
+ * How tall a certification seal is drawn, in points.
+ *
+ * These are round certified-company marks, so this is the diameter. Twenty-six
+ * points is about nine millimetres on paper — small, but the band has three of
+ * them beside two other areas, and the standard is printed underneath in type
+ * anyway, which is the part a reader has to be able to read.
+ */
+const SEAL = 26;
+
 /** Where the page stops and a new one starts. */
 const PAGE_BOTTOM = 792;
 const FOOTER_RULE = 806;
@@ -1369,13 +1379,26 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
   const partners = input.technologyPartners;
   const certificates = input.certifications.slice(0, 4);
 
-  const areas: Array<{ title: string; draw: (x: number, width: number, top: number) => void }> = [];
+  const areas: Array<{
+    title: string;
+    draw: (x: number, width: number, top: number, room: number) => void;
+  }> = [];
+
+  /*
+   * Centred in whatever height the band ends up at.
+   *
+   * The certification area sets the height, because a seal needs more room
+   * than a wordmark does; a row of partner marks pinned to the top of that
+   * taller band would hang above its own heading's column with the space all
+   * below it.
+   */
+  const centred = (top: number, room: number, height: number) => top + (room - height) / 2;
 
   if (badges.length > 0) {
     areas.push({
       title: "TECHNOLOGY PARTNER DESIGNATIONS",
-      draw: (x, width, bandTop) => {
-        drawLogoRow(pdf, badges.map((badge) => badge.image), x, width, bandTop, 24);
+      draw: (x, width, bandTop, room) => {
+        drawLogoRow(pdf, badges.map((badge) => badge.image), x, width, centred(bandTop, room, 24), 24);
       },
     });
   }
@@ -1383,40 +1406,66 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
   if (partners.length > 0) {
     areas.push({
       title: "OUR TECHNOLOGY PARTNERS",
-      draw: (x, width, bandTop) => {
-        drawLogoRow(pdf, partners.map((partner) => partner.image), x, width, bandTop, 18);
+      draw: (x, width, bandTop, room) => {
+        drawLogoRow(pdf, partners.map((partner) => partner.image), x, width, centred(bandTop, room, 18), 18);
       },
     });
   }
 
+  /*
+   * Artwork, or none of it.
+   *
+   * A row where two standards carry a seal and the third is set in type reads
+   * as though the third were a lesser claim, so the area draws marks only when
+   * every certification on the document has one.
+   */
+  const sealed = certificates.length > 0 && certificates.every((entry) => entry.image);
+
   if (certificates.length > 0) {
     areas.push({
       title: "CERTIFIED MANAGEMENT SYSTEMS",
-      draw: (x, width, bandTop) => {
+      draw: (x, width, bandTop, room) => {
         /*
-         * The mark and the number that proves it.
+         * The seal, the standard, and the number that proves it.
          *
          * "ISO 27001 certified" is a claim anybody can type; a certificate
          * number is one a procurement office can put to the body that issued
-         * it, and this is exactly the reader who will. The marks already carry
-         * the standard, so the type beneath is the reference and nothing else.
+         * it, and this is exactly the reader who will.
+         *
+         * The standard is set in type beneath the seal even though the seal
+         * carries it too. These are round certified-company marks, and the
+         * standard printed around the ring is a couple of points tall at the
+         * size a document can give it — legible on a certificate on a wall,
+         * a smudge here. The number alone would leave a reader unable to say
+         * which management system it belonged to.
          */
-        const marked = certificates.filter((entry) => entry.image);
         const cellWidth = width / certificates.length;
+        const textWidthAvailable = cellWidth - 8;
 
         certificates.forEach((certificate, index) => {
           const cellX = x + index * cellWidth;
+          const centre = cellX + cellWidth / 2;
           const image = certificate.image;
-          if (marked.length === certificates.length && image) {
-            pdf.image(image, cellX, bandTop, cellWidth - 6, 22);
-          } else {
-            pdf.textCentre(certificate.standard, cellX + cellWidth / 2, bandTop + 12, {
-              size: 6.6,
-              font: "sansBold",
-              colour: TEXT_INK,
-            });
+
+          if (sealed && image) {
+            pdf.image(image, cellX, centred(bandTop, room, SEAL), cellWidth - 6, SEAL);
           }
-          pdf.textCentre(certificate.reference, cellX + cellWidth / 2, bandTop + 32, {
+
+          /*
+           * Sized down rather than cut. "ISO/IEC 20000-1:2018" overruns a
+           * third of a three-area band at 6.6 points, and a standard ending
+           * in an ellipsis is not a statement of anything.
+           */
+          const size = Math.min(
+            6.6,
+            Math.max(4.8, textWidthAvailable / textWidth(certificate.standard, 1, "sansBold")),
+          );
+          pdf.textCentre(certificate.standard, centre, bandTop + (sealed ? SEAL + 10 : 12), {
+            size,
+            font: "sansBold",
+            colour: TEXT_INK,
+          });
+          pdf.textCentre(certificate.reference, centre, bandTop + (sealed ? SEAL + 19 : 32), {
             size: 6,
             font: "mono",
             colour: SOFT,
@@ -1427,7 +1476,14 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
   }
 
   if (areas.length > 0) {
-    const height = 52;
+    /*
+     * Tall enough for whatever the certification area needs.
+     *
+     * A seal is a circle: as tall as it is wide, where the wordmarks this band
+     * used to carry were a line of type two ems high. The band grows to hold
+     * one rather than the seal shrinking to fit the band.
+     */
+    const height = sealed ? 40 + SEAL : 52;
     room(height + 24);
 
     pdf.rect(MARGIN, y, CONTENT, height, WHITE);
@@ -1443,7 +1499,7 @@ function drawClosing(pdf: PdfDocument, input: QuotationPdfInput, top: number): n
         colour: NAVY,
         tracking: 0.3,
       });
-      area.draw(x + 8, areaWidth - 16, y + 17);
+      area.draw(x + 8, areaWidth - 16, y + 17, sealed ? SEAL : 26);
     });
 
     y += height + 16;

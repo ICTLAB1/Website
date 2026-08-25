@@ -1,5 +1,6 @@
 import "server-only";
 
+import { certificationLogo } from "@/lib/certification-logo";
 import { currentCertifications } from "@/lib/queries/certifications";
 import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
 
@@ -99,24 +100,51 @@ export async function TrustBar() {
 
         {certifications.length > 0 ? (
           /*
-            The standards in type, not as artwork.
+            The seals, where a seal exists, and the standard in type where one
+            does not.
 
-            The three ISO marks were shown here as their certified-company
-            badges and were taken out again: three framed ticks beside two
-            publisher badges read as a row of five logos, and at any height that
-            let their numbers be read they were the largest thing in the band.
-            The standard number is the whole content of that badge — a reader
-            gets exactly the same fact from "ISO 27001:2022" set in type, in a
-            band that stays quiet.
+            An earlier version set all three in type instead. That was the right
+            answer for the artwork it had — wide framed ticks that, at any height
+            letting their numbers be read, were the largest thing in the band and
+            read as three more logos beside the two publisher badges. These are
+            round seals of a common diameter: they read as certification marks
+            rather than as logos, and they sit quietly at the same height as the
+            badges beside them.
+
+            The standard still follows in type. The seal carries the number for
+            9001 and 20000-1 but not for 27001, and a reader should not have to
+            know which is which to learn what this company is certified against.
           */
-          <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2">
-            {certifications.map((certification) => (
-              <li key={certification.reference} className="flex items-center">
-                <span className="text-label font-semibold text-graphite-900">
-                  {certification.standard}
-                </span>
-              </li>
-            ))}
+          <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+            {certifications.map((certification) => {
+              const seal = certificationLogo(certification.standard);
+              return (
+                <li key={certification.reference} className="flex items-center gap-2">
+                  {seal ? (
+                    /*
+                      No plate and no border: the band is white, which is the
+                      ground these are drawn for. Square, so `h-9 w-9` states
+                      both dimensions and the browser reserves the space before
+                      the file arrives.
+                    */
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={seal}
+                      alt=""
+                      aria-hidden="true"
+                      className="h-9 w-9 object-contain sm:h-10 sm:w-10"
+                      width={420}
+                      height={420}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : null}
+                  <span className="text-label font-semibold text-graphite-900">
+                    {certification.standard}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         ) : null}
 
