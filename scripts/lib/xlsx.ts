@@ -8,16 +8,20 @@ import { readFileSync } from "node:fs";
  * dependency tree for a job that runs when a publisher updates its price list —
  * a few times a year, from a terminal, never from a request — is a permanent
  * supply-chain cost for an occasional convenience. An `.xlsx` is a ZIP of XML,
- * Node can already inflate, and the files in question use the plainest possible
- * encoding: one sheet, shared strings, no formulas, no styles that change a
- * value's meaning.
+ * Node can already inflate, and the files in question use a plain encoding:
+ * shared strings, cached formula results, no styles that change a value's
+ * meaning.
  *
- * What it supports: the first worksheet, shared and inline strings, numbers,
- * and blank cells. What it does not: formulas (the cached value is used),
- * dates (returned as the underlying serial number), multiple sheets, and
- * anything encrypted. If a future price list needs one of those, this is the
- * file to extend — and the failure will be a clear one rather than a wrong
- * number, because an unhandled cell type comes back as text.
+ * What it supports: any named worksheet (the first, by default), shared and
+ * inline strings, numbers, and blank cells. What it does not: dates (returned
+ * as the underlying serial number) and anything encrypted. Formulas are read
+ * through their cached value, which is what Excel wrote the last time it
+ * calculated — a workbook saved by a tool that does not calculate would carry
+ * an empty one, and an empty cell is what this reader would then report.
+ *
+ * If a future price list needs one of those, this is the file to extend — and
+ * the failure will be a clear one rather than a wrong number, because an
+ * unhandled cell type comes back as text.
  */
 
 /**
@@ -122,18 +126,71 @@ function columnIndex(reference: string): number {
 }
 
 /**
- * Every row of the first worksheet, as an array of trimmed strings.
+ * The worksheets in a workbook, in the order the tabs appear.
  *
- * Missing cells become empty strings rather than holes, and each row is padded
- * to the width of the header, so a caller can index by column without checking
- * length. Fully empty trailing rows are dropped: these files declare a
- * dimension of a million rows and hold a few hundred.
+ * `workbook.xml` names them and points at a relationship id; the relationship
+ * file turns that into a part name. The two are resolved together rather than
+ * assuming `sheet1.xml` is the first tab — sheet files are numbered in creation
+ * order, not tab order, so a workbook whose tabs have ever been dragged around
+ * will disagree, and reading the wrong tab is not an error that announces
+ * itself.
  */
-export function readSheet(path: string): string[][] {
+function sheetParts(zip: Map<string, Buffer>, path: string): Array<[string, string]> {
+  const workbook = zip.get("xl/workbook.xml");
+  if (!workbook) throw new Error(`${path}: no workbook part.`);
+
+  const relationships = new Map<string, string>();
+  const relsXml = zip.get("xl/_rels/workbook.xml.rels")?.toString("utf8") ?? "";
+  for (const match of relsXml.matchAll(/<Relationship\b([^>]*)\/?>/g)) {
+    const attributes = match[1] ?? "";
+    const id = /Id="([^"]+)"/.exec(attributes)?.[1];
+    const target = /Target="([^"]+)"/.exec(attributes)?.[1];
+    if (id && target) relationships.set(id, target.replace(/^\/?xl\//, "").replace(/^\//, ""));
+  }
+
+  const out: Array<[string, string]> = [];
+  for (const match of workbook.toString("utf8").matchAll(/<sheet\b([^>]*)\/?>/g)) {
+    const attributes = match[1] ?? "";
+    const name = /name="([^"]+)"/.exec(attributes)?.[1];
+    const id = /r:id="([^"]+)"/.exec(attributes)?.[1];
+    const target = id ? relationships.get(id) : undefined;
+    if (name && target) out.push([decodeXml(name), `xl/${target}`]);
+  }
+
+  return out;
+}
+
+/** The worksheet names in a workbook, in tab order. */
+export function listSheets(path: string): string[] {
+  const zip = readZip(readFileSync(path));
+  return sheetParts(zip, path).map(([name]) => name);
+}
+
+/**
+ * Every row of a worksheet, as an array of trimmed strings.
+ *
+ * `sheetName` picks a tab by the name on it; without one the first tab is read,
+ * which is what the single-sheet exports need. Missing cells become empty
+ * strings rather than holes, and each row is padded to the width of the header,
+ * so a caller can index by column without checking length. Fully empty trailing
+ * rows are dropped: these files declare a dimension of a million rows and hold a
+ * few hundred.
+ */
+export function readSheet(path: string, sheetName?: string): string[][] {
   const zip = readZip(readFileSync(path));
 
-  const sheet = zip.get("xl/worksheets/sheet1.xml");
-  if (!sheet) throw new Error(`${path}: no first worksheet found.`);
+  const parts = sheetParts(zip, path);
+  const chosen = sheetName
+    ? parts.find(([name]) => name.toLowerCase() === sheetName.toLowerCase())
+    : parts[0];
+
+  if (!chosen) {
+    const available = parts.map(([name]) => name).join(", ") || "none";
+    throw new Error(`${path}: no worksheet named "${sheetName}". Available: ${available}.`);
+  }
+
+  const sheet = zip.get(chosen[1]);
+  if (!sheet) throw new Error(`${path}: worksheet "${chosen[0]}" is missing its part.`);
 
   const sharedXml = zip.get("xl/sharedStrings.xml");
   const shared = sharedXml ? readSharedStrings(sharedXml.toString("utf8")) : [];
