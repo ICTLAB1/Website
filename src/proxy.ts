@@ -1,6 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { ANALYTICS_CSP, analyticsEnabled } from "@/lib/analytics";
+import {
+  ANALYTICS_CSP,
+  ANALYTICS_DEBUG_HOSTS,
+  analyticsDebugging,
+  analyticsEnabled,
+} from "@/lib/analytics";
 
 /**
  * Request proxy: security headers and Content Security Policy.
@@ -54,6 +59,7 @@ function buildCsp(
   isDevelopment: boolean,
   allowGateway: boolean,
   allowAnalytics: boolean,
+  allowTagDebug: boolean,
 ): string {
   // Razorpay Checkout is loaded by a nonce-carrying script, so 'strict-dynamic'
   // covers the script itself; what it cannot cover is the iframe the script
@@ -74,6 +80,7 @@ function buildCsp(
       // by browsers too old to understand it.
       "'strict-dynamic'",
       ...(allowAnalytics ? [...ANALYTICS_CSP.script] : []),
+      ...(allowTagDebug ? [...ANALYTICS_DEBUG_HOSTS] : []),
       // Next.js dev tooling evaluates code; never enabled in production.
       ...(isDevelopment ? ["'unsafe-eval'"] : []),
     ],
@@ -91,11 +98,22 @@ function buildCsp(
       "'self'",
       ...gatewayConnect,
       ...(allowAnalytics ? [...ANALYTICS_CSP.connect] : []),
+      ...(allowTagDebug ? [...ANALYTICS_DEBUG_HOSTS] : []),
       ...(isDevelopment ? ["ws:", "wss:"] : []),
     ],
     "form-action": ["'self'"],
     "frame-ancestors": ["'none'"],
-    "frame-src": gatewayFrame.length > 0 ? gatewayFrame : ["'none'"],
+    /*
+     * Nothing may be framed, unless something specific needs to be.
+     *
+     * Razorpay's checkout is one such case; a Tag Assistant session is the
+     * other, and it is the reason a debugging session times out on this site
+     * without it — see `lib/analytics`.
+     */
+    "frame-src": (() => {
+      const framed = [...gatewayFrame, ...(allowTagDebug ? ANALYTICS_DEBUG_HOSTS : [])];
+      return framed.length > 0 ? framed : ["'none'"];
+    })(),
     "object-src": ["'none'"],
     "base-uri": ["'self'"],
     "manifest-src": ["'self'"],
@@ -179,7 +197,21 @@ export function proxy(request: NextRequest) {
   const host = request.headers.get("host");
   const allowAnalytics = analyticsEnabled({ pathname, host, isDevelopment });
 
-  const csp = buildCsp(nonce, isDevelopment, isPaymentPath(pathname), allowAnalytics);
+  /*
+   * A tag debugging session, which needs two hosts the ordinary policy refuses.
+   * Only where analytics runs at all: there is nothing to debug on a page that
+   * carries no tag, and the widening should not follow the parameter into the
+   * admin panel.
+   */
+  const allowTagDebug = allowAnalytics && analyticsDebugging(request.nextUrl.searchParams);
+
+  const csp = buildCsp(
+    nonce,
+    isDevelopment,
+    isPaymentPath(pathname),
+    allowAnalytics,
+    allowTagDebug,
+  );
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);

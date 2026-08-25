@@ -146,6 +146,32 @@ export const ANALYTICS_CSP = {
 } as const;
 
 /**
+ * The extra hosts a Google Tag Assistant session needs, and only it.
+ *
+ * Tag Assistant opens the site in a window with `?gtm_debug=<timestamp>`, and
+ * the tag then injects an iframe from `tagassistant.google.com` to talk back
+ * through. This site sends `frame-src 'none'`, so that iframe never loads and
+ * the session times out with "could not connect" — which reads as "you have no
+ * tag" and is really "your policy will not let me look".
+ *
+ * Granted only on a request that carries the debug parameter, rather than
+ * widened for every visitor. Somebody could of course add `?gtm_debug=1` to a
+ * URL themselves; what they would gain is the ability to frame two Google
+ * hosts inside a page they are already looking at. `frame-ancestors` stays
+ * `'none'` either way, so nothing here affects who may embed this site — which
+ * is the direction that would matter.
+ */
+export const ANALYTICS_DEBUG_HOSTS = [
+  "https://tagassistant.google.com",
+  "https://www.googletagmanager.com",
+] as const;
+
+/** Whether this request is a Google tag debugging session. */
+export function analyticsDebugging(search: URLSearchParams): boolean {
+  return search.has("gtm_debug");
+}
+
+/**
  * What every page denies until a visitor says otherwise.
  *
  * Google Consent Mode v2. These four are sent as `consent: default` before any

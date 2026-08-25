@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   ANALYTICS_CSP,
+  ANALYTICS_DEBUG_HOSTS,
+  analyticsDebugging,
   analyticsEnabled,
   CONSENT_DEFAULTS,
   DENIED,
@@ -83,6 +85,24 @@ describe("the policy the tag needs", () => {
      */
     expect(ANALYTICS_CSP.connect).toContain("https://stats.g.doubleclick.net");
     expect(ANALYTICS_CSP.connect).toContain("https://www.google.com");
+  });
+});
+
+describe("a tag debugging session", () => {
+  it("is recognised only by the parameter Google's tooling sets", () => {
+    expect(analyticsDebugging(new URLSearchParams("gtm_debug=1787677100802"))).toBe(true);
+    expect(analyticsDebugging(new URLSearchParams(""))).toBe(false);
+    expect(analyticsDebugging(new URLSearchParams("utm_source=gtm"))).toBe(false);
+  });
+
+  it("needs the host the ordinary policy refuses to frame", () => {
+    /*
+     * The failure this exists for: Tag Assistant injects an iframe from
+     * tagassistant.google.com to talk back through, `frame-src 'none'` refuses
+     * it, and the session times out reporting "could not connect" — which
+     * reads to everybody as "there is no tag on this site".
+     */
+    expect(ANALYTICS_DEBUG_HOSTS).toContain("https://tagassistant.google.com");
   });
 });
 
