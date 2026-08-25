@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { ANALYTICS_CSP, analyticsEnabled } from "@/lib/analytics";
+
 /**
  * Request proxy: security headers and Content Security Policy.
  *
@@ -47,7 +49,12 @@ function isPaymentPath(pathname: string): boolean {
   return pathname === "/buy" || pathname.startsWith("/buy/") || pathname.startsWith("/account/orders");
 }
 
-function buildCsp(nonce: string, isDevelopment: boolean, allowGateway: boolean): string {
+function buildCsp(
+  nonce: string,
+  isDevelopment: boolean,
+  allowGateway: boolean,
+  allowAnalytics: boolean,
+): string {
   // Razorpay Checkout is loaded by a nonce-carrying script, so 'strict-dynamic'
   // covers the script itself; what it cannot cover is the iframe the script
   // opens and the requests that iframe makes.
@@ -66,14 +73,26 @@ function buildCsp(nonce: string, isDevelopment: boolean, allowGateway: boolean):
       // Lets nonce-verified scripts load their own dependencies, and is ignored
       // by browsers too old to understand it.
       "'strict-dynamic'",
+      ...(allowAnalytics ? [...ANALYTICS_CSP.script] : []),
       // Next.js dev tooling evaluates code; never enabled in production.
       ...(isDevelopment ? ["'unsafe-eval'"] : []),
     ],
     // Tailwind emits a stylesheet, but React still sets some inline styles.
     "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
     "font-src": ["'self'", "https://fonts.gstatic.com", "data:"],
-    "img-src": ["'self'", "data:", "blob:", ...(allowGateway ? ["https://cdn.razorpay.com"] : [])],
-    "connect-src": ["'self'", ...gatewayConnect, ...(isDevelopment ? ["ws:", "wss:"] : [])],
+    "img-src": [
+      "'self'",
+      "data:",
+      "blob:",
+      ...(allowGateway ? ["https://cdn.razorpay.com"] : []),
+      ...(allowAnalytics ? [...ANALYTICS_CSP.img] : []),
+    ],
+    "connect-src": [
+      "'self'",
+      ...gatewayConnect,
+      ...(allowAnalytics ? [...ANALYTICS_CSP.connect] : []),
+      ...(isDevelopment ? ["ws:", "wss:"] : []),
+    ],
     "form-action": ["'self'"],
     "frame-ancestors": ["'none'"],
     "frame-src": gatewayFrame.length > 0 ? gatewayFrame : ["'none'"],
@@ -148,10 +167,30 @@ export function proxy(request: NextRequest) {
     );
   }
 
-  const csp = buildCsp(nonce, isDevelopment, isPaymentPath(pathname));
+  /*
+   * Analytics widens the policy, so it is decided once and applied to both the
+   * header and the page.
+   *
+   * `lib/analytics` owns the rule — public pages on a real host in production,
+   * nowhere else — and the layout asks the same function whether to render the
+   * tag. Deciding it in two places is how a page ends up loading a script its
+   * own policy forbids.
+   */
+  const host = request.headers.get("host");
+  const allowAnalytics = analyticsEnabled({ pathname, host, isDevelopment });
+
+  const csp = buildCsp(nonce, isDevelopment, isPaymentPath(pathname), allowAnalytics);
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
+  /*
+   * The path, for a server component that needs to know it.
+   *
+   * A layout renders on every route and cannot read the URL; the analytics tag
+   * has to stay off the signed-in paths, and this is how it knows which one it
+   * is on.
+   */
+  requestHeaders.set("x-pathname", pathname);
   requestHeaders.set("content-security-policy", csp);
 
   /**

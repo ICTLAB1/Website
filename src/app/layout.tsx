@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/footer";
 import { TrustBar } from "@/components/layout/trust-bar";
 import { BasketProvider } from "@/components/enquiry/basket-provider";
 import { ToastProvider } from "@/components/ui/toast";
+import { GoogleTag } from "@/components/analytics/google-tag";
 import { JsonLd, organizationSchema, websiteSchema } from "@/lib/seo";
 import { appUrl } from "@/lib/env";
 import { getSiteIdentity } from "@/lib/site-config";
@@ -133,6 +134,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
         <JsonLd data={await organizationSchema()} />
         <JsonLd data={await websiteSchema()} />
+
+        {/*
+          Last in the body, and only on public pages — see the component.
+          Rendering it here rather than in <head> keeps it off the critical
+          path: the tag is asynchronous either way, and nothing on the page
+          waits for a measurement.
+        */}
+        <GoogleTag />
       </body>
     </html>
   );
