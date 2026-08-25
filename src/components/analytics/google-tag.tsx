@@ -34,14 +34,7 @@ import {
  * for itself is trusted only by `strict-dynamic`. Where the browser can check
  * the stricter thing, let it.
  *
- * ## No `<noscript>` iframe
- *
- * Google's second snippet frames gtm.js for visitors without JavaScript. It is
- * deliberately not here. Consent Mode is JavaScript: the defaults below, the
- * banner, and a returning visitor's stored answer all need it. A frame that
- * fires container tags for the one class of visitor who cannot be asked, and
- * for whom the denial cannot be carried, would fire them for the only people
- * guaranteed never to have consented. `frame-src` accordingly stays `'none'`.
+ * The `<noscript>` frame is `GoogleTagManagerNoScript`, below.
  *
  * Whether any of this renders is `analyticsEnabled`, which the proxy consults
  * for the same request when it builds the policy. See `lib/analytics` for why
@@ -155,5 +148,57 @@ export async function GoogleTag() {
       */}
       <ConsentBanner />
     </>
+  );
+}
+
+/**
+ * Google's second Tag Manager snippet: the container in a frame, for a visitor
+ * whose browser will not run the first one.
+ *
+ * ## What it cannot do
+ *
+ * Carry consent. Consent Mode is JavaScript — the defaults above, the banner,
+ * and a returning visitor's stored answer all need it — so a tag that fires
+ * through this frame fires with no consent signal at all, for the one class of
+ * visitor who cannot be asked and for whom no denial can be recorded.
+ *
+ * Today nothing fires through it. The container holds a Conversion Linker,
+ * which needs JavaScript, and an Ads conversion on a custom event, which needs
+ * a `dataLayer` push that also needs JavaScript. Neither is reachable from
+ * here. That is the reason this is acceptable rather than an argument that it
+ * is harmless: the day somebody publishes an All Pages tag that writes a
+ * cookie, it will write it for these visitors without asking, and the cookie
+ * policy will be wrong until somebody notices.
+ *
+ * ## The policy it needs
+ *
+ * `frame-src` allows one Google host wherever analytics runs, which is a wider
+ * policy than the site had. `frame-ancestors` stays `'none'` and is untouched:
+ * what this page may frame and who may frame this page are different
+ * questions, and only the first one moved.
+ *
+ * Written through `dangerouslySetInnerHTML` because a `<noscript>` body is not
+ * parsed as markup by the client renderer, and the shipped bytes are the whole
+ * point of an element only a non-JavaScript browser ever reads.
+ */
+export async function GoogleTagManagerNoScript() {
+  const list = await headers();
+
+  const enabled = analyticsEnabled({
+    pathname: list.get("x-pathname") ?? "/",
+    host: list.get("host"),
+    isDevelopment: process.env.NODE_ENV === "development",
+  });
+
+  if (!enabled || !GTM_ENABLED) return null;
+
+  return (
+    <noscript
+      dangerouslySetInnerHTML={{
+        __html:
+          `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_CONTAINER_ID}"` +
+          ` height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
+      }}
+    />
   );
 }

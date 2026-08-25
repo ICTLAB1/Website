@@ -84,16 +84,30 @@ describe("the Tag Manager container", () => {
     expect(ANALYTICS_CSP.script).toContain("https://www.googletagmanager.com");
   });
 
-  it("does not ask for the frame its noscript snippet would need", () => {
+  it("allows exactly one host to be framed, for the noscript snippet", () => {
     /*
-     * Google's second snippet frames gtm.js for visitors without JavaScript.
-     * It is not rendered, because Consent Mode is JavaScript: a visitor who
-     * cannot run it cannot be asked and cannot carry the denial, so framing the
-     * container for them would fire tags for the only people guaranteed never
-     * to have consented. `frame-src` stays 'none' outside a debugging session,
-     * and this asserts nobody quietly opened it.
+     * The one directive here widened for every visitor rather than for a
+     * debugging session. Kept to a single host on purpose: `frame-src` is what
+     * lets this page put something in a frame, and the list is short enough to
+     * read.
      */
-    expect(ANALYTICS_CSP).not.toHaveProperty("frame");
+    expect(ANALYTICS_CSP.frame).toEqual(["https://www.googletagmanager.com"]);
+  });
+});
+
+describe("what framing the container does not change", () => {
+  it("is who may frame this site, which is nobody", () => {
+    /*
+     * The confusion worth pinning: `frame-src` governs what this page may put
+     * in a frame, `frame-ancestors` governs who may put this page in one. Only
+     * the first moved for the noscript snippet. If a future edit ever adds a
+     * host to the wrong one, this site becomes embeddable and the clickjacking
+     * protection is gone silently.
+     */
+    expect(ANALYTICS_CSP).not.toHaveProperty("frameAncestors");
+    for (const host of ANALYTICS_CSP.frame) {
+      expect(host).toMatch(/^https:\/\//);
+    }
   });
 });
 

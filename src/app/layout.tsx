@@ -8,7 +8,7 @@ import { Footer } from "@/components/layout/footer";
 import { TrustBar } from "@/components/layout/trust-bar";
 import { BasketProvider } from "@/components/enquiry/basket-provider";
 import { ToastProvider } from "@/components/ui/toast";
-import { GoogleTag } from "@/components/analytics/google-tag";
+import { GoogleTag, GoogleTagManagerNoScript } from "@/components/analytics/google-tag";
 import { JsonLd, organizationSchema, websiteSchema } from "@/lib/seo";
 import { appUrl } from "@/lib/env";
 import { getSiteIdentity } from "@/lib/site-config";
@@ -108,6 +108,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en-IN" className={inter.variable}>
       <body className="flex min-h-dvh flex-col bg-white antialiased">
+        {/*
+          Immediately after <body>, where Google asks for it, and before the
+          skip link so it never lands between a keyboard user and their first
+          tab stop. It renders nothing a browser running JavaScript can see.
+        */}
+        <GoogleTagManagerNoScript />
+
         {/* First tab stop on every page. */}
         <Link
           href="#main-content"

@@ -106,11 +106,27 @@ for (const type of ["ad_storage", "ad_user_data", "ad_personalization", "analyti
 }
 
 /*
- * Google's second Tag Manager snippet, which is deliberately not shipped:
- * Consent Mode is JavaScript, so a frame that fires container tags for a
- * visitor without it fires them for the only people who can never be asked.
+ * Google's second Tag Manager snippet. Read out of the bytes rather than
+ * trusted from the component, because it is inside a `<noscript>` — nothing in
+ * a browser or a screenshot will ever show it missing.
  */
-check(!html.includes("googletagmanager.com/ns.html"), "the noscript container frame is on the page");
+const noscript = /<noscript[^>]*>\s*<iframe[^>]*googletagmanager\.com\/ns\.html\?id=([A-Z0-9-]+)/i.exec(
+  html,
+);
+check(Boolean(noscript), "the noscript container frame is missing");
+check(
+  noscript?.[1] === "GTM-THHL334G",
+  `the noscript frame names a different container: ${noscript?.[1] ?? "none"}`,
+);
+
+/*
+ * Before the skip link, or it sits between a keyboard user and their first tab
+ * stop on every page of the site.
+ */
+check(
+  html.indexOf("ns.html") >= 0 && html.indexOf("ns.html") < html.indexOf("Skip to main content"),
+  "the noscript frame is rendered after the skip link",
+);
 
 // ─────────────────────────────────────────────────────────────── where it is not
 
@@ -118,7 +134,7 @@ for (const path of ["/login", "/register"]) {
   const page = await get(path);
   check(
     !page.html.includes("googletagmanager.com"),
-    `${path} carries a Google tag, and its URL is not analytics' business`,
+    `${path} carries a Google tag or frame, and its URL is not analytics' business`,
   );
 }
 
@@ -144,8 +160,21 @@ check(
   "connect-src blocks the host GA4 posts to",
 );
 check(
-  directive("frame-src").includes("'none'"),
-  "frame-src is open on an ordinary request; only a tag debugging session may widen it",
+  directive("frame-src").includes("https://www.googletagmanager.com"),
+  "frame-src refuses the host the noscript frame loads from, so it would be blocked",
+);
+check(
+  !directive("frame-src").includes("tagassistant"),
+  "the debugging hosts are allowed on an ordinary request; only a debug session may add them",
+);
+
+/*
+ * The half of the frame policy that did not move, and must not. `frame-src` is
+ * what this page may frame; `frame-ancestors` is who may frame this page.
+ */
+check(
+  directive("frame-ancestors").includes("'none'"),
+  "frame-ancestors is no longer 'none' — this site can now be embedded",
 );
 
 // ────────────────────────────────────────────────── the conversion, end to end
