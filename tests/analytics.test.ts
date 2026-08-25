@@ -9,6 +9,8 @@ import {
   DENIED,
   GA_MEASUREMENT_IDS,
   GRANTED,
+  GTM_CONTAINER_ID,
+  GTM_ENABLED,
 } from "@/lib/analytics";
 
 /**
@@ -63,6 +65,35 @@ describe("the measurement IDs", () => {
     for (const id of GA_MEASUREMENT_IDS) {
       expect(id).toMatch(/^G-[A-Z0-9]{6,20}$/);
     }
+  });
+});
+
+describe("the Tag Manager container", () => {
+  it("is a container id and not a measurement id", () => {
+    expect(GTM_ENABLED).toBe(true);
+    expect(GTM_CONTAINER_ID).toMatch(/^GTM-[A-Z0-9]{4,12}$/);
+  });
+
+  it("loads from the host the policy already allows", () => {
+    /*
+     * gtm.js and gtag.js are served from the same host, so the container needs
+     * no widening of `script-src`. What it does need is `strict-dynamic`, which
+     * is what lets a tag published into the container next month load without
+     * a deploy to the policy.
+     */
+    expect(ANALYTICS_CSP.script).toContain("https://www.googletagmanager.com");
+  });
+
+  it("does not ask for the frame its noscript snippet would need", () => {
+    /*
+     * Google's second snippet frames gtm.js for visitors without JavaScript.
+     * It is not rendered, because Consent Mode is JavaScript: a visitor who
+     * cannot run it cannot be asked and cannot carry the denial, so framing the
+     * container for them would fire tags for the only people guaranteed never
+     * to have consented. `frame-src` stays 'none' outside a debugging session,
+     * and this asserts nobody quietly opened it.
+     */
+    expect(ANALYTICS_CSP).not.toHaveProperty("frame");
   });
 });
 

@@ -52,6 +52,29 @@ export const GA_MEASUREMENT_IDS = (
    */
   .filter((id) => /^G-[A-Z0-9]{6,20}$/.test(id));
 
+/**
+ * The Tag Manager container, supplied by the business on 25 August 2026.
+ *
+ * A container is not a second analytics property. GA4 stays configured
+ * directly, as it already was — a measurement that the business depends on
+ * should not stop working because somebody publishes a broken container
+ * version. The container is for everything else: conversion tags, remarketing,
+ * a chat widget, whatever marketing wants to add without a deploy.
+ *
+ * Both load from the same script host and share one `dataLayer`, so the
+ * consent defaults set below govern the container's tags exactly as they
+ * govern GA4's.
+ *
+ * Not secret, for the same reason the measurement IDs are not: it is served to
+ * every visitor in the page source. An empty value switches the container off.
+ */
+export const GTM_CONTAINER_ID = (
+  process.env.NEXT_PUBLIC_GTM_CONTAINER_ID ?? "GTM-THHL334G"
+).trim();
+
+/** Validated for the same reason the measurement IDs are: it reaches a script body. */
+export const GTM_ENABLED = /^GTM-[A-Z0-9]{4,12}$/.test(GTM_CONTAINER_ID);
+
 /** Paths analytics never sees. */
 const PRIVATE_PREFIXES = ["/admin", "/account", "/api", "/login", "/register", "/reset-password"];
 
@@ -92,7 +115,7 @@ export function analyticsEnabled(options: {
   host: string | null;
   isDevelopment: boolean;
 }): boolean {
-  if (GA_MEASUREMENT_IDS.length === 0) return false;
+  if (GA_MEASUREMENT_IDS.length === 0 && !GTM_ENABLED) return false;
   if (options.isDevelopment) return false;
   if (!options.host || isLocalHost(options.host)) return false;
   return !isPrivatePath(options.pathname);
