@@ -111,7 +111,11 @@ function buildCsp(
      * without it — see `lib/analytics`.
      */
     "frame-src": (() => {
-      const framed = [...gatewayFrame, ...(allowTagDebug ? ANALYTICS_DEBUG_HOSTS : [])];
+      const framed = [
+        ...gatewayFrame,
+        ...(allowAnalytics ? ANALYTICS_CSP.frame : []),
+        ...(allowTagDebug ? ANALYTICS_DEBUG_HOSTS : []),
+      ];
       return framed.length > 0 ? framed : ["'none'"];
     })(),
     "object-src": ["'none'"],

@@ -166,6 +166,17 @@ export const ANALYTICS_CSP = {
     "https://*.analytics.google.com",
   ],
   img: ["https://www.googletagmanager.com", "https://*.google-analytics.com"],
+  /*
+   * For the Tag Manager `<noscript>` frame, and nothing else.
+   *
+   * This is the one directive here that is widened for every visitor rather
+   * than for a debugging session, so it is worth being exact about what it
+   * does and does not do. `frame-src` governs what this page may put in a
+   * frame; `frame-ancestors` governs who may put this page in one, stays
+   * `'none'`, and is untouched. Allowing one Google host to be framed does not
+   * make this site embeddable anywhere.
+   */
+  frame: ["https://www.googletagmanager.com"],
 } as const;
 
 /**

@@ -327,8 +327,11 @@ without touching GA4 — the two are deliberately independent, so a broken
 container version cannot take the measurement down with it. Both load from the
 same host and share one `dataLayer`, so the consent defaults govern the
 container's tags exactly as they govern GA4's. Google's `<noscript>` frame is
-not rendered: Consent Mode is JavaScript, and a visitor who cannot run it
-cannot be asked. Anything published into the container is subject to the cookie
+rendered immediately after `<body>`, which is the one part of this that carries
+no consent signal — a visitor without JavaScript cannot be asked and cannot
+record a denial. Nothing reaches it today, because both tags in the container
+need JavaScript to fire; it widens `frame-src` to one Google host, and leaves
+`frame-ancestors` at `'none'`. Anything published into the container is subject to the cookie
 policy like anything else on the site — a tag that sets a cookie the policy
 does not name makes the policy untrue, and the policy is the thing that has to
 change first.
