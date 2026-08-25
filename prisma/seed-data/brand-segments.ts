@@ -78,4 +78,42 @@ export const brandSegments: Record<string, BrandSegment> = {
   fortinet: "CYBERSECURITY",
   watchguard: "CYBERSECURITY",
   crowdstrike: "CYBERSECURITY",
+  "quick-heal": "CYBERSECURITY",
+  sonicwall: "CYBERSECURITY",
+  acronis: "CYBERSECURITY",
+  "check-point": "CYBERSECURITY",
+  "palo-alto-networks": "CYBERSECURITY",
+
+  // ── added August 2026 ─────────────────────────────────────────────────────
+  //
+  // Acronis sits under cybersecurity rather than infrastructure and Veeam sits
+  // under infrastructure, which looks inconsistent for two backup products and
+  // is not: Acronis sells its business range as endpoint protection with
+  // backup in it, Veeam sells data protection for a virtual estate. Each is
+  // filed where a buyer would look for it.
+  tally: "SOFTWARE_CLOUD",
+  teamviewer: "SOFTWARE_CLOUD",
+  anydesk: "SOFTWARE_CLOUD",
+  zoom: "SOFTWARE_CLOUD",
+  foxit: "SOFTWARE_CLOUD",
+  mathworks: "SOFTWARE_CLOUD",
+  ansys: "SOFTWARE_CLOUD",
+  ptc: "SOFTWARE_CLOUD",
+
+  veeam: "ENTERPRISE_INFRASTRUCTURE",
+  citrix: "ENTERPRISE_INFRASTRUCTURE",
+  netgear: "ENTERPRISE_INFRASTRUCTURE",
+  "tp-link": "ENTERPRISE_INFRASTRUCTURE",
+  seagate: "ENTERPRISE_INFRASTRUCTURE",
+  "western-digital": "ENTERPRISE_INFRASTRUCTURE",
+
+  // Printing, displays and headsets go under business hardware for the same
+  // reason Logitech already does: it is the group a buyer looks in for the
+  // things on and around a desk, and a fifth heading for peripherals would
+  // split that search rather than serve it.
+  samsung: "BUSINESS_HARDWARE",
+  canon: "BUSINESS_HARDWARE",
+  epson: "BUSINESS_HARDWARE",
+  brother: "BUSINESS_HARDWARE",
+  jabra: "BUSINESS_HARDWARE",
 };

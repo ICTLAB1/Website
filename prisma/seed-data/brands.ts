@@ -590,4 +590,329 @@ export const brands: BrandSeed[] = [
     displayOrder: 410,
     featured: false,
   },
+  /*
+   * ── added August 2026 ────────────────────────────────────────────────────
+   *
+   * A second pass over the line card. Everything below is a description of
+   * what the company makes and how its products are bought; none of it is a
+   * statement about a relationship with any of them. Partner designations live
+   * in their own columns and appear only when somebody has confirmed one — see
+   * the `Brand` model — and no entry here fills any of those in.
+   *
+   * None carries artwork, because this repository holds none for them. Each
+   * shows the lettered wordmark, which is the intended fallback rather than a
+   * gap to be filled with something approximate.
+   */
+  {
+    slug: "quick-heal",
+    name: "Quick Heal",
+    tagline: "Endpoint security, developed in India",
+    summary:
+      "Quick Heal endpoint protection and the Seqrite business range — endpoint, server and mobile security, licensed by seat and by term.",
+    description:
+      "Quick Heal Technologies is an Indian security company whose business range is sold under the Seqrite name: endpoint protection, endpoint detection and response, server security, data loss prevention and mobile device management. Licences run by device and by term, so sizing comes down to how many endpoints and for how long.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "Quick Heal",
+    accentColor: "#c1272d",
+    displayOrder: 420,
+    featured: false,
+  },
+  {
+    slug: "sonicwall",
+    name: "SonicWall",
+    tagline: "Firewalls and secure remote access",
+    summary:
+      "Next-generation firewalls, secure mobile access and the security subscriptions that run on them.",
+    description:
+      "A SonicWall firewall is bought as an appliance plus a security subscription, and the subscription is the part that expires: gateway antivirus, intrusion prevention, content filtering and support each run on their own term. A renewal quote is therefore a list of services, not a single line.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "SonicWall",
+    accentColor: "#d15900",
+    displayOrder: 430,
+    featured: false,
+  },
+  {
+    slug: "acronis",
+    name: "Acronis",
+    tagline: "Backup, disaster recovery and endpoint protection",
+    summary:
+      "Cyber Protect backup and recovery for workstations, servers and virtual machines, licensed by workload and by storage.",
+    description:
+      "Acronis licensing counts two things: the workloads being protected — a workstation, a server, a virtual host — and the cloud storage the backups land in. Getting a quotation right means knowing both, because a licence that covers the machines and not the space they need protects nothing.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "Acronis",
+    accentColor: "#0064b7",
+    displayOrder: 440,
+    featured: false,
+  },
+  {
+    slug: "check-point",
+    name: "Check Point",
+    tagline: "Network, cloud and endpoint security",
+    summary:
+      "Quantum network security, Harmony endpoint and email protection, and CloudGuard for cloud workloads.",
+    description:
+      "Check Point separates its range by where the protection sits: Quantum at the network edge, Harmony on endpoints and in mailboxes, CloudGuard around cloud workloads. Each is licensed on its own basis — by gateway, by user or by workload — so the shape of a quotation follows the shape of the estate.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "Check Point",
+    accentColor: "#a4128a",
+    displayOrder: 450,
+    featured: false,
+  },
+  {
+    slug: "palo-alto-networks",
+    name: "Palo Alto Networks",
+    tagline: "Next-generation firewalls and cloud security",
+    summary:
+      "PA-Series firewalls, Prisma cloud security and Cortex detection and response.",
+    description:
+      "A Palo Alto Networks firewall is sized on throughput with the security services subscribed separately, and Prisma and Cortex are licensed on their own terms again. The sizing question is what the appliance has to inspect, not how many people sit behind it.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "Palo Alto Networks",
+    accentColor: "#d1451b",
+    displayOrder: 460,
+    featured: false,
+  },
+  {
+    slug: "tally",
+    name: "Tally Solutions",
+    tagline: "Accounting, inventory and statutory compliance",
+    summary:
+      "TallyPrime for accounting, inventory, payroll and GST filing, in single-user and multi-user editions.",
+    description:
+      "TallyPrime is sold as a perpetual licence with an annual subscription for updates, in a single-user edition and a multi-user one, and the difference between them is how many people post entries at the same time rather than how many people can open the file.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "Tally Solutions",
+    accentColor: "#1a5aa8",
+    displayOrder: 470,
+    featured: false,
+  },
+  {
+    slug: "teamviewer",
+    name: "TeamViewer",
+    tagline: "Remote access and remote support",
+    summary:
+      "Remote access, attended and unattended support sessions, licensed by concurrent user and by managed device.",
+    description:
+      "TeamViewer licensing counts two things separately: how many of your people can be in a session at once, and how many machines they may reach without somebody sitting at the other end. A support desk and a fleet of unattended kiosks are different licences even at the same headcount.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "TeamViewer",
+    accentColor: "#0e6ec8",
+    displayOrder: 480,
+    featured: false,
+  },
+  {
+    slug: "anydesk",
+    name: "AnyDesk",
+    tagline: "Remote desktop for support teams",
+    summary:
+      "Remote desktop access with unattended endpoints and session logging, licensed by concurrent session.",
+    description:
+      "AnyDesk is licensed on concurrent sessions and managed devices, which makes it straightforward to size for a support desk: the question is how many engineers are connected simultaneously at your busiest hour, not how many people are on the team.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "AnyDesk",
+    accentColor: "#c3273a",
+    displayOrder: 490,
+    featured: false,
+  },
+  {
+    slug: "zoom",
+    name: "Zoom",
+    tagline: "Meetings, webinars and phone",
+    summary:
+      "Zoom Workplace meeting licences, webinar and large-meeting add-ons, and Zoom Phone.",
+    description:
+      "Zoom is licensed per host rather than per attendee, with webinars, large meetings and phone numbers added on top. Most organisations over-buy hosts because attendees are counted first — the licence follows the person who schedules, not the people who join.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "Zoom",
+    accentColor: "#0b5cff",
+    displayOrder: 500,
+    featured: false,
+  },
+  {
+    slug: "foxit",
+    name: "Foxit",
+    tagline: "PDF editing and document workflow",
+    summary:
+      "PDF Editor and PDF Editor Pro for teams, with volume licensing and deployment for managed desktops.",
+    description:
+      "Foxit's PDF editor covers the work most organisations actually buy Acrobat for — editing, filling, signing, redacting and combining — and is licensed perpetually or by subscription, per named user, with volume terms above a threshold.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "Foxit",
+    accentColor: "#b8371f",
+    displayOrder: 510,
+    featured: false,
+  },
+  {
+    slug: "mathworks",
+    name: "MathWorks",
+    tagline: "MATLAB, Simulink and the toolboxes",
+    summary:
+      "MATLAB and Simulink with their toolboxes, under academic, individual and concurrent network licensing.",
+    description:
+      "MATLAB is licensed by product and then by toolbox, which is where the cost sits: a base licence plus the four toolboxes a team actually uses is a different quotation from the same licence plus fourteen. Academic, standard and network-concurrent terms are priced separately again.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "MathWorks",
+    accentColor: "#a8410f",
+    displayOrder: 520,
+    featured: false,
+  },
+  {
+    slug: "ansys",
+    name: "Ansys",
+    tagline: "Engineering simulation",
+    summary:
+      "Structural, fluid, thermal and electromagnetic simulation, under task-based and enterprise licensing.",
+    description:
+      "Ansys licensing separates the solver from the seats that drive it, and simulation licences are commonly shared across a team rather than assigned to individuals. Sizing is a question about concurrent solves and core counts, not headcount.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "Ansys",
+    accentColor: "#8a6100",
+    displayOrder: 530,
+    featured: false,
+  },
+  {
+    slug: "ptc",
+    name: "PTC",
+    tagline: "CAD, PLM and service lifecycle software",
+    summary:
+      "Creo for design, Windchill for product data management, and the Onshape cloud CAD platform.",
+    description:
+      "PTC's design software is licensed per seat with extensions bought against it, while Windchill is licensed by the kind of access a person needs rather than by the fact that they need any. The two are usually quoted together and rarely sized the same way.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "PTC",
+    accentColor: "#4a5a66",
+    displayOrder: 540,
+    featured: false,
+  },
+  {
+    slug: "veeam",
+    name: "Veeam",
+    tagline: "Backup and recovery for virtual, physical and cloud",
+    summary:
+      "Backup and replication for virtual machines, servers and Microsoft 365, licensed by instance and by workload.",
+    description:
+      "Veeam counts workloads: a virtual machine, a physical server, a Microsoft 365 mailbox. The licence follows what is being protected rather than the hardware underneath it, which is what makes a mid-term move from on-premises to cloud a re-count rather than a re-purchase.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "Veeam",
+    accentColor: "#00693c",
+    displayOrder: 550,
+    featured: false,
+  },
+  {
+    slug: "citrix",
+    name: "Citrix",
+    tagline: "Virtual apps, desktops and delivery",
+    summary:
+      "Virtual Apps and Desktops with the delivery controllers and ADC appliances that publish them.",
+    description:
+      "Citrix is licensed per user or per concurrent connection, and the two answers diverge sharply once shift work is involved: a hundred people across three shifts is a hundred users or thirty-five concurrent connections, and the right basis is worth establishing before anything is quoted.\n\nSend us the requirement — a product name, a seat count, or the problem you are solving — and we will return a written quotation with the licence terms and the GST position stated on it.",
+    logoText: "Citrix",
+    accentColor: "#5a1a75",
+    displayOrder: 560,
+    featured: false,
+  },
+  {
+    slug: "netgear",
+    name: "NETGEAR",
+    tagline: "Switching, wireless and small-business networking",
+    summary:
+      "Managed and smart switches, business access points and network storage for small and mid-sized sites.",
+    description:
+      "NETGEAR's business range covers the layer most offices actually run on: managed switches, PoE for cameras and access points, and wireless controllers small enough not to need a dedicated engineer. Specification usually turns on port count, PoE budget and how the switches will be managed.\n\nSend us the requirement — a model number, a quantity, or the problem you are solving — and we will return a written quotation with the specification, the warranty terms and the GST position stated on it.",
+    logoText: "NETGEAR",
+    accentColor: "#00558c",
+    displayOrder: 570,
+    featured: false,
+  },
+  {
+    slug: "tp-link",
+    name: "TP-Link",
+    tagline: "Networking, wireless and Omada managed sites",
+    summary:
+      "Switches, routers and access points, including the Omada range for centrally managed multi-site networks.",
+    description:
+      "TP-Link's Omada line is the part most businesses buy: access points, switches and gateways that report to one controller, so a chain of branches is administered as a single network rather than as a dozen unrelated ones.\n\nSend us the requirement — a model number, a quantity, or the problem you are solving — and we will return a written quotation with the specification, the warranty terms and the GST position stated on it.",
+    logoText: "TP-Link",
+    accentColor: "#0d7a8a",
+    displayOrder: 580,
+    featured: false,
+  },
+  {
+    slug: "seagate",
+    name: "Seagate",
+    tagline: "Enterprise drives and storage systems",
+    summary:
+      "Enterprise and surveillance hard drives, SSDs and the Exos storage systems built on them.",
+    description:
+      "Drives are specified by workload rather than by capacity alone: a surveillance drive, a NAS drive and an enterprise drive of the same size are rated for different duty cycles, and fitting the wrong one is a failure that arrives eighteen months later.\n\nSend us the requirement — a model number, a quantity, or the problem you are solving — and we will return a written quotation with the specification, the warranty terms and the GST position stated on it.",
+    logoText: "Seagate",
+    accentColor: "#3c8a2e",
+    displayOrder: 590,
+    featured: false,
+  },
+  {
+    slug: "western-digital",
+    name: "Western Digital",
+    tagline: "Drives, SSDs and data centre storage",
+    summary:
+      "WD and SanDisk drives and SSDs, from workstation storage to data centre platforms.",
+    description:
+      "Western Digital covers both ends of the same requirement — the SSD in a workstation and the platform behind a data centre — and, as with any drive, the specification that matters is the rated workload rather than the number on the label.\n\nSend us the requirement — a model number, a quantity, or the problem you are solving — and we will return a written quotation with the specification, the warranty terms and the GST position stated on it.",
+    logoText: "Western Digital",
+    accentColor: "#0057a8",
+    displayOrder: 600,
+    featured: false,
+  },
+  {
+    slug: "samsung",
+    name: "Samsung",
+    tagline: "Displays, SSDs and business devices",
+    summary:
+      "Business monitors, professional displays, SSDs and memory for desktops, workstations and servers.",
+    description:
+      "Samsung's business range spans the desk and the machine under it: monitors and large-format displays, and the SSDs and memory that go into workstations and servers. Panel specification — size, resolution, refresh, and whether it is rated for continuous operation — is what separates an office monitor from a display that runs sixteen hours a day.\n\nSend us the requirement — a model number, a quantity, or the problem you are solving — and we will return a written quotation with the specification, the warranty terms and the GST position stated on it.",
+    logoText: "Samsung",
+    accentColor: "#1428a0",
+    displayOrder: 610,
+    featured: false,
+  },
+  {
+    slug: "canon",
+    name: "Canon",
+    tagline: "Printing, scanning and imaging",
+    summary:
+      "Office printers and multifunction devices, production scanners and the consumables that run with them.",
+    description:
+      "A printer is quoted with its running cost, not just its purchase price: cartridge yield, duty cycle and whether the device is meant for a workgroup or a floor decide what it actually costs over three years. Scanners are specified on pages per day rather than resolution.\n\nSend us the requirement — a model number, a quantity, or the problem you are solving — and we will return a written quotation with the specification, the warranty terms and the GST position stated on it.",
+    logoText: "Canon",
+    accentColor: "#bb0000",
+    displayOrder: 620,
+    featured: false,
+  },
+  {
+    slug: "epson",
+    name: "Epson",
+    tagline: "Printing, scanning and projection",
+    summary:
+      "EcoTank and business inkjet printers, document scanners and installation projectors.",
+    description:
+      "Epson's business inkjets are bought where print volume is high and cartridge cost is the objection — the tank models change the arithmetic rather than the hardware. Projectors are specified on brightness for the room they are going into, which is the figure most quotations get wrong.\n\nSend us the requirement — a model number, a quantity, or the problem you are solving — and we will return a written quotation with the specification, the warranty terms and the GST position stated on it.",
+    logoText: "Epson",
+    accentColor: "#1a4f9c",
+    displayOrder: 630,
+    featured: false,
+  },
+  {
+    slug: "brother",
+    name: "Brother",
+    tagline: "Printers, scanners and label systems",
+    summary:
+      "Workgroup laser printers and multifunction devices, document scanners and industrial labelling.",
+    description:
+      "Brother's workgroup lasers and desktop scanners are specified the way any shared device is: monthly duty cycle first, then paper handling, then the consumable cost per page. The labelling range is a separate requirement that often arrives with the same enquiry.\n\nSend us the requirement — a model number, a quantity, or the problem you are solving — and we will return a written quotation with the specification, the warranty terms and the GST position stated on it.",
+    logoText: "Brother",
+    accentColor: "#0a5b8c",
+    displayOrder: 640,
+    featured: false,
+  },
+  {
+    slug: "jabra",
+    name: "Jabra",
+    tagline: "Headsets and meeting-room audio",
+    summary:
+      "Professional headsets and conference-room speakerphones and video bars, certified for the major platforms.",
+    description:
+      "Headsets are bought for a platform as much as for a desk: a device certified for Microsoft Teams or Zoom carries the call controls the software expects, and one that is not certified is a device your users will fight with daily. Room audio is specified by room size rather than by seat count.\n\nSend us the requirement — a model number, a quantity, or the problem you are solving — and we will return a written quotation with the specification, the warranty terms and the GST position stated on it.",
+    logoText: "Jabra",
+    accentColor: "#8a4b00",
+    displayOrder: 650,
+    featured: false,
+  },
 ];

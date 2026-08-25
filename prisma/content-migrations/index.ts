@@ -16,6 +16,7 @@ import { quoteCopy } from "./2026-08-quote-copy";
 import { uaeRegistrations } from "./2026-08-uae-registrations";
 import { quotationTerms } from "./2026-08-quotation-terms";
 import { ajmanEmirate } from "./2026-08-ajman-emirate";
+import { moreBrands } from "./2026-08-more-brands";
 import type { ContentMigration } from "./types";
 
 /**
@@ -45,6 +46,7 @@ export const contentMigrations: ContentMigration[] = [
   uaeRegistrations,
   quotationTerms,
   ajmanEmirate,
+  moreBrands,
 ];
 
 export type { ContentMigration };
