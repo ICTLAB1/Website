@@ -254,8 +254,10 @@ browser suites:
   `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` and COOP.
 - **Errors** return a generic message plus a correlation id; diagnostics stay in
   the server log, which redacts credential-shaped fields automatically.
-- **No secrets reach the browser.** Nothing is exposed via `NEXT_PUBLIC_*`, and
-  the build output is checked for credential strings.
+- **No secrets reach the browser.** The one `NEXT_PUBLIC_*` variable is the
+  analytics measurement ID, which is a public identifier printed in the page
+  source by design; nothing else is exposed, and the build output is checked for
+  credential strings.
 
 ### Known limitations
 
@@ -305,6 +307,19 @@ silently): `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`,
 `COMPANY_PHONE_SUPPORT`, `COMPANY_ADDRESS_LINE1`, `COMPANY_ADDRESS_LINE2`,
 `COMPANY_CITY`, `COMPANY_STATE`, `COMPANY_POSTCODE`, `COMPANY_COUNTRY`,
 `COMPANY_GSTIN`, `COMPANY_CIN`, `COMPANY_SUPPORT_HOURS`.
+
+**Scheduled work** (optional; each route refuses everything when its token is
+unset, rather than defaulting to open): `CRM_DELIVER_TOKEN` for
+`/api/crm/deliver`, `QUOTE_FOLLOWUP_TOKEN` for `/api/quotes/follow-ups`. Both
+are called by cron — see `deploy/README.md`, sections 10 and 11. Without the
+follow-up one, quotations are never chased and never expire on their own.
+
+**Analytics** (optional): `NEXT_PUBLIC_GA_MEASUREMENT_ID`, a comma-separated
+list of GA4 measurement IDs, defaulting to the two the business uses. Empty
+switches analytics off. It is public by nature — it is served in the page — and
+it is the only `NEXT_PUBLIC_` value this application has. The tag loads on
+public pages only; see `src/lib/analytics.ts` for why the signed-in paths are
+excluded.
 
 **Grievance officer** (legally required before launch):
 `COMPANY_GRIEVANCE_OFFICER_NAME`, `COMPANY_GRIEVANCE_OFFICER_EMAIL`,

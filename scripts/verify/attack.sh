@@ -289,6 +289,33 @@ code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/api/payments/start"
 psqlq "delete from \\\"Payment\\\" where \\\"orderId\\\"='$PAY_ORDER'" >/dev/null
 psqlq "delete from \\\"Order\\\" where id='$PAY_ORDER'" >/dev/null
 
+echo "== Quotation follow-ups: an endpoint that emails customers =="
+
+# The follow-up runner is reachable by anybody who can reach the site, so what
+# stands between a stranger and this business's customers is one header. The
+# token is deliberately not read from the environment here: this suite must
+# prove the closed case, and a run that happened to know the token would prove
+# the opposite.
+code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/api/quotes/follow-ups")
+[ "$code" = "404" ] && ok "the follow-up runner refuses an unauthenticated caller (404, not 401)" || no "follow-up runner" "got $code"
+
+code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/api/quotes/follow-ups" -H "x-follow-up-token: guess")
+[ "$code" = "404" ] && ok "and refuses a guessed token without confirming the route exists" || no "follow-up token guess" "got $code"
+
+# A GET is not a POST. A route that answered one would be reachable from a
+# browser address bar, an image tag, or a link in an email.
+code=$(curl -s -o /dev/null -w "%{http_code}" "$BASE/api/quotes/follow-ups")
+[ "$code" = "405" ] || [ "$code" = "404" ] && ok "a GET cannot trigger a run (got $code)" || no "follow-up GET" "got $code"
+
+# The settings that decide how often every customer is written to are ADMIN-only,
+# like the other integration screens. SALES may chase one quotation by hand;
+# that is a different decision from setting the cadence for all of them.
+code=$(curl -s -o /dev/null -w "%{http_code}" -b "$SJ" "$BASE/admin/settings/follow-ups")
+[ "$code" != "200" ] && ok "SALES cannot reach the follow-up schedule (got $code)" || no "SALES follow-up settings" "got 200"
+
+code=$(curl -s -o /dev/null -w "%{http_code}" "$BASE/admin/settings/follow-ups")
+[ "$code" != "200" ] && ok "and neither can a signed-out visitor (got $code)" || no "anonymous follow-up settings" "got 200"
+
 echo
 echo "passed: $pass  failed: $fail"
 [ $fail -eq 0 ]
