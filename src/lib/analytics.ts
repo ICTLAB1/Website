@@ -109,6 +109,24 @@ export function analyticsEnabled(options: {
 export const ANALYTICS_CSP = {
   script: ["https://www.googletagmanager.com"],
   connect: [
+    /*
+     * The advertising hosts, allowed as of 25 August 2026.
+     *
+     * `stats.g.doubleclick.net` and `www.google.com` are what GA4 contacts when
+     * Google Signals or an Ads link is on: cross-device identity, demographics,
+     * remarketing audiences. They were deliberately blocked while this site had
+     * no consent mechanism, because a cookie policy that says "no advertising
+     * or remarketing pixel" and a page that quietly contacts an ad network are
+     * not both true.
+     *
+     * What changed is not the appetite for advertising, it is that consent now
+     * gates it: `ad_storage`, `ad_user_data` and `ad_personalization` default
+     * to denied on every page, so nothing reaches these hosts in a form that
+     * can identify anybody until a visitor says yes. The policy says exactly
+     * that.
+     */
+    "https://stats.g.doubleclick.net",
+    "https://www.google.com",
     "https://www.googletagmanager.com",
     "https://www.google-analytics.com",
     "https://*.google-analytics.com",
@@ -128,22 +146,66 @@ export const ANALYTICS_CSP = {
 } as const;
 
 /**
- * Two hosts Google asks for and this site does not allow.
+ * What every page denies until a visitor says otherwise.
  *
- * `stats.g.doubleclick.net` and `www.google.com` are what GA4 contacts when
- * Google Signals or an Ads link is switched on in the property: cross-device
- * identity, demographics, and remarketing audiences. They are not measurement,
- * and nothing in the reports this business actually reads depends on them.
+ * Google Consent Mode v2. These four are sent as `consent: default` before any
+ * `config`, so the tag knows the answer before it has anything to report — a
+ * default set after the first measurement is a default that arrived too late.
  *
- * They stay blocked because the cookie policy says this site carries no
- * advertising or remarketing pixel, and that sentence should stay true. The
- * consequence is honest and small: Google's tag diagnostics keeps listing them
- * as blocked, and the property's Demographics and Interests reports stay empty.
+ * All denied. Not because analytics is unwelcome, but because "denied unless
+ * asked" is the only default that matches what the cookie policy says: nothing
+ * that is not strictly necessary happens to a visitor who has not been asked.
+ * Under denial the tag still sends a cookieless ping, so aggregate traffic is
+ * still counted and no `_ga` cookie is written.
  *
- * Turning either on is a business decision, not a CSP fix — it would mean
- * adding these hosts *and* rewriting that part of the cookie policy.
+ * `wait_for_update` gives the banner half a second to answer on a page where
+ * the visitor has already decided, so a returning visitor's own choice is
+ * applied before the first page view rather than after it.
+ *
+ * ## One default, not one per region
+ *
+ * Consent Mode takes region-scoped defaults — deny in the EEA, allow
+ * elsewhere — and this deliberately does not use them. A single global denial
+ * is the only version that matches what the cookie policy promises every
+ * reader, and a policy that quietly means something different depending on
+ * where you are reading it from is not one worth publishing. If the business
+ * ever decides to grant by default outside the EEA, it is one additional
+ * `consent default` command carrying a `region` array; the wording on the
+ * cookie policy has to change with it.
  */
-export const ANALYTICS_DECLINED = [
-  "https://stats.g.doubleclick.net",
-  "https://www.google.com",
-] as const;
+export const CONSENT_DEFAULTS = {
+  ad_storage: "denied",
+  ad_user_data: "denied",
+  ad_personalization: "denied",
+  analytics_storage: "denied",
+  wait_for_update: 500,
+} as const;
+
+/**
+ * Where a visitor's answer is kept.
+ *
+ * Their browser, not a cookie and not this application's database. A record of
+ * who refused tracking is itself a record about a person, and keeping one on
+ * the server to remember that somebody did not want to be remembered is the
+ * kind of thing this file exists to avoid.
+ */
+export const CONSENT_KEY = "techzoid.consent.v1";
+export type ConsentChoice = "granted" | "denied";
+
+/** Every consent type, answered the same way. */
+const answer = (value: ConsentChoice) => ({
+  ad_storage: value,
+  ad_user_data: value,
+  ad_personalization: value,
+  analytics_storage: value,
+});
+
+/**
+ * What "yes" and "no" send.
+ *
+ * Both are explicit updates. A refusal is not silence — Consent Mode does not
+ * remember anything between page loads, so a visitor who said no must be told
+ * so again on the next page, exactly as one who said yes is.
+ */
+export const GRANTED = answer("granted");
+export const DENIED = answer("denied");

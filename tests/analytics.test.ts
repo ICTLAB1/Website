@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import {
   ANALYTICS_CSP,
-  ANALYTICS_DECLINED,
   analyticsEnabled,
+  CONSENT_DEFAULTS,
+  DENIED,
   GA_MEASUREMENT_IDS,
+  GRANTED,
 } from "@/lib/analytics";
 
 /**
@@ -73,11 +75,44 @@ describe("the policy the tag needs", () => {
     expect(ANALYTICS_CSP.connect).toContain("https://www.google-analytics.com");
   });
 
-  it("does not open the advertising hosts the cookie policy says are absent", () => {
-    for (const host of ANALYTICS_DECLINED) {
-      expect(ANALYTICS_CSP.connect).not.toContain(host);
-      expect(ANALYTICS_CSP.img).not.toContain(host);
-      expect(ANALYTICS_CSP.script).not.toContain(host);
+  it("allows the advertising hosts, which only consent unlocks", () => {
+    /*
+     * These were blocked while there was no way to ask. They are open now
+     * because the answer is asked for and denied until given — the CSP is not
+     * what limits advertising here, consent is.
+     */
+    expect(ANALYTICS_CSP.connect).toContain("https://stats.g.doubleclick.net");
+    expect(ANALYTICS_CSP.connect).toContain("https://www.google.com");
+  });
+});
+
+describe("consent", () => {
+  it("denies everything by default", () => {
+    /*
+     * The property this whole feature rests on. A default that is granted, or
+     * a consent type left out of the defaults entirely, measures a visitor who
+     * has not been asked — and the cookie policy promises the opposite.
+     */
+    for (const type of ["ad_storage", "ad_user_data", "ad_personalization", "analytics_storage"] as const) {
+      expect(CONSENT_DEFAULTS[type]).toBe("denied");
     }
+  });
+
+  it("waits for an answer before measuring", () => {
+    expect(CONSENT_DEFAULTS.wait_for_update).toBeGreaterThan(0);
+  });
+
+  it("answers every consent type in both directions", () => {
+    /*
+     * Consent Mode remembers nothing between page loads, so a refusal has to
+     * be sent as explicitly as an acceptance. A type present in one and absent
+     * from the other is a type that silently keeps its previous value.
+     */
+    expect(Object.keys(GRANTED).sort()).toEqual(Object.keys(DENIED).sort());
+    expect(Object.values(GRANTED).every((value) => value === "granted")).toBe(true);
+    expect(Object.values(DENIED).every((value) => value === "denied")).toBe(true);
+
+    const defaults = Object.keys(CONSENT_DEFAULTS).filter((key) => key !== "wait_for_update");
+    expect(Object.keys(GRANTED).sort()).toEqual(defaults.sort());
   });
 });

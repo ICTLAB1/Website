@@ -1,3 +1,4 @@
+import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -70,6 +71,25 @@ export async function CmsPage({ slug }: { slug: string }) {
         resolved={resolved}
         afterHero={<DocumentDates page={page} />}
       />
+
+      {/*
+        The consent control belongs on the cookie policy and nowhere else.
+
+        Named here rather than made into a block type, because it is not
+        content: an administrator cannot meaningfully choose to leave it off —
+        a site that asks for consent has to offer a way to withdraw it, and a
+        block that could be deleted from the page would make that promise
+        removable by accident.
+
+        The page still says everything about it in editable copy; this is only
+        the pair of buttons that copy refers to.
+      */}
+      {slug === "cookie-policy" ? (
+        <section className="container-page pb-14 lg:pb-18">
+          <h2 className="mb-3 text-section">Your answer</h2>
+          <ConsentBanner mode="manage" />
+        </section>
+      ) : null}
     </>
   );
 }
