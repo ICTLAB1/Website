@@ -12,6 +12,7 @@ import { getPaymentSettingsView } from "@/lib/payments/config";
 import { getUnconfiguredIdentityKeys } from "@/lib/admin/config-status";
 import { isMailConfigured } from "@/lib/mail";
 import { crmConnection } from "@/lib/crm/outbox";
+import { getFollowUpSettings } from "@/lib/quotes/follow-ups";
 import { getMailConfig, getMailSettingsView } from "@/lib/mail-config";
 import { MailSettingsForm } from "@/components/admin/mail-settings-form";
 import { GstinLookupForm } from "@/components/admin/gstin-lookup-form";
@@ -36,17 +37,19 @@ export const metadata: Metadata = { title: "Settings" };
  */
 export default async function AdminSettingsPage() {
   const admin = await requireAdmin();
-  const [config, stored, missing, audit, payments, mail, mailReady, crmState, gstinLookup] = await Promise.all([
-    getSiteConfig(),
-    getStoredSettings(),
-    getUnconfiguredIdentityKeys(),
-    listAuditLog(25),
-    getPaymentSettingsView(),
-    getMailSettingsView(),
-    isMailConfigured(),
-    crmConnection(),
-    getGstinLookupView(),
-  ]);
+  const [config, stored, missing, audit, payments, mail, mailReady, crmState, gstinLookup, followUps] =
+    await Promise.all([
+      getSiteConfig(),
+      getStoredSettings(),
+      getUnconfiguredIdentityKeys(),
+      listAuditLog(25),
+      getPaymentSettingsView(),
+      getMailSettingsView(),
+      isMailConfigured(),
+      crmConnection(),
+      getGstinLookupView(),
+      getFollowUpSettings(),
+    ]);
   // What the From header will actually say, after the stored-then-environment
   // fallback — not what is typed in the form, which may be blank and inheriting.
   const mailFrom = (await getMailConfig()).from;
@@ -215,6 +218,25 @@ export default async function AdminSettingsPage() {
                   {crmState.connected
                     ? "Pipeline events are being sent to the configured endpoint."
                     : crmState.detail}
+                </Td>
+              </Tr>
+              <Tr>
+                <Td className="font-medium text-graphite-900">
+                  <Link href="/admin/settings/follow-ups" className="text-accent-700 hover:underline">
+                    Quotation follow-ups
+                  </Link>
+                </Td>
+                <Td>
+                  {followUps.enabled ? (
+                    <Badge tone="success">On</Badge>
+                  ) : (
+                    <Badge tone="warning">Off</Badge>
+                  )}
+                </Td>
+                <Td className="text-[13px] text-ink-600">
+                  {followUps.enabled
+                    ? `A quotation nobody has answered is chased after ${followUps.schedule.join(", ")} day(s), provided a scheduler is calling the endpoint.`
+                    : "Nothing is chased on a clock. Staff can still send a follow-up by hand from any quotation."}
                 </Td>
               </Tr>
               <Tr>

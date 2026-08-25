@@ -392,7 +392,7 @@ moved on is reported and left alone.
 
 ---
 
-## Sending pipeline events to your own CRM
+## 10. Sending pipeline events to your own CRM
 
 Optional. Skip the whole section if you do not want the site pushing events
 anywhere — nothing about the pipeline depends on it, and the admin panel says
@@ -464,7 +464,59 @@ screen without reading a server log.
 
 ---
 
-## Housekeeping
+## 11. Chasing quotations nobody has answered
+
+A quotation that has been sent and not replied to is followed up on a schedule
+set in the admin panel, at *Settings → Quotation follow-ups*. It is **off** until
+somebody turns it on: a release should not start emailing a business's customers
+because it deployed.
+
+Sending one by hand needs none of this. Any member of sales can chase a
+quotation from the quotation's own page at any time, whatever the schedule says
+and even while it is paused for that quotation.
+
+**1. Decide the cadence.** *Settings → Quotation follow-ups*: which days after
+sending to chase (3, 7 and 14 by default), the minimum gap between two messages
+about one quotation, and whether to stop once the customer has written back. The
+screen also reports when the last automatic follow-up actually went out, which is
+how you find out that step 2 below was never done.
+
+**2. Give the scheduler a token**, exactly as for the CRM delivery route:
+
+```bash
+# On the server, in /srv/techzoid/deploy — generate a token and record it
+openssl rand -hex 32
+# Add it to the .env file used by docker compose:
+#   QUOTE_FOLLOWUP_TOKEN=<the value you just generated>
+cd /srv/techzoid/deploy && docker compose -f docker-compose.prod.yml up -d
+```
+
+Then one cron entry. **Daily, not hourly** — the schedule is expressed in days,
+so running it more often sends the same messages at the same times and only adds
+chances to hit a mail outage. Nine in the morning, Indian time, is 03:30 UTC:
+
+```bash
+crontab -e
+# 30 3 * * * curl -sS -X POST -H "x-follow-up-token: <the value>" https://techzoidtechnologies.com/api/quotes/follow-ups >/dev/null
+```
+
+Without `QUOTE_FOLLOWUP_TOKEN` set the route refuses everything and answers 404.
+That is the safe default for an endpoint whose whole job is sending email to
+customers.
+
+The run also expires quotations whose validity has lapsed, before it decides who
+to chase — so nobody is ever asked to proceed with pricing that stopped standing
+overnight. That means this cron line is also what keeps quotation statuses
+honest, whether or not follow-ups are switched on.
+
+**What it reports.** The response is JSON: how many quotations expired, how many
+were considered, how many follow-ups were sent, and how many failed. `skipped:
+true` means the feature is off or the schedule is empty — the run did nothing on
+purpose.
+
+---
+
+## 12. Housekeeping
 
 Two functions are safe to run on a schedule, and neither is a correctness
 requirement — expiry is also checked at the moment a customer responds:

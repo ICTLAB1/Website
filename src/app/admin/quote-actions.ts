@@ -18,6 +18,7 @@ import {
   variantUnitPrice,
 } from "@/lib/quote-service";
 import { addQuoteMessage, reviseQuote } from "@/lib/quote-revision";
+import { sendManualFollowUp } from "@/lib/quotes/follow-ups";
 import { fulfilOrder } from "@/lib/order-service";
 import {
   discountFromPercent,
@@ -687,6 +688,115 @@ export async function reviseQuotation(
   revalidatePath("/admin/quotes");
   revalidatePath(`/admin/quotes/${parsed.data.reference}`);
   redirect(`/admin/quotes/${result.reference}`);
+}
+
+const followUpSchema = z.object({
+  reference: referenceSchema("QTE"),
+  /*
+   * Short on purpose.
+   *
+   * This paragraph opens a chase, not a second quotation. Anything longer than
+   * a few sentences is a reply to a question the customer has asked, and that
+   * belongs in the quotation thread where the question is — which is a
+   * different action and leaves a different record.
+   */
+  note: z.string().trim().max(800).optional(),
+});
+
+/**
+ * Chases a quotation now, because somebody here decided to.
+ *
+ * Separate from the schedule and not counted against it: a salesperson who
+ * rings and then writes has not used up the customer's patience with automatic
+ * mail, and the gap rule in `lib/quotes/follow-ups` pushes the next automatic
+ * one back rather than cancelling it.
+ */
+export async function sendQuoteFollowUp(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const staff = await guard();
+  if (isFailure(staff)) return staff;
+
+  const parsed = followUpSchema.safeParse({
+    reference: formData.get("reference"),
+    note: formData.get("note"),
+  });
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: "That follow-up could not be sent.",
+      fieldErrors: fieldErrorsOf(parsed.error),
+    };
+  }
+
+  const note = parsed.data.note?.length ? parsed.data.note : null;
+  const result = await sendManualFollowUp(parsed.data.reference, staff.id, note);
+  if (!result.ok) return { status: "error", message: result.reason };
+
+  await recordAudit({
+    actorId: staff.id,
+    action: "admin.quote_followed_up",
+    entityType: "Quote",
+    entityId: parsed.data.reference,
+    metadata: { manual: true, withNote: note !== null },
+    ip: await clientIp(),
+  });
+
+  revalidatePath(`/admin/quotes/${parsed.data.reference}`);
+  return { status: "success", message: "Follow-up sent to the customer." };
+}
+
+const pauseSchema = z.object({
+  reference: referenceSchema("QTE"),
+  /*
+   * The desired end state, not a toggle.
+   *
+   * A form that says "flip it" acts on whatever the page happened to be
+   * showing, and two people looking at the same quotation then undo each
+   * other. Saying which state is wanted makes a repeated submission harmless.
+   */
+  paused: z.enum(["yes", "no"]),
+});
+
+/** Stops or restarts the automatic chasing on one quotation. */
+export async function setQuoteFollowUpsPaused(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const staff = await guard();
+  if (isFailure(staff)) return staff;
+
+  const parsed = pauseSchema.safeParse({
+    reference: formData.get("reference"),
+    paused: formData.get("paused"),
+  });
+  if (!parsed.success) return { status: "error", message: "That change could not be made." };
+
+  const paused = parsed.data.paused === "yes";
+  const updated = await prisma.quote.updateMany({
+    where: { reference: parsed.data.reference },
+    data: { followUpsPausedAt: paused ? new Date() : null },
+  });
+  if (updated.count === 0) {
+    return { status: "error", message: "That quotation no longer exists." };
+  }
+
+  await recordAudit({
+    actorId: staff.id,
+    action: paused ? "admin.quote_follow_ups_paused" : "admin.quote_follow_ups_resumed",
+    entityType: "Quote",
+    entityId: parsed.data.reference,
+    ip: await clientIp(),
+  });
+
+  revalidatePath(`/admin/quotes/${parsed.data.reference}`);
+  return {
+    status: "success",
+    message: paused
+      ? "Automatic follow-ups paused on this quotation."
+      : "Automatic follow-ups resumed on this quotation.",
+  };
 }
 
 const replySchema = z.object({

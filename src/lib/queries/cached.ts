@@ -52,6 +52,7 @@ export const DATE_KEYS = new Set([
   "expectedCloseOn",
   "expiresAt",
   "firstReplyAt",
+  "followUpsPausedAt",
   "fulfilledAt",
   "issuedAt",
   "lastAttemptAt",

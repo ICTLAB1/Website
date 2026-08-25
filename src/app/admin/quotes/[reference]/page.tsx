@@ -12,6 +12,8 @@ import {
   removeQuoteLine,
   replyOnQuote,
   reviseQuotation,
+  sendQuoteFollowUp,
+  setQuoteFollowUpsPaused,
   updateQuoteLine,
   updateQuoteTerms,
 } from "@/app/admin/quote-actions";
@@ -20,6 +22,12 @@ import { DELETABLE } from "@/lib/admin/deletable";
 import { isAdmin, requireStaff } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db";
 import { quoteVersions } from "@/lib/quote-revision";
+import {
+  blockReason,
+  dueStep,
+  followUpBlock,
+  getFollowUpSettings,
+} from "@/lib/quotes/follow-ups";
 import { QuoteThread } from "@/components/quotes/quote-thread";
 import { QuoteVersions } from "@/components/quotes/quote-versions";
 import { formatMoney } from "@/lib/money";
@@ -66,6 +74,19 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
         },
       },
       orders: { select: { reference: true, status: true } },
+      followUps: {
+        orderBy: { sentAt: "desc" },
+        select: {
+          id: true,
+          kind: true,
+          step: true,
+          toEmail: true,
+          note: true,
+          sentAt: true,
+          delivered: true,
+          sentBy: { select: { name: true } },
+        },
+      },
       messages: {
         orderBy: { createdAt: "asc" },
         select: {
@@ -112,6 +133,28 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
    * superseded by an edit.
    */
   const revisable = !isDraft && quote.status !== "ACCEPTED";
+
+  /*
+   * What the schedule would do with this quotation, right now.
+   *
+   * Computed with the same functions the scheduler uses rather than described
+   * separately, so the panel cannot tell a salesperson the next chase goes out
+   * on Thursday while the runner disagrees.
+   */
+  const followUpSettings = await getFollowUpSettings();
+  const followUpState = {
+    quote: {
+      ...quote,
+      status: quote.status as string,
+      followUps: quote.followUps.map((row) => ({ step: row.step, sentAt: row.sentAt })),
+      messages: quote.messages.filter((message) => !message.fromStaff).map((message) => ({
+        createdAt: message.createdAt,
+      })),
+      owner: null,
+    },
+  };
+  const manualBlock = followUpBlock(followUpState.quote, new Date());
+  const automatic = dueStep(followUpState.quote, followUpSettings, new Date());
 
   return (
     <div className="space-y-8">
@@ -715,6 +758,107 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
         <section>
           <h2 className="mb-4 text-[1.05rem]">Versions</h2>
           <QuoteVersions versions={versions} current={quote.reference} basePath="/admin/quotes" />
+        </section>
+      ) : null}
+
+      {/*
+        Chasing, and what the schedule intends to do next.
+
+        Shown on anything that has been sent — including a quotation that has
+        been answered or has expired, because the record of what was sent to a
+        customer does not stop being worth reading once the deal closed.
+      */}
+      {!isDraft ? (
+        <section className="max-w-3xl">
+          <h2 className="mb-4 text-[1.05rem]">Follow-ups</h2>
+
+          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <p className="text-meta text-ink-600">
+              {!followUpSettings.enabled
+                ? "Automatic follow-ups are switched off for the whole site. You can still send one by hand."
+                : "blocked" in automatic
+                  ? blockReason(automatic.blocked)
+                  : `Follow-up ${automatic.step} of ${followUpSettings.schedule.length} is due and will go out on the next scheduled run.`}
+            </p>
+
+            {quote.followUps.length > 0 ? (
+              <ul className="mt-4 space-y-3 border-t border-line pt-4">
+                {quote.followUps.map((row) => (
+                  <li key={row.id} className="text-meta">
+                    <div className="flex flex-wrap items-baseline gap-x-2">
+                      <span className="font-medium text-graphite-900">
+                        {row.kind === "AUTOMATIC" ? `Automatic — step ${row.step}` : "Sent by hand"}
+                      </span>
+                      <span className="text-ink-500">
+                        {formatDate(row.sentAt)} to {row.toEmail}
+                        {row.sentBy ? ` · ${row.sentBy.name}` : ""}
+                      </span>
+                      {/*
+                        Only the failure is called out. "Delivered" here means
+                        the mail server accepted it, which is not the same as
+                        the customer reading it, and a green tick claiming
+                        otherwise would be read as more than it is.
+                      */}
+                      {row.delivered ? null : (
+                        <span className="text-accent-700">not accepted by the mail server</span>
+                      )}
+                    </div>
+                    {row.note ? (
+                      <p className="mt-1 border-l-2 border-line pl-3 text-ink-600">{row.note}</p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-3 text-meta text-ink-500">Nothing has been sent yet.</p>
+            )}
+
+            {manualBlock === null ? (
+              <div className="mt-5 border-t border-line pt-5">
+                <AdminForm
+                  action={sendQuoteFollowUp}
+                  submitLabel="Send a follow-up now"
+                  pendingLabel="Sending…"
+                  variant="outline"
+                  hidden={{ reference: quote.reference }}
+                  compact
+                >
+                  <Field
+                    label="Add a line of your own"
+                    name="note"
+                    hint="Printed at the top of the message, above the standard wording. Leave it empty to send the standard note."
+                  >
+                    <Textarea name="note" rows={2} maxLength={800} />
+                  </Field>
+                </AdminForm>
+
+                <div className="mt-4 border-t border-line pt-4">
+                  <AdminForm
+                    action={setQuoteFollowUpsPaused}
+                    submitLabel={
+                      quote.followUpsPausedAt ? "Resume automatic follow-ups" : "Pause automatic follow-ups"
+                    }
+                    pendingLabel="Saving…"
+                    variant="outline"
+                    hidden={{
+                      reference: quote.reference,
+                      paused: quote.followUpsPausedAt ? "no" : "yes",
+                    }}
+                    compact
+                  />
+                  {quote.followUpsPausedAt ? (
+                    <p className="mt-2 text-label text-ink-500">
+                      Paused on {formatDate(quote.followUpsPausedAt)}. Sending one by hand still works.
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            ) : (
+              <p className="mt-4 border-t border-line pt-4 text-meta text-ink-500">
+                {blockReason(manualBlock)}
+              </p>
+            )}
+          </div>
         </section>
       ) : null}
 

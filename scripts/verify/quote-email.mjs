@@ -281,7 +281,7 @@ if (hadRow) {
   sql(
     `update "MailSettings" set provider = ${provider ? `'${provider}'::"MailProvider"` : `'SMTP'`},
        host = ${orNull(host)}, port = ${port === "" ? "null" : port},
-       secure = ${secure === "" ? "null" : secure === "t"},
+       secure = ${secure === "" ? "null" : secure === "true"},
        "fromAddress" = ${orNull(fromAddress)}, "quoteCopyEmail" = ${orNull(quoteCopyEmail)}
      where id = 'singleton'`,
   );

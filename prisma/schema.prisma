@@ -386,10 +386,11 @@ model User {
 
   /// Companies this member of staff looks after. Every lead, quotation, order,
   /// renewal and ticket for those companies has a name against it.
-  accountsManaged Company[]  @relation("AccountManager")
-  quotesOwned     Quote[]    @relation("QuoteOwner")
-  dealsOwned      Deal[]     @relation("DealOwner")
-  activities      Activity[] @relation("ActivityAuthor")
+  accountsManaged Company[]       @relation("AccountManager")
+  quotesOwned     Quote[]         @relation("QuoteOwner")
+  quoteFollowUps  QuoteFollowUp[] @relation("QuoteFollowUpSender")
+  dealsOwned      Deal[]          @relation("DealOwner")
+  activities      Activity[]      @relation("ActivityAuthor")
 
   sessions         Session[]
   resetTokens      PasswordResetToken[]
@@ -407,6 +408,7 @@ model User {
   savedMail        MailSettings[]
   savedGstinLookup GstinLookupSettings[]
   savedCrm         CrmSettings[]            @relation("CrmSettingsEditor")
+  savedFollowUps   QuoteFollowUpSettings[]  @relation("QuoteFollowUpSettingsEditor")
   quoteMessages    QuoteMessage[]
   ticketMessages   TicketMessage[]
   devices          Device[]
@@ -1076,10 +1078,21 @@ model Quote {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  /**
+   * When somebody here stopped the automatic chasing on this one.
+   * A date rather than a flag, because the useful question afterwards is not
+   * whether chasing is off but when it was switched off and by whom — the
+   * audit log carries the who. Null means the schedule applies.
+   * Only the automatic sequence is affected. A member of staff can always send
+   * a follow-up by hand; pausing is a statement about the schedule, not a gag.
+   */
+  followUpsPausedAt DateTime?
+
   items     QuoteItem[]
   orders    Order[]
   documents Document[]
   messages  QuoteMessage[]
+  followUps QuoteFollowUp[]
 
   /// One document number per version, so a revision keeps the number it was
   /// issued under and the pair still identifies exactly one row.
@@ -1110,6 +1123,108 @@ model QuoteMessage {
   createdAt DateTime         @default(now())
 
   @@index([quoteId])
+}
+
+/// Why a follow-up went out.
+enum QuoteFollowUpKind {
+  /// Sent by the schedule, with nobody pressing anything.
+  AUTOMATIC
+  /// Sent by a member of staff, in their own time and optionally in their own
+  /// words.
+  MANUAL
+}
+
+/**
+ * One chase on a quotation nobody has answered.
+ * A row per message rather than a counter on the quotation, because the
+ * questions asked afterwards are "what did we send them, and when" and "has
+ * anyone chased this at all" — and a number answers neither. It is also what
+ * stops a second run of the scheduler sending the same chase twice: the step is
+ * unique per quotation, so a duplicate is a constraint violation rather than a
+ * second email to a customer.
+ */
+model QuoteFollowUp {
+  id      String            @id @default(cuid())
+  quoteId String
+  quote   Quote             @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  kind    QuoteFollowUpKind
+
+  /// Which step of the schedule this was — 1 for the first automatic chase, 2
+  /// for the second. Null on a manual one, which is not part of the sequence
+  /// and does not consume a step.
+  step Int?
+
+  /// Where it went, recorded at the time. An enquiry's contact address can be
+  /// corrected later, and that must not rewrite where a message actually went.
+  toEmail String
+
+  /// What a member of staff added in their own words, where they added
+  /// anything. Null on an automatic follow-up, which says only what the
+  /// template says.
+  note String?
+
+  /// Who sent it. Null for the scheduler, and null again where a staff account
+  /// was deleted afterwards — the record of the message stays either way.
+  sentById String?
+  sentBy   User?   @relation("QuoteFollowUpSender", fields: [sentById], references: [id], onDelete: SetNull)
+
+  sentAt DateTime @default(now())
+
+  /**
+   * Whether the mail server took it.
+   * Not whether it was read, and not whether it was delivered to a human —
+   * neither is knowable from here, and a column that implies otherwise would
+   * be read as though it were. False means this application could not hand the
+   * message over, which is the one failure it can honestly report.
+   */
+  delivered Boolean @default(false)
+
+  /// One automatic follow-up per step per quotation. Postgres allows repeated
+  /// nulls in a unique index, so manual follow-ups are unconstrained by it,
+  /// which is right: staff may chase by hand as often as the customer will bear.
+  @@unique([quoteId, step])
+  @@index([quoteId])
+}
+
+/**
+ * When a quotation nobody has answered gets chased, and how often.
+ * A singleton, like the other settings rows. The cadence is a commercial
+ * decision that differs by business and changes with experience, so it is
+ * edited in the admin panel rather than compiled in — and it is off until
+ * somebody turns it on, because a system that starts emailing customers on
+ * deploy is not one anybody asked for.
+ */
+model QuoteFollowUpSettings {
+  id String @id @default("singleton")
+
+  /// Off by default. Configured is not the same as wanted.
+  enabled Boolean @default(false)
+
+  /**
+   * Days after a quotation was sent, one entry per chase.
+   * [3, 7, 14] sends three: three days after it went out, a week after, and a
+   * fortnight after. The list is the schedule *and* its length is the limit —
+   * there is no separate maximum to fall out of step with it. An empty list
+   * sends nothing, which is a legitimate way to say "manual only" without
+   * switching the feature off for everyone.
+   */
+  schedule Int[] @default([3, 7, 14])
+
+  /**
+   * The floor between two follow-ups on one quotation, whoever sent them.
+   * Without it a salesperson who chases by hand on day six is followed by the
+   * scheduler on day seven, and the customer gets two messages about the same
+   * quotation in as many days. A manual chase pushes the automatic one back.
+   */
+  minimumGapDays Int @default(2)
+
+  /// Stop chasing once the customer has written on the quotation thread. They
+  /// answered; a reminder that they have not is then simply untrue.
+  stopOnReply Boolean @default(true)
+
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  updatedBy   User?    @relation("QuoteFollowUpSettingsEditor", fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
 model QuoteItem {
