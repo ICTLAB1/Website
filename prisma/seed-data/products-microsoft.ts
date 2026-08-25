@@ -533,4 +533,98 @@ export const microsoftProducts: ProductSeed[] = [
       },
     ],
   },
+  /*
+   * ── added 25 August 2026, from the search index rather than the line card ──
+   *
+   * Neither of these was in the catalogue, and both are what this domain
+   * actually ranks for: "visual studio enterprise" at 13 and "microsoft visio
+   * plan 1" at 10 in India. Both positions were held by `/product-page/` URLs
+   * from the previous site, which this repository retires — and retiring a URL
+   * Google is still ranking, with nothing to send it to, throws the ranking
+   * away. So the products exist here, the redirects point at them, and the
+   * position has somewhere to land.
+   *
+   * No price, deliberately: `listPriceMinor: 0` is the absence of a price and
+   * not a price, the same convention the hardware catalogue uses. Neither
+   * product's Indian pricing is something this repository knows, and inventing
+   * a figure on a page a customer might quote from would be worse than showing
+   * none.
+   */
+  {
+    slug: "visual-studio-enterprise",
+    name: "Visual Studio Enterprise",
+    brand: "microsoft",
+    category: "business-applications",
+    shortDescription:
+      "The full Visual Studio IDE with its subscriber benefits, licensed per named developer.",
+    description:
+      "Visual Studio Enterprise is the top edition of Microsoft's development environment, licensed per named user rather than per machine — one developer may install it on as many devices as they work on. The subscription is the larger part of what is bought: alongside the IDE it carries development and test licences for most Microsoft server software, an Azure credit, and access to the Windows and Office release channels for testing.\n\nThe edition question is usually the commercial one. Professional covers the IDE for teams that do not need the enterprise testing and architecture tooling; Enterprise adds it along with the subscriber benefits that many organisations are already paying for separately elsewhere. We quote both against your actual developer count so the comparison is on your numbers rather than on a list price.",
+    features: [
+      "Per-user licensing — install on every device that developer works on",
+      "Development and test licences for Microsoft server software",
+      "Monthly Azure credit included with the subscription",
+      "Enterprise testing, profiling and architecture tooling",
+      "Standard or cloud subscription, with or without an existing agreement",
+    ],
+    compatibility: ["Windows 10 and 11", "Windows Server 2019 and later", "macOS via Visual Studio Code or remote development"],
+    keywords: [
+      "visual studio",
+      "visual studio enterprise",
+      "visual studio licence",
+      "developer tools",
+      "msdn subscription",
+    ],
+    licensingNotes: CSP_NOTE,
+    deliveryNotes: DELIVERY_SUBSCRIPTION,
+    supportNotes: SUPPORT_STANDARD,
+    popularity: 40,
+    availability: "ON_REQUEST",
+    purchaseMode: "ENQUIRY",
+    variants: [
+      // Zero is the absence of a price, not a price.
+      {
+        sku: "MS-VS-ENT-A1",
+        name: "Annual subscription, per named developer",
+        licenceType: "SUBSCRIPTION_ANNUAL",
+        termMonths: 12,
+        isDefault: true,
+        listPriceMinor: 0,
+      },
+    ],
+  },
+  {
+    slug: "visio-plan-1",
+    name: "Microsoft Visio Plan 1",
+    brand: "microsoft",
+    category: "productivity-collaboration",
+    shortDescription:
+      "Browser-based diagramming with 2 GB of OneDrive storage, licensed per user.",
+    description:
+      "Visio Plan 1 is the web edition: diagrams are created and edited in a browser, stored in OneDrive, and shared with anyone who has a Microsoft 365 licence — including people with no Visio licence at all, who can view and comment. It does not include the Windows desktop application, which is the single distinction that decides most purchases.\n\nPlan 2 adds that desktop app and the data-linked and engineering templates. Most organisations need a mixture: a handful of Plan 2 seats for the people who build the diagrams, Plan 1 for those who maintain and share them. We quote the mix rather than a single plan across the whole team.",
+    features: [
+      "Diagramming in the browser, no installation",
+      "2 GB of OneDrive storage for diagram files",
+      "Sharing and commenting for colleagues without a Visio licence",
+      "Starter templates for flowcharts, org charts and basic network diagrams",
+      "Files interchange with the Visio desktop application",
+    ],
+    compatibility: ["Any modern browser", "Microsoft 365 account required", "iOS and Android for viewing"],
+    keywords: ["visio", "visio plan 1", "diagramming", "flowchart", "org chart"],
+    licensingNotes: CSP_NOTE,
+    deliveryNotes: DELIVERY_SUBSCRIPTION,
+    supportNotes: SUPPORT_STANDARD,
+    popularity: 38,
+    availability: "ON_REQUEST",
+    purchaseMode: "ENQUIRY",
+    variants: [
+      {
+        sku: "MS-VISIO-P1-A1",
+        name: "Annual subscription, per user",
+        licenceType: "SUBSCRIPTION_ANNUAL",
+        termMonths: 12,
+        isDefault: true,
+        listPriceMinor: 0,
+      },
+    ],
+  },
 ];

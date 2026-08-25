@@ -20,6 +20,8 @@ import { moreBrands } from "./2026-08-more-brands";
 import { analyticsDisclosure } from "./2026-08-analytics-disclosure";
 import { secondAnalyticsProperty } from "./2026-08-second-analytics-property";
 import { consentDisclosure } from "./2026-08-consent-disclosure";
+import { rankingProducts } from "./2026-08-ranking-products";
+import { aboutTitle } from "./2026-08-about-title";
 import type { ContentMigration } from "./types";
 
 /**
@@ -53,6 +55,8 @@ export const contentMigrations: ContentMigration[] = [
   analyticsDisclosure,
   secondAnalyticsProperty,
   consentDisclosure,
+  rankingProducts,
+  aboutTitle,
 ];
 
 export type { ContentMigration };

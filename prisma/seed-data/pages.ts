@@ -555,7 +555,7 @@ export const pageSeeds: PageSeed[] = [
   },
   {
     "slug": "about",
-    "title": "About Us",
+    "title": "An enterprise IT procurement partner in India",
     "description": "An enterprise technology procurement partner, consolidating software licensing, cloud and IT solutions from many publishers into one commercial relationship.",
     "keywords": [
       "about",

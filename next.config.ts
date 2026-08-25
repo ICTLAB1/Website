@@ -200,6 +200,45 @@ const nextConfig: NextConfig = {
         statusCode: 301,
       },
 
+      /*
+       * ── three more of them, from a live SERP check on 25 August 2026 ─────
+       *
+       * The reading above was two days older and listed three ranking URLs.
+       * A live check of the twelve commercial keywords found five, and the two
+       * it added are the most valuable positions this domain holds: "visual
+       * studio enterprise" at 13 on 8,100 searches a month, and "microsoft
+       * visio plan 1" at 10.
+       *
+       * All three were falling through to the catch-all and answering 410 —
+       * which is the correct answer for a page nothing replaces, and the worst
+       * possible answer for a page Google is ranking today. A 410 is a request
+       * to forget the URL, and forgetting it means forgetting the position.
+       *
+       * Fusion 360 was simply a miss: the product has been in the catalogue all
+       * along. The other two now exist because of this — see the note in
+       * `seed-data/products-microsoft`.
+       */
+      {
+        // Position 27 for "fusion 360 price india". The product was here the
+        // whole time; the redirect was not.
+        source: "/product-page/autodesk-fusion-360-business-license",
+        destination: "/products/fusion-360",
+        statusCode: 301,
+      },
+      {
+        // Position 13 for "visual studio enterprise", 8,100 a month — the most
+        // valuable position on the domain.
+        source: "/product-page/microsoft-visual-studio-enterprise",
+        destination: "/products/visual-studio-enterprise",
+        statusCode: 301,
+      },
+      {
+        // Position 10 for "microsoft visio plan 1", 720 a month.
+        source: "/product-page/microsoft-visio-plan-1",
+        destination: "/products/visio-plan-1",
+        statusCode: 301,
+      },
+
       // ── Autodesk (15 links) ─────────────────────────────────────────────
       {
         // 5 links

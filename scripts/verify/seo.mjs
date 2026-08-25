@@ -331,6 +331,27 @@ console.log(
  * them must not fall through to a listing page, which is the failure this
  * replaces.
  */
+/*
+ * Two URLs left this list on 25 August 2026, and why matters more than the
+ * edit.
+ *
+ * `microsoft-visual-studio-enterprise` and `microsoft-visio-plan-1` were on it
+ * because the catalogue sold neither, and a 410 is the right answer for a page
+ * nothing replaces. Then a live check of Google's results found them at 13 and
+ * 10 in India — the two most valuable positions this domain holds — and a 410
+ * is a request to forget a URL, which means forgetting the position with it.
+ *
+ * Both products now exist and both URLs redirect to them, which is what the
+ * check below asserts. The rest of this list is unchanged: those URLs really do
+ * answer nothing, and pretending otherwise with a redirect to a brand page
+ * would earn a soft 404 rather than a ranking.
+ */
+const RECOVERED = [
+  ["/product-page/microsoft-visual-studio-enterprise", "/products/visual-studio-enterprise"],
+  ["/product-page/microsoft-visio-plan-1", "/products/visio-plan-1"],
+  ["/product-page/autodesk-fusion-360-business-license", "/products/fusion-360"],
+];
+
 const RETIRED = [
   "/product-page/3ds-max-business-license",
   "/product-page/autodesk-vault-business-license",
@@ -339,9 +360,7 @@ const RETIRED = [
   "/product-page/microsoft-project-plan-1",
   "/product-page/microsoft-project-plan-3",
   "/product-page/microsoft-sharepoint-online-plan-2",
-  "/product-page/microsoft-visio-plan-1",
   "/product-page/microsoft-visio-plan-2",
-  "/product-page/microsoft-visual-studio-enterprise",
   "/product-page/microsoft-visual-studio-professional",
   "/product-page/microsoft-windows-10-pro-64-bit-system-builder-oem",
   "/product-page/buycoreldrawgraphicssuite2025lifetimelicense",
@@ -360,6 +379,28 @@ for (const path of RETIRED) {
   else problems.push(`${path}: answered ${response.status}, not 410 Gone`);
 }
 console.log(`Retired URLs: ${gone} of ${RETIRED.length} answer 410 Gone.`);
+
+/*
+ * And the ones that rank: a permanent redirect to a page that answers the
+ * query, not a 410 and not a soft 404 into a listing.
+ */
+let recovered = 0;
+for (const [path, destination] of RECOVERED) {
+  const response = await fetch(`${BASE}${path}`, { redirect: "manual" });
+  const location = response.headers.get("location") ?? "";
+  if (response.status === 301 && new URL(location, BASE).pathname === destination) {
+    recovered += 1;
+  } else {
+    problems.push(
+      `${path}: answered ${response.status} to ${location || "nowhere"}, not 301 to ${destination}`,
+    );
+  }
+
+  // The destination has to exist, or the redirect is a 404 with extra steps.
+  const landed = await fetch(`${BASE}${destination}`);
+  if (landed.status !== 200) problems.push(`${destination}: answered ${landed.status}, not 200`);
+}
+console.log(`Ranking URLs: ${recovered} of ${RECOVERED.length} redirect to a page that answers.`);
 
 /*
  * A page in the sitemap that nothing links to.
