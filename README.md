@@ -321,6 +321,18 @@ it is the only `NEXT_PUBLIC_` value this application has. The tag loads on
 public pages only; see `src/lib/analytics.ts` for why the signed-in paths are
 excluded.
 
+**Tag Manager** (optional): `NEXT_PUBLIC_GTM_CONTAINER_ID`, one container id,
+defaulting to the one the business uses. Empty switches the container off
+without touching GA4 — the two are deliberately independent, so a broken
+container version cannot take the measurement down with it. Both load from the
+same host and share one `dataLayer`, so the consent defaults govern the
+container's tags exactly as they govern GA4's. Google's `<noscript>` frame is
+not rendered: Consent Mode is JavaScript, and a visitor who cannot run it
+cannot be asked. Anything published into the container is subject to the cookie
+policy like anything else on the site — a tag that sets a cookie the policy
+does not name makes the policy untrue, and the policy is the thing that has to
+change first.
+
 **Grievance officer** (legally required before launch):
 `COMPANY_GRIEVANCE_OFFICER_NAME`, `COMPANY_GRIEVANCE_OFFICER_EMAIL`,
 `COMPANY_GRIEVANCE_OFFICER_PHONE`. The Consumer Protection (E-Commerce) Rules

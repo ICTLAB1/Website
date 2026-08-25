@@ -7,23 +7,45 @@ import {
   CONSENT_KEY,
   GA_MEASUREMENT_IDS,
   GRANTED,
+  GTM_CONTAINER_ID,
+  GTM_ENABLED,
 } from "@/lib/analytics";
 
 /**
- * The Google tag, as Google issues it, under this site's content policy.
+ * The Google tags, as Google issues them, under this site's content policy.
  *
- * Two scripts: the loader, and the inline snippet that starts the queue and
- * configures the property. Both carry the per-request nonce, because
+ * One inline snippet that starts the queue, settles consent and configures the
+ * analytics properties, then two loaders: gtag.js for GA4 and gtm.js for the
+ * Tag Manager container. All three carry the per-request nonce, because
  * `script-src` here has no `'unsafe-inline'` and is not getting one — the
  * nonce is precisely the mechanism that lets a specific inline script run
  * without opening the page to every injected one.
  *
- * `strict-dynamic` then covers what gtag.js loads for itself, which is why
- * nothing here has to enumerate Google's own script hosts.
+ * `strict-dynamic` then covers what those two load for themselves, which is why
+ * nothing here has to enumerate Google's own script hosts, and why a tag added
+ * to the container next month needs no change to the policy.
  *
- * Whether it renders at all is `analyticsEnabled`, which the proxy consults for
- * the same request when it builds the policy. See `lib/analytics` for why the
- * signed-in paths are excluded rather than merely uninteresting.
+ * ## The container's snippet, rewritten
+ *
+ * Google issues Tag Manager as a snippet that builds its own `<script>` element
+ * at runtime. That version is here as a plain `<script src>` instead. The two
+ * are equivalent — the snippet pushes `gtm.start` and appends the same URL —
+ * but a tag written in the markup gets a real nonce, where one the page creates
+ * for itself is trusted only by `strict-dynamic`. Where the browser can check
+ * the stricter thing, let it.
+ *
+ * ## No `<noscript>` iframe
+ *
+ * Google's second snippet frames gtm.js for visitors without JavaScript. It is
+ * deliberately not here. Consent Mode is JavaScript: the defaults below, the
+ * banner, and a returning visitor's stored answer all need it. A frame that
+ * fires container tags for the one class of visitor who cannot be asked, and
+ * for whom the denial cannot be carried, would fire them for the only people
+ * guaranteed never to have consented. `frame-src` accordingly stays `'none'`.
+ *
+ * Whether any of this renders is `analyticsEnabled`, which the proxy consults
+ * for the same request when it builds the policy. See `lib/analytics` for why
+ * the signed-in paths are excluded rather than merely uninteresting.
  */
 export async function GoogleTag() {
   const list = await headers();
@@ -82,17 +104,48 @@ export async function GoogleTag() {
     )});}}catch(e){}`,
     "gtag('js', new Date());",
     ...GA_MEASUREMENT_IDS.map((id) => `gtag('config', '${id}');`),
+    /*
+     * Last, and after the consent defaults for the same reason everything else
+     * is: this is the event that starts the container, and a tag inside it
+     * would otherwise be free to fire before the page had said what it allows.
+     */
+    ...(GTM_ENABLED
+      ? ["dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});"]
+      : []),
   ].join("\n");
 
   return (
     <>
       {/*
-        Before the loader, not after it. gtag.js reads the queue the moment it
-        arrives, and a default pushed afterwards is a default that arrived too
+        Before the loaders, not after them. Both read the queue the moment they
+        arrive, and a default pushed afterwards is a default that arrived too
         late to apply to the first thing measured.
       */}
       <script nonce={nonce} dangerouslySetInnerHTML={{ __html: consentScript }} />
-      <script async nonce={nonce} src={`https://www.googletagmanager.com/gtag/js?id=${loader}`} />
+
+      {/*
+        `defer`, not `async`, and that is the whole of what keeps the order
+        above true.
+
+        React hoists a script marked `async` into <head> — a sensible
+        optimisation that starts the download sooner, and one that here moved
+        both loaders in front of the inline script they must follow. The
+        emitted document had gtag.js at byte 1,838 and the consent defaults at
+        byte 145,919. A deferred script is left where it is written, runs after
+        the document is parsed, and runs in source order, so the queue is
+        already correct before either loader touches it.
+      */}
+      {loader ? (
+        <script defer nonce={nonce} src={`https://www.googletagmanager.com/gtag/js?id=${loader}`} />
+      ) : null}
+
+      {GTM_ENABLED ? (
+        <script
+          defer
+          nonce={nonce}
+          src={`https://www.googletagmanager.com/gtm.js?id=${GTM_CONTAINER_ID}`}
+        />
+      ) : null}
 
       {/*
         Rendered by the same component that decides the tag runs at all, so a
