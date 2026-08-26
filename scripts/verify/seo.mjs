@@ -280,23 +280,28 @@ for (const [legacy, expected] of LISTING_REDIRECTS) {
 }
 
 /*
- * The six Arabic URLs with no English equivalent, and what they must not do.
+ * The `/ar/` catch-all, and the one way it goes wrong.
  *
- * A blanket `/ar/:path*` redirect would answer a question about Office 2021
- * with the home page. These are meant to 404 — the check is that nobody has
- * since added the catch-all that would make them look handled.
+ * `/ar/:path*` → `/` now sweeps whatever the ten named Arabic rules miss. It
+ * has to remain the last of them: Next.js applies the first matching rule, so
+ * a catch-all moved above the named ones swallows all ten and quietly sends
+ * mapped URLs to the home page instead of to the product they were about.
+ *
+ * Nothing about that failure is visible — every URL still answers 301, the
+ * Search Console report still clears — which is exactly why it is checked. The
+ * named destinations are asserted in RECLAIMED above; this asserts the tail
+ * still reaches the home page rather than something unexpected, so the two
+ * halves together prove the ordering.
  */
-const ARABIC_WITHOUT_EQUIVALENT = [
-  "/ar/product-page/microsoft-windows-10-home",
-  "/ar/product-page/microsoft-office-2021-professional-plus",
-];
-for (const legacy of ARABIC_WITHOUT_EQUIVALENT) {
-  const response = await fetch(BASE + legacy, { redirect: "manual" });
+{
+  const response = await fetch(BASE + "/ar/product-page/microsoft-windows-10-home", {
+    redirect: "manual",
+  });
   const location = response.headers.get("location");
   const landed = location ? new URL(location, BASE).pathname : null;
-  if (landed === "/" || landed === "/products") {
+  if (landed !== "/") {
     problems.push(
-      `${legacy} has no equivalent here and redirects to ${landed}; that is a soft 404, not a fix`,
+      `the /ar/ catch-all lands on ${landed ?? response.status}, not /; check the rule order`,
     );
   }
 }
