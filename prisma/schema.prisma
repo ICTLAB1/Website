@@ -748,6 +748,19 @@ model Product {
   formFactor FormFactor?
 
   /// The manufacturer's part number for the model as listed. Folded into
+  /// Search-result title, where the product's own name is not what people type.
+  ///
+  /// A name is what the thing is called and belongs in the heading and on the
+  /// card; a title is what a search result shows, and "Autodesk Civil 3D" tells
+  /// a person searching "civil 3d license price" nothing about why this result
+  /// rather than the next. Null means the name is used, which is right for most
+  /// of the catalogue.
+  seoTitle       String?
+
+  /// Search-result description, overriding the sentence composed from
+  /// `shortDescription`. Same reasoning, and the same default when null.
+  seoDescription String?
+
   /// `searchText`, because it is what a procurement officer pastes from a
   /// tender document.
   partNumber String?

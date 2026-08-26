@@ -57,6 +57,17 @@ const SOCIAL_CARD = {
 
 export function buildMetadata(input: {
   title: string;
+  /**
+   * Use the title exactly as given, without the site-wide `%s | TechZoid`
+   * suffix the root layout appends.
+   *
+   * For a title somebody wrote for the search result. The suffix is right when
+   * a page supplies its own name and the layout completes it; it is wrong when
+   * the whole string has been composed to fit sixty-two characters, because
+   * appending eleven more either pushes it past the cut or repeats a trading
+   * name the author already placed.
+   */
+  absoluteTitle?: boolean;
   description: string;
   path: string;
   type?: "website" | "article";
@@ -74,7 +85,7 @@ export function buildMetadata(input: {
   const siteName = config.tradingName;
 
   return {
-    title: input.title,
+    title: input.absoluteTitle ? { absolute: input.title } : input.title,
     description: input.description,
     ...(input.keywords?.length ? { keywords: input.keywords } : {}),
     alternates: { canonical: url },

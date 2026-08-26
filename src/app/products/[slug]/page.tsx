@@ -57,7 +57,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     });
   }
 
+  const seoTitle = product.seoTitle?.trim();
+
   return buildMetadata({
+    // An authored title is the whole string; the layout's `%s | TechZoid`
+    // template must not append to something already composed to fit.
+    absoluteTitle: Boolean(seoTitle),
     // Just the product name. It used to append "— {Brand} Licensing", which
     // repeated a word already inside almost every name ("Adobe Acrobat Pro for
     // Teams") and pushed the title past what a search result will show.
@@ -70,7 +75,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     // Desktop workstation" and "HP ProOne 440 G9 All-in-One — Commercial
     // all-in-one" repeat the noun back at the reader inside sixty characters of
     // a search result, which is the one place there is no room to.
-    title: product.formFactor ? hardwareTitle(product.name, product.formFactor) : product.name,
+    /*
+     * The override first, where somebody has written one.
+     *
+     * A name is what the product is called and belongs in the heading and on
+     * the card. A title is what a search result shows, and the two are not the
+     * same job: "Autodesk Civil 3D" tells a person searching "civil 3d licence
+     * price" nothing about why this result rather than the next one. Null on
+     * almost every row, which keeps the derived title below.
+     */
+    title: seoTitle
+      ? seoTitle
+      : product.formFactor
+        ? hardwareTitle(product.name, product.formFactor)
+        : product.name,
     /*
      * A short description reads well under a heading and badly in a search
      * result, where a third of a line looks like a page with nothing on it.
@@ -79,7 +97,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
      * across the site already, and never anything specific to the product that
      * the record does not itself say.
      */
-    description: metaDescription(
+    description: product.seoDescription?.trim()
+      ? product.seoDescription.trim()
+      : metaDescription(
       product.shortDescription,
       `Supplied by TechZoid on a single quotation with GST invoicing, alongside your other ${product.brand.name} purchasing.`,
       "Supplied by TechZoid on a single quotation, with GST invoicing and one purchase order across brands.",

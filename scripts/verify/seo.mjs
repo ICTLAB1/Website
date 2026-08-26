@@ -194,6 +194,77 @@ for (const [legacy, expected, links] of RECLAIMED) {
  * page answers a different question from the one the visitor asked, and Google
  * scores it as a soft 404 rather than as a redirect.
  */
+/*
+ * The pages rewritten for the search result, checked in the bytes.
+ *
+ * A title composed to sixty-two characters is composed against the string the
+ * SERP shows, and the root layout appends "| TechZoid" to anything that is not
+ * marked absolute. That is how the first attempt shipped "… | TechZoid |
+ * TechZoid" at seventy-three characters: correct in the database, truncated on
+ * the page. Only the rendered document shows it.
+ */
+/** The handful of entities a title or description actually picks up. */
+function decodeEntities(value) {
+  return value
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&#x2F;/g, "/")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&");
+}
+
+const REWRITTEN = [
+  "/products/autodesk-civil-3d",
+  "/products/revit",
+  "/products/visio-plan-1",
+  "/products/autocad",
+  "/products/coreldraw-graphics-suite",
+  "/microsoft-365",
+  "/blog/what-is-a-digital-licence",
+];
+
+for (const path of REWRITTEN) {
+  const html = await (await fetch(BASE + path)).text();
+  /*
+   * Decoded before it is measured. `&#x27;` is six characters in the source
+   * and one apostrophe in the result, and counting the source reported a
+   * sixty-two character title as sixty-seven — a failure against a page that
+   * was correct.
+   */
+  const title = decodeEntities(/<title>([^<]*)<\/title>/.exec(html)?.[1] ?? "");
+  const description = decodeEntities(
+    /<meta name="description" content="([^"]*)"/.exec(html)?.[1] ?? "",
+  );
+
+  if (title.length > 62) {
+    problems.push(`${path}: title is ${title.length} characters and will truncate — "${title}"`);
+  }
+  if (/TechZoid.*TechZoid/.test(title)) {
+    problems.push(`${path}: the trading name appears twice in the title — "${title}"`);
+  }
+  if (description.length < 145 || description.length > 165) {
+    problems.push(`${path}: description is ${description.length} characters, outside 145-165`);
+  }
+  /*
+   * The claims this business cannot make. A partner designation is gated by
+   * `publicPartnerLabel`, and no turnaround is committed anywhere on the site;
+   * a meta description is the easiest place for either to reappear, because
+   * nobody reads one after it ships.
+   */
+  for (const claim of [
+    /authorised reseller/i,
+    /authorized reseller/i,
+    /same[- ]day (activation|delivery)/i,
+    /within 24 hours/i,
+    /one working day/i,
+  ]) {
+    if (claim.test(description)) {
+      problems.push(`${path}: description claims "${claim.source}", which nothing on this site backs`);
+    }
+  }
+}
+
 const dumped = RECLAIMED.filter(([, expected]) => expected === "/products");
 for (const [legacy] of dumped) {
   problems.push(`${legacy} is listed as redirecting to the generic catalogue listing`);
@@ -444,14 +515,18 @@ const RETIRED = [
   "/product-page/microsoft-sharepoint-online-plan-2",
   "/product-page/microsoft-visio-plan-2",
   "/product-page/microsoft-visual-studio-professional",
-  "/product-page/microsoft-windows-10-pro-64-bit-system-builder-oem",
-  "/product-page/buycoreldrawgraphicssuite2025lifetimelicense",
+  /*
+   * Windows 10 Pro OEM, the CorelDRAW page and `/shop-1` were here until
+   * Search Console showed what they were costing: 603, 1,137 and a listing
+   * page's worth of impressions, all answering "delete me". They redirect now
+   * and are asserted in RECLAIMED above; a URL cannot be in both lists, and
+   * this is the half that had to give way.
+   */
   // The prefixes, probed with a slug that never existed.
   "/product-page/nothing-was-ever-here",
   "/service-page/nothing-was-ever-here",
   "/blog/categories/nothing-was-ever-here",
   "/post/nothing-was-ever-here",
-  "/shop-1",
 ];
 
 let gone = 0;

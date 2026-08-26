@@ -14,6 +14,8 @@ export type ProductFormValues = {
   brandId: string;
   categoryId: string;
   shortDescription: string;
+  seoTitle: string | null;
+  seoDescription: string | null;
   description: string;
   status: string;
   availability: string;
@@ -107,6 +109,31 @@ export function ProductForm({
             >
 <Textarea name="description" rows={10} defaultValue={product?.description} required />
 </Field>
+          </Fieldset>
+
+          <Fieldset
+            legend="Search result"
+            description="What Google shows. Left blank, the name and short description above are used, which is right for most of the catalogue."
+          >
+            <Field
+              name="seoTitle"
+              label="Title (optional)"
+              hint="Up to 62 characters, or a search result truncates it. Lead with the words people type — a name says what the product is, a title has to say why this result."
+            >
+              <Input name="seoTitle" maxLength={70} defaultValue={product?.seoTitle ?? ""} />
+            </Field>
+            <Field
+              name="seoDescription"
+              label="Description (optional)"
+              hint="145 to 165 characters. Claim only what this page already says: a partner designation not on file, or a turnaround nobody has committed to, is a claim the rest of the site refuses to make."
+            >
+              <Textarea
+                name="seoDescription"
+                rows={3}
+                maxLength={200}
+                defaultValue={product?.seoDescription ?? ""}
+              />
+            </Field>
           </Fieldset>
 
           <Fieldset legend="Structured detail" description="One item per line.">
