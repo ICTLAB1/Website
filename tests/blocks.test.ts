@@ -134,6 +134,74 @@ describe("statBar", () => {
   });
 });
 
+describe("price comparison", () => {
+  const valid = {
+    heading: "Workplace against the mainstream alternative",
+    ourSlug: "zoho-workplace",
+    againstSlugs: ["microsoft-365-business-standard"],
+    note: "Per seat, annual commitment, exclusive of GST.",
+  };
+
+  it("accepts a subject and the thing it is compared against", () => {
+    expect(BLOCK_SCHEMAS.PRICE_COMPARISON.safeParse(valid).success).toBe(true);
+  });
+
+  it("will not render a comparison with nothing to compare against", () => {
+    /*
+     * One column is not a comparison, and a block that accepted an empty list
+     * would put a lone priced card on a page under a heading promising two.
+     */
+    expect(BLOCK_SCHEMAS.PRICE_COMPARISON.safeParse({ ...valid, againstSlugs: [] }).success).toBe(
+      false,
+    );
+  });
+
+  it("requires a subject", () => {
+    for (const ourSlug of ["", "   ", undefined]) {
+      expect(BLOCK_SCHEMAS.PRICE_COMPARISON.safeParse({ ...valid, ourSlug }).success).toBe(false);
+    }
+  });
+
+  it("caps the alternatives at three, which is what fits a row", () => {
+    const four = ["a", "b", "c", "d"];
+    expect(BLOCK_SCHEMAS.PRICE_COMPARISON.safeParse({ ...valid, againstSlugs: four }).success).toBe(
+      false,
+    );
+    expect(
+      BLOCK_SCHEMAS.PRICE_COMPARISON.safeParse({ ...valid, againstSlugs: four.slice(0, 3) }).success,
+    ).toBe(true);
+  });
+
+  it("takes no price of its own", () => {
+    /*
+     * The figures are read from the catalogue at render time. A price field
+     * here would be a number typed into content, wrong the day a price list is
+     * imported — and this site imports several thousand rows at a time.
+     */
+    const parsed = BLOCK_SCHEMAS.PRICE_COMPARISON.parse({
+      ...valid,
+      price: "₹2,400",
+      ourPrice: 240000,
+    });
+    expect(parsed).not.toHaveProperty("price");
+    expect(parsed).not.toHaveProperty("ourPrice");
+  });
+
+  it("is seeded with slugs that name no real product", () => {
+    /*
+     * Adding this block anywhere must not publish a comparison nobody wrote.
+     * The seed has to satisfy the schema — every slug is a non-empty string —
+     * so it uses placeholders that match nothing and render as "Nothing to
+     * compare" until an author fills them in.
+     */
+    const seed = BLOCK_SEEDS.PRICE_COMPARISON;
+    for (const slug of [seed.ourSlug, ...seed.againstSlugs]) {
+      expect(slug.length).toBeGreaterThan(0);
+      expect(slug).toMatch(/-slug$/);
+    }
+  });
+});
+
 describe("block seeds", () => {
   it("every block type has a seed that satisfies its own schema", () => {
     // A seed that fails validation makes that block type impossible to add,

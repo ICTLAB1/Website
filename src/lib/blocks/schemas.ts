@@ -186,6 +186,39 @@ export const productGridSchema = z.object({
   action: z.object({ label: text(60), href: safeHref }).optional(),
 });
 
+/**
+ * A like-for-like price comparison, against a named alternative.
+ *
+ * Separate from `PRODUCT_GRID` on purpose, and the separation is the point.
+ * A product grid is a buying surface: every card carries an Add to Enquiry
+ * button and any sale price on it renders as a discount badge with the list
+ * price struck through. That is right for the things this company sells and
+ * wrong for a competitor named to make an argument — the Zoho Workplace page
+ * put Microsoft 365 in its grid to say "ours costs less", and the layout gave
+ * the alternative the only promotional badge on the page.
+ *
+ * So this renders no purchase action and no badge. What it does render is the
+ * price a buyer would actually pay for each, read live from the catalogue: a
+ * comparison built on a competitor's list price while the site quietly sells it
+ * cheaper is a comparison that flatters itself, and one typed into page content
+ * is wrong the day either price moves.
+ */
+export const priceComparisonSchema = z.object({
+  eyebrow: optionalText(80),
+  heading: optionalText(200),
+  description: optionalText(600),
+  /** The product this page is about — marked as the subject of the comparison. */
+  ourSlug: text(200),
+  /** What it is being compared against. Ordered as authored. */
+  againstSlugs: z.array(z.string().trim().min(1).max(200)).min(1).max(3),
+  /**
+   * What the figures are measured on — "per seat, annual commitment", and any
+   * caveat. Not generated: the basis differs per comparison and stating the
+   * wrong one is worse than stating none.
+   */
+  note: optionalText(300),
+});
+
 export const collectionGridSchema = z.object({
   eyebrow: optionalText(80),
   heading: optionalText(200),
@@ -314,6 +347,7 @@ export const BLOCK_SCHEMAS = {
   SPLIT_PANEL: splitPanelSchema,
   STAT_BAR: statBarSchema,
   PRODUCT_GRID: productGridSchema,
+  PRICE_COMPARISON: priceComparisonSchema,
   COLLECTION_GRID: collectionGridSchema,
   FAQ: faqSchema,
   COMPANY_INFO: companyInfoSchema,
@@ -370,6 +404,19 @@ export const BLOCK_SEEDS: { [T in BlockType]: BlockData<T> } = {
   SPLIT_PANEL: splitPanelSchema.parse({ heading: "New panel" }),
   STAT_BAR: statBarSchema.parse({ items: [{ label: "Products", source: "productCount" }] }),
   PRODUCT_GRID: productGridSchema.parse({ source: "featured", limit: 6 }),
+  /*
+   * Placeholder slugs that match no product, so a newly added block renders
+   * "Nothing to compare" until an author names two. They cannot be empty —
+   * every slug here is a non-empty string by schema, and an empty seed throws
+   * at module load rather than at the point of use — and they must not name a
+   * real competitor, or adding this block anywhere would publish a comparison
+   * nobody wrote.
+   */
+  PRICE_COMPARISON: priceComparisonSchema.parse({
+    heading: "How it compares",
+    ourSlug: "our-product-slug",
+    againstSlugs: ["alternative-product-slug"],
+  }),
   COLLECTION_GRID: collectionGridSchema.parse({ kind: "brands", limit: 8 }),
   FAQ: faqSchema.parse({ source: "page" }),
   COMPANY_INFO: companyInfoSchema.parse({ heading: "Company information" }),
@@ -392,6 +439,7 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
   SPLIT_PANEL: "Split panel",
   STAT_BAR: "Statistics bar",
   PRODUCT_GRID: "Product grid",
+  PRICE_COMPARISON: "Price comparison",
   COLLECTION_GRID: "Collection grid",
   FAQ: "FAQ",
   COMPANY_INFO: "Company information",

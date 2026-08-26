@@ -47,6 +47,7 @@ const SHAPES: Record<BlockType, string> = {
   SPLIT_PANEL: `{ "eyebrow"?, "heading", "description"?, "bulletsIntro"?, "bullets"?: ["…"], "tiles"?: ["…"], "logo"?: { "src": "/marks/…", "alt" } }`,
   STAT_BAR: `{ "eyebrow"?, "heading"?, "items": [{ "label", "source": "literal" | "productCount" | "skuCount" | "brandCount" | "categoryCount", "value"? }] }`,
   PRODUCT_GRID: `{ "eyebrow"?, "heading"?, "source": "manual" | "featured" | "popular" | "brand" | "category", "slugs"?: ["…"], "ref"?, "limit"?, "action"?: { "label", "href" } }`,
+  PRICE_COMPARISON: `{ "eyebrow"?, "heading"?, "description"?, "ourSlug", "againstSlugs": ["…"], "note"? }  — prices are read from the catalogue, never typed here; the alternative renders with no Add to Enquiry and no discount badge`,
   COLLECTION_GRID: `{ "eyebrow"?, "heading"?, "description"?, "kind": "brands" | "categories" | "services" | "posts" | "postCategories", "limit"?, "layout"?: "grid" | "strip", "action"?: { "label", "href" } }`,
   FAQ: `{ "heading"?, "source": "page" | "brand" | "topic" | "manual", "ref"?, "items"?: [{ "question", "answer" }] }`,
   CTA_BANNER: `{ "heading", "body"?, "primaryCta"?, "secondaryCta"?, "showContactEmail"?: false, "tone"?: "dark" | "light" | "accent" }`,

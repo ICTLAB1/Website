@@ -54,6 +54,35 @@ const getCounts = cached(
   [tags.catalogue, tags.brands, tags.categories],
 );
 
+/**
+ * The products a comparison names, in the order it names them.
+ *
+ * Its own function rather than a call into `productsFor`, because the ordering
+ * rule is different and it matters: a grid renders whatever the author listed,
+ * while a comparison must put the subject first and the alternatives after it —
+ * a comparison whose columns silently reordered would still read as a
+ * comparison and say something else.
+ *
+ * Missing rows are dropped, as they are for a grid. A named product may have
+ * been archived since the page was written, and the renderer says so rather
+ * than showing a column with a hole in it.
+ */
+async function comparisonFor(
+  block: Extract<ParsedBlock, { type: "PRICE_COMPARISON" }>,
+): Promise<ProductListItem[]> {
+  const slugs = [block.data.ourSlug, ...block.data.againstSlugs].filter(Boolean);
+  if (slugs.length === 0) return [];
+
+  const rows = await prisma.product.findMany({
+    where: { status: "ACTIVE", deletedAt: null, slug: { in: slugs } },
+    select: productListSelect,
+  });
+
+  return slugs
+    .map((slug) => rows.find((row) => row.slug === slug))
+    .filter((row): row is ProductListItem => row !== undefined);
+}
+
 async function productsFor(
   block: Extract<ParsedBlock, { type: "PRODUCT_GRID" }>,
 ): Promise<ProductListItem[]> {
@@ -256,6 +285,7 @@ export async function resolveBlocks(
   await Promise.all([
     ...blocks.map(async (block) => {
       if (block.type === "PRODUCT_GRID") products.set(block.id, await productsFor(block));
+      else if (block.type === "PRICE_COMPARISON") products.set(block.id, await comparisonFor(block));
       else if (block.type === "COLLECTION_GRID") collections.set(block.id, await collectionFor(block));
       else if (block.type === "FAQ") faqs.set(block.id, await faqsFor(block, page));
       else if (block.type === "TESTIMONIALS") {

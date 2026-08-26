@@ -22,6 +22,7 @@ import { secondAnalyticsProperty } from "./2026-08-second-analytics-property";
 import { consentDisclosure } from "./2026-08-consent-disclosure";
 import { rankingProducts } from "./2026-08-ranking-products";
 import { aboutTitle } from "./2026-08-about-title";
+import { workplaceComparison } from "./2026-08-workplace-comparison";
 import type { ContentMigration } from "./types";
 
 /**
@@ -57,6 +58,7 @@ export const contentMigrations: ContentMigration[] = [
   consentDisclosure,
   rankingProducts,
   aboutTitle,
+  workplaceComparison,
 ];
 
 export type { ContentMigration };

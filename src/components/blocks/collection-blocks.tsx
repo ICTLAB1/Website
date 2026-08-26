@@ -8,6 +8,10 @@ import { BlockHeading, BlockSection } from "@/components/blocks/primitives";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
 import { certificationLogo } from "@/lib/certification-logo";
+import { effectivePriceMinor, formatTerm } from "@/lib/money";
+import { showPrice, statesTaxSeparately } from "@/lib/price-display";
+import { getDisplayCurrency } from "@/lib/display-currency";
+import { isHardware } from "@/lib/catalogue/hardware";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 import { formatDate } from "@/lib/utils";
@@ -54,6 +58,134 @@ export function ProductGridBlock({
         />
       ) : (
         <ProductGrid products={products} />
+      )}
+    </BlockSection>
+  );
+}
+
+/**
+ * Two or three products side by side, priced, with nothing to click but a link.
+ *
+ * ## Why this is not a product grid
+ *
+ * A grid is a buying surface. Every card on it carries an Add to Enquiry
+ * button, and a card whose variant has a sale price renders a discount badge
+ * with the list price struck through. Put a competitor in one — which the Zoho
+ * Workplace page did, to argue that Zoho costs less — and the competitor gets
+ * the only promotional badge on the page. The layout ends up arguing against
+ * the copy.
+ *
+ * So: no purchase action, no badge, no strike-through. A reader can follow a
+ * name to its own page and buy it there if that is what they want, which is the
+ * honest amount of friction for something named as the alternative.
+ *
+ * ## The figures
+ *
+ * Read from the catalogue at render time, never typed into the page. A number
+ * written into content is wrong the day a price list is imported, and this site
+ * imports several thousand rows at a time.
+ *
+ * It is the *effective* price on both sides — what a buyer would actually pay,
+ * sale included. Comparing your own selling price against a competitor's list
+ * price while quietly selling that competitor cheaper is a comparison that
+ * flatters itself, and the badge being gone is not a licence to quote the
+ * higher number.
+ *
+ * The quote-only rule is the grid's, unchanged: hardware, an absent variant, a
+ * zero price and an enquiry-only product all decline to show a figure. This is
+ * the one place a price could otherwise escape the catalogue's own rules by
+ * being rendered somewhere new.
+ */
+export async function PriceComparisonBlock({
+  data,
+  products,
+  tone,
+}: {
+  data: BlockData<"PRICE_COMPARISON">;
+  products: ProductListItem[];
+  tone?: "plain" | "muted";
+}) {
+  const display = await getDisplayCurrency();
+
+  return (
+    <BlockSection tone={tone}>
+      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
+
+      {products.length < 2 ? (
+        /*
+         * One column is not a comparison. A named product may have been
+         * archived since the page was written, and half a comparison makes a
+         * claim the author did not — so the section says nothing instead.
+         */
+        <EmptyState
+          title="Nothing to compare"
+          description="The products referenced by this section are not currently available."
+        />
+      ) : (
+        <>
+          <Reveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {products.map((product) => {
+              const variant = product.variants[0];
+              const price = variant
+                ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor)
+                : 0;
+              const quoteOnly =
+                isHardware(product) ||
+                !variant ||
+                price <= 0 ||
+                product.purchaseMode === "ENQUIRY";
+              const ours = product.slug === data.ourSlug;
+
+              return (
+                <div
+                  key={product.id}
+                  className={
+                    ours
+                      ? "flex flex-col rounded-[--radius-lg] border-2 border-accent-600 bg-white p-5"
+                      : "flex flex-col rounded-[--radius-lg] border border-line bg-white p-5"
+                  }
+                >
+                  <p className="text-label uppercase tracking-[0.12em] text-ink-500">
+                    {product.brand.name}
+                  </p>
+                  <h3 className="mt-1 text-body font-semibold text-graphite-900">{product.name}</h3>
+
+                  <div className="mt-4">
+                    {quoteOnly ? (
+                      <p className="text-lead font-semibold text-graphite-900">On enquiry</p>
+                    ) : (
+                      <>
+                        <p className="text-lead font-semibold text-graphite-900">
+                          {showPrice(price, variant.gstRatePercent, display)}
+                        </p>
+                        <p className="mt-1 text-label text-ink-500">
+                          {formatTerm(variant.termMonths)}
+                          {statesTaxSeparately(display)
+                            ? `, excl. GST (${variant.gstRatePercent}%)`
+                            : ""}
+                        </p>
+                      </>
+                    )}
+                  </div>
+
+                  {/*
+                    A link, not a button. The alternative is named to be
+                    understood, not sold from here — and the subject of the
+                    comparison has its own grid above this one to be bought from.
+                  */}
+                  <Link
+                    href={`/products/${product.slug}`}
+                    className="underline-grow mt-auto pt-4 text-meta font-medium text-accent-700"
+                  >
+                    View details
+                  </Link>
+                </div>
+              );
+            })}
+          </Reveal>
+
+          {data.note ? <p className="mt-4 text-meta text-ink-500">{data.note}</p> : null}
+        </>
       )}
     </BlockSection>
   );
