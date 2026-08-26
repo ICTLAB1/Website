@@ -23,6 +23,7 @@ import { consentDisclosure } from "./2026-08-consent-disclosure";
 import { rankingProducts } from "./2026-08-ranking-products";
 import { aboutTitle } from "./2026-08-about-title";
 import { workplaceComparison } from "./2026-08-workplace-comparison";
+import { digitalLicenceArticle } from "./2026-08-digital-licence-article";
 import type { ContentMigration } from "./types";
 
 /**
@@ -59,6 +60,7 @@ export const contentMigrations: ContentMigration[] = [
   rankingProducts,
   aboutTitle,
   workplaceComparison,
+  digitalLicenceArticle,
 ];
 
 export type { ContentMigration };
