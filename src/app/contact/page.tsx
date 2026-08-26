@@ -5,6 +5,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ContactForm } from "@/components/marketing/contact-form";
 import { buildMetadata } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
+import { socialLinks } from "@/lib/social";
 
 export const metadata: Metadata = buildMetadata({
   title: "Contact Sales",
@@ -15,6 +16,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default async function ContactPage() {
   const config = await getSiteConfig();
+  const social = socialLinks(config.profileUrls);
 
   /**
    * Sales only. Support used to be a third card here, which meant a customer
@@ -153,6 +155,29 @@ export default async function ContactPage() {
                   ))}
                 </dl>
               ) : null}
+            </div>
+          ) : null}
+
+          {social.length > 0 ? (
+            <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <h2 className="text-[15px] font-semibold text-graphite-900">Elsewhere</h2>
+              <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
+                The same business, on the networks it posts to.
+              </p>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {social.map((link) => (
+                  <li key={link.name}>
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="me noopener noreferrer"
+                      className="inline-flex h-8 items-center rounded-[--radius-md] border border-line px-3 text-[13px] text-ink-600 transition-colors hover:border-graphite-900 hover:text-graphite-900"
+                    >
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           ) : null}
 

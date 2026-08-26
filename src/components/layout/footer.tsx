@@ -2,10 +2,12 @@ import Link from "next/link";
 import { Logo } from "@/components/layout/logo";
 import { getNavigation } from "@/lib/queries/navigation";
 import { getSiteConfig } from "@/lib/site-config";
+import { socialLinks } from "@/lib/social";
 import { CertificationStrip } from "@/components/layout/certification-strip";
 
 export async function Footer() {
   const config = await getSiteConfig();
+  const social = socialLinks(config.profileUrls);
   const navigation = await getNavigation();
   const year = new Date().getFullYear();
 
@@ -104,6 +106,48 @@ export async function Footer() {
                 </div>
               ) : null}
             </dl>
+
+            {/*
+              The profiles, finally visible.
+
+              These have been in the settings for weeks and reached only the
+              `sameAs` in the structured data — a claim to a search engine that
+              those pages and this site are one business, published while no
+              visitor was ever shown a link. Named rather than drawn: there is
+              no licensed artwork for these marks here, and a logo reproduced
+              from memory is a brand's mark slightly wrong on a company's own
+              website.
+
+              Only the recognised networks. The same setting holds a GeM seller
+              profile and a directory listing on other deployments, and neither
+              belongs under "Follow".
+            */}
+            {social.length > 0 ? (
+              <div className="mt-6">
+                <h2 className="text-label font-semibold uppercase tracking-[0.12em] text-white">
+                  Follow
+                </h2>
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {social.map((link) => (
+                    <li key={link.name}>
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        /*
+                          `noopener` because the new tab would otherwise get a
+                          handle on this one; `noreferrer` because where a
+                          visitor came from is nobody else's business.
+                        */
+                        rel="me noopener noreferrer"
+                        className="inline-flex h-8 items-center rounded-[--radius-md] border border-graphite-700 px-3 text-meta text-graphite-200 transition-colors hover:border-graphite-400 hover:text-white"
+                      >
+                        {link.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
 
             {/*
               A contact detail that is not configured renders as nothing at all.

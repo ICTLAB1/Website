@@ -17,7 +17,11 @@ import {
   SplitPanelBlock,
   StatBarBlock,
 } from "@/components/blocks/content-blocks";
-import { CollectionGridBlock, ProductGridBlock } from "@/components/blocks/collection-blocks";
+import {
+  CollectionGridBlock,
+  PriceComparisonBlock,
+  ProductGridBlock,
+} from "@/components/blocks/collection-blocks";
 import { BlockSection } from "@/components/blocks/primitives";
 import { Testimonials } from "@/components/reviews/testimonials";
 import type { ParsedBlock } from "@/lib/blocks/schemas";
@@ -54,6 +58,7 @@ const BANDED = new Set([
   "CHIP_LIST",
   "SPLIT_PANEL",
   "PRODUCT_GRID",
+  "PRICE_COMPARISON",
   "COLLECTION_GRID",
   "PLANS",
   "STAT_BAR",
@@ -145,6 +150,15 @@ export function BlockRenderer({
           case "PRODUCT_GRID":
             return (
               <ProductGridBlock
+                key={block.id}
+                data={block.data}
+                products={(resolved.products.get(block.id) ?? []) as ProductListItem[]}
+                tone={tone}
+              />
+            );
+          case "PRICE_COMPARISON":
+            return (
+              <PriceComparisonBlock
                 key={block.id}
                 data={block.data}
                 products={(resolved.products.get(block.id) ?? []) as ProductListItem[]}
