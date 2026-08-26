@@ -392,6 +392,17 @@ const nextConfig: NextConfig = {
       },
       {
         /*
+         * The one retired post with a page genuinely about its subject.
+         * `/solutions/security-compliance` returns 200 and covers what the
+         * article covered, which is the test every entry in this file has to
+         * pass — a related page, not a plausible-looking one.
+         */
+        source: "/post/secure-your-business-with-reliable-cybersecurity-solutions",
+        destination: "/solutions/security-compliance",
+        statusCode: 301,
+      },
+      {
+        /*
          * 1,866 impressions and position 7.7 for "digital license" — the
          * single most valuable URL on the list, and the one with no product to
          * point at.
@@ -431,13 +442,10 @@ const nextConfig: NextConfig = {
        * Sixteen `/ar/*` URLs are still being crawled and every one 404s. The
        * ten below have an exact English counterpart and are mapped to it.
        *
-       * The other six — Windows 10 Home, the AutoCAD toolset, Windows Server
-       * 2019, two Office 2021 editions and Adobe CC Individual — have no
-       * equivalent here, and are deliberately left to 404. A blanket
-       * `/ar/:path*` → `/` would answer a question about Office 2021 with a
-       * home page, which is the soft-404 pattern in its purest form: Google
-       * discards it and the crawler keeps coming back. A 404 on six URLs
-       * nobody links to costs nothing and settles them.
+       * The rest — Windows 10 Home, the AutoCAD toolset, Windows Server 2019,
+       * two Office 2021 editions and Adobe CC Individual — have no equivalent
+       * here and fall to the catch-all below, which sends them to the home
+       * page. See the note on that rule for what that does and does not buy.
        */
       { source: "/ar/about", destination: "/about", statusCode: 301 },
       { source: "/ar/privacy", destination: "/privacy", statusCode: 301 },
@@ -464,6 +472,23 @@ const nextConfig: NextConfig = {
         destination: "/products/adobe-creative-cloud-all-apps-teams",
         statusCode: 301,
       },
+
+      /*
+       * The catch-all, and it must stay the last `/ar/` rule: Next.js applies
+       * the first match, so moved above the ten named rules it would swallow
+       * every one of them and send ten mapped URLs to the home page.
+       *
+       * Sending the remainder to `/` was asked for twice, and the reasoning
+       * against it is recorded here rather than lost. Google reads a redirect
+       * from a product URL to a home page as a soft 404 — it discards the
+       * signal and keeps crawling — so this is unlikely to do more than the
+       * 404 it replaces. What it does do is settle the Search Console report,
+       * and the three URLs it covers are retired products nobody links to and
+       * nothing ranks for, so there is no position to lose either way. That
+       * makes it a housekeeping decision rather than an SEO one, and the call
+       * belongs to whoever reads the report.
+       */
+      { source: "/ar/:path*", destination: "/", statusCode: 301 },
 
       /*
        * The old blog sitemap, still registered in Search Console and answering
