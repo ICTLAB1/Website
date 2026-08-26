@@ -43,6 +43,12 @@ const productSchema = z.object({
   brandId: z.string().trim().min(1, "Choose a brand."),
   categoryId: z.string().trim().min(1, "Choose a category."),
   shortDescription: z.string().trim().min(10).max(300),
+  /*
+   * Optional overrides for the search result. Empty means "use the name and
+   * short description", which is what almost every row does.
+   */
+  seoTitle: z.string().trim().max(70).optional().or(z.literal("")),
+  seoDescription: z.string().trim().max(200).optional().or(z.literal("")),
   description: z.string().trim().min(20).max(20000),
   status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]),
   availability: z.enum(["IN_STOCK", "MADE_TO_ORDER", "ON_REQUEST", "DISCONTINUED"]),
@@ -119,6 +125,8 @@ export async function saveProduct(
     brandId: formData.get("brandId"),
     categoryId: formData.get("categoryId"),
     shortDescription: formData.get("shortDescription"),
+    seoTitle: formData.get("seoTitle"),
+    seoDescription: formData.get("seoDescription"),
     description: formData.get("description"),
     status: formData.get("status"),
     availability: formData.get("availability"),
@@ -182,6 +190,10 @@ export async function saveProduct(
     brandId: input.brandId,
     categoryId: input.categoryId,
     shortDescription: input.shortDescription,
+    // Stored as null rather than "", so the read path has one absent value to
+    // check instead of two.
+    seoTitle: input.seoTitle?.trim() ? input.seoTitle.trim() : null,
+    seoDescription: input.seoDescription?.trim() ? input.seoDescription.trim() : null,
     description: input.description,
     status: input.status,
     availability: input.availability,

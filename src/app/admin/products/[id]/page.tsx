@@ -103,6 +103,8 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
             categoryId: product.categoryId,
             shortDescription: product.shortDescription,
             description: product.description,
+            seoTitle: product.seoTitle,
+            seoDescription: product.seoDescription,
             status: product.status,
             availability: product.availability,
             purchaseMode: product.purchaseMode,

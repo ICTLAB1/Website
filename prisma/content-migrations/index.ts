@@ -24,6 +24,7 @@ import { rankingProducts } from "./2026-08-ranking-products";
 import { aboutTitle } from "./2026-08-about-title";
 import { workplaceComparison } from "./2026-08-workplace-comparison";
 import { digitalLicenceArticle } from "./2026-08-digital-licence-article";
+import { searchResultCopy } from "./2026-08-search-result-copy";
 import type { ContentMigration } from "./types";
 
 /**
@@ -61,6 +62,7 @@ export const contentMigrations: ContentMigration[] = [
   aboutTitle,
   workplaceComparison,
   digitalLicenceArticle,
+  searchResultCopy,
 ];
 
 export type { ContentMigration };
