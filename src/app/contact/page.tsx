@@ -101,10 +101,20 @@ export default async function ContactPage() {
               <address className="mt-2 text-[13px] not-italic leading-relaxed text-ink-600">
                 {config.formattedAddress}
               </address>
-              {config.gstin ? (
-                <p className="mt-3 border-t border-line pt-3 font-mono text-[12px] text-ink-500">
-                  GSTIN {config.gstin}
-                </p>
+              {/*
+                The Indian company's registrations, under the Indian address.
+                Both of them: a CIN is what identifies the registered company at
+                the MCA, and a reader checking one is checking the other.
+              */}
+              {config.primaryRegistrations.length > 0 ? (
+                <dl className="mt-3 border-t border-line pt-3 font-mono text-[12px] text-ink-500">
+                  {config.primaryRegistrations.map((entry) => (
+                    <div key={entry.label} className="flex gap-2">
+                      <dt>{entry.label}</dt>
+                      <dd className="text-ink-600">{entry.value}</dd>
+                    </div>
+                  ))}
+                </dl>
               ) : null}
             </div>
           ) : null}
@@ -128,10 +138,21 @@ export default async function ContactPage() {
                 </p>
               ) : null}
               {/*
-                No GSTIN here. It is an Indian registration and belongs to the
-                Indian entity; repeating it under an overseas address would
-                attach a tax identifier to the wrong jurisdiction.
+                The branch's own registrations, never the Indian ones. A GSTIN
+                repeated under an overseas address attaches a tax identifier to
+                the wrong jurisdiction; a free-zone licence number and a TRN are
+                what a finance team actually checks this office against.
               */}
+              {config.secondaryEntity.registrations.length > 0 ? (
+                <dl className="mt-3 border-t border-line pt-3 font-mono text-[12px] text-ink-500">
+                  {config.secondaryEntity.registrations.map((entry) => (
+                    <div key={entry.label} className="flex gap-2">
+                      <dt className="shrink-0">{entry.label}</dt>
+                      <dd className="text-ink-600">{entry.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : null}
             </div>
           ) : null}
 

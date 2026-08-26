@@ -167,6 +167,11 @@ export const getSiteConfig = cache(async () => {
 
   const hasAddress = Boolean(address.line1 && address.city);
 
+  // Hoisted so `primaryRegistrations` below can pair each with its label
+  // without restating where the value comes from.
+  const gstin = stored(row?.gstin) ?? optionalEnv("COMPANY_GSTIN") ?? null;
+  const cin = stored(row?.cin) ?? optionalEnv("COMPANY_CIN") ?? null;
+
   return {
     ...identity,
     /*
@@ -220,8 +225,25 @@ export const getSiteConfig = cache(async () => {
           .filter(Boolean)
           .join(", ")
       : null,
-    gstin: stored(row?.gstin) ?? optionalEnv("COMPANY_GSTIN") ?? null,
-    cin: stored(row?.cin) ?? optionalEnv("COMPANY_CIN") ?? null,
+    gstin,
+    cin,
+    /*
+     * The Indian entity's own registrations, in the same shape as the branch's.
+     *
+     * A GSTIN and a CIN belong to the company registered in India, not to the
+     * business as a whole — the free-zone branch has its own licence and its own
+     * tax number, and a reader who cannot tell which set applies to which
+     * address has been given two numbers and no jurisdiction. Shaped like
+     * `secondaryEntity.registrations` so both offices print through the same
+     * markup and neither can quietly acquire a treatment the other lacks.
+     *
+     * Labelled, because an unlabelled identifier is unusable: "07AAICT5606J1Z4"
+     * beside an address tells nobody what to look it up in.
+     */
+    primaryRegistrations: [
+      { label: "GSTIN", value: gstin },
+      { label: "CIN", value: cin },
+    ].filter((entry): entry is { label: string; value: string } => Boolean(entry.value)),
     supportHours: stored(row?.supportHours) ?? optionalEnv("COMPANY_SUPPORT_HOURS") ?? null,
     /*
      * The terms printed on every quotation.
