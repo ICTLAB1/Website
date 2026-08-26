@@ -41,13 +41,32 @@ export async function Footer() {
                   </dd>
                 </div>
               ) : null}
+              {/*
+                Two offices, told apart by the only thing that distinguishes
+                them to a reader: which country's registrations they hold.
+
+                The GSTIN and CIN used to sit as their own rows at the bottom of
+                this list, below the UAE address and level with it, which read
+                as if they covered the whole business. They are registrations of
+                the Indian company. Under the Indian address is where they say
+                that without anyone having to know it already.
+              */}
               {config.formattedAddress ? (
                 <div className="flex gap-2">
                   {/* Named by country only once there is a second office. */}
                   <dt className="shrink-0 text-graphite-400">
                     {config.secondaryEntity ? "India" : "Office"}
                   </dt>
-                  <dd className="text-graphite-300">{config.formattedAddress}</dd>
+                  <dd className="text-graphite-300">
+                    {config.formattedAddress}
+                    {config.primaryRegistrations.length > 0 ? (
+                      <span className="mt-1 block font-mono text-label text-graphite-400">
+                        {config.primaryRegistrations
+                          .map((entry) => `${entry.label} ${entry.value}`)
+                          .join(" · ")}
+                      </span>
+                    ) : null}
+                  </dd>
                 </div>
               ) : null}
               {config.secondaryEntity ? (
@@ -68,11 +87,11 @@ export async function Footer() {
                     ) : null}
                     {/*
                       The branch's registrations, on their own line under the
-                      address. A free-zone licence number and a TRN are what a
-                      customer's finance team checks a foreign supplier against,
-                      and they are worth as little use as a GSTIN is without a
-                      label to say what they are — so each prints only when both
-                      halves are set.
+                      address, in the same treatment as the Indian ones above. A
+                      free-zone licence number and a TRN are what a customer's
+                      finance team checks a foreign supplier against, and they
+                      are of as little use as a GSTIN without a label to say what
+                      they are — so each prints only when both halves are set.
                     */}
                     {config.secondaryEntity.registrations.length > 0 ? (
                       <span className="mt-1 block font-mono text-label text-graphite-400">
@@ -82,26 +101,6 @@ export async function Footer() {
                       </span>
                     ) : null}
                   </dd>
-                </div>
-              ) : null}
-              {config.gstin ? (
-                <div className="flex gap-2">
-                  <dt className="text-graphite-400">GSTIN</dt>
-                  <dd className="font-mono text-label text-graphite-300">{config.gstin}</dd>
-                </div>
-              ) : null}
-              {/*
-                Beside the GSTIN, not in the copyright line.
-
-                Both are statutory identifiers of the same company and a reader
-                checking one is checking the other; a CIN tacked onto "all
-                rights reserved" reads as legal boilerplate rather than as a
-                number somebody can look up at the MCA.
-              */}
-              {config.cin ? (
-                <div className="flex gap-2">
-                  <dt className="text-graphite-400">CIN</dt>
-                  <dd className="font-mono text-label text-graphite-300">{config.cin}</dd>
                 </div>
               ) : null}
             </dl>

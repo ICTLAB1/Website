@@ -1,8 +1,11 @@
 import "server-only";
 
+import Link from "next/link";
+
 import { certificationLogo } from "@/lib/certification-logo";
 import { currentCertifications } from "@/lib/queries/certifications";
 import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
+import { getSiteConfig } from "@/lib/site-config";
 
 /**
  * Certifications and partner badges, in one band under the navigation.
@@ -32,14 +35,33 @@ import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
  * it. A buyer weighs those differently, so they share a band but not a heading
  * — the point of putting them together is economy of space, not blurring them
  * into one undifferentiated row of logos.
+ *
+ * ## The two countries
+ *
+ * A buyer in the Gulf reading an Indian address has to guess whether this
+ * company can invoice them at all, and until now the answer was in the footer.
+ * Two words at the end of this band answer it where the question gets asked,
+ * and link to the page carrying both addresses in full.
+ *
+ * Two words is the whole design. A banner reading "Now in the UAE" would be a
+ * claim about reach; "India · UAE" states where the offices are and stops,
+ * which is the fact — and stays quiet enough to sit under the navigation on
+ * every route without turning into furniture nobody reads.
+ *
+ * It renders only when a second office is actually configured. On a business
+ * trading from one country the band goes back to what it was, rather than
+ * announcing a single location as though it were a network.
  */
 export async function TrustBar() {
-  const [certifications, badges] = await Promise.all([
+  const [certifications, badges, config] = await Promise.all([
     currentCertifications(),
     currentPartnerBadges(),
+    getSiteConfig(),
   ]);
 
-  if (certifications.length === 0 && badges.length === 0) return null;
+  const offices = config.secondaryEntity ? ["India", "UAE"] : [];
+
+  if (certifications.length === 0 && badges.length === 0 && offices.length === 0) return null;
 
   return (
     /*
@@ -56,7 +78,7 @@ export async function TrustBar() {
      * landmark" ambiguous on every page that has a summary panel.
      */
     <section
-      aria-label="Certifications and partner programmes"
+      aria-label="Certifications, partner programmes and offices"
       className="border-b border-line bg-white"
     >
       <div className="container-page flex flex-wrap items-center justify-center gap-x-10 gap-y-3 py-3 lg:justify-between">
@@ -148,6 +170,21 @@ export async function TrustBar() {
           </ul>
         ) : null}
 
+        {/*
+          Last in the band, which at the wide breakpoint puts it at the right
+          edge — read after the evidence, not in front of it. A link, because
+          the useful form of this fact is the two addresses on /contact, and a
+          reader who wants it should not have to go hunting in the footer.
+        */}
+        {offices.length > 0 ? (
+          <Link
+            href="/contact"
+            className="flex items-center gap-2 text-label text-ink-500 transition-colors hover:text-graphite-900"
+          >
+            <span>Offices</span>
+            <span className="font-semibold text-graphite-900">{offices.join(" · ")}</span>
+          </Link>
+        ) : null}
       </div>
     </section>
   );
