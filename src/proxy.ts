@@ -156,7 +156,16 @@ const RETIRED_PREFIXES = [
   "/post/",
 ];
 
-const RETIRED_EXACT = new Set(["/shop-1"]);
+/*
+ * Empty, and kept for the next one.
+ *
+ * `/shop-1` was here. It is the old shop's listing page, and 410 was the wrong
+ * answer for it: a listing whose replacement is `/products` has a replacement,
+ * which makes it a redirect. It now has one in `next.config.ts`, which runs
+ * before this file — so leaving it here as well would be dead code that reads
+ * like a live rule.
+ */
+const RETIRED_EXACT = new Set<string>([]);
 
 function isRetired(pathname: string): boolean {
   if (RETIRED_EXACT.has(pathname)) return true;

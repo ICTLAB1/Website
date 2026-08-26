@@ -98,6 +98,57 @@ const RECLAIMED = [
    * this whole table exists to avoid. None of the six is in the catalogue, so
    * each goes to the page that is honestly about the subject.
    */
+
+  /*
+   * ── the five highest-impression 410s, Search Console, 26 August 2026 ────
+   *
+   * These were answering 410 Gone: a request to delete the URL from the index,
+   * correct for a retired product and wrong for pages holding roughly 6,700
+   * impressions and 48 clicks a quarter between them. The count column here is
+   * quarterly impressions rather than inbound links.
+   */
+  ["/product-page/microsoft-onedrive-for-business-plan-2", "/microsoft-365", 1600],
+  ["/post/autodesk-revit-license-in-2025", "/products/revit", 1508],
+  ["/product-page/buycoreldrawgraphicssuite2025lifetimelicense", "/products/coreldraw-graphics-suite", 1137],
+  ["/product-page/microsoft-windows-10-pro-64-bit-system-builder-oem", "/products/windows-11-pro-upgrade", 603],
+  /*
+   * The most valuable of the five, and the only one whose destination had to
+   * be written before the redirect could exist. If the article is ever
+   * unpublished this fails, which is the point: the redirect would become a
+   * pointer at nothing.
+   */
+  ["/post/what-is-a-digital-license", "/blog/what-is-a-digital-licence", 1866],
+
+  /*
+   * ── the abandoned Arabic tree ──────────────────────────────────────────
+   *
+   * Ten of the sixteen crawled `/ar/*` URLs have an exact English counterpart.
+   * The other six do not and are left to 404 on purpose — see next.config.ts.
+   * No impression data: these are crawl noise, and the value of fixing them is
+   * that Search Console stops reporting them.
+   */
+  ["/ar/about", "/about", 0],
+  ["/ar/privacy", "/privacy", 0],
+  ["/ar/solutions", "/solutions", 0],
+  ["/ar/terms-and-conditions", "/terms", 0],
+  ["/ar/clients", "/about", 0],
+  ["/ar/contact", "/contact", 0],
+  ["/ar/product-page/autocad-business-license", "/products/autocad", 0],
+  ["/ar/product-page/microsoft-365-business-standard-annual-subscription", "/products/microsoft-365-business-standard", 0],
+  ["/ar/product-page/adobe-creative-cloud-all-apps", "/products/adobe-creative-cloud-all-apps-teams", 0],
+];
+
+/*
+ * The two listing-to-listing redirects, checked separately.
+ *
+ * They are the one case where `/products` is the honest destination — the old
+ * shop's listing page replaced by this site's listing page, the same question
+ * answered at a different address — so they cannot go in the table above,
+ * which fails anything landing there.
+ */
+const LISTING_REDIRECTS = [
+  ["/shop-1", "/products"],
+  ["/ar/shop-1", "/products"],
 ];
 
 let reclaimed = 0;
@@ -146,6 +197,37 @@ for (const [legacy, expected, links] of RECLAIMED) {
 const dumped = RECLAIMED.filter(([, expected]) => expected === "/products");
 for (const [legacy] of dumped) {
   problems.push(`${legacy} is listed as redirecting to the generic catalogue listing`);
+}
+
+for (const [legacy, expected] of LISTING_REDIRECTS) {
+  const response = await fetch(BASE + legacy, { redirect: "manual" });
+  const location = response.headers.get("location");
+  const landed = location ? new URL(location, BASE).pathname : null;
+  if (landed !== expected) {
+    problems.push(`${legacy} lands on ${landed ?? response.status}, not ${expected}`);
+  }
+}
+
+/*
+ * The six Arabic URLs with no English equivalent, and what they must not do.
+ *
+ * A blanket `/ar/:path*` redirect would answer a question about Office 2021
+ * with the home page. These are meant to 404 — the check is that nobody has
+ * since added the catch-all that would make them look handled.
+ */
+const ARABIC_WITHOUT_EQUIVALENT = [
+  "/ar/product-page/microsoft-windows-10-home",
+  "/ar/product-page/microsoft-office-2021-professional-plus",
+];
+for (const legacy of ARABIC_WITHOUT_EQUIVALENT) {
+  const response = await fetch(BASE + legacy, { redirect: "manual" });
+  const location = response.headers.get("location");
+  const landed = location ? new URL(location, BASE).pathname : null;
+  if (landed === "/" || landed === "/products") {
+    problems.push(
+      `${legacy} has no equivalent here and redirects to ${landed}; that is a soft 404, not a fix`,
+    );
+  }
 }
 
 const homeHtml = await (await fetch(`${BASE}/`)).text();

@@ -287,6 +287,48 @@ const nextConfig: NextConfig = {
       },
 
       /*
+       * ── the five highest-impression 410s, from Search Console on 26 Aug ──
+       *
+       * Every one of these was answering 410 Gone, which is a request to
+       * delete the URL from the index — correct for a retired product and
+       * exactly wrong for a page carrying six hundred to nearly two thousand
+       * impressions a quarter. Between them they held roughly 6,700
+       * impressions and 48 clicks over three months.
+       *
+       * Each goes to the page that answers the same question. None goes to a
+       * listing: the SEO gate refuses a redirect whose destination is
+       * `/products`, for the reason recorded under the removed catch-all
+       * below.
+       */
+      {
+        // 1,137 impressions, 16 clicks. Exact product, wordier old slug.
+        source: "/product-page/buycoreldrawgraphicssuite2025lifetimelicense",
+        destination: "/products/coreldraw-graphics-suite",
+        statusCode: 301,
+      },
+      {
+        /*
+         * 603 impressions, 9 clicks. Windows 10 OEM is end of life and is not
+         * sold here; the upgrade to 11 Pro is what somebody arriving on that
+         * URL now needs, and the page says so.
+         */
+        source: "/product-page/microsoft-windows-10-pro-64-bit-system-builder-oem",
+        destination: "/products/windows-11-pro-upgrade",
+        statusCode: 301,
+      },
+      {
+        /*
+         * 1,600 impressions, 8 clicks, and no OneDrive product in this
+         * catalogue. `/microsoft-365` names OneDrive among what the plans
+         * include, which makes it an answer rather than a consolation — the
+         * same test the AutoCAD LT redirects above had to pass.
+         */
+        source: "/product-page/microsoft-onedrive-for-business-plan-2",
+        destination: "/microsoft-365",
+        statusCode: 301,
+      },
+
+      /*
        * There is no catch-all any more.
        *
        * `/product-page/:slug*` used to sweep whatever the list above missed to
@@ -339,6 +381,31 @@ const nextConfig: NextConfig = {
         destination: "/products/windows-11-pro-upgrade",
         statusCode: 301,
       },
+      {
+        /*
+         * 1,508 impressions, 7 clicks. An article about Revit licensing, and
+         * the Revit page is where that question is answered now.
+         */
+        source: "/post/autodesk-revit-license-in-2025",
+        destination: "/products/revit",
+        statusCode: 301,
+      },
+      {
+        /*
+         * 1,866 impressions and position 7.7 for "digital license" — the
+         * single most valuable URL on the list, and the one with no product to
+         * point at.
+         *
+         * It goes to a replacement article rather than to `/blog`. A blog index
+         * that does not mention digital licensing answers a different question
+         * from the one asked, which is the soft-404 pattern this file spent a
+         * catch-all learning about; the article is what makes this a redirect
+         * rather than a polite dead end.
+         */
+        source: "/post/what-is-a-digital-license",
+        destination: "/blog/what-is-a-digital-licence",
+        statusCode: 301,
+      },
 
       /*
        * Wix's forum, which this site does not have. Three inbound links, all to
@@ -358,6 +425,62 @@ const nextConfig: NextConfig = {
        * prefix leaves it nowhere to repeat into. These pages are always a
        * single segment anyway.
        */
+      /*
+       * ── the abandoned Arabic tree ───────────────────────────────────────
+       *
+       * Sixteen `/ar/*` URLs are still being crawled and every one 404s. The
+       * ten below have an exact English counterpart and are mapped to it.
+       *
+       * The other six — Windows 10 Home, the AutoCAD toolset, Windows Server
+       * 2019, two Office 2021 editions and Adobe CC Individual — have no
+       * equivalent here, and are deliberately left to 404. A blanket
+       * `/ar/:path*` → `/` would answer a question about Office 2021 with a
+       * home page, which is the soft-404 pattern in its purest form: Google
+       * discards it and the crawler keeps coming back. A 404 on six URLs
+       * nobody links to costs nothing and settles them.
+       */
+      { source: "/ar/about", destination: "/about", statusCode: 301 },
+      { source: "/ar/privacy", destination: "/privacy", statusCode: 301 },
+      { source: "/ar/solutions", destination: "/solutions", statusCode: 301 },
+      { source: "/ar/terms-and-conditions", destination: "/terms", statusCode: 301 },
+      // The Arabic site's client list; this site folds that into About.
+      { source: "/ar/clients", destination: "/about", statusCode: 301 },
+      { source: "/ar/contact", destination: "/contact", statusCode: 301 },
+      // Listing to listing, which is the one case a catalogue page is the
+      // honest destination rather than a consolation.
+      { source: "/ar/shop-1", destination: "/products", statusCode: 301 },
+      {
+        source: "/ar/product-page/autocad-business-license",
+        destination: "/products/autocad",
+        statusCode: 301,
+      },
+      {
+        source: "/ar/product-page/microsoft-365-business-standard-annual-subscription",
+        destination: "/products/microsoft-365-business-standard",
+        statusCode: 301,
+      },
+      {
+        source: "/ar/product-page/adobe-creative-cloud-all-apps",
+        destination: "/products/adobe-creative-cloud-all-apps-teams",
+        statusCode: 301,
+      },
+
+      /*
+       * The old blog sitemap, still registered in Search Console and answering
+       * 404 there every time it is fetched. Pointed at the sitemap that exists
+       * rather than left to error — removing it from Search Console is the
+       * tidier fix and is somebody's manual step; this makes the report stop
+       * failing either way.
+       */
+      { source: "/blog-posts-sitemap.xml", destination: "/sitemap.xml", statusCode: 301 },
+
+      /*
+       * The old shop listing. It was answering 410, which is right for a
+       * product that is gone and wrong for a listing whose replacement is
+       * `/products` — the same page, the same purpose, a different address.
+       */
+      { source: "/shop-1", destination: "/products", statusCode: 301 },
+
       { source: "/copy-of-:slug", destination: "/", statusCode: 301 },
       { source: "/_partials/:path*", destination: "/", statusCode: 301 },
     ];
