@@ -306,4 +306,53 @@ export const autodeskProducts: ProductSeed[] = [
       { sku: "ADSK-C3D-1Y", name: "1-year subscription, single user", licenceType: "SUBSCRIPTION_ANNUAL", termMonths: 12, isDefault: true, listPriceMinor: 3_15_000_00 },
     ],
   },
+  /*
+   * "3ds max license" sits at position 9.2 on 736 impressions a quarter, held
+   * by a page of the previous site that no longer exists. Maya has been in
+   * this catalogue all along and 3ds Max never was, which is the whole reason
+   * the position had nothing to land on.
+   *
+   * No price. The Autodesk lines above are priced from a rate card that did
+   * not cover this product, and a figure nobody can check is worse than a
+   * quote route — the same answer `visual-studio-enterprise` gives.
+   */
+  {
+    slug: "3ds-max",
+    name: "Autodesk 3ds Max",
+    brand: "autodesk",
+    category: "media-entertainment",
+    shortDescription:
+      "3D modelling, rendering and animation for visualisation, games and product design.",
+    description:
+      "3ds Max is Autodesk's modelling and rendering application for architectural visualisation, games, product design and motion graphics. It reads the Revit and AutoCAD files an architectural practice already has, which is the usual reason a practice licenses it alongside them rather than instead of them.\n\nIt is licensed per named user, like the rest of the Autodesk line: the entitlement follows a person rather than a machine, and can be reassigned when somebody leaves.\n\nWhere a studio uses both 3ds Max and Maya, or several Autodesk applications, a collection is usually cheaper than the standalone subscriptions and we will quote both so the comparison is visible.",
+    features: [
+      "Polygon, spline and parametric modelling",
+      "Arnold renderer included",
+      "Character animation and rigging",
+      "Interoperability with Revit, AutoCAD and Inventor files",
+      "Scripting and a large third-party plug-in ecosystem",
+    ],
+    compatibility: [
+      "Windows 11 and Windows 10 (64-bit) only",
+      "GPU with 4 GB VRAM or more recommended",
+      "32 GB RAM recommended for large scenes",
+    ],
+    keywords: ["3ds max", "3d modelling", "rendering", "animation", "visualisation", "arnold"],
+    licensingNotes: NAMED_USER_NOTE,
+    deliveryNotes: DELIVERY_SUBSCRIPTION,
+    supportNotes: SUPPORT_STANDARD,
+    popularity: 44,
+    availability: "ON_REQUEST",
+    purchaseMode: "ENQUIRY",
+    variants: [
+      {
+        sku: "ADSK-3DSMAX-1Y",
+        name: "1-year subscription, single user",
+        licenceType: "SUBSCRIPTION_ANNUAL",
+        termMonths: 12,
+        isDefault: true,
+        listPriceMinor: 0,
+      },
+    ],
+  },
 ];
