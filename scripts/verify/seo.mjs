@@ -222,6 +222,14 @@ const REWRITTEN = [
   "/products/coreldraw-graphics-suite",
   "/microsoft-365",
   "/blog/what-is-a-digital-licence",
+  /*
+   * The three created for rankings they already hold. Checked here rather than
+   * merely created: a page that exists and 404s, or one that never reaches the
+   * sitemap, is the same outcome as never having built it.
+   */
+  "/products/3ds-max",
+  "/products/visio-plan-2",
+  "/products/onedrive-for-business-plan-2",
 ];
 
 for (const path of REWRITTEN) {

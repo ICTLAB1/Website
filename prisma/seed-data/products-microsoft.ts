@@ -627,4 +627,104 @@ export const microsoftProducts: ProductSeed[] = [
       },
     ],
   },
+  /*
+   * ── two products this domain ranks for and did not sell ──────────────
+   *
+   * "visio plan 2" sits at position 15.9 on 317 impressions a quarter, and
+   * "onedrive for business plan 2" and "onedrive plan 2" at 13.7 and 7.9 on
+   * 571 between them. All three positions are held by pages of the previous
+   * site that no longer exist, and the Plan 2 page has been the missing half
+   * of the Plan 1 comparison since Plan 1 was written.
+   *
+   * Neither carries a price. Zero is the absence of one — the convention the
+   * hardware catalogue uses and the same answer `visual-studio-enterprise` and
+   * `visio-plan-1` already give — so both pages offer a quote instead. The
+   * publisher's list this catalogue is priced from was not to hand when these
+   * were written, and a number nobody could check is worse than a quote route.
+   */
+  {
+    slug: "visio-plan-2",
+    name: "Microsoft Visio Plan 2",
+    brand: "microsoft",
+    category: "productivity-collaboration",
+    shortDescription:
+      "The Visio desktop application and the web edition, licensed per user.",
+    description:
+      "Visio Plan 2 is the edition with the Windows desktop application. Everything Plan 1 does in a browser it does too, and it adds the desktop app, the data-linked diagrams that refresh from Excel and other sources, and the engineering and process templates.\n\nThe distinction that decides most purchases is that desktop app. Plan 1 is enough for someone who views, comments on and lightly edits diagrams in a browser; Plan 2 is for the people who build them.\n\nMost organisations need a mixture rather than one plan across the whole team, and we quote the mix.",
+    features: [
+      "The Visio desktop application for Windows, plus the web edition",
+      "Data-linked diagrams that refresh from Excel and other sources",
+      "Engineering, process and detailed network templates",
+      "Sharing and commenting for colleagues without a Visio licence",
+      "2 GB of OneDrive storage for diagram files",
+    ],
+    compatibility: [
+      "Windows 11 and Windows 10 for the desktop application",
+      "Microsoft 365 account required",
+      "Any modern browser for the web edition",
+    ],
+    keywords: ["visio", "visio plan 2", "diagramming", "desktop", "data-linked diagrams"],
+    licensingNotes: CSP_NOTE,
+    deliveryNotes: DELIVERY_SUBSCRIPTION,
+    supportNotes: SUPPORT_STANDARD,
+    popularity: 36,
+    availability: "ON_REQUEST",
+    purchaseMode: "ENQUIRY",
+    variants: [
+      {
+        sku: "MS-VISIO-P2-A1",
+        name: "Annual subscription, per user",
+        licenceType: "SUBSCRIPTION_ANNUAL",
+        termMonths: 12,
+        isDefault: true,
+        listPriceMinor: 0,
+      },
+    ],
+  },
+  {
+    slug: "onedrive-for-business-plan-2",
+    name: "Microsoft OneDrive for Business Plan 2",
+    brand: "microsoft",
+    category: "productivity-collaboration",
+    shortDescription:
+      "Cloud file storage with data loss prevention and eDiscovery, licensed per user.",
+    description:
+      "OneDrive for Business Plan 2 is the standalone storage plan with the compliance features: data loss prevention, eDiscovery for legal hold and search, and in-place retention.\n\nIt is bought by organisations that need those controls without a full Microsoft 365 subscription. Where a team already has Microsoft 365 Business Premium or an Enterprise plan, OneDrive is included and this is not the thing to buy — we will say so rather than sell a second entitlement for storage already paid for.\n\nStorage entitlements and the process for requesting more are set by Microsoft and change from time to time; we confirm the current allowance in writing on the quotation.",
+    features: [
+      "Cloud file storage synchronised across devices",
+      "Data loss prevention policies",
+      "eDiscovery, legal hold and in-place search",
+      "Retention policies and version history",
+      "Sharing with expiry and password controls",
+    ],
+    compatibility: [
+      "Windows, macOS, iOS and Android sync clients",
+      "Any modern browser",
+      "Microsoft 365 account required",
+    ],
+    keywords: [
+      "onedrive",
+      "onedrive for business",
+      "onedrive plan 2",
+      "cloud storage",
+      "dlp",
+      "ediscovery",
+    ],
+    licensingNotes: CSP_NOTE,
+    deliveryNotes: DELIVERY_SUBSCRIPTION,
+    supportNotes: SUPPORT_STANDARD,
+    popularity: 34,
+    availability: "ON_REQUEST",
+    purchaseMode: "ENQUIRY",
+    variants: [
+      {
+        sku: "MS-ONEDRIVE-P2-A1",
+        name: "Annual subscription, per user",
+        licenceType: "SUBSCRIPTION_ANNUAL",
+        termMonths: 12,
+        isDefault: true,
+        listPriceMinor: 0,
+      },
+    ],
+  },
 ];
