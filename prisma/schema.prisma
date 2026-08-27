@@ -2160,12 +2160,22 @@ model PaymentSettings {
   /// pointing at live keys is a deliberate act with its own audit entry.
   mode PaymentMode @default(TEST)
 
-  razorpayKeyId         String?
+  /// Stripe's secret key, `sk_test_…` or `sk_live_…`.
+  ///
   /// AES-256-GCM, keyed from AUTH_SECRET. Never rendered.
-  razorpayKeySecret     String?
-  /// Also encrypted. Used to authenticate Razorpay's webhook calls, which is
-  /// the only trustworthy signal that a payment was actually captured.
-  razorpayWebhookSecret String?
+  ///
+  /// There is no publishable key here, and that is not an omission: this
+  /// deployment redirects to Stripe's hosted Checkout rather than embedding
+  /// card fields, so no Stripe credential is ever handed to a browser.
+  stripeSecretKey     String?
+
+  /// The webhook signing secret, `whsec_…`. Also encrypted.
+  ///
+  /// A different value from the secret key, and the one that authenticates
+  /// Stripe's callbacks — which are the only trustworthy signal that a payment
+  /// was actually taken, since a browser returning from Checkout is just a
+  /// browser making a claim.
+  stripeWebhookSecret String?
 
   updatedAt   DateTime @updatedAt
   updatedById String?
@@ -2318,7 +2328,10 @@ model Payment {
   orderId String
   order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  provider String @default("razorpay")
+  /// Which gateway took it. Historical rows say "razorpay"; new ones say
+  /// "stripe", and the column exists so a payment taken under one gateway is
+  /// still identifiable after a switch to another.
+  provider String @default("stripe")
 
   /// The gateway's order id. Unique because it is what the browser callback and
   /// the webhook both use to find this row, and two rows sharing one would make

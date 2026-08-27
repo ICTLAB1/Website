@@ -244,28 +244,35 @@ PAY_REF="ORD-2026-A$(head -c4 /dev/urandom | od -An -tx1 | tr -d ' \n' | tr 'abc
 psqlq() { su postgres -c "psql -tA -d ictlab -c \"$1\"" 2>/dev/null | tr -d ' \r' | head -1; }
 
 psqlq "insert into \\\"Order\\\" (id,reference,status,currency,\\\"subtotalMinor\\\",\\\"discountMinor\\\",\\\"taxMinor\\\",\\\"totalMinor\\\",\\\"billingName\\\",\\\"billingEmail\\\",\\\"placedAt\\\",\\\"createdAt\\\",\\\"updatedAt\\\") values ('$PAY_ORDER','$PAY_REF','PENDING','INR',9000000,0,0,9000000,'Atk','atk@example.test',now(),now(),now())" >/dev/null
-psqlq "insert into \\\"Payment\\\" (id,\\\"orderId\\\",provider,\\\"providerOrderId\\\",status,\\\"amountMinor\\\",currency,mode,\\\"createdAt\\\",\\\"updatedAt\\\") values ('atk_pay_$RANDOM','$PAY_ORDER','razorpay','order_atk_$PAY_ORDER','CREATED',9000000,'INR','TEST',now(),now())" >/dev/null
+psqlq "insert into \\\"Payment\\\" (id,\\\"orderId\\\",provider,\\\"providerOrderId\\\",status,\\\"amountMinor\\\",currency,mode,\\\"createdAt\\\",\\\"updatedAt\\\") values ('atk_pay_$RANDOM','$PAY_ORDER','stripe','cs_test_atk_$PAY_ORDER','CREATED',9000000,'INR','TEST',now(),now())" >/dev/null
 
-# Whether the gateway is switched on changes what these two prove, so it is
-# stated rather than left for somebody to work out from the status codes. With
-# it on, a 403 proves the signature was checked and rejected. With it off, the
-# request is refused earlier, for a different reason — still refused, but not
-# evidence about the signature. The definitive signature tests are in
-# `npm run verify:payments`, which switches the gateway on with a known secret
-# precisely so it can prove that part.
+# Whether the gateway is switched on changes what these prove, so it is stated
+# rather than left for somebody to work out from the status codes. The
+# definitive tests are in `npm run verify:payments`, which switches the gateway
+# on with a known signing secret precisely so it can prove that part.
 GATEWAY=$(psqlq "select enabled from \\\"PaymentSettings\\\" where id='singleton'")
-[ "$GATEWAY" = "t" ] && echo "  (gateway on: signature rejection is what is being tested)" \
-                     || echo "  (gateway off: these prove refusal, not signature checking)"
+[ "$GATEWAY" = "t" ] && echo "  (gateway on: rejection is what is being tested)" \
+                     || echo "  (gateway off: these prove refusal, not verification)"
 
-# 1. A forged checkout signature.
+# 1. A claimed checkout session nobody can confirm.
+#
+# The return path no longer carries a signature to forge — it carries a session
+# id, and the server asks Stripe about it. So the attack is simply to claim one,
+# and the property is that a claim is worth nothing.
 code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/api/payments/verify" -H "content-type: application/json" \
-  --data "{\"razorpay_order_id\":\"order_atk_$PAY_ORDER\",\"razorpay_payment_id\":\"pay_atk\",\"razorpay_signature\":\"$(printf 'a%.0s' $(seq 64))\"}")
-[ "$code" = "403" ] || [ "$code" = "409" ] && ok "a forged payment signature never marks an order paid (got $code)" || no "forged signature" "got $code"
+  --data "{\"session_id\":\"cs_test_atk_$PAY_ORDER\"}")
+[ "$code" != "200" ] && ok "a claimed checkout session never marks an order paid (got $code)" || no "claimed session" "got 200"
 
 # 2. An unsigned webhook.
 code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/api/payments/webhook" -H "content-type: application/json" \
-  --data "{\"event\":\"payment.captured\",\"payload\":{\"payment\":{\"entity\":{\"id\":\"pay_atk\",\"order_id\":\"order_atk_$PAY_ORDER\",\"amount\":9000000}}}}")
+  --data "{\"type\":\"checkout.session.completed\",\"data\":{\"object\":{\"id\":\"cs_test_atk_$PAY_ORDER\",\"payment_status\":\"paid\",\"amount_total\":9000000}}}")
 [ "$code" != "200" ] && ok "an unsigned webhook never marks an order paid (got $code)" || no "unsigned webhook" "got 200"
+
+# 2b. A webhook signed with a secret we made up.
+code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/api/payments/webhook" -H "content-type: application/json" \
+  -H "stripe-signature: t=$(date +%s),v1=$(printf 'a%.0s' $(seq 64))" \
+  --data "{\"type\":\"checkout.session.completed\",\"data\":{\"object\":{\"id\":\"cs_test_atk_$PAY_ORDER\",\"payment_status\":\"paid\",\"amount_total\":9000000}}}")
+[ "$code" != "200" ] && ok "a wrongly signed webhook never marks an order paid (got $code)" || no "wrongly signed webhook" "got 200"
 
 # 3. Neither of them moved any money.
 st=$(psqlq "select status from \\\"Order\\\" where id='$PAY_ORDER'")

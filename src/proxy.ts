@@ -36,41 +36,28 @@ function randomToken(byteLength = 32): string {
     .replace(/=+$/, "");
 }
 
-/**
- * Pages on which the payment gateway's checkout can be opened.
+/*
+ * The payment gateway needs nothing from this policy any more.
  *
- * The Content-Security-Policy has to be widened for it — an iframe from
- * razorpay.com, calls out to their API — and that widening is confined to the
- * pages that actually need it rather than applied site-wide. A stored XSS on a
- * product page then still cannot frame a payment provider.
+ * Razorpay's checkout ran inside these pages: a script from their CDN, an
+ * iframe from their domain, XHR to their API, and a `payment` permission for
+ * the saved-card and Google Pay options inside that frame. Six origins across
+ * three directives, plus a path test to confine them to `/buy` and
+ * `/account/orders`, plus the permissions-policy entry.
  *
- * It is a path test rather than a check of whether payments are switched on,
- * because this runs before any database is reachable and on every request. The
- * cost of being generous is three extra origins on two pages; the cost of
- * getting it wrong the other way is a checkout that silently refuses to open,
- * with the reason visible only in the browser console.
+ * Stripe's hosted Checkout is a redirect. The browser leaves this site, pays on
+ * `checkout.stripe.com`, and comes back — and a top-level navigation is not
+ * something a content security policy governs. So all of it came out and none
+ * of it was replaced. A stored XSS on a product page can no longer frame a
+ * payment provider for the simple reason that nothing here can.
  */
-function isPaymentPath(pathname: string): boolean {
-  return pathname === "/buy" || pathname.startsWith("/buy/") || pathname.startsWith("/account/orders");
-}
 
 function buildCsp(
   nonce: string,
   isDevelopment: boolean,
-  allowGateway: boolean,
   allowAnalytics: boolean,
   allowTagDebug: boolean,
 ): string {
-  // Razorpay Checkout is loaded by a nonce-carrying script, so 'strict-dynamic'
-  // covers the script itself; what it cannot cover is the iframe the script
-  // opens and the requests that iframe makes.
-  const gatewayFrame = allowGateway
-    ? ["https://api.razorpay.com", "https://checkout.razorpay.com"]
-    : [];
-  const gatewayConnect = allowGateway
-    ? ["https://api.razorpay.com", "https://lumberjack.razorpay.com", "https://lumberjack-cx.razorpay.com"]
-    : [];
-
   const directives: Record<string, string[]> = {
     "default-src": ["'self'"],
     "script-src": [
@@ -91,12 +78,10 @@ function buildCsp(
       "'self'",
       "data:",
       "blob:",
-      ...(allowGateway ? ["https://cdn.razorpay.com"] : []),
       ...(allowAnalytics ? [...ANALYTICS_CSP.img] : []),
     ],
     "connect-src": [
       "'self'",
-      ...gatewayConnect,
       ...(allowAnalytics ? [...ANALYTICS_CSP.connect] : []),
       ...(allowTagDebug ? [...ANALYTICS_DEBUG_HOSTS] : []),
       ...(isDevelopment ? ["ws:", "wss:"] : []),
@@ -112,7 +97,6 @@ function buildCsp(
      */
     "frame-src": (() => {
       const framed = [
-        ...gatewayFrame,
         ...(allowAnalytics ? ANALYTICS_CSP.frame : []),
         ...(allowTagDebug ? ANALYTICS_DEBUG_HOSTS : []),
       ];
@@ -221,7 +205,6 @@ export function proxy(request: NextRequest) {
   const csp = buildCsp(
     nonce,
     isDevelopment,
-    isPaymentPath(pathname),
     allowAnalytics,
     allowTagDebug,
   );
@@ -276,18 +259,16 @@ export function proxy(request: NextRequest) {
   response.headers.set("x-frame-options", "DENY");
   response.headers.set("referrer-policy", "strict-origin-when-cross-origin");
   /*
-   * The Payment Request API is disabled everywhere except the checkout pages,
-   * where the gateway's iframe uses it to offer saved cards and Google Pay.
-   * Denying it there does not break the payment — it silently removes those
-   * options — which is exactly the kind of degradation nobody notices until a
-   * customer mentions it months later.
+   * The Payment Request API is disabled everywhere, with no exception.
+   *
+   * It used to be granted on the checkout pages so the gateway's iframe could
+   * offer saved cards and Google Pay. There is no iframe now: those options are
+   * offered by Stripe on its own domain, under its own policy, where this
+   * header has no reach and no say.
    */
-  const paymentDirective = isPaymentPath(pathname)
-    ? 'payment=(self "https://api.razorpay.com" "https://checkout.razorpay.com")'
-    : "payment=()";
   response.headers.set(
     "permissions-policy",
-    `camera=(), microphone=(), geolocation=(), ${paymentDirective}, usb=(), interest-cohort=()`,
+    "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
   );
   response.headers.set("x-dns-prefetch-control", "off");
   response.headers.set("cross-origin-opener-policy", "same-origin");

@@ -1,15 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { postJson } from "@/lib/csrf-client";
-import {
-  loadCheckoutScript,
-  openCheckout,
-  type PaymentHandoff,
-} from "@/lib/payments/checkout-client";
 
 /**
  * Paying for an order from the customer's own order list.
@@ -22,15 +16,20 @@ import {
  * The amount is not passed in. It comes back from the server, which reads it
  * from the order, so this component cannot display a figure that differs from
  * the one the gateway will charge.
+ *
+ * ## Why there is no script to load any more
+ *
+ * The gateway is Stripe's hosted Checkout: the server opens a session and this
+ * sends the browser to it. No third-party script is fetched, no payment window
+ * is opened over the page, and no ad blocker can prevent it — which removes the
+ * failure mode this button used to have to explain, along with the "dismissed"
+ * callback that also fired on success.
+ *
+ * Nothing is recorded here. `router.refresh()` is gone too, because the page is
+ * leaving: the customer comes back to the order page with a session id, and
+ * that page asks Stripe what happened.
  */
-export function PayOrderButton({
-  reference,
-  merchantName,
-}: {
-  reference: string;
-  merchantName: string;
-}) {
-  const router = useRouter();
+export function PayOrderButton({ reference }: { reference: string }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,43 +37,22 @@ export function PayOrderButton({
     setPending(true);
     setError(null);
 
-    const ready = await loadCheckoutScript();
-    if (!ready) {
-      setPending(false);
-      setError("The payment window could not be opened. An ad blocker may be preventing it.");
-      return;
-    }
-
-    const started = await postJson<PaymentHandoff>("/api/payments/start", { reference });
+    const started = await postJson<{ checkoutUrl: string }>("/api/payments/start", { reference });
     if (!started.ok) {
       setPending(false);
       setError(started.error.message);
       return;
     }
 
-    const outcome = await openCheckout(started.data, {
-      name: merchantName,
-      description: `Order ${reference}`,
-    });
-
-    if (outcome.status !== "paid") {
-      setPending(false);
-      // Not an error. Closing the payment window is a decision, not a failure,
-      // and telling somebody their payment "failed" when they chose to stop is
-      // both wrong and alarming.
-      return;
-    }
-
-    await postJson("/api/payments/verify", {
-      razorpay_order_id: outcome.response.razorpay_order_id,
-      razorpay_payment_id: outcome.response.razorpay_payment_id,
-      razorpay_signature: outcome.response.razorpay_signature,
-    });
-
-    // Re-read from the server rather than setting a local "paid" flag. The
-    // webhook may have recorded this first, and the row is the truth.
-    router.refresh();
-    setPending(false);
+    /*
+     * `assign`, not `replace`. The order page stays in history, so a customer
+     * who thinks better of it at Stripe can use the back button and arrive
+     * somewhere sensible rather than on whatever preceded the order.
+     *
+     * `pending` is deliberately left true: the navigation is in flight and
+     * re-enabling the button would invite a second session nobody needs.
+     */
+    window.location.assign(started.data.checkoutUrl);
   }
 
   return (

@@ -107,11 +107,10 @@ export const POST = withErrorHandling("payments.start", async (request: Request)
   });
 
   return jsonOk({
-    keyId: payment.keyId,
+    checkoutUrl: payment.checkoutUrl,
     providerOrderId: payment.providerOrderId,
     amountMinor: payment.amountMinor,
     currency: payment.currency,
     mode: payment.mode,
-    prefill: payment.prefill,
   });
 });

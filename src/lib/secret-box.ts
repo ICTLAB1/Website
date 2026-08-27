@@ -99,7 +99,7 @@ export function decryptSecret(stored: string | null | undefined): string | null 
  * A hint that identifies a stored secret without revealing it.
  *
  * The admin panel shows this beside a write-only field so somebody can tell
- * *which* key is saved — matching it against what Razorpay shows them — without
+ * *which* key is saved — matching it against what Stripe shows them — without
  * the value ever being sent back to a browser.
  */
 export function secretHint(plaintext: string): string {

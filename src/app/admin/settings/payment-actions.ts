@@ -31,18 +31,21 @@ import type { AdminActionState } from "@/lib/admin/types";
  */
 
 /**
- * `rzp_test_...` or `rzp_live_...`. Checked because a key id pasted with
- * surrounding whitespace or a truncated copy fails at the worst moment — in
- * front of a customer at checkout — rather than here.
+ * `sk_test_…` or `sk_live_…`. Shaped-checked because a key pasted with
+ * surrounding whitespace or truncated in the copy fails at the worst possible
+ * moment — in front of a customer at checkout — rather than here.
+ *
+ * The prefix is also the one place the TEST/LIVE mode field can be contradicted
+ * by the credential itself, which the save path checks below.
  */
-const keyIdField = z
+const secretKeyField = z
   .string()
   .trim()
-  .max(80)
+  .max(200)
   .transform((value) => (value.length > 0 ? value : null))
   .nullable()
-  .refine((value) => value === null || /^rzp_(test|live)_[A-Za-z0-9]{10,}$/.test(value), {
-    message: "A Razorpay key id looks like rzp_test_xxxxxxxxxxxx or rzp_live_xxxxxxxxxxxx.",
+  .refine((value) => value === null || /^sk_(test|live)_[A-Za-z0-9]{16,}$/.test(value), {
+    message: "A Stripe secret key looks like sk_test_… or sk_live_….",
   });
 
 /** Secrets are opaque; only length is worth checking. */
@@ -59,10 +62,9 @@ const secretField = z
 const schema = z.object({
   enabled: z.coerce.boolean().default(false),
   mode: z.enum(["TEST", "LIVE"]),
-  razorpayKeyId: keyIdField,
-  razorpayKeySecret: secretField,
-  razorpayWebhookSecret: secretField,
-  clearKeySecret: z.coerce.boolean().default(false),
+  stripeSecretKey: secretKeyField,
+  stripeWebhookSecret: secretField,
+  clearSecretKey: z.coerce.boolean().default(false),
   clearWebhookSecret: z.coerce.boolean().default(false),
 });
 
@@ -80,10 +82,9 @@ export async function savePaymentSettings(
   const parsed = schema.safeParse({
     enabled: formData.get("enabled") === "on",
     mode: formData.get("mode"),
-    razorpayKeyId: formData.get("razorpayKeyId") ?? "",
-    razorpayKeySecret: formData.get("razorpayKeySecret") ?? "",
-    razorpayWebhookSecret: formData.get("razorpayWebhookSecret") ?? "",
-    clearKeySecret: formData.get("clearKeySecret") === "on",
+    stripeSecretKey: formData.get("stripeSecretKey") ?? "",
+    stripeWebhookSecret: formData.get("stripeWebhookSecret") ?? "",
+    clearSecretKey: formData.get("clearSecretKey") === "on",
     clearWebhookSecret: formData.get("clearWebhookSecret") === "on",
   });
 
@@ -98,7 +99,7 @@ export async function savePaymentSettings(
   const input = parsed.data;
   const existing = await prisma.paymentSettings.findUnique({
     where: { id: "singleton" },
-    select: { razorpayKeySecret: true, razorpayWebhookSecret: true },
+    select: { stripeSecretKey: true, stripeWebhookSecret: true },
   });
 
   /** Blank leaves it; a value replaces it; the checkbox removes it. */
@@ -112,34 +113,54 @@ export async function savePaymentSettings(
     return stored ?? null;
   }
 
-  const keySecret = nextSecret(input.razorpayKeySecret, input.clearKeySecret, existing?.razorpayKeySecret);
+  const secretKey = nextSecret(input.stripeSecretKey, input.clearSecretKey, existing?.stripeSecretKey);
   const webhookSecret = nextSecret(
-    input.razorpayWebhookSecret,
+    input.stripeWebhookSecret,
     input.clearWebhookSecret,
-    existing?.razorpayWebhookSecret,
+    existing?.stripeWebhookSecret,
   );
 
   /*
    * Refuse to switch on a gateway that cannot work.
    *
-   * Enabling with no key id or no secret would show customers a "Pay now"
-   * button that fails when they press it. Better to refuse here, where the
-   * person can fix it, than at checkout where they cannot.
+   * Enabling with no secret key would show customers a "Pay now" button that
+   * fails when they press it. Better to refuse here, where the person can fix
+   * it, than at checkout where they cannot.
    */
-  if (input.enabled && (!input.razorpayKeyId || !keySecret)) {
+  if (input.enabled && !secretKey) {
     return {
       status: "error",
       message:
-        "Add both the key id and the key secret before switching payments on. Until then customers see the purchase-order route only.",
+        "Add the Stripe secret key before switching payments on. Until then customers see the purchase-order route only.",
     };
+  }
+
+  /*
+   * And refuse a key that disagrees with the mode.
+   *
+   * `sk_live_…` selected while the mode says TEST is somebody about to take
+   * real money believing they are rehearsing; `sk_test_…` under LIVE is a
+   * checkout that declines every card. The prefix is the only part of a Stripe
+   * credential that says which it is, so it is worth reading.
+   */
+  if (input.stripeSecretKey) {
+    const keyIsLive = input.stripeSecretKey.startsWith("sk_live_");
+    if (keyIsLive !== (input.mode === "LIVE")) {
+      return {
+        status: "error",
+        message: keyIsLive
+          ? "That is a live secret key but the mode is set to TEST. Set the mode to LIVE, or paste a test key."
+          : "That is a test secret key but the mode is set to LIVE. Set the mode to TEST, or paste a live key.",
+        fieldErrors: { stripeSecretKey: ["The key and the mode disagree."] },
+      };
+    }
   }
 
   const data = {
     enabled: input.enabled,
     mode: input.mode,
-    razorpayKeyId: input.razorpayKeyId,
-    razorpayKeySecret: keySecret,
-    razorpayWebhookSecret: webhookSecret,
+    stripeSecretKey: secretKey,
+    stripeWebhookSecret: webhookSecret,
     updatedById: admin.id,
   };
 
@@ -165,10 +186,9 @@ export async function savePaymentSettings(
     metadata: {
       enabled: input.enabled,
       mode: input.mode,
-      keyIdSet: Boolean(input.razorpayKeyId),
-      keySecretReplaced: Boolean(input.razorpayKeySecret),
-      keySecretCleared: input.clearKeySecret,
-      webhookSecretReplaced: Boolean(input.razorpayWebhookSecret),
+      secretKeyReplaced: Boolean(input.stripeSecretKey),
+      secretKeyCleared: input.clearSecretKey,
+      webhookSecretReplaced: Boolean(input.stripeWebhookSecret),
       webhookSecretCleared: input.clearWebhookSecret,
     },
     ip: await clientIp(),

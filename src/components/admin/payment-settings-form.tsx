@@ -15,7 +15,7 @@ import type { PaymentSettingsView } from "@/lib/payments/config";
  * The two secret fields are write-only. They are never populated, because the
  * value is never sent to the browser — a masked hint beside the label is how
  * somebody confirms *which* key is stored, by matching the last four characters
- * against what Razorpay shows them. A blank box therefore means "leave it
+ * against what Stripe shows them. A blank box therefore means "leave it
  * alone", which is why removing a secret needs its own explicit checkbox.
  */
 export function PaymentSettingsForm({ settings }: { settings: PaymentSettingsView }) {
@@ -53,58 +53,44 @@ export function PaymentSettingsForm({ settings }: { settings: PaymentSettingsVie
       </Fieldset>
 
       <Fieldset
-        legend="Razorpay credentials"
-        description="From your Razorpay dashboard, under Settings → API Keys. The key id is not a secret — the checkout page needs it in the browser — but the other two are, and are stored encrypted and never shown again."
+        legend="Stripe credentials"
+        description="From your Stripe dashboard: the secret key under Developers → API keys, and the signing secret shown when you add the webhook endpoint. Both are secrets, both are stored encrypted, and neither is shown again."
       >
         <Field
-          label="Key ID"
-          name="razorpayKeyId"
-          hint="Looks like rzp_test_xxxxxxxxxxxx or rzp_live_xxxxxxxxxxxx."
-        >
-          <Input
-            name="razorpayKeyId"
-            defaultValue={settings.keyId}
-            placeholder="rzp_test_1234567890abcd"
-            autoComplete="off"
-            spellCheck={false}
-          />
-        </Field>
-
-        <Field
-          label="Key Secret"
-          name="razorpayKeySecret"
+          label="Secret key"
+          name="stripeSecretKey"
           hint={
-            settings.keySecretHint
-              ? `A secret ending ${settings.keySecretHint.slice(-4)} is saved. Leave blank to keep it, or paste a new one to replace it.`
-              : "Not set. Paste the secret shown when you generated the key — Razorpay does not show it again."
+            settings.secretKeyHint
+              ? `A key ending ${settings.secretKeyHint.slice(-4)} is saved. Leave blank to keep it, or paste a new one to replace it.`
+              : "Looks like sk_test_… or sk_live_…. The prefix has to match the mode above — a live key in test mode takes real money."
           }
         >
           <Input
-            name="razorpayKeySecret"
+            name="stripeSecretKey"
             type="password"
-            placeholder={settings.keySecretHint ?? "Paste the key secret"}
+            placeholder={settings.secretKeyHint ?? "Paste the secret key"}
             autoComplete="new-password"
             spellCheck={false}
           />
         </Field>
 
-        {settings.keySecretHint ? (
-          <Checkbox name="clearKeySecret" label="Remove the saved key secret" />
+        {settings.secretKeyHint ? (
+          <Checkbox name="clearSecretKey" label="Remove the saved secret key" />
         ) : null}
 
         <Field
-          label="Webhook Secret"
-          name="razorpayWebhookSecret"
+          label="Webhook signing secret"
+          name="stripeWebhookSecret"
           hint={
             settings.webhookSecretHint
               ? `A secret ending ${settings.webhookSecretHint.slice(-4)} is saved. Leave blank to keep it.`
-              : "Optional but strongly recommended. Razorpay signs its webhook calls with this, and a webhook is the only reliable way to learn that a payment succeeded when a customer closes the tab mid-payment."
+              : "Looks like whsec_…. Optional but strongly recommended: Stripe signs its webhook calls with this, and a webhook is the only reliable way to learn a payment succeeded when a customer closes the tab mid-payment."
           }
         >
           <Input
-            name="razorpayWebhookSecret"
+            name="stripeWebhookSecret"
             type="password"
-            placeholder={settings.webhookSecretHint ?? "Paste the webhook secret"}
+            placeholder={settings.webhookSecretHint ?? "Paste the webhook signing secret"}
             autoComplete="new-password"
             spellCheck={false}
           />

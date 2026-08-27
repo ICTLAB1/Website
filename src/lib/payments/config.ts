@@ -7,6 +7,11 @@ import { logger } from "@/lib/logger";
 /**
  * Whether this deployment can take a card payment, and with what.
  *
+ * The gateway is Stripe. It replaced Razorpay, and the credentials did not
+ * carry over — the migration cleared them and switched the gateway off, because
+ * a Razorpay key sitting in a column Stripe will be asked to authenticate with
+ * is precisely the enabled-but-unusable state this file exists to prevent.
+ *
  * The site's original premise is unchanged: orders are raised against a
  * purchase order and invoiced. Paying by card is an *additional* route, offered
  * only when a gateway is both switched on and fully configured, and the
@@ -22,9 +27,12 @@ import { logger } from "@/lib/logger";
 
 export type PaymentConfig = {
   mode: "TEST" | "LIVE";
-  keyId: string;
-  keySecret: string;
-  /** Null when no webhook secret is set: callbacks work, webhooks do not. */
+  /**
+   * Stripe's secret key. There is no publishable key beside it, because hosted
+   * Checkout hands nothing to the browser — see `lib/payments/stripe`.
+   */
+  secretKey: string;
+  /** Null when no webhook secret is set: the return page works, webhooks do not. */
   webhookSecret: string | null;
 };
 
@@ -55,10 +63,9 @@ export const getPaymentConfig = cache(async (): Promise<PaymentConfig | null> =>
   const row = await load();
   if (!row || !row.enabled) return null;
 
-  const keyId = row.razorpayKeyId?.trim();
-  const keySecret = decryptSecret(row.razorpayKeySecret);
+  const secretKey = decryptSecret(row.stripeSecretKey);
 
-  if (!keyId || !keySecret) {
+  if (!secretKey) {
     /*
      * Enabled but not usable.
      *
@@ -67,15 +74,14 @@ export const getPaymentConfig = cache(async (): Promise<PaymentConfig | null> =>
      * but a deployment where the AUTH_SECRET was rotated would show this
      * without anyone touching the form.
      */
-    logger.warn("payment_enabled_but_not_configured", { hasKeyId: Boolean(keyId) });
+    logger.warn("payment_enabled_but_not_configured", {});
     return null;
   }
 
   return {
     mode: row.mode,
-    keyId,
-    keySecret,
-    webhookSecret: decryptSecret(row.razorpayWebhookSecret),
+    secretKey,
+    webhookSecret: decryptSecret(row.stripeWebhookSecret),
   };
 });
 
@@ -87,9 +93,8 @@ export async function cardPaymentsAvailable(): Promise<boolean> {
 export type PaymentSettingsView = {
   enabled: boolean;
   mode: "TEST" | "LIVE";
-  keyId: string;
   /** Masked. The secret itself never leaves the server. */
-  keySecretHint: string | null;
+  secretKeyHint: string | null;
   webhookSecretHint: string | null;
   /** True when enabled but the credentials cannot actually be used. */
   brokenConfiguration: boolean;
@@ -106,17 +111,15 @@ export type PaymentSettingsView = {
 export async function getPaymentSettingsView(): Promise<PaymentSettingsView> {
   const row = await load();
 
-  const keySecret = decryptSecret(row?.razorpayKeySecret);
-  const webhookSecret = decryptSecret(row?.razorpayWebhookSecret);
-  const keyId = row?.razorpayKeyId?.trim() ?? "";
+  const secretKey = decryptSecret(row?.stripeSecretKey);
+  const webhookSecret = decryptSecret(row?.stripeWebhookSecret);
 
   return {
     enabled: row?.enabled ?? false,
     mode: row?.mode ?? "TEST",
-    keyId,
-    keySecretHint: keySecret ? secretHint(keySecret) : null,
+    secretKeyHint: secretKey ? secretHint(secretKey) : null,
     webhookSecretHint: webhookSecret ? secretHint(webhookSecret) : null,
-    brokenConfiguration: Boolean(row?.enabled) && (!keyId || !keySecret),
+    brokenConfiguration: Boolean(row?.enabled) && !secretKey,
     updatedAt: row?.updatedAt ?? null,
   };
 }

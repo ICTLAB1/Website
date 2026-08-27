@@ -5,7 +5,8 @@ import { formatMoney } from "@/lib/money";
 import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
 import { getPaymentConfig } from "@/lib/payments/config";
-import { createRazorpayOrder } from "@/lib/payments/razorpay";
+import { createCheckoutSession } from "@/lib/payments/stripe";
+import { appUrl } from "@/lib/env";
 
 /**
  * Taking a card payment for an order.
@@ -23,22 +24,25 @@ import { createRazorpayOrder } from "@/lib/payments/razorpay";
  * against the amount already stored. A request that says a ₹90,000 order was
  * paid for ₹1 is refused rather than reconciled.
  *
- * **Recording a capture is idempotent.** Razorpay reports a successful payment
- * twice by design: once to the browser and once to the webhook, in no
- * guaranteed order, and either can be lost or replayed. So capture is a
- * conditional update on `capturedAt IS NULL`, and the second report is a no-op
- * that returns success rather than a duplicate or an error.
+ * **Recording a capture is idempotent.** A successful payment is reported twice
+ * by design: once when the browser returns from Checkout and once to the
+ * webhook, in no guaranteed order, and either can be lost or replayed. So
+ * capture is a conditional update on `capturedAt IS NULL`, and the second
+ * report is a no-op that returns success rather than a duplicate or an error.
  */
 
 export type BeginPaymentResult =
   | {
       ok: true;
-      keyId: string;
+      /**
+       * Where to send the browser. Stripe hosts the card form, so this is the
+       * whole of what the client needs — no key, no script, no embedded frame.
+       */
+      checkoutUrl: string;
       providerOrderId: string;
       amountMinor: number;
       currency: string;
       mode: "TEST" | "LIVE";
-      prefill: { name: string; email: string; contact: string };
     }
   | { ok: false; reason: string };
 
@@ -90,13 +94,26 @@ export async function beginPayment(orderId: string): Promise<BeginPaymentResult>
     return { ok: false, reason: "That order has no amount to pay." };
   }
 
-  const created = await createRazorpayOrder(config, {
+  /*
+   * Both return URLs are built from `appUrl`, never from the request.
+   *
+   * A success URL taken from a header or a query parameter is an open redirect
+   * with a payment attached to it — the customer pays and lands wherever the
+   * link said. This site knows its own address; that is where they come back
+   * to.
+   */
+  const base = appUrl();
+
+  const created = await createCheckoutSession(config, {
     amountMinor: order.totalMinor,
     currency: order.currency,
     receipt: order.reference,
-    // Visible in the Razorpay dashboard, which is where somebody stands when
-    // they are trying to match a payment to an order.
-    notes: { order_reference: order.reference },
+    productName: `Order ${order.reference}`,
+    // `{CHECKOUT_SESSION_ID}` is substituted by Stripe on the way back, and is
+    // the id the return page asks Stripe about rather than trusts.
+    successUrl: `${base}/account/orders/${order.reference}?session_id={CHECKOUT_SESSION_ID}`,
+    cancelUrl: `${base}/account/orders/${order.reference}?payment=cancelled`,
+    customerEmail: order.billingEmail,
   });
 
   if (!created.ok) return { ok: false, reason: created.reason };
@@ -104,8 +121,8 @@ export async function beginPayment(orderId: string): Promise<BeginPaymentResult>
   await prisma.payment.create({
     data: {
       orderId: order.id,
-      provider: "razorpay",
-      providerOrderId: created.order.id,
+      provider: "stripe",
+      providerOrderId: created.session.id,
       status: "CREATED",
       amountMinor: order.totalMinor,
       currency: order.currency,
@@ -115,22 +132,17 @@ export async function beginPayment(orderId: string): Promise<BeginPaymentResult>
 
   logger.info("payment_started", {
     reference: order.reference,
-    providerOrderId: created.order.id,
+    providerOrderId: created.session.id,
     mode: config.mode,
   });
 
   return {
     ok: true,
-    keyId: config.keyId,
-    providerOrderId: created.order.id,
+    checkoutUrl: created.session.url,
+    providerOrderId: created.session.id,
     amountMinor: order.totalMinor,
     currency: order.currency,
     mode: config.mode,
-    prefill: {
-      name: order.billingName,
-      email: order.billingEmail,
-      contact: order.billingPhone ?? "",
-    },
   };
 }
 
