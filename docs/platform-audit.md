@@ -42,7 +42,7 @@ email verification before transacting, audit log, secret encryption at rest,
 server-side authorisation on every protected route, and an attack suite that
 proves the boundaries.
 
-**Integrations.** Razorpay (credentials from the admin panel, encrypted),
+**Integrations.** Stripe (credentials from the admin panel, encrypted),
 Microsoft 365 mail over Graph with OAuth, both behind provider abstractions
 and both reporting "not connected" until credentials exist.
 

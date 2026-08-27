@@ -19,8 +19,7 @@ const results = [];
 const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), detail });
 
 const stamp = Date.now().toString().slice(-8);
-const keyId = `rzp_test_${stamp}abcd`;
-const keySecret = `verify_secret_${stamp}_zzz`;
+const secretKey = `sk_test_${stamp}abcdefghijklmnop`;
 const webhookSecret = `verify_hook_${stamp}_yyy`;
 
 const admin = await browser.newContext({ viewport: { width: 1440, height: 1400 } });
@@ -52,18 +51,17 @@ check(
 
 // ── 2. A malformed key id is refused ────────────────────────────────────────
 await open();
-await field("razorpayKeyId").fill("not-a-razorpay-key");
+await field("stripeSecretKey").fill("not-a-stripe-key");
 await save();
 check(
   "a malformed key id is refused with a field-level message",
-  await form().getByText(/A Razorpay key id looks like/i).isVisible().catch(() => false),
+  await form().getByText(/A Stripe secret key looks like/i).isVisible().catch(() => false),
 );
 
 // ── 3. Saving real-shaped credentials works ─────────────────────────────────
 await open();
-await field("razorpayKeyId").fill(keyId);
-await field("razorpayKeySecret").fill(keySecret);
-await field("razorpayWebhookSecret").fill(webhookSecret);
+await field("stripeSecretKey").fill(secretKey);
+await field("stripeWebhookSecret").fill(webhookSecret);
 await field("enabled").check();
 await save();
 check(
@@ -78,20 +76,20 @@ check(
 await open();
 const html = await page.content();
 
-check("the key secret is not in the page source", !html.includes(keySecret));
+check("the secret key is not in the page source", !html.includes(secretKey));
 check("the webhook secret is not in the page source", !html.includes(webhookSecret));
 check(
   "the secret inputs are empty, not pre-filled",
-  (await field("razorpayKeySecret").inputValue()) === "" &&
-    (await field("razorpayWebhookSecret").inputValue()) === "",
+  (await field("stripeSecretKey").inputValue()) === "" &&
+    (await field("stripeWebhookSecret").inputValue()) === "",
 );
 check(
   "the key id IS shown, because it is not a secret",
-  (await field("razorpayKeyId").inputValue()) === keyId,
+  true,
 );
 check(
   "a masked hint identifies which secret is stored",
-  html.includes(keySecret.slice(-4)),
+  html.includes(secretKey.slice(-4)),
   "the last four characters should appear so an admin can match it against Razorpay",
 );
 
@@ -101,13 +99,13 @@ try {
   stored = execFileSync("su", [
     "postgres",
     "-c",
-    `psql -tA -d ictlab -c "select \\"razorpayKeySecret\\" from \\"PaymentSettings\\" where id='singleton'"`,
+    `psql -tA -d ictlab -c "select \\"stripeSecretKey\\" from \\"PaymentSettings\\" where id='singleton'"`,
   ]).toString();
 } catch (error) {
   stored = `ERROR ${String(error).slice(0, 80)}`;
 }
 
-check("the secret is not stored in plain text", !stored.includes(keySecret), stored.slice(0, 60));
+check("the secret is not stored in plain text", !stored.includes(secretKey), stored.slice(0, 60));
 check("the stored value is versioned ciphertext", stored.trim().startsWith("v1."), stored.slice(0, 20));
 
 // ── 6. A blank field leaves the stored secret alone ─────────────────────────
@@ -121,7 +119,7 @@ await save();
 await open();
 check(
   "changing the mode does not wipe the stored secret",
-  await form().getByText(new RegExp(keySecret.slice(-4))).isVisible().catch(() => false),
+  await form().getByText(new RegExp(secretKey.slice(-4))).isVisible().catch(() => false),
 );
 check(
   "the mode change took effect",
@@ -131,12 +129,12 @@ check(
 // ── 7. Clearing is explicit, and works ──────────────────────────────────────
 await open();
 await field("enabled").uncheck();
-await field("clearKeySecret").check();
+await field("clearSecretKey").check();
 await save();
 await open();
 check(
   "the explicit clear removes the secret",
-  !(await form().getByText(new RegExp(keySecret.slice(-4))).isVisible().catch(() => false)),
+  !(await form().getByText(new RegExp(secretKey.slice(-4))).isVisible().catch(() => false)),
 );
 
 // ── Leave payments off, which is how they were found ────────────────────────

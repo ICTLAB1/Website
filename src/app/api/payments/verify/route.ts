@@ -2,7 +2,7 @@ import { jsonError, jsonOk, withErrorHandling } from "@/lib/api";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { ipFromRequest } from "@/lib/auth/request";
 import { getPaymentConfig } from "@/lib/payments/config";
-import { verifyCheckoutSignature } from "@/lib/payments/razorpay";
+import { retrieveSession } from "@/lib/payments/stripe";
 import { recordCapture } from "@/lib/payments/service";
 import { logger } from "@/lib/logger";
 import { z } from "zod";
@@ -10,44 +10,56 @@ import { z } from "zod";
 /**
  * The browser's report that a payment succeeded.
  *
- * Razorpay Checkout hands the page three values when a payment goes through,
- * and this is where they are cashed in. The customer's browser is the least
- * trustworthy participant in the system, so nothing it says is believed: the
- * third value is an HMAC over the other two, computed with a key secret that
- * only Razorpay and this server hold. Either it verifies, in which case the
- * payment is real whoever posted it, or it does not, in which case nothing
- * happens.
+ * A customer returning from Stripe's hosted Checkout arrives with a session id
+ * in the URL and nothing else. That id is a claim, not evidence — anyone can
+ * type one — so it is not believed. It is used to ask Stripe, server to server,
+ * what actually happened to that session, and only Stripe's answer decides
+ * whether anything is recorded.
  *
- * That signature is the entire authorisation. There is deliberately no session
- * check and no CSRF token:
+ * That is a stronger arrangement than the signed assertion this replaced. Under
+ * Razorpay the browser handed back an HMAC and the server checked it: the claim
+ * still originated at the least trustworthy participant in the system, and was
+ * believed because it could not have been forged. Here the claim carries no
+ * authority at all and the answer comes from the gateway directly.
+ *
+ * There is deliberately no session check and no CSRF token:
  *
  *  - A session check would break the flow for anonymous purchases, which are
- *    supported, and would add nothing for signed-in ones — an attacker who
- *    could forge the signature would not be stopped by owning a session.
+ *    supported, and would add nothing for signed-in ones — the authorisation is
+ *    Stripe's answer, not the caller's identity.
  *  - CSRF protects against a third-party page making a request *as* the user.
  *    Here that would mean a stranger's site causing us to record a genuine,
- *    correctly-signed payment against the order it belongs to. There is no
- *    harm in the other direction to protect against.
+ *    Stripe-confirmed payment against the order it belongs to. There is no harm
+ *    in the other direction to protect against.
  *
  * What matters instead is that the amount is never taken from this request —
  * `recordCapture` reads it from the row written before the customer saw a
- * payment form — and that recording is idempotent, because the webhook reports
- * the same capture independently.
+ * payment page — and that recording is idempotent, because the webhook reports
+ * the same capture independently and in no guaranteed order.
  */
 
 const schema = z.object({
-  razorpay_order_id: z.string().trim().min(1).max(80),
-  razorpay_payment_id: z.string().trim().min(1).max(80),
-  razorpay_signature: z.string().trim().min(1).max(200),
+  /*
+   * `cs_test_…` / `cs_live_…`. Shape-checked before it is put in a URL path:
+   * the id is interpolated into a request to Stripe, and a value that is not a
+   * session id has no business being sent there.
+   */
+  session_id: z
+    .string()
+    .trim()
+    .min(1)
+    .max(200)
+    .regex(/^cs_[A-Za-z0-9_]+$/, "not a checkout session id"),
 });
 
 export const POST = withErrorHandling("payments.verify", async (request: Request) => {
   const ip = ipFromRequest(request);
 
   /*
-   * Rate limited despite being signature-protected. Not to stop forgery — the
-   * HMAC does that — but to stop an unauthenticated endpoint being used to
-   * make this server compute thousands of hashes and database lookups.
+   * Rate limited despite being gateway-verified. Not to stop forgery — Stripe's
+   * answer does that — but to stop an unauthenticated endpoint being used to
+   * make this server issue thousands of outbound API calls on demand, which is
+   * a sharper edge here than it was when verification was a local HMAC.
    */
   const limit = hit(`payverify:${ip}`, LIMITS.enquiry.limit, LIMITS.enquiry.windowSeconds);
   if (!limit.allowed) {
@@ -79,25 +91,32 @@ export const POST = withErrorHandling("payments.verify", async (request: Request
     return jsonError("conflict", "This payment could not be confirmed. Our team will be in touch.");
   }
 
-  const genuine = verifyCheckoutSignature(config, {
-    razorpayOrderId: parsed.data.razorpay_order_id,
-    razorpayPaymentId: parsed.data.razorpay_payment_id,
-    signature: parsed.data.razorpay_signature,
-  });
+  const looked = await retrieveSession(config, parsed.data.session_id);
 
-  if (!genuine) {
-    logger.warn("payment_signature_rejected", {
-      providerOrderId: parsed.data.razorpay_order_id,
-      ip,
-    });
+  if (!looked.ok) {
+    logger.warn("payment_session_lookup_rejected", { ip });
     // Says nothing about which part was wrong. Nothing useful can be learned
     // from the difference, and a probe should learn nothing at all.
     return jsonError("forbidden", "This payment could not be confirmed.");
   }
 
+  if (looked.status.paymentStatus !== "paid") {
+    /*
+     * A real session that has not been paid. Not an error and not an attack —
+     * a customer who reached Checkout and abandoned it lands here — so the
+     * order stays payable and nothing is recorded.
+     */
+    return jsonError("conflict", "That payment has not completed.");
+  }
+
   const result = await recordCapture({
-    providerOrderId: parsed.data.razorpay_order_id,
-    providerPaymentId: parsed.data.razorpay_payment_id,
+    providerOrderId: parsed.data.session_id,
+    /*
+     * The PaymentIntent, not the session. It is the id that appears on the
+     * payout and in a refund, so it is the one worth having on the row when
+     * somebody is reconciling a statement.
+     */
+    providerPaymentId: looked.status.paymentIntentId ?? parsed.data.session_id,
     source: "checkout",
   });
 

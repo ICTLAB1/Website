@@ -8,7 +8,6 @@ import { ButtonLink } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/guards";
 import { listUserOrders } from "@/lib/queries/account";
 import { cardPaymentsAvailable } from "@/lib/payments/config";
-import { getSiteConfig } from "@/lib/site-config";
 import { PayOrderButton } from "@/components/account/pay-order-button";
 import { formatMoney } from "@/lib/money";
 import { formatDate } from "@/lib/utils";
@@ -17,10 +16,9 @@ export const metadata: Metadata = { title: "Orders" };
 
 export default async function AccountOrdersPage() {
   const user = await requireUser("/account/orders");
-  const [orders, cardPayments, config] = await Promise.all([
+  const [orders, cardPayments] = await Promise.all([
     listUserOrders(user),
     cardPaymentsAvailable(),
-    getSiteConfig(),
   ]);
 
   if (orders.length === 0) {
@@ -73,7 +71,7 @@ export default async function AccountOrdersPage() {
                   {order.payments.length > 0 ? (
                     <span className="text-[13px] font-medium text-success-700">Paid</span>
                   ) : cardPayments && order.status === "PENDING" ? (
-                    <PayOrderButton reference={order.reference} merchantName={config.tradingName} />
+                    <PayOrderButton reference={order.reference} />
                   ) : (
                     /*
                      * Says what is true rather than nothing. An order with no

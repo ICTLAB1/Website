@@ -16,11 +16,6 @@ import {
 } from "@/components/ui/form";
 import { postJson } from "@/lib/csrf-client";
 import { formatMoney, gstAmountMinor } from "@/lib/money";
-import {
-  loadCheckoutScript,
-  openCheckout,
-  type PaymentHandoff,
-} from "@/lib/payments/checkout-client";
 
 /**
  * Direct purchase, paid by card or raised against a purchase order.
@@ -43,7 +38,6 @@ export function BuyNowForm({
   gstRatePercent,
   currency,
   cardPaymentsAvailable,
-  merchantName,
   prefill,
 }: {
   sku: string;
@@ -54,7 +48,6 @@ export function BuyNowForm({
   currency: string;
   /** Decided on the server. False hides the option entirely. */
   cardPaymentsAvailable: boolean;
-  merchantName: string;
   prefill: { contactName: string; contactEmail: string; companyName: string; phone: string };
 }) {
   const router = useRouter();
@@ -80,20 +73,19 @@ export function BuyNowForm({
     const wantsCard = cardPaymentsAvailable && payWithCard;
 
     /*
-     * The script is fetched before the order is placed, not after.
+     * There is no script to fetch any more.
      *
-     * Loading it afterwards would mean a customer whose browser blocks it —
-     * an ad blocker, a corporate proxy, a bad moment on the network — has
-     * already had an order raised before anything can be said about it. Doing
-     * it first costs nothing when it works and lets the failure be handled
-     * before it becomes a half-finished purchase.
+     * The gateway is Stripe's hosted Checkout, so paying is a redirect. The
+     * whole class of failure this used to guard against — an ad blocker, a
+     * corporate proxy, a bad moment on the network while a third-party script
+     * loads — does not exist, and neither does the pre-flight that existed to
+     * catch it before an order was raised against a checkout that could not
+     * open.
      */
-    const scriptReady = wantsCard ? await loadCheckoutScript() : false;
-
     const form = new FormData(event.currentTarget);
     const result = await postJson<{
       reference: string;
-      payment: PaymentHandoff | null;
+      payment: { checkoutUrl: string } | null;
     }>("/api/orders", {
       sku,
       quantity,
@@ -104,7 +96,7 @@ export function BuyNowForm({
       gstin: String(form.get("gstin") ?? "").toUpperCase(),
       poNumber: String(form.get("poNumber") ?? ""),
       billingAddress: String(form.get("billingAddress") ?? ""),
-      payWithCard: wantsCard && scriptReady,
+      payWithCard: wantsCard,
       website: String(form.get("website") ?? ""),
     });
 
@@ -134,33 +126,16 @@ export function BuyNowForm({
     }
 
     setStatus("Opening secure payment…");
-    const outcome = await openCheckout(payment, {
-      name: merchantName,
-      description: `${productName} — ${reference}`,
-    });
-
-    if (outcome.status !== "paid") {
-      router.push(confirmed);
-      return;
-    }
-
-    setStatus("Confirming your payment…");
     /*
-     * Confirm with our own server before moving on.
+     * The page leaves for Stripe here, and the order is already placed.
      *
-     * The gateway has the money at this point whatever happens next, and the
-     * webhook will record it independently — this call is what makes the
-     * confirmation page able to say "paid" immediately instead of a few seconds
-     * later. So its failure is not shown as an error: the customer goes to the
-     * same page, which reports whatever is actually true by the time it loads.
+     * Whatever happens next — paid, abandoned, a card declined three times —
+     * the customer returns to the confirmation page, which reads the order's
+     * real state rather than being told it by this form. Both return addresses
+     * were fixed by the server when the session was opened, from `appUrl` and
+     * never from anything the browser supplied.
      */
-    await postJson("/api/payments/verify", {
-      razorpay_order_id: outcome.response.razorpay_order_id,
-      razorpay_payment_id: outcome.response.razorpay_payment_id,
-      razorpay_signature: outcome.response.razorpay_signature,
-    });
-
-    router.push(confirmed);
+    window.location.assign(payment.checkoutUrl);
   }
 
   return (

@@ -151,12 +151,11 @@ export const POST = withErrorHandling("orders.createDirect", async (request: Req
     payment:
       payment?.ok === true
         ? {
-            keyId: payment.keyId,
+            checkoutUrl: payment.checkoutUrl,
             providerOrderId: payment.providerOrderId,
             amountMinor: payment.amountMinor,
             currency: payment.currency,
             mode: payment.mode,
-            prefill: payment.prefill,
           }
         : null,
   });

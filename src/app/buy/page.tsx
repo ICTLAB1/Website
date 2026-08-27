@@ -9,7 +9,6 @@ import { getSessionUser } from "@/lib/auth/session";
 import { effectivePriceMinor } from "@/lib/money";
 import { buildMetadata } from "@/lib/seo";
 import { cardPaymentsAvailable } from "@/lib/payments/config";
-import { getSiteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = buildMetadata({
   title: "Place an order",
@@ -57,7 +56,7 @@ export default async function BuyPage({ searchParams }: PageProps) {
   if (unitPriceMinor <= 0) notFound();
 
   const user = await getSessionUser();
-  const [company, profile, cardPayments, config] = await Promise.all([
+  const [company, profile, cardPayments] = await Promise.all([
     user?.companyId
       ? prisma.company.findUnique({ where: { id: user.companyId }, select: { name: true } })
       : Promise.resolve(null),
@@ -68,7 +67,6 @@ export default async function BuyPage({ searchParams }: PageProps) {
     // gateway is genuinely usable, so a customer is never shown a button that
     // cannot work.
     cardPaymentsAvailable(),
-    getSiteConfig(),
   ]);
 
   return (
@@ -104,7 +102,6 @@ export default async function BuyPage({ searchParams }: PageProps) {
           gstRatePercent={variant.gstRatePercent}
           currency={variant.currency}
           cardPaymentsAvailable={cardPayments}
-          merchantName={config.tradingName}
           prefill={{
             contactName: user?.name ?? "",
             contactEmail: user?.email ?? "",

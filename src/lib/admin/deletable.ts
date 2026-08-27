@@ -139,7 +139,7 @@ export const DELETABLE: Record<DeletableKey, DeletableConfig> = {
     confirmLabel: "order reference",
     cascades: [
       "every line on the order",
-      "its payment records, including any Razorpay capture",
+      "its payment records, including any card capture",
       "the link from any licence issued against it",
     ],
     listPath: "/admin/orders",
