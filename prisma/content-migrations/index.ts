@@ -29,6 +29,7 @@ import { rankingGaps } from "./2026-08-ranking-gaps";
 import { logoMarquee } from "./2026-08-logo-marquee";
 import { clientBelt } from "./2026-08-client-belt";
 import { industries } from "./2026-08-industries";
+import { organisationWall } from "./2026-08-organisation-wall";
 import type { ContentMigration } from "./types";
 
 /**
@@ -71,6 +72,7 @@ export const contentMigrations: ContentMigration[] = [
   logoMarquee,
   clientBelt,
   industries,
+  organisationWall,
 ];
 
 export type { ContentMigration };

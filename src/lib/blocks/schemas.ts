@@ -269,6 +269,27 @@ export const logoMarqueeSchema = z.object({
   speed: z.enum(["slow", "steady", "brisk"]).optional().default("steady"),
   /** Right-to-left by default; `true` runs it the other way. */
   reverse: z.boolean().optional().default(false),
+  /**
+   * How the marks are laid out.
+   *
+   * `belt` moves; `wall` is a static grid. The choice is really about how many
+   * marks there are: a belt with eight logos on it spends most of every pass
+   * showing the gap between the end of the row and the start of the copy, and
+   * a wall of forty is a wall nobody reads. Under about a dozen, use a wall.
+   */
+  layout: z.enum(["belt", "wall"]).optional().default("belt"),
+  /**
+   * Desaturate the marks until they are hovered.
+   *
+   * Off by default, and deliberately opt-in rather than the usual default.
+   * A greyscale filter is a modification of the artwork, and several of the
+   * organisations whose marks may end up here publish rules against exactly
+   * that — the government logo pack supplied for this site says "do not redraw
+   * or modify government emblems, preserve official proportions and colors" in
+   * as many words. A per-section switch means a wall of commercial brands can
+   * have the effect without a wall of emblems inheriting it.
+   */
+  desaturate: z.boolean().optional().default(false),
   /** Optional link beside the heading. */
   action: z.object({ label: text(60), href: safeHref }).optional(),
 });

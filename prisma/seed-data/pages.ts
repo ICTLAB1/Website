@@ -440,10 +440,9 @@ export const pageSeeds: PageSeed[] = [
         "visible": true,
         "data": {
           "limit": 24,
-          "speed": "steady",
+          "layout": "wall",
           "source": "clients",
-          "heading": "Customers we work with",
-          "reverse": true
+          "desaturate": false
         }
       },
       {

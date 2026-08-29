@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { Reveal } from "@/components/motion/reveal";
+
 export type BeltItem = {
   /** Stable within one belt; the belt repeats items, so it is not a React key. */
   key: string;
@@ -95,6 +97,96 @@ function BeltFace({ item }: { item: BeltItem }) {
       </span>
       {item.name}
     </>
+  );
+}
+
+/**
+ * The same marks, standing still.
+ *
+ * A wall rather than a belt whenever there are few enough to take in at once,
+ * which for a row of logos is somewhere around a dozen. Below that a belt is
+ * actively worse: with eight marks the track spends most of every pass showing
+ * the gap between the end of the row and the start of its copy, and a reader
+ * who looks up at the wrong moment sees a half-empty strip.
+ *
+ * Equal cells, `object-contain`, and a fixed mark height: publishers' and
+ * institutions' marks have wildly different aspect ratios, and the only way a
+ * row of them reads as a set is if the *cell* is uniform and the artwork is
+ * fitted inside it untouched. Nothing here stretches, crops or recomposes a
+ * mark.
+ */
+export function LogoWall({
+  items,
+  desaturate = false,
+}: {
+  items: BeltItem[];
+  desaturate?: boolean;
+}) {
+  if (items.length === 0) return null;
+
+  return (
+    <div className="container-page">
+      <ul
+        /*
+          Five across at the widest, not six.
+          `object-contain` cannot distort a mark, but it can only make one as
+          tall as the cell is wide allows: a 6:1 wordmark capped at 160px of
+          width renders 27px tall beside a square emblem at 48px, and the eye
+          reads that as the wordmark being smaller rather than wider. A wider
+          cell narrows the gap. It cannot close it — that is the arithmetic of
+          putting a 6:1 mark beside a 1:1 one — which is why the brand artwork
+          in this repository is normalised to a common height before it is
+          committed. See public/brands/README.md.
+        */
+        className="grid grid-cols-2 gap-px overflow-hidden rounded-[--radius-lg] border border-line bg-line sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        data-desaturate={desaturate ? "true" : "false"}
+      >
+        {items.map((item, index) => (
+          <li key={item.key} className="bg-white">
+            {/*
+              Staggered, capped. Each cell arrives 60ms after the one before it
+              up to a quarter of a second, so the wall assembles rather than
+              appearing — and the last mark is not still arriving after the
+              reader has moved on.
+            */}
+            <Reveal delay={Math.min(index * 60, 240)}>
+              <WallCell item={item} />
+            </Reveal>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function WallCell({ item }: { item: BeltItem }) {
+  const face = item.logo ? (
+    /* eslint-disable-next-line @next/next/no-img-element */
+    <img
+      src={item.logo}
+      alt={item.name}
+      className="logo-wall__mark h-12 w-auto max-w-[12rem] object-contain"
+      loading="lazy"
+      decoding="async"
+    />
+  ) : (
+    <span className="text-meta font-medium text-ink-700">{item.name}</span>
+  );
+
+  const shell = "logo-wall__cell flex h-28 items-center justify-center px-5 py-4";
+
+  /*
+   * Linked only where there is somewhere to go. A customer's mark leads
+   * nowhere by design — it is evidence of a relationship, not an advertisement
+   * for the customer — so most cells here are not anchors, and making them all
+   * anchors "for consistency" would put an empty target under every mark.
+   */
+  return item.href ? (
+    <Link href={item.href} className={shell}>
+      {face}
+    </Link>
+  ) : (
+    <span className={shell}>{face}</span>
   );
 }
 

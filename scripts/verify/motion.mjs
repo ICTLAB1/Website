@@ -358,6 +358,61 @@ for (const reduced of ["no-preference", "reduce"]) {
   await ctx.close();
 }
 
+// --------------------------------------------------------- the logo wall
+/*
+ * Only runs when a wall is on the page, which it is not until an organisation
+ * has artwork, a confirmed permission and a publish. Skipped rather than
+ * failed when there is nothing to look at: a gate that fails because a section
+ * is legitimately empty is a gate people learn to ignore.
+ */
+{
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  const page = await ctx.newPage();
+  await page.goto(BASE, { waitUntil: "load" });
+
+  const cells = page.locator(".logo-wall__cell");
+  if ((await cells.count()) > 0) {
+    await cells.first().scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1200);
+
+    const wall = await page.evaluate(() => {
+      const boxes = [...document.querySelectorAll(".logo-wall__cell")];
+      const marks = [...document.querySelectorAll(".logo-wall__mark")];
+      return {
+        cells: boxes.length,
+        // One height for every cell: the grid is what makes a set of marks
+        // with different proportions read as a set.
+        heights: [...new Set(boxes.map((b) => Math.round(b.getBoundingClientRect().height)))],
+        /*
+         * Distortion is checked by asking how the mark is fitted, not by
+         * comparing the element's box to the file's proportions. With
+         * `object-contain` the box is deliberately wider than the painting —
+         * that is the letterboxing doing its job — so a box comparison flags
+         * every wide wordmark as stretched when none of them is.
+         */
+        fitted: marks.every((m) => getComputedStyle(m).objectFit === "contain"),
+        broken: marks.filter((m) => !m.complete || m.naturalWidth === 0).length,
+        // Every mark carries its organisation's name; the wall shows no text.
+        unnamed: marks.filter((m) => !m.getAttribute("alt")?.trim()).length,
+        spilling: marks.filter((m) => {
+          const cell = m.closest(".logo-wall__cell").getBoundingClientRect();
+          const box = m.getBoundingClientRect();
+          return box.width > cell.width + 1 || box.height > cell.height + 1;
+        }).length,
+      };
+    });
+
+    check("every cell on the logo wall is the same height", wall.heights.length === 1, JSON.stringify(wall.heights));
+    check("every mark is fitted rather than stretched", wall.fitted);
+    check("no mark spills out of its cell", wall.spilling === 0, `${wall.spilling} spilling`);
+    check("every mark loaded", wall.broken === 0, `${wall.broken} broken of ${wall.cells}`);
+    check("every mark names its organisation", wall.unnamed === 0, `${wall.unnamed} without alt text`);
+  } else {
+    console.log("  – no logo wall on the page yet (no organisation has artwork and a permission)");
+  }
+  await ctx.close();
+}
+
 // -------------------------------------------------- menus animate open
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });

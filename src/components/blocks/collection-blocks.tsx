@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { BrandCard, BrandStrip } from "@/components/marketing/brand-card";
-import { LogoBelt, type BeltItem } from "@/components/marketing/logo-belt";
+import { LogoBelt, LogoWall, type BeltItem } from "@/components/marketing/logo-belt";
 import { safeBrandLogo } from "@/lib/brand-logo";
 import { safeClientLogo } from "@/lib/client-logo";
 import { CategoryCard } from "@/components/marketing/category-card";
@@ -441,9 +441,18 @@ export function LogoMarqueeBlock({
           </div>
         ) : null}
 
-        <Reveal>
-          <LogoBelt items={items} speed={data.speed} reverse={data.reverse} />
-        </Reveal>
+        {data.layout === "wall" ? (
+          /*
+           * The wall staggers its own cells, so it is not wrapped in a Reveal:
+           * a Reveal around a Reveal fades the whole grid in and then fades
+           * each cell in again inside it.
+           */
+          <LogoWall items={items} desaturate={data.desaturate} />
+        ) : (
+          <Reveal>
+            <LogoBelt items={items} speed={data.speed} reverse={data.reverse} />
+          </Reveal>
+        )}
       </div>
     </section>
   );

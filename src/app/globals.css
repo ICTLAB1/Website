@@ -464,6 +464,69 @@
   }
 
   /* -----------------------------------------------------------------------
+     Logo wall
+     A static grid of marks, for the cases where there are too few to justify
+     a moving belt. The cell is uniform; the artwork is fitted inside it and
+     never touched.
+  ----------------------------------------------------------------------- */
+  .logo-wall__cell {
+    transition:
+      transform var(--duration-base) var(--ease-out-quart),
+      background-color var(--duration-base) var(--ease-out-quart),
+      box-shadow var(--duration-base) var(--ease-out-quart);
+  }
+
+  .logo-wall__mark {
+    transition:
+      filter var(--duration-slow) var(--ease-out-quart),
+      opacity var(--duration-slow) var(--ease-out-quart);
+  }
+
+  /*
+   * Desaturation is opt-in per wall, not a default.
+   *
+   * A greyscale filter is a modification of the artwork. Commercial brand
+   * programmes usually tolerate it; institutional and government emblems
+   * generally do not, and the logo pack supplied for this site says so
+   * explicitly. So the effect hangs off a data attribute the section sets
+   * rather than off the class every wall carries.
+   */
+  [data-desaturate="true"] .logo-wall__mark {
+    filter: grayscale(1);
+    opacity: 0.72;
+  }
+
+  [data-desaturate="true"] .logo-wall__cell:hover .logo-wall__mark,
+  [data-desaturate="true"] .logo-wall__cell:focus-visible .logo-wall__mark {
+    filter: none;
+    opacity: 1;
+  }
+
+  /* A small lift, and a hair of scale on the mark. Kept under the 1.03 that
+     reads as a jump on a mark this size. */
+  .logo-wall__cell:hover,
+  .logo-wall__cell:focus-visible {
+    transform: translate3d(0, -2px, 0);
+    box-shadow: var(--shadow-raised);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo-wall__cell,
+    .logo-wall__mark {
+      transition: none;
+    }
+    .logo-wall__cell:hover,
+    .logo-wall__cell:focus-visible {
+      transform: none;
+    }
+    /*
+     * The colour still returns on hover. Removing the greyscale filter is a
+     * state change, not motion, and a reader who asked for less motion has not
+     * asked to be shown a permanently grey logo.
+     */
+  }
+
+  /* -----------------------------------------------------------------------
      Accent wash
      A card that fills with the accent colour on hover, growing from its
      bottom-right corner rather than fading in flat. One pseudo-element and one

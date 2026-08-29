@@ -169,13 +169,25 @@ check(
   const named = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const shown = await named.newPage();
   await shown.goto(BASE, { waitUntil: "load" });
-  const marks = await shown.locator(`.belt img[alt="${clientName}"]`).count();
+  /*
+   * Either presentation. The section is a wall today and was a belt last
+   * week; which one it is, is a setting on the block, and this suite is about
+   * the permission rule rather than the layout. Pinning the selector to `.belt`
+   * made it fail the day the homepage switched to a wall, reporting a missing
+   * alt attribute for a mark that was rendering perfectly.
+   */
+  const marks = await shown
+    .locator(`.belt img[alt="${clientName}"], .logo-wall__mark[alt="${clientName}"]`)
+    .count();
   check("the customer's mark is named for assistive technology", marks > 0, `${marks} found`);
 
   // Not a link. A customer's mark is evidence of the relationship, not an
   // advertisement for the customer.
   const linked = await shown.evaluate(
-    (name) => [...document.querySelectorAll(".belt a img")].filter((img) => img.alt === name).length,
+    (name) =>
+      [...document.querySelectorAll(".belt a img, .logo-wall__cell a img")].filter(
+        (img) => img.alt === name,
+      ).length,
     clientName,
   );
   check("the customer's mark is not a link", linked === 0, `${linked} linked`);
