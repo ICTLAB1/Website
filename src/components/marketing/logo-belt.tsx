@@ -72,7 +72,16 @@ function BeltFace({ item }: { item: BeltItem }) {
       <img
         src={item.logo}
         alt={item.name}
-        className="h-8 w-auto max-w-[6.5rem] shrink-0 object-contain"
+        /*
+          48px, not 32.
+          Thirty-two was set when the belt only ever carried publisher marks —
+          Microsoft, Adobe, Dell — which are simple shapes that read fine small.
+          The institutional emblems are not: the Delhi Police, DRDO and NBCC
+          marks all carry legible text inside them, and at 32px that text is a
+          grey smudge, which makes the mark look like a low-quality file rather
+          than a small one. 48px matches the wall.
+        */
+        className="h-12 w-auto max-w-[9rem] shrink-0 object-contain"
         /*
          * Eager, against the lazy default everywhere else on the site. The
          * marks off the right-hand edge are seconds from sliding into view
