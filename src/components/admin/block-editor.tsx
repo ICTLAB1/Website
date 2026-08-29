@@ -50,6 +50,7 @@ const SHAPES: Record<BlockType, string> = {
   PRICE_COMPARISON: `{ "eyebrow"?, "heading"?, "description"?, "ourSlug", "againstSlugs": ["…"], "note"? }  — prices are read from the catalogue, never typed here; the alternative renders with no Add to Enquiry and no discount badge`,
   COLLECTION_GRID: `{ "eyebrow"?, "heading"?, "description"?, "kind": "brands" | "categories" | "services" | "posts" | "postCategories", "limit"?, "layout"?: "grid" | "strip", "action"?: { "label", "href" } }`,
   LOGO_MARQUEE: `{ "eyebrow"?, "heading"?, "description"?, "source"?: "withLogo" | "all" | "manual" | "clients", "slugs"?: ["…"], "limit"?, "speed"?: "slow" | "steady" | "brisk", "reverse"?: false, "action"?: { "label", "href" } }  — the marks are read from each brand's logo, never named here; "clients" reads Customer logos instead, and shows only rows with a confirmed permission`,
+  INDUSTRY_GRID: `{ "eyebrow"?, "heading"?, "description"?, "filterable"?: true, "limit"?, "action"?: { "label", "href" } }  — the sectors come from Industries, not from here`,
   FAQ: `{ "heading"?, "source": "page" | "brand" | "topic" | "manual", "ref"?, "items"?: [{ "question", "answer" }] }`,
   CTA_BANNER: `{ "heading", "body"?, "primaryCta"?, "secondaryCta"?, "showContactEmail"?: false, "tone"?: "dark" | "light" | "accent" }`,
   PLANS: `{ "eyebrow"?, "heading"?, "description"?, "items": [{ "name", "summary", "points"?: ["…"], "productSlug"? }] }`,

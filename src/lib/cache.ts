@@ -43,6 +43,9 @@ export const tags = {
    * be named.
    */
   clientLogos: "client-logos",
+
+  /** The sectors this business supplies: the homepage grid and the detail pages. */
+  industries: "industries",
   /**
    * Customer testimonials, which appear on the homepage, brand pages and
    * service pages — so one tag rather than per-page, since a single quote can

@@ -6,6 +6,7 @@ import { productListSelect, type ProductListItem } from "@/lib/queries/catalogue
 import { getFaqsByBrandSlug, getFaqsByTopic } from "@/lib/queries/content";
 import { publishedTestimonials } from "@/lib/queries/reviews";
 import { publishedClientLogos } from "@/lib/queries/client-logos";
+import { publishedIndustries } from "@/lib/queries/industries";
 import type { ParsedBlock } from "@/lib/blocks/schemas";
 
 /** One row as `publishedTestimonials` returns it. */
@@ -341,6 +342,8 @@ export async function resolveBlocks(
       else if (block.type === "PRICE_COMPARISON") products.set(block.id, await comparisonFor(block));
       else if (block.type === "COLLECTION_GRID") collections.set(block.id, await collectionFor(block));
       else if (block.type === "LOGO_MARQUEE") collections.set(block.id, await marqueeFor(block));
+      else if (block.type === "INDUSTRY_GRID")
+        collections.set(block.id, (await publishedIndustries()).slice(0, block.data.limit));
       else if (block.type === "FAQ") faqs.set(block.id, await faqsFor(block, page));
       else if (block.type === "TESTIMONIALS") {
         /*

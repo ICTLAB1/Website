@@ -23,6 +23,7 @@ export type ResourceKey =
   | "certifications"
   | "testimonials"
   | "clients"
+  | "industries"
   | "jobs";
 
 export type ListColumn = {
@@ -48,6 +49,7 @@ export type ResourceConfig = {
     | "certification"
     | "testimonial"
     | "clientLogo"
+    | "industry"
     | "jobPosting";
   label: { singular: string; plural: string };
   description: string;
@@ -278,6 +280,66 @@ export const RESOURCES: Record<ResourceKey, ResourceConfig> = {
       { kind: "relation", name: "serviceId", label: "Service", resource: "service", group: "Attach to" },
       { kind: "relation", name: "productId", label: "Product", resource: "product", group: "Attach to" },
       { kind: "text", name: "topic", label: "Topic", maxLength: 80, hint: "For pages with no database record of their own, e.g. microsoft-licensing.", group: "Attach to" },
+      { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
+    ],
+  },
+
+  industries: {
+    key: "industries",
+    model: "industry",
+    label: { singular: "Industry", plural: "Industries" },
+    description:
+      "The sectors this business supplies. One row drives the homepage grid, the filter on /industries, that sector's own page and its sitemap entry — so an edit here reaches all four. Describe what is supplied to a sector; a sector is not a reference, so nothing here should name a customer or an outcome.",
+    guard: "admin",
+    softDelete: true,
+    orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
+    searchFields: ["name", "slug", "summary"],
+    tagsFor: () => [tags.industries, tags.pages],
+    listColumns: [
+      { header: "Sector", path: "name", primary: true },
+      { header: "URL", path: "slug", format: "slug" },
+      { header: "Published", path: "published", format: "boolean" },
+      { header: "Order", path: "displayOrder", format: "number" },
+    ],
+    fields: [
+      { kind: "text", name: "name", label: "Sector name", required: true, maxLength: 120, group: "Identity" },
+      { kind: "slug", name: "slug", label: "URL slug", from: "name", group: "Identity" },
+      {
+        kind: "text",
+        name: "icon",
+        label: "Glyph",
+        maxLength: 40,
+        hint: "A key from lib/glyphs — business, server, construction, finance, support, document, network, chart, cad, shield, storage, workspace, media and the rest. An unknown key falls back rather than drawing nothing.",
+        group: "Identity",
+      },
+      {
+        kind: "textarea",
+        name: "summary",
+        label: "Summary",
+        required: true,
+        rows: 3,
+        maxLength: 400,
+        hint: "One or two sentences. Shown on the card and used as the page's meta description, so keep it between 70 and 160 characters if you can.",
+        group: "Content",
+      },
+      {
+        kind: "textarea",
+        name: "description",
+        label: "Detail page copy",
+        rows: 6,
+        markdown: true,
+        maxLength: 4000,
+        group: "Content",
+      },
+      {
+        kind: "lines",
+        name: "solutions",
+        label: "What we supply",
+        maxItems: 12,
+        hint: "One per line. The first three appear on the card; all of them appear on the sector's page. Name something the catalogue actually carries.",
+        group: "Content",
+      },
+      { kind: "checkbox", name: "published", label: "Published", defaultChecked: true, group: PUBLICATION_GROUP },
       { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
     ],
   },

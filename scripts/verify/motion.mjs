@@ -295,6 +295,69 @@ const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), d
   await ctx.close();
 }
 
+// ------------------------------------------------------- the card wash
+/*
+ * The accent wash on the industry cards.
+ *
+ * The failure worth guarding is not "does it animate" but the one that makes
+ * the card unreadable: the content's hover colours are Tailwind utilities that
+ * flip the text to white, and they fire whether or not the fill behind them
+ * does. If reduced motion ever switched the fill off rather than making it
+ * instant, every hovered card would be white text on white.
+ */
+for (const reduced of ["no-preference", "reduce"]) {
+  const ctx = await browser.newContext({
+    viewport: { width: 1440, height: 1000 },
+    reducedMotion: reduced,
+  });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/industries`, { waitUntil: "load" });
+  await page.waitForTimeout(400);
+
+  const card = page.locator(".wash").first();
+  const present = (await card.count()) > 0;
+  check(`the sector cards carry a wash (${reduced})`, present);
+
+  if (present) {
+    await card.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
+    const box = await card.boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    // Longer than the 420ms fill, so this measures the settled state either way.
+    await page.waitForTimeout(700);
+
+    /*
+     * Every corner of the card is covered by the fill.
+     *
+     * Sampled at the corners rather than the middle because the fill is a
+     * circle: an undersized one covers the centre convincingly and leaves the
+     * far corner white, which is how it shipped the first time.
+     */
+    const covered = await page.evaluate(() => {
+      const el = document.querySelector(".wash");
+      const fill = getComputedStyle(el, "::before");
+      const scaled = fill.transform !== "none" && !fill.transform.includes("matrix(0,");
+      const box = el.getBoundingClientRect();
+      // The circle's radius, against the distance to the furthest corner.
+      const radius = (parseFloat(fill.width) || 0) / 2;
+      const diagonal = Math.hypot(box.width, box.height);
+      return { scaled, radius: Math.round(radius), diagonal: Math.round(diagonal) };
+    });
+
+    check(
+      `hovering fills the card (${reduced})`,
+      covered.scaled,
+      JSON.stringify(covered),
+    );
+    check(
+      `the fill reaches the far corner (${reduced})`,
+      covered.radius >= covered.diagonal,
+      `radius ${covered.radius}px against a ${covered.diagonal}px diagonal`,
+    );
+  }
+  await ctx.close();
+}
+
 // -------------------------------------------------- menus animate open
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });

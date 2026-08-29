@@ -463,6 +463,96 @@
     }
   }
 
+  /* -----------------------------------------------------------------------
+     Accent wash
+     A card that fills with the accent colour on hover, growing from its
+     bottom-right corner rather than fading in flat. One pseudo-element and one
+     transform: no JavaScript, nothing that reflows, and the card keeps its
+     layout box throughout.
+  ----------------------------------------------------------------------- */
+  .wash {
+    position: relative;
+    overflow: hidden;
+    /* Its own stacking context, so the `z-index: -1` below sits behind the
+       card's own content and not behind the card. Without this the fill
+       disappears under the section background. */
+    isolation: isolate;
+    transition:
+      border-color var(--duration-base) var(--ease-out-quart),
+      box-shadow var(--duration-slow) var(--ease-out-quart),
+      transform var(--duration-base) var(--ease-out-quart);
+  }
+
+  .wash::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    /*
+       A circle centred exactly on the card's bottom-right corner, with a radius
+       longer than the card's diagonal — which is what it takes to cover the
+       opposite corner.
+
+       The geometry is worth spelling out because getting it slightly wrong
+       looks like a bug rather than a smaller effect: `translate(50%, 50%)`
+       against `right: 0; bottom: 0` puts the centre on the corner, so the
+       radius is half the width — 180% of the card. A 4-up card is about
+       292 × 370, whose diagonal is 471px against a radius of 526px; a single
+       column on a phone is about 343 × 400, diagonal 527px against 617px.
+       Both clear. An earlier 175% with a partial offset left the top edge
+       twelve pixels short and the corners visibly rounded off. */
+    width: 360%;
+    aspect-ratio: 1;
+    transform: translate(50%, 50%) scale(0);
+    border-radius: 50%;
+    /* accent-700, not 600. White text on 600 measures 4.31:1, which is under
+       the 4.5:1 AA threshold for normal text — and axe would not catch it,
+       because axe reads the resting page and this colour only exists on hover.
+       700 measures 6.8:1. */
+    background: var(--color-accent-700);
+    z-index: -1;
+    transition: transform 420ms var(--ease-out-quart);
+  }
+
+  .wash:hover,
+  .wash:focus-visible {
+    border-color: var(--color-accent-700);
+    box-shadow: var(--shadow-raised);
+    transform: translate3d(0, -4px, 0);
+  }
+
+  .wash:hover::before,
+  .wash:focus-visible::before {
+    transform: translate(50%, 50%) scale(1);
+  }
+
+  /*
+   * For a reader who asked for less motion: no fill, no lift.
+   *
+   * Here rather than in the base layer's blanket rule, for the reason set out
+   * on the belt above — layers beat specificity, so a rule written up there
+   * loses to these. The global rule would also merely *shorten* the fill, which
+   * on a wash means it snaps to full accent instantly: the card would still
+   * invert, just abruptly. Switching the fill off entirely leaves the card
+   * reading normally, which is the point.
+   *
+   * The content's own colours are Tailwind `group-hover:` utilities and would
+   * still flip to white over a white card — so the fill is not removed, it is
+   * made instant-off by keeping the scale at zero and dropping the transition.
+   * `.wash` never sets a text colour itself, so with no hover state applied
+   * there is nothing to invert.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .wash,
+    .wash::before {
+      transition: none;
+    }
+    .wash:hover,
+    .wash:focus-visible {
+      transform: none;
+    }
+  }
+
   /* Cards lift very slightly on hover. Kept to a 2px translate and a border
      change: enough to read as interactive, not enough to feel springy. */
   .lift {

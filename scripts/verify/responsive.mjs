@@ -19,6 +19,11 @@ const PAGES = [
   ["blog", "/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model"],
   ["login", "/login"],
   ["buy", `/buy?sku=${encodeURIComponent(BUY_SKU)}`],
+  // Seventeen filter chips and a four-up card grid; and the sector page, whose
+  // long names ("Architecture, Engineering & Construction") are the ones most
+  // likely to push a card past its column on a narrow screen.
+  ["industries", "/industries"],
+  ["industry", "/industries/aec"],
   // The support page's accordion and the legal pages' date strip were both
   // rebuilt in this pass; neither page was in this sweep before.
   ["support", "/support"],

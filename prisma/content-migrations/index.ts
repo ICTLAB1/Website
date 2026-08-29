@@ -28,6 +28,7 @@ import { searchResultCopy } from "./2026-08-search-result-copy";
 import { rankingGaps } from "./2026-08-ranking-gaps";
 import { logoMarquee } from "./2026-08-logo-marquee";
 import { clientBelt } from "./2026-08-client-belt";
+import { industries } from "./2026-08-industries";
 import type { ContentMigration } from "./types";
 
 /**
@@ -69,6 +70,7 @@ export const contentMigrations: ContentMigration[] = [
   rankingGaps,
   logoMarquee,
   clientBelt,
+  industries,
 ];
 
 export type { ContentMigration };

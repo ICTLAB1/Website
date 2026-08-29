@@ -177,6 +177,23 @@ export const BLOCK_FORMS: Partial<Record<BlockType, BlockFormShape>> = {
     ],
   },
 
+  INDUSTRY_GRID: {
+    fields: [
+      { kind: "text", path: "eyebrow", label: "Eyebrow", hint: "Small label above the heading." },
+      { kind: "text", path: "heading", label: "Heading" },
+      { kind: "textarea", path: "description", label: "Intro" },
+      {
+        kind: "checkbox",
+        path: "filterable",
+        label: "Show the sector filter",
+        hint: "Worth its space above a long grid; clutter above a row of four.",
+      },
+      { kind: "number", path: "limit", label: "Maximum sectors", min: 1, max: 40 },
+      { kind: "text", path: "action.label", label: "Link label", hint: 'Optional link beside the heading, e.g. "All industries".' },
+      { kind: "text", path: "action.href", label: "Link target" },
+    ],
+  },
+
   LOGO_MARQUEE: {
     fields: [
       { kind: "text", path: "eyebrow", label: "Eyebrow", hint: "Small label above the heading." },

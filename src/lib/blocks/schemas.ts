@@ -273,6 +273,29 @@ export const logoMarqueeSchema = z.object({
   action: z.object({ label: text(60), href: safeHref }).optional(),
 });
 
+/**
+ * The sectors this business supplies, as a filterable grid.
+ *
+ * Stores no sector. The rows come from the Industry table at render time, so
+ * the grid, the filter chips, the sixteen detail pages and the sitemap are all
+ * reading one list — which is the only way an edit reaches all four.
+ */
+export const industryGridSchema = z.object({
+  eyebrow: optionalText(80),
+  heading: optionalText(200),
+  description: optionalText(600),
+  /**
+   * Whether to show the filter chips.
+   *
+   * Off for a short grid. The chips are worth their space when there are more
+   * cards than a reader will scan, and are clutter above a row of four.
+   */
+  filterable: z.boolean().optional().default(true),
+  limit: z.number().int().min(1).max(40).optional().default(24),
+  /** Optional link beside the heading. */
+  action: z.object({ label: text(60), href: safeHref }).optional(),
+});
+
 export const faqSchema = z.object({
   heading: optionalText(200),
   /**
@@ -393,6 +416,7 @@ export const BLOCK_SCHEMAS = {
   PRICE_COMPARISON: priceComparisonSchema,
   COLLECTION_GRID: collectionGridSchema,
   LOGO_MARQUEE: logoMarqueeSchema,
+  INDUSTRY_GRID: industryGridSchema,
   FAQ: faqSchema,
   COMPANY_INFO: companyInfoSchema,
   NOTICE: noticeSchema,
@@ -463,6 +487,7 @@ export const BLOCK_SEEDS: { [T in BlockType]: BlockData<T> } = {
   }),
   COLLECTION_GRID: collectionGridSchema.parse({ kind: "brands", limit: 8 }),
   LOGO_MARQUEE: logoMarqueeSchema.parse({ heading: "Brands we supply" }),
+  INDUSTRY_GRID: industryGridSchema.parse({ heading: "Industries we serve" }),
   FAQ: faqSchema.parse({ source: "page" }),
   COMPANY_INFO: companyInfoSchema.parse({ heading: "Company information" }),
   NOTICE: noticeSchema.parse({ tone: "info", markdown: "Something worth saying before the rest of the page." }),
@@ -487,6 +512,7 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
   PRICE_COMPARISON: "Price comparison",
   COLLECTION_GRID: "Collection grid",
   LOGO_MARQUEE: "Logo marquee",
+  INDUSTRY_GRID: "Industry grid",
   FAQ: "FAQ",
   COMPANY_INFO: "Company information",
   NOTICE: "Notice",

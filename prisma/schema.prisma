@@ -336,6 +336,7 @@ enum PageSectionType {
   PRICE_COMPARISON
   COLLECTION_GRID
   LOGO_MARQUEE
+  INDUSTRY_GRID
   FAQ
   COMPANY_INFO
   NOTICE
@@ -1782,6 +1783,64 @@ model Certification {
  * `published` is on *and* there is artwork. See `lib/client-logo`, which is the
  * only place that decides.
  */
+/**
+ * A sector this business supplies, and what it supplies to it.
+ *
+ * Rows rather than page copy for the usual reason: the same sixteen sectors
+ * appear on the homepage grid, in the filter, on their own detail pages and in
+ * the sitemap, and four copies of a list is four places to forget an edit.
+ *
+ * ## What a row may and may not say
+ *
+ * `summary` and `description` describe what this business supplies to a
+ * sector, drawn from the catalogue and the service list. They are not the place
+ * for a customer, a case study, a headcount or an outcome — a sector is not a
+ * reference, and a sentence that reads like one is a claim nothing here can
+ * support. Customers live in ClientLogo, with a permission on the record.
+ *
+ * `solutions` holds labels, not promises: each one names something the
+ * catalogue actually carries or a service that actually exists.
+ */
+model Industry {
+  id   String @id @default(cuid())
+  slug String @unique
+  name String
+
+  /// One or two sentences. Shown on the card and used as the page description.
+  summary String
+
+  /// Longer copy for the detail page. Empty means the page shows the summary
+  /// alone rather than a heading with nothing under it.
+  description String @default("")
+
+  /// Key into the glyph map in `lib/glyphs`. An unknown key falls back rather
+  /// than rendering an empty box.
+  icon String @default("business")
+
+  /// What this business supplies to the sector, as labels for the card chips.
+  solutions String[]
+
+  /// Slugs of the brands, services and catalogue categories most relevant to
+  /// the sector, rendered on its page as real links.
+  ///
+  /// Slugs rather than relations, and the renderer drops any that no longer
+  /// resolve. A sector naming a brand that has since been archived should lose
+  /// a card, not 500 the page — and a foreign key would make withdrawing a
+  /// brand a two-step operation for a marketing reason.
+  brandSlugs    String[]
+  serviceSlugs  String[]
+  categorySlugs String[]
+
+  displayOrder Int       @default(100)
+  published    Boolean   @default(true)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([published])
+  @@index([deletedAt])
+}
+
 model ClientLogo {
   id   String @id @default(cuid())
   /// The organisation's name as they write it themselves.

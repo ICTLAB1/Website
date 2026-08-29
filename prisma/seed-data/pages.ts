@@ -384,20 +384,19 @@ export const pageSeeds: PageSeed[] = [
         }
       },
       {
-        "type": "CHIP_LIST",
+        "type": "INDUSTRY_GRID",
         "displayOrder": 14,
         "visible": true,
         "data": {
-          "items": [
-            "Defence",
-            "Education",
-            "Banking & Finance",
-            "Manufacturing",
-            "Ministry of Health and Family Welfare"
-          ],
+          "limit": 8,
+          "action": {
+            "href": "/industries",
+            "label": "All industries"
+          },
           "eyebrow": "Industries we serve",
-          "heading": "Industries we serve",
-          "description": "Sectors whose procurement rules, security requirements and licensing models we work within routinely."
+          "heading": "Built for how your sector actually buys",
+          "filterable": false,
+          "description": "Procurement rules, security requirements and licensing models differ by sector. These are the ones we work within routinely."
         }
       },
       {
@@ -436,8 +435,20 @@ export const pageSeeds: PageSeed[] = [
         }
       },
       {
-        "type": "CARDS",
+        "type": "LOGO_MARQUEE",
         "displayOrder": 17,
+        "visible": true,
+        "data": {
+          "limit": 24,
+          "speed": "steady",
+          "source": "clients",
+          "heading": "Customers we work with",
+          "reverse": true
+        }
+      },
+      {
+        "type": "CARDS",
+        "displayOrder": 18,
         "visible": true,
         "data": {
           "items": [
@@ -468,7 +479,7 @@ export const pageSeeds: PageSeed[] = [
       },
       {
         "type": "COLLECTION_GRID",
-        "displayOrder": 18,
+        "displayOrder": 19,
         "visible": true,
         "data": {
           "kind": "brands",
@@ -485,7 +496,7 @@ export const pageSeeds: PageSeed[] = [
       },
       {
         "type": "KEY_VALUE_LIST",
-        "displayOrder": 19,
+        "displayOrder": 20,
         "visible": true,
         "data": {
           "items": [
@@ -518,7 +529,7 @@ export const pageSeeds: PageSeed[] = [
       },
       {
         "type": "COLLECTION_GRID",
-        "displayOrder": 20,
+        "displayOrder": 21,
         "visible": true,
         "data": {
           "kind": "posts",
@@ -535,7 +546,7 @@ export const pageSeeds: PageSeed[] = [
       },
       {
         "type": "CTA_BANNER",
-        "displayOrder": 21,
+        "displayOrder": 22,
         "visible": true,
         "data": {
           "body": "Send us the requirement — a product list, a seat count, or just the problem you are trying to solve. We will come back with a consolidated quotation and a plain recommendation, including where a cheaper option would serve you better.",
@@ -8667,6 +8678,15 @@ export const navigationSeeds: NavigationSeed[] = [
     "href": "/solutions/education",
     "description": null,
     "displayOrder": 50
+  },
+  {
+    "key": "header:industries",
+    "parentKey": null,
+    "menu": "HEADER",
+    "label": "Industries",
+    "href": "/industries",
+    "description": "Technology procurement by sector",
+    "displayOrder": 25
   },
   {
     "key": "header:services",
