@@ -230,6 +230,93 @@ export const collectionGridSchema = z.object({
   action: z.object({ label: text(60), href: safeHref }).optional(),
 });
 
+/**
+ * A moving belt of publisher and manufacturer marks.
+ *
+ * Two things this block deliberately does not do.
+ *
+ * It does not store logos. The payload names a source and the artwork is read
+ * from `Brand.logoUrl` when the page renders, so the belt cannot outlive the
+ * catalogue it advertises: a brand deleted in the admin panel leaves the belt
+ * in the same request, and a mark replaced there is replaced here.
+ *
+ * And it does not name customers either. `source: "clients"` reads the
+ * ClientLogo table, where each row carries who granted permission, where the
+ * evidence is and the date it was confirmed — and `lib/client-logo` will not
+ * release a mark without all three. So a customer strip is something an
+ * administrator populates with recorded permissions, not something an author
+ * types into a block payload.
+ */
+export const logoMarqueeSchema = z.object({
+  eyebrow: optionalText(80),
+  heading: optionalText(200),
+  description: optionalText(600),
+  /**
+   * `withLogo` is the default and the only one that guarantees a belt made of
+   * artwork. `all` admits brands with no file on file, which render as the
+   * lettered wordmark — correct, but a row of coloured initials moving past is
+   * not what anyone means by a logo strip.
+   */
+  source: z.enum(["withLogo", "all", "manual", "clients"]).optional().default("withLogo"),
+  /** Brand slugs, in order, for `manual`. Ignored by the other two sources. */
+  slugs: z.array(z.string().trim().min(1).max(120)).max(40).optional().default([]),
+  limit: z.number().int().min(4).max(60).optional().default(24),
+  /**
+   * How long one full pass takes. Named rather than numeric because the honest
+   * range is narrow: below about 25 seconds the belt is distracting on a
+   * marketing page, and above about 70 it reads as broken rather than slow.
+   */
+  speed: z.enum(["slow", "steady", "brisk"]).optional().default("steady"),
+  /** Right-to-left by default; `true` runs it the other way. */
+  reverse: z.boolean().optional().default(false),
+  /**
+   * How the marks are laid out.
+   *
+   * `belt` moves; `wall` is a static grid. The choice is really about how many
+   * marks there are: a belt with eight logos on it spends most of every pass
+   * showing the gap between the end of the row and the start of the copy, and
+   * a wall of forty is a wall nobody reads. Under about a dozen, use a wall.
+   */
+  layout: z.enum(["belt", "wall"]).optional().default("belt"),
+  /**
+   * Desaturate the marks until they are hovered.
+   *
+   * Off by default, and deliberately opt-in rather than the usual default.
+   * A greyscale filter is a modification of the artwork, and several of the
+   * organisations whose marks may end up here publish rules against exactly
+   * that — the government logo pack supplied for this site says "do not redraw
+   * or modify government emblems, preserve official proportions and colors" in
+   * as many words. A per-section switch means a wall of commercial brands can
+   * have the effect without a wall of emblems inheriting it.
+   */
+  desaturate: z.boolean().optional().default(false),
+  /** Optional link beside the heading. */
+  action: z.object({ label: text(60), href: safeHref }).optional(),
+});
+
+/**
+ * The sectors this business supplies, as a filterable grid.
+ *
+ * Stores no sector. The rows come from the Industry table at render time, so
+ * the grid, the filter chips, the sixteen detail pages and the sitemap are all
+ * reading one list — which is the only way an edit reaches all four.
+ */
+export const industryGridSchema = z.object({
+  eyebrow: optionalText(80),
+  heading: optionalText(200),
+  description: optionalText(600),
+  /**
+   * Whether to show the filter chips.
+   *
+   * Off for a short grid. The chips are worth their space when there are more
+   * cards than a reader will scan, and are clutter above a row of four.
+   */
+  filterable: z.boolean().optional().default(true),
+  limit: z.number().int().min(1).max(40).optional().default(24),
+  /** Optional link beside the heading. */
+  action: z.object({ label: text(60), href: safeHref }).optional(),
+});
+
 export const faqSchema = z.object({
   heading: optionalText(200),
   /**
@@ -349,6 +436,8 @@ export const BLOCK_SCHEMAS = {
   PRODUCT_GRID: productGridSchema,
   PRICE_COMPARISON: priceComparisonSchema,
   COLLECTION_GRID: collectionGridSchema,
+  LOGO_MARQUEE: logoMarqueeSchema,
+  INDUSTRY_GRID: industryGridSchema,
   FAQ: faqSchema,
   COMPANY_INFO: companyInfoSchema,
   NOTICE: noticeSchema,
@@ -418,6 +507,8 @@ export const BLOCK_SEEDS: { [T in BlockType]: BlockData<T> } = {
     againstSlugs: ["alternative-product-slug"],
   }),
   COLLECTION_GRID: collectionGridSchema.parse({ kind: "brands", limit: 8 }),
+  LOGO_MARQUEE: logoMarqueeSchema.parse({ heading: "Brands we supply" }),
+  INDUSTRY_GRID: industryGridSchema.parse({ heading: "Industries we serve" }),
   FAQ: faqSchema.parse({ source: "page" }),
   COMPANY_INFO: companyInfoSchema.parse({ heading: "Company information" }),
   NOTICE: noticeSchema.parse({ tone: "info", markdown: "Something worth saying before the rest of the page." }),
@@ -441,6 +532,8 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
   PRODUCT_GRID: "Product grid",
   PRICE_COMPARISON: "Price comparison",
   COLLECTION_GRID: "Collection grid",
+  LOGO_MARQUEE: "Logo marquee",
+  INDUSTRY_GRID: "Industry grid",
   FAQ: "FAQ",
   COMPANY_INFO: "Company information",
   NOTICE: "Notice",

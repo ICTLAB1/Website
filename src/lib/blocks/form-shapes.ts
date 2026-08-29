@@ -177,6 +177,68 @@ export const BLOCK_FORMS: Partial<Record<BlockType, BlockFormShape>> = {
     ],
   },
 
+  INDUSTRY_GRID: {
+    fields: [
+      { kind: "text", path: "eyebrow", label: "Eyebrow", hint: "Small label above the heading." },
+      { kind: "text", path: "heading", label: "Heading" },
+      { kind: "textarea", path: "description", label: "Intro" },
+      {
+        kind: "checkbox",
+        path: "filterable",
+        label: "Show the sector filter",
+        hint: "Worth its space above a long grid; clutter above a row of four.",
+      },
+      { kind: "number", path: "limit", label: "Maximum sectors", min: 1, max: 40 },
+      { kind: "text", path: "action.label", label: "Link label", hint: 'Optional link beside the heading, e.g. "All industries".' },
+      { kind: "text", path: "action.href", label: "Link target" },
+    ],
+  },
+
+  LOGO_MARQUEE: {
+    fields: [
+      { kind: "text", path: "eyebrow", label: "Eyebrow", hint: "Small label above the heading." },
+      { kind: "text", path: "heading", label: "Heading" },
+      { kind: "textarea", path: "description", label: "Intro" },
+      {
+        kind: "select",
+        path: "source",
+        label: "Which brands",
+        options: ["withLogo", "all", "manual", "clients"],
+        hint: "withLogo shows brands that have artwork on file; all also shows lettered wordmarks; manual uses the slug list below. clients shows customer logos instead of brands — only those with a recorded permission and published under Customer logos.",
+      },
+      {
+        kind: "stringList",
+        path: "slugs",
+        label: "Brand slugs",
+        hint: "One per line, in the order to display. Used when the source is manual.",
+      },
+      { kind: "number", path: "limit", label: "Maximum brands", min: 4, max: 60 },
+      {
+        kind: "select",
+        path: "speed",
+        label: "Speed",
+        options: ["slow", "steady", "brisk"],
+        hint: "How long one full pass takes: 72, 48 or 32 seconds.",
+      },
+      {
+        kind: "select",
+        path: "layout",
+        label: "Layout",
+        options: ["belt", "wall"],
+        hint: "belt moves; wall is a static grid. Under about a dozen marks, use a wall — a belt that short spends most of each pass showing the gap.",
+      },
+      { kind: "checkbox", path: "reverse", label: "Scroll left to right", hint: "Belt only." },
+      {
+        kind: "checkbox",
+        path: "desaturate",
+        label: "Grey until hovered",
+        hint: "Leave off for government or institutional emblems: a greyscale filter modifies the artwork, and their usage rules generally forbid that.",
+      },
+      { kind: "text", path: "action.label", label: "Link label", hint: 'Optional link beside the heading, e.g. "All brands".' },
+      { kind: "text", path: "action.href", label: "Link target" },
+    ],
+  },
+
   FAQ: {
     fields: [
       { kind: "text", path: "heading", label: "Heading" },

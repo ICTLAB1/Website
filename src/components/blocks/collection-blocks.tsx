@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { BrandCard, BrandStrip } from "@/components/marketing/brand-card";
+import { LogoBelt, LogoWall, type BeltItem } from "@/components/marketing/logo-belt";
+import { safeBrandLogo } from "@/lib/brand-logo";
+import { safeClientLogo } from "@/lib/client-logo";
 import { CategoryCard } from "@/components/marketing/category-card";
 import { Reveal } from "@/components/motion/reveal";
 import { EmptyState } from "@/components/ui/states";
@@ -199,6 +202,27 @@ type BrandRow = {
   logoUrl: string | null;
   _count: { products: number };
 };
+/**
+ * What the marquee's resolver selects — narrower than `BrandRow`, and its own
+ * type rather than a `Pick` of it, because it is a different query. A belt
+ * needs a name, a mark and somewhere to go; asking for a tagline and a product
+ * count it will not print would be reading columns to throw them away.
+ */
+type BeltBrandRow = {
+  slug: string;
+  name: string;
+  accentColor: string;
+  logoUrl: string | null;
+};
+
+/** What `publishedClientLogos` returns, of which the belt uses three fields. */
+type ClientLogoRow = {
+  name: string;
+  logoUrl: string | null;
+  website: string | null;
+  sector: string | null;
+};
+
 type CategoryRow = {
   slug: string;
   name: string;
@@ -322,6 +346,117 @@ type PostRow = {
   readMinutes: number;
   publishedAt: Date | null;
 };
+
+/**
+ * The moving brand belt.
+ *
+ * Laid out by hand rather than through `BlockSection` because the belt has to
+ * reach both edges of the window: a marquee inside a centred container has
+ * visible ends, and a strip with visible ends is a list that happens to move.
+ * The heading above it still sits in the page container, so it lines up with
+ * every other section's heading.
+ */
+export function LogoMarqueeBlock({
+  data,
+  rows,
+  tone,
+}: {
+  data: BlockData<"LOGO_MARQUEE">;
+  rows: unknown[];
+  tone?: "plain" | "muted";
+}) {
+  /*
+   * Two sources, two directories, two rules — normalised here so the belt
+   * itself takes one shape and holds no policy.
+   *
+   * A brand with no artwork falls back to its lettered wordmark, which is what
+   * it does everywhere else on the site. A customer does not: `/clients/`
+   * artwork is the only thing that may stand for a customer, and a row without
+   * it never leaves `publishedClientLogos` in the first place. The filter here
+   * is the second of the two, not the first.
+   */
+  const items: BeltItem[] =
+    data.source === "clients"
+      ? (rows as ClientLogoRow[])
+          .map((client) => ({
+            key: client.name,
+            name: client.name,
+            logo: safeClientLogo(client.logoUrl),
+            // Not linked. A customer's mark on a supplier's page is evidence of
+            // the relationship, not an advertisement for the customer, and an
+            // off-site link out of a marquee is a strange thing to offer.
+            href: null,
+            accentColor: "#201c18",
+          }))
+          .filter((item) => item.logo !== null)
+      : (rows as BeltBrandRow[]).map((brand) => ({
+          key: brand.slug,
+          name: brand.name,
+          logo: safeBrandLogo(brand.logoUrl),
+          href: `/brands/${brand.slug}`,
+          accentColor: brand.accentColor,
+        }));
+
+  /*
+   * Nothing to show, nothing rendered — not an empty band with a heading over
+   * it. Every source can legitimately come back empty: no brand has artwork on
+   * file yet, every slug in a manual list has since been deleted, or — the
+   * common one — customer logos have been added but none has a confirmed
+   * permission and a publish yet. A heading reading "Customers we work with"
+   * above a blank strip is worse than the section's absence.
+   */
+  if (items.length === 0) return null;
+
+  const caption = Boolean(data.heading) && !data.eyebrow && !data.description && !data.action;
+
+  return (
+    <section
+      className={tone === "muted" ? "border-y border-line bg-surface-muted" : undefined}
+    >
+      <div className="py-12 lg:py-16">
+        {caption ? (
+          <p className="container-page mb-6 text-center text-label font-semibold uppercase tracking-[0.14em] text-ink-500">
+            {data.heading}
+          </p>
+        ) : data.eyebrow || data.heading || data.description ? (
+          <div className="container-page">
+            {data.action ? (
+              <SectionHeader
+                eyebrow={data.eyebrow}
+                title={data.heading ?? ""}
+                description={data.description}
+                action={
+                  <ButtonLink href={data.action.href} variant="outline" size="sm">
+                    {data.action.label}
+                  </ButtonLink>
+                }
+              />
+            ) : (
+              <BlockHeading
+                eyebrow={data.eyebrow}
+                heading={data.heading}
+                description={data.description}
+              />
+            )}
+          </div>
+        ) : null}
+
+        {data.layout === "wall" ? (
+          /*
+           * The wall staggers its own cells, so it is not wrapped in a Reveal:
+           * a Reveal around a Reveal fades the whole grid in and then fades
+           * each cell in again inside it.
+           */
+          <LogoWall items={items} desaturate={data.desaturate} />
+        ) : (
+          <Reveal>
+            <LogoBelt items={items} speed={data.speed} reverse={data.reverse} />
+          </Reveal>
+        )}
+      </div>
+    </section>
+  );
+}
 
 export function CollectionGridBlock({
   data,

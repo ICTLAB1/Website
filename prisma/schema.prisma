@@ -335,6 +335,8 @@ enum PageSectionType {
   PRODUCT_GRID
   PRICE_COMPARISON
   COLLECTION_GRID
+  LOGO_MARQUEE
+  INDUSTRY_GRID
   FAQ
   COMPANY_INFO
   NOTICE
@@ -1759,6 +1761,129 @@ model Certification {
 /// seed. A plausible-looking quote attributed to a plausible-looking customer
 /// is a fabricated endorsement whatever the intention behind it, and it would
 /// be indistinguishable from the real ones the moment it shipped.
+/**
+ * A customer whose logo may be shown on the public site.
+ *
+ * A separate model from `Company`, and deliberately so. A Company is a
+ * commercial record — orders, quotations, addresses, people — and most of them
+ * will never appear on a marketing page. This holds only what a logo strip
+ * needs, so putting a customer on the website is an explicit act rather than a
+ * side effect of them buying something.
+ *
+ * ## Why permission is four columns rather than a checkbox
+ *
+ * The same reasoning as `Brand.partnerLabel`, and for a stronger reason. A
+ * customer's name and mark are their property, and a supplier displaying them
+ * is making a claim the customer may be asked to confirm. So the record has to
+ * hold not just *that* somebody said yes, but who, when, and where the
+ * evidence is — the difference between a permission somebody remembers and one
+ * somebody can produce.
+ *
+ * Nothing reaches the public site unless `permissionConfirmedAt` is set *and*
+ * `published` is on *and* there is artwork. See `lib/client-logo`, which is the
+ * only place that decides.
+ */
+/**
+ * A sector this business supplies, and what it supplies to it.
+ *
+ * Rows rather than page copy for the usual reason: the same sixteen sectors
+ * appear on the homepage grid, in the filter, on their own detail pages and in
+ * the sitemap, and four copies of a list is four places to forget an edit.
+ *
+ * ## What a row may and may not say
+ *
+ * `summary` and `description` describe what this business supplies to a
+ * sector, drawn from the catalogue and the service list. They are not the place
+ * for a customer, a case study, a headcount or an outcome — a sector is not a
+ * reference, and a sentence that reads like one is a claim nothing here can
+ * support. Customers live in ClientLogo, with a permission on the record.
+ *
+ * `solutions` holds labels, not promises: each one names something the
+ * catalogue actually carries or a service that actually exists.
+ */
+model Industry {
+  id   String @id @default(cuid())
+  slug String @unique
+  name String
+
+  /// One or two sentences. Shown on the card and used as the page description.
+  summary String
+
+  /// Longer copy for the detail page. Empty means the page shows the summary
+  /// alone rather than a heading with nothing under it.
+  description String @default("")
+
+  /// Key into the glyph map in `lib/glyphs`. An unknown key falls back rather
+  /// than rendering an empty box.
+  icon String @default("business")
+
+  /// What this business supplies to the sector, as labels for the card chips.
+  solutions String[]
+
+  /// Slugs of the brands, services and catalogue categories most relevant to
+  /// the sector, rendered on its page as real links.
+  ///
+  /// Slugs rather than relations, and the renderer drops any that no longer
+  /// resolve. A sector naming a brand that has since been archived should lose
+  /// a card, not 500 the page — and a foreign key would make withdrawing a
+  /// brand a two-step operation for a marketing reason.
+  brandSlugs    String[]
+  serviceSlugs  String[]
+  categorySlugs String[]
+
+  displayOrder Int       @default(100)
+  published    Boolean   @default(true)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([published])
+  @@index([deletedAt])
+}
+
+model ClientLogo {
+  id   String @id @default(cuid())
+  /// The organisation's name as they write it themselves.
+  name String
+
+  /// Path to their mark: a file under `public/clients/`, or an upload. Null
+  /// until artwork is added, and a null keeps the row off the public site —
+  /// a logo strip entry with no logo is not a thing worth rendering.
+  logoUrl String?
+
+  /// Their own site. Optional, and not linked from the strip by default: a
+  /// customer logo is evidence, not an advertisement for them.
+  website String?
+
+  /// Free text — "Public sector", "Defence", "Manufacturing". Used to group
+  /// the strip where a page wants that, and left null where it does not
+  /// matter.
+  sector String?
+
+  /// Who granted permission, in words a person can check: a name and a role,
+  /// not an identifier.
+  permissionHolder    String?
+  /// Where the evidence is. An email subject and date, a contract clause, a
+  /// file reference — free text, because the point is that somebody can find
+  /// it, not that a machine can parse it.
+  permissionReference String?
+  /// When permission was confirmed. Null means it has not been, whatever the
+  /// other columns say.
+  permissionConfirmedAt DateTime?
+  /// Whether to show it. Off by default, including for a row whose permission
+  /// is recorded — recording a permission and deciding to use it are two
+  /// decisions.
+  published Boolean @default(false)
+
+  displayOrder Int       @default(100)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([published])
+  @@index([deletedAt])
+}
+
 model Testimonial {
   id String @id @default(cuid())
 

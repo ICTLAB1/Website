@@ -5,6 +5,8 @@ import { tags } from "@/lib/cache";
 import { productListSelect, type ProductListItem } from "@/lib/queries/catalogue";
 import { getFaqsByBrandSlug, getFaqsByTopic } from "@/lib/queries/content";
 import { publishedTestimonials } from "@/lib/queries/reviews";
+import { publishedClientLogos } from "@/lib/queries/client-logos";
+import { publishedIndustries } from "@/lib/queries/industries";
 import type { ParsedBlock } from "@/lib/blocks/schemas";
 
 /** One row as `publishedTestimonials` returns it. */
@@ -240,6 +242,58 @@ async function collectionFor(
   }
 }
 
+/**
+ * The marks a marquee rides.
+ *
+ * `withLogo` filters on the column rather than trusting `displayOrder` to have
+ * put the illustrated brands first, because the belt's whole premise is
+ * artwork: a brand with no file on file renders the lettered wordmark, and a
+ * strip of moving coloured initials is not a logo strip, it is a bug that
+ * looks like a decision.
+ *
+ * Nothing here can widen a partner claim. The rows carry a name, a slug and a
+ * mark; the heading above them is authored copy, and what a brand relationship
+ * may be *called* publicly is decided in `lib/brand-partner`, not by which
+ * brands happen to have a PNG.
+ */
+async function marqueeFor(
+  block: Extract<ParsedBlock, { type: "LOGO_MARQUEE" }>,
+): Promise<unknown[]> {
+  /*
+   * Customers are not brands and do not come from the same table. The query is
+   * the only one entitled to release a customer's mark — it applies the
+   * permission rule itself — so this branch hands the whole decision to it
+   * rather than assembling a `where` clause here that could drift from it.
+   */
+  if (block.data.source === "clients") {
+    const clients = await publishedClientLogos();
+    return clients.slice(0, block.data.limit);
+  }
+
+  const select = { slug: true, name: true, accentColor: true, logoUrl: true };
+  const base = { deletedAt: null };
+
+  if (block.data.source === "manual") {
+    const slugs = block.data.slugs.filter(Boolean);
+    if (slugs.length === 0) return [];
+    const rows = await prisma.brand.findMany({
+      where: { ...base, slug: { in: slugs } },
+      select,
+    });
+    // The author's order, which `in` does not preserve.
+    return slugs
+      .map((slug) => rows.find((row) => row.slug === slug))
+      .filter((row) => row !== undefined);
+  }
+
+  return prisma.brand.findMany({
+    where: block.data.source === "withLogo" ? { ...base, NOT: { logoUrl: null } } : base,
+    orderBy: { displayOrder: "asc" },
+    take: block.data.limit,
+    select,
+  });
+}
+
 async function faqsFor(
   block: Extract<ParsedBlock, { type: "FAQ" }>,
   page: { brandSlug: string | null; faqTopic: string | null },
@@ -287,6 +341,9 @@ export async function resolveBlocks(
       if (block.type === "PRODUCT_GRID") products.set(block.id, await productsFor(block));
       else if (block.type === "PRICE_COMPARISON") products.set(block.id, await comparisonFor(block));
       else if (block.type === "COLLECTION_GRID") collections.set(block.id, await collectionFor(block));
+      else if (block.type === "LOGO_MARQUEE") collections.set(block.id, await marqueeFor(block));
+      else if (block.type === "INDUSTRY_GRID")
+        collections.set(block.id, (await publishedIndustries()).slice(0, block.data.limit));
       else if (block.type === "FAQ") faqs.set(block.id, await faqsFor(block, page));
       else if (block.type === "TESTIMONIALS") {
         /*

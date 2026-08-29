@@ -26,6 +26,13 @@ import { workplaceComparison } from "./2026-08-workplace-comparison";
 import { digitalLicenceArticle } from "./2026-08-digital-licence-article";
 import { searchResultCopy } from "./2026-08-search-result-copy";
 import { rankingGaps } from "./2026-08-ranking-gaps";
+import { logoMarquee } from "./2026-08-logo-marquee";
+import { clientBelt } from "./2026-08-client-belt";
+import { industries } from "./2026-08-industries";
+import { organisationWall } from "./2026-08-organisation-wall";
+import { organisationLogos } from "./2026-08-organisation-logos";
+import { organisationBelt } from "./2026-08-organisation-belt";
+import { publishOrganisations } from "./2026-08-publish-organisations";
 import type { ContentMigration } from "./types";
 
 /**
@@ -65,6 +72,13 @@ export const contentMigrations: ContentMigration[] = [
   digitalLicenceArticle,
   searchResultCopy,
   rankingGaps,
+  logoMarquee,
+  clientBelt,
+  industries,
+  organisationWall,
+  organisationLogos,
+  organisationBelt,
+  publishOrganisations,
 ];
 
 export type { ContentMigration };

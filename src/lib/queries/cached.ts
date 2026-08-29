@@ -62,6 +62,7 @@ export const DATE_KEYS = new Set([
   "moderatedAt",
   "occurredAt",
   "partnerConfirmedAt",
+  "permissionConfirmedAt",
   "placedAt",
   "postedOn",
   "publishedAt",
