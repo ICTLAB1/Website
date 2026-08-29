@@ -240,12 +240,12 @@ export const collectionGridSchema = z.object({
  * catalogue it advertises: a brand deleted in the admin panel leaves the belt
  * in the same request, and a mark replaced there is replaced here.
  *
- * And it does not carry customers. A moving strip of marks is the shape most
- * sites use for "our clients", and it is the one shape this business must not
- * borrow: it holds no written permission to display a customer's trademark,
- * and several of the organisations it supplies are public bodies whose emblems
- * carry statutory restrictions on exactly that use. The brands here are the
- * ones this business resells, which is a relationship it can evidence.
+ * And it does not name customers either. `source: "clients"` reads the
+ * ClientLogo table, where each row carries who granted permission, where the
+ * evidence is and the date it was confirmed — and `lib/client-logo` will not
+ * release a mark without all three. So a customer strip is something an
+ * administrator populates with recorded permissions, not something an author
+ * types into a block payload.
  */
 export const logoMarqueeSchema = z.object({
   eyebrow: optionalText(80),
@@ -257,7 +257,7 @@ export const logoMarqueeSchema = z.object({
    * lettered wordmark — correct, but a row of coloured initials moving past is
    * not what anyone means by a logo strip.
    */
-  source: z.enum(["withLogo", "all", "manual"]).optional().default("withLogo"),
+  source: z.enum(["withLogo", "all", "manual", "clients"]).optional().default("withLogo"),
   /** Brand slugs, in order, for `manual`. Ignored by the other two sources. */
   slugs: z.array(z.string().trim().min(1).max(120)).max(40).optional().default([]),
   limit: z.number().int().min(4).max(60).optional().default(24),

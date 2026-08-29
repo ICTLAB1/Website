@@ -5,6 +5,7 @@ import { tags } from "@/lib/cache";
 import { productListSelect, type ProductListItem } from "@/lib/queries/catalogue";
 import { getFaqsByBrandSlug, getFaqsByTopic } from "@/lib/queries/content";
 import { publishedTestimonials } from "@/lib/queries/reviews";
+import { publishedClientLogos } from "@/lib/queries/client-logos";
 import type { ParsedBlock } from "@/lib/blocks/schemas";
 
 /** One row as `publishedTestimonials` returns it. */
@@ -257,6 +258,17 @@ async function collectionFor(
 async function marqueeFor(
   block: Extract<ParsedBlock, { type: "LOGO_MARQUEE" }>,
 ): Promise<unknown[]> {
+  /*
+   * Customers are not brands and do not come from the same table. The query is
+   * the only one entitled to release a customer's mark — it applies the
+   * permission rule itself — so this branch hands the whole decision to it
+   * rather than assembling a `where` clause here that could drift from it.
+   */
+  if (block.data.source === "clients") {
+    const clients = await publishedClientLogos();
+    return clients.slice(0, block.data.limit);
+  }
+
   const select = { slug: true, name: true, accentColor: true, logoUrl: true };
   const base = { deletedAt: null };
 

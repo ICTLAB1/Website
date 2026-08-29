@@ -42,7 +42,9 @@ export default async function NewResourcePage({ params }: PageProps) {
   // Sensible starting values so a new record does not save with a blank state.
   const values: Record<string, string | boolean> = {};
   for (const field of config.fields) {
-    if (field.kind === "checkbox") values[field.name] = field.name === "published";
+    // Declared by the field, not guessed from its name. See the note on
+    // `defaultChecked` in lib/admin/fields.
+    if (field.kind === "checkbox") values[field.name] = field.defaultChecked === true;
     else if (field.kind === "number" && field.name === "displayOrder") values[field.name] = "100";
     else if (field.kind === "select") values[field.name] = field.options[0]?.value ?? "";
     else values[field.name] = "";

@@ -22,6 +22,7 @@ export type ResourceKey =
   | "banners"
   | "certifications"
   | "testimonials"
+  | "clients"
   | "jobs";
 
 export type ListColumn = {
@@ -46,6 +47,7 @@ export type ResourceConfig = {
     | "banner"
     | "certification"
     | "testimonial"
+    | "clientLogo"
     | "jobPosting";
   label: { singular: string; plural: string };
   description: string;
@@ -68,6 +70,16 @@ export type ResourceConfig = {
 };
 
 const PUBLICATION_GROUP = "Publication";
+/*
+ * Its own group, and named for what it is.
+ *
+ * These four fields are the difference between a permission somebody remembers
+ * and one somebody can produce, and grouping them under "Identity" would file
+ * them as paperwork. Displaying a customer's trademark is a claim they may be
+ * asked to confirm; the person filling this in should see that as its own
+ * section with its own heading.
+ */
+const PERMISSION_GROUP = "Permission";
 
 export const RESOURCES: Record<ResourceKey, ResourceConfig> = {
   brands: {
@@ -202,7 +214,7 @@ export const RESOURCES: Record<ResourceKey, ResourceConfig> = {
       { kind: "lines", name: "benefits", label: "Benefits", hint: "One per line.", group: "Content" },
       { kind: "lines", name: "technologies", label: "Technologies", hint: "One per line.", group: "Content" },
       { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
-      { kind: "checkbox", name: "published", label: "Published", group: PUBLICATION_GROUP },
+      { kind: "checkbox", name: "published", label: "Published", defaultChecked: true, group: PUBLICATION_GROUP },
       { kind: "checkbox", name: "featured", label: "Featured", group: PUBLICATION_GROUP },
     ],
   },
@@ -266,6 +278,64 @@ export const RESOURCES: Record<ResourceKey, ResourceConfig> = {
       { kind: "relation", name: "serviceId", label: "Service", resource: "service", group: "Attach to" },
       { kind: "relation", name: "productId", label: "Product", resource: "product", group: "Attach to" },
       { kind: "text", name: "topic", label: "Topic", maxLength: 80, hint: "For pages with no database record of their own, e.g. microsoft-licensing.", group: "Attach to" },
+      { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
+    ],
+  },
+
+  clients: {
+    key: "clients",
+    model: "clientLogo",
+    label: { singular: "Customer logo", plural: "Customer logos" },
+    description:
+      "Customers whose logo may appear on the public site. A row is shown only once it has artwork, a confirmed permission date and Published turned on — all three, so a mark cannot reach a visitor by half-finishing this form. Record who granted permission and where the evidence is: the point of the field is that somebody can produce it later.",
+    guard: "admin",
+    softDelete: true,
+    orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
+    searchFields: ["name", "sector", "permissionHolder"],
+    tagsFor: () => [tags.clientLogos, tags.pages],
+    listColumns: [
+      { header: "Customer", path: "name", primary: true },
+      { header: "Sector", path: "sector" },
+      { header: "Permission from", path: "permissionHolder" },
+      { header: "Confirmed", path: "permissionConfirmedAt", format: "date" },
+      { header: "Published", path: "published", format: "boolean" },
+      { header: "Order", path: "displayOrder", format: "number" },
+    ],
+    fields: [
+      { kind: "text", name: "name", label: "Customer name", required: true, maxLength: 160, hint: "As the organisation writes it themselves.", group: "Identity" },
+      { kind: "text", name: "sector", label: "Sector", maxLength: 80, hint: 'Optional, for grouping — e.g. "Public sector", "Defence", "Manufacturing".', group: "Identity" },
+      { kind: "text", name: "website", label: "Their website", maxLength: 300, group: "Identity" },
+      {
+        kind: "text",
+        name: "permissionHolder",
+        label: "Permission granted by",
+        maxLength: 200,
+        hint: "A name and a role, not an identifier — somebody a colleague could ring.",
+        group: PERMISSION_GROUP,
+      },
+      {
+        kind: "textarea",
+        name: "permissionReference",
+        label: "Where the evidence is",
+        rows: 3,
+        maxLength: 1000,
+        hint: 'The email subject and date, the contract clause, the file reference. Free text, because the point is that a person can find it.',
+        group: PERMISSION_GROUP,
+      },
+      {
+        kind: "date",
+        name: "permissionConfirmedAt",
+        label: "Permission confirmed on",
+        hint: "Until this is set, the logo is not shown — whatever else the form says.",
+        group: PERMISSION_GROUP,
+      },
+      {
+        kind: "checkbox",
+        name: "published",
+        label: "Show this logo on the site",
+        hint: "Off by default even once permission is recorded: obtaining permission and choosing to use it are two decisions.",
+        group: PUBLICATION_GROUP,
+      },
       { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
     ],
   },

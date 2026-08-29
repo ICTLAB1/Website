@@ -186,8 +186,8 @@ export const BLOCK_FORMS: Partial<Record<BlockType, BlockFormShape>> = {
         kind: "select",
         path: "source",
         label: "Which brands",
-        options: ["withLogo", "all", "manual"],
-        hint: "withLogo shows only brands that have artwork on file — the other two will show lettered wordmarks for any brand that does not. Manual uses the slug list below.",
+        options: ["withLogo", "all", "manual", "clients"],
+        hint: "withLogo shows brands that have artwork on file; all also shows lettered wordmarks; manual uses the slug list below. clients shows customer logos instead of brands — only those with a recorded permission and published under Customer logos.",
       },
       {
         kind: "stringList",

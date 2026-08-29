@@ -6,6 +6,7 @@ import { ResourceForm } from "@/components/admin/resource-form";
 import { AdminForm } from "@/components/admin/admin-form";
 import { deleteResource } from "@/app/admin/resource-actions";
 import { BrandLogoForm } from "@/components/admin/brand-logo-form";
+import { ClientLogoForm } from "@/components/admin/client-logo-form";
 import { requireAdmin, requireStaff } from "@/lib/auth/guards";
 import { resolveResource } from "@/lib/admin/resources";
 import { getRecord, relationOptions, toFormValues } from "@/lib/admin/repository";
@@ -109,6 +110,20 @@ export default async function EditResourcePage({ params }: PageProps) {
             brandId={id}
             brandName={String(record.name ?? "This brand")}
             logoUrl={typeof record.logoUrl === "string" ? record.logoUrl : null}
+          />
+        </div>
+      ) : null}
+
+      {config.key === "clients" ? (
+        <div className="max-w-3xl">
+          <ClientLogoForm
+            clientId={id}
+            clientName={String(record.name ?? "This customer")}
+            logoUrl={typeof record.logoUrl === "string" ? record.logoUrl : null}
+            permissionConfirmedAt={
+              record.permissionConfirmedAt instanceof Date ? record.permissionConfirmedAt : null
+            }
+            published={record.published === true}
           />
         </div>
       ) : null}

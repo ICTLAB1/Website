@@ -27,6 +27,7 @@ import { digitalLicenceArticle } from "./2026-08-digital-licence-article";
 import { searchResultCopy } from "./2026-08-search-result-copy";
 import { rankingGaps } from "./2026-08-ranking-gaps";
 import { logoMarquee } from "./2026-08-logo-marquee";
+import { clientBelt } from "./2026-08-client-belt";
 import type { ContentMigration } from "./types";
 
 /**
@@ -67,6 +68,7 @@ export const contentMigrations: ContentMigration[] = [
   searchResultCopy,
   rankingGaps,
   logoMarquee,
+  clientBelt,
 ];
 
 export type { ContentMigration };

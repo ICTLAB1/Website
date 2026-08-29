@@ -35,6 +35,14 @@ export const tags = {
   faqs: "faqs",
   /** Independently issued certifications shown on the homepage and about page. */
   certifications: "certifications",
+
+  /**
+   * Customer logos. Separate from `brands`, because the two answer different
+   * questions and are governed by different permissions: a brand is a
+   * publisher this business resells, a client is a customer who has agreed to
+   * be named.
+   */
+  clientLogos: "client-logos",
   /**
    * Customer testimonials, which appear on the homepage, brand pages and
    * service pages — so one tag rather than per-page, since a single quote can

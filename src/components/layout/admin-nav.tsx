@@ -57,6 +57,7 @@ const SECTIONS: Array<{ heading: string; links: Array<{ href: string; label: str
       { href: "/admin/posts", label: "Articles", adminOnly: true },
       { href: "/admin/jobs", label: "Jobs", adminOnly: true },
       { href: "/admin/testimonials", label: "Testimonials", adminOnly: true },
+      { href: "/admin/clients", label: "Customer logos", adminOnly: true },
     ],
   },
   {
