@@ -23,7 +23,37 @@ import { PartnerBadge } from "@/components/marketing/partner-badge";
 
 type BrandArtwork = { name: string; accentColor: string; logoUrl?: string | null };
 
-function BrandMark({ brand, size }: { brand: BrandArtwork; size: "sm" | "md" }) {
+export function BrandMark({
+  brand,
+  size,
+  alt = "",
+  eager = false,
+}: {
+  brand: BrandArtwork;
+  size: "sm" | "md";
+  /**
+   * The mark's alternative text.
+   *
+   * Empty by default, and that default is the common case: both callers that
+   * pass nothing print the brand's name in text beside the mark, so alt text
+   * would make a screen reader say "Microsoft Microsoft" — noise to a person
+   * and an `image-redundant-alt` violation to axe.
+   *
+   * The belt is the exception. It shows the mark *instead of* the name, so
+   * there the alt text is not a duplicate: it is the only name the link has.
+   */
+  alt?: string;
+  /**
+   * Load the file immediately rather than when it scrolls into view.
+   *
+   * Lazy is right for a page of brand cards. It is wrong on the belt, where
+   * the marks off the right-hand edge are seconds away from sliding into view
+   * under their own power — deferring them means a reader watches empty chips
+   * fill in as they arrive, which reads as a broken page rather than a lazy
+   * one.
+   */
+  eager?: boolean;
+}) {
   const logo = safeBrandLogo(brand.logoUrl);
   const box = size === "md" ? "h-9 w-9" : "h-5 w-5";
 
@@ -50,17 +80,11 @@ function BrandMark({ brand, size }: { brand: BrandArtwork; size: "sm" | "md" }) 
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={logo}
-        /*
-         * Empty, deliberately. Both places that render a mark print the brand's
-         * name in text right beside it, so `alt="Microsoft"` makes a screen
-         * reader say "Microsoft Microsoft" — which axe-core reports as
-         * `image-redundant-alt` and a person using one hears as noise. The mark
-         * carries no information the sighted reader does not also get from the
-         * word; that is the definition of decorative.
-         */
-        alt=""
+        /* Empty unless the caller is showing the mark instead of the name;
+           see the prop's own note above. */
+        alt={alt}
         className={`${mark} shrink-0 object-contain object-left`}
-        loading="lazy"
+        loading={eager ? "eager" : "lazy"}
         decoding="async"
       />
     );

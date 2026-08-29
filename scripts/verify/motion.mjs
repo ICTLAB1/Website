@@ -178,6 +178,123 @@ const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), d
   await ctx.close();
 }
 
+// ---------------------------------------------------------- the logo belt
+/*
+ * The belt is the only animation on the site that runs forever, and the only
+ * one a shortened duration makes *worse* rather than merely faster: run to its
+ * end state and stopped, it parks half a row to the left with a hole where the
+ * first marks were. So the reduced-motion path is asserted as its own thing,
+ * not covered by the blanket "nothing is translated" check above.
+ */
+{
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await ctx.newPage();
+  await page.goto(BASE, { waitUntil: "load" });
+
+  const belt = page.locator(".belt").first();
+  const present = (await belt.count()) > 0;
+  check("the homepage carries a logo belt", present);
+
+  if (present) {
+    await belt.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(400);
+
+    const transformNow = () =>
+      page.evaluate(() => getComputedStyle(document.querySelector(".belt__track")).transform);
+
+    const before = await transformNow();
+    await page.waitForTimeout(1200);
+    const after = await transformNow();
+    check("the belt is moving", before !== after, `${before} → ${after}`);
+
+    // Every mark is a real file. A belt of alt text is the failure this catches.
+    const broken = await page.evaluate(
+      () =>
+        [...document.querySelectorAll(".belt img")].filter(
+          (img) => !img.complete || img.naturalWidth === 0,
+        ).length,
+    );
+    const marks = await page.locator(".belt img").count();
+    check("every mark on the belt loaded", marks > 0 && broken === 0, `${marks} marks, ${broken} broken`);
+
+    /*
+     * The duplicated row exists to make the loop seamless and is hidden from
+     * assistive technology. A focusable element inside an aria-hidden subtree
+     * is both an axe violation and a keyboard trap — the reader tabs through
+     * every brand a second time with no way to tell they have.
+     */
+    const trapped = await page.evaluate(
+      () =>
+        document.querySelector('.belt__row[aria-hidden="true"]')?.querySelectorAll("a, button, [tabindex]")
+          .length ?? -1,
+    );
+    check("the duplicated row holds nothing focusable", trapped === 0, `${trapped} focusable`);
+
+    // Hovering stops it, so a reader can actually read a mark and click it.
+    const box = await belt.boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.waitForTimeout(250);
+    const paused = await transformNow();
+    await page.waitForTimeout(900);
+    check("the belt pauses under the pointer", paused === (await transformNow()));
+  }
+  await ctx.close();
+}
+
+{
+  const ctx = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: "reduce",
+  });
+  const page = await ctx.newPage();
+  await page.goto(BASE, { waitUntil: "load" });
+
+  const belt = page.locator(".belt").first();
+  if ((await belt.count()) > 0) {
+    await belt.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(400);
+
+    const state = await page.evaluate(() => {
+      const track = document.querySelector(".belt__track");
+      const echo = document.querySelector('.belt__row[aria-hidden="true"]');
+      const chips = [...document.querySelectorAll(".belt__item")];
+      return {
+        animationName: getComputedStyle(track).animationName,
+        transform: getComputedStyle(track).transform,
+        echoDisplay: getComputedStyle(echo).display,
+        shown: chips.filter((el) => {
+          const r = el.getBoundingClientRect();
+          return r.width > 0 && r.left >= -1 && r.right <= window.innerWidth + 1;
+        }).length,
+      };
+    });
+
+    check(
+      "reduced motion stops the belt rather than fast-forwarding it",
+      state.animationName === "none" &&
+        (state.transform === "none" || state.transform === "matrix(1, 0, 0, 1, 0, 0)"),
+      `${state.animationName}, ${state.transform}`,
+    );
+    check(
+      "reduced motion hides the duplicate rather than printing every brand twice",
+      state.echoDisplay === "none",
+      state.echoDisplay,
+    );
+    /*
+     * The point of the fallback: a static belt still has to show the brands.
+     * A nowrap row sized to its own content runs off under `overflow: hidden`
+     * and shows nine of twenty-four, which is a worse page than the one it
+     * replaced rather than a calmer one.
+     */
+    check(
+      "reduced motion wraps the whole belt into view",
+      state.shown >= 20,
+      `${state.shown} marks fully visible`,
+    );
+  }
+  await ctx.close();
+}
+
 // -------------------------------------------------- menus animate open
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });

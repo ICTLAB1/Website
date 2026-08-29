@@ -1,0 +1,12 @@
+-- A continuously scrolling belt of the brand marks this business supplies.
+--
+-- Stored as a block rather than hard-coded into the homepage for the same
+-- reason every other section is: which brands appear, and whether the belt is
+-- there at all, is a marketing decision somebody should be able to make in the
+-- admin panel on a Tuesday afternoon.
+--
+-- It holds no artwork of its own. The payload names a source, and the marks are
+-- read from Brand.logoUrl at render time — so a logo swapped in the Brands
+-- screen changes here too, and a brand removed from the catalogue cannot leave
+-- its mark riding a belt on the homepage.
+ALTER TYPE "PageSectionType" ADD VALUE IF NOT EXISTS 'LOGO_MARQUEE';

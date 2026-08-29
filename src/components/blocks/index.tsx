@@ -19,6 +19,7 @@ import {
 } from "@/components/blocks/content-blocks";
 import {
   CollectionGridBlock,
+  LogoMarqueeBlock,
   PriceComparisonBlock,
   ProductGridBlock,
 } from "@/components/blocks/collection-blocks";
@@ -60,6 +61,7 @@ const BANDED = new Set([
   "PRODUCT_GRID",
   "PRICE_COMPARISON",
   "COLLECTION_GRID",
+  "LOGO_MARQUEE",
   "PLANS",
   "STAT_BAR",
   "COMPANY_INFO",
@@ -168,6 +170,15 @@ export function BlockRenderer({
           case "COLLECTION_GRID":
             return (
               <CollectionGridBlock
+                key={block.id}
+                data={block.data}
+                rows={resolved.collections.get(block.id) ?? []}
+                tone={tone}
+              />
+            );
+          case "LOGO_MARQUEE":
+            return (
+              <LogoMarqueeBlock
                 key={block.id}
                 data={block.data}
                 rows={resolved.collections.get(block.id) ?? []}

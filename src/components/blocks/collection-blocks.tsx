@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { BrandCard, BrandStrip } from "@/components/marketing/brand-card";
+import { LogoBelt, type BeltBrand } from "@/components/marketing/logo-belt";
 import { CategoryCard } from "@/components/marketing/category-card";
 import { Reveal } from "@/components/motion/reveal";
 import { EmptyState } from "@/components/ui/states";
@@ -322,6 +323,77 @@ type PostRow = {
   readMinutes: number;
   publishedAt: Date | null;
 };
+
+/**
+ * The moving brand belt.
+ *
+ * Laid out by hand rather than through `BlockSection` because the belt has to
+ * reach both edges of the window: a marquee inside a centred container has
+ * visible ends, and a strip with visible ends is a list that happens to move.
+ * The heading above it still sits in the page container, so it lines up with
+ * every other section's heading.
+ */
+export function LogoMarqueeBlock({
+  data,
+  rows,
+  tone,
+}: {
+  data: BlockData<"LOGO_MARQUEE">;
+  rows: unknown[];
+  tone?: "plain" | "muted";
+}) {
+  const brands = rows as BeltBrand[];
+
+  /*
+   * Nothing to show, nothing rendered — not an empty band with a heading over
+   * it. The source can legitimately come back empty (no brand has artwork on
+   * file yet, or every slug in a manual list has since been deleted), and a
+   * heading reading "Brands we supply" above a blank strip is worse than the
+   * section's absence.
+   */
+  if (brands.length === 0) return null;
+
+  const caption = Boolean(data.heading) && !data.eyebrow && !data.description && !data.action;
+
+  return (
+    <section
+      className={tone === "muted" ? "border-y border-line bg-surface-muted" : undefined}
+    >
+      <div className="py-12 lg:py-16">
+        {caption ? (
+          <p className="container-page mb-6 text-center text-label font-semibold uppercase tracking-[0.14em] text-ink-500">
+            {data.heading}
+          </p>
+        ) : data.eyebrow || data.heading || data.description ? (
+          <div className="container-page">
+            {data.action ? (
+              <SectionHeader
+                eyebrow={data.eyebrow}
+                title={data.heading ?? ""}
+                description={data.description}
+                action={
+                  <ButtonLink href={data.action.href} variant="outline" size="sm">
+                    {data.action.label}
+                  </ButtonLink>
+                }
+              />
+            ) : (
+              <BlockHeading
+                eyebrow={data.eyebrow}
+                heading={data.heading}
+                description={data.description}
+              />
+            )}
+          </div>
+        ) : null}
+
+        <Reveal>
+          <LogoBelt brands={brands} speed={data.speed} reverse={data.reverse} />
+        </Reveal>
+      </div>
+    </section>
+  );
+}
 
 export function CollectionGridBlock({
   data,

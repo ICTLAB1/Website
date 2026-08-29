@@ -177,6 +177,38 @@ export const BLOCK_FORMS: Partial<Record<BlockType, BlockFormShape>> = {
     ],
   },
 
+  LOGO_MARQUEE: {
+    fields: [
+      { kind: "text", path: "eyebrow", label: "Eyebrow", hint: "Small label above the heading." },
+      { kind: "text", path: "heading", label: "Heading" },
+      { kind: "textarea", path: "description", label: "Intro" },
+      {
+        kind: "select",
+        path: "source",
+        label: "Which brands",
+        options: ["withLogo", "all", "manual"],
+        hint: "withLogo shows only brands that have artwork on file — the other two will show lettered wordmarks for any brand that does not. Manual uses the slug list below.",
+      },
+      {
+        kind: "stringList",
+        path: "slugs",
+        label: "Brand slugs",
+        hint: "One per line, in the order to display. Used when the source is manual.",
+      },
+      { kind: "number", path: "limit", label: "Maximum brands", min: 4, max: 60 },
+      {
+        kind: "select",
+        path: "speed",
+        label: "Speed",
+        options: ["slow", "steady", "brisk"],
+        hint: "How long one full pass takes: 72, 48 or 32 seconds.",
+      },
+      { kind: "checkbox", path: "reverse", label: "Scroll left to right" },
+      { kind: "text", path: "action.label", label: "Link label", hint: 'Optional link beside the heading, e.g. "All brands".' },
+      { kind: "text", path: "action.href", label: "Link target" },
+    ],
+  },
+
   FAQ: {
     fields: [
       { kind: "text", path: "heading", label: "Heading" },

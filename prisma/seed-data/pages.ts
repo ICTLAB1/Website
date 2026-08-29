@@ -96,14 +96,15 @@ export const pageSeeds: PageSeed[] = [
         }
       },
       {
-        "type": "COLLECTION_GRID",
+        "type": "LOGO_MARQUEE",
         "displayOrder": 1,
         "visible": true,
         "data": {
-          "kind": "brands",
           "limit": 24,
-          "layout": "strip",
-          "heading": "Authorised to resell licensing from"
+          "speed": "steady",
+          "source": "withLogo",
+          "heading": "Authorised to resell licensing from",
+          "reverse": false
         }
       },
       {
@@ -178,17 +179,17 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 5,
         "visible": true,
         "data": {
+          "ref": "infrastructure-hardware",
+          "limit": 4,
+          "slugs": [],
+          "action": {
+            "href": "/hardware",
+            "label": "Explore business computers"
+          },
+          "source": "category",
           "eyebrow": "Business laptops & desktops",
           "heading": "Commercial computers from HP, Lenovo and Acer",
-          "description": "Business-class laptops, desktops and workstations for enterprise, government, PSU, education and corporate requirements — sourced from the manufacturers and quoted alongside the licensing that goes on them. Priced to your configuration and quantity rather than listed.",
-          "source": "category",
-          "ref": "infrastructure-hardware",
-          "slugs": [],
-          "limit": 4,
-          "action": {
-            "label": "Explore business computers",
-            "href": "/hardware"
-          }
+          "description": "Business-class laptops, desktops and workstations for enterprise, government, PSU, education and corporate requirements — sourced from the manufacturers and quoted alongside the licensing that goes on them. Priced to your configuration and quantity rather than listed."
         }
       },
       {
@@ -344,6 +345,10 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 12,
         "visible": true,
         "data": {
+          "logo": {
+            "alt": "Government e Marketplace (GeM)",
+            "src": "/marks/gem.webp"
+          },
           "tiles": [
             "GeM contracts",
             "CRAC support",
@@ -359,11 +364,7 @@ export const pageSeeds: PageSeed[] = [
           "eyebrow": "Government e-Marketplace",
           "heading": "Registered GeM seller",
           "description": "An experienced seller on the Government e-Marketplace, supplying software and IT solutions through public procurement channels.",
-          "bulletsIntro": "We support:",
-          "logo": {
-            "src": "/marks/gem.webp",
-            "alt": "Government e Marketplace (GeM)"
-          }
+          "bulletsIntro": "We support:"
         }
       },
       {
@@ -371,15 +372,15 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 13,
         "visible": true,
         "data": {
-          "eyebrow": "Our experience",
-          "heading": "Where we have delivered",
           "items": [
             "Government",
             "Defence",
             "Education",
             "PSU",
             "Corporate"
-          ]
+          ],
+          "eyebrow": "Our experience",
+          "heading": "Where we have delivered"
         }
       },
       {
@@ -387,16 +388,16 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 14,
         "visible": true,
         "data": {
-          "eyebrow": "Industries we serve",
-          "heading": "Industries we serve",
-          "description": "Sectors whose procurement rules, security requirements and licensing models we work within routinely.",
           "items": [
             "Defence",
             "Education",
             "Banking & Finance",
             "Manufacturing",
             "Ministry of Health and Family Welfare"
-          ]
+          ],
+          "eyebrow": "Industries we serve",
+          "heading": "Industries we serve",
+          "description": "Sectors whose procurement rules, security requirements and licensing models we work within routinely."
         }
       },
       {
@@ -404,12 +405,12 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 15,
         "visible": true,
         "data": {
-          "eyebrow": "Independently certified",
-          "heading": "Certifications",
-          "description": "Assessed by accredited certification bodies against international standards. Each certificate number below can be checked with the body that issued it.",
           "kind": "certifications",
           "limit": 6,
-          "layout": "grid"
+          "layout": "grid",
+          "eyebrow": "Independently certified",
+          "heading": "Certifications",
+          "description": "Assessed by accredited certification bodies against international standards. Each certificate number below can be checked with the body that issued it."
         }
       },
       {
@@ -3265,9 +3266,9 @@ export const pageSeeds: PageSeed[] = [
             "microsoft-365-business-standard",
             "microsoft-365-business-premium",
             "microsoft-365-e3",
-            "windows-server-2025-standard-8-core-license-pack-1-year",
-            "sql-server-2025-standard-2-core-license-pack-1-year",
-            "office-ltsc-professional-plus-2024"
+            "windows-server-2025-standard",
+            "sql-server-2022-standard",
+            "microsoft-office-ltsc-professional-plus-2024"
           ],
           "action": {
             "href": "/products",
@@ -3339,8 +3340,8 @@ export const pageSeeds: PageSeed[] = [
   },
   {
     "slug": "microsoft-365",
-    "title": "Microsoft 365 Plans, Pricing & Licensing",
-    "description": "Microsoft 365 Business and Enterprise plans compared, with seat sizing, the 300-user cap explained and CSP pricing in INR with GST invoicing.",
+    "title": "Cloud Productivity Software for Business India",
+    "description": "Compare Microsoft 365 Business and Enterprise plans for Indian teams. Seat sizing, the 300-user cap, CSP pricing in INR and GST invoicing explained.",
     "keywords": [
       "microsoft 365",
       "m365 pricing",
@@ -3490,7 +3491,8 @@ export const pageSeeds: PageSeed[] = [
             "microsoft-365-business-basic",
             "microsoft-365-business-standard",
             "microsoft-365-business-premium",
-            "microsoft-365-e3"
+            "microsoft-365-e3",
+            "microsoft-365-e5"
           ],
           "action": {
             "href": "/products",
@@ -4253,7 +4255,8 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 3,
           "slugs": [
-            "office-ltsc-professional-plus-2024",
+            "microsoft-office-home-and-business-2024",
+            "microsoft-office-ltsc-professional-plus-2024",
             "microsoft-365-business-standard"
           ],
           "action": {
@@ -4408,7 +4411,7 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 1,
           "slugs": [
-            "office-ltsc-professional-plus-2024"
+            "microsoft-office-ltsc-professional-plus-2024"
           ],
           "action": {
             "href": "/products",
@@ -5490,14 +5493,15 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 40,
         "visible": true,
         "data": {
-          "limit": 6,
-          "slugs": [],
+          "limit": 1,
+          "slugs": [
+            "azure-consumption-commitment"
+          ],
           "action": {
-            "href": "/products?category=cloud-platforms",
+            "href": "/products",
             "label": "Full catalogue"
           },
-          "source": "category",
-          "ref": "cloud-subscriptions",
+          "source": "manual",
           "heading": "Cloud consumption"
         }
       },
@@ -5891,7 +5895,8 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 2,
           "slugs": [
-            "microsoft-365-e3"
+            "microsoft-365-e3",
+            "microsoft-365-e5"
           ],
           "action": {
             "href": "/products",
@@ -6017,7 +6022,7 @@ export const pageSeeds: PageSeed[] = [
           "slugs": [
             "autodesk-product-design-manufacturing-collection",
             "fusion-360",
-            "office-ltsc-professional-plus-2024",
+            "microsoft-office-ltsc-professional-plus-2024",
             "dell-precision-workstation"
           ],
           "action": {
@@ -6281,7 +6286,8 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 2,
           "slugs": [
-            "microsoft-365-business-premium"
+            "microsoft-365-business-premium",
+            "microsoft-365-e5"
           ],
           "action": {
             "href": "/products",
@@ -6403,7 +6409,8 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 3,
           "slugs": [
-            "sql-server-2025-standard-2-core-license-pack-1-year",
+            "azure-consumption-commitment",
+            "sql-server-2022-standard",
             "microsoft-365-e3"
           ],
           "action": {
@@ -6552,8 +6559,8 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 2,
           "slugs": [
-            "sql-server-2025-standard-2-core-license-pack-1-year",
-            "sql-server-2025-enterprise-2-core-license-pack-1-year"
+            "sql-server-2022-standard",
+            "sql-server-2022-enterprise"
           ],
           "action": {
             "href": "/products",
@@ -6984,9 +6991,9 @@ export const pageSeeds: PageSeed[] = [
         "data": {
           "limit": 3,
           "slugs": [
-            "windows-server-2025-standard-8-core-license-pack-1-year",
-            "windows-server-2025-datacenter-8-core-license-pack-1-year",
-            "windows-server-2025-cal-1-user-cal-1-year"
+            "windows-server-2025-standard",
+            "windows-server-2025-datacenter",
+            "windows-server-cal-user"
           ],
           "action": {
             "href": "/products",
@@ -7880,15 +7887,28 @@ export const pageSeeds: PageSeed[] = [
           "limit": 3,
           "slugs": [
             "zoho-workplace",
-            "zoho-mail",
-            "microsoft-365-business-standard"
+            "zoho-mail"
           ],
           "action": {
             "href": "/products",
             "label": "Full catalogue"
           },
           "source": "manual",
-          "heading": "Workplace licensing and the alternative"
+          "heading": "Workplace licensing"
+        }
+      },
+      {
+        "type": "PRICE_COMPARISON",
+        "displayOrder": 51,
+        "visible": true,
+        "data": {
+          "note": "Per seat, on the annual commitment each publisher lists, exclusive of GST. Both are sold here; the comparison is the cost, not a recommendation against Microsoft.",
+          "heading": "Workplace against the mainstream alternative",
+          "ourSlug": "zoho-workplace",
+          "description": "The per-seat difference this page is about, at the price each is sold for here.",
+          "againstSlugs": [
+            "microsoft-365-business-standard"
+          ]
         }
       },
       {
@@ -7947,164 +7967,38 @@ export const pageSeeds: PageSeed[] = [
 
 export const navigationSeeds: NavigationSeed[] = [
   {
-    "key": "header:hardware.servers",
-    "parentKey": "header:hardware",
-    "menu": "HEADER",
-    "label": "Servers",
-    "href": "/hardware?family=servers",
-    "description": null,
-    "displayOrder": 25
-  },
-  {
-    "key": "header:hardware.servers.tower",
-    "parentKey": "header:hardware.servers",
-    "menu": "HEADER",
-    "label": "Tower servers",
-    "href": "/hardware?form=tower-server",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "header:hardware.servers.rack",
-    "parentKey": "header:hardware.servers",
-    "menu": "HEADER",
-    "label": "Rack servers",
-    "href": "/hardware?form=rack-server",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "header:hardware.servers.dell",
-    "parentKey": "header:hardware.servers",
-    "menu": "HEADER",
-    "label": "Dell PowerEdge",
-    "href": "/hardware?family=servers&brand=dell",
-    "description": null,
-    "displayOrder": 30
-  },
-  {
-    "key": "header:hardware.servers.hpe",
-    "parentKey": "header:hardware.servers",
-    "menu": "HEADER",
-    "label": "HPE ProLiant",
-    "href": "/hardware?family=servers&brand=hpe",
-    "description": null,
-    "displayOrder": 40
-  },
-  {
-    "key": "header:hardware",
+    "key": "header:about",
     "parentKey": null,
     "menu": "HEADER",
-    "label": "Hardware",
-    "href": "/hardware",
+    "label": "About",
+    "href": "/about",
     "description": null,
-    "displayOrder": 15
+    "displayOrder": 5
   },
   {
-    "key": "header:hardware.laptops",
-    "parentKey": "header:hardware",
+    "key": "header:about.about-us",
+    "parentKey": "header:about",
     "menu": "HEADER",
-    "label": "Business laptops",
-    "href": "/hardware?family=laptops",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "header:hardware.laptops.hp",
-    "parentKey": "header:hardware.laptops",
-    "menu": "HEADER",
-    "label": "HP laptops",
-    "href": "/hardware?family=laptops&brand=hp",
+    "label": "About us",
+    "href": "/about",
     "description": null,
     "displayOrder": 10
   },
   {
-    "key": "header:hardware.laptops.lenovo",
-    "parentKey": "header:hardware.laptops",
+    "key": "header:about.enterprise-procurement",
+    "parentKey": "header:about",
     "menu": "HEADER",
-    "label": "Lenovo laptops",
-    "href": "/hardware?family=laptops&brand=lenovo",
+    "label": "Enterprise procurement",
+    "href": "/enterprise",
     "description": null,
     "displayOrder": 20
   },
   {
-    "key": "header:hardware.laptops.acer",
-    "parentKey": "header:hardware.laptops",
+    "key": "header:about.contact",
+    "parentKey": "header:about",
     "menu": "HEADER",
-    "label": "Acer laptops",
-    "href": "/hardware?family=laptops&brand=acer",
-    "description": null,
-    "displayOrder": 30
-  },
-  {
-    "key": "header:hardware.desktops",
-    "parentKey": "header:hardware",
-    "menu": "HEADER",
-    "label": "Business desktops",
-    "href": "/hardware?family=desktops",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "header:hardware.desktops.hp",
-    "parentKey": "header:hardware.desktops",
-    "menu": "HEADER",
-    "label": "HP desktops",
-    "href": "/hardware?family=desktops&brand=hp",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "header:hardware.desktops.lenovo",
-    "parentKey": "header:hardware.desktops",
-    "menu": "HEADER",
-    "label": "Lenovo desktops",
-    "href": "/hardware?family=desktops&brand=lenovo",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "header:hardware.desktops.acer",
-    "parentKey": "header:hardware.desktops",
-    "menu": "HEADER",
-    "label": "Acer desktops",
-    "href": "/hardware?family=desktops&brand=acer",
-    "description": null,
-    "displayOrder": 30
-  },
-  {
-    "key": "header:hardware.workstations",
-    "parentKey": "header:hardware",
-    "menu": "HEADER",
-    "label": "Workstations",
-    "href": "/hardware?form=mobile-workstation&form=desktop-workstation",
-    "description": null,
-    "displayOrder": 30
-  },
-  {
-    "key": "header:hardware.workstations.mobile",
-    "parentKey": "header:hardware.workstations",
-    "menu": "HEADER",
-    "label": "Mobile workstations",
-    "href": "/hardware?form=mobile-workstation",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "header:hardware.workstations.desktop",
-    "parentKey": "header:hardware.workstations",
-    "menu": "HEADER",
-    "label": "Desktop workstations",
-    "href": "/hardware?form=desktop-workstation",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "header:hardware.workstations.all",
-    "parentKey": "header:hardware.workstations",
-    "menu": "HEADER",
-    "label": "All business computers",
-    "href": "/hardware",
+    "label": "Contact",
+    "href": "/contact",
     "description": null,
     "displayOrder": 30
   },
@@ -8118,7 +8012,7 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 10
   },
   {
-    "key": "header:products.requirement",
+    "key": "header:products.tell-us-what-you-need",
     "parentKey": "header:products",
     "menu": "HEADER",
     "label": "Tell us what you need",
@@ -8496,6 +8390,168 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 50
   },
   {
+    "key": "header:hardware",
+    "parentKey": null,
+    "menu": "HEADER",
+    "label": "Hardware",
+    "href": "/hardware",
+    "description": null,
+    "displayOrder": 15
+  },
+  {
+    "key": "header:hardware.business-laptops",
+    "parentKey": "header:hardware",
+    "menu": "HEADER",
+    "label": "Business laptops",
+    "href": "/hardware?family=laptops",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:hardware.business-laptops.hp-laptops",
+    "parentKey": "header:hardware.business-laptops",
+    "menu": "HEADER",
+    "label": "HP laptops",
+    "href": "/hardware?family=laptops&brand=hp",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:hardware.business-laptops.lenovo-laptops",
+    "parentKey": "header:hardware.business-laptops",
+    "menu": "HEADER",
+    "label": "Lenovo laptops",
+    "href": "/hardware?family=laptops&brand=lenovo",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:hardware.business-laptops.acer-laptops",
+    "parentKey": "header:hardware.business-laptops",
+    "menu": "HEADER",
+    "label": "Acer laptops",
+    "href": "/hardware?family=laptops&brand=acer",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:hardware.business-desktops",
+    "parentKey": "header:hardware",
+    "menu": "HEADER",
+    "label": "Business desktops",
+    "href": "/hardware?family=desktops",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:hardware.business-desktops.hp-desktops",
+    "parentKey": "header:hardware.business-desktops",
+    "menu": "HEADER",
+    "label": "HP desktops",
+    "href": "/hardware?family=desktops&brand=hp",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:hardware.business-desktops.lenovo-desktops",
+    "parentKey": "header:hardware.business-desktops",
+    "menu": "HEADER",
+    "label": "Lenovo desktops",
+    "href": "/hardware?family=desktops&brand=lenovo",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:hardware.business-desktops.acer-desktops",
+    "parentKey": "header:hardware.business-desktops",
+    "menu": "HEADER",
+    "label": "Acer desktops",
+    "href": "/hardware?family=desktops&brand=acer",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:hardware.servers",
+    "parentKey": "header:hardware",
+    "menu": "HEADER",
+    "label": "Servers",
+    "href": "/hardware?family=servers",
+    "description": null,
+    "displayOrder": 25
+  },
+  {
+    "key": "header:hardware.servers.tower-servers",
+    "parentKey": "header:hardware.servers",
+    "menu": "HEADER",
+    "label": "Tower servers",
+    "href": "/hardware?form=tower-server",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:hardware.servers.rack-servers",
+    "parentKey": "header:hardware.servers",
+    "menu": "HEADER",
+    "label": "Rack servers",
+    "href": "/hardware?form=rack-server",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:hardware.servers.dell-poweredge",
+    "parentKey": "header:hardware.servers",
+    "menu": "HEADER",
+    "label": "Dell PowerEdge",
+    "href": "/hardware?family=servers&brand=dell",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:hardware.servers.hpe-proliant",
+    "parentKey": "header:hardware.servers",
+    "menu": "HEADER",
+    "label": "HPE ProLiant",
+    "href": "/hardware?family=servers&brand=hpe",
+    "description": null,
+    "displayOrder": 40
+  },
+  {
+    "key": "header:hardware.workstations",
+    "parentKey": "header:hardware",
+    "menu": "HEADER",
+    "label": "Workstations",
+    "href": "/hardware?form=mobile-workstation&form=desktop-workstation",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
+    "key": "header:hardware.workstations.mobile-workstations",
+    "parentKey": "header:hardware.workstations",
+    "menu": "HEADER",
+    "label": "Mobile workstations",
+    "href": "/hardware?form=mobile-workstation",
+    "description": null,
+    "displayOrder": 10
+  },
+  {
+    "key": "header:hardware.workstations.desktop-workstations",
+    "parentKey": "header:hardware.workstations",
+    "menu": "HEADER",
+    "label": "Desktop workstations",
+    "href": "/hardware?form=desktop-workstation",
+    "description": null,
+    "displayOrder": 20
+  },
+  {
+    "key": "header:hardware.workstations.all-business-computers",
+    "parentKey": "header:hardware.workstations",
+    "menu": "HEADER",
+    "label": "All business computers",
+    "href": "/hardware",
+    "description": null,
+    "displayOrder": 30
+  },
+  {
     "key": "header:solutions",
     "parentKey": null,
     "menu": "HEADER",
@@ -8853,7 +8909,7 @@ export const navigationSeeds: NavigationSeed[] = [
     "label": "Resources",
     "href": "/resources",
     "description": null,
-    "displayOrder": 50
+    "displayOrder": 160
   },
   {
     "key": "header:resources.resource-centre",
@@ -8890,42 +8946,6 @@ export const navigationSeeds: NavigationSeed[] = [
     "href": "/support",
     "description": "Raise a ticket or reach the service desk",
     "displayOrder": 40
-  },
-  {
-    "key": "header:about",
-    "parentKey": null,
-    "menu": "HEADER",
-    "label": "About",
-    "href": "/about",
-    "description": null,
-    "displayOrder": 5
-  },
-  {
-    "key": "header:about.about-us",
-    "parentKey": "header:about",
-    "menu": "HEADER",
-    "label": "About us",
-    "href": "/about",
-    "description": null,
-    "displayOrder": 10
-  },
-  {
-    "key": "header:about.enterprise-procurement",
-    "parentKey": "header:about",
-    "menu": "HEADER",
-    "label": "Enterprise procurement",
-    "href": "/enterprise",
-    "description": null,
-    "displayOrder": 20
-  },
-  {
-    "key": "header:about.contact",
-    "parentKey": "header:about",
-    "menu": "HEADER",
-    "label": "Contact",
-    "href": "/contact",
-    "description": null,
-    "displayOrder": 30
   },
   {
     "key": "footer:software",
@@ -9090,15 +9110,6 @@ export const navigationSeeds: NavigationSeed[] = [
     "displayOrder": 30
   },
   {
-    "key": "footer:company.careers",
-    "parentKey": "footer:company",
-    "menu": "FOOTER",
-    "label": "Careers",
-    "href": "/careers",
-    "description": null,
-    "displayOrder": 45
-  },
-  {
     "key": "footer:company.about-us",
     "parentKey": "footer:company",
     "menu": "FOOTER",
@@ -9133,6 +9144,15 @@ export const navigationSeeds: NavigationSeed[] = [
     "href": "/blog",
     "description": null,
     "displayOrder": 40
+  },
+  {
+    "key": "footer:company.careers",
+    "parentKey": "footer:company",
+    "menu": "FOOTER",
+    "label": "Careers",
+    "href": "/careers",
+    "description": null,
+    "displayOrder": 45
   },
   {
     "key": "footer:company.contact",

@@ -240,6 +240,47 @@ async function collectionFor(
   }
 }
 
+/**
+ * The marks a marquee rides.
+ *
+ * `withLogo` filters on the column rather than trusting `displayOrder` to have
+ * put the illustrated brands first, because the belt's whole premise is
+ * artwork: a brand with no file on file renders the lettered wordmark, and a
+ * strip of moving coloured initials is not a logo strip, it is a bug that
+ * looks like a decision.
+ *
+ * Nothing here can widen a partner claim. The rows carry a name, a slug and a
+ * mark; the heading above them is authored copy, and what a brand relationship
+ * may be *called* publicly is decided in `lib/brand-partner`, not by which
+ * brands happen to have a PNG.
+ */
+async function marqueeFor(
+  block: Extract<ParsedBlock, { type: "LOGO_MARQUEE" }>,
+): Promise<unknown[]> {
+  const select = { slug: true, name: true, accentColor: true, logoUrl: true };
+  const base = { deletedAt: null };
+
+  if (block.data.source === "manual") {
+    const slugs = block.data.slugs.filter(Boolean);
+    if (slugs.length === 0) return [];
+    const rows = await prisma.brand.findMany({
+      where: { ...base, slug: { in: slugs } },
+      select,
+    });
+    // The author's order, which `in` does not preserve.
+    return slugs
+      .map((slug) => rows.find((row) => row.slug === slug))
+      .filter((row) => row !== undefined);
+  }
+
+  return prisma.brand.findMany({
+    where: block.data.source === "withLogo" ? { ...base, NOT: { logoUrl: null } } : base,
+    orderBy: { displayOrder: "asc" },
+    take: block.data.limit,
+    select,
+  });
+}
+
 async function faqsFor(
   block: Extract<ParsedBlock, { type: "FAQ" }>,
   page: { brandSlug: string | null; faqTopic: string | null },
@@ -287,6 +328,7 @@ export async function resolveBlocks(
       if (block.type === "PRODUCT_GRID") products.set(block.id, await productsFor(block));
       else if (block.type === "PRICE_COMPARISON") products.set(block.id, await comparisonFor(block));
       else if (block.type === "COLLECTION_GRID") collections.set(block.id, await collectionFor(block));
+      else if (block.type === "LOGO_MARQUEE") collections.set(block.id, await marqueeFor(block));
       else if (block.type === "FAQ") faqs.set(block.id, await faqsFor(block, page));
       else if (block.type === "TESTIMONIALS") {
         /*
