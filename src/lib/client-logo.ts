@@ -22,31 +22,38 @@ export function safeClientLogo(value: string | null | undefined): string | null 
 
 export type ClientPermission = {
   logoUrl: string | null;
-  permissionConfirmedAt: Date | null;
   published: boolean;
 };
 
 /**
  * Whether a customer's mark may appear on the public site.
  *
- * Three conditions, and all three are required.
+ * Two conditions: artwork on file, and `published` turned on deliberately.
  *
  *  - **Artwork on file.** There is no wordmark fallback here as there is for a
  *    brand. A publisher's name set in type is a reasonable stand-in for its
  *    logo; a customer's name set in type, in a strip captioned as customers, is
  *    a claim about who this business works for with nothing behind it.
- *  - **A confirmed permission date.** Not a note, not an intention — a date
- *    somebody put in the record having checked.
- *  - **Published, deliberately.** Off by default even once permission is
- *    recorded, because obtaining permission and choosing to use it are two
- *    decisions and only the second one is about the website.
+ *  - **Published, deliberately.** Off by default, so a row created while
+ *    somebody is still gathering the artwork cannot appear halfway through.
  *
- * This is the only function that decides. Every query that reaches a visitor
- * goes through `publishedClientLogos`, which is built on it, so there is one
- * place to read and one place to change — and no page can display a mark by
- * forgetting to check.
+ * ## Why the permission date is no longer one of them
  *
- * ## What this cannot check, and somebody has to
+ * It used to be. The rule wanted a confirmed date as well, on the reasoning
+ * that a supplier displaying somebody else's trademark should hold evidence it
+ * can produce. The business owner has since decided that recording a date per
+ * organisation is not how they want to work, and that is their call to make:
+ * they hold the relationships, and whether the authorisation is filed here or
+ * in an inbox is a business decision rather than an engineering one.
+ *
+ * So the date is now a record rather than a gate. `permissionHolder`,
+ * `permissionReference` and `permissionConfirmedAt` are still on the model and
+ * still worth filling in — they are the answer to "who said we could?" when
+ * somebody eventually asks — but an empty one no longer stops a mark from
+ * being shown. Nothing here was ever faked to get past the old rule; the rule
+ * was changed instead.
+ *
+ * ## What no field can check, and somebody has to
  *
  * Permission from the organisation is necessary and is not always sufficient.
  * In India the Emblems and Names (Prevention of Improper Use) Act, 1950 bars
@@ -57,12 +64,10 @@ export type ClientPermission = {
  * marketing strip on a supplier's website is exactly the use it names.
  *
  * A field cannot enforce that; it is a question for whoever signs off the
- * page. It is written here because this is where somebody will be looking when
- * they add a row, and a comment in the code is the last place the question can
- * be raised before the mark is on the internet.
+ * page, and it has been put to them. It stays written here because this is
+ * where somebody will be looking when they add a row.
  */
 export function mayShowClientLogo(client: ClientPermission): boolean {
   if (!safeClientLogo(client.logoUrl)) return false;
-  if (client.permissionConfirmedAt === null) return false;
   return client.published;
 }

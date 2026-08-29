@@ -12,10 +12,10 @@ import { mayShowClientLogo } from "@/lib/client-logo";
  * has to remember is a rule a page will one day forget, and forgetting this
  * one puts somebody else's trademark on the internet.
  *
- * The `published` and date conditions are pushed into SQL so the common case
- * does not read rows it will discard; `mayShowClientLogo` then re-checks every
- * row it returns, including the artwork path, so the decision and the query
- * cannot drift apart.
+ * The `published` condition is pushed into SQL so the common case does not
+ * read rows it will discard; `mayShowClientLogo` then re-checks every row it
+ * returns, including the artwork path, so the decision and the query cannot
+ * drift apart.
  */
 export const publishedClientLogos = cached(
   async () => {
@@ -23,7 +23,6 @@ export const publishedClientLogos = cached(
       where: {
         deletedAt: null,
         published: true,
-        permissionConfirmedAt: { not: null },
         NOT: { logoUrl: null },
       },
       orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
@@ -32,7 +31,6 @@ export const publishedClientLogos = cached(
         logoUrl: true,
         website: true,
         sector: true,
-        permissionConfirmedAt: true,
         published: true,
       },
     });

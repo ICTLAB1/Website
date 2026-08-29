@@ -9,15 +9,19 @@ Commit a file here only when it should ship with a fresh install.
 
 ## Before adding anything
 
-A customer's mark is their property. Three things have to be true before one
-reaches a visitor, and the code enforces the first two:
+A customer's mark is their property. Two things have to be true before one
+reaches a visitor, and the code enforces the first:
 
-1. **Permission is recorded** — who granted it, where the evidence is, and the
-   date it was confirmed. `lib/client-logo` will not show a mark without a
-   confirmed date.
-2. **The row is published** — off by default, even once permission is
-   recorded.
-3. **The use is lawful** — which no field can check. In India the Emblems and
+1. **The row is published** — off by default, so a row created while somebody
+   is still gathering artwork cannot appear halfway through.
+2. **The use is lawful** — which no field can check.
+
+Recording the permission — who granted it, where the evidence is, when it was
+confirmed — is optional and worth doing anyway: those fields are the answer to
+"who said we could?" when somebody asks. They used to gate the logo; the
+business owner decided that recording a date per organisation is not how they
+want to work, so the rule was changed rather than dates being invented to
+satisfy it. In India the Emblems and
    Names (Prevention of Improper Use) Act, 1950 bars using a scheduled name or
    emblem, including those of the armed forces and the national emblem, "for
    the purpose of any trade, business, calling or profession". A supplier's
@@ -57,10 +61,10 @@ The pack also contained `HR_` variants at 1800px. They are not used: the pack's
 own README calls them "enlarged, not newly authenticated official artwork", and
 an upscale is the wrong source for a small mark.
 
-**None of these is published.** Each row exists with its artwork and no
-confirmed permission date, which is what keeps it off the site. Before
-publishing one, fill in who authorised it and when — see the three conditions
-above.
+All nine are published. `permissionReference` on each row records where the
+artwork came from and what was done to it; the authorising person and date are
+blank, by the owner's decision, and can be filled in at any time from
+**Customer logos**.
 
 ## Deliberately not installed
 

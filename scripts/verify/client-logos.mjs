@@ -12,10 +12,16 @@ import { join } from "node:path";
  * else's trademark published without their permission, which is not the kind of
  * bug you fix by rolling back.
  *
- * The rule under test is `mayShowClientLogo`: artwork on file, a confirmed
- * permission date, and Published, all three. The unit tests prove the function.
- * This proves the whole path — that no combination of two out of three reaches
- * a visitor through the query, the cache, the block and the page.
+ * The rule under test is `mayShowClientLogo`: artwork on file, and Published.
+ * The unit tests prove the function; this proves the whole path — that neither
+ * one alone reaches a visitor through the query, the cache, the block and the
+ * page, and that unpublishing takes a live mark back down.
+ *
+ * The permission date used to be a third condition and is now a record instead,
+ * by the owner's decision. It is still exercised here, for the opposite reason:
+ * to prove it does *not* gate anything, so nobody re-adds the requirement by
+ * accident while tidying, and nobody is tempted to fill one in to get a mark
+ * published.
  */
 
 const BASE = process.env.BASE ?? "http://localhost:3000";
@@ -125,7 +131,7 @@ check(
   "the logo is stored against the customer",
   sql(`select coalesce("logoUrl",'') from "ClientLogo" where id = '${createdId}'`).startsWith("/uploads/"),
 );
-check("a logo with no permission and no publish is not shown", !(await onPublicHomepage()));
+check("artwork alone, unpublished, is not shown", !(await onPublicHomepage()));
 
 // ── every state change goes through the admin form ──────────────────────────
 /*
@@ -149,19 +155,15 @@ async function save({ confirmedOn, published }) {
 
 await save({ confirmedOn: "", published: true });
 check(
-  "published with artwork but no confirmed permission is still not shown",
-  !(await onPublicHomepage()),
+  "artwork and a publish are enough — no permission date needed",
+  await onPublicHomepage(),
 );
 
 await save({ confirmedOn: "2026-08-01", published: false });
-check("a confirmed permission alone does not publish it", !(await onPublicHomepage()));
+check("a recorded permission does not publish it on its own", !(await onPublicHomepage()));
 
-// ── all three ───────────────────────────────────────────────────────────────
 await save({ confirmedOn: "2026-08-01", published: true });
-check(
-  "artwork, a confirmed permission and a publish together show the mark",
-  await onPublicHomepage(),
-);
+check("published with the permission recorded as well, still shown", await onPublicHomepage());
 
 // The mark carries the customer's name as its alt text, which is the only
 // accessible name it has — the belt shows no text beside a logo.
@@ -194,11 +196,12 @@ check(
   await named.close();
 }
 
-// ── withdrawing permission takes it down ───────────────────────────────────
+// ── clearing the date changes nothing; unpublishing takes it down ──────────
 await save({ confirmedOn: "", published: true });
+check("clearing the permission date does not take the mark down", await onPublicHomepage());
 
-// ── withdrawing permission takes it down ────────────────────────────────────
-check("clearing the permission date takes the mark down again", !(await onPublicHomepage()));
+await save({ confirmedOn: "", published: false });
+check("unpublishing takes the mark down again", !(await onPublicHomepage()));
 
 await context.close();
 await browser.close();

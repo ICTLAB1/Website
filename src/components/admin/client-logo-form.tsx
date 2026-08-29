@@ -32,24 +32,30 @@ export function ClientLogoForm({
   const current = safeClientLogo(logoUrl);
 
   /*
-   * The three conditions, shown as the state of each rather than as one
-   * verdict. "Not shown" answers the wrong question: the person looking at
-   * this screen wants to know which of the three is missing.
+   * The conditions, shown as the state of each rather than as one verdict.
+   * "Not shown" answers the wrong question: the person looking at this screen
+   * wants to know which one is missing.
+   *
+   * The permission date is listed but not required — it is a record now rather
+   * than a gate, so it is shown as a note about the record's completeness and
+   * marked as optional, not as something blocking the mark.
    */
   const conditions = [
-    { label: "Artwork on file", met: current !== null },
-    { label: "Permission confirmed", met: permissionConfirmedAt !== null },
-    { label: "Published", met: published },
+    { label: "Artwork on file", met: current !== null, required: true },
+    { label: "Published", met: published, required: true },
+    { label: "Permission recorded", met: permissionConfirmedAt !== null, required: false },
   ];
-  const live = conditions.every((condition) => condition.met);
+  const live = conditions.every((condition) => !condition.required || condition.met);
 
   return (
     <section className="rounded-[--radius-lg] border border-line bg-white p-5">
       <h2 className="text-[15px] font-semibold text-graphite-900">Logo</h2>
       <p className="mt-2 text-meta leading-relaxed text-ink-600">
-        Uploading a file does not put it on the site. {clientName}&rsquo;s mark appears only once
-        all three conditions below are met, so a half-finished record cannot publish a customer&rsquo;s
-        trademark by accident. Use the artwork {clientName} supplies; do not recolour or crop it.
+        Uploading a file does not put it on the site — {clientName}&rsquo;s mark appears once the
+        artwork is here and the record is published, so a half-finished one cannot go up by
+        accident. Recording who authorised it is optional and worth doing anyway: it is the answer
+        to &ldquo;who said we could?&rdquo; when somebody asks. Use the artwork {clientName}
+        supplies; do not recolour or crop it.
       </p>
 
       <ul className="mt-4 flex flex-wrap gap-2">
@@ -64,6 +70,7 @@ export function ClientLogoForm({
           >
             <span aria-hidden="true">{condition.met ? "✓" : "—"}</span>
             {condition.label}
+            {condition.required ? null : <span className="text-ink-500">(optional)</span>}
           </li>
         ))}
       </ul>

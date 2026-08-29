@@ -32,6 +32,7 @@ import { industries } from "./2026-08-industries";
 import { organisationWall } from "./2026-08-organisation-wall";
 import { organisationLogos } from "./2026-08-organisation-logos";
 import { organisationBelt } from "./2026-08-organisation-belt";
+import { publishOrganisations } from "./2026-08-publish-organisations";
 import type { ContentMigration } from "./types";
 
 /**
@@ -77,6 +78,7 @@ export const contentMigrations: ContentMigration[] = [
   organisationWall,
   organisationLogos,
   organisationBelt,
+  publishOrganisations,
 ];
 
 export type { ContentMigration };

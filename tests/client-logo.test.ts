@@ -2,8 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import { mayShowClientLogo, safeClientLogo } from "@/lib/client-logo";
 
-const CONFIRMED = new Date("2026-08-01T00:00:00Z");
-
 describe("safeClientLogo", () => {
   it("accepts a file in the clients directory and an upload", () => {
     expect(safeClientLogo("/clients/acme.svg")).toBe("/clients/acme.svg");
@@ -27,31 +25,35 @@ describe("safeClientLogo", () => {
 });
 
 describe("mayShowClientLogo", () => {
-  const allowed = { logoUrl: "/clients/acme.svg", permissionConfirmedAt: CONFIRMED, published: true };
+  const allowed = { logoUrl: "/clients/acme.svg", published: true };
 
-  it("shows a customer with artwork, a confirmed permission and a publish", () => {
+  it("shows a customer with artwork and a publish", () => {
     expect(mayShowClientLogo(allowed)).toBe(true);
   });
 
-  it("needs all three, not two", () => {
+  it("needs both, not one", () => {
     expect(mayShowClientLogo({ ...allowed, logoUrl: null })).toBe(false);
-    expect(mayShowClientLogo({ ...allowed, permissionConfirmedAt: null })).toBe(false);
     expect(mayShowClientLogo({ ...allowed, published: false })).toBe(false);
   });
 
-  it("does not treat a published row with no permission date as permitted", () => {
+  it("does not require a recorded permission date", () => {
     /*
-     * The failure this exists for: somebody adds a customer, ticks Published
-     * because the logo is sitting right there, and never fills in the date.
-     * Publishing is a decision about the website; the date is the evidence, and
-     * a decision without evidence is what this whole model is built to refuse.
+     * The date used to be a third condition and is now a record instead — the
+     * owner's decision, taken deliberately. This test exists so that the change
+     * is a stated property rather than an absence somebody re-adds by accident
+     * while tidying, and so the reverse is caught too: nothing anywhere fakes a
+     * date to get a mark published.
      */
-    expect(
-      mayShowClientLogo({ logoUrl: "/clients/acme.svg", permissionConfirmedAt: null, published: true }),
-    ).toBe(false);
+    expect(mayShowClientLogo({ logoUrl: "/clients/acme.svg", published: true })).toBe(true);
   });
 
-  it("refuses artwork that is not a client file even when everything else is set", () => {
+  it("keeps `published` off as the thing that has to be chosen", () => {
+    // A row created with artwork but never published stays off the site, which
+    // is what stops a half-finished record appearing.
+    expect(mayShowClientLogo({ logoUrl: "/clients/acme.svg", published: false })).toBe(false);
+  });
+
+  it("refuses artwork that is not a client file even when published", () => {
     // A path pointing anywhere else is the same as no artwork: unusable.
     expect(mayShowClientLogo({ ...allowed, logoUrl: "https://example.test/acme.png" })).toBe(false);
     expect(mayShowClientLogo({ ...allowed, logoUrl: "/brands/acme.svg" })).toBe(false);
