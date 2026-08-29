@@ -36,3 +36,38 @@ Same as `public/brands/`: SVG where the organisation publishes one, otherwise
 PNG trimmed of its transparent margin and scaled to 128 pixels tall. Do not
 recolour, crop into, or recompose a mark — most brand programmes prohibit it,
 and an altered mark is no longer the one that was licensed.
+
+## What is here
+
+Nine organisation emblems, supplied by the business on 29 August 2026 in
+`TechZoid_Organisation_Logos_Final.zip`, prepared for the web by two operations
+and no others: the uniform border each file carried was trimmed, and the
+artwork was scaled down to a common height with its aspect ratio preserved
+exactly. Neither alters an emblem. Nothing was recoloured, cropped into or
+recomposed.
+
+> `bsnl` · `ongc` · `nbcc` · `hal` · `delhi-police` · `drdo` · `bro` ·
+> `indian-army` · `indian-air-force`
+
+Lossless WebP rather than PNG. Several are detailed — the BRO mark is a
+photograph of a painted board — and as PNG they ran to 80–110 KB each for
+something that renders 48 pixels tall.
+
+The pack also contained `HR_` variants at 1800px. They are not used: the pack's
+own README calls them "enlarged, not newly authenticated official artwork", and
+an upscale is the wrong source for a small mark.
+
+**None of these is published.** Each row exists with its artwork and no
+confirmed permission date, which is what keeps it off the site. Before
+publishing one, fill in who authorised it and when — see the three conditions
+above.
+
+## Deliberately not installed
+
+`QCI` was in the pack and is not here. The Quality Council of India is an
+accreditation body, not an organisation this business supplies, so its mark in
+a wall captioned "organisations we have supplied" would be a category error —
+and a quality-council mark on a supplier's site reads as a statement about that
+supplier's own accreditation, which is a different claim needing its own
+evidence. If it belongs anywhere it is beside the ISO certificates, and only
+if that accreditation is real and current.

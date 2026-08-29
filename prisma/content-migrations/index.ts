@@ -30,6 +30,7 @@ import { logoMarquee } from "./2026-08-logo-marquee";
 import { clientBelt } from "./2026-08-client-belt";
 import { industries } from "./2026-08-industries";
 import { organisationWall } from "./2026-08-organisation-wall";
+import { organisationLogos } from "./2026-08-organisation-logos";
 import type { ContentMigration } from "./types";
 
 /**
@@ -73,6 +74,7 @@ export const contentMigrations: ContentMigration[] = [
   clientBelt,
   industries,
   organisationWall,
+  organisationLogos,
 ];
 
 export type { ContentMigration };

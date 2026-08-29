@@ -138,11 +138,21 @@ export function LogoWall({
           in this repository is normalised to a common height before it is
           committed. See public/brands/README.md.
         */
-        className="grid grid-cols-2 gap-px overflow-hidden rounded-[--radius-lg] border border-line bg-line sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        className="grid grid-cols-2 overflow-hidden rounded-[--radius-lg] border border-line bg-white sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
         data-desaturate={desaturate ? "true" : "false"}
       >
         {items.map((item, index) => (
-          <li key={item.key} className="bg-white">
+          /*
+            Separators drawn on the cell, not by a one-pixel gap over a
+            coloured parent.
+            The gap trick is neater right up until the last row is short: nine
+            marks in a five-column grid leave one cell's worth of the parent's
+            divider colour showing, which reads as a logo that failed to load.
+            A border per cell leaves white there instead. The cost is a doubled
+            hairline where a cell's border meets the container's, at one pixel
+            on a #e3e1de line — invisible, and the right trade.
+          */
+          <li key={item.key} className="border-b border-r border-line">
             {/*
               Staggered, capped. Each cell arrives 60ms after the one before it
               up to a quarter of a second, so the wall assembles rather than
@@ -165,7 +175,7 @@ function WallCell({ item }: { item: BeltItem }) {
     <img
       src={item.logo}
       alt={item.name}
-      className="logo-wall__mark h-12 w-auto max-w-[12rem] object-contain"
+      className="logo-wall__mark h-14 w-auto max-w-[12rem] object-contain"
       loading="lazy"
       decoding="async"
     />
