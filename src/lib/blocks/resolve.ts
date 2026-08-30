@@ -201,16 +201,15 @@ async function collectionFor(
         where: { OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
         orderBy: [{ displayOrder: "asc" }, { standard: "asc" }],
         take,
-        select: {
-          standard: true,
-          title: true,
-          reference: true,
-          issuer: true,
-          verifyUrl: true,
-          scope: true,
-          issuedAt: true,
-          expiresAt: true,
-        },
+        /*
+         * The issuer, the validity dates and the verification address are not
+         * selected. They are still on the record and still editable, but the
+         * owner asked for them off the site — and a field that is not fetched
+         * cannot be put back on a page by an edit that was not thinking about
+         * that decision. The row's id is the key, so the
+         * number need not travel either.
+         */
+        select: { id: true, standard: true, title: true, scope: true },
       });
     case "postCategories": {
       // Grouped rather than listed: the chip carries the article count, so the

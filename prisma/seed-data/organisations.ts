@@ -19,7 +19,8 @@ export type OrganisationSeed = {
   /** Stable id, so re-running touches the same row. */
   id: string;
   name: string;
-  logoUrl: string;
+  /** Null until the artwork is on disk; a row without it never reaches the site. */
+  logoUrl: string | null;
   sector: string;
   displayOrder: number;
 };
@@ -77,4 +78,17 @@ export const organisationSeeds: OrganisationSeed[] = [
     sector: "Defence and aerospace",
     displayOrder: 90,
   },
+  /*
+   * Six more the business asked for. No `logoUrl` yet — the marks arrived
+   * pasted into a conversation rather than as files, so there is nothing to
+   * install. The rows exist so that uploading a file at /admin/clients is the
+   * only step left, and `lib/client-logo` keeps a row with no artwork off the
+   * site regardless of anything else.
+   */
+  { id: "org-nsg", name: "National Security Guard", logoUrl: null, sector: "Defence and aerospace", displayOrder: 100 },
+  { id: "org-hudco", name: "HUDCO", logoUrl: null, sector: "Public sector", displayOrder: 110 },
+  { id: "org-sardar-patel-university", name: "Sardar Patel University", logoUrl: null, sector: "Education", displayOrder: 120 },
+  { id: "org-nagpur-metro", name: "Nagpur Metro", logoUrl: null, sector: "Transport", displayOrder: 130 },
+  { id: "org-rites", name: "RITES", logoUrl: null, sector: "Public sector", displayOrder: 140 },
+  { id: "org-barc", name: "Bhabha Atomic Research Centre", logoUrl: null, sector: "Research", displayOrder: 150 },
 ];
