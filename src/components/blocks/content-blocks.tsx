@@ -44,13 +44,35 @@ function HeroPattern() {
             "radial-gradient(90% 120% at 100% 30%, black 25%, rgb(0 0 0 / 0.35) 60%, transparent 85%)",
         }}
       />
-      {/* Gold nodes on a coarser interval, so the grid reads as a network. */}
+      {/*
+        Gold nodes on a coarser interval, so the grid reads as a network —
+        now two copies of that same layer, offset by half a cell and pulsing
+        out of phase, so the nodes read as points of light coming up and
+        fading rather than a network that is simply always lit. Each layer is
+        identical but for `backgroundPosition` and `animationDelay`; sitting
+        at different intersections and brightening at different moments is
+        what makes the two read as many independent points rather than one
+        grid dimming as a whole.
+      */}
       <div
-        className="absolute inset-0"
+        className="hero-sparkle absolute inset-0"
         style={{
           backgroundImage:
             "radial-gradient(circle at 1px 1px, rgb(222 181 84 / 0.55) 1.5px, transparent 0)",
           backgroundSize: "104px 104px",
+          maskImage:
+            "radial-gradient(80% 110% at 100% 28%, black 20%, rgb(0 0 0 / 0.4) 55%, transparent 80%)",
+          WebkitMaskImage:
+            "radial-gradient(80% 110% at 100% 28%, black 20%, rgb(0 0 0 / 0.4) 55%, transparent 80%)",
+        }}
+      />
+      <div
+        className="hero-sparkle hero-sparkle--offset absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 1px 1px, rgb(222 181 84 / 0.55) 1.5px, transparent 0)",
+          backgroundSize: "104px 104px",
+          backgroundPosition: "52px 52px",
           maskImage:
             "radial-gradient(80% 110% at 100% 28%, black 20%, rgb(0 0 0 / 0.4) 55%, transparent 80%)",
           WebkitMaskImage:
@@ -212,7 +234,12 @@ export function HeroBlock({
                   </dt>
                   <dd
                     className={cn(
-                      "mt-1 text-2xl font-semibold",
+                      // Tabular figures, so the count-up doesn't shift the row's
+                      // width as it passes through "9" on the way to "90" — the
+                      // width the finished number needs is reserved from the
+                      // first frame instead of arriving at whatever the digit
+                      // count happens to be that instant.
+                      "mt-1 text-2xl font-semibold tabular-nums",
                       dark ? "text-white" : "text-graphite-900",
                     )}
                   >
@@ -294,7 +321,7 @@ export function CardsBlock({
       <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
       <Reveal className={cn("grid gap-4", columns)}>
         {data.items.map((item, index) => (
-          <div key={index} className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <div key={index} className="card-hover rounded-[--radius-lg] border border-line bg-white p-5">
             {data.numbered && data.numberLabel ? (
               <span className="block text-label font-semibold uppercase tracking-wide text-accent-700">
                 {data.numberLabel} {index + 1}
