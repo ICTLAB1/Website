@@ -40,6 +40,7 @@ import { nameEveryOrganisationWithAMark } from "./2026-08-name-every-organisatio
 import { threeDsMaxRanking } from "./2026-08-3ds-max-ranking";
 import { homepageHeadline } from "./2026-08-homepage-headline";
 import { claimsWithoutEvidence } from "./2026-08-claims-without-evidence";
+import { relationshipWording } from "./2026-08-relationship-wording";
 import type { ContentMigration } from "./types";
 
 /**
@@ -93,6 +94,7 @@ export const contentMigrations: ContentMigration[] = [
   threeDsMaxRanking,
   homepageHeadline,
   claimsWithoutEvidence,
+  relationshipWording,
 ];
 
 export type { ContentMigration };

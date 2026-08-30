@@ -518,6 +518,13 @@ const RECOVERED = [
   ["/product-page/autodesk-fusion-360-business-license", "/products/fusion-360"],
   ["/product-page/3ds-max-business-license", "/products/3ds-max"],
   ["/product-page/microsoft-visio-plan-2", "/products/visio-plan-2"],
+  // No exact replacement; the nearest page that answers the question. See the
+  // reasoning beside these two in next.config.ts.
+  [
+    "/product-page/autodesk-vault-business-license",
+    "/products/autodesk-product-design-manufacturing-collection",
+  ],
+  ["/product-page/microsoft-365-apps-for-business-annual-subscription", "/microsoft-365"],
 ];
 
 const RETIRED = [
@@ -527,9 +534,7 @@ const RETIRED = [
    * RECOVERED above. The check below this list exists so the next one is caught
    * by the gate rather than by an audit.
    */
-  "/product-page/autodesk-vault-business-license",
   "/product-page/inventor-business-license",
-  "/product-page/microsoft-365-apps-for-business-annual-subscription",
   "/product-page/microsoft-project-plan-1",
   "/product-page/microsoft-project-plan-3",
   "/product-page/microsoft-sharepoint-online-plan-2",
@@ -572,7 +577,7 @@ console.log(`Retired URLs: ${gone} of ${RETIRED.length} answer 410 Gone.`);
  * directories away. Nothing failed; the site simply threw the links away.
  *
  * So the list is no longer trusted to stay right on its own. Each retired
- * product URL is reduced to the product it was about — the vendor prefix and
+ * product URL is reduced to the product it was about — the brand prefix and
  * the "-business-license" / "-annual-subscription" tail are packaging, not
  * identity — and the catalogue is asked whether that product now exists. It is
  * a guess at a slug, deliberately: a guess that lands is proof the redirect is

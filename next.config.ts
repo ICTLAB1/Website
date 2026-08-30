@@ -156,6 +156,35 @@ const nextConfig: NextConfig = {
         destination: "/products/visio-plan-2",
         statusCode: 301,
       },
+      /*
+       * Two the catalogue has no page for, and probably never will.
+       *
+       * Both carry external links, so a 410 spends them for nothing. Neither
+       * has an exact replacement, so each goes to the nearest page that
+       * actually answers the visitor's question — which is the test, not
+       * whether the slug looks similar:
+       *
+       *  - Autodesk Vault is a component of the Product Design & Manufacturing
+       *    Collection, which this site does sell. Somebody who followed a Vault
+       *    link lands on the product that contains it.
+       *  - Microsoft 365 Apps for Business is a plan in a family whose landing
+       *    page compares all of them. That page answers "which Microsoft 365
+       *    do I need", which is the question behind the link.
+       *
+       * Deliberately not a redirect to /products or /brands/autodesk. A
+       * catch-all into a listing is the soft-404 pattern Google discounts, and
+       * it is barely better than the 410 it replaces.
+       */
+      {
+        source: "/product-page/autodesk-vault-business-license",
+        destination: "/products/autodesk-product-design-manufacturing-collection",
+        statusCode: 301,
+      },
+      {
+        source: "/product-page/microsoft-365-apps-for-business-annual-subscription",
+        destination: "/microsoft-365",
+        statusCode: 301,
+      },
 
       /*
        * ── The ones nobody had a list of ──────────────────────────────────
