@@ -28,6 +28,12 @@ MOVED_ENV=0
 cleanup() {
   [ "$MOVED_ENV" = "1" ] && mv .env.verify-backup .env
   [ "$STOPPED_DB" = "1" ] && pg_ctlcluster 16 main start >/dev/null 2>&1
+  # The build ran `prisma generate` with no `.env` and a dummy URL, and the
+  # generated client keeps that. Putting `.env` back is not enough: every
+  # script that opens a Prisma client afterwards fails with "Environment
+  # variable not found: DATABASE_URL" until the client is regenerated, which
+  # looks like a broken database rather than like this script's leftovers.
+  npx prisma generate >/dev/null 2>&1
   return 0
 }
 trap cleanup EXIT
