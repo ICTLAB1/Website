@@ -41,6 +41,8 @@ import { threeDsMaxRanking } from "./2026-08-3ds-max-ranking";
 import { homepageHeadline } from "./2026-08-homepage-headline";
 import { claimsWithoutEvidence } from "./2026-08-claims-without-evidence";
 import { relationshipWording } from "./2026-08-relationship-wording";
+import { headlineAsTheOwnerWroteIt } from "./2026-08-headline-as-the-owner-wrote-it";
+import { partnerDesignationMatchesTheBadge } from "./2026-08-partner-designation-matches-the-badge";
 import type { ContentMigration } from "./types";
 
 /**
@@ -95,6 +97,8 @@ export const contentMigrations: ContentMigration[] = [
   homepageHeadline,
   claimsWithoutEvidence,
   relationshipWording,
+  headlineAsTheOwnerWroteIt,
+  partnerDesignationMatchesTheBadge,
 ];
 
 export type { ContentMigration };
