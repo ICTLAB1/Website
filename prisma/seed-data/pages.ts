@@ -350,9 +350,9 @@ export const pageSeeds: PageSeed[] = [
             "src": "/marks/gem.webp"
           },
           "tiles": [
-            "GeM contracts",
+            "Software licensing",
+            "Commercial hardware",
             "CRAC support",
-            "Timely delivery",
             "GST invoicing"
           ],
           "bullets": [

@@ -408,7 +408,18 @@ for (const reduced of ["no-preference", "reduce"]) {
     check("every mark loaded", wall.broken === 0, `${wall.broken} broken of ${wall.cells}`);
     check("every mark names its organisation", wall.unnamed === 0, `${wall.unnamed} without alt text`);
   } else {
-    console.log("  – no logo wall on the page yet (no organisation has artwork and a permission)");
+    /*
+     * Not a failure: the homepage shows its organisations as a moving belt
+     * rather than a static grid, so there are no wall cells to measure. The
+     * wall is still a layout the block offers, and these checks stay for the
+     * day somebody switches back to it.
+     *
+     * The message used to say the wall was missing because no organisation had
+     * artwork and a permission, which stopped being the reason twice over:
+     * thirteen have artwork, and a permission date has not gated a mark since
+     * the owner asked for that rule to go.
+     */
+    console.log("  – the organisations are shown as a belt on this page, so there is no wall to measure");
   }
   await ctx.close();
 }

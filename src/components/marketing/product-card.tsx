@@ -7,6 +7,7 @@ import { showPrice, statesTaxSeparately, type PriceDisplay } from "@/lib/price-d
 import { getDisplayCurrency } from "@/lib/display-currency";
 import { humanise } from "@/lib/utils";
 import { hardwareClassLabel, isHardware } from "@/lib/catalogue/hardware";
+import { isQuoteOnly } from "@/lib/catalogue/quote-only";
 import { ProductPhoto } from "@/components/catalogue/product-photo";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 import { ratingsForProducts } from "@/lib/queries/reviews";
@@ -44,16 +45,12 @@ export function ProductCard({
   const hardware = isHardware(product);
 
   /*
-   * Hardware is quote-only here, not merely quote-only by configuration.
-   *
-   * A hardware row is imported with `purchaseMode: ENQUIRY` and no price, so
-   * the general test below would already catch it. This adds `hardware ||`
-   * anyway, because "no price on hardware" is a requirement of the business
-   * rather than a property of a row: one mis-imported record, or one price set
-   * by hand in the admin panel to note a cost, and the general test would put a
-   * figure on a public card. The card cannot be made to show one.
+   * The catalogue quotes rather than prices, and the decision is not this
+   * component's to make — see `lib/catalogue/quote-only`, which every surface
+   * asks. A card that worked it out for itself is a card that can disagree
+   * with the listing beside it.
    */
-  const quoteOnly = hardware || !variant || price <= 0 || product.purchaseMode === "ENQUIRY";
+  const quoteOnly = isQuoteOnly(product);
   const canBuyDirect = !quoteOnly && variant != null;
 
   /*
@@ -221,7 +218,14 @@ export function ProductCard({
               productName: product.name,
               brandName: product.brand.name,
               variantName: variant.name,
-              unitPriceMinor: price > 0 ? price : null,
+              /*
+                No price into the basket while the catalogue quotes rather than
+                prices. Hiding it in the basket UI would leave the figure in
+                the browser's local storage and in the enquiry the customer
+                submits — this keeps it out of both, so "on quote" is the truth
+                rather than a presentation choice.
+              */
+              unitPriceMinor: quoteOnly || price <= 0 ? null : price,
               currency: variant.currency,
             }}
             compact

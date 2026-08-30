@@ -37,21 +37,29 @@ above.
 ## Format
 
 Same as `public/brands/`: SVG where the organisation publishes one, otherwise
-PNG trimmed of its transparent margin and scaled to 128 pixels tall. Do not
+PNG trimmed of its uniform border and scaled to 200 pixels tall — which is
+what `scripts/prepare-client-logo.mjs` does. Do not
 recolour, crop into, or recompose a mark — most brand programmes prohibit it,
 and an altered mark is no longer the one that was licensed.
 
 ## What is here
 
-Nine organisation emblems, supplied by the business on 29 August 2026 in
-`TechZoid_Organisation_Logos_Final.zip`, prepared for the web by two operations
-and no others: the uniform border each file carried was trimmed, and the
-artwork was scaled down to a common height with its aspect ratio preserved
-exactly. Neither alters an emblem. Nothing was recoloured, cropped into or
-recomposed.
+Thirteen organisation emblems, prepared for the web by two operations and no
+others: the uniform border each file carried was trimmed, and the artwork was
+scaled to a common height with its aspect ratio preserved. Neither alters an
+emblem. Nothing was recoloured, cropped into or recomposed.
+
+`scripts/prepare-client-logo.mjs` does both, so the next batch is one command
+per file rather than a set of steps somebody has to remember.
+
+Nine came from `TechZoid_Organisation_Logos_Final.zip` on 29 August 2026:
 
 > `bsnl` · `ongc` · `nbcc` · `hal` · `delhi-police` · `drdo` · `bro` ·
 > `indian-army` · `indian-air-force`
+
+Four more from `claude_government_client_logos.zip`:
+
+> `sardar-patel-university` · `nagpur-metro` · `rites` · `barc`
 
 Lossless WebP rather than PNG. Several are detailed — the BRO mark is a
 photograph of a painted board — and as PNG they ran to 80–110 KB each for
@@ -61,12 +69,32 @@ The pack also contained `HR_` variants at 1800px. They are not used: the pack's
 own README calls them "enlarged, not newly authenticated official artwork", and
 an upscale is the wrong source for a small mark.
 
-All nine are published. `permissionReference` on each row records where the
+All thirteen are published. `permissionReference` on each row records where the
 artwork came from and what was done to it; the authorising person and date are
 blank, by the owner's decision, and can be filled in at any time from
 **Customer logos**.
 
 ## Deliberately not installed
+
+**HUDCO.** The supplied file is a marketing banner, not a mark: the hudco logo
+sits over a grey cityscape with a captioned bar beneath it, on an opaque plate.
+At the size a belt renders a mark it is a grey smear, and getting the logo out
+of it means cropping into the picture — which is the line the preparation
+script does not cross. The row is on file with no artwork, which keeps it off
+the site. The file to ask for is the mark on its own.
+
+**The National Security Guard.** Never supplied as a file; it arrived pasted
+into a conversation, which is a picture of a mark rather than the mark.
+
+**The State Emblem of India.** `Government_of_India_Emblem.png` was in the
+second pack. It is not an organisation this business supplies — it is the
+national emblem — and it is the clearest case in the Emblems and Names
+(Prevention of Improper Use) Act, 1950, which names it specifically.
+
+**IRCON.** There is no IRCON row and no IRCON file. The second pack contains
+`IRCON.png`, and the image inside it is the RITES mark. It is installed as
+`rites`, an organisation the business had already named. A filename is not
+evidence of a customer relationship.
 
 `QCI` was in the pack and is not here. The Quality Council of India is an
 accreditation body, not an organisation this business supplies, so its mark in

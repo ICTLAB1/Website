@@ -487,13 +487,25 @@ export function SplitPanelBlock({ data, tone }: { data: BlockData<"SPLIT_PANEL">
         </Reveal>
 
         {data.tiles.length > 0 ? (
-          <Reveal as="ul" className="grid grid-cols-2 gap-4" delay={80}>
+          /*
+           * `self-start`, and that is the whole bug fix.
+           *
+           * This is the right-hand cell of a two-column grid, and a grid item
+           * stretches to its row by default. The tile grid inside it stretched
+           * with it, and its rows stretched again — so four one-word labels
+           * were rendered as four boxes about 250 pixels tall with the word at
+           * the top and nothing underneath. It read as content that had failed
+           * to load.
+           */
+          <Reveal as="ul" className="grid grid-cols-2 gap-3 self-start" delay={80}>
             {data.tiles.map((tile, index) => (
               <li
                 key={index}
-                className="rounded-[--radius-lg] border border-line bg-white p-5 text-center"
+                className="flex min-h-[4.5rem] items-center justify-center rounded-[--radius-lg] border border-line bg-white px-4 py-4 text-center"
               >
-                <span className="text-body font-semibold text-graphite-900">{tile}</span>
+                <span className="text-meta font-semibold leading-snug text-graphite-900">
+                  {tile}
+                </span>
               </li>
             ))}
           </Reveal>

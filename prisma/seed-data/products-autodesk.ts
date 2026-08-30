@@ -341,7 +341,23 @@ export const autodeskProducts: ProductSeed[] = [
     licensingNotes: NAMED_USER_NOTE,
     deliveryNotes: DELIVERY_SUBSCRIPTION,
     supportNotes: SUPPORT_STANDARD,
-    popularity: 44,
+    /*
+     * Ranked from what this domain is measured doing, not from a guess.
+     *
+     * It was 44 — last of the nine Autodesk products, below Civil 3D and the
+     * Construction Cloud — which was the value it was given when the row was
+     * created to fill a gap rather than ranked against its siblings. Search
+     * Console has "3ds max license" at position 9.2 on 736 impressions over
+     * three months, which is the strongest demand signal on this brand after
+     * AutoCAD and Revit and better than anything below it here.
+     *
+     * 70 places it fourth of nine, above Maya and below Fusion 360. It moves
+     * the product up the catalogue's popular sort, the brand page and search
+     * results. It does not decide whether anything links to it — the related
+     * products ring covers every product regardless of score — so this is
+     * ordering, not visibility.
+     */
+    popularity: 70,
     availability: "ON_REQUEST",
     purchaseMode: "ENQUIRY",
     variants: [
