@@ -82,7 +82,19 @@ export function ProductCard({
           >
             {product.brand.name}
           </Link>
-          {saving ? <Badge tone="success">{saving}% off</Badge> : null}
+          {/*
+            No discount badge where there is no price to discount.
+
+            "5% off" beside "Price on enquiry" is a discount percentage with
+            nothing to apply it to — a figure a buyer can hold you to, on a card
+            that otherwise says the price is quoted. It survived the move to a
+            quote-only catalogue because the saving is computed from the
+            variant's own list and sale prices, which are still there and still
+            correct; it was only ever the *display* of a price that went. This
+            is the same `quoteOnly` the rest of the card asks, so the two cannot
+            disagree.
+          */}
+          {!quoteOnly && saving ? <Badge tone="success">{saving}% off</Badge> : null}
         </div>
 
         <h3 className="mt-2 text-body font-semibold leading-snug text-graphite-900">

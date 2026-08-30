@@ -293,7 +293,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
             >
               {product.brand.name}
             </Link>
-            <StatusBadge status={product.availability} />
+            {/*
+              Stock language is for things that have stock.
+
+              "In Stock" on an annual AutoCAD subscription says the licence is
+              sitting on a shelf, which is not a thing a licence does — and on a
+              site selling to procurement officers it reads as a delivery
+              promise nobody made. The colour is unchanged, because the meaning
+              is unchanged: it is available. Only the noun was wrong.
+            */}
+            <StatusBadge
+              status={product.availability}
+              label={
+                product.availability === "IN_STOCK" && !hardware
+                  ? "Available to order"
+                  : undefined
+              }
+            />
             {product.featured ? <Badge tone="brand">Featured</Badge> : null}
           </div>
 

@@ -516,17 +516,23 @@ const RECOVERED = [
   ["/product-page/microsoft-visual-studio-enterprise", "/products/visual-studio-enterprise"],
   ["/product-page/microsoft-visio-plan-1", "/products/visio-plan-1"],
   ["/product-page/autodesk-fusion-360-business-license", "/products/fusion-360"],
+  ["/product-page/3ds-max-business-license", "/products/3ds-max"],
+  ["/product-page/microsoft-visio-plan-2", "/products/visio-plan-2"],
 ];
 
 const RETIRED = [
-  "/product-page/3ds-max-business-license",
+  /*
+   * `3ds-max-business-license` and `microsoft-visio-plan-2` were here until the
+   * catalogue grew a page for each. They redirect now and are asserted in
+   * RECOVERED above. The check below this list exists so the next one is caught
+   * by the gate rather than by an audit.
+   */
   "/product-page/autodesk-vault-business-license",
   "/product-page/inventor-business-license",
   "/product-page/microsoft-365-apps-for-business-annual-subscription",
   "/product-page/microsoft-project-plan-1",
   "/product-page/microsoft-project-plan-3",
   "/product-page/microsoft-sharepoint-online-plan-2",
-  "/product-page/microsoft-visio-plan-2",
   "/product-page/microsoft-visual-studio-professional",
   /*
    * Windows 10 Pro OEM, the CorelDRAW page and `/shop-1` were here until
@@ -549,6 +555,47 @@ for (const path of RETIRED) {
   else problems.push(`${path}: answered ${response.status}, not 410 Gone`);
 }
 console.log(`Retired URLs: ${gone} of ${RETIRED.length} answer 410 Gone.`);
+
+/*
+ * A 410 is correct on the day it is written and silently wrong the day the
+ * catalogue grows a page for it.
+ *
+ * `proxy.ts` answers any unmapped `/product-page/*` with 410 Gone — "this is
+ * gone and is not coming back" — which is the truth about a migrated shop and
+ * makes crawlers drop the URL quickly. They drop the inbound links with it,
+ * and that is the part nobody sees until a backlink audit counts them.
+ *
+ * Two of these were wrong when this check was written. `/products/3ds-max` was
+ * built because the domain ranks for "3ds max license", and `/products/
+ * visio-plan-2` because it ranks for "visio plan 2" — and both old URLs were
+ * still telling Google to forget themselves while the page each wanted sat two
+ * directories away. Nothing failed; the site simply threw the links away.
+ *
+ * So the list is no longer trusted to stay right on its own. Each retired
+ * product URL is reduced to the product it was about — the vendor prefix and
+ * the "-business-license" / "-annual-subscription" tail are packaging, not
+ * identity — and the catalogue is asked whether that product now exists. It is
+ * a guess at a slug, deliberately: a guess that lands is proof the redirect is
+ * missing, and a guess that misses costs one request.
+ */
+const NOISE = /^(microsoft|autodesk|adobe|m365)-|-(business-license|annual-subscription|1-year-subscription|business-license)$/g;
+for (const path of RETIRED) {
+  if (!path.startsWith("/product-page/")) continue;
+  const slug = path.slice("/product-page/".length);
+  if (slug === "nothing-was-ever-here") continue;
+
+  const guesses = new Set([slug, slug.replace(NOISE, ""), slug.replace(NOISE, "").replace(NOISE, "")]);
+  for (const guess of guesses) {
+    if (!guess) continue;
+    const response = await fetch(`${BASE}/products/${guess}`, { redirect: "manual" });
+    if (response.status === 200) {
+      problems.push(
+        `${path}: answers 410 Gone, but /products/${guess} now exists — redirect it instead of discarding its links`,
+      );
+      break;
+    }
+  }
+}
 
 /*
  * And the ones that rank: a permanent redirect to a page that answers the

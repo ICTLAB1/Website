@@ -114,6 +114,22 @@ if (firstProduct) {
 }
 
 /*
+ * A discount is a price claim, and it survived the move to quote-only.
+ *
+ * "5% off" beside "Price on enquiry" is a percentage with nothing to apply it
+ * to, and it shipped: the saving is computed from the variant's list and sale
+ * prices, which are still there and still correct, so hiding the *price* left
+ * the *discount* on the card. The money expression above does not match "5%
+ * off" — no currency in it — which is exactly why this check is separate.
+ */
+for (const [name, path] of SURFACES) {
+  await page.goto(`${BASE}${path}`, { waitUntil: "load" });
+  const body = await text();
+  const found = /\b\d{1,2}%\s*off\b|\bsave\s+\d{1,2}%/i.exec(body);
+  check(`no discount claim on ${name}`, found === null, found ? `found "${found[0]}"` : "");
+}
+
+/*
  * The filter cannot offer a band there is no price to fall into.
  */
 await page.goto(`${BASE}/products`, { waitUntil: "load" });

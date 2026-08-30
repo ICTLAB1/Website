@@ -39,6 +39,7 @@ import { organisationArtworkSecondBatch } from "./2026-08-organisation-artwork-s
 import { nameEveryOrganisationWithAMark } from "./2026-08-name-every-organisation-with-a-mark";
 import { threeDsMaxRanking } from "./2026-08-3ds-max-ranking";
 import { homepageHeadline } from "./2026-08-homepage-headline";
+import { claimsWithoutEvidence } from "./2026-08-claims-without-evidence";
 import type { ContentMigration } from "./types";
 
 /**
@@ -91,6 +92,7 @@ export const contentMigrations: ContentMigration[] = [
   nameEveryOrganisationWithAMark,
   threeDsMaxRanking,
   homepageHeadline,
+  claimsWithoutEvidence,
 ];
 
 export type { ContentMigration };

@@ -124,6 +124,38 @@ const nextConfig: NextConfig = {
         destination: "/products/autocad",
         statusCode: 301,
       },
+      /*
+       * 3ds Max, which was a 410 until the product existed.
+       *
+       * `proxy.ts` answers any unmapped `/product-page/*` with 410 Gone, and
+       * that was the right answer while this site had no 3ds Max page: 410
+       * means "gone and not coming back", and a crawler drops the URL fast.
+       *
+       * It also drops the links pointing at it, which is the cost nobody sees.
+       * A later release added `/products/3ds-max` — built because this domain
+       * ranks for "3ds max license" at position 9 — and the 410 stayed, so an
+       * external link to the old URL was still being told to forget itself
+       * while the page it wanted sat two directories away.
+       *
+       * That is the general hazard of a catch-all 410: it is correct on the day
+       * it is written and silently wrong the day the catalogue grows. Anything
+       * added to `/products/*` that had an old `/product-page/*` URL needs a
+       * line here, and `scripts/verify/seo.mjs` now fails if one of these
+       * answers 410 rather than redirecting.
+       */
+      {
+        source: "/product-page/3ds-max-business-license",
+        destination: "/products/3ds-max",
+        statusCode: 301,
+      },
+      // Visio Plan 2, the second instance of the same thing. The page was built
+      // because this domain ranks for "visio plan 2"; its old URL was still
+      // telling crawlers to forget itself.
+      {
+        source: "/product-page/microsoft-visio-plan-2",
+        destination: "/products/visio-plan-2",
+        statusCode: 301,
+      },
 
       /*
        * ── The ones nobody had a list of ──────────────────────────────────
