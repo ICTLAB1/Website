@@ -34,6 +34,7 @@ import { organisationLogos } from "./2026-08-organisation-logos";
 import { organisationBelt } from "./2026-08-organisation-belt";
 import { publishOrganisations } from "./2026-08-publish-organisations";
 import { moreOrganisations } from "./2026-08-more-organisations";
+import { gemPanelTiles } from "./2026-08-gem-panel-tiles";
 import type { ContentMigration } from "./types";
 
 /**
@@ -81,6 +82,7 @@ export const contentMigrations: ContentMigration[] = [
   organisationBelt,
   publishOrganisations,
   moreOrganisations,
+  gemPanelTiles,
 ];
 
 export type { ContentMigration };
