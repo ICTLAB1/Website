@@ -74,8 +74,8 @@ export const pageSeeds: PageSeed[] = [
               "source": "literal"
             }
           ],
-          "eyebrow": "Microsoft Authorised Partner | Verified GeM Reseller | Enterprise IT Solutions",
-          "headline": "Trusted IT & Software Solutions Partner",
+          "eyebrow": "Microsoft Solutions Partner | Registered GeM Seller | Enterprise IT Solutions",
+          "headline": "Trusted IT Hardware & Software Solutions Partner",
           "primaryCta": {
             "href": "/enquiry",
             "label": "Get Enterprise Quote"
