@@ -70,6 +70,13 @@ export async function CatalogueListing({
 
   return (
     <div className={showFilters ? "grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)]" : ""}>
+      {/*
+        No price filter, because there are no prices to filter by.
+        It read `filters.kind !== "hardware"` when hardware alone was
+        quote-only. The whole catalogue is now — see `lib/catalogue/quote-only`
+        — and a band of "Under ₹5,000" over a listing that shows no figures is
+        a control that cannot do anything.
+      */}
       {showFilters ? (
       <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
         <div className="hidden lg:block">
@@ -77,14 +84,14 @@ export async function CatalogueListing({
             facets={facets}
             params={params}
             basePath={basePath}
-            showPrice={filters.kind !== "hardware"}
+            showPrice={false}
           />
         </div>
         <MobileFilterPanel
           facets={facets}
           params={params}
           basePath={basePath}
-          showPrice={filters.kind !== "hardware"}
+          showPrice={false}
         />
       </aside>
       ) : null}

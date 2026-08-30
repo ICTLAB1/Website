@@ -14,7 +14,7 @@ import { certificationLogo } from "@/lib/certification-logo";
 import { effectivePriceMinor, formatTerm } from "@/lib/money";
 import { showPrice, statesTaxSeparately } from "@/lib/price-display";
 import { getDisplayCurrency } from "@/lib/display-currency";
-import { isHardware } from "@/lib/catalogue/hardware";
+import { isQuoteOnly } from "@/lib/catalogue/quote-only";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 import { formatDate } from "@/lib/utils";
@@ -132,11 +132,13 @@ export async function PriceComparisonBlock({
               const price = variant
                 ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor)
                 : 0;
-              const quoteOnly =
-                isHardware(product) ||
-                !variant ||
-                price <= 0 ||
-                product.purchaseMode === "ENQUIRY";
+              /*
+                `|| !variant` is not belt and braces — it is what tells the
+                compiler the variant exists in the other branch. `isQuoteOnly`
+                covers the case on its own; this keeps the narrowing that used
+                to come free from the inline test.
+              */
+              const quoteOnly = isQuoteOnly(product) || !variant;
               const ours = product.slug === data.ourSlug;
 
               return (

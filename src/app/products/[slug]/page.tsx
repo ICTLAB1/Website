@@ -16,6 +16,7 @@ import { SpecTable } from "@/components/catalogue/spec-table";
 import { ConfigurationTable } from "@/components/catalogue/configuration-table";
 import { HardwareQuotePanel } from "@/components/catalogue/hardware-quote-panel";
 import { hardwareClassLabel, hardwareTitle, isHardware } from "@/lib/catalogue/hardware";
+import { isQuoteOnly } from "@/lib/catalogue/quote-only";
 import { resolveProductPhoto } from "@/lib/representative-image";
 import { getProductBySlug, getRelatedProducts } from "@/lib/queries/catalogue";
 import { effectivePriceMinor } from "@/lib/money";
@@ -206,7 +207,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
      * carry no price; naming the case keeps somebody from "fixing" that later
      * by defaulting it to zero, which reads as free.
      */
-    ...(lowestPrice && !hardware
+    /*
+     * No offer on anything, while the catalogue quotes rather than prices.
+     *
+     * A price-bearing structured-data block is exactly what a search engine
+     * surfaces as a number beside the result — so leaving this in would put a
+     * figure in front of a buyer on the one surface nobody thinks to check,
+     * after it had been taken off every page they can actually see.
+     */
+    ...(lowestPrice && !hardware && !isQuoteOnly(product)
       ? {
           offers: {
             "@type": "AggregateOffer",
