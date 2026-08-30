@@ -426,7 +426,13 @@ export const pageSeeds: PageSeed[] = [
             "Indian Army",
             "Border Roads Organisation",
             "DRDO",
-            "Hindustan Aeronautics Limited"
+            "Hindustan Aeronautics Limited",
+            "National Security Guard",
+            "HUDCO",
+            "Sardar Patel University",
+            "Nagpur Metro",
+            "RITES",
+            "Bhabha Atomic Research Centre"
           ],
           "eyebrow": "Public sector and defence",
           "heading": "Organisations we have supplied technology to",
