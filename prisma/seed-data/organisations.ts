@@ -1,16 +1,15 @@
 /**
  * Organisations whose emblem is on file.
  *
- * Artwork only. Every row is created unpublished and with no confirmed
- * permission date, which is precisely what keeps it off the public site: see
- * `lib/client-logo`, which wants artwork, a date and a deliberate publish
- * before a mark reaches a visitor.
+ * Artwork and a name, nothing else. A row reaches the public site when it has
+ * both a `logoUrl` and a deliberate publish — see `lib/client-logo` — so a row
+ * whose artwork has not arrived shows as nothing rather than as a gap in the
+ * line, and the two here that are still `null` are exactly that case.
  *
- * The date is left empty because nobody here knows it. The business has said
- * the permissions are held; who granted each one and when is a fact that has to
- * be entered by somebody who can produce it, and a migration inventing a date
- * would defeat the only mechanism standing between a supplier's marketing page
- * and somebody else's trademark.
+ * The permission fields are a record rather than a gate. They used to be a
+ * gate; the business owner asked for that rule to go, and it went. No date was
+ * ever invented to get past it — the rule was changed instead, which is the
+ * only honest way to remove a check you cannot satisfy.
  *
  * The names are the organisations' own. `sector` groups them and is not a
  * claim about anything.
@@ -79,16 +78,42 @@ export const organisationSeeds: OrganisationSeed[] = [
     displayOrder: 90,
   },
   /*
-   * Six more the business asked for. No `logoUrl` yet — the marks arrived
-   * pasted into a conversation rather than as files, so there is nothing to
-   * install. The rows exist so that uploading a file at /admin/clients is the
-   * only step left, and `lib/client-logo` keeps a row with no artwork off the
-   * site regardless of anything else.
+   * Six more the business asked for. Four now have artwork, from
+   * `claude_government_client_logos.zip`; two do not, and a row with no
+   * `logoUrl` is kept off the site by `lib/client-logo` regardless of anything
+   * else, so it appears as nothing rather than as a gap in the line.
+   *
+   *  - **National Security Guard** — never supplied as a file. It arrived
+   *    pasted into a conversation, which is a picture of a mark rather than
+   *    the mark.
+   *  - **HUDCO** — supplied, but as a marketing banner: the hudco mark set
+   *    over a grey cityscape with a captioned bar beneath it, on an opaque
+   *    plate. Getting a usable mark out of that means cropping into the
+   *    picture, which is the one thing `scripts/prepare-client-logo.mjs`
+   *    refuses to do. The file to ask for is the mark on its own.
    */
   { id: "org-nsg", name: "National Security Guard", logoUrl: null, sector: "Defence and aerospace", displayOrder: 100 },
   { id: "org-hudco", name: "HUDCO", logoUrl: null, sector: "Public sector", displayOrder: 110 },
-  { id: "org-sardar-patel-university", name: "Sardar Patel University", logoUrl: null, sector: "Education", displayOrder: 120 },
-  { id: "org-nagpur-metro", name: "Nagpur Metro", logoUrl: null, sector: "Transport", displayOrder: 130 },
-  { id: "org-rites", name: "RITES", logoUrl: null, sector: "Public sector", displayOrder: 140 },
-  { id: "org-barc", name: "Bhabha Atomic Research Centre", logoUrl: null, sector: "Research", displayOrder: 150 },
+  {
+    id: "org-sardar-patel-university",
+    name: "Sardar Patel University",
+    logoUrl: "/clients/sardar-patel-university.webp",
+    sector: "Education",
+    displayOrder: 120,
+  },
+  {
+    id: "org-nagpur-metro",
+    name: "Nagpur Metro",
+    logoUrl: "/clients/nagpur-metro.webp",
+    sector: "Transport",
+    displayOrder: 130,
+  },
+  { id: "org-rites", name: "RITES", logoUrl: "/clients/rites.webp", sector: "Public sector", displayOrder: 140 },
+  {
+    id: "org-barc",
+    name: "Bhabha Atomic Research Centre",
+    logoUrl: "/clients/barc.webp",
+    sector: "Research",
+    displayOrder: 150,
+  },
 ];
