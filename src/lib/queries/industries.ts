@@ -48,17 +48,3 @@ export const industryBySlug = (slug: string) =>
     ["industry", slug],
     [tags.industries],
   )();
-
-/** Every published slug, for `generateStaticParams` and the sitemap. */
-export const industrySlugs = cached(
-  async () => {
-    const rows = await prisma.industry.findMany({
-      where: { published: true, deletedAt: null },
-      orderBy: [{ displayOrder: "asc" }],
-      select: { slug: true },
-    });
-    return rows.map((row) => row.slug);
-  },
-  ["industry-slugs"],
-  [tags.industries],
-);
