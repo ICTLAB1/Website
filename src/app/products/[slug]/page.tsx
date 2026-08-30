@@ -213,12 +213,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
      * by defaulting it to zero, which reads as free.
      */
     /*
-     * No offer on anything, while the catalogue quotes rather than prices.
-     *
-     * A price-bearing structured-data block is exactly what a search engine
-     * surfaces as a number beside the result — so leaving this in would put a
-     * figure in front of a buyer on the one surface nobody thinks to check,
-     * after it had been taken off every page they can actually see.
+     * The offer matches what the page itself shows: a price on a software
+     * product with one, none on hardware or an enquiry-only row. Structured
+     * data is the one surface nobody thinks to check by eye, so it is asked
+     * the same `isQuoteOnly` question as the visible price rather than a
+     * separate rule that could quietly disagree with it.
      */
     ...(lowestPrice && !hardware && !isQuoteOnly(product)
       ? {

@@ -5,47 +5,79 @@ import { isHardware } from "@/lib/catalogue/hardware";
 /**
  * Whether a product is quoted rather than priced on the public site.
  *
- * ## The rule today: everything is
+ * ## The rule today: hardware only, plus the per-row exceptions
  *
- * `CATALOGUE_IS_QUOTE_ONLY` is on, so no price reaches a visitor from any
- * catalogue surface — not a card, not a product page, not a listing, not a
- * filter band, not the structured data a search engine reads. A visitor sees
- * what a product is and a way to ask what it costs.
+ * `CATALOGUE_IS_QUOTE_ONLY` is off. Software licences show an indicative price
+ * — on a card, on the product page, in the structured data — with a
+ * disclaimer that the figure is subject to confirmation, alongside GST and
+ * the term it applies to. A written quotation still fixes the number: nothing
+ * here makes a price binding, and nothing here re-enables a card checkout —
+ * see `DIRECT_PURCHASE_ENABLED` below, which is the separate decision that
+ * controls that.
  *
- * This is a commercial position, not a property of the rows. Licensing prices
- * move with programme, term, quantity and the customer's own agreement, and a
- * figure on a card is a number a buyer will hold you to three months later
- * when none of those are the same. The prices themselves are untouched: they
- * are still on the variants, still what a quotation is priced from, still on
- * orders and invoices and in the admin panel. What changed is who is shown one
- * before there is a quotation.
+ * Hardware stays quote-only regardless of this constant. That was true when
+ * the whole catalogue went quote-only and it did not change back with this
+ * flag: HP, Dell and HPE configurations are priced against a specification a
+ * buyer chooses, not a catalogue figure, and it has been a standing rule of
+ * this business from before any of this file existed that no hardware price
+ * is shown in public. `isHardware(product)` below is unconditional.
+ *
+ * This was on once before — briefly, catalogue-wide — on the reasoning that
+ * licensing prices move with programme, term, quantity and the customer's own
+ * agreement, so a figure on a card is a number a buyer holds you to three
+ * months later when none of those are the same. That reasoning still applies
+ * to the number itself, which is why every surface that shows one also shows
+ * the disclaimer: the figure is indicative, not an offer capable of
+ * acceptance, and it is confirmed on a written quotation before an order is
+ * placed. The business decided the qualifying disclaimer is enough and asked
+ * for prices back; this is that decision, not a reversal of the reasoning
+ * behind it.
  *
  * ## Why a constant rather than deleting the code
  *
- * The per-row conditions underneath are the ones that governed before, and
- * they are kept intact so this is one line to reverse. A business that decides
- * to list prices again should not have to reconstruct the rules for which rows
- * could carry one — those rules were right, and hardware in particular must
- * stay quote-only whatever the constant says.
+ * The per-row conditions underneath governed before the catalogue went
+ * quote-only and they govern again now that it has come back off — hardware,
+ * an enquiry-only purchase mode, a row with no usable price. Keeping them as
+ * a function this flag sits in front of, rather than inlining a price check
+ * everywhere, is what let this reverse in one place instead of a search for
+ * every surface that had learned to hide a price.
  *
  * ## One function, every surface
  *
- * The same reasoning as `mayShowClientLogo` and `currentCertifications`: a rule
- * a component has to remember is a rule a component will one day forget, and
- * the cost of forgetting this one is a price on a public page that somebody
- * quotes back at you. `scripts/verify/prices.mjs` reads the rendered site and
- * fails on any currency-shaped string in the catalogue, so a surface that
- * skips this function is caught by the gate rather than by a customer.
+ * The same reasoning as `mayShowClientLogo` and `currentCertifications`: a
+ * rule a component has to remember is a rule a component will one day forget.
+ * `scripts/verify/prices.mjs` reads the rendered site and asserts the current
+ * policy in both directions — a price and its disclaimer on a software
+ * surface, none on a hardware one — so a surface that disagrees with this
+ * function is caught by the gate rather than by a customer.
  */
 
 /**
  * The switch. `true` means the catalogue quotes rather than prices.
  *
- * Flipping it to `false` restores the per-row behaviour below and nothing
- * else — no copy anywhere says "quote only" except through
- * `QUOTE_ONLY_NOTE`, which is the one string to change with it.
+ * `false` restores the per-row behaviour below: hardware and enquiry-only
+ * rows stay quote-only, everything else shows its price. Flipping this alone
+ * does not restore direct card purchase — see `DIRECT_PURCHASE_ENABLED`.
  */
-export const CATALOGUE_IS_QUOTE_ONLY = true;
+export const CATALOGUE_IS_QUOTE_ONLY = false;
+
+/**
+ * Whether a priced software product may be bought by card without a
+ * quotation first.
+ *
+ * Separate from `CATALOGUE_IS_QUOTE_ONLY` on purpose: showing a price and
+ * accepting a card for it are two different decisions, and the business asked
+ * for the first without the second. Every eligible SKU still routes to
+ * "Request Enterprise Pricing"; `/buy` remains reachable directly and Stripe
+ * still settles quotation-raised orders on `/account/orders` — this constant
+ * only controls whether a catalogue surface links to it.
+ *
+ * `false` today. Setting it `true` restores the "Buy now" button on the
+ * product page and the card exactly as they rendered before direct purchase
+ * was retired, with no other change needed: the eligibility rules
+ * (`purchaseMode`, `isDirectlyPurchasable`, a real price) were never removed.
+ */
+export const DIRECT_PURCHASE_ENABLED = false;
 
 /** What a card, a listing and a product page say in place of a price. */
 export const QUOTE_ONLY_NOTE =
@@ -53,6 +85,19 @@ export const QUOTE_ONLY_NOTE =
 
 /** The short form, for a card with no room for the sentence. */
 export const QUOTE_ONLY_LABEL = "Price on enquiry";
+
+/**
+ * The disclaimer a priced surface carries beside its figure.
+ *
+ * One sentence, reused everywhere a price is shown, so the wording cannot
+ * drift between a card and a product page the way two hand-written captions
+ * would. It says two things and only two: the number can still move, and a
+ * written quotation is what fixes it — which is also what `/terms` says about
+ * catalogue prices, so this is consistent with the contract rather than a
+ * separate claim beside it.
+ */
+export const TENTATIVE_PRICE_NOTE =
+  "Tentative price, subject to confirmation. Final pricing is fixed on a written quotation before any order is placed.";
 
 type PriceableProduct = {
   formFactor?: FormFactor | null;

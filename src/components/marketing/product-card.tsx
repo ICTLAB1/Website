@@ -7,7 +7,7 @@ import { showPrice, statesTaxSeparately, type PriceDisplay } from "@/lib/price-d
 import { getDisplayCurrency } from "@/lib/display-currency";
 import { humanise } from "@/lib/utils";
 import { hardwareClassLabel, isHardware } from "@/lib/catalogue/hardware";
-import { isQuoteOnly } from "@/lib/catalogue/quote-only";
+import { DIRECT_PURCHASE_ENABLED, isQuoteOnly } from "@/lib/catalogue/quote-only";
 import { ProductPhoto } from "@/components/catalogue/product-photo";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 import { ratingsForProducts } from "@/lib/queries/reviews";
@@ -51,7 +51,14 @@ export function ProductCard({
    * with the listing beside it.
    */
   const quoteOnly = isQuoteOnly(product);
-  const canBuyDirect = !quoteOnly && variant != null;
+  /*
+   * A price on the card is not an offer to check out from the card. See
+   * `DIRECT_PURCHASE_ENABLED` — the "Buy now" link below is gated on it
+   * independently of whether a figure is shown, so the two decisions
+   * (show a price / accept a card for it) cannot be conflated by a future
+   * edit that only looks at `quoteOnly`.
+   */
+  const canBuyDirect = DIRECT_PURCHASE_ENABLED && !quoteOnly && variant != null;
 
   /*
    * Hardware and licensing on one card.
@@ -87,12 +94,10 @@ export function ProductCard({
 
             "5% off" beside "Price on enquiry" is a discount percentage with
             nothing to apply it to — a figure a buyer can hold you to, on a card
-            that otherwise says the price is quoted. It survived the move to a
-            quote-only catalogue because the saving is computed from the
-            variant's own list and sale prices, which are still there and still
-            correct; it was only ever the *display* of a price that went. This
-            is the same `quoteOnly` the rest of the card asks, so the two cannot
-            disagree.
+            that otherwise says the price is quoted. It uses the same
+            `quoteOnly` the rest of the card asks, so a hardware SKU or an
+            enquiry-only row never shows a saving even though the underlying
+            list and sale prices exist on every row regardless.
           */}
           {!quoteOnly && saving ? <Badge tone="success">{saving}% off</Badge> : null}
         </div>
@@ -181,7 +186,7 @@ export function ProductCard({
                 </span>
               ) : null}
               {/*
-                "Indicative" belongs on the card, not only on the pages that
+                "Tentative" belongs on the card, not only on the pages that
                 happen to carry a note. The catalogue and the product page both
                 explain that a price is confirmed on a written quotation — but
                 this card also appears in home-page grids, on brand pages and on
@@ -195,7 +200,7 @@ export function ProductCard({
                   is. It is removed rather than replaced: one figure, and no
                   claim about tax in either direction.
                 */}
-                Indicative
+                Tentative price
                 {statesTaxSeparately(display) ? `, excl. GST (${variant!.gstRatePercent}%)` : ""}{" "}
                 &middot; {variant!.seats > 1 ? `${variant!.seats} seats` : "per seat"}
                 {canBuyDirect ? (
@@ -231,11 +236,11 @@ export function ProductCard({
               brandName: product.brand.name,
               variantName: variant.name,
               /*
-                No price into the basket while the catalogue quotes rather than
-                prices. Hiding it in the basket UI would leave the figure in
-                the browser's local storage and in the enquiry the customer
-                submits — this keeps it out of both, so "on quote" is the truth
-                rather than a presentation choice.
+                No price into the basket for a row that has none to give — the
+                same `quoteOnly` test as the badge above, so hardware and
+                enquiry-only rows carry nothing into local storage or the
+                enquiry the customer submits, while a priced software row
+                carries the tentative figure it is showing on the card.
               */
               unitPriceMinor: quoteOnly || price <= 0 ? null : price,
               currency: variant.currency,

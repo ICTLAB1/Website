@@ -11,7 +11,7 @@ import {
   statesTaxSeparately,
   type PriceDisplay,
 } from "@/lib/price-display";
-import { CATALOGUE_IS_QUOTE_ONLY } from "@/lib/catalogue/quote-only";
+import { CATALOGUE_IS_QUOTE_ONLY, DIRECT_PURCHASE_ENABLED } from "@/lib/catalogue/quote-only";
 import { cn, humanise } from "@/lib/utils";
 import { audienceNote, isDirectlyPurchasable } from "@/lib/catalogue/audience";
 import type { VariantAudience } from "@prisma/client";
@@ -81,8 +81,18 @@ export function VariantSelector({
      more code than the question.
   */
   const quoteOnly = CATALOGUE_IS_QUOTE_ONLY || unitPrice <= 0 || purchaseMode === "ENQUIRY";
+  /*
+   * Showing a price and accepting a card for it are different decisions —
+   * see `DIRECT_PURCHASE_ENABLED`. A priced, eligible variant still cannot
+   * check out here while that flag is off; the route it offers instead is
+   * "Request Enterprise Pricing", never a dead end.
+   */
   const canBuyDirect =
-    !quoteOnly && !restricted && (purchaseMode === "DIRECT" || purchaseMode === "BOTH") && unitPrice > 0;
+    DIRECT_PURCHASE_ENABLED &&
+    !quoteOnly &&
+    !restricted &&
+    (purchaseMode === "DIRECT" || purchaseMode === "BOTH") &&
+    unitPrice > 0;
   const lineTotal = unitPrice * quantity;
   const gst = gstAmountMinor(lineTotal, selected.gstRatePercent);
 
@@ -263,9 +273,10 @@ export function VariantSelector({
         ) : null}
 
         <div className="mt-5 space-y-2.5">
-          {/* Direct purchase is offered only where the product's mode permits it
-              and the SKU carries a real price. The route and the API both
-              re-check this server-side. */}
+          {/* Direct purchase is offered only where `DIRECT_PURCHASE_ENABLED`
+              is on, the product's mode permits it and the SKU carries a real
+              price. The route and the API both re-check this server-side,
+              independently of what this component decides to render. */}
           {canBuyDirect ? (
             <ButtonLink
               href={`/buy?sku=${encodeURIComponent(selected.sku)}`}
@@ -293,11 +304,10 @@ export function VariantSelector({
               brandName,
               variantName: selected.name,
               /*
-                No price into the basket while the catalogue quotes rather than
-                prices. Hiding it in the basket UI would leave the figure in
-                the browser's local storage and in the enquiry the customer
-                submits — this keeps it out of both, so "on quote" is the truth
-                rather than a presentation choice.
+                No price into the basket for a variant that has none to give
+                — hardware, an enquiry-only mode, or a zero-priced row. A
+                priced software variant carries its tentative figure into the
+                basket and the enquiry, exactly as the page shows it.
               */
               unitPriceMinor: quoteOnly || unitPrice <= 0 ? null : unitPrice,
               currency: selected.currency,
@@ -322,10 +332,16 @@ export function VariantSelector({
             </>
           ) : (
             <>
+              {/*
+                "Tentative" is the word the business asked for, put beside the
+                figure rather than only in a shared constant: a buyer reading
+                this panel should not have to know that `TENTATIVE_PRICE_NOTE`
+                exists elsewhere to learn the number can move.
+              */}
               {statesTaxSeparately(display)
-                ? "Prices shown are indicative and exclude GST."
-                : "Prices shown are indicative and are converted from our rupee list price at the rate we publish."}{" "}
-              Final pricing, delivery timelines and licensing terms are confirmed on a written
+                ? "Tentative price, excluding GST — subject to confirmation."
+                : "Tentative price, converted from our rupee list price at the rate we publish — subject to confirmation."}{" "}
+              Final pricing, delivery timelines and licensing terms are fixed on a written
               quotation before any order is placed.
               {statesTaxSeparately(display) ? "" : " Orders are placed and invoiced in Indian rupees."}
             </>
