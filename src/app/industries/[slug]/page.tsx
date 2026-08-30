@@ -11,7 +11,7 @@ import { BrandCard } from "@/components/marketing/brand-card";
 import { CategoryCard } from "@/components/marketing/category-card";
 import { glyph } from "@/lib/glyphs";
 import { prisma } from "@/lib/db";
-import { industryBySlug, industrySlugs, publishedIndustries } from "@/lib/queries/industries";
+import { industryBySlug, publishedIndustries } from "@/lib/queries/industries";
 import { buildMetadata } from "@/lib/seo";
 
 /**
@@ -26,13 +26,26 @@ import { buildMetadata } from "@/lib/seo";
  * sixteen files.
  *
  * Anything that no longer resolves is dropped rather than rendered as a hole.
+ *
+ * ## Rendered on request, never prerendered
+ *
+ * This route declared `generateStaticParams` and `revalidate`, which marked it
+ * SSG — and a `next build` has no database. The Dockerfile points DATABASE_URL
+ * at a host that is not listening, so the query ran, the connection was
+ * refused, and the image build died at `RUN npm run build`. It passed locally
+ * only because a local build has a database sitting there.
+ *
+ * The same mistake is already commented on five other routes here — brands,
+ * products, services, blog and the CMS catch-all all had it and all dropped it.
+ * `scripts/verify/build-without-database.sh` exists to catch exactly this and I
+ * did not run it; it is now part of `npm run check` so the next person cannot
+ * skip it either.
+ *
+ * Nothing is lost by dropping it. Every read behind this page goes through the
+ * tag-based cache, so the work per request is a cache lookup, and an edit in
+ * the admin panel invalidates it immediately — which beats a prerender that
+ * only refreshes on redeploy.
  */
-
-export const revalidate = 3600;
-
-export async function generateStaticParams() {
-  return (await industrySlugs()).map((slug) => ({ slug }));
-}
 
 export async function generateMetadata({
   params,
