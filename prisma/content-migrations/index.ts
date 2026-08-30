@@ -38,6 +38,7 @@ import { gemPanelTiles } from "./2026-08-gem-panel-tiles";
 import { organisationArtworkSecondBatch } from "./2026-08-organisation-artwork-second-batch";
 import { nameEveryOrganisationWithAMark } from "./2026-08-name-every-organisation-with-a-mark";
 import { threeDsMaxRanking } from "./2026-08-3ds-max-ranking";
+import { homepageHeadline } from "./2026-08-homepage-headline";
 import type { ContentMigration } from "./types";
 
 /**
@@ -89,6 +90,7 @@ export const contentMigrations: ContentMigration[] = [
   organisationArtworkSecondBatch,
   nameEveryOrganisationWithAMark,
   threeDsMaxRanking,
+  homepageHeadline,
 ];
 
 export type { ContentMigration };

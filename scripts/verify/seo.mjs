@@ -394,7 +394,7 @@ for (const path of paths) {
   if (!meta.description) problems.push(`${path}: no meta description`);
   else if (meta.description.length > 180) {
     problems.push(`${path}: description is ${meta.description.length} characters`);
-  } else if (meta.description.length < 70 || meta.description.length > 160) {
+  } else if (meta.description.length < 115 || meta.description.length > 160) {
     shortDescriptions.push(`${path}: ${meta.description.length} characters`);
   }
   if (!meta.canonical) problems.push(`${path}: no canonical URL`);
@@ -585,6 +585,54 @@ console.log(`Ranking URLs: ${recovered} of ${RECOVERED.length} redirect to a pag
  * Either link it or take it out of the sitemap. Both are fine; the silence is
  * not.
  */
+/*
+ * A brand page with no products is out of the index and out of the sitemap.
+ *
+ * Fifty-five of the sixty-four brand pages have no catalogue behind them. Each
+ * is a real page worth keeping — it says "there is no published catalogue for
+ * Oracle yet, tell us what you need", which is the honest offer and a
+ * reasonable place for a link to land — and each is titled with somebody
+ * else's trademark while admitting in its own body copy that there is nothing
+ * behind it. Fifty-five of those in the index is thin content at a scale that
+ * drags the pages that are good, and a trademark exposure at the same time.
+ *
+ * Two rules, in two files, that must not drift apart: `app/sitemap.ts` leaves
+ * these out, and `generateMetadata` on the brand route marks them noindex. This
+ * checks both against the site as served, and checks the other direction too —
+ * a brand that HAS products must stay indexable, because the cheapest way to
+ * break this is to make the condition slightly too broad and quietly deindex
+ * the nine pages that earn their place.
+ *
+ * `follow` is deliberately kept on the noindexed ones: they carry the whole
+ * site navigation, and nofollow there throws away crawl paths for nothing.
+ */
+const brandIndex = await (await fetch(`${BASE}/brands`)).text();
+const brandSlugs = [
+  ...new Set([...brandIndex.matchAll(/href="\/brands\/([a-z0-9-]+)"/g)].map((m) => m[1])),
+];
+let emptyBrands = 0;
+let stockedBrands = 0;
+for (const slug of brandSlugs) {
+  const path = `/brands/${slug}`;
+  const html = await (await fetch(`${BASE}${path}`)).text();
+  // The page says so itself, in the words a visitor reads.
+  const empty = /There is no published catalogue for/.test(html);
+  const robots = html.match(/<meta name="robots" content="([^"]*)"/)?.[1] ?? "";
+  const inSitemap = paths.includes(path);
+
+  if (empty) {
+    emptyBrands += 1;
+    if (!/noindex/.test(robots)) problems.push(`${path}: no products, but indexable ("${robots}")`);
+    if (/nofollow/.test(robots)) problems.push(`${path}: noindexed with nofollow — keep follow on a thin page`);
+    if (inSitemap) problems.push(`${path}: no products, but listed in the sitemap`);
+  } else {
+    stockedBrands += 1;
+    if (/noindex/.test(robots)) problems.push(`${path}: has products, but noindexed ("${robots}")`);
+    if (!inSitemap) problems.push(`${path}: has products, but missing from the sitemap`);
+  }
+}
+if (brandSlugs.length === 0) problems.push("/brands lists no brand pages at all");
+
 const orphans = [...inbound].filter(([, count]) => count === 0).map(([path]) => path);
 for (const path of orphans) {
   problems.push(`${path}: in the sitemap, linked from no page on the site`);
@@ -597,7 +645,7 @@ if (longTitles.length) {
 }
 
 if (shortDescriptions.length) {
-  console.log(`${shortDescriptions.length} description(s) outside the 70–160 character window:`);
+  console.log(`${shortDescriptions.length} description(s) outside the 115–160 character window:`);
   for (const line of shortDescriptions) console.log("  " + line);
   console.log("");
 }
@@ -623,4 +671,8 @@ console.log(
 console.log(
   `Legacy URLs: ${reclaimed} inbound links across ${RECLAIMED.length} old Wix paths still land ` +
     `on the page they were about.`,
+);
+console.log(
+  `Brand pages: ${stockedBrands} with a catalogue are indexed and in the sitemap; ` +
+    `${emptyBrands} without one are noindex, follow and out of it.`,
 );

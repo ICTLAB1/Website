@@ -105,6 +105,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       `Supplied by TechZoid on a single quotation with GST invoicing, alongside your other ${product.brand.name} purchasing.`,
       "Supplied by TechZoid on a single quotation, with GST invoicing and one purchase order across brands.",
       "Quoted by TechZoid with GST invoicing, on one purchase order with the rest of your software.",
+      // Short enough to fit behind a long description. Without it the three
+      // above are all too long for a base in the nineties, and the page keeps
+      // a stub — which is how `adobe-acrobat-standard-teams` sat at 68
+      // characters while a rule designed to lengthen it ran on every request.
+      `Quoted by TechZoid with GST invoicing on one purchase order.`,
     ),
     path: `/products/${product.slug}`,
     keywords: [...product.keywords, product.brand.name, product.name],

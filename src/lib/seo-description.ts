@@ -30,8 +30,22 @@
 /** Google renders about this much before cutting the sentence off. */
 const LONGEST = 160;
 
-/** Below this a result looks thin next to anything else on the page. */
-const SHORTEST = 70;
+/**
+ * Below this a result looks thin next to anything else on the page.
+ *
+ * It was 70, which is 45% of the space a result gets — barely more than the
+ * "third of a line" this file was written to fix, and it left forty of ninety
+ * product pages between 68 and 119 characters. Descriptions at exactly 70 or 71
+ * were being returned untouched by a rule whose own reasoning said they were
+ * too short.
+ *
+ * 115 is the number a description has to reach before the context sentence is
+ * no longer worth adding. Nothing is padded to a target: a base already past
+ * this is returned as written, and a base under it is only extended when a
+ * whole candidate sentence fits inside `LONGEST` — which is why the callers
+ * pass a short one last.
+ */
+const SHORTEST = 115;
 
 /**
  * `lead` first, then the first `candidates` entry that fits.

@@ -37,8 +37,28 @@ const getSitemapRows = cached(
         where: { status: "ACTIVE", deletedAt: null },
         select: { slug: true, updatedAt: true, featured: true },
       }),
+      /*
+       * Only brands with something behind them.
+       *
+       * Thirty-four of the sixty-four brand rows have no products: they exist
+       * so the site can say "we source Oracle, tell us what you need", which is
+       * a true and useful offer and a perfectly good page to land on from a
+       * link. It is not a page to ask Google to index. Thirty-four indexable
+       * pages titled with somebody else's trademark, each admitting in its own
+       * body copy that there is no catalogue behind it, is a thin-content
+       * pattern at a scale that drags the quality signal for the pages that are
+       * good — and it is a trademark exposure besides.
+       *
+       * So they stay on the site, stay linked from /brands, and stay out of the
+       * sitemap. `generateMetadata` on the brand route marks the same pages
+       * noindex from the same condition, and the day a brand gets its first
+       * product both reverse themselves with no further action.
+       */
       prisma.brand.findMany({
-        where: { deletedAt: null },
+        where: {
+          deletedAt: null,
+          products: { some: { status: "ACTIVE", deletedAt: null } },
+        },
         select: { slug: true, updatedAt: true },
       }),
       prisma.service.findMany({
