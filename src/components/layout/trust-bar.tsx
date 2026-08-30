@@ -141,7 +141,7 @@ export async function TrustBar() {
             {certifications.map((certification) => {
               const seal = certificationLogo(certification.standard);
               return (
-                <li key={certification.reference} className="flex items-center gap-2">
+                <li key={certification.id} className="flex items-center gap-2">
                   {seal ? (
                     /*
                       No plate and no border: the band is white, which is the

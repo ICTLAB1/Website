@@ -233,27 +233,30 @@ type CategoryRow = {
 type ServiceRow = { slug: string; name: string; summary: string; category: string };
 type PostCategoryRow = { name: string; count: number };
 type CertificationRow = {
+  id: string;
   standard: string;
   title: string;
-  reference: string;
-  issuer: string;
-  verifyUrl: string | null;
   scope: string | null;
-  issuedAt: Date;
-  expiresAt: Date | null;
 };
 
 /**
- * A certification, stated so it can be checked.
+ * A certification: the standard, what it covers, and its scope.
  *
- * The certificate number, the body that issued it and the verification address
- * are all on the card. A badge saying "ISO 27001 certified" with nothing behind
- * it is a claim; this is the same claim with the means to disprove it, which is
- * the only version worth making to a procurement officer.
+ * The certificate number, the issuing body, the validity dates and the
+ * verification link were all on this card, on the reasoning that a badge saying
+ * "ISO 27001 certified" is a claim while a checkable certificate number is
+ * evidence. The owner has asked for those off the site, which is their call to
+ * make about their own credentials.
  *
- * The expiry is shown for the same reason. A certificate is a statement about a
- * period, and a reader who cannot see the period has to assume it is current —
- * which is exactly the assumption that goes wrong.
+ * They are not deleted — every one is still on the record and still editable
+ * under Certifications, and the expiry still governs whether a certificate
+ * appears at all, because a lapsed one shown on every page of a site would be
+ * the most thorough possible way to make a false statement. What changed is
+ * only what a visitor is shown.
+ *
+ * The four fields are no longer selected either, in `blocks/resolve`. A field
+ * that is not fetched cannot be put back on the page by an edit that was not
+ * thinking about this decision.
  */
 function CertificationCard({ certification }: { certification: CertificationRow }) {
   const seal = certificationLogo(certification.standard);
@@ -300,44 +303,10 @@ function CertificationCard({ certification }: { certification: CertificationRow 
           {certification.scope}
         </p>
       ) : null}
-
-      <dl className="mt-4 space-y-1 border-t border-line pt-3 text-label text-ink-600">
-        <div className="flex gap-2">
-          <dt className="text-ink-500">Certificate</dt>
-          <dd className="font-mono text-graphite-900">{certification.reference}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="text-ink-500">Issued by</dt>
-          <dd className="text-graphite-900">{certification.issuer}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="text-ink-500">Valid</dt>
-          <dd className="text-graphite-900">
-            {formatDate(certification.issuedAt)}
-            {certification.expiresAt ? ` – ${formatDate(certification.expiresAt)}` : ""}
-          </dd>
-        </div>
-      </dl>
-
-      {certification.verifyUrl ? (
-        <p className="mt-auto pt-3">
-          <a
-            href={
-              certification.verifyUrl.startsWith("http")
-                ? certification.verifyUrl
-                : `https://${certification.verifyUrl}`
-            }
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-label font-medium text-accent-700 underline underline-offset-2 hover:text-accent-800"
-          >
-            Verify this certificate
-          </a>
-        </p>
-      ) : null}
     </div>
   );
 }
+
 type PostRow = {
   slug: string;
   title: string;
@@ -515,7 +484,7 @@ export function CollectionGridBlock({
       ) : data.kind === "certifications" ? (
         <Reveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {(rows as CertificationRow[]).map((certification) => (
-            <CertificationCard key={certification.reference} certification={certification} />
+            <CertificationCard key={certification.id} certification={certification} />
           ))}
         </Reveal>
       ) : data.kind === "brands" && data.layout === "strip" ? (
