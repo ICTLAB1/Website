@@ -797,6 +797,74 @@
     padding: 0.15em 0.35em;
     border-radius: var(--radius-sm);
   }
+
+  /* -----------------------------------------------------------------------
+     Hero sparkle
+     Two copies of the hero's gold-node layer (see content-blocks.tsx),
+     brightening and fading out of phase so the field reads as points of
+     light rather than a grid that is simply always lit. Opacity only, so it
+     stays on the compositor next to the grid and glow it sits above.
+  ----------------------------------------------------------------------- */
+  @keyframes hero-sparkle-pulse {
+    0%,
+    100% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .hero-sparkle {
+    animation: hero-sparkle-pulse 4.8s var(--ease-out-soft, ease-in-out) infinite;
+  }
+
+  /* Half a cycle out of phase, so this layer peaks while the other fades. */
+  .hero-sparkle--offset {
+    animation-delay: 2.4s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-sparkle {
+      animation: none;
+      /* The resting state the pattern always had before this existed: both
+         layers fully lit, so reduced motion loses the twinkle and keeps the
+         texture. */
+      opacity: 1;
+    }
+  }
+
+  /* -----------------------------------------------------------------------
+     Card hover
+     One lift for every card in a grid — the catalogue, the hardware
+     catalogue, and a plain feature grid like "Multi-brand sourcing" — so a
+     visitor learns the interaction once. Transform and colour only, so it
+     stays on the compositor; no scale and no shadow bloom, which is what
+     keeps a catalogue of sixty-four brands feeling composed rather than busy.
+  ----------------------------------------------------------------------- */
+  .card-hover {
+    transition:
+      transform var(--duration-fast) var(--ease-out-quart),
+      border-color var(--duration-fast) var(--ease-out-quart),
+      box-shadow var(--duration-fast) var(--ease-out-quart);
+  }
+
+  .card-hover:hover,
+  .card-hover:focus-within {
+    transform: translateY(-2px);
+    border-color: var(--color-accent-400);
+    box-shadow: 0 6px 16px -10px rgb(0 0 0 / 0.28);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-hover:hover,
+    .card-hover:focus-within {
+      /* The colour and shadow still say "this is interactive"; only the
+         motion goes, since a translated element is the one part of this that
+         reduced motion is actually asking to stop. */
+      transform: none;
+    }
+  }
 }
 
 @layer utilities {
