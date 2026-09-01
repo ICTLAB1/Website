@@ -9,6 +9,7 @@ import { TrustBar } from "@/components/layout/trust-bar";
 import { BasketProvider } from "@/components/enquiry/basket-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { GoogleTag, GoogleTagManagerNoScript } from "@/components/analytics/google-tag";
+import { ChatWidgetGate } from "@/components/chat/chat-widget-gate";
 import { JsonLd, organizationSchema, websiteSchema } from "@/lib/seo";
 import { appUrl } from "@/lib/env";
 import { getSiteIdentity } from "@/lib/site-config";
@@ -138,6 +139,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Footer />
           </BasketProvider>
         </ToastProvider>
+
+        <ChatWidgetGate />
 
         <JsonLd data={await organizationSchema()} />
         <JsonLd data={await websiteSchema()} />

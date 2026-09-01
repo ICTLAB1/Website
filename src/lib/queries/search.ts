@@ -50,6 +50,7 @@ export async function searchProducts(term: string, limit = 8) {
       name: true,
       shortDescription: true,
       popularity: true,
+      formFactor: true,
       brand: { select: { name: true } },
       variants: {
         where: publicVariantWhere,
