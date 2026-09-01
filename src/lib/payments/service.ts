@@ -1,10 +1,11 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { formatMoney } from "@/lib/money";
 import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
-import { getPaymentConfig } from "@/lib/payments/config";
+import { getPaymentConfig, getCCAvenueConfig, type PaymentGateway } from "@/lib/payments/config";
 import { createCheckoutSession } from "@/lib/payments/stripe";
 import { appUrl } from "@/lib/env";
 
@@ -52,11 +53,15 @@ export type BeginPaymentResult =
  * Called with an order id the caller has already established the requester is
  * entitled to act on. It performs no authorisation of its own — that belongs at
  * the route, where the session is.
+ *
+ * `gateway` defaults to Stripe rather than being required everywhere, so every
+ * call site written before CCAvenue existed keeps compiling and keeps its old
+ * behaviour unchanged.
  */
-export async function beginPayment(orderId: string): Promise<BeginPaymentResult> {
-  const config = await getPaymentConfig();
-  if (!config) return { ok: false, reason: "Card payment is not available at the moment." };
-
+export async function beginPayment(
+  orderId: string,
+  gateway: PaymentGateway = "stripe",
+): Promise<BeginPaymentResult> {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     select: {
@@ -93,6 +98,24 @@ export async function beginPayment(orderId: string): Promise<BeginPaymentResult>
   if (order.totalMinor <= 0) {
     return { ok: false, reason: "That order has no amount to pay." };
   }
+
+  if (gateway === "ccavenue") return beginCCAvenuePayment(order);
+  return beginStripePayment(order);
+}
+
+type PayableOrder = {
+  id: string;
+  reference: string;
+  currency: string;
+  totalMinor: number;
+  billingName: string;
+  billingEmail: string;
+  billingPhone: string | null;
+};
+
+async function beginStripePayment(order: PayableOrder): Promise<BeginPaymentResult> {
+  const config = await getPaymentConfig();
+  if (!config) return { ok: false, reason: "Card payment is not available at the moment." };
 
   /*
    * Both return URLs are built from `appUrl`, never from the request.
@@ -140,6 +163,49 @@ export async function beginPayment(orderId: string): Promise<BeginPaymentResult>
     ok: true,
     checkoutUrl: created.session.url,
     providerOrderId: created.session.id,
+    amountMinor: order.totalMinor,
+    currency: order.currency,
+    mode: config.mode,
+  };
+}
+
+/**
+ * CCAvenue has no "create session" API call — the request is built and
+ * encrypted entirely by this server, then posted as a browser form straight
+ * to CCAvenue's own hosted page. So `checkoutUrl` here is not CCAvenue's URL
+ * at all: it is a route on this deployment that renders that auto-submitting
+ * form when the browser is sent to it, which is what lets every caller of
+ * `beginPayment` treat the two gateways identically — `window.location.assign
+ * (checkoutUrl)` and nothing else.
+ */
+async function beginCCAvenuePayment(order: PayableOrder): Promise<BeginPaymentResult> {
+  const config = await getCCAvenueConfig();
+  if (!config) return { ok: false, reason: "Card payment is not available at the moment." };
+
+  // CCAvenue's own token for the attempt. Generated here, before any call to
+  // CCAvenue, because it is what this deployment's redirect and callback
+  // routes use to find the row again — the same role `created.session.id`
+  // plays for Stripe.
+  const providerOrderId = `cca_${randomUUID().replace(/-/g, "")}`;
+
+  await prisma.payment.create({
+    data: {
+      orderId: order.id,
+      provider: "ccavenue",
+      providerOrderId,
+      status: "CREATED",
+      amountMinor: order.totalMinor,
+      currency: order.currency,
+      mode: config.mode,
+    },
+  });
+
+  logger.info("payment_started", { reference: order.reference, providerOrderId, mode: config.mode });
+
+  return {
+    ok: true,
+    checkoutUrl: `${appUrl()}/api/payments/ccavenue/redirect/${providerOrderId}`,
+    providerOrderId,
     amountMinor: order.totalMinor,
     currency: order.currency,
     mode: config.mode,

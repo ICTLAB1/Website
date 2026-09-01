@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { postJson } from "@/lib/csrf-client";
+import type { PaymentGateway } from "@/lib/payments/config";
 
 /**
  * Paying for an order from the customer's own order list.
@@ -29,15 +30,30 @@ import { postJson } from "@/lib/csrf-client";
  * leaving: the customer comes back to the order page with a session id, and
  * that page asks Stripe what happened.
  */
-export function PayOrderButton({ reference }: { reference: string }) {
+const GATEWAY_LABEL: Record<PaymentGateway, string> = {
+  stripe: "Pay by card",
+  ccavenue: "Pay via CCAvenue",
+};
+
+export function PayOrderButton({
+  reference,
+  gateways,
+}: {
+  reference: string;
+  /** Which gateways are actually usable. One button each — never a dropdown for two things. */
+  gateways: PaymentGateway[];
+}) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function pay() {
+  async function pay(gateway: PaymentGateway) {
     setPending(true);
     setError(null);
 
-    const started = await postJson<{ checkoutUrl: string }>("/api/payments/start", { reference });
+    const started = await postJson<{ checkoutUrl: string }>("/api/payments/start", {
+      reference,
+      gateway,
+    });
     if (!started.ok) {
       setPending(false);
       setError(started.error.message);
@@ -46,20 +62,26 @@ export function PayOrderButton({ reference }: { reference: string }) {
 
     /*
      * `assign`, not `replace`. The order page stays in history, so a customer
-     * who thinks better of it at Stripe can use the back button and arrive
-     * somewhere sensible rather than on whatever preceded the order.
+     * who thinks better of it at the gateway can use the back button and
+     * arrive somewhere sensible rather than on whatever preceded the order.
      *
      * `pending` is deliberately left true: the navigation is in flight and
-     * re-enabling the button would invite a second session nobody needs.
+     * re-enabling the button would invite a second attempt nobody needs.
      */
     window.location.assign(started.data.checkoutUrl);
   }
 
+  if (gateways.length === 0) return null;
+
   return (
     <div>
-      <Button type="button" size="sm" onClick={pay} disabled={pending}>
-        {pending ? "Opening…" : "Pay now"}
-      </Button>
+      <div className="flex flex-wrap gap-2">
+        {gateways.map((gateway) => (
+          <Button key={gateway} type="button" size="sm" onClick={() => pay(gateway)} disabled={pending}>
+            {pending ? "Opening…" : GATEWAY_LABEL[gateway]}
+          </Button>
+        ))}
+      </div>
       {error ? <p className="mt-1 text-[12px] text-danger-700">{error}</p> : null}
     </div>
   );

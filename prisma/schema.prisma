@@ -2263,7 +2263,7 @@ model SiteSettings {
   updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
-/// Which payment gateway is configured, and its credentials.
+/// Which payment gateways are configured, and their credentials.
 ///
 /// One row, id `singleton`, like `SiteSettings` — and separate from it on
 /// purpose. This holds credentials that can move money; that holds a telephone
@@ -2271,9 +2271,19 @@ model SiteSettings {
 /// credentials are not read on every page render, and a mistake in the
 /// business-identity form cannot touch them.
 ///
-/// The two secrets are encrypted at rest by `lib/secret-box.ts` and are never
-/// sent back to a browser. The key id is not a secret — Razorpay Checkout needs
-/// it in the page — so it is stored and displayed in the clear.
+/// Two gateways can be configured and enabled independently — Stripe (a
+/// redirect to hosted Checkout) and CCAvenue (a redirect to a hosted payment
+/// page, reached by an encrypted form POST rather than an API call). A
+/// customer sees a choice between them only when both are on; otherwise
+/// whichever one is configured is used silently, same as before CCAvenue
+/// existed.
+///
+/// The secrets are encrypted at rest by `lib/secret-box.ts` and are never sent
+/// back to a browser. A key id or access code is not a secret in the same
+/// sense — Razorpay Checkout needed its key id in the page, and CCAvenue's
+/// access code is submitted in the outgoing form the same way — so those are
+/// stored and displayed in the clear; only the values that authenticate a
+/// server-to-server call or decrypt a callback are encrypted.
 model PaymentSettings {
   id String @id @default("singleton")
 
@@ -2283,6 +2293,8 @@ model PaymentSettings {
 
   /// TEST or LIVE. Stored rather than inferred from the key prefix, so that
   /// pointing at live keys is a deliberate act with its own audit entry.
+  /// Shared by both gateways — this deployment does not run one gateway live
+  /// and the other in test at the same time.
   mode PaymentMode @default(TEST)
 
   /// Stripe's secret key, `sk_test_…` or `sk_live_…`.
@@ -2301,6 +2313,26 @@ model PaymentSettings {
   /// was actually taken, since a browser returning from Checkout is just a
   /// browser making a claim.
   stripeWebhookSecret String?
+
+  /// CCAvenue's own gateway, off by default and independent of Stripe.
+  ccavenueEnabled Boolean @default(false)
+
+  /// CCAvenue's merchant id. Not a secret — it is submitted as a plain form
+  /// field in the redirect to CCAvenue's hosted page, so encrypting it at rest
+  /// would protect nothing that a page-source view does not already show.
+  ccavenueMerchantId String?
+
+  /// CCAvenue's access code for this integration. Same status as the merchant
+  /// id: it travels in the outgoing form, in the clear, by CCAvenue's own
+  /// design.
+  ccavenueAccessCode String?
+
+  /// CCAvenue's working key — the actual secret. It never leaves this server:
+  /// it is what encrypts the outgoing request and decrypts CCAvenue's reply, so
+  /// anyone holding it could forge a "payment succeeded" callback.
+  ///
+  /// AES-256-GCM, keyed from AUTH_SECRET. Never rendered.
+  ccavenueWorkingKey String?
 
   updatedAt   DateTime @updatedAt
   updatedById String?
