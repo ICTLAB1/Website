@@ -4671,8 +4671,8 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 14,
         "visible": true,
         "data": {
-          "fields": "grievance",
-          "heading": "Grievance redressal",
+          "fields": "all",
+          "heading": "Company details and grievance redressal",
           "footnote": "Please include your quotation or order reference, the name of your organisation, and what outcome you are looking for. A grievance raised without a reference takes longer to trace.",
           "description": "If something has gone wrong and the team handling your account has not put it right, this is who to escalate to. We acknowledge a grievance within 48 hours of receiving it and aim to resolve it within one month, as required of an online seller under the Consumer Protection (E-Commerce) Rules 2020."
         }
@@ -4835,8 +4835,8 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 11,
         "visible": true,
         "data": {
-          "fields": "grievance",
-          "heading": "Grievance redressal",
+          "fields": "all",
+          "heading": "Company details and grievance redressal",
           "footnote": "Please include your quotation or order reference, the name of your organisation, and what outcome you are looking for. A grievance raised without a reference takes longer to trace.",
           "description": "If something has gone wrong and the team handling your account has not put it right, this is who to escalate to. We acknowledge a grievance within 48 hours of receiving it and aim to resolve it within one month, as required of an online seller under the Consumer Protection (E-Commerce) Rules 2020."
         }
@@ -6872,8 +6872,8 @@ export const pageSeeds: PageSeed[] = [
         "displayOrder": 21,
         "visible": true,
         "data": {
-          "fields": "grievance",
-          "heading": "Grievance redressal",
+          "fields": "all",
+          "heading": "Company details and grievance redressal",
           "footnote": "Please include your quotation or order reference, the name of your organisation, and what outcome you are looking for. A grievance raised without a reference takes longer to trace.",
           "description": "If something has gone wrong and the team handling your account has not put it right, this is who to escalate to. We acknowledge a grievance within 48 hours of receiving it and aim to resolve it within one month, as required of an online seller under the Consumer Protection (E-Commerce) Rules 2020."
         }

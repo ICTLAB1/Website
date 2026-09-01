@@ -43,6 +43,7 @@ import { claimsWithoutEvidence } from "./2026-08-claims-without-evidence";
 import { relationshipWording } from "./2026-08-relationship-wording";
 import { headlineAsTheOwnerWroteIt } from "./2026-08-headline-as-the-owner-wrote-it";
 import { partnerDesignationMatchesTheBadge } from "./2026-08-partner-designation-matches-the-badge";
+import { ccavenueCompliance } from "./2026-09-ccavenue-compliance";
 import type { ContentMigration } from "./types";
 
 /**
@@ -99,6 +100,7 @@ export const contentMigrations: ContentMigration[] = [
   relationshipWording,
   headlineAsTheOwnerWroteIt,
   partnerDesignationMatchesTheBadge,
+  ccavenueCompliance,
 ];
 
 export type { ContentMigration };
