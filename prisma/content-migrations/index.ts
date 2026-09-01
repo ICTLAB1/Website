@@ -44,6 +44,7 @@ import { relationshipWording } from "./2026-08-relationship-wording";
 import { headlineAsTheOwnerWroteIt } from "./2026-08-headline-as-the-owner-wrote-it";
 import { partnerDesignationMatchesTheBadge } from "./2026-08-partner-designation-matches-the-badge";
 import { ccavenueCompliance } from "./2026-09-ccavenue-compliance";
+import { termsItActNotice } from "./2026-09-terms-it-act-notice";
 import type { ContentMigration } from "./types";
 
 /**
@@ -101,6 +102,7 @@ export const contentMigrations: ContentMigration[] = [
   headlineAsTheOwnerWroteIt,
   partnerDesignationMatchesTheBadge,
   ccavenueCompliance,
+  termsItActNotice,
 ];
 
 export type { ContentMigration };

@@ -6676,6 +6676,14 @@ export const pageSeeds: PageSeed[] = [
       },
       {
         "type": "RICH_TEXT",
+        "displayOrder": 1,
+        "visible": true,
+        "data": {
+          "markdown": "This document is an electronic record under the Information Technology Act, 2000 and the rules made under it."
+        }
+      },
+      {
+        "type": "RICH_TEXT",
         "displayOrder": 2,
         "visible": true,
         "data": {
