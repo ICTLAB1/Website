@@ -410,6 +410,7 @@ model User {
   savedPayments    PaymentSettings[]
   savedMail        MailSettings[]
   savedGstinLookup GstinLookupSettings[]
+  savedAssistant   AssistantSettings[]
   savedCrm         CrmSettings[]            @relation("CrmSettingsEditor")
   savedFollowUps   QuoteFollowUpSettings[]  @relation("QuoteFollowUpSettingsEditor")
   quoteMessages    QuoteMessage[]
@@ -2391,6 +2392,34 @@ model GstinLookupSettings {
   updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
+/// The site's chat assistant — off, and unnamed to a visitor, until this is set.
+///
+/// A singleton, alongside the mail, payment and GSTIN settings and for the
+/// same reason: an integration credential edited by an administrator, whose
+/// secret half must never be rendered back. `anthropicApiKey` is the only
+/// secret here; the name is not one — a visitor reads it in the chat header
+/// regardless, the same reasoning that leaves the CCAvenue merchant id in the
+/// clear.
+model AssistantSettings {
+  id String @id @default("singleton")
+
+  /// Off by default. On with no key does nothing: the widget only renders
+  /// when this is true *and* the key is present and usable.
+  enabled Boolean @default(false)
+
+  /// AES-256-GCM, keyed from AUTH_SECRET. Never rendered.
+  anthropicApiKey String?
+
+  /// What a visitor sees in the chat header and what the assistant calls
+  /// itself. Free text rather than a fixed persona, because the right name
+  /// for a support widget is this business's call, not a default we chose.
+  assistantName String @default("Zoey")
+
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
 enum PaymentMode {
   TEST
   LIVE
@@ -2611,6 +2640,8 @@ enum DealSource {
   REFERRAL
   /// A published tender or a GeM bid.
   TENDER
+  /// Captured by the site's chat assistant.
+  CHATBOT
   OTHER
 }
 

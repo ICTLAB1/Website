@@ -91,6 +91,7 @@ export const DEAL_SOURCES: DealSource[] = [
   "RENEWAL",
   "REFERRAL",
   "TENDER",
+  "CHATBOT",
   "OTHER",
 ];
 
@@ -101,6 +102,7 @@ export const DEAL_SOURCE_LABELS: Record<DealSource, string> = {
   RENEWAL: "Renewal",
   REFERRAL: "Referral",
   TENDER: "Tender or GeM bid",
+  CHATBOT: "Chat assistant",
   OTHER: "Other",
 };
 
