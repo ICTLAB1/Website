@@ -66,6 +66,7 @@ const SECTIONS: Array<{ heading: string; links: Array<{ href: string; label: str
     links: [
       { href: "/admin/users", label: "Staff users", adminOnly: true },
       { href: "/admin/settings", label: "Settings", adminOnly: true },
+      { href: "/admin/audit-log", label: "Audit log", adminOnly: true },
     ],
   },
 ];

@@ -275,3 +275,67 @@ export async function listAuditLog(limit = 50) {
     },
   });
 }
+
+/**
+ * The full audit log, filterable and paginated.
+ *
+ * `listAuditLog` above serves the dashboard's own "recent activity" panel —
+ * the ten newest entries, no filters, no paging. This is "everything this
+ * user did" and "everything that happened to this record", the two
+ * questions a fixed-length recent list cannot answer.
+ */
+export async function searchAuditLog(options: {
+  actorId?: string;
+  entityType?: string;
+  q?: string;
+  page?: number;
+} = {}) {
+  const page = Math.max(1, options.page ?? 1);
+  const pageSize = 50;
+
+  const where = {
+    ...(options.actorId ? { actorId: options.actorId } : {}),
+    ...(options.entityType ? { entityType: options.entityType } : {}),
+    ...(options.q
+      ? {
+          OR: [
+            { action: { contains: options.q, mode: "insensitive" as const } },
+            { entityId: { contains: options.q, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
+  };
+
+  const [items, total, entityTypes] = await Promise.all([
+    prisma.auditLog.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      select: {
+        id: true,
+        action: true,
+        entityType: true,
+        entityId: true,
+        metadata: true,
+        createdAt: true,
+        actor: { select: { id: true, name: true, email: true } },
+      },
+    }),
+    prisma.auditLog.count({ where }),
+    // Distinct values for the filter dropdown — read once, not per row.
+    prisma.auditLog.findMany({
+      distinct: ["entityType"],
+      select: { entityType: true },
+      orderBy: { entityType: "asc" },
+    }),
+  ]);
+
+  return {
+    items,
+    total,
+    page,
+    pageSize,
+    entityTypes: entityTypes.map((row) => row.entityType),
+  };
+}
