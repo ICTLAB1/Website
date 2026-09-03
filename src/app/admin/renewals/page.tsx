@@ -1,11 +1,15 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
+import { AdminForm } from "@/components/admin/admin-form";
+import { Field, Input, Select, Textarea } from "@/components/ui/form";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { Badge, StatusBadge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/states";
 import { RenewalCalendar } from "@/components/portal/renewal-calendar";
+import { updateRenewal } from "@/app/admin/renewal-actions";
 import { requireCapability } from "@/lib/auth/guards";
+import { can } from "@/lib/auth/capabilities";
 import { prisma } from "@/lib/db";
 import {
   REMINDER_DAYS,
@@ -34,8 +38,11 @@ export const metadata: Metadata = { title: "Renewals" };
  * email yet, and a dashboard that implied otherwise would be worse than one
  * that says plainly whose job it is.
  */
+const RENEWAL_STATUSES = ["UPCOMING", "QUOTED", "RENEWED", "LAPSED", "DECLINED"] as const;
+
 export default async function AdminRenewalsPage() {
-  await requireCapability("customers.read");
+  const staff = await requireCapability("customers.read");
+  const mayWrite = can(staff, "customers.write");
 
   const renewals = await prisma.renewal.findMany({
     where: { status: { in: RENEWAL_OPEN_STATUSES } },
@@ -48,6 +55,7 @@ export default async function AdminRenewalsPage() {
       dueAt: true,
       seats: true,
       quotedMinor: true,
+      notes: true,
       licence: {
         select: {
           productName: true,
@@ -106,6 +114,7 @@ export default async function AdminRenewalsPage() {
               <Th>Seats</Th>
               <Th>Quoted</Th>
               <Th>Status</Th>
+              {mayWrite ? <Th>Update</Th> : null}
             </tr>
           </thead>
           <tbody>
@@ -141,6 +150,44 @@ export default async function AdminRenewalsPage() {
                   <Td>
                     <StatusBadge status={renewal.status} />
                   </Td>
+                  {mayWrite ? (
+                    <Td>
+                      <details>
+                        <summary className="cursor-pointer text-[12px] text-accent-700 hover:underline">
+                          Update
+                        </summary>
+                        <div className="mt-3 w-64">
+                          <AdminForm
+                            action={updateRenewal}
+                            submitLabel="Save"
+                            pendingLabel="Saving…"
+                            compact
+                            hidden={{ renewalId: renewal.id }}
+                          >
+                            <Field label="Status" name="status">
+                              <Select name="status" defaultValue={renewal.status}>
+                                {RENEWAL_STATUSES.map((status) => (
+                                  <option key={status} value={status}>
+                                    {status.charAt(0) + status.slice(1).toLowerCase()}
+                                  </option>
+                                ))}
+                              </Select>
+                            </Field>
+                            <Field label="Quoted amount (₹)" name="quotedMinor">
+                              <Input
+                                name="quotedMinor"
+                                inputMode="decimal"
+                                defaultValue={renewal.quotedMinor != null ? (renewal.quotedMinor / 100).toFixed(2) : ""}
+                              />
+                            </Field>
+                            <Field label="Note" name="notes">
+                              <Textarea name="notes" rows={2} defaultValue={renewal.notes ?? ""} maxLength={2000} />
+                            </Field>
+                          </AdminForm>
+                        </div>
+                      </details>
+                    </Td>
+                  ) : null}
                 </Tr>
               );
             })}

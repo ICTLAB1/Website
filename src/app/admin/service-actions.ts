@@ -337,3 +337,93 @@ export async function recordDeviceForCompany(
     message: `${parsed.data.brandName} ${parsed.data.model} recorded for ${exists.name} as ${device.reference}.`,
   };
 }
+
+/**
+ * Correcting a device already on the register.
+ *
+ * Every field `recordDeviceForCompany` can set, reused rather than
+ * duplicated — a device recorded with the wrong warranty date, or reassigned
+ * to a different person, had no way to be corrected once created.
+ */
+export async function updateDevice(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const staff = await guard("customers.write");
+  if (refused(staff)) return staff;
+
+  const deviceId = String(formData.get("deviceId") ?? "").trim();
+  if (!deviceId) return { status: "error", message: "No device specified." };
+
+  const parsed = parseDeviceForm(formData);
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: "Please correct the highlighted fields.",
+      fieldErrors: fieldErrorsOf(parsed.error),
+    };
+  }
+
+  const device = await prisma.device.update({
+    where: { id: deviceId },
+    data: parsed.data,
+    select: { reference: true, brandName: true, model: true },
+  });
+
+  await recordAudit({
+    actorId: staff.id,
+    action: "device.updated_by_staff",
+    entityType: "Device",
+    entityId: device.reference,
+    ip: await clientIp(),
+  });
+
+  revalidatePath("/admin/devices");
+  revalidatePath(`/admin/devices/${deviceId}`);
+  return { status: "success", message: `${device.brandName} ${device.model} updated.` };
+}
+
+const archiveSchema = z.object({
+  deviceId: z.string().trim().min(1),
+  archived: z.string().optional(),
+});
+
+/** Soft-delete/restore, matching the model's own deletedAt column. */
+export async function archiveDevice(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const staff = await guard("customers.write");
+  if (refused(staff)) return staff;
+
+  const parsed = archiveSchema.safeParse({
+    deviceId: formData.get("deviceId"),
+    archived: formData.get("archived"),
+  });
+  if (!parsed.success) return { status: "error", message: "No device specified." };
+
+  const restoring = parsed.data.archived === "true";
+
+  const device = await prisma.device.update({
+    where: { id: parsed.data.deviceId },
+    data: { deletedAt: restoring ? null : new Date() },
+    select: { reference: true, brandName: true, model: true },
+  });
+
+  await recordAudit({
+    actorId: staff.id,
+    action: restoring ? "device.restored" : "device.archived",
+    entityType: "Device",
+    entityId: device.reference,
+    ip: await clientIp(),
+  });
+
+  revalidatePath("/admin/devices");
+  revalidatePath(`/admin/devices/${parsed.data.deviceId}`);
+  return {
+    status: "success",
+    message: restoring
+      ? `${device.brandName} ${device.model} restored to the register.`
+      : `${device.brandName} ${device.model} removed from the register.`,
+  };
+}
