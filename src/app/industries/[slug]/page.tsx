@@ -126,8 +126,13 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
     publishedIndustries(),
   ]);
 
+  // Deduped first: `brandSlugs` etc. are plain String[] columns with no
+  // uniqueness constraint, and a slug entered twice by an editor would
+  // otherwise render the same card twice under the same React key.
   const inOrder = <T extends { slug: string }>(slugs: string[], rows: T[]) =>
-    slugs.map((wanted) => rows.find((row) => row.slug === wanted)).filter((row): row is T => row !== undefined);
+    [...new Set(slugs)]
+      .map((wanted) => rows.find((row) => row.slug === wanted))
+      .filter((row): row is T => row !== undefined);
 
   const brandRows = inOrder(industry.brandSlugs, brands);
   const serviceRows = inOrder(industry.serviceSlugs, services);
