@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 
 import { AdminForm } from "@/components/admin/admin-form";
@@ -88,7 +89,12 @@ export default async function AdminOrganisationsPage() {
               {companies.map((company) => (
                 <Tr key={company.id}>
                   <Td>
-                    <span className="font-medium text-graphite-900">{company.name}</span>
+                    <Link
+                      href={`/admin/organisations/${company.id}`}
+                      className="font-medium text-graphite-900 hover:underline"
+                    >
+                      {company.name}
+                    </Link>
                     <span className="block font-mono text-[12px] text-ink-500">
                       {company.gstin ?? "No GSTIN on file"}
                     </span>
