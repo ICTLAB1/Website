@@ -113,7 +113,11 @@ await lineEditor.locator("summary").click();
 await admin.waitForTimeout(300);
 await lineEditor.locator('input[name="discountPercent"]').fill("10");
 await lineEditor.getByRole("button", { name: "Update line" }).click();
-await admin.waitForTimeout(1200);
+// A fixed sleep here raced the server action under load: the button click
+// resolves before the response completes, so a slow tick reads the total
+// before the recalculation lands. Waiting for the action's own success
+// banner is a real synchronization point instead of a guessed delay.
+await admin.getByText("Line updated and totals recalculated.").waitFor({ timeout: 10000 });
 page = await admin.locator("body").innerText();
 const discountedTotal = page.match(/Total\s*₹([\d,]+)/)?.[1];
 check("discount recalculates the document total",
