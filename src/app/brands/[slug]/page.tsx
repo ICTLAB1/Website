@@ -484,6 +484,28 @@ export default async function BrandPage({ params }: PageProps) {
           url: absoluteUrl(`/brands/${brand.slug}`),
         }}
       />
+
+      {/*
+       * The same six products the "Featured" section above already shows —
+       * never the full catalogue. ItemList is meant for a small, curated set;
+       * asserting it over every product a brand carries would be a listing
+       * page's job, not this one's, and this page does not fetch that list.
+       */}
+      {featured.length > 0 ? (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: `Featured ${brand.name} products`,
+            itemListElement: featured.map((product, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              url: absoluteUrl(`/products/${product.slug}`),
+              name: product.name,
+            })),
+          }}
+        />
+      ) : null}
     </div>
   );
 }
