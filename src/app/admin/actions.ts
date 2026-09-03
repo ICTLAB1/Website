@@ -292,6 +292,14 @@ export async function archiveProduct(
   };
 }
 
+/** Free text, trimmed, blank collapsed to null — a hardware field left empty on a licence. */
+const hardwareField = z
+  .string()
+  .trim()
+  .max(200)
+  .optional()
+  .transform((value) => (value ? value : null));
+
 const variantSchema = z.object({
   sku: z.string().trim().min(2).max(64).regex(/^[A-Za-z0-9._-]+$/, "Use letters, numbers, dot, dash or underscore."),
   name: z.string().trim().min(2).max(160),
@@ -304,13 +312,27 @@ const variantSchema = z.object({
     "OEM",
     "EDUCATION",
     "MAINTENANCE",
+    "HARDWARE",
   ]),
+  audience: z.enum(["COMMERCIAL", "EDUCATION", "NON_PROFIT"]).default("COMMERCIAL"),
   termMonths: z.string().trim().optional(),
   seats: z.coerce.number().int().min(1).max(100000).default(1),
   listPrice: moneyField,
   salePrice: z.string().trim().optional(),
   gstRatePercent: z.coerce.number().int().min(0).max(50).default(18),
   isDefault: z.coerce.boolean().default(false),
+  partNumber: hardwareField,
+  processor: hardwareField,
+  memory: hardwareField,
+  storage: hardwareField,
+  graphics: hardwareField,
+  operatingSystem: hardwareField,
+  opticalDrive: hardwareField,
+  powerSupply: hardwareField,
+  warranty: hardwareField,
+  raidController: hardwareField,
+  systemManagement: hardwareField,
+  configNote: hardwareField,
 });
 
 export async function saveVariant(
@@ -327,12 +349,25 @@ export async function saveVariant(
     sku: formData.get("sku"),
     name: formData.get("name"),
     licenceType: formData.get("licenceType"),
+    audience: formData.get("audience") || "COMMERCIAL",
     termMonths: formData.get("termMonths"),
     seats: formData.get("seats") || 1,
     listPrice: formData.get("listPrice"),
     salePrice: formData.get("salePrice"),
     gstRatePercent: formData.get("gstRatePercent") || 18,
     isDefault: formData.get("isDefault") === "on",
+    partNumber: formData.get("partNumber"),
+    processor: formData.get("processor"),
+    memory: formData.get("memory"),
+    storage: formData.get("storage"),
+    graphics: formData.get("graphics"),
+    operatingSystem: formData.get("operatingSystem"),
+    opticalDrive: formData.get("opticalDrive"),
+    powerSupply: formData.get("powerSupply"),
+    warranty: formData.get("warranty"),
+    raidController: formData.get("raidController"),
+    systemManagement: formData.get("systemManagement"),
+    configNote: formData.get("configNote"),
   });
 
   if (!parsed.success) {
@@ -393,6 +428,7 @@ export async function saveVariant(
     sku,
     name: input.name,
     licenceType: input.licenceType,
+    audience: input.audience,
     termMonths,
     seats: input.seats,
     currency: "INR",
@@ -400,6 +436,18 @@ export async function saveVariant(
     salePriceMinor,
     gstRatePercent: input.gstRatePercent,
     isDefault: input.isDefault,
+    partNumber: input.partNumber,
+    processor: input.processor,
+    memory: input.memory,
+    storage: input.storage,
+    graphics: input.graphics,
+    operatingSystem: input.operatingSystem,
+    opticalDrive: input.opticalDrive,
+    powerSupply: input.powerSupply,
+    warranty: input.warranty,
+    raidController: input.raidController,
+    systemManagement: input.systemManagement,
+    configNote: input.configNote,
   };
 
   const saved = await prisma.$transaction(async (tx) => {
