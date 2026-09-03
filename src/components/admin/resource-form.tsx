@@ -90,6 +90,17 @@ function controlFor(
     case "lines":
       return <Textarea name={field.name} rows={5} defaultValue={text} />;
 
+    case "json":
+      return (
+        <Textarea
+          name={field.name}
+          rows={10}
+          defaultValue={text}
+          required={field.required}
+          className="font-mono text-[12px]"
+        />
+      );
+
     case "slug":
       return (
         <Input
@@ -160,7 +171,10 @@ export function ResourceForm({
             {group.fields.map((field) => {
               // Long-form and list inputs need the full width to be usable.
               const wide =
-                field.kind === "textarea" || field.kind === "lines" || field.kind === "checkbox";
+                field.kind === "textarea" ||
+                field.kind === "lines" ||
+                field.kind === "checkbox" ||
+                field.kind === "json";
 
               return (
                 <div key={field.name} className={wide ? "sm:col-span-2" : undefined}>

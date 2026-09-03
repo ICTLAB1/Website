@@ -203,6 +203,9 @@ export function toFormValues(
       case "number":
         values[field.name] = value === null || value === undefined ? "" : String(value);
         break;
+      case "json":
+        values[field.name] = value === null || value === undefined ? "" : JSON.stringify(value, null, 2);
+        break;
       default:
         values[field.name] = value === null || value === undefined ? "" : String(value);
     }
