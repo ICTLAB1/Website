@@ -921,12 +921,31 @@ export async function updateOrderStatus(
     return { status: "error", message: "A fulfilled order's status cannot be changed here." };
   }
 
-  await prisma.order.update({
-    where: { reference: parsed.data.reference },
-    data: {
-      status: parsed.data.status,
-      internalNotes: parsed.data.internalNotes?.trim() || null,
-    },
+  await prisma.$transaction(async (tx) => {
+    await tx.order.update({
+      where: { reference: parsed.data.reference },
+      data: {
+        status: parsed.data.status,
+        internalNotes: parsed.data.internalNotes?.trim() || null,
+      },
+    });
+
+    /*
+     * Marking the order REFUNDED and leaving its captured payment saying
+     * CAPTURED is exactly the drift a reconciliation later has to catch by
+     * hand — the two fields would then disagree about the one fact that
+     * matters most. This is a record of what happened, not a request to
+     * refund: the actual money movement still happens at the gateway (its
+     * dashboard, or Payment.status can be corrected directly against
+     * whichever payment it applies to — see markPaymentRefunded below),
+     * before an order is set to REFUNDED here.
+     */
+    if (parsed.data.status === "REFUNDED") {
+      await tx.payment.updateMany({
+        where: { order: { reference: parsed.data.reference }, status: "CAPTURED" },
+        data: { status: "REFUNDED" },
+      });
+    }
   });
 
   await recordAudit({
@@ -964,6 +983,58 @@ export async function updateOrderStatus(
   revalidatePath(`/admin/orders/${parsed.data.reference}`);
   revalidatePath("/admin/orders");
   return { status: "success", message: "Order updated." };
+}
+
+const paymentRefundSchema = z.object({
+  paymentId: z.string().trim().min(1),
+  reference: referenceSchema("ORD"),
+});
+
+/**
+ * Recording that a specific payment has been refunded.
+ *
+ * A record of fact, not a request: this deployment has no refund API
+ * integration with either gateway, so the money movement itself still
+ * happens at the gateway — its own dashboard — first. This is what keeps
+ * Payment.status agreeing with that afterwards, for the one payment it names,
+ * without requiring the whole order to move to REFUNDED (an order can carry
+ * more than one payment attempt; only a captured one is ever refundable).
+ */
+export async function markPaymentRefunded(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const staff = await guard();
+  if (isFailure(staff)) return staff;
+
+  const parsed = paymentRefundSchema.safeParse({
+    paymentId: formData.get("paymentId"),
+    reference: formData.get("reference"),
+  });
+  if (!parsed.success) return { status: "error", message: "That update could not be applied." };
+
+  const payment = await prisma.payment.findFirst({
+    where: { id: parsed.data.paymentId, order: { reference: parsed.data.reference } },
+    select: { id: true, status: true, amountMinor: true, currency: true },
+  });
+  if (!payment) return { status: "error", message: "That payment could not be found on this order." };
+  if (payment.status !== "CAPTURED") {
+    return { status: "error", message: "Only a captured payment can be marked refunded." };
+  }
+
+  await prisma.payment.update({ where: { id: payment.id }, data: { status: "REFUNDED" } });
+
+  await recordAudit({
+    actorId: staff.id,
+    action: "admin.payment_marked_refunded",
+    entityType: "Payment",
+    entityId: payment.id,
+    metadata: { order: parsed.data.reference, amountMinor: payment.amountMinor, currency: payment.currency },
+    ip: await clientIp(),
+  });
+
+  revalidatePath(`/admin/orders/${parsed.data.reference}`);
+  return { status: "success", message: "Payment marked as refunded." };
 }
 
 /** Fulfils an order, creating a licence per line and a renewal per term. */
