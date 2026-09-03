@@ -32,11 +32,18 @@ await page.getByRole("button", { name: "Sign in" }).click();
 await page.waitForURL("**/admin", { timeout: 15000 });
 
 const settings = `${BASE}/admin/settings`;
+// Success/error banners render outside the form, so text checks stay scoped
+// to the whole page.
 const form = () => page.locator("main");
-const field = (name) => form().locator(`[name="${name}"]`);
+// Field lookups are scoped to the payment settings form specifically, not
+// `main` as a whole: the settings page also carries the assistant/chat-widget
+// form, which has its own "enabled" checkbox — a bare `[name="enabled"]`
+// lookup against the whole page matches both once that form exists.
+const paymentForm = () => page.locator("form", { has: page.locator('[name="stripeSecretKey"]') });
+const field = (name) => paymentForm().locator(`[name="${name}"]`);
 const open = () => page.goto(settings, { waitUntil: "load" });
 async function save() {
-  await form().getByRole("button", { name: /Save payment settings/i }).click();
+  await paymentForm().getByRole("button", { name: /Save payment settings/i }).click();
   await page.waitForTimeout(900);
 }
 
@@ -46,7 +53,9 @@ await field("enabled").check();
 await save();
 check(
   "switching payments on with no keys is refused",
-  await form().getByText(/Add both the key id and the key secret/i).isVisible().catch(() => false),
+  // Wording is now specific to Stripe's own credential shape (a secret key
+  // only) rather than the older two-part "key id and key secret" phrasing.
+  await form().getByText(/Add the Stripe secret key before switching payments on/i).isVisible().catch(() => false),
 );
 
 // ── 2. A malformed key id is refused ────────────────────────────────────────
@@ -66,7 +75,10 @@ await field("enabled").check();
 await save();
 check(
   "valid credentials save and switch payments on",
-  await form().getByText(/Card payments are on in TEST mode/i).isVisible().catch(() => false),
+  // Wording changed to name both gateways once CCAvenue joined Stripe as a
+  // second, independent option — "Stripe is on in TEST mode" rather than
+  // the old gateway-agnostic "Card payments are on in TEST mode".
+  await form().getByText(/Stripe is on in TEST mode/i).isVisible().catch(() => false),
 );
 
 // ── 4. The secrets never reach the browser ──────────────────────────────────
