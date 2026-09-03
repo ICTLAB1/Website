@@ -131,6 +131,7 @@ export async function getAdminProduct(id: string) {
       brand: { select: { id: true, name: true } },
       category: { select: { id: true, name: true } },
       variants: { where: { deletedAt: null }, orderBy: { listPriceMinor: "asc" } },
+      specs: { orderBy: [{ displayOrder: "asc" }, { label: "asc" }] },
     },
   });
 }

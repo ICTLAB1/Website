@@ -5,10 +5,11 @@ import type { Metadata } from "next";
 import { ProductForm } from "@/components/admin/product-form";
 import { ProductPhotoForm } from "@/components/admin/product-photo-form";
 import { VariantForm } from "@/components/admin/variant-form";
+import { SpecForm } from "@/components/admin/spec-form";
 import { AdminForm } from "@/components/admin/admin-form";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { archiveProduct } from "@/app/admin/actions";
+import { archiveProduct, deleteSpec } from "@/app/admin/actions";
 import { DangerZone } from "@/components/admin/danger-zone";
 import { DELETABLE } from "@/lib/admin/deletable";
 import { isAdmin, requireStaff } from "@/lib/auth/guards";
@@ -224,6 +225,67 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
           <div className="rounded-[--radius-lg] border border-line bg-white p-5">
             <h3 className="mb-5 text-[14px] font-medium text-graphite-900">Add a licence option</h3>
             <VariantForm productId={product.id} />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-5 text-[1.15rem]">Specification table</h2>
+        <p className="mb-5 max-w-2xl text-[13px] leading-relaxed text-ink-600">
+          Shown on the product page as a plain label/value table — &ldquo;Processor&rdquo;,
+          &ldquo;Display&rdquo;, &ldquo;Memory&rdquo;. Order controls where each row sits; rows with the
+          same order are alphabetical by label.
+        </p>
+
+        {product.specs.length === 0 ? (
+          <p className="mb-6 rounded-[--radius-lg] border border-dashed border-line-strong bg-white px-5 py-6 text-[13px] text-ink-500">
+            No specification rows yet.
+          </p>
+        ) : (
+          <TableWrap className="mb-8">
+            <Table className="min-w-[36rem]">
+              <thead>
+                <tr>
+                  <Th>Order</Th>
+                  <Th>Label</Th>
+                  <Th>Value</Th>
+                </tr>
+              </thead>
+              <tbody>
+                {product.specs.map((spec) => (
+                  <Tr key={spec.id}>
+                    <Td className="tabular-nums">{spec.displayOrder}</Td>
+                    <Td className="text-[13px] font-medium text-graphite-900">{spec.label}</Td>
+                    <Td className="text-[13px]">{spec.value}</Td>
+                  </Tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableWrap>
+        )}
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          {product.specs.map((spec) => (
+            <details key={spec.id} className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
+                Edit {spec.label}
+              </summary>
+              <div className="mt-5 space-y-4">
+                <SpecForm productId={product.id} spec={spec} />
+                <AdminForm
+                  action={deleteSpec}
+                  submitLabel="Delete this row"
+                  pendingLabel="Removing…"
+                  variant="danger"
+                  hidden={{ productId: product.id, specId: spec.id }}
+                />
+              </div>
+            </details>
+          ))}
+
+          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <h3 className="mb-5 text-[14px] font-medium text-graphite-900">Add a specification row</h3>
+            <SpecForm productId={product.id} />
           </div>
         </div>
       </section>
