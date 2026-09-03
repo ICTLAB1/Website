@@ -8,6 +8,7 @@ import { AdminForm } from "@/components/admin/admin-form";
 import { Field, Input, Select, Textarea } from "@/components/ui/form";
 import {
   fulfilOrderAction,
+  markPaymentRefunded,
   updateOrderStatus,
   verifyPurchaseOrder,
 } from "@/app/admin/quote-actions";
@@ -151,6 +152,9 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                       <Th>Method</Th>
                       <Th>Gateway reference</Th>
                       <Th>Status</Th>
+                      <Th>
+                        <span className="sr-only">Actions</span>
+                      </Th>
                     </tr>
                   </thead>
                   <tbody>
@@ -180,6 +184,18 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                           </div>
                           {payment.failureReason ? (
                             <p className="mt-1 text-[12px] text-ink-500">{payment.failureReason}</p>
+                          ) : null}
+                        </Td>
+                        <Td>
+                          {payment.status === "CAPTURED" ? (
+                            <AdminForm
+                              action={markPaymentRefunded}
+                              submitLabel="Mark refunded"
+                              pendingLabel="Saving…"
+                              variant="outline"
+                              compact
+                              hidden={{ paymentId: payment.id, reference: order.reference }}
+                            />
                           ) : null}
                         </Td>
                       </Tr>

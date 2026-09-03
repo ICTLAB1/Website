@@ -131,22 +131,29 @@ await page.waitForURL("**/admin", { timeout: 20000 });
 
 async function savePaymentSettings({ enabled }) {
   await page.goto(`${BASE}/admin/settings`, { waitUntil: "load" });
-  const main = page.locator("main");
-  await main.locator('[name="stripeSecretKey"]').fill(SECRET_KEY);
-  await main.locator('[name="stripeWebhookSecret"]').fill(WEBHOOK_SECRET);
-  await main.locator('select[name="mode"]').selectOption("TEST");
-  if (enabled) await main.locator('[name="enabled"]').check();
-  else await main.locator('[name="enabled"]').uncheck();
-  await main.getByRole("button", { name: /Save payment settings/i }).click();
+  // Scoped to the payment settings form specifically, not `main` as a whole:
+  // the settings page also carries the assistant/chat-widget form, which has
+  // its own "enabled" checkbox — a bare `[name="enabled"]` lookup against the
+  // whole page matches both once that form exists.
+  const form = page.locator("form", { has: page.locator('[name="stripeSecretKey"]') });
+  await form.locator('[name="stripeSecretKey"]').fill(SECRET_KEY);
+  await form.locator('[name="stripeWebhookSecret"]').fill(WEBHOOK_SECRET);
+  await form.locator('select[name="mode"]').selectOption("TEST");
+  if (enabled) await form.locator('[name="enabled"]').check();
+  else await form.locator('[name="enabled"]').uncheck();
+  await form.getByRole("button", { name: /Save payment settings/i }).click();
   await page.waitForTimeout(1200);
 }
 
 await savePaymentSettings({ enabled: true });
 check(
   "test credentials saved and payments switched on",
+  // Wording changed to name both gateways once CCAvenue joined Stripe as a
+  // second, independent option — "Stripe is on in TEST mode" rather than
+  // the old gateway-agnostic "Card payments are on in TEST mode".
   await page
     .locator("main")
-    .getByText(/Card payments are on in TEST mode/i)
+    .getByText(/Stripe is on in TEST mode/i)
     .isVisible()
     .catch(() => false),
 );
@@ -380,13 +387,14 @@ sql(`delete from "Order" where id='${ORDER_ID}'`);
 
 // Leave the gateway off and the credentials cleared, which is how it was found.
 await page.goto(`${BASE}/admin/settings`, { waitUntil: "load" });
-const main = page.locator("main");
-await main.locator('[name="enabled"]').uncheck();
-const clearKey = main.locator('[name="clearSecretKey"]');
+// Same scoping as savePaymentSettings above — see its comment.
+const form = page.locator("form", { has: page.locator('[name="stripeSecretKey"]') });
+await form.locator('[name="enabled"]').uncheck();
+const clearKey = form.locator('[name="clearSecretKey"]');
 if (await clearKey.count()) await clearKey.check();
-const clearHook = main.locator('[name="clearWebhookSecret"]');
+const clearHook = form.locator('[name="clearWebhookSecret"]');
 if (await clearHook.count()) await clearHook.check();
-await main.getByRole("button", { name: /Save payment settings/i }).click();
+await form.getByRole("button", { name: /Save payment settings/i }).click();
 await page.waitForTimeout(1000);
 
 await browser.close();
