@@ -502,6 +502,84 @@ export async function saveVariant(
   return { status: "success", message: "Licence option saved." };
 }
 
+const specSchema = z.object({
+  label: z.string().trim().min(1).max(80),
+  // "Configuration dependent" is a legitimate value and often the honest
+  // one — see the model's own comment — so this is not required to look
+  // like a measurement.
+  value: z.string().trim().min(1).max(300),
+  displayOrder: z.coerce.number().int().min(0).max(10_000).default(0),
+});
+
+export async function saveSpec(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  await requireStaff();
+
+  const productId = String(formData.get("productId") ?? "").trim();
+  const specId = String(formData.get("specId") ?? "").trim() || null;
+  if (!productId) return { status: "error", message: "No product specified." };
+
+  const parsed = specSchema.safeParse({
+    label: formData.get("label"),
+    value: formData.get("value"),
+    displayOrder: formData.get("displayOrder") || 0,
+  });
+
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: "Please correct the highlighted fields.",
+      fieldErrors: fieldErrorsOf(parsed.error),
+    };
+  }
+
+  const { label, value, displayOrder } = parsed.data;
+
+  const clash = await prisma.productSpec.findFirst({
+    where: { productId, label, ...(specId ? { id: { not: specId } } : {}) },
+    select: { id: true },
+  });
+  if (clash) {
+    return {
+      status: "error",
+      message: "This product already has a specification with that label.",
+      fieldErrors: { label: ["Already used — edit that row instead, or choose a different label."] },
+    };
+  }
+
+  const data = { productId, label, value, displayOrder };
+  if (specId) {
+    await prisma.productSpec.update({ where: { id: specId }, data });
+  } else {
+    await prisma.productSpec.create({ data });
+  }
+
+  const owner = await prisma.product.findUnique({ where: { id: productId }, select: { slug: true } });
+  invalidate(tags.catalogue, ...(owner ? [tags.product(owner.slug)] : []));
+  revalidatePath(`/admin/products/${productId}`);
+  return { status: "success", message: "Specification saved." };
+}
+
+export async function deleteSpec(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  await requireStaff();
+
+  const productId = String(formData.get("productId") ?? "").trim();
+  const specId = String(formData.get("specId") ?? "").trim();
+  if (!productId || !specId) return { status: "error", message: "Nothing to delete." };
+
+  await prisma.productSpec.delete({ where: { id: specId, productId } });
+
+  const owner = await prisma.product.findUnique({ where: { id: productId }, select: { slug: true } });
+  invalidate(tags.catalogue, ...(owner ? [tags.product(owner.slug)] : []));
+  revalidatePath(`/admin/products/${productId}`);
+  return { status: "success", message: "Specification removed." };
+}
+
 const enquiryUpdateSchema = z.object({
   reference: z.string().trim().regex(/^ENQ-\d{4}-[A-Z0-9]{6}$/),
   status: z.enum(RFQ_STATUSES as [EnquiryStatus, ...EnquiryStatus[]]),
