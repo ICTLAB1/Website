@@ -161,7 +161,12 @@ export default async function AdminDashboardPage() {
       </div>
 
       <section>
-        <h2 className="mb-3 text-[1.05rem]">Recent activity</h2>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-[1.05rem]">Recent activity</h2>
+          <Link href="/admin/audit-log" className="text-[13px] text-accent-700 hover:underline">
+            View full audit log &rarr;
+          </Link>
+        </div>
         <TableWrap>
           <Table>
             <thead>
