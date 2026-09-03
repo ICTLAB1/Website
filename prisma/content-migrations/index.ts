@@ -26,6 +26,24 @@ import { workplaceComparison } from "./2026-08-workplace-comparison";
 import { digitalLicenceArticle } from "./2026-08-digital-licence-article";
 import { searchResultCopy } from "./2026-08-search-result-copy";
 import { rankingGaps } from "./2026-08-ranking-gaps";
+import { logoMarquee } from "./2026-08-logo-marquee";
+import { clientBelt } from "./2026-08-client-belt";
+import { industries } from "./2026-08-industries";
+import { organisationWall } from "./2026-08-organisation-wall";
+import { organisationLogos } from "./2026-08-organisation-logos";
+import { organisationBelt } from "./2026-08-organisation-belt";
+import { publishOrganisations } from "./2026-08-publish-organisations";
+import { moreOrganisations } from "./2026-08-more-organisations";
+import { gemPanelTiles } from "./2026-08-gem-panel-tiles";
+import { organisationArtworkSecondBatch } from "./2026-08-organisation-artwork-second-batch";
+import { nameEveryOrganisationWithAMark } from "./2026-08-name-every-organisation-with-a-mark";
+import { threeDsMaxRanking } from "./2026-08-3ds-max-ranking";
+import { homepageHeadline } from "./2026-08-homepage-headline";
+import { claimsWithoutEvidence } from "./2026-08-claims-without-evidence";
+import { relationshipWording } from "./2026-08-relationship-wording";
+import { headlineAsTheOwnerWroteIt } from "./2026-08-headline-as-the-owner-wrote-it";
+import { partnerDesignationMatchesTheBadge } from "./2026-08-partner-designation-matches-the-badge";
+import { ccavenueCompliance } from "./2026-09-ccavenue-compliance";
 import type { ContentMigration } from "./types";
 
 /**
@@ -65,6 +83,24 @@ export const contentMigrations: ContentMigration[] = [
   digitalLicenceArticle,
   searchResultCopy,
   rankingGaps,
+  logoMarquee,
+  clientBelt,
+  industries,
+  organisationWall,
+  organisationLogos,
+  organisationBelt,
+  publishOrganisations,
+  moreOrganisations,
+  gemPanelTiles,
+  organisationArtworkSecondBatch,
+  nameEveryOrganisationWithAMark,
+  threeDsMaxRanking,
+  homepageHeadline,
+  claimsWithoutEvidence,
+  relationshipWording,
+  headlineAsTheOwnerWroteIt,
+  partnerDesignationMatchesTheBadge,
+  ccavenueCompliance,
 ];
 
 export type { ContentMigration };

@@ -28,7 +28,19 @@ export type FieldDescriptor =
   | (Common & { kind: "textarea"; required?: boolean; maxLength?: number; rows?: number; markdown?: boolean })
   | (Common & { kind: "slug"; from: string })
   | (Common & { kind: "number"; required?: boolean; min?: number; max?: number; step?: number })
-  | (Common & { kind: "checkbox" })
+  | (Common & {
+      kind: "checkbox";
+      /**
+       * Whether a *new* record starts with the box ticked. Off unless a
+       * resource says otherwise, and it has to say so here rather than have it
+       * inferred: this used to be decided by whether the field happened to be
+       * called "published", which meant the next resource with a column of
+       * that name silently inherited a default nobody had chosen. For customer
+       * logos that default pre-ticked the box that puts somebody else's
+       * trademark on the internet.
+       */
+      defaultChecked?: boolean;
+    })
   | (Common & { kind: "select"; required?: boolean; options: SelectOption[] })
   | (Common & { kind: "relation"; required?: boolean; resource: RelationSource })
   | (Common & { kind: "lines"; maxItems?: number })

@@ -100,6 +100,70 @@ export function PaymentSettingsForm({ settings }: { settings: PaymentSettingsVie
           <Checkbox name="clearWebhookSecret" label="Remove the saved webhook secret" />
         ) : null}
       </Fieldset>
+
+      <Fieldset
+        legend="CCAvenue"
+        description="A second, independent gateway. When both this and Stripe are on and configured, the customer sees a choice at checkout; with only one configured, that one is used with no choice shown."
+      >
+        <Checkbox
+          name="ccavenueEnabled"
+          defaultChecked={settings.ccavenueEnabled}
+          label="Offer CCAvenue at checkout"
+        />
+        <p className="-mt-2 text-[12px] leading-relaxed text-ink-500">
+          {settings.ccavenueBrokenConfiguration
+            ? "Currently switched on but not usable — the merchant id, access code or working key is missing."
+            : "Off until the merchant id, access code and working key are all saved. Uses the same Test/Live mode as Stripe, above."}
+        </p>
+
+        <Field
+          label="Merchant ID"
+          name="ccavenueMerchantId"
+          hint="From your CCAvenue dashboard. Not a secret — it travels in the payment form itself."
+        >
+          <Input
+            name="ccavenueMerchantId"
+            defaultValue={settings.ccavenueMerchantId ?? ""}
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </Field>
+
+        <Field
+          label="Access code"
+          name="ccavenueAccessCode"
+          hint="Also from the dashboard, tied to your site's URL. Same status as the merchant id — not encrypted, since it is sent in the clear regardless."
+        >
+          <Input
+            name="ccavenueAccessCode"
+            defaultValue={settings.ccavenueAccessCode ?? ""}
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </Field>
+
+        <Field
+          label="Working key"
+          name="ccavenueWorkingKey"
+          hint={
+            settings.ccavenueWorkingKeyHint
+              ? `A key ending ${settings.ccavenueWorkingKeyHint.slice(-4)} is saved. Leave blank to keep it, or paste a new one to replace it.`
+              : "The actual secret: it encrypts the request to CCAvenue and decrypts their reply. Anyone holding it could forge a payment confirmation, so it is encrypted at rest and never shown again."
+          }
+        >
+          <Input
+            name="ccavenueWorkingKey"
+            type="password"
+            placeholder={settings.ccavenueWorkingKeyHint ?? "Paste the working key"}
+            autoComplete="new-password"
+            spellCheck={false}
+          />
+        </Field>
+
+        {settings.ccavenueWorkingKeyHint ? (
+          <Checkbox name="clearCcavenueWorkingKey" label="Remove the saved working key" />
+        ) : null}
+      </Fieldset>
     </AdminForm>
   );
 }

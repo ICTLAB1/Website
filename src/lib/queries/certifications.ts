@@ -24,7 +24,14 @@ export const currentCertifications = cache(
       prisma.certification.findMany({
         where: { OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
         orderBy: [{ displayOrder: "asc" }, { standard: "asc" }],
-        select: { standard: true, title: true, reference: true },
+        /*
+         * The certificate number is not fetched. It was, and it was rendered
+         * in the footer strip; the owner asked for the numbers off the site,
+         * and a field still travelling to the page turns up in the RSC payload
+         * whether or not anything prints it — which is View Source away from
+         * being published. `id` is the key instead.
+         */
+        select: { id: true, standard: true, title: true },
       }),
     ["current-certifications"],
     [tags.certifications],

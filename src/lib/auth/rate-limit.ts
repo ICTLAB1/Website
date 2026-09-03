@@ -76,6 +76,13 @@ export const LIMITS = {
   contact: { limit: 6, windowSeconds: 3600 },
   search: { limit: 90, windowSeconds: 60 },
   adminWrite: { limit: 120, windowSeconds: 60 },
+  /*
+   * Each message is a paid model call, so this is the one limiter here also
+   * defending a budget rather than only abuse. Thirty an hour is more than a
+   * real conversation needs and still cheap for a script to exhaust slowly —
+   * the message-length and history-length caps in the route do the rest.
+   */
+  chat: { limit: 30, windowSeconds: 3600 },
 } as const;
 
 /** Test-only helper; not exported through any route. */

@@ -19,10 +19,13 @@ import {
 } from "@/components/blocks/content-blocks";
 import {
   CollectionGridBlock,
+  LogoMarqueeBlock,
   PriceComparisonBlock,
   ProductGridBlock,
 } from "@/components/blocks/collection-blocks";
 import { BlockSection } from "@/components/blocks/primitives";
+import { IndustryGridBlock } from "@/components/blocks/industry-grid";
+import type { IndustryCardRow } from "@/components/marketing/industry-card";
 import { Testimonials } from "@/components/reviews/testimonials";
 import type { ParsedBlock } from "@/lib/blocks/schemas";
 import type { ResolvedBlockData } from "@/lib/blocks/resolve";
@@ -60,6 +63,8 @@ const BANDED = new Set([
   "PRODUCT_GRID",
   "PRICE_COMPARISON",
   "COLLECTION_GRID",
+  "LOGO_MARQUEE",
+  "INDUSTRY_GRID",
   "PLANS",
   "STAT_BAR",
   "COMPANY_INFO",
@@ -171,6 +176,24 @@ export function BlockRenderer({
                 key={block.id}
                 data={block.data}
                 rows={resolved.collections.get(block.id) ?? []}
+                tone={tone}
+              />
+            );
+          case "LOGO_MARQUEE":
+            return (
+              <LogoMarqueeBlock
+                key={block.id}
+                data={block.data}
+                rows={resolved.collections.get(block.id) ?? []}
+                tone={tone}
+              />
+            );
+          case "INDUSTRY_GRID":
+            return (
+              <IndustryGridBlock
+                key={block.id}
+                data={block.data}
+                rows={(resolved.collections.get(block.id) ?? []) as IndustryCardRow[]}
                 tone={tone}
               />
             );

@@ -22,6 +22,8 @@ export type ResourceKey =
   | "banners"
   | "certifications"
   | "testimonials"
+  | "clients"
+  | "industries"
   | "jobs";
 
 export type ListColumn = {
@@ -46,6 +48,8 @@ export type ResourceConfig = {
     | "banner"
     | "certification"
     | "testimonial"
+    | "clientLogo"
+    | "industry"
     | "jobPosting";
   label: { singular: string; plural: string };
   description: string;
@@ -68,6 +72,16 @@ export type ResourceConfig = {
 };
 
 const PUBLICATION_GROUP = "Publication";
+/*
+ * Its own group, and named for what it is.
+ *
+ * These four fields are the difference between a permission somebody remembers
+ * and one somebody can produce, and grouping them under "Identity" would file
+ * them as paperwork. Displaying a customer's trademark is a claim they may be
+ * asked to confirm; the person filling this in should see that as its own
+ * section with its own heading.
+ */
+const PERMISSION_GROUP = "Permission";
 
 export const RESOURCES: Record<ResourceKey, ResourceConfig> = {
   brands: {
@@ -202,7 +216,7 @@ export const RESOURCES: Record<ResourceKey, ResourceConfig> = {
       { kind: "lines", name: "benefits", label: "Benefits", hint: "One per line.", group: "Content" },
       { kind: "lines", name: "technologies", label: "Technologies", hint: "One per line.", group: "Content" },
       { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
-      { kind: "checkbox", name: "published", label: "Published", group: PUBLICATION_GROUP },
+      { kind: "checkbox", name: "published", label: "Published", defaultChecked: true, group: PUBLICATION_GROUP },
       { kind: "checkbox", name: "featured", label: "Featured", group: PUBLICATION_GROUP },
     ],
   },
@@ -266,6 +280,124 @@ export const RESOURCES: Record<ResourceKey, ResourceConfig> = {
       { kind: "relation", name: "serviceId", label: "Service", resource: "service", group: "Attach to" },
       { kind: "relation", name: "productId", label: "Product", resource: "product", group: "Attach to" },
       { kind: "text", name: "topic", label: "Topic", maxLength: 80, hint: "For pages with no database record of their own, e.g. microsoft-licensing.", group: "Attach to" },
+      { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
+    ],
+  },
+
+  industries: {
+    key: "industries",
+    model: "industry",
+    label: { singular: "Industry", plural: "Industries" },
+    description:
+      "The sectors this business supplies. One row drives the homepage grid, the filter on /industries, that sector's own page and its sitemap entry — so an edit here reaches all four. Describe what is supplied to a sector; a sector is not a reference, so nothing here should name a customer or an outcome.",
+    guard: "admin",
+    softDelete: true,
+    orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
+    searchFields: ["name", "slug", "summary"],
+    tagsFor: () => [tags.industries, tags.pages],
+    listColumns: [
+      { header: "Sector", path: "name", primary: true },
+      { header: "URL", path: "slug", format: "slug" },
+      { header: "Published", path: "published", format: "boolean" },
+      { header: "Order", path: "displayOrder", format: "number" },
+    ],
+    fields: [
+      { kind: "text", name: "name", label: "Sector name", required: true, maxLength: 120, group: "Identity" },
+      { kind: "slug", name: "slug", label: "URL slug", from: "name", group: "Identity" },
+      {
+        kind: "text",
+        name: "icon",
+        label: "Glyph",
+        maxLength: 40,
+        hint: "A key from lib/glyphs — business, server, construction, finance, support, document, network, chart, cad, shield, storage, workspace, media and the rest. An unknown key falls back rather than drawing nothing.",
+        group: "Identity",
+      },
+      {
+        kind: "textarea",
+        name: "summary",
+        label: "Summary",
+        required: true,
+        rows: 3,
+        maxLength: 400,
+        hint: "One or two sentences. Shown on the card and used as the page's meta description, so keep it between 70 and 160 characters if you can.",
+        group: "Content",
+      },
+      {
+        kind: "textarea",
+        name: "description",
+        label: "Detail page copy",
+        rows: 6,
+        markdown: true,
+        maxLength: 4000,
+        group: "Content",
+      },
+      {
+        kind: "lines",
+        name: "solutions",
+        label: "What we supply",
+        maxItems: 12,
+        hint: "One per line. The first three appear on the card; all of them appear on the sector's page. Name something the catalogue actually carries.",
+        group: "Content",
+      },
+      { kind: "checkbox", name: "published", label: "Published", defaultChecked: true, group: PUBLICATION_GROUP },
+      { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
+    ],
+  },
+
+  clients: {
+    key: "clients",
+    model: "clientLogo",
+    label: { singular: "Customer logo", plural: "Customer logos" },
+    description:
+      "Customers and organisations whose logo may appear on the public site. A row is shown once it has artwork and Published turned on, so a half-finished one cannot reach a visitor. The permission fields are a record rather than a requirement — worth filling in, because they are the answer to \"who said we could?\" when somebody asks.",
+    guard: "admin",
+    softDelete: true,
+    orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
+    searchFields: ["name", "sector", "permissionHolder"],
+    tagsFor: () => [tags.clientLogos, tags.pages],
+    listColumns: [
+      { header: "Customer", path: "name", primary: true },
+      { header: "Sector", path: "sector" },
+      { header: "Permission from", path: "permissionHolder" },
+      { header: "Confirmed", path: "permissionConfirmedAt", format: "date" },
+      { header: "Published", path: "published", format: "boolean" },
+      { header: "Order", path: "displayOrder", format: "number" },
+    ],
+    fields: [
+      { kind: "text", name: "name", label: "Customer name", required: true, maxLength: 160, hint: "As the organisation writes it themselves.", group: "Identity" },
+      { kind: "text", name: "sector", label: "Sector", maxLength: 80, hint: 'Optional, for grouping — e.g. "Public sector", "Defence", "Manufacturing".', group: "Identity" },
+      { kind: "text", name: "website", label: "Their website", maxLength: 300, group: "Identity" },
+      {
+        kind: "text",
+        name: "permissionHolder",
+        label: "Permission granted by",
+        maxLength: 200,
+        hint: "A name and a role, not an identifier — somebody a colleague could ring.",
+        group: PERMISSION_GROUP,
+      },
+      {
+        kind: "textarea",
+        name: "permissionReference",
+        label: "Where the evidence is",
+        rows: 3,
+        maxLength: 1000,
+        hint: 'The email subject and date, the contract clause, the file reference. Free text, because the point is that a person can find it.',
+        group: PERMISSION_GROUP,
+      },
+      {
+        kind: "date",
+        name: "permissionConfirmedAt",
+        label: "Permission confirmed on",
+        hint: "Optional. Kept as a record of when the authorisation was checked; it does not gate the logo.",
+        group: PERMISSION_GROUP,
+      },
+      {
+        kind: "checkbox",
+        name: "published",
+        label: "Show this logo on the site",
+        hint: "Off by default: adding a logo and deciding to show it are two decisions.",
+        group: PUBLICATION_GROUP,
+      },
       { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
     ],
   },

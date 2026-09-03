@@ -18,6 +18,10 @@ const PAGES = [
   // /support carries the FAQ accordion, and /terms the legal effective dates.
   // Both were rebuilt in this pass; neither was being audited before.
   "/support", "/terms", "/about",
+  // The sector index and one sector page. The index carries the filter chips
+  // and sixteen cards; the sector page is the template all sixteen share, so
+  // auditing one audits the shape of all of them.
+  "/industries", "/industries/aec",
   `/buy?sku=${encodeURIComponent(BUY_SKU)}`, "/buy/confirmed?ref=ORD-2026-ABC123",
 ];
 

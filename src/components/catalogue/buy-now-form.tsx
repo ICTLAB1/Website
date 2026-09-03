@@ -16,6 +16,12 @@ import {
 } from "@/components/ui/form";
 import { postJson } from "@/lib/csrf-client";
 import { formatMoney, gstAmountMinor } from "@/lib/money";
+import type { PaymentGateway } from "@/lib/payments/config";
+
+const GATEWAY_LABEL: Record<PaymentGateway, string> = {
+  stripe: "Card, UPI or net banking",
+  ccavenue: "CCAvenue",
+};
 
 /**
  * Direct purchase, paid by card or raised against a purchase order.
@@ -38,6 +44,7 @@ export function BuyNowForm({
   gstRatePercent,
   currency,
   cardPaymentsAvailable,
+  gateways,
   prefill,
 }: {
   sku: string;
@@ -48,11 +55,14 @@ export function BuyNowForm({
   currency: string;
   /** Decided on the server. False hides the option entirely. */
   cardPaymentsAvailable: boolean;
+  /** Which gateways are actually usable, in display order. */
+  gateways: PaymentGateway[];
   prefill: { contactName: string; contactEmail: string; companyName: string; phone: string };
 }) {
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [payWithCard, setPayWithCard] = useState(cardPaymentsAvailable);
+  const [gateway, setGateway] = useState<PaymentGateway>(gateways[0] ?? "stripe");
   const [pending, setPending] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -97,6 +107,7 @@ export function BuyNowForm({
       poNumber: String(form.get("poNumber") ?? ""),
       billingAddress: String(form.get("billingAddress") ?? ""),
       payWithCard: wantsCard,
+      gateway,
       website: String(form.get("website") ?? ""),
     });
 
@@ -266,6 +277,34 @@ export function BuyNowForm({
                 detail="We issue a GST invoice against your purchase order and you pay by transfer."
               />
             </div>
+
+            {payWithCard && gateways.length > 1 ? (
+              <div
+                role="radiogroup"
+                aria-label="Payment provider"
+                className="mt-3 flex flex-wrap gap-2 border-t border-line pt-3"
+              >
+                {gateways.map((option) => (
+                  <label
+                    key={option}
+                    className={`flex cursor-pointer items-center gap-2 rounded-[--radius-sm] border px-3 py-1.5 text-meta ${
+                      gateway === option
+                        ? "border-accent-600 bg-accent-50/60 text-graphite-900"
+                        : "border-line-strong text-ink-600 hover:bg-surface-muted"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="gatewayChoice"
+                      checked={gateway === option}
+                      onChange={() => setGateway(option)}
+                      className="h-3.5 w-3.5 accent-accent-700"
+                    />
+                    {GATEWAY_LABEL[option]}
+                  </label>
+                ))}
+              </div>
+            ) : null}
           </Fieldset>
         ) : null}
 

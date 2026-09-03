@@ -16,6 +16,7 @@ import { SpecTable } from "@/components/catalogue/spec-table";
 import { ConfigurationTable } from "@/components/catalogue/configuration-table";
 import { HardwareQuotePanel } from "@/components/catalogue/hardware-quote-panel";
 import { hardwareClassLabel, hardwareTitle, isHardware } from "@/lib/catalogue/hardware";
+import { isQuoteOnly } from "@/lib/catalogue/quote-only";
 import { resolveProductPhoto } from "@/lib/representative-image";
 import { getProductBySlug, getRelatedProducts } from "@/lib/queries/catalogue";
 import { effectivePriceMinor } from "@/lib/money";
@@ -104,6 +105,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       `Supplied by TechZoid on a single quotation with GST invoicing, alongside your other ${product.brand.name} purchasing.`,
       "Supplied by TechZoid on a single quotation, with GST invoicing and one purchase order across brands.",
       "Quoted by TechZoid with GST invoicing, on one purchase order with the rest of your software.",
+      // Short enough to fit behind a long description. Without it the three
+      // above are all too long for a base in the nineties, and the page keeps
+      // a stub — which is how `adobe-acrobat-standard-teams` sat at 68
+      // characters while a rule designed to lengthen it ran on every request.
+      `Quoted by TechZoid with GST invoicing on one purchase order.`,
     ),
     path: `/products/${product.slug}`,
     keywords: [...product.keywords, product.brand.name, product.name],
@@ -206,7 +212,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
      * carry no price; naming the case keeps somebody from "fixing" that later
      * by defaulting it to zero, which reads as free.
      */
-    ...(lowestPrice && !hardware
+    /*
+     * The offer matches what the page itself shows: a price on a software
+     * product with one, none on hardware or an enquiry-only row. Structured
+     * data is the one surface nobody thinks to check by eye, so it is asked
+     * the same `isQuoteOnly` question as the visible price rather than a
+     * separate rule that could quietly disagree with it.
+     */
+    ...(lowestPrice && !hardware && !isQuoteOnly(product)
       ? {
           offers: {
             "@type": "AggregateOffer",
@@ -279,7 +292,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
             >
               {product.brand.name}
             </Link>
-            <StatusBadge status={product.availability} />
+            {/*
+              Stock language is for things that have stock.
+
+              "In Stock" on an annual AutoCAD subscription says the licence is
+              sitting on a shelf, which is not a thing a licence does — and on a
+              site selling to procurement officers it reads as a delivery
+              promise nobody made. The colour is unchanged, because the meaning
+              is unchanged: it is available. Only the noun was wrong.
+            */}
+            <StatusBadge
+              status={product.availability}
+              label={
+                product.availability === "IN_STOCK" && !hardware
+                  ? "Available to order"
+                  : undefined
+              }
+            />
             {product.featured ? <Badge tone="brand">Featured</Badge> : null}
           </div>
 

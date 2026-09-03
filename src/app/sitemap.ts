@@ -32,13 +32,33 @@ const EXCLUDED = new Set(["/search", "/enquiry", "/track-order"]);
 /** The catalogue rows the sitemap needs, cached under the tags that own them. */
 const getSitemapRows = cached(
   async () => {
-    const [products, brands, services, posts] = await Promise.all([
+    const [products, brands, services, posts, industries] = await Promise.all([
       prisma.product.findMany({
         where: { status: "ACTIVE", deletedAt: null },
         select: { slug: true, updatedAt: true, featured: true },
       }),
+      /*
+       * Only brands with something behind them.
+       *
+       * Thirty-four of the sixty-four brand rows have no products: they exist
+       * so the site can say "we source Oracle, tell us what you need", which is
+       * a true and useful offer and a perfectly good page to land on from a
+       * link. It is not a page to ask Google to index. Thirty-four indexable
+       * pages titled with somebody else's trademark, each admitting in its own
+       * body copy that there is no catalogue behind it, is a thin-content
+       * pattern at a scale that drags the quality signal for the pages that are
+       * good — and it is a trademark exposure besides.
+       *
+       * So they stay on the site, stay linked from /brands, and stay out of the
+       * sitemap. `generateMetadata` on the brand route marks the same pages
+       * noindex from the same condition, and the day a brand gets its first
+       * product both reverse themselves with no further action.
+       */
       prisma.brand.findMany({
-        where: { deletedAt: null },
+        where: {
+          deletedAt: null,
+          products: { some: { status: "ACTIVE", deletedAt: null } },
+        },
         select: { slug: true, updatedAt: true },
       }),
       prisma.service.findMany({
@@ -49,11 +69,15 @@ const getSitemapRows = cached(
         where: { status: "PUBLISHED", deletedAt: null },
         select: { slug: true, updatedAt: true, publishedAt: true },
       }),
+      prisma.industry.findMany({
+        where: { published: true, deletedAt: null },
+        select: { slug: true, updatedAt: true },
+      }),
     ]);
-    return { products, brands, services, posts };
+    return { products, brands, services, posts, industries };
   },
   ["sitemap-rows"],
-  [tags.catalogue, tags.brands, tags.services, tags.posts],
+  [tags.catalogue, tags.brands, tags.services, tags.posts, tags.industries],
 );
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -67,7 +91,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getUnservedPageSlugs(),
     liveJobSlugs(),
   ]);
-  const { products, brands, services, posts } = rows;
+  const { products, brands, services, posts, industries } = rows;
 
   /**
    * Keyed by URL so a page listed twice is published once.
@@ -133,6 +157,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: brand.updatedAt,
       changeFrequency: "monthly",
       priority: 0.8,
+    });
+  }
+
+  /*
+   * The sector index, then each sector.
+   *
+   * The index is a route file rather than a CMS page, so it is not in the
+   * `pages` loop above and has to be added here or it is absent from the
+   * sitemap while sixteen pages link out of it.
+   */
+  add({
+    url: `${base}/industries`,
+    changeFrequency: "monthly",
+    priority: 0.8,
+  });
+
+  for (const industry of industries) {
+    add({
+      url: `${base}/industries/${industry.slug}`,
+      lastModified: industry.updatedAt,
+      changeFrequency: "monthly",
+      priority: 0.7,
     });
   }
 

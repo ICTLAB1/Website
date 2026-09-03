@@ -35,7 +35,10 @@ import { logger } from "@/lib/logger";
  *    customer's own cookies.
  */
 
-const schema = z.object({ reference: z.string().trim().regex(/^ORD-\d{4}-[A-Z0-9]{6}$/) });
+const schema = z.object({
+  reference: z.string().trim().regex(/^ORD-\d{4}-[A-Z0-9]{6}$/),
+  gateway: z.enum(["stripe", "ccavenue"]).optional().default("stripe"),
+});
 
 export const POST = withErrorHandling("payments.start", async (request: Request) => {
   const csrfFailure = await verifyCsrf(request);
@@ -89,7 +92,7 @@ export const POST = withErrorHandling("payments.start", async (request: Request)
   // somebody else. The difference is not the caller's business.
   if (!order) return jsonError("not_found", "That order could not be found.");
 
-  const payment = await beginPayment(order.id);
+  const payment = await beginPayment(order.id, parsed.data.gateway);
   if (!payment.ok) {
     logger.info("payment_retry_refused", {
       reference: parsed.data.reference,

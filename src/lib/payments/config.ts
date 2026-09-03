@@ -36,6 +36,16 @@ export type PaymentConfig = {
   webhookSecret: string | null;
 };
 
+/** CCAvenue's configuration — see `lib/payments/ccavenue`. */
+export type CCAvenueConfig = {
+  mode: "TEST" | "LIVE";
+  merchantId: string;
+  /** Not a secret: submitted in the outgoing form. Kept beside the working key regardless. */
+  accessCode: string;
+  /** The actual secret. Encrypts the request and decrypts CCAvenue's reply. */
+  workingKey: string;
+};
+
 /**
  * Not cached with `cached()` and a tag, unlike most reads.
  *
@@ -85,9 +95,50 @@ export const getPaymentConfig = cache(async (): Promise<PaymentConfig | null> =>
   };
 });
 
-/** True when a customer can be offered "pay now". */
+/** True when a customer can be offered "pay now" through Stripe. */
 export async function cardPaymentsAvailable(): Promise<boolean> {
   return (await getPaymentConfig()) !== null;
+}
+
+/** The usable CCAvenue configuration, or null if that gateway is not available. */
+export const getCCAvenueConfig = cache(async (): Promise<CCAvenueConfig | null> => {
+  const row = await load();
+  if (!row || !row.ccavenueEnabled) return null;
+
+  const merchantId = row.ccavenueMerchantId?.trim() || null;
+  const accessCode = row.ccavenueAccessCode?.trim() || null;
+  const workingKey = decryptSecret(row.ccavenueWorkingKey);
+
+  if (!merchantId || !accessCode || !workingKey) {
+    logger.warn("ccavenue_enabled_but_not_configured", {});
+    return null;
+  }
+
+  return { mode: row.mode, merchantId, accessCode, workingKey };
+});
+
+/** True when a customer can be offered "pay now" through CCAvenue. */
+export async function ccavenuePaymentsAvailable(): Promise<boolean> {
+  return (await getCCAvenueConfig()) !== null;
+}
+
+export type PaymentGateway = "stripe" | "ccavenue";
+
+/**
+ * Every gateway a customer can actually be offered right now, in the fixed
+ * order the checkout UI shows them.
+ *
+ * Both configured means a choice; exactly one configured means that one is
+ * used silently, with no chooser shown — the same behaviour the site had
+ * before CCAvenue existed. Neither configured means the purchase-order route
+ * only, as it always did.
+ */
+export async function availablePaymentGateways(): Promise<PaymentGateway[]> {
+  const [stripe, ccavenue] = await Promise.all([cardPaymentsAvailable(), ccavenuePaymentsAvailable()]);
+  const gateways: PaymentGateway[] = [];
+  if (stripe) gateways.push("stripe");
+  if (ccavenue) gateways.push("ccavenue");
+  return gateways;
 }
 
 export type PaymentSettingsView = {
@@ -98,6 +149,15 @@ export type PaymentSettingsView = {
   webhookSecretHint: string | null;
   /** True when enabled but the credentials cannot actually be used. */
   brokenConfiguration: boolean;
+
+  ccavenueEnabled: boolean;
+  /** Not a secret, so shown in full rather than as a hint — same as Stripe never showing a key id, because there isn't one. */
+  ccavenueMerchantId: string | null;
+  ccavenueAccessCode: string | null;
+  /** Masked. The working key itself never leaves the server. */
+  ccavenueWorkingKeyHint: string | null;
+  ccavenueBrokenConfiguration: boolean;
+
   updatedAt: Date | null;
 };
 
@@ -113,6 +173,9 @@ export async function getPaymentSettingsView(): Promise<PaymentSettingsView> {
 
   const secretKey = decryptSecret(row?.stripeSecretKey);
   const webhookSecret = decryptSecret(row?.stripeWebhookSecret);
+  const ccavenueWorkingKey = decryptSecret(row?.ccavenueWorkingKey);
+  const ccavenueMerchantId = row?.ccavenueMerchantId?.trim() || null;
+  const ccavenueAccessCode = row?.ccavenueAccessCode?.trim() || null;
 
   return {
     enabled: row?.enabled ?? false,
@@ -120,6 +183,14 @@ export async function getPaymentSettingsView(): Promise<PaymentSettingsView> {
     secretKeyHint: secretKey ? secretHint(secretKey) : null,
     webhookSecretHint: webhookSecret ? secretHint(webhookSecret) : null,
     brokenConfiguration: Boolean(row?.enabled) && !secretKey,
+
+    ccavenueEnabled: row?.ccavenueEnabled ?? false,
+    ccavenueMerchantId,
+    ccavenueAccessCode,
+    ccavenueWorkingKeyHint: ccavenueWorkingKey ? secretHint(ccavenueWorkingKey) : null,
+    ccavenueBrokenConfiguration:
+      Boolean(row?.ccavenueEnabled) && !(ccavenueMerchantId && ccavenueAccessCode && ccavenueWorkingKey),
+
     updatedAt: row?.updatedAt ?? null,
   };
 }

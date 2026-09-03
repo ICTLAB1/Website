@@ -54,7 +54,7 @@ describe("form shapes", () => {
 
   it("covers the block types that carry the content", () => {
     expect(typed.sort()).toEqual(
-      ["BULLETS", "CARDS", "CHIP_LIST", "CTA_BANNER", "FAQ", "HERO", "LINK_LIST", "NOTICE", "PRODUCT_GRID", "RICH_TEXT"].sort(),
+      ["BULLETS", "CARDS", "CHIP_LIST", "CTA_BANNER", "FAQ", "HERO", "INDUSTRY_GRID", "LINK_LIST", "LOGO_MARQUEE", "NOTICE", "PRODUCT_GRID", "RICH_TEXT"].sort(),
     );
   });
 

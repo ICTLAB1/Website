@@ -17,6 +17,8 @@ import { getMailConfig, getMailSettingsView } from "@/lib/mail-config";
 import { MailSettingsForm } from "@/components/admin/mail-settings-form";
 import { GstinLookupForm } from "@/components/admin/gstin-lookup-form";
 import { getGstinLookupView } from "@/lib/gstin-lookup";
+import { AssistantSettingsForm } from "@/components/admin/assistant-settings-form";
+import { getAssistantSettingsView } from "@/lib/assistant/config";
 import { listAuditLog } from "@/lib/queries/admin";
 import { formatDateTime, humanise } from "@/lib/utils";
 
@@ -37,7 +39,7 @@ export const metadata: Metadata = { title: "Settings" };
  */
 export default async function AdminSettingsPage() {
   const admin = await requireAdmin();
-  const [config, stored, missing, audit, payments, mail, mailReady, crmState, gstinLookup, followUps] =
+  const [config, stored, missing, audit, payments, mail, mailReady, crmState, gstinLookup, followUps, assistant] =
     await Promise.all([
       getSiteConfig(),
       getStoredSettings(),
@@ -49,6 +51,7 @@ export default async function AdminSettingsPage() {
       crmConnection(),
       getGstinLookupView(),
       getFollowUpSettings(),
+      getAssistantSettingsView(),
     ]);
   // What the From header will actually say, after the stored-then-environment
   // fallback — not what is typed in the form, which may be blank and inheriting.
@@ -136,6 +139,13 @@ export default async function AdminSettingsPage() {
         </p>
         <div className="max-w-2xl">
           <GstinLookupForm settings={gstinLookup} />
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-4 text-[1.05rem]">Chat assistant</h2>
+        <div className="max-w-2xl">
+          <AssistantSettingsForm settings={assistant} />
         </div>
       </section>
 

@@ -137,7 +137,7 @@ export const POST = withErrorHandling("orders.createDirect", async (request: Req
    */
   let payment: Awaited<ReturnType<typeof beginPayment>> | null = null;
   if (parsed.data.payWithCard) {
-    payment = await beginPayment(result.orderId);
+    payment = await beginPayment(result.orderId, parsed.data.gateway);
     if (!payment.ok) {
       logger.warn("order_card_payment_unavailable", {
         reference: result.reference,

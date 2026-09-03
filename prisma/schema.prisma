@@ -335,6 +335,8 @@ enum PageSectionType {
   PRODUCT_GRID
   PRICE_COMPARISON
   COLLECTION_GRID
+  LOGO_MARQUEE
+  INDUSTRY_GRID
   FAQ
   COMPANY_INFO
   NOTICE
@@ -408,6 +410,7 @@ model User {
   savedPayments    PaymentSettings[]
   savedMail        MailSettings[]
   savedGstinLookup GstinLookupSettings[]
+  savedAssistant   AssistantSettings[]
   savedCrm         CrmSettings[]            @relation("CrmSettingsEditor")
   savedFollowUps   QuoteFollowUpSettings[]  @relation("QuoteFollowUpSettingsEditor")
   quoteMessages    QuoteMessage[]
@@ -1759,6 +1762,129 @@ model Certification {
 /// seed. A plausible-looking quote attributed to a plausible-looking customer
 /// is a fabricated endorsement whatever the intention behind it, and it would
 /// be indistinguishable from the real ones the moment it shipped.
+/**
+ * A customer whose logo may be shown on the public site.
+ *
+ * A separate model from `Company`, and deliberately so. A Company is a
+ * commercial record — orders, quotations, addresses, people — and most of them
+ * will never appear on a marketing page. This holds only what a logo strip
+ * needs, so putting a customer on the website is an explicit act rather than a
+ * side effect of them buying something.
+ *
+ * ## Why permission is four columns rather than a checkbox
+ *
+ * The same reasoning as `Brand.partnerLabel`, and for a stronger reason. A
+ * customer's name and mark are their property, and a supplier displaying them
+ * is making a claim the customer may be asked to confirm. So the record has to
+ * hold not just *that* somebody said yes, but who, when, and where the
+ * evidence is — the difference between a permission somebody remembers and one
+ * somebody can produce.
+ *
+ * Nothing reaches the public site unless `permissionConfirmedAt` is set *and*
+ * `published` is on *and* there is artwork. See `lib/client-logo`, which is the
+ * only place that decides.
+ */
+/**
+ * A sector this business supplies, and what it supplies to it.
+ *
+ * Rows rather than page copy for the usual reason: the same sixteen sectors
+ * appear on the homepage grid, in the filter, on their own detail pages and in
+ * the sitemap, and four copies of a list is four places to forget an edit.
+ *
+ * ## What a row may and may not say
+ *
+ * `summary` and `description` describe what this business supplies to a
+ * sector, drawn from the catalogue and the service list. They are not the place
+ * for a customer, a case study, a headcount or an outcome — a sector is not a
+ * reference, and a sentence that reads like one is a claim nothing here can
+ * support. Customers live in ClientLogo, with a permission on the record.
+ *
+ * `solutions` holds labels, not promises: each one names something the
+ * catalogue actually carries or a service that actually exists.
+ */
+model Industry {
+  id   String @id @default(cuid())
+  slug String @unique
+  name String
+
+  /// One or two sentences. Shown on the card and used as the page description.
+  summary String
+
+  /// Longer copy for the detail page. Empty means the page shows the summary
+  /// alone rather than a heading with nothing under it.
+  description String @default("")
+
+  /// Key into the glyph map in `lib/glyphs`. An unknown key falls back rather
+  /// than rendering an empty box.
+  icon String @default("business")
+
+  /// What this business supplies to the sector, as labels for the card chips.
+  solutions String[]
+
+  /// Slugs of the brands, services and catalogue categories most relevant to
+  /// the sector, rendered on its page as real links.
+  ///
+  /// Slugs rather than relations, and the renderer drops any that no longer
+  /// resolve. A sector naming a brand that has since been archived should lose
+  /// a card, not 500 the page — and a foreign key would make withdrawing a
+  /// brand a two-step operation for a marketing reason.
+  brandSlugs    String[]
+  serviceSlugs  String[]
+  categorySlugs String[]
+
+  displayOrder Int       @default(100)
+  published    Boolean   @default(true)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([published])
+  @@index([deletedAt])
+}
+
+model ClientLogo {
+  id   String @id @default(cuid())
+  /// The organisation's name as they write it themselves.
+  name String
+
+  /// Path to their mark: a file under `public/clients/`, or an upload. Null
+  /// until artwork is added, and a null keeps the row off the public site —
+  /// a logo strip entry with no logo is not a thing worth rendering.
+  logoUrl String?
+
+  /// Their own site. Optional, and not linked from the strip by default: a
+  /// customer logo is evidence, not an advertisement for them.
+  website String?
+
+  /// Free text — "Public sector", "Defence", "Manufacturing". Used to group
+  /// the strip where a page wants that, and left null where it does not
+  /// matter.
+  sector String?
+
+  /// Who granted permission, in words a person can check: a name and a role,
+  /// not an identifier.
+  permissionHolder    String?
+  /// Where the evidence is. An email subject and date, a contract clause, a
+  /// file reference — free text, because the point is that somebody can find
+  /// it, not that a machine can parse it.
+  permissionReference String?
+  /// When permission was confirmed. Null means it has not been, whatever the
+  /// other columns say.
+  permissionConfirmedAt DateTime?
+  /// Whether to show it. Off by default, including for a row whose permission
+  /// is recorded — recording a permission and deciding to use it are two
+  /// decisions.
+  published Boolean @default(false)
+
+  displayOrder Int       @default(100)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([published])
+  @@index([deletedAt])
+}
+
 model Testimonial {
   id String @id @default(cuid())
 
@@ -2138,7 +2264,7 @@ model SiteSettings {
   updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
-/// Which payment gateway is configured, and its credentials.
+/// Which payment gateways are configured, and their credentials.
 ///
 /// One row, id `singleton`, like `SiteSettings` — and separate from it on
 /// purpose. This holds credentials that can move money; that holds a telephone
@@ -2146,9 +2272,19 @@ model SiteSettings {
 /// credentials are not read on every page render, and a mistake in the
 /// business-identity form cannot touch them.
 ///
-/// The two secrets are encrypted at rest by `lib/secret-box.ts` and are never
-/// sent back to a browser. The key id is not a secret — Razorpay Checkout needs
-/// it in the page — so it is stored and displayed in the clear.
+/// Two gateways can be configured and enabled independently — Stripe (a
+/// redirect to hosted Checkout) and CCAvenue (a redirect to a hosted payment
+/// page, reached by an encrypted form POST rather than an API call). A
+/// customer sees a choice between them only when both are on; otherwise
+/// whichever one is configured is used silently, same as before CCAvenue
+/// existed.
+///
+/// The secrets are encrypted at rest by `lib/secret-box.ts` and are never sent
+/// back to a browser. A key id or access code is not a secret in the same
+/// sense — Razorpay Checkout needed its key id in the page, and CCAvenue's
+/// access code is submitted in the outgoing form the same way — so those are
+/// stored and displayed in the clear; only the values that authenticate a
+/// server-to-server call or decrypt a callback are encrypted.
 model PaymentSettings {
   id String @id @default("singleton")
 
@@ -2158,6 +2294,8 @@ model PaymentSettings {
 
   /// TEST or LIVE. Stored rather than inferred from the key prefix, so that
   /// pointing at live keys is a deliberate act with its own audit entry.
+  /// Shared by both gateways — this deployment does not run one gateway live
+  /// and the other in test at the same time.
   mode PaymentMode @default(TEST)
 
   /// Stripe's secret key, `sk_test_…` or `sk_live_…`.
@@ -2176,6 +2314,26 @@ model PaymentSettings {
   /// was actually taken, since a browser returning from Checkout is just a
   /// browser making a claim.
   stripeWebhookSecret String?
+
+  /// CCAvenue's own gateway, off by default and independent of Stripe.
+  ccavenueEnabled Boolean @default(false)
+
+  /// CCAvenue's merchant id. Not a secret — it is submitted as a plain form
+  /// field in the redirect to CCAvenue's hosted page, so encrypting it at rest
+  /// would protect nothing that a page-source view does not already show.
+  ccavenueMerchantId String?
+
+  /// CCAvenue's access code for this integration. Same status as the merchant
+  /// id: it travels in the outgoing form, in the clear, by CCAvenue's own
+  /// design.
+  ccavenueAccessCode String?
+
+  /// CCAvenue's working key — the actual secret. It never leaves this server:
+  /// it is what encrypts the outgoing request and decrypts CCAvenue's reply, so
+  /// anyone holding it could forge a "payment succeeded" callback.
+  ///
+  /// AES-256-GCM, keyed from AUTH_SECRET. Never rendered.
+  ccavenueWorkingKey String?
 
   updatedAt   DateTime @updatedAt
   updatedById String?
@@ -2228,6 +2386,34 @@ model GstinLookupSettings {
   headerTwoValue   String?
   headerThreeName  String?
   headerThreeValue String?
+
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
+/// The site's chat assistant — off, and unnamed to a visitor, until this is set.
+///
+/// A singleton, alongside the mail, payment and GSTIN settings and for the
+/// same reason: an integration credential edited by an administrator, whose
+/// secret half must never be rendered back. `anthropicApiKey` is the only
+/// secret here; the name is not one — a visitor reads it in the chat header
+/// regardless, the same reasoning that leaves the CCAvenue merchant id in the
+/// clear.
+model AssistantSettings {
+  id String @id @default("singleton")
+
+  /// Off by default. On with no key does nothing: the widget only renders
+  /// when this is true *and* the key is present and usable.
+  enabled Boolean @default(false)
+
+  /// AES-256-GCM, keyed from AUTH_SECRET. Never rendered.
+  anthropicApiKey String?
+
+  /// What a visitor sees in the chat header and what the assistant calls
+  /// itself. Free text rather than a fixed persona, because the right name
+  /// for a support widget is this business's call, not a default we chose.
+  assistantName String @default("Zoey")
 
   updatedAt   DateTime @updatedAt
   updatedById String?
@@ -2454,6 +2640,8 @@ enum DealSource {
   REFERRAL
   /// A published tender or a GeM bid.
   TENDER
+  /// Captured by the site's chat assistant.
+  CHATBOT
   OTHER
 }
 

@@ -35,8 +35,18 @@ export function Badge({
   );
 }
 
-/** Maps a workflow status onto a consistent tone across the whole application. */
-export function StatusBadge({ status }: { status: string }) {
+/**
+ * Maps a workflow status onto a consistent tone across the whole application.
+ *
+ * `label` overrides the words without touching the colour. The tone is the part
+ * that has to be consistent — a procurement officer scanning a list learns that
+ * green means settled and amber means waiting, and that lesson must hold on
+ * every screen. The words sometimes should not: "In Stock" is exactly right on
+ * a device in an asset register and wrong on an annual subscription, which has
+ * no stock to be in. See the product page, which is the one caller that needs
+ * this.
+ */
+export function StatusBadge({ status, label }: { status: string; label?: string }) {
   const tone: Tone = (() => {
     switch (status) {
       case "ACTIVE":
@@ -93,11 +103,12 @@ export function StatusBadge({ status }: { status: string }) {
 
   return (
     <Badge tone={tone}>
-      {status
-        .toLowerCase()
-        .split("_")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ")}
+      {label ??
+        status
+          .toLowerCase()
+          .split("_")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ")}
     </Badge>
   );
 }

@@ -11,6 +11,7 @@ import {
   statesTaxSeparately,
   type PriceDisplay,
 } from "@/lib/price-display";
+import { CATALOGUE_IS_QUOTE_ONLY, DIRECT_PURCHASE_ENABLED } from "@/lib/catalogue/quote-only";
 import { cn, humanise } from "@/lib/utils";
 import { audienceNote, isDirectlyPurchasable } from "@/lib/catalogue/audience";
 import type { VariantAudience } from "@prisma/client";
@@ -72,9 +73,26 @@ export function VariantSelector({
   const restricted = !isDirectlyPurchasable(selected.audience);
   const eligibility = audienceNote(selected.audience);
 
-  const quoteOnly = unitPrice <= 0 || purchaseMode === "ENQUIRY";
+  /*
+     The catalogue quotes rather than prices — see `lib/catalogue/quote-only`.
+     The two per-row conditions stay beside the switch rather than behind
+     `isQuoteOnly`, because this component is handed a variant and a mode, not
+     a product, and inventing a product shape to ask the question would be
+     more code than the question.
+  */
+  const quoteOnly = CATALOGUE_IS_QUOTE_ONLY || unitPrice <= 0 || purchaseMode === "ENQUIRY";
+  /*
+   * Showing a price and accepting a card for it are different decisions —
+   * see `DIRECT_PURCHASE_ENABLED`. A priced, eligible variant still cannot
+   * check out here while that flag is off; the route it offers instead is
+   * "Request Enterprise Pricing", never a dead end.
+   */
   const canBuyDirect =
-    !quoteOnly && !restricted && (purchaseMode === "DIRECT" || purchaseMode === "BOTH") && unitPrice > 0;
+    DIRECT_PURCHASE_ENABLED &&
+    !quoteOnly &&
+    !restricted &&
+    (purchaseMode === "DIRECT" || purchaseMode === "BOTH") &&
+    unitPrice > 0;
   const lineTotal = unitPrice * quantity;
   const gst = gstAmountMinor(lineTotal, selected.gstRatePercent);
 
@@ -116,7 +134,9 @@ export function VariantSelector({
                     </span>
                   </span>
                   <span className="shrink-0 text-right text-meta font-semibold text-graphite-900">
-                    {price > 0 ? showPrice(price, variant.gstRatePercent, display) : "On enquiry"}
+                    {!quoteOnly && price > 0
+                      ? showPrice(price, variant.gstRatePercent, display)
+                      : "On enquiry"}
                   </span>
                 </label>
               );
@@ -177,55 +197,68 @@ export function VariantSelector({
                 : "per unit"}
             </p>
 
-            <div className="mt-5 flex items-end gap-3">
-              <div className="w-32">
-                <label htmlFor="quantity" className="mb-1.5 block text-meta font-medium text-ink-800">
-                  Quantity
-                </label>
-                <input
-                  id="quantity"
-                  type="number"
-                  min={1}
-                  max={100000}
-                  step={1}
-                  value={quantity}
-                  onChange={(event) => {
-                    const parsed = Number.parseInt(event.target.value, 10);
-                    setQuantity(Number.isFinite(parsed) ? Math.min(100000, Math.max(1, parsed)) : 1);
-                  }}
-                  className="h-11 w-full rounded-[--radius-md] border border-line-strong px-3 text-sm tabular-nums"
-                />
-              </div>
-              <div className="flex-1 rounded-[--radius-md] bg-surface-muted px-4 py-2.5 text-right">
-                {/*
-                  In rupees: the subtotal, the GST on it, and the total —
-                  the breakdown an Indian buyer needs for input credit.
-                  In any other currency: the total alone, with no tax wording,
-                  because that figure already contains it.
-                */}
-                {statesTaxSeparately(display) ? (
-                  <>
-                    <p className="text-label text-ink-500">
-                      Subtotal {formatMoney(lineTotal, "INR")} + GST {formatMoney(gst, "INR")}
-                    </p>
-                    <p className="text-body font-semibold text-graphite-900">
-                      {formatMoney(lineTotal + gst, "INR")} incl. GST
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-label text-ink-500">
-                      {quantity} &times; {showPrice(unitPrice, selected.gstRatePercent, display)}
-                    </p>
-                    <p className="text-body font-semibold text-graphite-900">
-                      {showInclusive(lineTotal + gst, display)}
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
           </>
         )}
+
+        {/*
+          Quantity, whether or not there is a price beside it.
+
+          It used to live inside the priced branch, so making the catalogue
+          quote-only took the field away along with the figure — and every
+          enquiry would then have arrived asking for a single seat. Quantity
+          matters more here, not less: it is the main thing a quotation is
+          priced against. The lifecycle suite caught its absence within the
+          minute, which is the entire argument for that suite.
+        */}
+        <div className="mt-5 flex items-end gap-3">
+          <div className="w-32">
+            <label htmlFor="quantity" className="mb-1.5 block text-meta font-medium text-ink-800">
+              Quantity
+            </label>
+            <input
+              id="quantity"
+              type="number"
+              min={1}
+              max={100000}
+              step={1}
+              value={quantity}
+              onChange={(event) => {
+                const parsed = Number.parseInt(event.target.value, 10);
+                setQuantity(Number.isFinite(parsed) ? Math.min(100000, Math.max(1, parsed)) : 1);
+              }}
+              className="h-11 w-full rounded-[--radius-md] border border-line-strong px-3 text-sm tabular-nums"
+            />
+          </div>
+          {quoteOnly ? null : (
+            <div className="flex-1 rounded-[--radius-md] bg-surface-muted px-4 py-2.5 text-right">
+              {/*
+                In rupees: the subtotal, the GST on it, and the total —
+                the breakdown an Indian buyer needs for input credit.
+                In any other currency: the total alone, with no tax wording,
+                because that figure already contains it.
+              */}
+              {statesTaxSeparately(display) ? (
+                <>
+                  <p className="text-label text-ink-500">
+                    Subtotal {formatMoney(lineTotal, "INR")} + GST {formatMoney(gst, "INR")}
+                  </p>
+                  <p className="text-body font-semibold text-graphite-900">
+                    {formatMoney(lineTotal + gst, "INR")} incl. GST
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-label text-ink-500">
+                    {quantity} &times; {showPrice(unitPrice, selected.gstRatePercent, display)}
+                  </p>
+                  <p className="text-body font-semibold text-graphite-900">
+                    {showInclusive(lineTotal + gst, display)}
+                  </p>
+                </>
+              )}
+            </div>
+          )}
+        </div>
 
         {/*
           Who this price is for, stated beside it rather than in small print.
@@ -240,9 +273,10 @@ export function VariantSelector({
         ) : null}
 
         <div className="mt-5 space-y-2.5">
-          {/* Direct purchase is offered only where the product's mode permits it
-              and the SKU carries a real price. The route and the API both
-              re-check this server-side. */}
+          {/* Direct purchase is offered only where `DIRECT_PURCHASE_ENABLED`
+              is on, the product's mode permits it and the SKU carries a real
+              price. The route and the API both re-check this server-side,
+              independently of what this component decides to render. */}
           {canBuyDirect ? (
             <ButtonLink
               href={`/buy?sku=${encodeURIComponent(selected.sku)}`}
@@ -269,21 +303,49 @@ export function VariantSelector({
               productName,
               brandName,
               variantName: selected.name,
-              unitPriceMinor: unitPrice > 0 ? unitPrice : null,
+              /*
+                No price into the basket for a variant that has none to give
+                — hardware, an enquiry-only mode, or a zero-priced row. A
+                priced software variant carries its tentative figure into the
+                basket and the enquiry, exactly as the page shows it.
+              */
+              unitPriceMinor: quoteOnly || unitPrice <= 0 ? null : unitPrice,
               currency: selected.currency,
             }}
           />
         </div>
 
+        {/*
+          The note has to match what is above it.
+          While the catalogue quotes rather than prices there are no figures on
+          this page, so "prices shown are indicative" describes nothing — and a
+          currency-conversion caveat under a page with no currency on it is
+          worse than no note at all.
+        */}
         <p className="mt-4 text-label leading-relaxed text-ink-500">
-          {statesTaxSeparately(display)
-            ? "Prices shown are indicative and exclude GST."
-            : "Prices shown are indicative and are converted from our rupee list price at the rate we publish."}{" "}
-          Final pricing, delivery timelines and licensing terms are confirmed on a written
-          quotation before any order is placed.
-          {statesTaxSeparately(display)
-            ? ""
-            : " Orders are placed and invoiced in Indian rupees."}
+          {quoteOnly ? (
+            <>
+              Pricing depends on licensing programme, term, quantity and your existing
+              entitlement, so it is quoted rather than listed. Send the requirement and we
+              return a written quotation with the figure, the delivery timeline and the
+              licensing terms on it.
+            </>
+          ) : (
+            <>
+              {/*
+                "Tentative" is the word the business asked for, put beside the
+                figure rather than only in a shared constant: a buyer reading
+                this panel should not have to know that `TENTATIVE_PRICE_NOTE`
+                exists elsewhere to learn the number can move.
+              */}
+              {statesTaxSeparately(display)
+                ? "Tentative price, excluding GST — subject to confirmation."
+                : "Tentative price, converted from our rupee list price at the rate we publish — subject to confirmation."}{" "}
+              Final pricing, delivery timelines and licensing terms are fixed on a written
+              quotation before any order is placed.
+              {statesTaxSeparately(display) ? "" : " Orders are placed and invoiced in Indian rupees."}
+            </>
+          )}
         </p>
       </div>
 
