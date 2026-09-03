@@ -132,7 +132,9 @@ export default async function AdminDevicesPage({ searchParams }: PageProps) {
               {devices.map((device) => (
                 <Tr key={device.id}>
                   <Td className="font-medium text-graphite-900">
-                    {device.brandName} {device.model}
+                    <Link href={`/admin/devices/${device.id}`} className="hover:underline">
+                      {device.brandName} {device.model}
+                    </Link>
                     <span className="mt-0.5 block font-mono text-[11px] font-normal text-ink-500">
                       {device.reference}
                     </span>
