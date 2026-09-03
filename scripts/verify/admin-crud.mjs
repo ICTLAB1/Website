@@ -43,6 +43,20 @@ check("new record appears in the list", (await page.locator("body").innerText())
 await page.goto(bannerUrl, { waitUntil: "load" });
 check("edit form is populated from the database",
   (await page.getByLabel("Internal name").inputValue()) === `Verify banner ${stamp}`);
+/*
+ * .clear() before .fill(), not .fill() alone.
+ *
+ * The very first scripted interaction with a freshly-hydrated, uncontrolled
+ * <textarea> in this browser build leaves .fill()'s own select-all step
+ * selecting nothing, so the new text lands at position 0 instead of
+ * replacing the field — "Edited 123Original text" rather than "Edited 123".
+ * Confirmed browser-automation-only: a real Ctrl+A in the same field selects
+ * correctly, and .fill() on the same element a second time also replaces
+ * correctly, so this is specific to first touch. .clear() performs that
+ * first interaction safely, and the .fill() that follows is then the second
+ * touch and behaves normally.
+ */
+await page.getByLabel("Message").clear();
 await page.getByLabel("Message").fill(`Edited ${stamp}`);
 await page.getByRole("button", { name: /Save banner/i }).click();
 await page.waitForTimeout(1500);
