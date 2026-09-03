@@ -1,8 +1,16 @@
 import { createHash } from "node:crypto";
 import type { LicenceType } from "@prisma/client";
 
-import { MAX_AMOUNT_MINOR } from "../../src/lib/pricing";
 import { readSheet } from "./xlsx";
+
+/**
+ * Postgres's `int4` bound — the same value `src/lib/pricing.ts` guards prices
+ * with at write time. Duplicated rather than imported: these import scripts
+ * are meant to run standalone, including inside the production container,
+ * which ships the compiled `.next` build but never the `src/` tree a script
+ * would need to import from.
+ */
+const MAX_AMOUNT_MINOR = 2_147_483_647;
 
 /**
  * What a row on Adobe's channel Commercial sheet means.
