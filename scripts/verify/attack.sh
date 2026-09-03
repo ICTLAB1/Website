@@ -38,7 +38,15 @@ fi
 # replaced the samples, the SKU stopped existing, and every price-tampering
 # test carried on passing — because a 404 for an unknown SKU is also a refusal.
 # The suite reported green while proving nothing about price tampering at all.
-SKU=$(curl -s "$BASE/products?sort=popular" | grep -oP '/buy\?sku=\K[A-Za-z0-9._-]+' | head -1)
+#
+# No longer scraped off a card's "Buy now" link: DIRECT_PURCHASE_ENABLED
+# (lib/catalogue/quote-only.ts) is off, by deliberate business decision, so
+# no card links to /buy any more even though the route itself, and the
+# purchaseMode/price eligibility it checks, were never removed — see that
+# file's own comment. Queried directly instead, against the same rule
+# isQuoteOnly() applies: not hardware (no formFactor), not enquiry-only, and
+# a positive price.
+SKU=$(su postgres -c "psql -tA -d ictlab -c \"select v.sku from \\\"ProductVariant\\\" v join \\\"Product\\\" p on p.id = v.\\\"productId\\\" where p.\\\"deletedAt\\\" is null and p.status='ACTIVE' and p.\\\"formFactor\\\" is null and p.\\\"purchaseMode\\\" != 'ENQUIRY' and v.\\\"deletedAt\\\" is null and coalesce(nullif(v.\\\"salePriceMinor\\\",0), v.\\\"listPriceMinor\\\") > 0 order by p.popularity desc limit 1\"" 2>/dev/null | tr -d ' ')
 if [ -z "$SKU" ]; then
   echo "  NO PURCHASABLE SKU — the catalogue offers nothing that can be bought directly."
   echo "  Every pricing test below would pass without testing anything. Aborting."
