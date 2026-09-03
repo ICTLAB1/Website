@@ -4,9 +4,11 @@ import type { Metadata } from "next";
 
 import { DeviceForm } from "@/components/admin/device-form";
 import { AdminForm } from "@/components/admin/admin-form";
+import { DangerZone } from "@/components/admin/danger-zone";
 import { Badge, StatusBadge } from "@/components/ui/badge";
 import { archiveDevice } from "@/app/admin/service-actions";
-import { requireCapability } from "@/lib/auth/guards";
+import { DELETABLE } from "@/lib/admin/deletable";
+import { isAdmin, requireCapability } from "@/lib/auth/guards";
 import { can } from "@/lib/auth/capabilities";
 import { prisma } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
@@ -71,6 +73,17 @@ export default async function AdminDeviceDetailPage({ params }: PageProps) {
           <p className="text-[13px] text-ink-500">Your role does not include changing this.</p>
         )}
       </section>
+
+      {isAdmin(staff) ? (
+        <DangerZone
+          config={DELETABLE.devices}
+          id={device.id}
+          reference={device.reference}
+          // The archive/restore control above already covers the reversible
+          // removal; this is only for the permanent one.
+          showArchive={false}
+        />
+      ) : null}
     </div>
   );
 }

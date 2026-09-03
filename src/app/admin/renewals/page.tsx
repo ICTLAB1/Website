@@ -8,7 +8,8 @@ import { Badge, StatusBadge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/states";
 import { RenewalCalendar } from "@/components/portal/renewal-calendar";
 import { updateRenewal } from "@/app/admin/renewal-actions";
-import { requireCapability } from "@/lib/auth/guards";
+import { deleteRecordPermanently } from "@/app/admin/record-actions";
+import { requireCapability, isAdmin } from "@/lib/auth/guards";
 import { can } from "@/lib/auth/capabilities";
 import { prisma } from "@/lib/db";
 import {
@@ -43,6 +44,10 @@ const RENEWAL_STATUSES = ["UPCOMING", "QUOTED", "RENEWED", "LAPSED", "DECLINED"]
 export default async function AdminRenewalsPage() {
   const staff = await requireCapability("customers.read");
   const mayWrite = can(staff, "customers.write");
+  // Deleting a renewal is administrator-only (DELETABLE.renewals.guard), a
+  // narrower gate than mayWrite: SALES and SALES_MANAGER hold customers.write
+  // but not this.
+  const mayDelete = isAdmin(staff);
 
   const renewals = await prisma.renewal.findMany({
     where: { status: { in: RENEWAL_OPEN_STATUSES } },
@@ -186,6 +191,41 @@ export default async function AdminRenewalsPage() {
                           </AdminForm>
                         </div>
                       </details>
+                      {mayDelete ? (
+                        <details className="mt-2">
+                          <summary className="cursor-pointer text-[12px] text-danger-700 hover:underline">
+                            Delete permanently
+                          </summary>
+                          <div className="mt-3 w-64 space-y-2">
+                            <p className="text-[12px] leading-relaxed text-ink-600">
+                              Destroys this renewal record, including its quoted amount and any
+                              note. Cannot be undone.
+                            </p>
+                            <AdminForm
+                              action={deleteRecordPermanently}
+                              submitLabel="Delete permanently"
+                              pendingLabel="Deleting…"
+                              variant="danger"
+                              compact
+                              hidden={{ __deletable: "renewals", __id: renewal.id }}
+                            >
+                              <Field
+                                name="__confirm"
+                                label="Type the renewal reference to confirm"
+                                hint={renewal.reference}
+                                required
+                              >
+                                <Input
+                                  name="__confirm"
+                                  autoComplete="off"
+                                  spellCheck={false}
+                                  placeholder="renewal reference"
+                                />
+                              </Field>
+                            </AdminForm>
+                          </div>
+                        </details>
+                      ) : null}
                     </Td>
                   ) : null}
                 </Tr>

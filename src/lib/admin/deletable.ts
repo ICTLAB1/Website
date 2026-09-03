@@ -45,7 +45,29 @@ export type DeletableKey =
   | "tickets"
   | "products"
   | "variants"
-  | "licences";
+  | "licences"
+  | "devices"
+  | "renewals";
+
+/*
+ * Not here — checked, and deliberately absent, not merely unfinished:
+ *
+ * - **Organisations** (`Company`), **deals** (`Deal`) and **reviews**
+ *   (`ProductReview`) have no field this file's `confirmField` union covers
+ *   (a `reference`, `email`, `sku` or `slug` shown on screen) — `Company`
+ *   and `ProductReview` have no reference-shaped column at all, and typing
+ *   a company's or a reviewer's *name* back is a materially weaker
+ *   confirmation than a reference nobody could paste by accident. Adding
+ *   one means deciding what confirmation looks like for each, not widening
+ *   a type union to fit whatever is nearest.
+ * - **Payments** are a financial record automatically written by the
+ *   gateway integration, never hand-created; permanently deleting one
+ *   breaks the reconciliation a captured or refunded amount exists to
+ *   support, which is a different kind of loss than an accidentally
+ *   duplicated enquiry. `markPaymentRefunded` in quote-actions.ts is the
+ *   correction this project actually needed — recording what happened
+ *   to a payment, never erasing it.
+ */
 
 /** Prisma delegate names, kept narrow so a key cannot name an arbitrary model. */
 export type DeletableModel =
@@ -56,7 +78,9 @@ export type DeletableModel =
   | "supportTicket"
   | "product"
   | "productVariant"
-  | "licence";
+  | "licence"
+  | "device"
+  | "renewal";
 
 export type DeletableConfig = {
   key: DeletableKey;
@@ -229,6 +253,34 @@ export const DELETABLE: Record<DeletableKey, DeletableConfig> = {
     confirmLabel: "licence reference",
     cascades: ["the seat count and key recorded against it"],
     listPath: "/admin/orders",
+    tagsFor: NO_PUBLIC_FACE,
+  },
+
+  devices: {
+    key: "devices",
+    model: "device",
+    label: { singular: "Device", plural: "Devices" },
+    guard: "admin",
+    softDelete: true,
+    confirmField: "reference",
+    confirmLabel: "device reference",
+    cascades: ["every support ticket raised against it"],
+    listPath: "/admin/devices",
+    tagsFor: NO_PUBLIC_FACE,
+  },
+
+  renewals: {
+    key: "renewals",
+    model: "renewal",
+    label: { singular: "Renewal", plural: "Renewals" },
+    guard: "admin",
+    // No `deletedAt` on this model — see Device above for the reversible
+    // option this model does not have.
+    softDelete: false,
+    confirmField: "reference",
+    confirmLabel: "renewal reference",
+    cascades: ["its quoted amount and any note recorded against it"],
+    listPath: "/admin/renewals",
     tagsFor: NO_PUBLIC_FACE,
   },
 };
