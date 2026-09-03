@@ -70,6 +70,14 @@ export async function CatalogueListing({
 
   return (
     <div className={showFilters ? "grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)]" : ""}>
+      {/*
+        No price filter on the hardware catalogue, because there are no
+        prices there to filter by — hardware stays quote-only regardless of
+        the software catalogue's own price policy, and a band of
+        "Under ₹5,000" over a listing that shows no figures is a control that
+        cannot do anything. Software prices are back — see
+        `lib/catalogue/quote-only` — so its filter is too.
+      */}
       {showFilters ? (
       <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
         <div className="hidden lg:block">

@@ -59,6 +59,14 @@ const secretField = z
     message: "That looks too short to be a secret. Paste the whole value.",
   });
 
+/** Not a secret — just kept reasonable so a pasted paragraph is rejected as the wrong field. */
+const idField = z
+  .string()
+  .trim()
+  .max(64)
+  .transform((value) => (value.length > 0 ? value : null))
+  .nullable();
+
 const schema = z.object({
   enabled: z.coerce.boolean().default(false),
   mode: z.enum(["TEST", "LIVE"]),
@@ -66,6 +74,12 @@ const schema = z.object({
   stripeWebhookSecret: secretField,
   clearSecretKey: z.coerce.boolean().default(false),
   clearWebhookSecret: z.coerce.boolean().default(false),
+
+  ccavenueEnabled: z.coerce.boolean().default(false),
+  ccavenueMerchantId: idField,
+  ccavenueAccessCode: idField,
+  ccavenueWorkingKey: secretField,
+  clearCcavenueWorkingKey: z.coerce.boolean().default(false),
 });
 
 export async function savePaymentSettings(
@@ -86,6 +100,12 @@ export async function savePaymentSettings(
     stripeWebhookSecret: formData.get("stripeWebhookSecret") ?? "",
     clearSecretKey: formData.get("clearSecretKey") === "on",
     clearWebhookSecret: formData.get("clearWebhookSecret") === "on",
+
+    ccavenueEnabled: formData.get("ccavenueEnabled") === "on",
+    ccavenueMerchantId: formData.get("ccavenueMerchantId") ?? "",
+    ccavenueAccessCode: formData.get("ccavenueAccessCode") ?? "",
+    ccavenueWorkingKey: formData.get("ccavenueWorkingKey") ?? "",
+    clearCcavenueWorkingKey: formData.get("clearCcavenueWorkingKey") === "on",
   });
 
   if (!parsed.success) {
@@ -99,7 +119,7 @@ export async function savePaymentSettings(
   const input = parsed.data;
   const existing = await prisma.paymentSettings.findUnique({
     where: { id: "singleton" },
-    select: { stripeSecretKey: true, stripeWebhookSecret: true },
+    select: { stripeSecretKey: true, stripeWebhookSecret: true, ccavenueWorkingKey: true },
   });
 
   /** Blank leaves it; a value replaces it; the checkbox removes it. */
@@ -118,6 +138,11 @@ export async function savePaymentSettings(
     input.stripeWebhookSecret,
     input.clearWebhookSecret,
     existing?.stripeWebhookSecret,
+  );
+  const ccavenueWorkingKey = nextSecret(
+    input.ccavenueWorkingKey,
+    input.clearCcavenueWorkingKey,
+    existing?.ccavenueWorkingKey,
   );
 
   /*
@@ -156,11 +181,29 @@ export async function savePaymentSettings(
     }
   }
 
+  /*
+   * Same refusal, for CCAvenue: on with any of the three pieces missing shows
+   * a customer a button that fails when pressed.
+   */
+  const ccavenueMerchantId = input.ccavenueMerchantId;
+  const ccavenueAccessCode = input.ccavenueAccessCode;
+  if (input.ccavenueEnabled && !(ccavenueMerchantId && ccavenueAccessCode && ccavenueWorkingKey)) {
+    return {
+      status: "error",
+      message:
+        "Add the merchant id, access code and working key before switching CCAvenue on. Until then customers do not see it as an option.",
+    };
+  }
+
   const data = {
     enabled: input.enabled,
     mode: input.mode,
     stripeSecretKey: secretKey,
     stripeWebhookSecret: webhookSecret,
+    ccavenueEnabled: input.ccavenueEnabled,
+    ccavenueMerchantId,
+    ccavenueAccessCode,
+    ccavenueWorkingKey,
     updatedById: admin.id,
   };
 
@@ -190,15 +233,27 @@ export async function savePaymentSettings(
       secretKeyCleared: input.clearSecretKey,
       webhookSecretReplaced: Boolean(input.stripeWebhookSecret),
       webhookSecretCleared: input.clearWebhookSecret,
+      ccavenueEnabled: input.ccavenueEnabled,
+      ccavenueWorkingKeyReplaced: Boolean(input.ccavenueWorkingKey),
+      ccavenueWorkingKeyCleared: input.clearCcavenueWorkingKey,
     },
     ip: await clientIp(),
   });
 
-  const state = !input.enabled
-    ? "Saved. Card payments are off; customers see the purchase-order route only."
+  const stripeState = !input.enabled
+    ? "Stripe is off"
     : input.mode === "LIVE"
-      ? "Saved. Card payments are LIVE — real money will be taken."
-      : "Saved. Card payments are on in TEST mode; no real money moves.";
+      ? "Stripe is LIVE"
+      : "Stripe is on in TEST mode";
+  const ccavenueState = !input.ccavenueEnabled
+    ? "CCAvenue is off"
+    : input.mode === "LIVE"
+      ? "CCAvenue is LIVE"
+      : "CCAvenue is on in TEST mode";
+  const anyLive = (input.enabled && input.mode === "LIVE") || (input.ccavenueEnabled && input.mode === "LIVE");
 
-  return { status: "success", message: state };
+  return {
+    status: "success",
+    message: `Saved. ${stripeState}; ${ccavenueState}.${anyLive ? " Real money will be taken." : ""}`,
+  };
 }

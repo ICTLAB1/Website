@@ -55,7 +55,8 @@ const text = async (page) => (await page.locator("body").innerText()).replace(/\
  * costs a minute of reading, and a false negative puts a price on a quotation
  * catalogue.
  */
-const MONEY = /₹|Rs\.?\s?\d|INR\s?\d|\$\s?\d|US\$|AED\s?\d|\bMRP\b|excl\. GST|incl\. GST/i;
+const MONEY =
+  /₹|\bRs\.?\s?\d|\bINR\s?\d|\$\s?\d|US\$|\bAED\s?\d|\bMRP\b|excl\. GST|incl\. GST/i;
 
 /** Ranges that must never appear in a business catalogue. */
 const CONSUMER = [

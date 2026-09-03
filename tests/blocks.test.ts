@@ -202,6 +202,52 @@ describe("price comparison", () => {
   });
 });
 
+describe("logo marquee", () => {
+  const parse = (data: unknown) => BLOCK_SCHEMAS.LOGO_MARQUEE.safeParse(data);
+
+  it("defaults to the brands that actually have artwork", () => {
+    const parsed = parse({ heading: "Brands we supply" });
+    expect(parsed.success).toBe(true);
+    if (!parsed.success) return;
+    // `all` would admit brands with no logo, which render as lettered
+    // wordmarks — a moving row of coloured initials, not a logo belt.
+    expect(parsed.data.source).toBe("withLogo");
+    expect(parsed.data.speed).toBe("steady");
+    expect(parsed.data.reverse).toBe(false);
+  });
+
+  it("names no brand and stores no artwork", () => {
+    /*
+     * The whole point of resolving marks from the catalogue: a payload that
+     * could carry an image path would let a block outlive the brand it
+     * advertises, and would put an <img src> under the block editor's control
+     * without going through `safeBrandLogo`.
+     */
+    const parsed = parse({ logoUrl: "/brands/microsoft.png", items: [{ src: "x" }] });
+    expect(parsed.success).toBe(true);
+    if (!parsed.success) return;
+    expect(parsed.data).not.toHaveProperty("logoUrl");
+    expect(parsed.data).not.toHaveProperty("items");
+  });
+
+  it("refuses a speed it has no animation for", () => {
+    expect(parse({ speed: "instant" }).success).toBe(false);
+  });
+
+  it("refuses an unsafe link beside the heading", () => {
+    expect(parse({ action: { label: "All brands", href: "javascript:alert(1)" } }).success).toBe(false);
+    expect(parse({ action: { label: "All brands", href: "//evil.test" } }).success).toBe(false);
+    expect(parse({ action: { label: "All brands", href: "/brands" } }).success).toBe(true);
+  });
+
+  it("bounds the manual slug list and the limit", () => {
+    expect(parse({ source: "manual", slugs: Array.from({ length: 41 }, () => "a") }).success).toBe(false);
+    expect(parse({ limit: 61 }).success).toBe(false);
+    expect(parse({ limit: 3 }).success).toBe(false);
+    expect(parse({ limit: 24 }).success).toBe(true);
+  });
+});
+
 describe("block seeds", () => {
   it("every block type has a seed that satisfies its own schema", () => {
     // A seed that fails validation makes that block type impossible to add,

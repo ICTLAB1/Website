@@ -189,6 +189,13 @@ export const directOrderSchema = z.object({
    * what is owed depends on this field.
    */
   payWithCard: z.coerce.boolean().optional().default(false),
+  /*
+   * Which gateway, when `payWithCard` is true and more than one is available.
+   * Ignored otherwise. Not trusted blindly at the route either — it is only
+   * ever used to pick between gateways that `availablePaymentGateways` has
+   * already said are configured.
+   */
+  gateway: z.enum(["stripe", "ccavenue"]).optional().default("stripe"),
   // Honeypot: a real visitor never fills this in.
   website: z.string().max(0).optional(),
 });

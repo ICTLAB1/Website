@@ -15,7 +15,9 @@ import { hardwareTitle } from "@/lib/catalogue/hardware";
 describe("metaDescription", () => {
   it("leaves a description that is already long enough alone", () => {
     const written =
-      "AutoCAD subscriptions with all seven industry toolsets included, priced across one- and three-year terms.";
+      "AutoCAD subscriptions with all seven industry toolsets included, priced across one- and three-year " +
+      "terms, and quoted against your seat count.";
+    expect(written.length).toBeGreaterThanOrEqual(115);
     expect(metaDescription(written, "ignored context")).toBe(written);
   });
 
@@ -25,8 +27,26 @@ describe("metaDescription", () => {
       "Sourced and quoted by TechZoid, on one quotation and one purchase order with the rest of your estate.",
     );
     expect(result.startsWith("Business laptops, desktops and displays.")).toBe(true);
-    expect(result.length).toBeGreaterThanOrEqual(70);
+    expect(result.length).toBeGreaterThanOrEqual(115);
     expect(result.length).toBeLessThanOrEqual(160);
+  });
+
+  /*
+   * The threshold moved from 70 to 115, and this is the band that moved.
+   *
+   * A description of a hundred characters used to be returned untouched, which
+   * is 65% of the space a result gets and reads as a stub beside a competitor
+   * filling all of it. The fixture above had to be lengthened for the same
+   * reason — at 105 characters it is no longer an example of "long enough".
+   */
+  it("extends a description that is long but still short of the window", () => {
+    const lead =
+      "Endpoint detection and response for Windows, macOS and Linux estates, licensed per endpoint.";
+    expect(lead.length).toBeGreaterThan(70);
+    expect(lead.length).toBeLessThan(115);
+
+    const result = metaDescription(lead, "Quoted by TechZoid with GST invoicing.");
+    expect(result).toBe(`${lead} Quoted by TechZoid with GST invoicing.`);
   });
 
   it("takes the first candidate that fits, not the first candidate", () => {

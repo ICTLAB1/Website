@@ -178,6 +178,252 @@ const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), d
   await ctx.close();
 }
 
+// ---------------------------------------------------------- the logo belt
+/*
+ * The belt is the only animation on the site that runs forever, and the only
+ * one a shortened duration makes *worse* rather than merely faster: run to its
+ * end state and stopped, it parks half a row to the left with a hole where the
+ * first marks were. So the reduced-motion path is asserted as its own thing,
+ * not covered by the blanket "nothing is translated" check above.
+ */
+{
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await ctx.newPage();
+  await page.goto(BASE, { waitUntil: "load" });
+
+  const belt = page.locator(".belt").first();
+  const present = (await belt.count()) > 0;
+  check("the homepage carries a logo belt", present);
+
+  if (present) {
+    await belt.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(400);
+
+    const transformNow = () =>
+      page.evaluate(() => getComputedStyle(document.querySelector(".belt__track")).transform);
+
+    const before = await transformNow();
+    await page.waitForTimeout(1200);
+    const after = await transformNow();
+    check("the belt is moving", before !== after, `${before} → ${after}`);
+
+    // Every mark is a real file. A belt of alt text is the failure this catches.
+    const broken = await page.evaluate(
+      () =>
+        [...document.querySelectorAll(".belt img")].filter(
+          (img) => !img.complete || img.naturalWidth === 0,
+        ).length,
+    );
+    const marks = await page.locator(".belt img").count();
+    check("every mark on the belt loaded", marks > 0 && broken === 0, `${marks} marks, ${broken} broken`);
+
+    /*
+     * The duplicated row exists to make the loop seamless and is hidden from
+     * assistive technology. A focusable element inside an aria-hidden subtree
+     * is both an axe violation and a keyboard trap — the reader tabs through
+     * every brand a second time with no way to tell they have.
+     */
+    const trapped = await page.evaluate(
+      () =>
+        document.querySelector('.belt__row[aria-hidden="true"]')?.querySelectorAll("a, button, [tabindex]")
+          .length ?? -1,
+    );
+    check("the duplicated row holds nothing focusable", trapped === 0, `${trapped} focusable`);
+
+    // Hovering stops it, so a reader can actually read a mark and click it.
+    const box = await belt.boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.waitForTimeout(250);
+    const paused = await transformNow();
+    await page.waitForTimeout(900);
+    check("the belt pauses under the pointer", paused === (await transformNow()));
+  }
+  await ctx.close();
+}
+
+{
+  const ctx = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: "reduce",
+  });
+  const page = await ctx.newPage();
+  await page.goto(BASE, { waitUntil: "load" });
+
+  const belt = page.locator(".belt").first();
+  if ((await belt.count()) > 0) {
+    await belt.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(400);
+
+    const state = await page.evaluate(() => {
+      const track = document.querySelector(".belt__track");
+      const echo = document.querySelector('.belt__row[aria-hidden="true"]');
+      const chips = [...document.querySelectorAll(".belt__item")];
+      return {
+        animationName: getComputedStyle(track).animationName,
+        transform: getComputedStyle(track).transform,
+        echoDisplay: getComputedStyle(echo).display,
+        shown: chips.filter((el) => {
+          const r = el.getBoundingClientRect();
+          return r.width > 0 && r.left >= -1 && r.right <= window.innerWidth + 1;
+        }).length,
+      };
+    });
+
+    check(
+      "reduced motion stops the belt rather than fast-forwarding it",
+      state.animationName === "none" &&
+        (state.transform === "none" || state.transform === "matrix(1, 0, 0, 1, 0, 0)"),
+      `${state.animationName}, ${state.transform}`,
+    );
+    check(
+      "reduced motion hides the duplicate rather than printing every brand twice",
+      state.echoDisplay === "none",
+      state.echoDisplay,
+    );
+    /*
+     * The point of the fallback: a static belt still has to show the brands.
+     * A nowrap row sized to its own content runs off under `overflow: hidden`
+     * and shows nine of twenty-four, which is a worse page than the one it
+     * replaced rather than a calmer one.
+     */
+    check(
+      "reduced motion wraps the whole belt into view",
+      state.shown >= 20,
+      `${state.shown} marks fully visible`,
+    );
+  }
+  await ctx.close();
+}
+
+// ------------------------------------------------------- the card wash
+/*
+ * The accent wash on the industry cards.
+ *
+ * The failure worth guarding is not "does it animate" but the one that makes
+ * the card unreadable: the content's hover colours are Tailwind utilities that
+ * flip the text to white, and they fire whether or not the fill behind them
+ * does. If reduced motion ever switched the fill off rather than making it
+ * instant, every hovered card would be white text on white.
+ */
+for (const reduced of ["no-preference", "reduce"]) {
+  const ctx = await browser.newContext({
+    viewport: { width: 1440, height: 1000 },
+    reducedMotion: reduced,
+  });
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/industries`, { waitUntil: "load" });
+  await page.waitForTimeout(400);
+
+  const card = page.locator(".wash").first();
+  const present = (await card.count()) > 0;
+  check(`the sector cards carry a wash (${reduced})`, present);
+
+  if (present) {
+    await card.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
+    const box = await card.boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    // Longer than the 420ms fill, so this measures the settled state either way.
+    await page.waitForTimeout(700);
+
+    /*
+     * Every corner of the card is covered by the fill.
+     *
+     * Sampled at the corners rather than the middle because the fill is a
+     * circle: an undersized one covers the centre convincingly and leaves the
+     * far corner white, which is how it shipped the first time.
+     */
+    const covered = await page.evaluate(() => {
+      const el = document.querySelector(".wash");
+      const fill = getComputedStyle(el, "::before");
+      const scaled = fill.transform !== "none" && !fill.transform.includes("matrix(0,");
+      const box = el.getBoundingClientRect();
+      // The circle's radius, against the distance to the furthest corner.
+      const radius = (parseFloat(fill.width) || 0) / 2;
+      const diagonal = Math.hypot(box.width, box.height);
+      return { scaled, radius: Math.round(radius), diagonal: Math.round(diagonal) };
+    });
+
+    check(
+      `hovering fills the card (${reduced})`,
+      covered.scaled,
+      JSON.stringify(covered),
+    );
+    check(
+      `the fill reaches the far corner (${reduced})`,
+      covered.radius >= covered.diagonal,
+      `radius ${covered.radius}px against a ${covered.diagonal}px diagonal`,
+    );
+  }
+  await ctx.close();
+}
+
+// --------------------------------------------------------- the logo wall
+/*
+ * Only runs when a wall is on the page, which it is not until an organisation
+ * has artwork, a confirmed permission and a publish. Skipped rather than
+ * failed when there is nothing to look at: a gate that fails because a section
+ * is legitimately empty is a gate people learn to ignore.
+ */
+{
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  const page = await ctx.newPage();
+  await page.goto(BASE, { waitUntil: "load" });
+
+  const cells = page.locator(".logo-wall__cell");
+  if ((await cells.count()) > 0) {
+    await cells.first().scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1200);
+
+    const wall = await page.evaluate(() => {
+      const boxes = [...document.querySelectorAll(".logo-wall__cell")];
+      const marks = [...document.querySelectorAll(".logo-wall__mark")];
+      return {
+        cells: boxes.length,
+        // One height for every cell: the grid is what makes a set of marks
+        // with different proportions read as a set.
+        heights: [...new Set(boxes.map((b) => Math.round(b.getBoundingClientRect().height)))],
+        /*
+         * Distortion is checked by asking how the mark is fitted, not by
+         * comparing the element's box to the file's proportions. With
+         * `object-contain` the box is deliberately wider than the painting —
+         * that is the letterboxing doing its job — so a box comparison flags
+         * every wide wordmark as stretched when none of them is.
+         */
+        fitted: marks.every((m) => getComputedStyle(m).objectFit === "contain"),
+        broken: marks.filter((m) => !m.complete || m.naturalWidth === 0).length,
+        // Every mark carries its organisation's name; the wall shows no text.
+        unnamed: marks.filter((m) => !m.getAttribute("alt")?.trim()).length,
+        spilling: marks.filter((m) => {
+          const cell = m.closest(".logo-wall__cell").getBoundingClientRect();
+          const box = m.getBoundingClientRect();
+          return box.width > cell.width + 1 || box.height > cell.height + 1;
+        }).length,
+      };
+    });
+
+    check("every cell on the logo wall is the same height", wall.heights.length === 1, JSON.stringify(wall.heights));
+    check("every mark is fitted rather than stretched", wall.fitted);
+    check("no mark spills out of its cell", wall.spilling === 0, `${wall.spilling} spilling`);
+    check("every mark loaded", wall.broken === 0, `${wall.broken} broken of ${wall.cells}`);
+    check("every mark names its organisation", wall.unnamed === 0, `${wall.unnamed} without alt text`);
+  } else {
+    /*
+     * Not a failure: the homepage shows its organisations as a moving belt
+     * rather than a static grid, so there are no wall cells to measure. The
+     * wall is still a layout the block offers, and these checks stay for the
+     * day somebody switches back to it.
+     *
+     * The message used to say the wall was missing because no organisation had
+     * artwork and a permission, which stopped being the reason twice over:
+     * thirteen have artwork, and a permission date has not gated a mark since
+     * the owner asked for that rule to go.
+     */
+    console.log("  – the organisations are shown as a belt on this page, so there is no wall to measure");
+  }
+  await ctx.close();
+}
+
 // -------------------------------------------------- menus animate open
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });

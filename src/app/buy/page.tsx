@@ -8,7 +8,7 @@ import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth/session";
 import { effectivePriceMinor } from "@/lib/money";
 import { buildMetadata } from "@/lib/seo";
-import { cardPaymentsAvailable } from "@/lib/payments/config";
+import { availablePaymentGateways } from "@/lib/payments/config";
 
 export const metadata: Metadata = buildMetadata({
   title: "Place an order",
@@ -56,18 +56,19 @@ export default async function BuyPage({ searchParams }: PageProps) {
   if (unitPriceMinor <= 0) notFound();
 
   const user = await getSessionUser();
-  const [company, profile, cardPayments] = await Promise.all([
+  const [company, profile, gateways] = await Promise.all([
     user?.companyId
       ? prisma.company.findUnique({ where: { id: user.companyId }, select: { name: true } })
       : Promise.resolve(null),
     user
       ? prisma.user.findUnique({ where: { id: user.id }, select: { phone: true } })
       : Promise.resolve(null),
-    // Decided on the server. The form offers the card option only when the
-    // gateway is genuinely usable, so a customer is never shown a button that
-    // cannot work.
-    cardPaymentsAvailable(),
+    // Decided on the server. The form offers the card option only when at
+    // least one gateway is genuinely usable, so a customer is never shown a
+    // button that cannot work.
+    availablePaymentGateways(),
   ]);
+  const cardPayments = gateways.length > 0;
 
   return (
     <div className="container-page pb-16">
@@ -102,6 +103,7 @@ export default async function BuyPage({ searchParams }: PageProps) {
           gstRatePercent={variant.gstRatePercent}
           currency={variant.currency}
           cardPaymentsAvailable={cardPayments}
+          gateways={gateways}
           prefill={{
             contactName: user?.name ?? "",
             contactEmail: user?.email ?? "",

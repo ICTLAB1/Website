@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { BrandCard, BrandStrip } from "@/components/marketing/brand-card";
+import { LogoBelt, LogoWall, type BeltItem } from "@/components/marketing/logo-belt";
+import { safeBrandLogo } from "@/lib/brand-logo";
+import { safeClientLogo } from "@/lib/client-logo";
 import { CategoryCard } from "@/components/marketing/category-card";
 import { Reveal } from "@/components/motion/reveal";
 import { EmptyState } from "@/components/ui/states";
@@ -11,7 +14,7 @@ import { certificationLogo } from "@/lib/certification-logo";
 import { effectivePriceMinor, formatTerm } from "@/lib/money";
 import { showPrice, statesTaxSeparately } from "@/lib/price-display";
 import { getDisplayCurrency } from "@/lib/display-currency";
-import { isHardware } from "@/lib/catalogue/hardware";
+import { isQuoteOnly } from "@/lib/catalogue/quote-only";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 import { formatDate } from "@/lib/utils";
@@ -129,11 +132,13 @@ export async function PriceComparisonBlock({
               const price = variant
                 ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor)
                 : 0;
-              const quoteOnly =
-                isHardware(product) ||
-                !variant ||
-                price <= 0 ||
-                product.purchaseMode === "ENQUIRY";
+              /*
+                `|| !variant` is not belt and braces — it is what tells the
+                compiler the variant exists in the other branch. `isQuoteOnly`
+                covers the case on its own; this keeps the narrowing that used
+                to come free from the inline test.
+              */
+              const quoteOnly = isQuoteOnly(product) || !variant;
               const ours = product.slug === data.ourSlug;
 
               return (
@@ -199,6 +204,27 @@ type BrandRow = {
   logoUrl: string | null;
   _count: { products: number };
 };
+/**
+ * What the marquee's resolver selects — narrower than `BrandRow`, and its own
+ * type rather than a `Pick` of it, because it is a different query. A belt
+ * needs a name, a mark and somewhere to go; asking for a tagline and a product
+ * count it will not print would be reading columns to throw them away.
+ */
+type BeltBrandRow = {
+  slug: string;
+  name: string;
+  accentColor: string;
+  logoUrl: string | null;
+};
+
+/** What `publishedClientLogos` returns, of which the belt uses three fields. */
+type ClientLogoRow = {
+  name: string;
+  logoUrl: string | null;
+  website: string | null;
+  sector: string | null;
+};
+
 type CategoryRow = {
   slug: string;
   name: string;
@@ -209,27 +235,30 @@ type CategoryRow = {
 type ServiceRow = { slug: string; name: string; summary: string; category: string };
 type PostCategoryRow = { name: string; count: number };
 type CertificationRow = {
+  id: string;
   standard: string;
   title: string;
-  reference: string;
-  issuer: string;
-  verifyUrl: string | null;
   scope: string | null;
-  issuedAt: Date;
-  expiresAt: Date | null;
 };
 
 /**
- * A certification, stated so it can be checked.
+ * A certification: the standard, what it covers, and its scope.
  *
- * The certificate number, the body that issued it and the verification address
- * are all on the card. A badge saying "ISO 27001 certified" with nothing behind
- * it is a claim; this is the same claim with the means to disprove it, which is
- * the only version worth making to a procurement officer.
+ * The certificate number, the issuing body, the validity dates and the
+ * verification link were all on this card, on the reasoning that a badge saying
+ * "ISO 27001 certified" is a claim while a checkable certificate number is
+ * evidence. The owner has asked for those off the site, which is their call to
+ * make about their own credentials.
  *
- * The expiry is shown for the same reason. A certificate is a statement about a
- * period, and a reader who cannot see the period has to assume it is current —
- * which is exactly the assumption that goes wrong.
+ * They are not deleted — every one is still on the record and still editable
+ * under Certifications, and the expiry still governs whether a certificate
+ * appears at all, because a lapsed one shown on every page of a site would be
+ * the most thorough possible way to make a false statement. What changed is
+ * only what a visitor is shown.
+ *
+ * The four fields are no longer selected either, in `blocks/resolve`. A field
+ * that is not fetched cannot be put back on the page by an edit that was not
+ * thinking about this decision.
  */
 function CertificationCard({ certification }: { certification: CertificationRow }) {
   const seal = certificationLogo(certification.standard);
@@ -276,44 +305,10 @@ function CertificationCard({ certification }: { certification: CertificationRow 
           {certification.scope}
         </p>
       ) : null}
-
-      <dl className="mt-4 space-y-1 border-t border-line pt-3 text-label text-ink-600">
-        <div className="flex gap-2">
-          <dt className="text-ink-500">Certificate</dt>
-          <dd className="font-mono text-graphite-900">{certification.reference}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="text-ink-500">Issued by</dt>
-          <dd className="text-graphite-900">{certification.issuer}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="text-ink-500">Valid</dt>
-          <dd className="text-graphite-900">
-            {formatDate(certification.issuedAt)}
-            {certification.expiresAt ? ` – ${formatDate(certification.expiresAt)}` : ""}
-          </dd>
-        </div>
-      </dl>
-
-      {certification.verifyUrl ? (
-        <p className="mt-auto pt-3">
-          <a
-            href={
-              certification.verifyUrl.startsWith("http")
-                ? certification.verifyUrl
-                : `https://${certification.verifyUrl}`
-            }
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-label font-medium text-accent-700 underline underline-offset-2 hover:text-accent-800"
-          >
-            Verify this certificate
-          </a>
-        </p>
-      ) : null}
     </div>
   );
 }
+
 type PostRow = {
   slug: string;
   title: string;
@@ -322,6 +317,117 @@ type PostRow = {
   readMinutes: number;
   publishedAt: Date | null;
 };
+
+/**
+ * The moving brand belt.
+ *
+ * Laid out by hand rather than through `BlockSection` because the belt has to
+ * reach both edges of the window: a marquee inside a centred container has
+ * visible ends, and a strip with visible ends is a list that happens to move.
+ * The heading above it still sits in the page container, so it lines up with
+ * every other section's heading.
+ */
+export function LogoMarqueeBlock({
+  data,
+  rows,
+  tone,
+}: {
+  data: BlockData<"LOGO_MARQUEE">;
+  rows: unknown[];
+  tone?: "plain" | "muted";
+}) {
+  /*
+   * Two sources, two directories, two rules — normalised here so the belt
+   * itself takes one shape and holds no policy.
+   *
+   * A brand with no artwork falls back to its lettered wordmark, which is what
+   * it does everywhere else on the site. A customer does not: `/clients/`
+   * artwork is the only thing that may stand for a customer, and a row without
+   * it never leaves `publishedClientLogos` in the first place. The filter here
+   * is the second of the two, not the first.
+   */
+  const items: BeltItem[] =
+    data.source === "clients"
+      ? (rows as ClientLogoRow[])
+          .map((client) => ({
+            key: client.name,
+            name: client.name,
+            logo: safeClientLogo(client.logoUrl),
+            // Not linked. A customer's mark on a supplier's page is evidence of
+            // the relationship, not an advertisement for the customer, and an
+            // off-site link out of a marquee is a strange thing to offer.
+            href: null,
+            accentColor: "#201c18",
+          }))
+          .filter((item) => item.logo !== null)
+      : (rows as BeltBrandRow[]).map((brand) => ({
+          key: brand.slug,
+          name: brand.name,
+          logo: safeBrandLogo(brand.logoUrl),
+          href: `/brands/${brand.slug}`,
+          accentColor: brand.accentColor,
+        }));
+
+  /*
+   * Nothing to show, nothing rendered — not an empty band with a heading over
+   * it. Every source can legitimately come back empty: no brand has artwork on
+   * file yet, every slug in a manual list has since been deleted, or — the
+   * common one — customer logos have been added but none has a confirmed
+   * permission and a publish yet. A heading reading "Customers we work with"
+   * above a blank strip is worse than the section's absence.
+   */
+  if (items.length === 0) return null;
+
+  const caption = Boolean(data.heading) && !data.eyebrow && !data.description && !data.action;
+
+  return (
+    <section
+      className={tone === "muted" ? "border-y border-line bg-surface-muted" : undefined}
+    >
+      <div className="py-12 lg:py-16">
+        {caption ? (
+          <p className="container-page mb-6 text-center text-label font-semibold uppercase tracking-[0.14em] text-ink-500">
+            {data.heading}
+          </p>
+        ) : data.eyebrow || data.heading || data.description ? (
+          <div className="container-page">
+            {data.action ? (
+              <SectionHeader
+                eyebrow={data.eyebrow}
+                title={data.heading ?? ""}
+                description={data.description}
+                action={
+                  <ButtonLink href={data.action.href} variant="outline" size="sm">
+                    {data.action.label}
+                  </ButtonLink>
+                }
+              />
+            ) : (
+              <BlockHeading
+                eyebrow={data.eyebrow}
+                heading={data.heading}
+                description={data.description}
+              />
+            )}
+          </div>
+        ) : null}
+
+        {data.layout === "wall" ? (
+          /*
+           * The wall staggers its own cells, so it is not wrapped in a Reveal:
+           * a Reveal around a Reveal fades the whole grid in and then fades
+           * each cell in again inside it.
+           */
+          <LogoWall items={items} desaturate={data.desaturate} />
+        ) : (
+          <Reveal>
+            <LogoBelt items={items} speed={data.speed} reverse={data.reverse} />
+          </Reveal>
+        )}
+      </div>
+    </section>
+  );
+}
 
 export function CollectionGridBlock({
   data,
@@ -380,7 +486,7 @@ export function CollectionGridBlock({
       ) : data.kind === "certifications" ? (
         <Reveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {(rows as CertificationRow[]).map((certification) => (
-            <CertificationCard key={certification.reference} certification={certification} />
+            <CertificationCard key={certification.id} certification={certification} />
           ))}
         </Reveal>
       ) : data.kind === "brands" && data.layout === "strip" ? (

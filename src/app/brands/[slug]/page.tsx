@@ -73,6 +73,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           : `${brand.name} — Products & Procurement`;
 
   return buildMetadata({
+    /*
+     * A brand with nothing behind it is a page, not an index entry.
+     *
+     * Thirty-four of these have no products. The page itself is worth keeping —
+     * it says "there is no published catalogue for Oracle yet, tell us what you
+     * need", which is true, is the honest offer, and is a reasonable place for
+     * a link to land. Asking Google to index thirty-four pages titled with
+     * somebody else's trademark, each admitting in its own body copy that it
+     * has no product behind it, is a different matter: that is thin content at
+     * a scale that drags the quality signal for the pages that are good, and it
+     * is a trademark exposure at the same time.
+     *
+     * The condition is `shape`, which this function already had in hand for the
+     * title. `app/sitemap.ts` drops the same pages from the same test, so the
+     * two cannot disagree, and the day a brand gets its first product both
+     * reverse themselves with nothing to remember.
+     */
+    noIndex: shape.licences + shape.hardware === 0 && "thin",
     title,
     /*
      * A brand summary is a line under a heading — forty characters for Acer.

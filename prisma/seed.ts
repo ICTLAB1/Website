@@ -17,6 +17,7 @@ import { services } from "./seed-data/services";
 import { blogPosts } from "./seed-data/blog";
 import { pageSeeds, navigationSeeds } from "./seed-data/pages";
 import { certifications } from "./seed-data/certifications";
+import { industrySeeds } from "./seed-data/industries";
 import { partnerStatus } from "./seed-data/partner-status";
 import { brandSegments } from "./seed-data/brand-segments";
 import { applyHardwareFile, hardwareFiles } from "./seed-data/hardware";
@@ -363,6 +364,26 @@ async function main() {
     await prisma.blogPost.upsert({
       where: { slug: post.slug },
       create: data,
+      update: data,
+    });
+  }
+
+  console.log("Seeding industries…");
+  for (const industry of industrySeeds) {
+    const data = {
+      name: industry.name,
+      summary: industry.summary,
+      description: industry.description,
+      icon: industry.icon,
+      solutions: industry.solutions,
+      brandSlugs: industry.brandSlugs,
+      serviceSlugs: industry.serviceSlugs,
+      categorySlugs: industry.categorySlugs,
+      displayOrder: industry.displayOrder,
+    };
+    await prisma.industry.upsert({
+      where: { slug: industry.slug },
+      create: { ...data, slug: industry.slug },
       update: data,
     });
   }

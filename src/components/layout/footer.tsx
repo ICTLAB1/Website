@@ -193,10 +193,25 @@ export async function Footer() {
           <p>
             &copy; {year} {config.entityName}. All rights reserved.
           </p>
+          {/*
+            One trademark notice, in the footer, on every page.
+
+            It used to be here AND written into a homepage section, in two
+            different wordings — which is how a reader ends up comparing them
+            and a lawyer ends up asking which one is the company's position. The
+            duplicate is gone; this is the position.
+
+            The second sentence is the one the legal review asked for. Naming a
+            reselling relationship is accurate and worth saying; leaving a
+            reader to infer what kind of relationship it is, next to sixty
+            manufacturers' marks, is what it exists to prevent.
+          */}
           <p className="max-w-2xl text-graphite-300">
             Third-party product names, logos and trademarks are the property of their
             respective owners and are used here only to identify the software and
-            hardware supplied.
+            hardware supplied. Where we describe a partner relationship, that
+            relationship is a reselling or programme relationship and does not make us
+            an agent of that company.
           </p>
         </div>
       </div>

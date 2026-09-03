@@ -73,7 +73,24 @@ export function buildMetadata(input: {
   type?: "website" | "article";
   publishedTime?: Date | string | null;
   modifiedTime?: Date | string | null;
-  noIndex?: boolean;
+  /**
+   * Keep this page out of the index.
+   *
+   * Two different reasons, and they want different directives:
+   *
+   * - `true` — the page is **private or transactional**. Checkout, sign-in, an
+   *   account screen. Nothing on it should be indexed and nothing linked from
+   *   it should be crawled on its account, so it gets `noindex, nofollow`.
+   * - `"thin"` — the page is **public and legitimate but not worth an index
+   *   entry**. A brand page with no products behind it is the case this exists
+   *   for: it is a real page a link may land on, it just should not compete in
+   *   search. It gets `noindex, follow`, because `nofollow` on a page that
+   *   carries the whole site navigation throws away crawl paths for no reason.
+   *
+   * Getting this backwards is quiet rather than loud, which is why it is two
+   * named cases instead of a second boolean nobody would remember to set.
+   */
+  noIndex?: boolean | "thin";
   keywords?: string[];
 }): Metadata {
   // Synchronous on purpose: `buildMetadata` is called at module scope by
@@ -89,10 +106,11 @@ export function buildMetadata(input: {
     description: input.description,
     ...(input.keywords?.length ? { keywords: input.keywords } : {}),
     alternates: { canonical: url },
-    // noIndex covers transactional and account pages, which must never be
-    // indexed even though they are reachable.
+    // See `noIndex` above: `true` is a private page and takes nofollow with it;
+    // "thin" is a public page that simply should not be in the index, and keeps
+    // follow so its outbound links still count.
     robots: input.noIndex
-      ? { index: false, follow: false, nocache: true }
+      ? { index: false, follow: input.noIndex === "thin", nocache: true }
       : {
           index: true,
           follow: true,
