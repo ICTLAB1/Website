@@ -44,7 +44,15 @@ export type FieldDescriptor =
   | (Common & { kind: "select"; required?: boolean; options: SelectOption[] })
   | (Common & { kind: "relation"; required?: boolean; resource: RelationSource })
   | (Common & { kind: "lines"; maxItems?: number })
-  | (Common & { kind: "date"; required?: boolean });
+  | (Common & { kind: "date"; required?: boolean })
+  /**
+   * Raw JSON, for a column with no dedicated form yet — the same fallback
+   * the CMS block editor keeps behind an "Edit as JSON" disclosure on every
+   * block, here as a first-class field kind rather than something bespoke.
+   * Validated only as well-formed JSON; a resource whose column expects a
+   * particular shape is trusted to say so in its own hint text.
+   */
+  | (Common & { kind: "json"; required?: boolean });
 
 /** Which table a `relation` field draws its options from. */
 export type RelationSource = "brand" | "category" | "service" | "product" | "user";
@@ -132,6 +140,23 @@ export function schemaFor(fields: FieldDescriptor[]): z.ZodType<Record<string, u
         shape[field.name] = field.required ? date : date.or(z.literal("")).optional();
         break;
       }
+
+      case "json": {
+        const json = z
+          .string()
+          .trim()
+          .max(50_000)
+          .refine((value) => {
+            try {
+              JSON.parse(value);
+              return true;
+            } catch {
+              return false;
+            }
+          }, "That is not valid JSON.");
+        shape[field.name] = field.required ? json : json.or(z.literal("")).optional();
+        break;
+      }
     }
   }
 
@@ -204,6 +229,15 @@ export function toPrismaData(
       case "date": {
         const text = typeof value === "string" ? value.trim() : "";
         data[field.name] = text === "" ? null : new Date(`${text}T00:00:00.000Z`);
+        break;
+      }
+
+      case "json": {
+        const text = typeof value === "string" ? value.trim() : "";
+        // Already proven parseable by schemaFor's refine; a parse failure here
+        // would mean the two disagreed, which is a bug in this file rather
+        // than something to handle gracefully.
+        data[field.name] = text === "" ? null : JSON.parse(text);
         break;
       }
     }
