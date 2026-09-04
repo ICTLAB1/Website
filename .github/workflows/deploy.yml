@@ -66,5 +66,10 @@ jobs:
              # with, and running as its own owner sidesteps git'"'"'s
              # dubious-ownership check (CVE-2022-24765) entirely.
              sudo -u azureuser git -C /home/azureuser/app pull
-             cd /home/azureuser/app/deploy
-             sudo docker compose -f docker-compose.prod.yml up -d --build'
+             # `cd` is a shell builtin, so it cannot be sudo'"'"'ed on its own —
+             # it would run as the unprivileged deploy user, which cannot even
+             # traverse into azureuser'"'"'s home directory. --project-directory
+             # keeps the whole docker compose invocation, cd included, under
+             # one sudo.
+             sudo docker compose --project-directory /home/azureuser/app/deploy \
+               -f /home/azureuser/app/deploy/docker-compose.prod.yml up -d --build'
