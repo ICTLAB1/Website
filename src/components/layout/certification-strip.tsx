@@ -21,7 +21,7 @@ export async function CertificationStrip() {
     <div className="border-t border-graphite-800">
       <div className="container-page flex flex-wrap items-center gap-x-6 gap-y-3 py-5">
         <p className="text-label font-semibold uppercase tracking-[0.12em] text-graphite-400">
-          Independently certified
+          Certified and registered
         </p>
         <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
           {certifications.map((certification) => (

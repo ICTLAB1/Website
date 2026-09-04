@@ -407,9 +407,9 @@ export const pageSeeds: PageSeed[] = [
           "kind": "certifications",
           "limit": 6,
           "layout": "grid",
-          "eyebrow": "Independently certified",
-          "heading": "Certifications",
-          "description": "Assessed by accredited certification bodies against international standards. Each certificate number below can be checked with the body that issued it."
+          "eyebrow": "Certified and registered",
+          "heading": "Certifications & registrations",
+          "description": "Independently audited against international standards, and registered with the Government of India. Each reference below can be checked with the body that issued it."
         }
       },
       {
