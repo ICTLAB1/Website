@@ -11,6 +11,7 @@ import { getSiteConfig } from "@/lib/site-config";
 import { getBankingDetails } from "@/lib/banking-config";
 import { formatMoney } from "@/lib/money";
 import { notifyOrderFulfilled } from "@/lib/emails/transactional";
+import { notifyOrderWhatsApp } from "@/lib/whatsapp/notify";
 import { logger } from "@/lib/logger";
 
 /**
@@ -143,6 +144,14 @@ async function notifyOrder(
       `<p>${escapeHtml(config.tradingName)}</p>`,
     ].join(""),
     purpose: "transactional",
+  });
+
+  void notifyOrderWhatsApp({
+    reference,
+    billingName: billing.name,
+    billingPhone: billing.phone ?? null,
+    totalMinor,
+    currency: "INR",
   });
 }
 

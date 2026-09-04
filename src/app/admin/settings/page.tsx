@@ -20,6 +20,9 @@ import { GstinLookupForm } from "@/components/admin/gstin-lookup-form";
 import { getGstinLookupView } from "@/lib/gstin-lookup";
 import { AssistantSettingsForm } from "@/components/admin/assistant-settings-form";
 import { getAssistantSettingsView } from "@/lib/assistant/config";
+import { WhatsAppSettingsForm } from "@/components/admin/whatsapp-settings-form";
+import { TestWhatsAppForm } from "@/components/admin/test-whatsapp-form";
+import { getWhatsAppSettingsView } from "@/lib/whatsapp/config";
 import { listAuditLog } from "@/lib/queries/admin";
 import { formatDateTime, humanise } from "@/lib/utils";
 
@@ -40,7 +43,7 @@ export const metadata: Metadata = { title: "Settings" };
  */
 export default async function AdminSettingsPage() {
   const admin = await requireAdmin();
-  const [config, stored, missing, audit, payments, mail, mailReady, crmState, gstinLookup, followUps, assistant] =
+  const [config, stored, missing, audit, payments, mail, mailReady, crmState, gstinLookup, followUps, assistant, whatsApp] =
     await Promise.all([
       getSiteConfig(),
       getStoredSettings(),
@@ -53,6 +56,7 @@ export default async function AdminSettingsPage() {
       getGstinLookupView(),
       getFollowUpSettings(),
       getAssistantSettingsView(),
+      getWhatsAppSettingsView(),
     ]);
   // What the From header will actually say, after the stored-then-environment
   // fallback — not what is typed in the form, which may be blank and inheriting.
@@ -130,6 +134,20 @@ export default async function AdminSettingsPage() {
           {mail.acsEnabled && mail.acsSenderAddress ? (
             <TestAzureAcsEmailForm address={admin.email} from={mail.acsSenderAddress} />
           ) : null}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-4 text-[1.05rem]">WhatsApp notifications</h2>
+        <p className="mb-4 max-w-2xl text-[13px] leading-relaxed text-ink-600">
+          Order and payment confirmations, sent through Meta&rsquo;s WhatsApp Business Platform
+          alongside the email that already goes out for both. Off by default, and additive when on:
+          a customer who gave no phone number, or one this deployment cannot parse with confidence,
+          still gets the email and nothing else changes for them.
+        </p>
+        <div className="max-w-2xl space-y-6">
+          <WhatsAppSettingsForm settings={whatsApp} />
+          {whatsApp.enabled && !whatsApp.brokenConfiguration ? <TestWhatsAppForm /> : null}
         </div>
       </section>
 

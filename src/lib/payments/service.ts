@@ -7,6 +7,7 @@ import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
 import { getPaymentConfig, getCCAvenueConfig, type PaymentGateway } from "@/lib/payments/config";
 import { createCheckoutSession } from "@/lib/payments/stripe";
+import { notifyPaymentWhatsApp } from "@/lib/whatsapp/notify";
 import { appUrl } from "@/lib/env";
 
 /**
@@ -240,7 +241,9 @@ export async function recordCapture(input: {
       amountMinor: true,
       capturedAt: true,
       providerPaymentId: true,
-      order: { select: { id: true, reference: true, status: true, billingName: true, billingEmail: true } },
+      order: {
+        select: { id: true, reference: true, status: true, billingName: true, billingEmail: true, billingPhone: true },
+      },
     },
   });
 
@@ -331,7 +334,13 @@ export async function recordCapture(input: {
     source: input.source,
   });
 
-  await notifyPaid(payment.order.reference, payment.order.billingName, payment.order.billingEmail, payment.amountMinor);
+  await notifyPaid(
+    payment.order.reference,
+    payment.order.billingName,
+    payment.order.billingEmail,
+    payment.order.billingPhone,
+    payment.amountMinor,
+  );
 
   return { ok: true, reference: payment.order.reference, alreadyRecorded: false };
 }
@@ -425,6 +434,7 @@ async function notifyPaid(
   reference: string,
   name: string,
   email: string,
+  phone: string | null,
   amountMinor: number,
 ): Promise<void> {
   const config = await getSiteConfig();
@@ -460,4 +470,6 @@ async function notifyPaid(
       text: [`Order:    ${reference}`, `Customer: ${name} <${email}>`, `Amount:   ${amount}`].join("\n"),
     });
   }
+
+  void notifyPaymentWhatsApp({ reference, billingName: name, billingPhone: phone, amountMinor, currency: "INR" });
 }
