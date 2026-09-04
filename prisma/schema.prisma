@@ -409,6 +409,7 @@ model User {
   savedSettings    SiteSettings[]
   savedPayments    PaymentSettings[]
   savedMail        MailSettings[]
+  savedWhatsApp    WhatsAppSettings[]
   savedGstinLookup GstinLookupSettings[]
   savedAssistant   AssistantSettings[]
   savedCrm         CrmSettings[]            @relation("CrmSettingsEditor")
@@ -2518,6 +2519,46 @@ model MailSettings {
   /// on Azure's managed domain, or an address on a custom domain verified in
   /// the same Email Communication Service resource. Not a secret.
   acsSenderAddress String?
+
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
+/// Sending order and payment confirmations over WhatsApp, alongside email.
+///
+/// Additive, never a replacement: the email that flow already sends is
+/// unaffected by anything here, on or off, configured or not. A WhatsApp
+/// message goes out only when a billing phone number is on the order and
+/// resolves to something that looks like a real number — a customer who gave
+/// no phone, or one this deployment cannot parse with confidence, gets the
+/// email alone, exactly as before this existed.
+model WhatsAppSettings {
+  id String @id @default("singleton")
+
+  /// Off by default, and off with no credentials does nothing — the same rule
+  /// every other gateway in this file follows.
+  enabled Boolean @default(false)
+
+  /// From the WhatsApp API Setup page for the app's WhatsApp product. Not a
+  /// secret — it identifies which of Meta's numbers sends, nothing more.
+  phoneNumberId String?
+
+  /// The WhatsApp Business Account this deployment sends as. Needed to create
+  /// and check message templates through the same API; not needed to send one
+  /// that already exists, but stored beside the rest of the registration
+  /// rather than re-entered each time it is.
+  businessAccountId String?
+
+  /// A System User token from Meta Business Settings, scoped to
+  /// whatsapp_business_messaging on this app. AES-256-GCM, keyed from
+  /// AUTH_SECRET. Never rendered.
+  ///
+  /// The temporary token the API Setup page hands out for testing expires in
+  /// about 24 hours; this field holds whichever one was pasted in, and an
+  /// expired token fails the same way a wrong one does — the send is refused,
+  /// logged, and the order is unaffected.
+  accessToken String?
 
   updatedAt   DateTime @updatedAt
   updatedById String?
