@@ -67,4 +67,44 @@ export const certifications: CertificationSeed[] = [
     expiresAt: "2029-07-19",
     displayOrder: 30,
   },
+  /*
+   * Government recognitions, not third-party audited standards — no periodic
+   * surveillance, no accreditation body of the ISO kind. Held to the same
+   * transcription rule anyway: every value below is copied from the
+   * certificate PDF, nothing rounded or inferred.
+   */
+  {
+    standard: "Udyam Registration",
+    title: "Micro Enterprise (MSME)",
+    reference: "UDYAM-DL-06-0022244",
+    issuer: "Ministry of Micro, Small and Medium Enterprises, Government of India",
+    // The certificate's own footer names this domain as where a registration
+    // is looked up; no deep link to this specific record is printed on it.
+    verifyUrl: "https://udyamregistration.gov.in",
+    scope:
+      "Computer consultancy and computer facilities management, software installation, and other information technology and computer service activities; wholesale of software.",
+    issuedAt: "2021-07-22",
+    // No expiry is printed on a Udyam certificate — see the note on
+    // `expiresAt` in schema.prisma before assuming this is an oversight.
+    expiresAt: null,
+    displayOrder: 40,
+  },
+  {
+    standard: "Startup India",
+    title: "DPIIT-Recognized Startup",
+    reference: "DIPP208811",
+    issuer:
+      "Department for Promotion of Industry and Internal Trade, Ministry of Commerce & Industry, Government of India",
+    // A QR code is printed for verification; no URL is printed as text, and
+    // none is invented here.
+    verifyUrl: null,
+    scope: "IT Services industry, IT Consulting sector, as self-certified by the company.",
+    issuedAt: "2025-06-20",
+    // Ten years from incorporation (14-04-2021), and only while turnover
+    // stays under ₹100 crore in every financial year — a condition this
+    // column cannot express, so it is left out of `scope` rather than
+    // half-stated.
+    expiresAt: "2031-04-13",
+    displayOrder: 50,
+  },
 ];
