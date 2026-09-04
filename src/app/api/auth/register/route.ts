@@ -7,7 +7,7 @@ import { createSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { fieldErrorsOf, registerSchema } from "@/lib/validation";
 import { recordAudit } from "@/lib/audit";
-import { sendVerificationEmail } from "@/lib/auth/email-verification";
+import { sendVerificationEmail, verificationEnforced } from "@/lib/auth/email-verification";
 import { logger } from "@/lib/logger";
 
 export const POST = withErrorHandling("auth.register", async (request: Request) => {
@@ -99,9 +99,8 @@ export const POST = withErrorHandling("auth.register", async (request: Request) 
    * and never allowed to throw. The same reasoning as the enquiry
    * confirmation: store first, notify second.
    */
-  const verification = await sendVerificationEmail(user).catch((error) => {
+  await sendVerificationEmail(user).catch((error) => {
     logger.warn("verification_email_failed", { userId: user.id, error: String(error) });
-    return { delivered: false };
   });
 
   await recordAudit({
@@ -113,7 +112,8 @@ export const POST = withErrorHandling("auth.register", async (request: Request) 
   });
 
   /*
-   * Straight to the code screen when a code is actually in flight.
+   * Straight to the code screen whenever mail is configured at all — not
+   * only when this one send attempt reported success.
    *
    * Registration used to land on the account page with a "check your email"
    * banner, which is the right shape for a link — the person goes to their
@@ -121,11 +121,16 @@ export const POST = withErrorHandling("auth.register", async (request: Request) 
    * back *here* and type it, so the field to type it into should be the thing
    * in front of them rather than something to go and find.
    *
-   * Only when the mail was actually sent. On a deployment with no SMTP that
-   * page would be a form for a code nobody received, so the account page and
-   * its quieter wording remain the honest destination.
+   * `verification.delivered` used to gate this and looked right — until a
+   * customer got the email fine while this one request reported a transient
+   * failure (a slow provider, a single dropped connection) and landed on the
+   * account page with no way back to a code that had, in fact, arrived. The
+   * verify-email page already has a "send a new code" action for exactly a
+   * message that never turns up; `verificationEnforced()` is the same check
+   * that page itself uses to decide whether to exist at all, so a deployment
+   * with no mail configured still gets the honest, quieter destination.
    */
   return jsonOk({
-    redirectTo: verification.delivered ? "/verify-email/required" : "/account",
+    redirectTo: (await verificationEnforced()) ? "/verify-email/required" : "/account",
   });
 });
