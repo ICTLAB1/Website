@@ -54,19 +54,24 @@ jobs:
             ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
           fi
 
-      - name: git pull && docker compose up -d --build
+      - name: DIAGNOSTIC - inspect the VM's actual layout
         run: |
           set -euo pipefail
-          # `set -o pipefail` is a bash extension. The runner's own shell
-          # here is bash (fine), but the remote command runs through
-          # whatever /bin/sh is configured as the deploy account's login
-          # shell on the VM -- dash on Ubuntu, which rejects it outright.
-          # Dropping it costs nothing: the remote script has no pipeline
-          # whose exit code `-e` alone wouldn't already catch.
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
             "$DEPLOY_USER@$DEPLOY_HOST" \
             'set -eu
-             cd /srv/techzoid
-             git pull
-             cd deploy
-             docker compose -f docker-compose.prod.yml up -d --build'
+             echo "--- whoami / groups ---"
+             whoami
+             id
+             echo "--- home directory ---"
+             echo "$HOME"
+             ls -la "$HOME"
+             echo "--- /srv ---"
+             ls -la /srv 2>&1 || echo "(no /srv or not readable)"
+             echo "--- searching for the repo ---"
+             find / -maxdepth 4 -iname "*techzoid*" 2>/dev/null || true
+             echo "--- docker ---"
+             which docker 2>&1 || echo "no docker on PATH"
+             docker ps 2>&1 || echo "docker ps failed (not in docker group?)"
+             echo "--- what is actually listening on 80/443 ---"
+             sudo ss -tlnp 2>&1 || ss -tln 2>&1 || true'
