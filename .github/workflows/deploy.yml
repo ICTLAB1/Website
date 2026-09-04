@@ -57,9 +57,15 @@ jobs:
       - name: git pull && docker compose up -d --build
         run: |
           set -euo pipefail
+          # `set -o pipefail` is a bash extension. The runner's own shell
+          # here is bash (fine), but the remote command runs through
+          # whatever /bin/sh is configured as the deploy account's login
+          # shell on the VM -- dash on Ubuntu, which rejects it outright.
+          # Dropping it costs nothing: the remote script has no pipeline
+          # whose exit code `-e` alone wouldn't already catch.
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
             "$DEPLOY_USER@$DEPLOY_HOST" \
-            'set -euo pipefail
+            'set -eu
              cd /srv/techzoid
              git pull
              cd deploy
