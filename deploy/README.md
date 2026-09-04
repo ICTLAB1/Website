@@ -390,6 +390,50 @@ says so. It never touches a page you have edited yourself: each change is
 matched against the exact text it expects to replace, and anything that has
 moved on is reported and left alone.
 
+### Deploying from GitHub Actions instead of a terminal
+
+`.github/workflows/deploy.yml` runs the exact four commands above over SSH.
+It is manual — `workflow_dispatch`, triggered from the Actions tab — rather
+than on every push to `main`, so a commit lands on the live site only when
+somebody chooses that moment, not the instant it merges. Run it from
+**Actions → Deploy to production → Run workflow**.
+
+It needs three repository secrets (**Settings → Secrets and variables →
+Actions → New repository secret**), none of which this workflow, or anyone
+without write access to those settings, can set on your behalf:
+
+| Secret | Value |
+| --- | --- |
+| `DEPLOY_HOST` | The VM's IP address or hostname. |
+| `DEPLOY_USER` | `deploy` — the non-root user created in section 1. |
+| `DEPLOY_SSH_KEY` | A **dedicated** private key for this workflow, not your own login key — see below. |
+
+Generate the dedicated key on your own machine, never on the runner or in
+this chat, so the private half is only ever typed into two places: the VM
+and this one GitHub secret:
+
+```bash
+ssh-keygen -t ed25519 -C "github-actions-deploy" -f deploy_key -N ""
+```
+
+Append `deploy_key.pub` to the `deploy` user's `~/.ssh/authorized_keys` on
+the VM (the same file section 1 seeded from your own key), then paste the
+*contents of `deploy_key`* — the private half — into the `DEPLOY_SSH_KEY`
+secret. Delete both files locally once they're in place; nothing here needs
+to keep a copy of either.
+
+A fourth, optional secret hardens host verification: run
+`ssh-keyscan -H <host>` once by hand and set its output as
+`DEPLOY_HOST_KEY`. Without it, each run trusts whatever key the host
+presents that run rather than a value you pinned yourself — still checked
+against what it presented, just not against a value fixed in advance.
+
+If you'd rather it deployed automatically on every push to `main`, add
+`push: { branches: [main] }` under `on:` in the workflow file — nothing else
+about it needs to change. That trade-off (every merge goes live unattended,
+with no chance to catch a problem first) is worth deciding deliberately
+rather than defaulting into.
+
 ---
 
 ## 10. Sending pipeline events to your own CRM

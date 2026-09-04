@@ -1,0 +1,66 @@
+name: Deploy to production
+
+# Manual on purpose. This runs the same four commands documented in
+# deploy/README.md section 9 against the live Azure VM, on a site that takes
+# real payments — a push-triggered deploy would mean every commit to `main`
+# goes live unattended, with no chance to notice a problem before it does.
+# Change `on:` to include `push: { branches: [main] }` if that trade-off is
+# ever wanted; nothing else here needs to change.
+on:
+  workflow_dispatch: {}
+
+# Only one deploy at a time, and a second manual run waits for the first
+# rather than racing it — `docker compose up -d --build` on the same host
+# from two directions at once is not something to find out about by accident.
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Five minutes covers a git pull and a Docker rebuild comfortably; a hang
+    # here almost always means the SSH connection itself is stuck, not that
+    # the deploy is slow, and this stops it burning Actions minutes at a
+    # runner that will never come back.
+    timeout-minutes: 15
+    env:
+      # Passed as real environment variables rather than interpolated with
+      # `${{ }}` inside a `run:` string — a secret substituted straight into
+      # a shell script's source is a script-injection risk if its value ever
+      # contained a shell-special character; an env var is just a value, read
+      # by the shell rather than pasted into it.
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+      DEPLOY_HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
+    steps:
+      - name: Configure SSH
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          # DEPLOY_HOST_KEY, if set, is the output of `ssh-keyscan -H <host>`
+          # run once by hand and pinned as a secret — the stronger option,
+          # verifying the server's identity against a value only someone with
+          # repo-secret access chose. Without it, this falls back to trusting
+          # whatever key the host presents on this run (TOFU each time),
+          # which is the weaker but still functional default.
+          if [ -n "$DEPLOY_HOST_KEY" ]; then
+            printf '%s\n' "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          fi
+
+      - name: git pull && docker compose up -d --build
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            'set -euo pipefail
+             cd /srv/techzoid
+             git pull
+             cd deploy
+             docker compose -f docker-compose.prod.yml up -d --build'
