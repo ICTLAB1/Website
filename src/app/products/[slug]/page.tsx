@@ -472,6 +472,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           {product.variants.map((variant) => (
                             <li key={variant.sku} className="flex flex-wrap items-baseline gap-x-3 text-[13px]">
                               <span className="font-mono text-[12px] text-ink-500">{variant.sku}</span>
+                              {/* The publisher's number, or nothing — see variant-selector.tsx. */}
+                              {variant.partNumber ? (
+                                <span className="font-mono text-[12px] text-ink-500">
+                                  {variant.partNumber}
+                                </span>
+                              ) : null}
                               <span className="text-ink-700">{variant.name}</span>
                               <span className="text-ink-500">
                                 {variant.seats > 1 ? `${variant.seats} seats per unit` : "1 seat per unit"}
@@ -571,6 +577,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               salePriceMinor: variant.salePriceMinor,
               gstRatePercent: variant.gstRatePercent,
               audience: variant.audience,
+              partNumber: variant.partNumber,
             }))}
             productName={product.name}
             productSlug={product.slug}

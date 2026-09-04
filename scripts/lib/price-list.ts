@@ -76,12 +76,23 @@ const MAX_AMOUNT_MINOR = 2_147_483_647;
 
 export type Source = "nce" | "est" | "perpetual" | "subscription";
 
-/** The channel workbook's tabs, by the name printed on the tab. */
+/**
+ * The channel workbook's tabs, by the name printed on the tab.
+ *
+ * `SUBSCRIPION` is not a second sheet: it is the same "Subscription" tab
+ * under a misspelling this distributor's own export has carried before and
+ * carried again in the September 2026 workbook — same header shape (Publisher,
+ * ProductId, SkuId, SkuTitle, Segment, TermDuration, BillingPlan, ERP), same
+ * row count class as prior "Subscription" tabs. Listed as its own alias rather
+ * than matched loosely, so a *genuinely* unrecognised tab still stops the
+ * import instead of being guessed at.
+ */
 export const WORKBOOK_SHEETS: Record<string, Source> = {
   NCE: "nce",
   EST: "est",
   PERPETUAL: "perpetual",
   SUBSCRIPTION: "subscription",
+  SUBSCRIPION: "subscription",
 };
 
 export type Row = {
@@ -330,10 +341,14 @@ export function licenceTypeFor(source: Source, termMonths: number | null): Licen
 /**
  * A stable SKU.
  *
- * The publisher's own part number arrived with the channel workbook, and is
- * deliberately not used: every SKU already in the catalogue was keyed by this
- * formula, and changing it would archive the whole Microsoft catalogue and write
- * it again under new keys, breaking the link from every past order line.
+ * The publisher's own product id arrived with the channel workbook, and is
+ * deliberately not used alone as this key: every SKU already in the catalogue
+ * was keyed by this formula, and changing it would archive the whole
+ * Microsoft catalogue and write it again under new keys, breaking the link
+ * from every past order line. It is still captured — see `partNumber` on
+ * `VariantPlan`, which is the manufacturer's own identifier shown to a buyer
+ * comparing against their own copy of the price list, kept separate from this
+ * site's internal key.
  *
  * So the key stays what it was — the product id, the audience, the term and a
  * digest of the exact title — with one addition. An annual commitment billed
@@ -429,6 +444,14 @@ export type VariantPlan = {
   termMonths: number | null;
   billedMonthly: boolean;
   listPriceMinor: number;
+  /**
+   * Microsoft's own Product ID for this row — distinct from `sku`, which is
+   * this site's key (see `skuFor`). Every row in the group `plan()` builds
+   * this variant from shares one `productId`, because it is part of the key
+   * that group was formed from, so `first.productId` is exact rather than a
+   * representative sample.
+   */
+  partNumber: string;
 };
 
 export type ProductPlan = {
@@ -630,6 +653,7 @@ export function plan(rows: Row[]): { products: ProductPlan[]; skipped: Skipped[]
         termMonths: option.termMonths,
         billedMonthly: option.billedMonthly,
         listPriceMinor: storable ? listPriceMinor : 0,
+        partNumber: first.productId,
       });
     }
   }

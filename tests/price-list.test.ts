@@ -335,6 +335,32 @@ describe("planning a catalogue from rows", () => {
     expect(skipped[0]?.why).toBe("no price");
   });
 
+  it("carries the row's own product id as the variant's part number", () => {
+    const { products } = plan([row({ productId: "CFQ7TTC0ABCD" })]);
+    expect(products[0]?.variants[0]?.partNumber).toBe("CFQ7TTC0ABCD");
+  });
+
+  it("keeps each audience's own product id, when commercial and education differ", () => {
+    // Microsoft issues education SKUs under their own product id, not the
+    // commercial one — the two rows land on one product page but must not
+    // borrow each other's number.
+    const { products } = plan([
+      row({ productId: "AAAA1111", priceMajor: 1980 }),
+      row({
+        productId: "BBBB2222",
+        title: "10-Year Audit Log Retention Add On (Education Pricing)",
+        segment: "Education",
+        priceMajor: 990,
+      }),
+    ]);
+    expect(products).toHaveLength(1);
+    const byAudience = Object.fromEntries(
+      products[0]?.variants.map((variant) => [variant.audience, variant.partNumber]) ?? [],
+    );
+    expect(byAudience.COMMERCIAL).toBe("AAAA1111");
+    expect(byAudience.EDUCATION).toBe("BBBB2222");
+  });
+
   it("does not import a segment it cannot place", () => {
     const { products, skipped } = plan([row({ segment: "Government" })]);
     expect(products).toHaveLength(0);
@@ -365,6 +391,7 @@ describe("the price a card quotes", () => {
     termMonths: 12,
     billedMonthly: false,
     listPriceMinor: 100,
+    partNumber: "PID",
     ...over,
   });
 

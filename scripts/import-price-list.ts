@@ -189,7 +189,7 @@ async function main() {
       console.log(`\n  ${product.name}  (/products/${product.slug}, ${product.categorySlug})`);
       for (const variant of product.variants.slice(0, 6)) {
         console.log(
-          `    ${variant.sku}  ${variant.name}  ₹${(variant.listPriceMinor / 100).toLocaleString("en-IN")}`,
+          `    ${variant.sku}  [${variant.partNumber}]  ${variant.name}  ₹${(variant.listPriceMinor / 100).toLocaleString("en-IN")}`,
         );
       }
     }
@@ -277,6 +277,7 @@ async function main() {
         listPriceMinor: variant.listPriceMinor,
         salePriceMinor: null,
         gstRatePercent: 18,
+        partNumber: variant.partNumber,
         deletedAt: null,
       };
       await prisma.productVariant.upsert({
