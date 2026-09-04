@@ -28,6 +28,8 @@ export type SelectableVariant = {
   salePriceMinor: number | null;
   gstRatePercent: number;
   audience: VariantAudience;
+  /** The publisher's own product number. Never invented — null when the source named none. */
+  partNumber: string | null;
 };
 
 /**
@@ -151,6 +153,19 @@ export function VariantSelector({
             <dt className="text-ink-500">SKU</dt>
             <dd className="mt-0.5 font-mono text-label text-ink-700">{selected.sku}</dd>
           </div>
+          {/*
+            The publisher's number, or nothing — same rule as a hardware part
+            number (see the product page). `sku` above is this site's own key
+            and stays whether or not the source names one of its own; this row
+            does not, because a blank "Product number" would read as a missing
+            fact rather than an absent one.
+          */}
+          {selected.partNumber ? (
+            <div>
+              <dt className="text-ink-500">Product number</dt>
+              <dd className="mt-0.5 font-mono text-label text-ink-700">{selected.partNumber}</dd>
+            </div>
+          ) : null}
           <div>
             <dt className="text-ink-500">Licence type</dt>
             <dd className="mt-0.5 text-ink-700">{humanise(selected.licenceType)}</dd>
