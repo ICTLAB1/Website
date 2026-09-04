@@ -142,6 +142,7 @@ async function notifyOrder(
       paymentHtmlBlock,
       `<p>${escapeHtml(config.tradingName)}</p>`,
     ].join(""),
+    purpose: "transactional",
   });
 }
 

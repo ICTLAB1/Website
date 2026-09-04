@@ -124,6 +124,7 @@ export async function sendVerificationEmail(user: {
       "<p>If you did not create an account, you can ignore this message. Nobody can use this code without it.</p>",
       `<p>${escapeHtml(config.tradingName)}</p>`,
     ].join(""),
+    purpose: "transactional",
   });
 
   if (!delivered) {

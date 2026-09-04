@@ -8,6 +8,7 @@ import { getSiteConfig, getSiteIdentity, getStoredSettings } from "@/lib/site-co
 import { SettingsForm } from "@/components/admin/settings-form";
 import { PaymentSettingsForm } from "@/components/admin/payment-settings-form";
 import { TestEmailForm } from "@/components/admin/test-email-form";
+import { TestAzureAcsEmailForm } from "@/components/admin/test-azure-email-form";
 import { getPaymentSettingsView } from "@/lib/payments/config";
 import { getUnconfiguredIdentityKeys } from "@/lib/admin/config-status";
 import { isMailConfigured } from "@/lib/mail";
@@ -126,6 +127,9 @@ export default async function AdminSettingsPage() {
         <div className="max-w-2xl space-y-6">
           <MailSettingsForm settings={mail} />
           <TestEmailForm address={admin.email} from={mailFrom} />
+          {mail.acsEnabled && mail.acsSenderAddress ? (
+            <TestAzureAcsEmailForm address={admin.email} from={mail.acsSenderAddress} />
+          ) : null}
         </div>
       </section>
 

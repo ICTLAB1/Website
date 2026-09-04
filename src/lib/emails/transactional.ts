@@ -22,14 +22,32 @@ import { humanise } from "@/lib/utils";
  * logged inside `sendMail` and shows up in the admin panel's mail test.
  */
 
-async function deliver(to: string, subject: string, content: EmailContent, replyTo?: string) {
+/**
+ * `purpose` defaults to "transactional": every function below but the three
+ * marked otherwise is a status notice to a customer, not a document or a
+ * conversation, which is exactly what that channel is for.
+ *
+ * A transactional message with no explicit `replyTo` gets the sales inbox as
+ * one anyway. The address in the From header no longer belongs to a mailbox
+ * anybody reads — that is the point of it — but three of the messages below
+ * say "reply to this email" in their own copy, and every one of them must
+ * keep meaning that.
+ */
+async function deliver(
+  to: string,
+  subject: string,
+  content: EmailContent,
+  replyTo?: string,
+  purpose: "sales" | "transactional" = "transactional",
+) {
   const config = await getSiteConfig();
   void sendMail({
     to,
     subject,
     text: renderEmailText(content, config),
     html: renderEmailHtml(content, config),
-    replyTo,
+    replyTo: replyTo ?? (purpose === "transactional" ? ((await salesInbox()) ?? undefined) : undefined),
+    purpose,
   });
 }
 
@@ -76,6 +94,7 @@ export async function notifyTicketRaised(ticket: {
     // Replying to the notification reaches the customer, which is what anyone
     // reading it will try to do.
     ticket.customerEmail,
+    "sales",
   );
 }
 
@@ -122,6 +141,7 @@ export async function notifyQuoteDecision(quote: {
         : { label: "Open the quotation", url: `${appUrl()}/admin/quotes/${quote.reference}` },
     },
     quote.customerEmail,
+    "sales",
   );
 }
 
@@ -164,6 +184,7 @@ export async function notifyQuoteMessage(message: {
       },
     },
     message.customerEmail,
+    "sales",
   );
 }
 

@@ -249,6 +249,61 @@ export function MailSettingsForm({ settings }: { settings: MailSettingsView }) {
         </Field>
       </Fieldset>
       </div>
+
+      <Fieldset
+        legend="System mail (Azure Communication Services)"
+        description="A separate, optional channel for verification codes, order and payment confirmations, and status updates — everything above except quotations and the internal copies your team already gets. Switched off, all of it keeps coming from the mailbox configured above, exactly as before."
+      >
+        <Checkbox
+          name="acsEnabled"
+          label="Send system mail through Azure Communication Services"
+          defaultChecked={settings.acsEnabled}
+        />
+
+        <Field
+          label="Connection string"
+          name="acsConnectionString"
+          hint={
+            settings.acsConnectionStringHint
+              ? `A connection string ending ${settings.acsConnectionStringHint.slice(-4)} is saved. Leave blank to keep it.`
+              : "Communication Services resource → Keys. Looks like endpoint=https://<resource>.communication.azure.com/;accesskey=..."
+          }
+        >
+          <Input
+            name="acsConnectionString"
+            type="password"
+            placeholder={settings.acsConnectionStringHint ?? "Paste the connection string"}
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </Field>
+
+        {settings.acsConnectionStringHint ? (
+          <Checkbox name="clearAcsConnectionString" label="Remove the saved connection string" />
+        ) : null}
+
+        <Field
+          label="Sender address"
+          name="acsSenderAddress"
+          hint="From the Email Communication Service domain connected to that resource — an Azure managed domain gives you a working DoNotReply@<guid>.azurecomm.net with nothing to verify."
+        >
+          <Input
+            name="acsSenderAddress"
+            type="email"
+            defaultValue={settings.acsSenderAddress}
+            placeholder="DoNotReply@xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.azurecomm.net"
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </Field>
+
+        {settings.acsBrokenConfiguration ? (
+          <p className="rounded-[--radius-md] border border-amber-300 bg-amber-50 p-3 text-[12px] leading-relaxed text-amber-800">
+            Switched on, but the connection string or the sender address is missing — system mail
+            is still going out from the mailbox configured above until both are set.
+          </p>
+        ) : null}
+      </Fieldset>
     </AdminForm>
   );
 }

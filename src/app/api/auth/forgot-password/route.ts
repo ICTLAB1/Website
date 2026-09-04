@@ -91,6 +91,7 @@ export const POST = withErrorHandling("auth.forgotPassword", async (request: Req
         "<p>If you did not request this, you can ignore this email. Your password will not change.</p>",
         `<p>${escapeHtml(config.tradingName)}</p>`,
       ].join(""),
+      purpose: "transactional",
     });
 
     await recordAudit({
