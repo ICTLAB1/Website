@@ -60,11 +60,11 @@ jobs:
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
             "$DEPLOY_USER@$DEPLOY_HOST" \
             'set -eu
-             # The repo (owned by azureuser) lives at /home/azureuser/app;
-             # the deploy account only has access to it via sudo, which runs
-             # git as root — a UID that does not own the checkout, which git
-             # refuses to touch by default (CVE-2022-24765 "dubious
-             # ownership") unless told this one path is trusted.
-             sudo git -C /home/azureuser/app -c safe.directory=/home/azureuser/app pull
+             # The repo (owned by azureuser) lives at /home/azureuser/app.
+             # Pull as azureuser, not root: azureuser already has GitHub'"'"'s
+             # host key and the credentials this checkout authenticates
+             # with, and running as its own owner sidesteps git'"'"'s
+             # dubious-ownership check (CVE-2022-24765) entirely.
+             sudo -u azureuser git -C /home/azureuser/app pull
              cd /home/azureuser/app/deploy
              sudo docker compose -f docker-compose.prod.yml up -d --build'
