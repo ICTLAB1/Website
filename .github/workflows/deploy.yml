@@ -54,19 +54,22 @@ jobs:
             ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
           fi
 
-      - name: git pull && docker compose up -d --build
+      - name: Deploy
         run: |
           set -euo pipefail
-          # `set -o pipefail` is a bash extension. The runner's own shell
-          # here is bash (fine), but the remote command runs through
-          # whatever /bin/sh is configured as the deploy account's login
-          # shell on the VM -- dash on Ubuntu, which rejects it outright.
-          # Dropping it costs nothing: the remote script has no pipeline
-          # whose exit code `-e` alone wouldn't already catch.
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
             "$DEPLOY_USER@$DEPLOY_HOST" \
             'set -eu
-             cd /srv/techzoid
-             git pull
-             cd deploy
-             docker compose -f docker-compose.prod.yml up -d --build'
+             # The repo (owned by azureuser) lives at /home/azureuser/app.
+             # Pull as azureuser, not root: azureuser already has GitHub'"'"'s
+             # host key and the credentials this checkout authenticates
+             # with, and running as its own owner sidesteps git'"'"'s
+             # dubious-ownership check (CVE-2022-24765) entirely.
+             sudo -u azureuser git -C /home/azureuser/app pull
+             # `cd` is a shell builtin, so it cannot be sudo'"'"'ed on its own —
+             # it would run as the unprivileged deploy user, which cannot even
+             # traverse into azureuser'"'"'s home directory. --project-directory
+             # keeps the whole docker compose invocation, cd included, under
+             # one sudo.
+             sudo docker compose --project-directory /home/azureuser/app/deploy \
+               -f /home/azureuser/app/deploy/docker-compose.prod.yml up -d --build'
