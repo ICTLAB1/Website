@@ -1,6 +1,6 @@
 import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
-import { getMailConfig, type MailConfig } from "@/lib/mail-config";
+import { getMailConfig, type MailConfig, mailIsConfigured, azureAcsConfigured } from "@/lib/mail-config";
 import { resetGraphToken, sendViaGraph } from "@/lib/mail/graph";
 import { resetAzureAcsClient, sendViaAzureAcs } from "@/lib/mail/azure-acs";
 import { logger } from "@/lib/logger";
@@ -65,9 +65,22 @@ function transport(config: MailConfig): Transporter | null {
   return cachedTransport;
 }
 
+/**
+ * Whether *some* channel exists to send a message through — never whether
+ * one particular send attempt succeeded.
+ *
+ * Delegates to `mail-config.ts`'s check for the active provider (which,
+ * unlike the version this replaced, correctly reads a Graph registration
+ * rather than looking for an SMTP host that Graph never sets) and adds Azure
+ * Communication Services, which a "transactional" message can also go
+ * through. A caller deciding whether to show a customer a code-entry screen,
+ * or whether to enforce verification at all, needs exactly this — not the
+ * outcome of a single network call, which fails transiently for reasons that
+ * have nothing to do with whether mail is configured.
+ */
 export async function isMailConfigured(): Promise<boolean> {
-  const config = await getMailConfig();
-  return Boolean(config.host && config.from);
+  const [acs, base] = await Promise.all([azureAcsConfigured(), mailIsConfigured()]);
+  return acs || base;
 }
 
 /**
