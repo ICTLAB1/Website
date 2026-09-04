@@ -5,7 +5,7 @@ import { hit } from "@/lib/auth/rate-limit";
 import { recordAudit } from "@/lib/audit";
 import { clientIp } from "@/lib/auth/request";
 import { getSiteConfig } from "@/lib/site-config";
-import { resetMailTransport, sendMailVerbose } from "@/lib/mail";
+import { resetMailTransport, sendMailVerbose, sendTestAzureAcsMail } from "@/lib/mail";
 import { describeMailFailure } from "@/app/admin/settings/mail-hints";
 import { logger } from "@/lib/logger";
 import type { AdminActionState } from "@/lib/admin/types";
@@ -79,6 +79,67 @@ export async function sendTestEmail(
   }
 
   logger.error("test_email_failed", { kind: result.failure.kind });
+
+  return { status: "error", message: describeMailFailure(result.failure) };
+}
+
+/**
+ * "Is Azure actually working?" — the same question as `sendTestEmail`, asked
+ * of the other channel specifically.
+ *
+ * Uses `sendTestAzureAcsMail` rather than `sendMailVerbose`, which would
+ * silently fall back to the sales mailbox and report success for a message
+ * that never touched Azure at all — exactly the false positive this button
+ * exists to rule out.
+ */
+export async function sendTestAzureAcsEmail(
+  _previous: AdminActionState,
+  _formData: FormData,
+): Promise<AdminActionState> {
+  const admin = await requireAdmin();
+
+  const limit = hit(`testmail:azure:${admin.id}`, 5, 600);
+  if (!limit.allowed) {
+    return {
+      status: "error",
+      message: "Too many test messages. Please wait a few minutes before trying again.",
+    };
+  }
+
+  resetMailTransport();
+
+  const config = await getSiteConfig();
+  const result = await sendTestAzureAcsMail({
+    to: admin.email,
+    subject: `Test message from ${config.tradingName} (Azure)`,
+    text: [
+      `This is a test message sent through Azure Communication Services from the`,
+      `${config.tradingName} admin panel.`,
+      "",
+      "If you are reading it, system mail is working over that channel:",
+      "verification codes, order and payment confirmations, and status updates",
+      "will all reach your customers from the address configured above.",
+    ].join("\n"),
+    purpose: "transactional",
+  });
+
+  await recordAudit({
+    actorId: admin.id,
+    action: "settings.test_email_azure",
+    entityType: "SiteSettings",
+    entityId: "singleton",
+    metadata: { delivered: result.delivered },
+    ip: await clientIp(),
+  });
+
+  if (result.delivered) {
+    return {
+      status: "success",
+      message: `Sent. Check ${admin.email} — including the junk folder, since the first message from a new sender often lands there.`,
+    };
+  }
+
+  logger.error("test_email_azure_failed", { kind: result.failure.kind });
 
   return { status: "error", message: describeMailFailure(result.failure) };
 }

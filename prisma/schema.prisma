@@ -2494,6 +2494,31 @@ model MailSettings {
   /// exactly where they must not go.
   quoteCopyEmail String?
 
+  /// A second, independent channel used only for system mail — verification
+  /// codes, password resets, order and payment confirmations, status and
+  /// ticket updates — everything above except quotations and the internal
+  /// sales-inbox copies, which keep coming from the mailbox configured above.
+  ///
+  /// Azure Communication Services rather than another SMTP/Graph account: it
+  /// is the one gateway here that hands out a working, already-deliverable
+  /// sending address (`DoNotReply@<guid>.azurecomm.net` on Azure's managed
+  /// domain) with no DNS or mailbox to provision — the whole point of routing
+  /// automated mail away from a real inbox in the first place.
+  ///
+  /// Off by default and additive: unset or disabled, every message this
+  /// deployment sends behaves exactly as it did before this existed.
+  acsEnabled Boolean @default(false)
+
+  /// `endpoint=https://<resource>.communication.azure.com/;accesskey=...`, from
+  /// the resource's "Keys" blade. AES-256-GCM, keyed from AUTH_SECRET. Never
+  /// rendered.
+  acsConnectionString String?
+
+  /// The verified sender, e.g. `DoNotReply@xxxxxxxx-xxxx-....azurecomm.net`
+  /// on Azure's managed domain, or an address on a custom domain verified in
+  /// the same Email Communication Service resource. Not a secret.
+  acsSenderAddress String?
+
   updatedAt   DateTime @updatedAt
   updatedById String?
   updatedBy   User?    @relation(fields: [updatedById], references: [id], onDelete: SetNull)

@@ -80,6 +80,7 @@ export async function issueInvite(user: { id: string; name: string; email: strin
     subject: `Set up your ${config.tradingName} account`,
     text: renderEmailText(content, config),
     html: renderEmailHtml(content, config),
+    purpose: "transactional",
   });
 
   return { link, delivered: result.delivered };

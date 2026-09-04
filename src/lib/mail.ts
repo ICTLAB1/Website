@@ -2,6 +2,7 @@ import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
 import { getMailConfig, type MailConfig } from "@/lib/mail-config";
 import { resetGraphToken, sendViaGraph } from "@/lib/mail/graph";
+import { resetAzureAcsClient, sendViaAzureAcs } from "@/lib/mail/azure-acs";
 import { logger } from "@/lib/logger";
 
 /**
@@ -94,6 +95,8 @@ export type MailFailure =
   | { kind: "no_from" }
   /** Microsoft is selected but some part of the registration is missing. */
   | { kind: "graph_incomplete" }
+  /** Azure Communication Services is switched on but not fully configured. */
+  | { kind: "acs_incomplete" }
   /** The server would not accept the connection or the credentials. */
   | { kind: "rejected_connection"; detail: string }
   /** Signed in, but the message itself was refused. */
@@ -101,8 +104,27 @@ export type MailFailure =
 
 export type VerboseMailResult = { delivered: true } | { delivered: false; failure: MailFailure };
 
+/**
+ * Sends through Azure Communication Services when this message asked for it
+ * and ACS is actually configured — `null` otherwise, meaning "use the normal
+ * path", which covers every message sent before ACS existed and every one
+ * sent while it is unset, disabled, or half-configured.
+ */
+async function tryAzureAcs(
+  message: MailMessage,
+  config: MailConfig,
+): Promise<{ ok: true } | { ok: false; detail: string } | null> {
+  if (message.purpose !== "transactional" || !config.acs) return null;
+  return sendViaAzureAcs(config.acs, message);
+}
+
 export async function sendMailVerbose(message: MailMessage): Promise<VerboseMailResult> {
   const config = await getMailConfig();
+
+  const acs = await tryAzureAcs(message, config);
+  if (acs) {
+    return acs.ok ? { delivered: true } : { delivered: false, failure: { kind: "rejected_message", detail: acs.detail } };
+  }
 
   if (config.provider === "MICROSOFT_GRAPH") {
     if (!config.graph) {
@@ -164,6 +186,27 @@ export async function sendMailVerbose(message: MailMessage): Promise<VerboseMail
 }
 
 /**
+ * Tests the Azure Communication Services channel specifically, rather than
+ * whatever `sendMailVerbose` would actually pick.
+ *
+ * `sendMailVerbose` falls back to the sales mailbox when ACS is unset or
+ * broken — the right behaviour for a real message, where getting a
+ * verification code out matters more than which address it came from, but the
+ * wrong one for a button whose entire purpose is "did the Azure setup work?".
+ * Falling back there would report success for a test that sent through the
+ * old path entirely, which is the one lie this page cannot afford to tell.
+ */
+export async function sendTestAzureAcsMail(message: MailMessage): Promise<VerboseMailResult> {
+  const config = await getMailConfig();
+  if (!config.acs) return { delivered: false, failure: { kind: "acs_incomplete" } };
+
+  const result = await sendViaAzureAcs(config.acs, message);
+  return result.ok
+    ? { delivered: true }
+    : { delivered: false, failure: { kind: "rejected_message", detail: result.detail } };
+}
+
+/**
  * Drops the cached transport.
  *
  * The cache is keyed on the settings, so an edit already takes effect on its
@@ -175,9 +218,10 @@ export async function sendMailVerbose(message: MailMessage): Promise<VerboseMail
 export function resetMailTransport(): void {
   cachedTransport = null;
   cachedKey = null;
-  // The Graph access token is cached for the same reason and goes stale for the
-  // same one: credentials just changed.
+  // The Graph access token and the ACS client are cached for the same reason
+  // and go stale for the same one: credentials just changed.
   resetGraphToken();
+  resetAzureAcsClient();
 }
 
 /**
@@ -211,10 +255,31 @@ export type MailMessage = {
   html?: string;
   replyTo?: string;
   attachments?: MailAttachment[];
+  /**
+   * "sales" (the default, and every call site written before this existed):
+   * quotations and the internal notifications sales already reads day to
+   * day — these keep coming from the mailbox configured for them, because a
+   * customer replying to a quotation or a colleague replying to a lead
+   * notification should reach a person.
+   *
+   * "transactional": a one-time code, a receipt, a status update — sent
+   * through Azure Communication Services when it is configured, and through
+   * the same mailbox as "sales" when it is not. Nothing here can regress a
+   * deployment onto ACS by accident: a message must ask for this explicitly.
+   */
+  purpose?: "sales" | "transactional";
 };
 
 export async function sendMail(message: MailMessage): Promise<{ delivered: boolean }> {
   const config = await getMailConfig();
+
+  const acs = await tryAzureAcs(message, config);
+  if (acs) {
+    if (!acs.ok) {
+      logger.error("mail_send_failed", { to: message.to, subject: message.subject, message: acs.detail });
+    }
+    return { delivered: acs.ok };
+  }
 
   if (config.provider === "MICROSOFT_GRAPH") {
     if (!config.graph) {

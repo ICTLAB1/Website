@@ -40,6 +40,8 @@ export type MailConfig = {
   salesNotification: string | null;
   /** Copied on every quotation. Null means nobody is. */
   quoteCopy: string | null;
+  /** Present and complete only when Azure Communication Services is switched on and configured. */
+  acs: { connectionString: string; senderAddress: string } | null;
 };
 
 const load = cache(async () => {
@@ -129,14 +131,36 @@ export const getMailConfig = cache(async (): Promise<MailConfig> => {
     from,
     salesNotification: pick(row?.salesNotificationEmail, smtp.salesNotification()),
     quoteCopy: row?.quoteCopyEmail?.trim() || null,
+    acs: acsConfig(row),
   };
 });
+
+/**
+ * Independent of `provider`: on or off, and, if on, only usable once both the
+ * connection string and the sender address are actually present. Enabled but
+ * incomplete means null, exactly like a half-configured Graph registration —
+ * system mail then falls back to the mailbox above rather than going nowhere.
+ */
+function acsConfig(
+  row: { acsEnabled: boolean; acsConnectionString: string | null; acsSenderAddress: string | null } | null,
+): MailConfig["acs"] {
+  if (!row?.acsEnabled) return null;
+  const connectionString = decryptSecret(row.acsConnectionString);
+  const senderAddress = row.acsSenderAddress?.trim() || null;
+  if (!connectionString || !senderAddress) return null;
+  return { connectionString, senderAddress };
+}
 
 /** True when there is both a server to send through and an address to send as. */
 export async function mailIsConfigured(): Promise<boolean> {
   const config = await getMailConfig();
   if (config.provider === "MICROSOFT_GRAPH") return config.graph !== null;
   return Boolean(config.host && config.from);
+}
+
+/** True when system mail (verification, confirmations, status updates) has its own Azure channel. */
+export async function azureAcsConfigured(): Promise<boolean> {
+  return (await getMailConfig()).acs !== null;
 }
 
 export type MailSettingsView = {
@@ -163,6 +187,13 @@ export type MailSettingsView = {
    */
   usingEnvironment: boolean;
   updatedAt: Date | null;
+
+  acsEnabled: boolean;
+  /** Masked. The connection string itself never leaves the server. */
+  acsConnectionStringHint: string | null;
+  acsSenderAddress: string;
+  /** True when switched on but the connection string or sender is missing. */
+  acsBrokenConfiguration: boolean;
 };
 
 /**
@@ -195,5 +226,13 @@ export async function getMailSettingsView(): Promise<MailSettingsView> {
     quoteCopyEmail: row?.quoteCopyEmail ?? "",
     usingEnvironment: !row?.host && Boolean(smtp.host()),
     updatedAt: row?.updatedAt ?? null,
+
+    acsEnabled: row?.acsEnabled ?? false,
+    acsConnectionStringHint: (() => {
+      const decrypted = decryptSecret(row?.acsConnectionString);
+      return decrypted ? secretHint(decrypted) : null;
+    })(),
+    acsSenderAddress: row?.acsSenderAddress ?? "",
+    acsBrokenConfiguration: Boolean(row?.acsEnabled) && acsConfig(row ?? null) === null,
   };
 }

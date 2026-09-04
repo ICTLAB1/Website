@@ -80,6 +80,20 @@ const schema = z.object({
     (value) => value === null || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value),
     { message: "Enter a single email address." },
   ),
+
+  acsEnabled: z.coerce.boolean().default(false),
+  // `endpoint=https://<resource>.communication.azure.com/;accesskey=...` — the
+  // shape every ACS connection string takes, checked loosely so a pasted
+  // secret with the wrong scheme is refused before it is ever saved.
+  acsConnectionString: blankToNull(500).refine(
+    (value) => value === null || /^endpoint=https:\/\/[^;]+;accesskey=.+$/i.test(value),
+    { message: 'That does not look like an ACS connection string. It should look like endpoint=https://<resource>.communication.azure.com/;accesskey=...' },
+  ),
+  clearAcsConnectionString: z.coerce.boolean().default(false),
+  acsSenderAddress: blankToNull(200).refine(
+    (value) => value === null || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value),
+    { message: "Enter a single email address." },
+  ),
 });
 
 export async function saveMailSettings(
@@ -110,6 +124,10 @@ export async function saveMailSettings(
     fromName: formData.get("fromName") ?? "",
     salesNotificationEmail: formData.get("salesNotificationEmail") ?? "",
     quoteCopyEmail: formData.get("quoteCopyEmail") ?? "",
+    acsEnabled: formData.get("acsEnabled") === "on",
+    acsConnectionString: formData.get("acsConnectionString") ?? "",
+    clearAcsConnectionString: formData.get("clearAcsConnectionString") === "on",
+    acsSenderAddress: formData.get("acsSenderAddress") ?? "",
   });
 
   if (!parsed.success) {
@@ -123,7 +141,7 @@ export async function saveMailSettings(
   const input = parsed.data;
   const existing = await prisma.mailSettings.findUnique({
     where: { id: "singleton" },
-    select: { password: true, graphClientSecret: true },
+    select: { password: true, graphClientSecret: true, acsConnectionString: true },
   });
 
   const password = input.clearPassword
@@ -131,6 +149,32 @@ export async function saveMailSettings(
     : input.password
       ? encryptSecret(input.password)
       : (existing?.password ?? null);
+
+  const acsConnectionString = input.clearAcsConnectionString
+    ? null
+    : input.acsConnectionString
+      ? encryptSecret(input.acsConnectionString)
+      : (existing?.acsConnectionString ?? null);
+
+  /*
+   * Same reasoning as the Microsoft block below: switched on with either
+   * piece missing is worse than switched off, because the panel then says
+   * "system mail goes through Azure" while every one of those messages is
+   * quietly still going out from the sales mailbox instead.
+   */
+  if (input.acsEnabled) {
+    const missing = [
+      !acsConnectionString ? "the connection string" : null,
+      !input.acsSenderAddress ? "the sender address" : null,
+    ].filter((part): part is string => part !== null);
+
+    if (missing.length > 0) {
+      return {
+        status: "error",
+        message: `Azure Communication Services needs ${missing.join(" and ")}. Nothing was saved.`,
+      };
+    }
+  }
 
   const graphClientSecret = input.clearGraphSecret
     ? null
@@ -189,6 +233,9 @@ export async function saveMailSettings(
     fromName: input.fromName,
     salesNotificationEmail: input.salesNotificationEmail,
     quoteCopyEmail: input.quoteCopyEmail,
+    acsEnabled: input.acsEnabled,
+    acsConnectionString,
+    acsSenderAddress: input.acsSenderAddress,
     updatedById: admin.id,
   };
 
@@ -217,17 +264,24 @@ export async function saveMailSettings(
       graphSecretCleared: input.clearGraphSecret,
       port: input.port,
       secure: input.secure,
+      acsEnabled: input.acsEnabled,
+      acsConnectionStringReplaced: Boolean(input.acsConnectionString),
+      acsConnectionStringCleared: input.clearAcsConnectionString,
     },
     ip: await clientIp(),
   });
 
+  const acsNote = input.acsEnabled
+    ? " Verification codes, order and payment confirmations, and status updates now go through Azure — send the Azure test message below to confirm it accepts them."
+    : "";
+
   return {
     status: "success",
     message:
-      input.provider === "MICROSOFT_GRAPH"
+      (input.provider === "MICROSOFT_GRAPH"
         ? "Saved. Mail now goes through Microsoft 365 over HTTPS. Send a test email below to confirm Microsoft accepts it."
         : input.host
           ? "Saved. Send a test email below to confirm the server accepts it."
-          : "Saved. With no server set, messages fall back to whatever is configured on the server itself.",
+          : "Saved. With no server set, messages fall back to whatever is configured on the server itself.") + acsNote,
   };
 }

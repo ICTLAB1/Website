@@ -99,6 +99,10 @@ describe("mail failure hints", () => {
     expect(describeMailFailure({ kind: "graph_incomplete" })).toContain("mailbox to send from");
   });
 
+  it("says Azure Communication Services is not fully configured", () => {
+    expect(describeMailFailure({ kind: "acs_incomplete" })).toContain("Azure Communication Services");
+  });
+
   it("adds nothing to a failure it does not recognise", () => {
     // Silence is correct here. A guess dressed up as advice sends somebody to
     // change a setting that was never the problem.

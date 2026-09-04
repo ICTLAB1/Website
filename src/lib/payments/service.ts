@@ -449,6 +449,7 @@ async function notifyPaid(
       "<p>Your order is confirmed. We are provisioning it now and will send the licence details and your GST invoice shortly.</p>",
       `<p>${escapeHtml(config.tradingName)}</p>`,
     ].join(""),
+    purpose: "transactional",
   });
 
   const internal = await salesInbox();

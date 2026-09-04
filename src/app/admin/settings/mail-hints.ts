@@ -25,6 +25,8 @@ export function describeMailFailure(failure: MailFailure): string {
       return "No mail server is configured. Set SMTP_HOST, SMTP_USER, SMTP_PASSWORD and MAIL_FROM in deploy/.env, then restart the app.";
     case "graph_incomplete":
       return "Microsoft 365 is selected but the registration is incomplete. All four are needed: tenant ID, client ID, client secret and the mailbox to send from.";
+    case "acs_incomplete":
+      return "Azure Communication Services is not fully configured. Both the connection string and the sender address are needed before system mail can go through it.";
     case "no_from":
       return "No sender address is configured. Set MAIL_FROM in deploy/.env, then restart the app.";
     case "rejected_connection":
