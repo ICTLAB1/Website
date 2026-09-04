@@ -54,24 +54,12 @@ jobs:
             ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
           fi
 
-      - name: DIAGNOSTIC - inspect the VM's actual layout
+      - name: Deploy
         run: |
           set -euo pipefail
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
             "$DEPLOY_USER@$DEPLOY_HOST" \
             'set -eu
-             echo "--- whoami / groups ---"
-             whoami
-             id
-             echo "--- home directory ---"
-             echo "$HOME"
-             ls -la "$HOME"
-             echo "--- /srv ---"
-             ls -la /srv 2>&1 || echo "(no /srv or not readable)"
-             echo "--- searching for the repo ---"
-             find / -maxdepth 4 -iname "*techzoid*" 2>/dev/null || true
-             echo "--- docker ---"
-             which docker 2>&1 || echo "no docker on PATH"
-             docker ps 2>&1 || echo "docker ps failed (not in docker group?)"
-             echo "--- what is actually listening on 80/443 ---"
-             sudo ss -tlnp 2>&1 || ss -tln 2>&1 || true'
+             cd /home/azureuser/app/deploy
+             sudo git pull
+             sudo docker compose -f docker-compose.prod.yml up -d --build'
