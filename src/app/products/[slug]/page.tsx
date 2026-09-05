@@ -139,6 +139,21 @@ export default async function ProductDetailPage({ params }: PageProps) {
     .filter((price) => price > 0)
     .sort((a, b) => a - b)[0];
 
+  /*
+   * The one `Availability` this product has, in schema.org's vocabulary.
+   *
+   * There is no per-variant stock state in the catalogue — `availability`
+   * lives on `Product`, not `ProductVariant` — so every nested offer below
+   * states the same value the parent `AggregateOffer` already did rather than
+   * inventing a distinction the data does not draw.
+   */
+  const schemaAvailability =
+    product.availability === "IN_STOCK"
+      ? "https://schema.org/InStock"
+      : product.availability === "DISCONTINUED"
+        ? "https://schema.org/Discontinued"
+        : "https://schema.org/PreOrder";
+
   const parentCategory = product.category.parent;
   const hardware = isHardware(product);
 
@@ -226,13 +241,33 @@ export default async function ProductDetailPage({ params }: PageProps) {
             priceCurrency: defaultVariant?.currency ?? "INR",
             lowPrice: (lowestPrice / 100).toFixed(2),
             offerCount: product.variants.filter((variant) => variant.listPriceMinor > 0).length,
-            availability:
-              product.availability === "IN_STOCK"
-                ? "https://schema.org/InStock"
-                : product.availability === "DISCONTINUED"
-                  ? "https://schema.org/Discontinued"
-                  : "https://schema.org/PreOrder",
+            availability: schemaAvailability,
             seller: { "@type": "Organization", name: config.entityName },
+            /*
+             * Every priced variant, named by its own SKU.
+             *
+             * `AggregateOffer.offers` is the schema.org property for exactly
+             * this — the individual Offers an aggregate summarises — and until
+             * now nothing populated it, so a licence with three terms (say,
+             * monthly, annual and triennial) surfaced as one undifferentiated
+             * price range with no way for a crawler to tell the SKUs apart.
+             * `product.variants` here is already the publicly-visible set
+             * (`publicVariantWhere`, applied in the query this page reads),
+             * so nothing gated behind a quote or an eligibility check reaches
+             * this block.
+             */
+            offers: product.variants
+              .filter((variant) => variant.listPriceMinor > 0)
+              .map((variant) => ({
+                "@type": "Offer",
+                sku: variant.sku,
+                name: variant.name,
+                price: (
+                  effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) / 100
+                ).toFixed(2),
+                priceCurrency: variant.currency,
+                availability: schemaAvailability,
+              })),
           },
         }
       : {}),

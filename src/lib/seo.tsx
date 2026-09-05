@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { appUrl } from "@/lib/env";
 import { getSiteConfig, getSiteIdentity } from "@/lib/site-config";
+import { currentCertifications } from "@/lib/queries/certifications";
 
 /**
  * Metadata helpers.
@@ -176,6 +177,7 @@ const ORGANISATION_LOGO = "/logo.png";
 
 export async function organizationSchema() {
   const config = await getSiteConfig();
+  const certifications = await currentCertifications();
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -209,6 +211,31 @@ export async function organizationSchema() {
      * some, and Google's validator says so.
      */
     ...(config.profileUrls.length > 0 ? { sameAs: config.profileUrls } : {}),
+    /*
+     * `hasCredential`: the certifications currently in force, standard and
+     * title only.
+     *
+     * No `identifier` and no `url` here, on purpose and permanently: the
+     * certificate reference number used to be on this site, in the footer
+     * strip, and the owner asked for it removed — a number is exactly the kind
+     * of specific, checkable claim that should not travel to a page (or a
+     * script tag) unless it is meant to be published. `currentCertifications`
+     * itself no longer fetches it for the same reason, so there is nothing
+     * left here to leak even by mistake. GeM registration has no equivalent
+     * entry: unlike these three ISO certificates, there is no stored
+     * credential number or verification link for it anywhere in this system,
+     * and a `hasCredential` entry with an invented one would be a false claim
+     * in the block search engines trust most.
+     */
+    ...(certifications.length > 0
+      ? {
+          hasCredential: certifications.map((certification) => ({
+            "@type": "EducationalOccupationalCredential",
+            credentialCategory: "certification",
+            name: `${certification.standard} — ${certification.title}`,
+          })),
+        }
+      : {}),
     description:
       "Enterprise software licensing, cloud and IT solutions across Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure manufacturers.",
     ...(config.email.sales || config.phone.sales
