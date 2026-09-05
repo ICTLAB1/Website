@@ -273,6 +273,58 @@ export async function organizationSchema() {
   };
 }
 
+/**
+ * The registered office, as a place search can surface for a "near me" or
+ * city-qualified query — an IT reseller or software licensing partner in a
+ * named city or locality — which `organizationSchema` above cannot do on its
+ * own: `PostalAddress` nested under `Organization.address` identifies *whose*
+ * address it is, but only a `LocalBusiness` (or a subtype of it) is what
+ * Google's local ranking and Maps panel actually look for.
+ *
+ * Gated on `config.hasAddress`, the same condition the contact page itself
+ * uses to decide whether to render an office card at all — this schema never
+ * states more than what a visitor to that page can already read, and emits
+ * nothing on a deployment that has not configured an address.
+ */
+export async function localBusinessSchema() {
+  const config = await getSiteConfig();
+  if (!config.hasAddress) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: config.tradingName,
+    alternateName: config.entityName !== config.tradingName ? config.entityName : undefined,
+    url: config.url,
+    image: absoluteUrl(ORGANISATION_LOGO),
+    logo: absoluteUrl(ORGANISATION_LOGO),
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: [config.address.line1, config.address.line2].filter(Boolean).join(", "),
+      addressLocality: config.address.city,
+      addressRegion: config.address.state,
+      postalCode: config.address.postcode,
+      addressCountry: config.address.country,
+    },
+    ...(config.phone.sales ? { telephone: config.phone.sales } : {}),
+    ...(config.email.sales ? { email: config.email.sales } : {}),
+    // Same reasoning as `organizationSchema`'s `sameAs`: only ever the
+    // profiles an administrator has actually entered, never inferred.
+    ...(config.profileUrls.length > 0 ? { sameAs: config.profileUrls } : {}),
+    ...(config.gstin ? { taxID: config.gstin } : {}),
+    /*
+     * `priceRange` and structured `openingHoursSpecification` are deliberately
+     * absent. Both are real schema.org properties Google's LocalBusiness
+     * validator checks for, and both would have to be invented here — there is
+     * no stored price band (this is a B2B quote-and-licence business, not a
+     * storefront with a menu) and `supportHours` is free text an administrator
+     * writes for humans, not a parsed day/time table. A fabricated value in
+     * either field is worse than an absent one: it is a specific, checkable
+     * claim with nothing behind it.
+     */
+  };
+}
+
 export async function websiteSchema() {
   const config = await getSiteConfig();
   return {
