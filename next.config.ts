@@ -44,9 +44,11 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        // Baseline headers for every response, including static assets that the
-        // proxy matcher deliberately skips. The proxy adds the CSP and HSTS
-        // for document requests.
+        // Baseline headers for every response, including static assets that
+        // src/proxy.ts's matcher deliberately skips. That middleware adds the
+        // per-request-nonce CSP and HSTS for document requests; Caddy
+        // (deploy/Caddyfile) additionally sets HSTS at the edge, since the
+        // redirect from the non-canonical host never reaches the middleware.
         source: "/:path*",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },

@@ -20,9 +20,17 @@
 # without a certificate of its own.
 #
 # Deliberately thin. The application sets its own Content-Security-Policy with
-# a per-request nonce, HSTS, X-Frame-Options and the rest, so adding them here
-# would either duplicate them or, worse, override the nonce-bearing CSP with a
+# a per-request nonce, X-Frame-Options and the rest, so adding them here would
+# either duplicate them or, worse, override the nonce-bearing CSP with a
 # weaker static one.
+#
+# HSTS is the one exception, set here as well as by the app. The app's own
+# `strict-transport-security` header (src/proxy.ts) never reaches a request for
+# SITE_REDIRECT_FROM — that host gets a 301 straight back from the `redir`
+# below and never reaches the Next.js server at all, so the app-set header was
+# only ever present on the canonical host. Same value in both places, so this
+# is a harmless overwrite on the response that does reach the app, and the only
+# thing carrying it on the one that does not.
 
 {
 	email {$TLS_EMAIL}
@@ -34,6 +42,8 @@
 
 {$SITE_ADDRESS} {
 	encode zstd gzip
+
+	header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
 
 	# Everything on one canonical host, so a page is never reachable at two URLs
 	# and the canonical tags stay honest.

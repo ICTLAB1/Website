@@ -12,7 +12,14 @@ export type BlogSeed = {
 export const blogPosts: BlogSeed[] = [
   {
     slug: "csp-vs-enterprise-agreement-which-microsoft-licensing-model",
-    title: "CSP or Enterprise Agreement: choosing a Microsoft licensing model",
+    /*
+     * Kept to 55 characters so the " | TechZoid" the layout appends still
+     * lands under Google's ~70-character title truncation point. The longer
+     * original — "CSP or Enterprise Agreement: choosing a Microsoft
+     * licensing model" — was 76 characters with the suffix and was the one
+     * title on the site a search-engine crawl flagged as too long.
+     */
+    title: "CSP or Enterprise Agreement: which licensing model fits",
     excerpt:
       "The two main routes to Microsoft licensing behave very differently as your seat count moves. Here is how to work out which one suits your organisation.",
     category: "Microsoft Licensing",
