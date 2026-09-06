@@ -175,6 +175,17 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
  */
 const ORGANISATION_LOGO = "/logo.png";
 
+/**
+ * The one-sentence description of what this business does.
+ *
+ * Shared rather than duplicated: `organizationSchema` below and the
+ * `llms.txt` route both need it, and a business description that could read
+ * two different ways depending which file you looked at is worse than the
+ * import.
+ */
+export const COMPANY_DESCRIPTION =
+  "Enterprise software licensing, cloud and IT solutions across Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure manufacturers.";
+
 export async function organizationSchema() {
   const config = await getSiteConfig();
   const certifications = await currentCertifications();
@@ -236,8 +247,7 @@ export async function organizationSchema() {
           })),
         }
       : {}),
-    description:
-      "Enterprise software licensing, cloud and IT solutions across Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure manufacturers.",
+    description: COMPANY_DESCRIPTION,
     ...(config.email.sales || config.phone.sales
       ? {
           contactPoint: [
