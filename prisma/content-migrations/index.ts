@@ -48,6 +48,7 @@ import { termsItActNotice } from "./2026-09-terms-it-act-notice";
 import { govtRegistrationCertificates } from "./2026-09-govt-registration-certificates";
 import { certificationsHeading } from "./2026-09-certifications-heading";
 import { shortenCspEaTitle } from "./2026-09-shorten-csp-ea-title";
+import { pricingArticles } from "./2026-09-pricing-articles";
 import type { ContentMigration } from "./types";
 
 /**
@@ -109,6 +110,7 @@ export const contentMigrations: ContentMigration[] = [
   govtRegistrationCertificates,
   certificationsHeading,
   shortenCspEaTitle,
+  pricingArticles,
 ];
 
 export type { ContentMigration };
