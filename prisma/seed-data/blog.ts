@@ -304,4 +304,118 @@ The practical fix is a renewal calendar with a review reminder set sixty to nine
 
 Without it, renewals happen at last year's count by default — which is a decision, just not one anybody made.`,
   },
+  {
+    slug: "microsoft-365-business-standard-price-in-india",
+    title: "Microsoft 365 Business Standard price in India",
+    excerpt:
+      "Three ways to buy the same plan, and the commitment shape behind the headline number matters more than the number itself.",
+    category: "Microsoft Licensing",
+    tags: ["microsoft 365", "pricing", "licensing", "csp"],
+    readMinutes: 4,
+    daysAgo: 2,
+    body: `Microsoft 365 Business Standard is licensed three different ways, and each one answers a different buying pattern. The wrong one is not more expensive so much as mismatched to how your organisation actually pays for software.
+
+## The three ways to buy it
+
+**Monthly commitment, billed monthly** — ₹1,320 per user per month, excluding GST. No commitment beyond the month you are in: add or remove seats at any billing cycle. The higher per-seat price is the cost of that flexibility.
+
+**Annual commitment, billed monthly** — ₹1,100 per user per month, excluding GST, spread across twelve monthly invoices. You commit to the year, but the cash flow looks the same as the monthly plan above — usually the middle ground worth checking first.
+
+**Annual commitment, billed yearly** — ₹11,800 per user per year, excluding GST. One invoice, once a year, and the lowest per-seat cost of the three: over a year it comes to less than the annual-billed-monthly plan's ₹13,200 total. Worth it only if you are confident the seat count will not need to shrink mid-term, since an annual commitment does not refund unused months.
+
+## What GST adds
+
+All three figures above are before GST. At the standard 18% rate: the monthly plan comes to about ₹1,558 a month, the annual-billed-monthly plan to about ₹1,298 a month, and the annual-billed-yearly plan to about ₹13,924 a year. GST is invoiced separately and is fully creditable for a registered business, so the pre-GST figure is what actually belongs in a budget comparison, not the total.
+
+## Choosing between the three
+
+The commitment shape is the real decision, not the headline number — see [our comparison of CSP against an Enterprise Agreement](/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model) for how that works out past a few hundred seats. Below that, it comes down to how stable your headcount is: a team that added or lost people every quarter this year should stay on the monthly plan even at the higher per-seat rate, because the flexibility is worth more than the saving.
+
+Full plan details, a feature comparison against Business Basic and Business Premium, and current availability are on the [Microsoft 365 Business Standard product page](/products/microsoft-365-business-standard).`,
+  },
+  {
+    slug: "autocad-subscription-price-in-india",
+    title: "AutoCAD subscription price in India",
+    excerpt:
+      "The per-month cost falls sharply the longer you commit. Here is what each term actually works out to, and which one to pick.",
+    category: "Autodesk Licensing",
+    tags: ["autodesk", "autocad", "pricing", "licensing"],
+    readMinutes: 4,
+    daysAgo: 3,
+    body: `AutoCAD is licensed by term length, and the per-month cost falls sharply the longer you commit — which makes the right answer almost entirely about how confident you are in still needing the seat next year.
+
+## The three terms
+
+**Monthly** — ₹19,300 per user per month, excluding GST. No commitment past the current month, and the most expensive per-month figure of the three by a wide margin. The right choice for a short, defined project rather than an ongoing seat.
+
+**Annual (1-year)** — ₹1,46,300 per user per year, excluding GST, which works out to roughly ₹12,192 a month — well under half the pure monthly rate.
+
+**3-year** — ₹4,38,900 per user for three years, excluding GST, or the same roughly ₹12,192 a month averaged out. It is priced level with the annual term rather than at a further discount, so a 3-year commitment buys price certainty against future increases rather than a lower running cost. Worth it if AutoCAD is a fixture in your workflow and you would simply re-buy the annual term three times regardless.
+
+## What GST adds
+
+Adding the standard 18%: the monthly term comes to about ₹22,774 a month, the annual term to about ₹1,72,634 a year, and the 3-year term to about ₹5,17,902 total. GST is invoiced separately and is fully creditable for a registered business.
+
+## The actual decision
+
+Almost nobody genuinely needs AutoCAD for exactly one month, which means the real choice is between the annual and 3-year terms — and it turns on one question: will AutoCAD's price still be what it is today in three years? Autodesk has raised subscription prices in most years since moving off perpetual licensing, so a 3-year term is, in effect, a price lock. Worth it for a seat you are certain you are keeping; an unforced bet against your own uncertainty for one you might not renew.
+
+Full specification, the AutoCAD LT consolidation into this line, and current availability are on the [AutoCAD product page](/products/autocad).`,
+  },
+  {
+    slug: "windows-server-2025-core-licence-price-in-india",
+    title: "Windows Server 2025 core licence price in India",
+    excerpt:
+      "It is licensed by physical core, not by server — so the per-pack price only tells half the story until you know how many packs a real server needs.",
+    category: "Microsoft Licensing",
+    tags: ["windows server", "pricing", "licensing", "core licensing"],
+    readMinutes: 4,
+    daysAgo: 1,
+    body: `Windows Server 2025 is licensed by physical core, not by seat — which means the number that matters is not "per server" but "per core," and the ₹42,500 core-pack price only tells half the story until you know how many packs a real server needs.
+
+## The core-counting rule
+
+Every physical processor needs at least eight core licences, and every server needs at least sixteen — regardless of how many cores it actually has. A quad-core server is billed as if it had sixteen. This is a licensing rule, not a pricing choice on our part, and it is worth confirming your actual core count before budgeting rather than after.
+
+## What it costs
+
+**Standard edition** — sold in 2-core packs at ₹42,500 each, excluding GST. The mandatory 16-core minimum comes to eight packs, ₹3,40,000, whether bought as eight packs or as one 16-core licence — the per-core rate is identical either way. Every 2 additional cores past that minimum add another ₹42,500.
+
+**Datacenter edition** — sold in 2-core packs at ₹2,47,000 each, excluding GST, roughly 5.8 times Standard's per-core rate. The same 16-core minimum works out to ₹19,76,000 for the licence alone. That is not a pricing anomaly: Datacenter's licence covers unlimited virtual machines on the host, where Standard covers only two.
+
+## What GST adds
+
+At 18%: a Standard 2-core pack comes to about ₹50,150, the 16-core Standard minimum to about ₹4,01,200, and a Datacenter 2-core pack to about ₹2,91,460. GST is invoiced separately and is fully creditable for a registered business.
+
+## Where the two editions actually cross over
+
+The licence price alone makes Standard look like the obvious choice, and for a lightly virtualised host it is — the 16-core minimum covers the host operating system plus two virtual machines. The calculation changes once a host runs more guests than that: each additional pair of virtual machines on Standard needs another full stack of core licences, while Datacenter's cost is flat regardless of guest count. [Our Windows Server licensing guide](/windows-server) works through exactly where that crossover sits for a given guest count, and covers Client Access Licences, which are a separate purchase from the core licence.
+
+Current availability and full specification are on the [Windows Server 2025 Standard](/products/windows-server-2025-standard) and [Windows Server 2025 Datacenter](/products/windows-server-2025-datacenter) product pages.`,
+  },
+  {
+    slug: "windows-11-pro-upgrade-licence-price-in-india",
+    title: "Windows 11 Pro upgrade licence price in India",
+    excerpt:
+      "Most searches for this price actually want an upgrade from Home, not a fresh licence — and the two are priced, and licensed, differently.",
+    category: "Microsoft Licensing",
+    tags: ["windows 11", "pricing", "licensing"],
+    readMinutes: 3,
+    daysAgo: 1,
+    body: `The licence most people searching for "Windows 11 Pro price" actually want is not a fresh Windows 11 Pro licence — it is an upgrade from the Home edition already on the machine, and the two are priced, and licensed, differently.
+
+## What this licence is
+
+Most business laptops and desktops already ship with Windows 11 Home. The upgrade licence — ₹15,600 per device, excluding GST — unlocks Pro features on that same installation: joining a domain or Azure AD, BitLocker device encryption, Remote Desktop as a host, and Group Policy management. It is a one-time, perpetual purchase rather than a subscription, and it is licensed per device rather than per user.
+
+## What GST adds
+
+At 18%, the upgrade comes to about ₹18,408 per device. GST is invoiced separately and is fully creditable for a registered business.
+
+## Why "upgrade" matters here
+
+A genuinely new Windows 11 Pro licence — for a machine with no Windows installed at all, or one currently running something else entirely — is a different product with a different price, and is not what this SKU covers. For the overwhelmingly common case, a business device bought with Home pre-installed, the upgrade licence is the correct and complete purchase: it changes the edition in place, keeps the existing activation, and needs no reinstall.
+
+Current availability and full specification are on the [Windows 11 Pro Upgrade product page](/products/windows-11-pro-upgrade).`,
+  },
 ];
