@@ -50,6 +50,7 @@ import { certificationsHeading } from "./2026-09-certifications-heading";
 import { shortenCspEaTitle } from "./2026-09-shorten-csp-ea-title";
 import { pricingArticles } from "./2026-09-pricing-articles";
 import { morePricingArticles } from "./2026-09-more-pricing-articles";
+import { m365BasicPremiumPricing } from "./2026-09-m365-basic-premium-pricing";
 import type { ContentMigration } from "./types";
 
 /**
@@ -113,6 +114,7 @@ export const contentMigrations: ContentMigration[] = [
   shortenCspEaTitle,
   pricingArticles,
   morePricingArticles,
+  m365BasicPremiumPricing,
 ];
 
 export type { ContentMigration };
