@@ -19,11 +19,28 @@ import { postJson } from "@/lib/csrf-client";
  * not the anonymous visitor this widget exists to turn into a lead.
  */
 
+/**
+ * How far down the page the visitor has to scroll before the collapsed
+ * button appears.
+ *
+ * Every hero on this site ends in a bank of calls to action — a button, a
+ * search bar — sitting in the same bottom-right corner this widget is fixed
+ * to. On a real phone, where the visible viewport is shorter than a desktop
+ * one once the browser's own chrome is subtracted, the two landed on top of
+ * each other: a real screenshot showed the button sitting directly over the
+ * homepage's search field. Delaying the button until the visitor has moved
+ * past that first screenful — a pattern most chat widgets use anyway — means
+ * it can never collide with a hero's own controls, on this page or any other,
+ * without this component having to know each page's layout.
+ */
+const REVEAL_AFTER_SCROLL_PX = 480;
+
 type Message = { role: "user" | "assistant"; content: string };
 
 export function ChatWidget({ assistantName }: { assistantName: string }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
@@ -35,6 +52,18 @@ export function ChatWidget({ assistantName }: { assistantName: string }) {
     if (!listRef.current) return;
     listRef.current.scrollTop = listRef.current.scrollHeight;
   }, [messages, pending]);
+
+  // Only the collapsed button waits on this — once open, the panel stays up
+  // regardless of scroll position, including if the visitor scrolls back to
+  // the top with a conversation in progress.
+  useEffect(() => {
+    function onScroll() {
+      setPastHero(window.scrollY > REVEAL_AFTER_SCROLL_PX);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   if (pathname?.startsWith("/admin") || pathname?.startsWith("/account")) return null;
 
@@ -148,8 +177,14 @@ export function ChatWidget({ assistantName }: { assistantName: string }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-700 text-white shadow-[0_10px_28px_-8px_rgb(0_0_0/0.4)] hover:bg-accent-800 active:bg-accent-900"
+          className={`flex h-14 w-14 items-center justify-center rounded-full bg-accent-700 text-white shadow-[0_10px_28px_-8px_rgb(0_0_0/0.4)] transition-opacity duration-300 motion-reduce:transition-none hover:bg-accent-800 active:bg-accent-900 ${
+            pastHero ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
           aria-label={`Chat with ${assistantName}`}
+          // Out of the tab order until it is actually visible — otherwise a
+          // keyboard user lands on an invisible button before reaching the
+          // hero's own controls.
+          tabIndex={pastHero ? 0 : -1}
         >
           <ChatIcon />
         </button>
