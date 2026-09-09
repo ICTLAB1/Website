@@ -6,6 +6,7 @@ import { certificationLogo } from "@/lib/certification-logo";
 import { currentCertifications } from "@/lib/queries/certifications";
 import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
 import { getSiteConfig } from "@/lib/site-config";
+import { glyph } from "@/lib/glyphs";
 
 /**
  * Certifications and partner badges, in one band under the navigation.
@@ -160,7 +161,41 @@ export async function TrustBar() {
                       loading="lazy"
                       decoding="async"
                     />
-                  ) : null}
+                  ) : (
+                    /*
+                      Udyam Registration and Startup India are government
+                      registrations, not certification-body artwork — nobody
+                      supplied a seal for these because there isn't one to
+                      supply. Left with nothing at all, their text sat flush
+                      against the left edge of its own box while every other
+                      item's text started a seal's width in, which is what
+                      actually read as misaligned: four items with a leading
+                      icon and two without, in the same row.
+
+                      A plain line-drawn shield fills the same h-9 w-9 box
+                      the seals use, restoring the row's rhythm, and is
+                      deliberately unlike the photographic ISO seals beside
+                      it — a generic glyph, not artwork standing in for an
+                      official mark neither body issued.
+                    */
+                    <span
+                      aria-hidden="true"
+                      className="flex h-9 w-9 items-center justify-center text-graphite-400 sm:h-10 sm:w-10"
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d={glyph("shield")} />
+                      </svg>
+                    </span>
+                  )}
                   <span className="text-label font-semibold text-graphite-900">
                     {certification.standard}
                   </span>
