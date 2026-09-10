@@ -761,51 +761,48 @@ export async function CompanyInfoBlock({
       <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
 
       {/*
-        The person beside the paperwork, not above it.
+        The person first, then the paperwork.
 
         A buyer weighing up an unfamiliar supplier, and an acquiring bank
         checking a merchant against its account holder, are both looking for the
         same thing: evidence that a named human being stands behind the
         registration numbers. A photograph answers that in a way a row in a list
-        does not.
+        does not, so it opens the panel rather than sitting among the fields.
 
-        Side by side rather than stacked because of what this particular
+        The name and designation go beside the photograph, not under it. They
+        are what the picture is being shown to establish, and a caption set
+        below it reads as a label on an image; set alongside, at the foot of the
+        frame, the two are one statement — this is who runs the company — with
+        the registration details following underneath.
+
+        Large enough to be worth showing, because of what this particular
         photograph is: a full-length shot against the wall the company's
-        wordmark is mounted on. At the size a stacked thumbnail allows, the face
-        is a few dozen pixels and the wordmark is illegible — the picture is
-        present without being readable, which is the worst of both. Given a
-        column of its own it is large enough to be worth showing, and it fills
-        the space the details left empty.
+        wordmark is mounted on. At thumbnail size the face is a few dozen pixels
+        and the wordmark is illegible — present without being readable, which is
+        the worst of both.
 
-        A `figure` with a caption, because the name and designation *are* the
-        caption; and the `alt` says the same thing, since for a reader who
-        cannot see it that is the whole content of the photograph.
+        A `figure` with a `figcaption`, because the name and designation *are*
+        the caption; and the `alt` says the same thing, since for a reader who
+        cannot see the photograph that is the whole content of it.
       */}
-      {/*
-        `sm:items-start` matters: without it the details column stretches to the
-        portrait's height, and a grid with spare vertical space distributes it
-        into the rows — pushing the registration details apart into a column of
-        gaps that reads as a layout accident. Stacked, the default stretch is
-        still what is wanted, so it is qualified to the row layout only.
-      */}
-      <div className={portrait ? "flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-10" : undefined}>
+      <div>
         {portrait ? (
-          <figure className="shrink-0">
+          <figure className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:gap-8">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={portrait.photo!}
               alt={`${portrait.name}, ${portrait.title}`}
-              className="w-44 rounded-[--radius-lg] border border-line object-cover sm:w-52"
+              className="w-44 shrink-0 rounded-[--radius-lg] border border-line object-cover sm:w-52"
               width={640}
               height={962}
               loading="lazy"
               decoding="async"
             />
-            <figcaption className="mt-3">
+            <figcaption className="sm:pb-2">
               <span className="block text-label uppercase tracking-wide text-ink-500">
                 {portrait.title}
               </span>
-              <span className="mt-1 block text-body font-semibold text-graphite-900">
+              <span className="mt-1 block text-[1.35rem] font-semibold text-graphite-900">
                 {portrait.name}
               </span>
             </figcaption>
@@ -819,9 +816,7 @@ export async function CompanyInfoBlock({
           admin dashboard reports what is still missing.
         */}
         {!configured ? null : (
-          <dl
-            className={`grid gap-x-8 gap-y-4 sm:grid-cols-2 ${portrait ? "min-w-0 flex-1" : "max-w-3xl"}`}
-          >
+          <dl className="grid max-w-3xl gap-x-8 gap-y-4 sm:grid-cols-2">
             {rows
               .filter(([, value]) => Boolean(value))
               .map(([label, value]) => (
