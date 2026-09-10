@@ -708,6 +708,9 @@ export async function CompanyInfoBlock({
 }) {
   const config = await getSiteConfig();
 
+  const portrait = data.showDirector && config.director?.photo ? config.director : null;
+  const showDirectorRow = Boolean(data.showDirector && config.director && !portrait);
+
   const identity: Array<[string, string | null | undefined]> = [
     ["Trading name", config.tradingName],
     ["Registered legal name", config.legalName],
@@ -721,10 +724,13 @@ export async function CompanyInfoBlock({
       introduces the company rather than at the foot of every legal page as
       well. Omitted entirely when the designation is unconfigured: see
       `getSiteConfig`, which will not print a name under a guessed title.
+
+      And only as a row when there is no photograph. Where one exists the same
+      name and designation are stated by the portrait above, and repeating them
+      here would print the same fact twice under one heading — the same choice
+      the trust bar makes between a certification's seal and its number in type.
     */
-    ...(data.showDirector && config.director
-      ? [[config.director.title, config.director.name] as [string, string]]
-      : []),
+    ...(showDirectorRow ? [[config.director!.title, config.director!.name] as [string, string]] : []),
     ["Registered address", config.formattedAddress],
     ["GSTIN", config.gstin],
     ["CIN", config.cin],
@@ -755,23 +761,78 @@ export async function CompanyInfoBlock({
       <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
 
       {/*
-        No launch-readiness notice here. A visitor reading the grievance section
-        must not be told the appointment is unconfigured, and must never be shown
-        an environment variable name. An unset value is omitted, silently. The
-        admin dashboard reports what is still missing.
+        The person beside the paperwork, not above it.
+
+        A buyer weighing up an unfamiliar supplier, and an acquiring bank
+        checking a merchant against its account holder, are both looking for the
+        same thing: evidence that a named human being stands behind the
+        registration numbers. A photograph answers that in a way a row in a list
+        does not.
+
+        Side by side rather than stacked because of what this particular
+        photograph is: a full-length shot against the wall the company's
+        wordmark is mounted on. At the size a stacked thumbnail allows, the face
+        is a few dozen pixels and the wordmark is illegible — the picture is
+        present without being readable, which is the worst of both. Given a
+        column of its own it is large enough to be worth showing, and it fills
+        the space the details left empty.
+
+        A `figure` with a caption, because the name and designation *are* the
+        caption; and the `alt` says the same thing, since for a reader who
+        cannot see it that is the whole content of the photograph.
       */}
-      {!configured ? null : (
-      <dl className="grid max-w-3xl gap-x-8 gap-y-4 sm:grid-cols-2">
-        {rows
-          .filter(([, value]) => Boolean(value))
-          .map(([label, value]) => (
-            <div key={label}>
-              <dt className="text-label uppercase tracking-wide text-ink-500">{label}</dt>
-              <dd className="mt-1 break-words text-body text-ink-800">{value}</dd>
-            </div>
-          ))}
-      </dl>
-      )}
+      {/*
+        `sm:items-start` matters: without it the details column stretches to the
+        portrait's height, and a grid with spare vertical space distributes it
+        into the rows — pushing the registration details apart into a column of
+        gaps that reads as a layout accident. Stacked, the default stretch is
+        still what is wanted, so it is qualified to the row layout only.
+      */}
+      <div className={portrait ? "flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-10" : undefined}>
+        {portrait ? (
+          <figure className="shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={portrait.photo!}
+              alt={`${portrait.name}, ${portrait.title}`}
+              className="w-44 rounded-[--radius-lg] border border-line object-cover sm:w-52"
+              width={640}
+              height={962}
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption className="mt-3">
+              <span className="block text-label uppercase tracking-wide text-ink-500">
+                {portrait.title}
+              </span>
+              <span className="mt-1 block text-body font-semibold text-graphite-900">
+                {portrait.name}
+              </span>
+            </figcaption>
+          </figure>
+        ) : null}
+
+        {/*
+          No launch-readiness notice here. A visitor reading the grievance section
+          must not be told the appointment is unconfigured, and must never be shown
+          an environment variable name. An unset value is omitted, silently. The
+          admin dashboard reports what is still missing.
+        */}
+        {!configured ? null : (
+          <dl
+            className={`grid gap-x-8 gap-y-4 sm:grid-cols-2 ${portrait ? "min-w-0 flex-1" : "max-w-3xl"}`}
+          >
+            {rows
+              .filter(([, value]) => Boolean(value))
+              .map(([label, value]) => (
+                <div key={label}>
+                  <dt className="text-label uppercase tracking-wide text-ink-500">{label}</dt>
+                  <dd className="mt-1 break-words text-body text-ink-800">{value}</dd>
+                </div>
+              ))}
+          </dl>
+        )}
+      </div>
 
       {data.footnote ? (
         <p className="mt-8 max-w-3xl text-meta leading-relaxed text-ink-500">{data.footnote}</p>

@@ -4,6 +4,7 @@ import { appUrl, optionalEnv } from "@/lib/env";
 import { prisma } from "@/lib/db";
 import { cached } from "@/lib/queries/cached";
 import { tags } from "@/lib/cache";
+import { safeTeamImage } from "@/lib/team-image";
 
 /**
  * Business identity.
@@ -105,13 +106,22 @@ function stored(value: string | null | undefined): string | null {
   return trimmed ? trimmed : null;
 }
 
-/** A named officer, only when the designation to print them under is known too. */
+/**
+ * A named officer, only when the designation to print them under is known too.
+ *
+ * The photograph is optional where the other two are paired, and is put through
+ * `safeTeamImage` rather than trusted: it reaches an `src` attribute, and a
+ * stored value that walked out of the team directory would be the one image on
+ * the site nobody had checked.
+ */
 function director(
   name: string | null | undefined,
   title: string | null | undefined,
-): { name: string; title: string } | null {
+  photo: string | null | undefined,
+): { name: string; title: string; photo: string | null } | null {
   const both = { name: stored(name), title: stored(title) };
-  return both.name && both.title ? { name: both.name, title: both.title } : null;
+  if (!both.name || !both.title) return null;
+  return { name: both.name, title: both.title, photo: safeTeamImage(stored(photo)) };
 }
 
 /**
@@ -230,6 +240,7 @@ export const getSiteConfig = cache(async () => {
     director: director(
       stored(row?.directorName) ?? optionalEnv("COMPANY_DIRECTOR_NAME"),
       stored(row?.directorTitle) ?? optionalEnv("COMPANY_DIRECTOR_TITLE"),
+      stored(row?.directorPhoto) ?? optionalEnv("COMPANY_DIRECTOR_PHOTO"),
     ),
     address,
     hasAddress,

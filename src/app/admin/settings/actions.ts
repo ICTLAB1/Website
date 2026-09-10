@@ -10,6 +10,7 @@ import { fieldErrorsOf } from "@/lib/validation";
 import { TEMPLATE_PROBLEMS, templateProblem } from "@/lib/document-number";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { invalidate, tags } from "@/lib/cache";
+import { safeTeamImage } from "@/lib/team-image";
 import type { AdminActionState } from "@/lib/admin/types";
 
 /**
@@ -191,6 +192,16 @@ const settingsSchema = z.object({
    */
   directorName: optionalText(120),
   directorTitle: optionalText(80),
+  /*
+   * Checked against the team directory here as well as when read, so an
+   * administrator who mistypes a path is told which field is wrong while they
+   * still have it in front of them. A value that reached the database malformed
+   * would simply show no photograph, silently, which is the worst way to find
+   * out about it.
+   */
+  directorPhoto: optionalText(200).refine((value) => value === null || safeTeamImage(value) !== null, {
+    message: "Use a file served from /team/.",
+  }),
 });
 
 /** The first line that is not a well-formed `https` URL, or null. */

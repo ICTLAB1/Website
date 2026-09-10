@@ -19,10 +19,12 @@ import type { ContentMigration } from "./types";
  *
  * ## Both halves, and where each lives
  *
- * The name and the designation go into the settings row, beside the GSTIN and
- * the grievance officer, because that is where business identity lives and
- * where it stays editable without a deploy. The about page's panel gets the
- * flag that asks for them.
+ * The name, the designation and the portrait the business supplied go into the
+ * settings row, beside the GSTIN and the grievance officer, because that is
+ * where business identity lives and where it stays editable without a deploy.
+ * All three in one write, so a later director cannot be recorded while the
+ * previous one's photograph stays. The about page's panel gets the flag that
+ * asks for them.
  *
  * The flag is set on the about page and nowhere else, on the owner's
  * instruction. The same panel appears on the terms, privacy and refund pages —
@@ -38,38 +40,45 @@ import type { ContentMigration } from "./types";
 const NAME = "Abhinav Jain";
 const TITLE = "Managing Director";
 
+/**
+ * The portrait the business supplied, committed at `public/team/`.
+ *
+ * Written in the same statement as the name so the two cannot part company: a
+ * later director recorded without replacing this would otherwise inherit the
+ * previous one's face.
+ */
+const PHOTO = "/team/abhinav-jain.webp";
+
 /** The about page's identity panel, as `seed-data/pages.ts` places it. */
 const ABOUT_PANEL = { slug: "about", displayOrder: 4 };
 
 export const nameTheManagingDirector: ContentMigration = {
   id: "2026-09-name-the-managing-director",
-  describe: "name the managing director on the about page, for payment-gateway KYC",
+  describe: "name and picture the managing director on the about page, for payment-gateway KYC",
 
   async apply(prisma) {
     const outcomes: string[] = [];
 
     const existing = await prisma.siteSettings.findUnique({
       where: { id: "singleton" },
-      select: { directorName: true, directorTitle: true },
+      select: { directorName: true, directorTitle: true, directorPhoto: true },
     });
 
     const current = existing?.directorName?.trim() ?? "";
+    const record = { directorName: NAME, directorTitle: TITLE, directorPhoto: PHOTO };
 
     if (!existing) {
-      await prisma.siteSettings.create({
-        data: { id: "singleton", directorName: NAME, directorTitle: TITLE },
-      });
+      await prisma.siteSettings.create({ data: { id: "singleton", ...record } });
       outcomes.push("director recorded");
-    } else if (current === NAME) {
-      outcomes.push("director already recorded");
-    } else if (current !== "") {
+    } else if (current !== "" && current !== NAME) {
       outcomes.push(`director is set to "${current}" — left alone`);
+    } else if (current === NAME && existing.directorPhoto?.trim()) {
+      outcomes.push("director already recorded");
     } else {
-      await prisma.siteSettings.update({
-        where: { id: "singleton" },
-        data: { directorName: NAME, directorTitle: TITLE },
-      });
-      outcomes.push("director recorded");
+      // Either nothing recorded, or the name from an earlier run of this
+      // migration with no portrait yet — the photograph is the new half.
+      await prisma.siteSettings.update({ where: { id: "singleton" }, data: record });
+      outcomes.push(current === NAME ? "director portrait recorded" : "director recorded");
     }
 
     const section = await prisma.pageSection.findFirst({
