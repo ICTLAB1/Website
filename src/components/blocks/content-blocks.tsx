@@ -711,6 +711,20 @@ export async function CompanyInfoBlock({
   const identity: Array<[string, string | null | undefined]> = [
     ["Trading name", config.tradingName],
     ["Registered legal name", config.legalName],
+    /*
+      Who runs the company, under the designation they actually hold, directly
+      after the name of the company itself — an acquiring bank reads this to
+      match the merchant against its account holder, and both halves of that
+      check belong together.
+
+      Only where the block asks for it, so the person is named on the page that
+      introduces the company rather than at the foot of every legal page as
+      well. Omitted entirely when the designation is unconfigured: see
+      `getSiteConfig`, which will not print a name under a guessed title.
+    */
+    ...(data.showDirector && config.director
+      ? [[config.director.title, config.director.name] as [string, string]]
+      : []),
     ["Registered address", config.formattedAddress],
     ["GSTIN", config.gstin],
     ["CIN", config.cin],

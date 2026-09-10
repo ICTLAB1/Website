@@ -665,6 +665,7 @@ export const pageSeeds: PageSeed[] = [
         "visible": true,
         "data": {
           "heading": "Company information",
+          "showDirector": true,
           "footnote": "Third-party product names and trademarks referenced across this site are the property of their respective owners and are used descriptively to identify the software supplied. Nothing here implies endorsement by, or affiliation with, those brand owners beyond a commercial reselling relationship."
         }
       },
