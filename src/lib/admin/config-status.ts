@@ -30,5 +30,8 @@ export async function getUnconfiguredIdentityKeys(): Promise<string[]> {
   if (!config.grievance.name || !config.grievance.email) {
     missing.push("COMPANY_GRIEVANCE_OFFICER_NAME / COMPANY_GRIEVANCE_OFFICER_EMAIL");
   }
+  // Both, because the about page prints neither without the other, and an
+  // acquiring bank looking for a named individual finds nothing either way.
+  if (!config.director) missing.push("COMPANY_DIRECTOR_NAME / COMPANY_DIRECTOR_TITLE");
   return missing;
 }
