@@ -58,7 +58,6 @@ type StoredSettings = {
   grievancePhone: string | null;
   directorName: string | null;
   directorTitle: string | null;
-  directorPhoto: string | null;
 } | null;
 
 export function SettingsForm({
@@ -176,9 +175,6 @@ export function SettingsForm({
         {text("directorName", "Name", effective.director?.name ?? null)}
         {text("directorTitle", "Designation", effective.director?.title ?? null, {
           placeholder: "Managing Director",
-        })}
-        {text("directorPhoto", "Photograph", effective.director?.photo ?? null, {
-          placeholder: "/team/name.webp",
         })}
       </Fieldset>
 

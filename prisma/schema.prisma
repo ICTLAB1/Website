@@ -2273,15 +2273,6 @@ model SiteSettings {
   directorName  String?
   directorTitle String?
 
-  /// A photograph of that person, as a path under `/team/`.
-  ///
-  /// Stored beside the name rather than compiled in, so the two can only be
-  /// changed together — a new director recorded here while the old portrait
-  /// stayed in the bundle would put one person's name under another's face.
-  /// Optional where the other two are paired: a director with no photograph is
-  /// simply named in the panel, which is what the page did before there was one.
-  directorPhoto String?
-
   updatedAt   DateTime @updatedAt
   /// The administrator who last saved. Nullable so a row written by a migration
   /// or a restore does not have to invent an author.

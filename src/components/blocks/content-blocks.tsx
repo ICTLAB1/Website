@@ -708,9 +708,6 @@ export async function CompanyInfoBlock({
 }) {
   const config = await getSiteConfig();
 
-  const portrait = data.showDirector && config.director?.photo ? config.director : null;
-  const showDirectorRow = Boolean(data.showDirector && config.director && !portrait);
-
   const identity: Array<[string, string | null | undefined]> = [
     ["Trading name", config.tradingName],
     ["Registered legal name", config.legalName],
@@ -724,13 +721,10 @@ export async function CompanyInfoBlock({
       introduces the company rather than at the foot of every legal page as
       well. Omitted entirely when the designation is unconfigured: see
       `getSiteConfig`, which will not print a name under a guessed title.
-
-      And only as a row when there is no photograph. Where one exists the same
-      name and designation are stated by the portrait above, and repeating them
-      here would print the same fact twice under one heading — the same choice
-      the trust bar makes between a certification's seal and its number in type.
     */
-    ...(showDirectorRow ? [[config.director!.title, config.director!.name] as [string, string]] : []),
+    ...(data.showDirector && config.director
+      ? [[config.director.title, config.director.name] as [string, string]]
+      : []),
     ["Registered address", config.formattedAddress],
     ["GSTIN", config.gstin],
     ["CIN", config.cin],
@@ -761,73 +755,23 @@ export async function CompanyInfoBlock({
       <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
 
       {/*
-        The person first, then the paperwork.
-
-        A buyer weighing up an unfamiliar supplier, and an acquiring bank
-        checking a merchant against its account holder, are both looking for the
-        same thing: evidence that a named human being stands behind the
-        registration numbers. A photograph answers that in a way a row in a list
-        does not, so it opens the panel rather than sitting among the fields.
-
-        The name and designation go beside the photograph, not under it. They
-        are what the picture is being shown to establish, and a caption set
-        below it reads as a label on an image; set alongside, at the foot of the
-        frame, the two are one statement — this is who runs the company — with
-        the registration details following underneath.
-
-        Large enough to be worth showing, because of what this particular
-        photograph is: a full-length shot against the wall the company's
-        wordmark is mounted on. At thumbnail size the face is a few dozen pixels
-        and the wordmark is illegible — present without being readable, which is
-        the worst of both.
-
-        A `figure` with a `figcaption`, because the name and designation *are*
-        the caption; and the `alt` says the same thing, since for a reader who
-        cannot see the photograph that is the whole content of it.
+        No launch-readiness notice here. A visitor reading the grievance section
+        must not be told the appointment is unconfigured, and must never be shown
+        an environment variable name. An unset value is omitted, silently. The
+        admin dashboard reports what is still missing.
       */}
-      <div>
-        {portrait ? (
-          <figure className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:gap-8">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={portrait.photo!}
-              alt={`${portrait.name}, ${portrait.title}`}
-              className="w-44 shrink-0 rounded-[--radius-lg] border border-line object-cover sm:w-52"
-              width={640}
-              height={962}
-              loading="lazy"
-              decoding="async"
-            />
-            <figcaption className="sm:pb-2">
-              <span className="block text-label uppercase tracking-wide text-ink-500">
-                {portrait.title}
-              </span>
-              <span className="mt-1 block text-[1.35rem] font-semibold text-graphite-900">
-                {portrait.name}
-              </span>
-            </figcaption>
-          </figure>
-        ) : null}
-
-        {/*
-          No launch-readiness notice here. A visitor reading the grievance section
-          must not be told the appointment is unconfigured, and must never be shown
-          an environment variable name. An unset value is omitted, silently. The
-          admin dashboard reports what is still missing.
-        */}
-        {!configured ? null : (
-          <dl className="grid max-w-3xl gap-x-8 gap-y-4 sm:grid-cols-2">
-            {rows
-              .filter(([, value]) => Boolean(value))
-              .map(([label, value]) => (
-                <div key={label}>
-                  <dt className="text-label uppercase tracking-wide text-ink-500">{label}</dt>
-                  <dd className="mt-1 break-words text-body text-ink-800">{value}</dd>
-                </div>
-              ))}
-          </dl>
-        )}
-      </div>
+      {!configured ? null : (
+      <dl className="grid max-w-3xl gap-x-8 gap-y-4 sm:grid-cols-2">
+        {rows
+          .filter(([, value]) => Boolean(value))
+          .map(([label, value]) => (
+            <div key={label}>
+              <dt className="text-label uppercase tracking-wide text-ink-500">{label}</dt>
+              <dd className="mt-1 break-words text-body text-ink-800">{value}</dd>
+            </div>
+          ))}
+      </dl>
+      )}
 
       {data.footnote ? (
         <p className="mt-8 max-w-3xl text-meta leading-relaxed text-ink-500">{data.footnote}</p>
