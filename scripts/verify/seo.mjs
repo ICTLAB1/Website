@@ -251,8 +251,10 @@ for (const path of REWRITTEN) {
   if (/TechZoid.*TechZoid/.test(title)) {
     problems.push(`${path}: the trading name appears twice in the title — "${title}"`);
   }
-  if (description.length < 145 || description.length > 165) {
-    problems.push(`${path}: description is ${description.length} characters, outside 145-165`);
+  // 160 rather than 165 at the top, so this does not contradict the site-wide
+  // ceiling below; these pages were rewritten to a tighter floor than the rest.
+  if (description.length < 145 || description.length > 160) {
+    problems.push(`${path}: description is ${description.length} characters, outside 145-160`);
   }
   /*
    * The claims this business cannot make. A partner designation is gated by
@@ -380,21 +382,31 @@ for (const path of paths) {
     longTitles.push(`${path}: ${meta.title.length} characters`);
   }
   /*
-   * Descriptions get the same two-threshold treatment as titles, for the same
-   * reason: one length is a fault and the other is a judgement.
+   * The two ends of the range are not the same kind of problem, so they are
+   * not enforced the same way.
    *
-   * Google shows about 155 characters. Past 180 the sentence is being cut
-   * mid-clause whatever wrote it, which is a fault. Between 160 and 180 it is
-   * merely tight, and under 70 it is leaving the result looking thin — both
-   * worth a list and neither worth failing a build over, because a short
-   * accurate description beats a padded one and padding is what a hard failure
-   * would encourage. These are the constraints: descriptions must not invent
-   * capability to reach a character count.
+   * Google shows about 155 characters. Over 160 the sentence is being cut
+   * mid-clause whatever wrote it, and the fix is always available: cut a
+   * clause. So it fails.
+   *
+   * It used to fail only past 180 and merely warn between 160 and 180, which
+   * is how four CMS pages and four route files came to sit between 162 and 180
+   * characters until an external audit noticed. A warning nobody has to clear
+   * is a warning that accumulates.
+   *
+   * Under 115 stays a warning, and that asymmetry is deliberate rather than an
+   * oversight. A description that is too short can only be fixed by writing
+   * more, and a hard failure there would encourage padding — which is worse
+   * than a short but accurate sentence, because descriptions must not invent
+   * capability to reach a character count. Nothing has to be invented to
+   * shorten one.
    */
   if (!meta.description) problems.push(`${path}: no meta description`);
-  else if (meta.description.length > 180) {
-    problems.push(`${path}: description is ${meta.description.length} characters`);
-  } else if (meta.description.length < 115 || meta.description.length > 160) {
+  else if (meta.description.length > 160) {
+    problems.push(
+      `${path}: description is ${meta.description.length} characters, over the 160 a result shows`,
+    );
+  } else if (meta.description.length < 115) {
     shortDescriptions.push(`${path}: ${meta.description.length} characters`);
   }
   if (!meta.canonical) problems.push(`${path}: no canonical URL`);

@@ -10,7 +10,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Managed IT Services, Cloud & Deployment",
   description:
-    "Microsoft 365 deployment, cloud migration, cybersecurity, email migration, endpoint management, backup and disaster recovery, helpdesk and software asset management.",
+    "Microsoft 365 deployment, cloud migration, cybersecurity, endpoint management, backup and disaster recovery, helpdesk and software asset management.",
   path: "/services",
 });
 

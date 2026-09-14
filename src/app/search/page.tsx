@@ -18,7 +18,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   return buildMetadata({
     title: term ? `Search results for “${term}”` : "Search",
     description:
-      "Search across the software catalogue, brands, managed services, licensing guidance and frequently asked questions.",
+      "Search across the TechZoid software catalogue, brands, managed services, licensing guidance and frequently asked questions.",
     path: "/search",
     // Search result pages are not useful in an index and create unbounded URLs.
     noIndex: true,
