@@ -108,12 +108,34 @@ export async function TrustBar() {
                   which is the whole point of showing the badge rather than
                   writing the designation out.
                 */}
+                {/*
+                  Eager, and that is a layout fix rather than a speed one.
+
+                  These sit directly under the header, so they are above the
+                  fold on every page and were never a candidate for lazy
+                  loading — but the cost was not a late image, it was a moved
+                  page. The badges are the only artwork in this band with no
+                  intrinsic size declared: a publisher's badge is whatever
+                  shape the publisher drew it, the width comes from the file,
+                  and `w-auto` before the file arrives is zero. The row fitted
+                  on one line while they were empty and wrapped the moment
+                  they loaded, which pushed the hero down thirty pixels and
+                  was the entire cumulative layout shift on the homepage —
+                  0.68 against a budget of 0.1.
+
+                  Loading them with the document rather than on approach means
+                  the width is known before first paint, so the row wraps once
+                  and stays wrapped. `fetchPriority` is what stops the browser
+                  queueing two above-the-fold images behind everything else it
+                  found first.
+                */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={brand.badge}
                   alt={`${brand.name} ${brand.label}`}
                   className="h-9 w-auto object-contain sm:h-10"
-                  loading="lazy"
+                  loading="eager"
+                  fetchPriority="high"
                   decoding="async"
                 />
               </li>
