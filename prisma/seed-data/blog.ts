@@ -90,7 +90,7 @@ Neither is technically difficult. Both fail for the same reason: they are small 
   },
   {
     slug: "autodesk-named-user-licensing-what-changed",
-    title: "Autodesk named-user licensing: what changed and what it means for teams",
+    title: "Autodesk named-user licensing: what changed",
     excerpt:
       "The move from network licences to named users changed how design teams should allocate seats. Some of the old habits now cost money.",
     category: "Autodesk Licensing",
@@ -123,7 +123,7 @@ The third group is the one worth acting on first.`,
   },
   {
     slug: "microsoft-365-business-premium-security-you-already-own",
-    title: "Microsoft 365 Business Premium: the security you may already be paying for",
+    title: "Microsoft 365 Business Premium security features",
     excerpt:
       "Most organisations on Business Premium use a fraction of its security capability. That unused portion is often the cheapest security improvement available.",
     category: "Cybersecurity",
@@ -191,7 +191,7 @@ Read the first invoice from any new supplier properly: GSTIN correct, legal name
   },
   {
     slug: "planning-a-cloud-migration-that-does-not-cost-more",
-    title: "Planning a cloud migration that does not end up costing more",
+    title: "Planning a cloud migration without cost overruns",
     excerpt:
       "Lift-and-shift migrations frequently increase cost. The reasons are predictable and mostly avoidable at the planning stage.",
     category: "Cloud",

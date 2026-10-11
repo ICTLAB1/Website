@@ -53,6 +53,7 @@ import { morePricingArticles } from "./2026-09-more-pricing-articles";
 import { m365BasicPremiumPricing } from "./2026-09-m365-basic-premium-pricing";
 import { nameTheManagingDirector } from "./2026-09-name-the-managing-director";
 import { trimLongMetaDescriptions } from "./2026-09-trim-long-meta-descriptions";
+import { seoAuditTailEnds } from "./2026-10-seo-audit-tail-ends";
 import type { ContentMigration } from "./types";
 
 /**
@@ -119,6 +120,7 @@ export const contentMigrations: ContentMigration[] = [
   m365BasicPremiumPricing,
   nameTheManagingDirector,
   trimLongMetaDescriptions,
+  seoAuditTailEnds,
 ];
 
 export type { ContentMigration };
