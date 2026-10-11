@@ -224,7 +224,7 @@ export function MailSettingsForm({ settings }: { settings: MailSettingsView }) {
         <Field
           label="Send a copy of enquiries and orders to"
           name="salesNotificationEmail"
-          hint="Optional. Your team gets a copy of every enquiry and order as it arrives."
+          hint="Optional. Your team gets a copy of every enquiry and order as it arrives. Left blank, copies go to the sales address on your contact page instead — set one here to send them somewhere else."
         >
           <Input
             name="salesNotificationEmail"

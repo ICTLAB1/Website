@@ -4,6 +4,7 @@ import { getMailConfig, type MailConfig, mailIsConfigured, azureAcsConfigured } 
 import { resetGraphToken, sendViaGraph } from "@/lib/mail/graph";
 import { resetAzureAcsClient, sendViaAzureAcs } from "@/lib/mail/azure-acs";
 import { logger } from "@/lib/logger";
+import { getSiteConfig } from "@/lib/site-config";
 
 /**
  * Outbound email.
@@ -349,9 +350,35 @@ export async function sendMail(message: MailMessage): Promise<{ delivered: boole
   }
 }
 
-/** Recipient for internal sales notifications, when configured. */
+/**
+ * Recipient for internal sales notifications.
+ *
+ * Two sources, in order of how deliberate they are.
+ *
+ * The mail settings carry an explicit "send a copy of enquiries and orders to"
+ * address, and when somebody has set one that is the answer — it is the field
+ * whose entire job is this, and an administrator who typed an address there
+ * meant that address.
+ *
+ * When nobody has, this falls back to the sales address the business already
+ * publishes. That is a change from returning null, and the reason is what null
+ * actually did: the contact route and the enquiry service both guard on
+ * `if (internal)`, so an unset field meant every enquiry was acknowledged to
+ * the customer and mentioned to nobody here. Silently — the ticket was stored,
+ * the request succeeded, and the only symptom was leads that never got called
+ * back. Between "tell the address on the contact page" and "tell no one", the
+ * first is plainly closer to what an unconfigured site intends.
+ *
+ * It is a fallback and not a default: setting the field overrides it, and
+ * clearing the published sales address turns it off again. Nothing is invented
+ * — `email.sales` is the address already printed on the contact page, in the
+ * footer and in the Organization structured data, so mail reaching it is mail
+ * reaching a mailbox this business has told the public to use.
+ */
 export async function salesInbox(): Promise<string | null> {
-  return (await getMailConfig()).salesNotification;
+  const configured = (await getMailConfig()).salesNotification;
+  if (configured) return configured;
+  return (await getSiteConfig()).email.sales;
 }
 
 /** Minimal HTML escape for values interpolated into email bodies. */
