@@ -1,0 +1,67 @@
+name: Tag diagnostics
+
+# Read-only. Reports what the live page and the published Tag Manager container
+# actually contain, and changes neither.
+#
+# It exists to settle one question with evidence rather than inference: does the
+# container already fire a Google Ads conversion? If it does, firing a second
+# one from the site's own code counts every lead twice, and an inflated
+# conversion count is the number an advertising budget gets set from. Reading
+# the container answers it in seconds; reasoning about it from the repository
+# cannot answer it at all.
+#
+# Unlike the mail diagnostics, this needs nothing of ours. It makes two ordinary
+# outbound requests — the public page and the container's published payload — so
+# it runs entirely on the Actions runner: no SSH, no deploy key, no production
+# host, no database. There is correspondingly nothing it could disturb.
+#
+# Everything it prints is already public. A container id, a measurement id and a
+# conversion id are served in the page source or fetched by every visitor's
+# browser, and none of them grants access to anything.
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: The public origin to read
+        required: false
+        default: https://techzoidtechnologies.com
+      container:
+        description: The Tag Manager container to read
+        required: false
+        default: GTM-THHL334G
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Nothing is written, so nothing is granted. The checkout below needs read
+    # access to this repository's contents and that is the whole requirement.
+    permissions:
+      contents: read
+    env:
+      SITE: ${{ inputs.site }}
+      CONTAINER: ${{ inputs.container }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read tag diagnostics
+        run: |
+          set -euo pipefail
+          # Validated rather than trusted. Both reach a shell, and on a public
+          # repository a workflow input is controlled by anyone who can
+          # dispatch the workflow.
+          case "${SITE:-}" in
+            https://[a-zA-Z0-9.-]*) ;;
+            *) echo "site must be https:// followed by a plain hostname" >&2; exit 1 ;;
+          esac
+          case "${SITE#https://}" in
+            *[!a-zA-Z0-9.-]*) echo "site hostname has unexpected characters" >&2; exit 1 ;;
+          esac
+          case "${CONTAINER:-}" in
+            GTM-[A-Z0-9]*) ;;
+            *) echo "container must look like GTM-XXXXXXX" >&2; exit 1 ;;
+          esac
+          case "${CONTAINER:-}" in
+            *[!A-Z0-9-]*) echo "container has unexpected characters" >&2; exit 1 ;;
+          esac
+          bash deploy/tag-diagnostics.sh
