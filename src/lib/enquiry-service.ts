@@ -143,6 +143,15 @@ async function notify(
         .filter((line) => line !== null)
         .join("\n"),
     });
+  } else {
+    /*
+     * The enquiry is stored and the customer is acknowledged either way, so
+     * nothing is lost — but with no internal address the sales team is never
+     * told a quote was requested, and nothing anywhere said so. Warned per
+     * enquiry rather than once, because this is precisely the silence that
+     * gets mistaken for "no enquiries came in".
+     */
+    logger.warn("enquiry_no_internal_recipient", { reference });
   }
 
   /*
