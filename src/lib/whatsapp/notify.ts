@@ -28,17 +28,40 @@ async function send(
   components: ReturnType<typeof orderConfirmationComponents>,
   logContext: Record<string, unknown>,
 ): Promise<void> {
-  const config = await getWhatsAppConfig();
-  if (!config) return;
+  /*
+   * The try is what makes the paragraph above true.
+   *
+   * "Swallows its own failure" described the three returns below and the
+   * `result.ok` branch — every way Meta itself can say no. It did not cover
+   * this function throwing, and `getWhatsAppConfig()` is a database read, so a
+   * connection hiccup rejected the promise. Both callers are
+   * `void notifyOrderWhatsApp(...)` with nothing attached, which is correct for
+   * a bonus channel and makes that rejection an unhandled one — on the path
+   * that has just taken a customer's money.
+   *
+   * Nothing above this needs to know: the order is committed and the email has
+   * gone. So the failure is logged and the promise resolves, which is what the
+   * callers were already written to expect.
+   */
+  try {
+    const config = await getWhatsAppConfig();
+    if (!config) return;
 
-  const to = normaliseWhatsAppPhone(billingPhone);
-  if (!to) return;
+    const to = normaliseWhatsAppPhone(billingPhone);
+    if (!to) return;
 
-  const result = await sendTemplateMessage(config, { to, templateName, languageCode, components });
-  if (result.ok) {
-    logger.info("whatsapp_notification_sent", { ...logContext, template: templateName });
-  } else {
-    logger.warn("whatsapp_notification_failed", { ...logContext, template: templateName, detail: result.detail });
+    const result = await sendTemplateMessage(config, { to, templateName, languageCode, components });
+    if (result.ok) {
+      logger.info("whatsapp_notification_sent", { ...logContext, template: templateName });
+    } else {
+      logger.warn("whatsapp_notification_failed", { ...logContext, template: templateName, detail: result.detail });
+    }
+  } catch (error) {
+    logger.error("whatsapp_notification_threw", {
+      ...logContext,
+      template: templateName,
+      message: error instanceof Error ? error.message : String(error),
+    });
   }
 }
 

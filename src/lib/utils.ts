@@ -70,6 +70,36 @@ const ACRONYMS = new Set([
 ]);
 
 /** Turns SCREAMING_SNAKE enum values into readable labels. */
+/**
+ * A date this many whole months later, clamped to the end of the target month.
+ *
+ * `Date.UTC(y, m + n, d)` is the obvious way to do this and it is wrong at
+ * month ends, because it does not clamp — it overflows into the next month.
+ * The 31st of January plus one month came out as the 3rd of March, the 31st of
+ * August plus one as the 1st of October, and the 29th of February 2028 plus
+ * twelve as the 1st of March 2029.
+ *
+ * That matters here because it is how a licence's expiry is calculated, and the
+ * renewal is scheduled for the same instant. Every one of those dates sold a
+ * few more days of software than were paid for and moved the renewal reminder
+ * past the date it was meant to land on. A monthly term fulfilled on the 29th,
+ * 30th or 31st hits it, which is a tenth of the days in a month.
+ *
+ * Day 0 of the following month is the last day of the target month, which is
+ * the one piece of `Date` overflow worth relying on: it needs no table of month
+ * lengths and no leap-year rule.
+ *
+ * The result is midnight UTC, as it was before: an expiry is a date rather than
+ * a moment, and two licences fulfilled an hour apart on the same day should not
+ * expire an hour apart a year later.
+ */
+export function addMonthsUtc(from: Date, months: number): Date {
+  const year = from.getUTCFullYear();
+  const month = from.getUTCMonth() + months;
+  const lastDayOfTargetMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+  return new Date(Date.UTC(year, month, Math.min(from.getUTCDate(), lastDayOfTargetMonth)));
+}
+
 export function humanise(value: string): string {
   return value
     .split("_")

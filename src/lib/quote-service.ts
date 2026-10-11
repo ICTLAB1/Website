@@ -504,7 +504,33 @@ export async function decideOnQuote(
     };
   }
 
-  await prisma.quote.update({ where: { id: quote.id }, data: { status: decision } });
+  /*
+   * Compare-and-set, for the same reason `createOrderFromQuote` leans on a
+   * unique index rather than on the check it performs first: the status test
+   * above is a read, and two responses arriving together both pass it.
+   *
+   * The duplicate-order case is already impossible — `Order.quoteId` is
+   * unique, so the second acceptance cannot raise a second order. What this
+   * closes is the interleaving of two *different* answers. An accept and a
+   * decline landing together both found SENT, and whichever wrote second
+   * decided the quotation's final state: a quotation recorded as declined with
+   * an order raised against it, or the reverse. Narrow, but the records then
+   * disagree with each other permanently, and no later step notices.
+   *
+   * It also makes the losing acceptance honest. It used to continue, fail at
+   * the unique index, and tell the customer their order could not be raised —
+   * after their quotation had been accepted. Now it says the quotation has
+   * already been answered, which is what happened.
+   */
+  const decided = await prisma.quote.updateMany({
+    where: { id: quote.id, status: "SENT" },
+    data: { status: decision },
+  });
+
+  if (decided.count === 0) {
+    logger.info("quote_decision_already_recorded", { reference, decision });
+    return { ok: false, reason: "That quotation has already been responded to." };
+  }
 
   /*
    * The notification is sent by the caller, not here.

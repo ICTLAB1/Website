@@ -10,6 +10,7 @@ import { escapeHtml, notifyInternal, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
 import { getBankingDetails } from "@/lib/banking-config";
 import { formatMoney } from "@/lib/money";
+import { addMonthsUtc } from "@/lib/utils";
 import { notifyOrderFulfilled } from "@/lib/emails/transactional";
 import { notifyOrderWhatsApp } from "@/lib/whatsapp/notify";
 import { logger } from "@/lib/logger";
@@ -420,61 +421,97 @@ export async function fulfilOrder(reference: string, actorId: string): Promise<O
   const startsAt = new Date();
   const issued: Array<{ reference: string; productName: string; seats: number; expiresAt: Date | null }> = [];
 
-  await prisma.$transaction(async (tx) => {
-    for (const item of order.items) {
-      const termMonths = item.variant?.termMonths ?? null;
-      const expiresAt = termMonths
-        ? new Date(
-            Date.UTC(
-              startsAt.getUTCFullYear(),
-              startsAt.getUTCMonth() + termMonths,
-              startsAt.getUTCDate(),
-            ),
-          )
-        : null;
+  /*
+   * Thrown to abandon the transaction when the order turns out to be somebody
+   * else's to fulfil. A sentinel rather than a flag because the only way out of
+   * an interactive transaction without committing is to throw.
+   */
+  class AlreadyFulfilled extends Error {}
 
-      const seats = item.quantity * (item.variant?.seats ?? 1);
-
-      const licenceReference = publicReference("LIC");
-      const licence = await tx.licence.create({
-        data: {
-          reference: licenceReference,
-          status: "ACTIVE",
-          userId: order.userId,
-          companyId: order.companyId,
-          orderId: order.id,
-          productId: item.productId,
-          variantId: item.variantId,
-          productName: item.productName,
-          sku: item.sku,
-          seats,
-          startsAt,
-          expiresAt,
-        },
-        select: { id: true },
+  try {
+    await prisma.$transaction(async (tx) => {
+      /*
+       * Claim it first, and claim it atomically.
+       *
+       * The status check above this function's transaction is a read, so two
+       * requests arriving together both passed it and both went on to issue a
+       * full set of licences: one order, two licences per line, two renewal
+       * rows, and two emails telling the customer their software was ready.
+       * An administrator double-clicking Fulfil is enough to do it, and that
+       * was reproducible on the first try.
+       *
+       * `updateMany` with the status in the filter makes this a compare-and-set
+       * in the database, exactly as `recordCapture` does for a payment that
+       * arrives twice. In READ COMMITTED the second transaction blocks on the
+       * row lock, re-checks the predicate against the committed row, matches
+       * nothing, and backs out having issued no licence at all.
+       *
+       * It is first in the transaction rather than last so that nothing is
+       * created before the right to create it is established.
+       */
+      const claimed = await tx.order.updateMany({
+        where: { id: order.id, status: { notIn: ["FULFILLED", "CANCELLED", "REFUNDED"] } },
+        data: { status: "FULFILLED", fulfilledAt: new Date() },
       });
 
-      issued.push({ reference: licenceReference, productName: item.productName, seats, expiresAt });
+      if (claimed.count === 0) throw new AlreadyFulfilled();
 
-      // Perpetual licences never expire, so they get no renewal row.
-      if (expiresAt) {
-        await tx.renewal.create({
+      for (const item of order.items) {
+        const termMonths = item.variant?.termMonths ?? null;
+        // Clamped at month ends rather than left to overflow — see the note on
+        // `addMonthsUtc`. This was the 31st of January plus one month landing
+        // on the 3rd of March.
+        const expiresAt = termMonths ? addMonthsUtc(startsAt, termMonths) : null;
+
+        const seats = item.quantity * (item.variant?.seats ?? 1);
+
+        const licenceReference = publicReference("LIC");
+        const licence = await tx.licence.create({
           data: {
-            reference: publicReference("REN"),
-            licenceId: licence.id,
-            status: "UPCOMING",
-            dueAt: expiresAt,
+            reference: licenceReference,
+            status: "ACTIVE",
+            userId: order.userId,
+            companyId: order.companyId,
+            orderId: order.id,
+            productId: item.productId,
+            variantId: item.variantId,
+            productName: item.productName,
+            sku: item.sku,
             seats,
+            startsAt,
+            expiresAt,
           },
+          select: { id: true },
         });
-      }
-    }
 
-    await tx.order.update({
-      where: { id: order.id },
-      data: { status: "FULFILLED", fulfilledAt: new Date() },
+        issued.push({ reference: licenceReference, productName: item.productName, seats, expiresAt });
+
+        // Perpetual licences never expire, so they get no renewal row.
+        if (expiresAt) {
+          await tx.renewal.create({
+            data: {
+              reference: publicReference("REN"),
+              licenceId: licence.id,
+              status: "UPCOMING",
+              dueAt: expiresAt,
+              seats,
+            },
+          });
+        }
+      }
     });
-  });
+  } catch (error) {
+    if (error instanceof AlreadyFulfilled) {
+      /*
+       * Someone else got there first — the usual cause being the same person
+       * clicking twice. Nothing was written, so this is the same answer the
+       * read above would have given a moment later, not a failure.
+       */
+      logger.info("order_fulfil_already_claimed", { reference, actorId });
+      return { ok: false, reason: "That order is already fulfilled." };
+    }
+    throw error;
+  }
 
   /*
    * The message the customer has actually been waiting for.
@@ -487,12 +524,26 @@ export async function fulfilOrder(reference: string, actorId: string): Promise<O
    * Sent after the transaction commits, never inside it. A mail server that is
    * slow or unreachable must not hold a database transaction open, and the
    * licences exist whether or not the email leaves.
+   *
+   * That last clause was only half true until the catch below existed. The
+   * licences did survive an unreachable mail server, but anything *thrown* in
+   * here — the cached config read is a database call — rejected `fulfilOrder`
+   * after the transaction had committed, so the administrator was told
+   * fulfilment had failed on an order that was fulfilled. The obvious response
+   * to that is to press Fulfil again, which before the claim above issued a
+   * second set of licences. It is harmless now, but reporting a success as a
+   * failure is still wrong, and it is how somebody reached the race.
    */
   await notifyOrderFulfilled({
     reference,
     billingName: order.billingName,
     billingEmail: order.billingEmail,
     licences: issued,
+  }).catch((error: unknown) => {
+    logger.error("order_fulfilled_notification_failed", {
+      reference,
+      message: error instanceof Error ? error.message : String(error),
+    });
   });
 
   logger.info("order_fulfilled", { reference, lineCount: order.items.length, actorId });
