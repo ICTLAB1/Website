@@ -108,12 +108,37 @@ export const enquirySchema = z.object({
   website: z.string().max(0).optional(),
 });
 
+/**
+ * What the contact form is about, in one place.
+ *
+ * Written down here because three screens had their own copy of it: this
+ * schema, the admin queue's filter, and now the conversion the form reports.
+ * A fifth topic added to one copy and not the others is a message that
+ * validates and then cannot be filtered, or a lead that stops being counted.
+ */
+export const CONTACT_TOPICS = ["SALES", "ENTERPRISE", "SUPPORT", "GENERAL"] as const;
+export type ContactTopic = (typeof CONTACT_TOPICS)[number];
+
+/**
+ * The two topics that are somebody asking to buy something.
+ *
+ * The other two are a support request and a question, and neither is a
+ * conversion: counting them would teach a bidding strategy that a visitor with
+ * a broken licence is the same outcome as a visitor asking for a quote, and it
+ * would bid for more of both.
+ */
+export const LEAD_TOPICS: readonly ContactTopic[] = ["SALES", "ENTERPRISE"];
+
+export function topicIsLead(topic: string): boolean {
+  return (LEAD_TOPICS as readonly string[]).includes(topic);
+}
+
 export const contactSchema = z.object({
   name: trimmed(120).min(2, "Enter your full name."),
   email: emailSchema,
   phone: phoneSchema.optional().or(z.literal("")),
   companyName: trimmed(160).optional().or(z.literal("")),
-  topic: z.enum(["SALES", "ENTERPRISE", "SUPPORT", "GENERAL"]).default("GENERAL"),
+  topic: z.enum(CONTACT_TOPICS).default("GENERAL"),
   message: trimmed(4000).min(10, "Tell us a little more (at least 10 characters)."),
   website: z.string().max(0).optional(),
 });

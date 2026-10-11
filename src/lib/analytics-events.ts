@@ -63,10 +63,26 @@ declare global {
  *   trigger is configured against
  * @param once what makes this occurrence distinct, such as the reference the
  *   server issued. Two calls with the same pair push once.
+ * @param details extra keys pushed alongside the event, for a container or a
+ *   report that wants to tell these occurrences apart.
+ *
+ * ## Why `details` exists
+ *
+ * Four forms on this site produce the same thing — somebody asking to be
+ * quoted — and they belong to one conversion action, because a conversion
+ * action is what a bidding strategy optimises towards and splitting one
+ * intention across several of them starves each. But "which form" is a real
+ * question for a report, and the answer is lost if every push looks identical.
+ *
+ * So the event name stays the unit of counting and this carries the
+ * distinction. A container can read it into a parameter without a code change,
+ * and if one of these forms should later become a conversion action of its own,
+ * that too is a container change rather than a deploy.
  */
 export function pushConversion(
   event: (typeof CONVERSION_EVENTS)[keyof typeof CONVERSION_EVENTS],
   once: string,
+  details?: Readonly<Record<string, string>>,
 ): void {
   // Called from event handlers, so this should never be false. It is checked
   // anyway: a push that throws during a server render would take the page with
@@ -83,5 +99,7 @@ export function pushConversion(
    * array nobody reads, which is the correct amount of nothing to happen.
    */
   window.dataLayer = window.dataLayer ?? [];
-  window.dataLayer.push({ event });
+  // `event` last, and deliberately: a container trigger reads it, and a detail
+  // key colliding with it would silently fire the wrong tag — or none.
+  window.dataLayer.push({ ...details, event });
 }

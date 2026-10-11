@@ -13,6 +13,7 @@ import { isAdmin, requireStaff } from "@/lib/auth/guards";
 import { prisma } from "@/lib/db";
 import { isMailConfigured, salesInbox } from "@/lib/mail";
 import { cn, formatDateTime, humanise } from "@/lib/utils";
+import { CONTACT_TOPICS, LEAD_TOPICS } from "@/lib/validation";
 import { DeletedNotice } from "@/components/admin/deleted-notice";
 
 export const metadata: Metadata = { title: "Support" };
@@ -32,10 +33,10 @@ const PRIORITIES = ["LOW", "NORMAL", "HIGH", "URGENT"];
  * is not configured. What was wrong is that this page never let anyone look at
  * one kind without the other.
  */
-const CATEGORIES = ["SALES", "ENTERPRISE", "SUPPORT", "GENERAL"];
+const CATEGORIES: readonly string[] = CONTACT_TOPICS;
 
 /** The two that are a lead rather than a support request. */
-const LEAD_CATEGORIES = ["SALES", "ENTERPRISE"];
+const LEAD_CATEGORIES: readonly string[] = LEAD_TOPICS;
 
 type PageProps = { searchParams: Promise<{ status?: string; category?: string; deleted?: string }> };
 
@@ -87,7 +88,7 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
    * have not been called back". Conflating them is how a lead waits a week.
    */
   const openLeads = await prisma.supportTicket.count({
-    where: { status: { notIn: ["RESOLVED", "CLOSED"] }, category: { in: LEAD_CATEGORIES } },
+    where: { status: { notIn: ["RESOLVED", "CLOSED"] }, category: { in: [...LEAD_CATEGORIES] } },
   });
 
   return (

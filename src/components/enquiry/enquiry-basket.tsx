@@ -110,7 +110,9 @@ export function EnquiryBasket({
      * and counting there would let a guessed URL report a sale. The reference
      * doubles as the key that stops one enquiry being counted twice.
      */
-    pushConversion(CONVERSION_EVENTS.quoteFormSubmit, result.data.reference);
+    pushConversion(CONVERSION_EVENTS.quoteFormSubmit, result.data.reference, {
+      form: "enquiry_basket",
+    });
 
     clear();
     router.push(`/enquiry/submitted?ref=${encodeURIComponent(result.data.reference)}`);
