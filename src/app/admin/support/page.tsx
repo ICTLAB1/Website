@@ -132,10 +132,15 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
         A working SMTP server with no address to notify is not a broken
         transport — every send succeeds, because none is attempted. The guard
         in the contact route and the enquiry service is `if (internal)`, so an
-        unset notification address means the staff copy is skipped silently
-        while the customer's own acknowledgement still goes out. From the
-        outside that is indistinguishable from working email, which is why it
-        needs saying on the page somebody opens when they think mail is broken.
+        address to notify means the staff copy is skipped silently while the
+        customer's own acknowledgement still goes out. From the outside that is
+        indistinguishable from working email, which is why it needs saying on
+        the page somebody opens when they think mail is broken.
+
+        Rarer than it was: with no notification address set, `salesInbox()` now
+        falls back to the sales address the contact page publishes, so this
+        only appears when the business has published no sales address either.
+        That is why the fix offered below names both places.
       */}
       {mailReady && !notifyTo ? (
         <div className="rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-5">
@@ -143,13 +148,18 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
             Nobody is being notified of new messages
           </h2>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
-            Email is working — customers receive their acknowledgement — but no internal
-            notification address is set, so the copy that tells your team a message arrived is not
-            sent to anyone. Set one under{" "}
+            Email is working — customers receive their acknowledgement — but there is no address
+            to notify, so the copy that tells your team a message arrived is not sent to anyone.
+            Set one under{" "}
             <Link href="/admin/settings" className="font-medium text-accent-700 hover:underline">
               Settings → Email
             </Link>
-            . Until then this queue is the only place a new enquiry appears.
+            , or fill in the sales address under{" "}
+            <Link href="/admin/settings" className="font-medium text-accent-700 hover:underline">
+              Settings → Contact
+            </Link>{" "}
+            and copies go there instead. Until then this queue is the only place a new enquiry
+            appears.
           </p>
         </div>
       ) : null}
