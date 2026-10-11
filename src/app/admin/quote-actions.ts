@@ -1022,7 +1022,24 @@ export async function markPaymentRefunded(
     return { status: "error", message: "Only a captured payment can be marked refunded." };
   }
 
-  await prisma.payment.update({ where: { id: payment.id }, data: { status: "REFUNDED" } });
+  /*
+   * Conditional, though the outcome never differed.
+   *
+   * Two submissions of this form both read CAPTURED and both wrote REFUNDED,
+   * which is the same state either way — so unlike the fulfilment race this
+   * corrupted nothing. What it did produce was two audit entries for one
+   * refund, on the one record whose job is to be the account of what happened,
+   * and a second administrator told their action succeeded when it had changed
+   * nothing. Both are cheap to not do.
+   */
+  const marked = await prisma.payment.updateMany({
+    where: { id: payment.id, status: "CAPTURED" },
+    data: { status: "REFUNDED" },
+  });
+
+  if (marked.count === 0) {
+    return { status: "error", message: "Only a captured payment can be marked refunded." };
+  }
 
   await recordAudit({
     actorId: staff.id,

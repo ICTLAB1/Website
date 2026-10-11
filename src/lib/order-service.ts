@@ -524,19 +524,15 @@ export async function fulfilOrder(reference: string, actorId: string): Promise<O
    * Sent after the transaction commits, never inside it. A mail server that is
    * slow or unreachable must not hold a database transaction open, and the
    * licences exist whether or not the email leaves.
-   */
-  /*
-   * And it must not be able to fail the fulfilment it is reporting.
    *
-   * It was awaited bare, and the comment above was only half true as a result:
-   * the licences did survive a mail server being unreachable, but anything
-   * thrown in here — the cached config read is a database call — rejected
-   * `fulfilOrder` after the transaction had committed. The administrator then
-   * saw fulfilment fail on an order that was in fact fulfilled, and the
-   * obvious thing to do about that is click Fulfil again. Before the claim
-   * above, that second click issued a second set of licences; it is harmless
-   * now, but reporting a success as a failure is still wrong, and it is what
-   * led a person to the race.
+   * That last clause was only half true until the catch below existed. The
+   * licences did survive an unreachable mail server, but anything *thrown* in
+   * here — the cached config read is a database call — rejected `fulfilOrder`
+   * after the transaction had committed, so the administrator was told
+   * fulfilment had failed on an order that was fulfilled. The obvious response
+   * to that is to press Fulfil again, which before the claim above issued a
+   * second set of licences. It is harmless now, but reporting a success as a
+   * failure is still wrong, and it is how somebody reached the race.
    */
   await notifyOrderFulfilled({
     reference,
