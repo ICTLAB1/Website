@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Field, Fieldset, FormError, FormStateProvider, Input, Textarea } from "@/components/ui/form";
 import { submitRequirement } from "@/app/requirement/actions";
 import type { RequirementState } from "@/lib/rfq";
+import { useRequirementConversion } from "@/components/enquiry/use-requirement-conversion";
 
 /**
  * "Tell us what you need."
@@ -119,6 +120,8 @@ export function RequirementForm({
   const [state, formAction] = useActionState<RequirementState, FormData>(submitRequirement, {
     status: "idle",
   });
+
+  useRequirementConversion(state, "requirement");
 
   if (state.status === "success" && state.reference) {
     return (

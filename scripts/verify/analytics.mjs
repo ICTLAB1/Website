@@ -257,6 +257,101 @@ try {
   if (reference) {
     console.log(`  test enquiry ${reference} — mark it internally so it is not chased as a lead.`);
   }
+
+  // ───────────────────────────────── the other three forms that produce a lead
+
+  /**
+   * Every way somebody asks to be quoted, counted.
+   *
+   * The enquiry basket above was the only one instrumented, so four of the
+   * five paths a lead arrives by reported nothing and a bidding strategy set
+   * to maximise conversions was optimising against a fifth of the evidence.
+   * These drive the real forms rather than asserting about the source,
+   * because what matters is that the string reaches the queue in a browser.
+   */
+  const detailsFor = (name) =>
+    page.evaluate(
+      (event) =>
+        (window.dataLayer ?? [])
+          .filter((entry) => entry && typeof entry === "object" && entry.event === event)
+          .map((entry) => ({ form: entry.form, topic: entry.topic })),
+      name,
+    );
+
+  // ── the typed requirement form
+  //
+  // Addressed by field name rather than by label: this form's labels are its
+  // own ("Your name", "Work email", "Organisation"), and a selector copied
+  // from the enquiry basket is how the first version of this check failed.
+  await page.goto(`${BASE}/requirement`, { waitUntil: "load" });
+  /*
+   * Addressed by exact field name, and not scoped to a `form`.
+   *
+   * Three wrong versions preceded this one, which is worth leaving written
+   * down: the labels are this form's own rather than the basket's,
+   * `[name$="description"]` also matches the document's `<meta
+   * name="description">`, the line description is an input and not a textarea,
+   * and `locator("form").first()` is the header's search form once the page
+   * has hydrated — not this one.
+   */
+  await page.locator('input[name="lines.0.description"]').fill("25 laptops with Windows 11 Pro");
+  await page.locator('input[name="lines.0.quantity"]').fill("25");
+  await page.locator('[name="contactName"]').fill("Analytics Probe");
+  await page.locator('[name="contactEmail"]').fill("analytics-probe@example.test");
+  await page.locator('[name="contactPhone"]').fill("+91 99999 99999");
+  await page.locator('input[name="companyName"]').fill("Analytics Probe Pvt Ltd");
+  await page.getByRole("button", { name: /Send my requirement/i }).click();
+  await page.waitForTimeout(3000);
+
+  const requirementPushes = await detailsFor("quote_form_submit");
+  check(
+    requirementPushes.some((entry) => entry.form === "requirement"),
+    `the requirement form counted nothing (saw ${JSON.stringify(requirementPushes)})`,
+  );
+  check(
+    requirementPushes.filter((entry) => entry.form === "requirement").length === 1,
+    "the requirement form counted more than once",
+  );
+
+  // ── the contact form, on a topic that is a lead
+  await page.goto(`${BASE}/contact`, { waitUntil: "load" });
+  await page.locator('input[name="name"]').fill("Analytics Probe");
+  await page.locator('input[name="email"]').fill("analytics-probe@example.test");
+  await page.selectOption('select[name="topic"]', "SALES");
+  await page.locator('textarea[name="message"]').fill("Please quote 40 licences of Autodesk AutoCAD for our design office.");
+  await page.getByRole("button", { name: /Send message/i }).click();
+  await page.waitForTimeout(3000);
+
+  const salesPushes = (await detailsFor("quote_form_submit")).filter(
+    (entry) => entry.form === "contact",
+  );
+  check(
+    salesPushes.length === 1,
+    `a sales enquiry through the contact form counted ${salesPushes.length} time(s)`,
+  );
+  check(
+    salesPushes[0]?.topic === "SALES",
+    `the contact conversion did not carry its topic (${JSON.stringify(salesPushes[0])})`,
+  );
+
+  // ── and on a topic that is not
+  await page.goto(`${BASE}/contact`, { waitUntil: "load" });
+  await page.locator('input[name="name"]').fill("Analytics Probe");
+  await page.locator('input[name="email"]').fill("analytics-probe@example.test");
+  await page.selectOption('select[name="topic"]', "SUPPORT");
+  await page.locator('textarea[name="message"]').fill("Our existing licence has stopped activating on two machines.");
+  await page.getByRole("button", { name: /Send message/i }).click();
+  await page.waitForTimeout(3000);
+
+  /*
+   * The one that would be expensive to get wrong. A support request counted as
+   * a conversion teaches the bidding strategy to buy more traffic from people
+   * whose licence is broken.
+   */
+  check(
+    (await detailsFor("quote_form_submit")).every((entry) => entry.topic !== "SUPPORT"),
+    "a support request was counted as a conversion",
+  );
 } finally {
   await context.close();
   await browser.close();
@@ -271,4 +366,5 @@ if (problems.length > 0) {
 }
 
 console.log("Analytics: consent defaults precede both loaders, tags stay off the signed-in paths,");
-console.log("and the policy allows exactly what they need.");
+console.log("the policy allows exactly what they need, and all four lead forms count once —");
+console.log("a support request through the contact form counting none.");

@@ -9,6 +9,7 @@ import { Field, Fieldset, FormError, FormStateProvider, Input, Textarea } from "
 import { uploadRequirement } from "@/app/requirement/upload/actions";
 import { ACCEPTED_DOCUMENTS, DOCUMENT_ACCEPT_ATTRIBUTE } from "@/lib/document-bytes";
 import type { RequirementState } from "@/lib/rfq";
+import { useRequirementConversion } from "@/components/enquiry/use-requirement-conversion";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -41,6 +42,8 @@ export function BoqUploadForm({
   const [state, formAction] = useActionState<RequirementState, FormData>(uploadRequirement, {
     status: "idle",
   });
+
+  useRequirementConversion(state, "requirement_upload");
 
   if (state.status === "success" && state.reference) {
     return (

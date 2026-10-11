@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { CONVERSION_EVENTS } from "@/lib/analytics";
+import { pushConversion } from "@/lib/analytics-events";
+import { topicIsLead } from "@/lib/validation";
+
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -55,6 +59,32 @@ export function ContactForm({ defaultTopic = "GENERAL" }: { defaultTopic?: strin
       setCorrelationId(result.error.correlationId ?? null);
       setFieldErrors(result.error.fieldErrors ?? {});
       return;
+    }
+
+    /*
+     * Counted here, and only for a topic that is somebody asking to buy.
+     *
+     * This form was invisible to advertising: four of the five ways a lead
+     * reaches this business pushed nothing, so a bidding strategy set to
+     * maximise conversions was optimising against a fifth of the evidence.
+     *
+     * The topic gate is the point. A support request and a general question
+     * are not conversions, and counting them would teach that strategy to bid
+     * for a visitor with a broken licence as readily as for one who wants a
+     * quotation. `topicIsLead` is shared with the admin queue, so the two
+     * cannot drift into disagreeing about which is which.
+     *
+     * The same event as the other three forms, deliberately: they are one
+     * intention and a bidding strategy optimises towards a conversion action,
+     * so splitting them across several would starve each. Which form it was
+     * travels alongside, for a report that wants to know.
+     */
+    const topic = String(form.get("topic") ?? "GENERAL");
+    if (topicIsLead(topic)) {
+      pushConversion(CONVERSION_EVENTS.quoteFormSubmit, result.data.reference, {
+        form: "contact",
+        topic,
+      });
     }
 
     setReference(result.data.reference);
