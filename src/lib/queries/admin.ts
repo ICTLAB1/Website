@@ -20,6 +20,7 @@ export async function getDashboardMetrics() {
     orderCount,
     enquiryCount,
     newEnquiries,
+    newLeads,
     quoteCount,
     customerCount,
     productCount,
@@ -36,6 +37,23 @@ export async function getDashboardMetrics() {
     // What has arrived and nobody has picked up. The dashboard's "needs
     // attention" number, so it counts the state that means exactly that.
     prisma.enquiry.count({ where: { status: "SUBMITTED" } }),
+    /*
+     * Leads that came through the contact form and nobody has answered.
+     *
+     * They are stored as support tickets, because one table for every inbound
+     * message is what stops any of them being lost when email is down. That is
+     * right for the storage and wrong for the dashboard: two of the form's four
+     * topics are somebody asking to buy something, and counting them under
+     * "support" is how a lead gets read as a complaint and waits its turn.
+     * Counted separately here so the number a salesperson needs is on the first
+     * screen they open, under its own name.
+     */
+    prisma.supportTicket.count({
+      where: {
+        category: { in: ["SALES", "ENTERPRISE"] },
+        status: { in: ["OPEN", "IN_PROGRESS"] },
+      },
+    }),
     prisma.quote.count({ where: { status: { in: ["DRAFT", "SENT"] } } }),
     prisma.user.count({ where: { role: "CUSTOMER", deletedAt: null } }),
     prisma.product.count({ where: { status: "ACTIVE", deletedAt: null } }),
@@ -78,6 +96,7 @@ export async function getDashboardMetrics() {
     orderCount,
     enquiryCount,
     newEnquiries,
+    newLeads,
     quoteCount,
     customerCount,
     productCount,

@@ -3,7 +3,7 @@ import type { z } from "zod";
 import { prisma } from "@/lib/db";
 import { publicReference } from "@/lib/auth/tokens";
 import { resolveVariantsBySku } from "@/lib/queries/catalogue";
-import { salesInbox, sendMail } from "@/lib/mail";
+import { notifyInternal, sendMail } from "@/lib/mail";
 import { renderEmailHtml, renderEmailText, type EmailContent } from "@/lib/emails/shell";
 import { absoluteUrl } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
@@ -117,42 +117,29 @@ async function notify(
     .map((item) => `  • ${item.productName} (${item.sku}) — quantity ${item.quantity}`)
     .join("\n");
 
-  const internal = await salesInbox();
-  if (internal) {
-    await sendMail({
-      to: internal,
-      replyTo: input.contactEmail,
-      subject: `New enterprise enquiry ${reference} — ${input.companyName}`,
-      text: [
-        `Enquiry reference: ${reference}`,
-        "",
-        `Company:   ${input.companyName}`,
-        `Contact:   ${input.contactName}`,
-        `Email:     ${input.contactEmail}`,
-        `Phone:     ${input.contactPhone}`,
-        input.gstin ? `GSTIN:     ${input.gstin}` : null,
-        `Location:  ${[input.city, input.country].filter(Boolean).join(", ")}`,
-        input.userCount ? `Users:     ${input.userCount}` : null,
-        `Timeline:  ${input.timeline.replace(/_/g, " ").toLowerCase()}`,
-        "",
-        "Products requested:",
-        lines,
-        "",
-        input.requirements ? `Requirements:\n${input.requirements}` : null,
-      ]
-        .filter((line) => line !== null)
-        .join("\n"),
-    });
-  } else {
-    /*
-     * The enquiry is stored and the customer is acknowledged either way, so
-     * nothing is lost — but with no internal address the sales team is never
-     * told a quote was requested, and nothing anywhere said so. Warned per
-     * enquiry rather than once, because this is precisely the silence that
-     * gets mistaken for "no enquiries came in".
-     */
-    logger.warn("enquiry_no_internal_recipient", { reference });
-  }
+  await notifyInternal({
+    replyTo: input.contactEmail,
+    subject: `New enterprise enquiry ${reference} — ${input.companyName}`,
+    text: [
+      `Enquiry reference: ${reference}`,
+      "",
+      `Company:   ${input.companyName}`,
+      `Contact:   ${input.contactName}`,
+      `Email:     ${input.contactEmail}`,
+      `Phone:     ${input.contactPhone}`,
+      input.gstin ? `GSTIN:     ${input.gstin}` : null,
+      `Location:  ${[input.city, input.country].filter(Boolean).join(", ")}`,
+      input.userCount ? `Users:     ${input.userCount}` : null,
+      `Timeline:  ${input.timeline.replace(/_/g, " ").toLowerCase()}`,
+      "",
+      "Products requested:",
+      lines,
+      "",
+      input.requirements ? `Requirements:\n${input.requirements}` : null,
+    ]
+      .filter((line) => line !== null)
+      .join("\n"),
+  });
 
   /*
    * The acknowledgement, through the same shell as every other transactional

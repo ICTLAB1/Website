@@ -2,7 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/db";
 import { publicReference } from "@/lib/auth/tokens";
-import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
+import { escapeHtml, notifyInternal, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
 import { logger } from "@/lib/logger";
 import type { Requirement, RequirementLine } from "@/lib/rfq";
@@ -141,36 +141,32 @@ async function notify(
   const lines = requirement.lines.map((line) => `  • ${describeLine(line)}`).join("\n");
   const review = requirement.lines.filter((line) => line.needsReview).length;
 
-  const internal = await salesInbox();
-  if (internal) {
-    await sendMail({
-      to: internal,
-      replyTo: contact.contactEmail,
-      subject: `New requirement ${reference} — ${contact.companyName}`,
-      text: [
-        `Requirement reference: ${reference}`,
-        "",
-        `Company:   ${contact.companyName}`,
-        `Contact:   ${contact.contactName}`,
-        `Email:     ${contact.contactEmail}`,
-        `Phone:     ${contact.contactPhone}`,
-        contact.gstin ? `GSTIN:     ${contact.gstin}` : null,
-        "",
-        "What they need:",
-        lines,
-        "",
-        requirement.requiredBy ? `Required by: ${requirement.requiredBy}` : null,
-        requirement.deliveryLocation ? `Deliver to: ${requirement.deliveryLocation}` : null,
-        requirement.budgetNote ? `Indicative budget: ${requirement.budgetNote}` : null,
-        requirement.context ? `\nContext:\n${requirement.context}` : null,
-        review > 0
-          ? `\n${review} line(s) came from an uploaded document and have not been confirmed by the customer. Check them before quoting.`
-          : null,
-      ]
-        .filter((line) => line !== null)
-        .join("\n"),
-    });
-  }
+  await notifyInternal({
+    replyTo: contact.contactEmail,
+    subject: `New requirement ${reference} — ${contact.companyName}`,
+    text: [
+      `Requirement reference: ${reference}`,
+      "",
+      `Company:   ${contact.companyName}`,
+      `Contact:   ${contact.contactName}`,
+      `Email:     ${contact.contactEmail}`,
+      `Phone:     ${contact.contactPhone}`,
+      contact.gstin ? `GSTIN:     ${contact.gstin}` : null,
+      "",
+      "What they need:",
+      lines,
+      "",
+      requirement.requiredBy ? `Required by: ${requirement.requiredBy}` : null,
+      requirement.deliveryLocation ? `Deliver to: ${requirement.deliveryLocation}` : null,
+      requirement.budgetNote ? `Indicative budget: ${requirement.budgetNote}` : null,
+      requirement.context ? `\nContext:\n${requirement.context}` : null,
+      review > 0
+        ? `\n${review} line(s) came from an uploaded document and have not been confirmed by the customer. Check them before quoting.`
+        : null,
+    ]
+      .filter((line) => line !== null)
+      .join("\n"),
+  });
 
   await sendMail({
     to: contact.contactEmail,
