@@ -88,6 +88,20 @@ const REQUIRED: Array<{ what: string; file: string; fn: string; notifies: string
     notifies: "sendMail",
   },
   {
+    /*
+     * The one that was missing from this list, and the one that broke.
+     *
+     * Every message from the public contact form — including the two topics
+     * that are a sales lead rather than a support request — arrives through
+     * here. It was the only inbound path not covered, which is how it came to
+     * notify nobody without a single test going red.
+     */
+    what: "a message sent through the public contact form",
+    file: "src/app/api/contact/route.ts",
+    fn: "POST",
+    notifies: "salesInbox",
+  },
+  {
     what: "an order placed directly",
     file: "src/lib/order-service.ts",
     fn: "createDirectOrder",

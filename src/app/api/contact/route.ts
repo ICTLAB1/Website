@@ -91,7 +91,29 @@ export const POST = withErrorHandling("contact.create", async (request: Request)
       ]
         .filter((line) => line !== null)
         .join("\n"),
+    }).catch((error: unknown) => {
+      /*
+       * Logged rather than ignored. `void` on a promise that can reject makes
+       * a failed staff notification completely invisible: the customer gets
+       * their acknowledgement, the ticket is stored, the request returns 200,
+       * and the one person who needed to know never hears. The send stays
+       * off the response path — a visitor should not wait on our mail server
+       * — but a failure now leaves a trace somebody can find.
+       */
+      logger.error("contact_staff_notification_failed", {
+        reference,
+        message: error instanceof Error ? error.message : String(error),
+      });
     });
+  } else {
+    /*
+     * No internal address configured, so nobody is told. Warned every time
+     * rather than once at boot, because this is the state in which the
+     * business silently stops hearing about its own leads, and a single
+     * startup line scrolls away. `/admin/support` says the same thing to the
+     * person who can fix it.
+     */
+    logger.warn("contact_no_internal_recipient", { reference, topic: input.topic });
   }
 
   void sendMail({
