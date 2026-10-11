@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@/lib/db";
 import { publicReference } from "@/lib/auth/tokens";
 import { recordCrmEvent } from "@/lib/crm/outbox";
-import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
+import { escapeHtml, notifyInternal } from "@/lib/mail";
 import { logger } from "@/lib/logger";
 
 /**
@@ -89,35 +89,31 @@ export async function captureLead(input: CaptureLeadInput): Promise<CaptureLeadR
 
   logger.info("chatbot_lead_captured", { reference: deal.reference });
 
-  const inbox = await salesInbox();
-  if (inbox) {
-    void sendMail({
-      to: inbox,
-      subject: `New chat lead — ${input.companyName?.trim() || name}`,
-      text: [
-        `Deal:     ${deal.reference}`,
-        `Name:     ${name}`,
-        `Email:    ${email}`,
-        `Phone:    ${input.phone?.trim() || "—"}`,
-        `Company:  ${input.companyName?.trim() || "—"}`,
-        "",
-        "What they're looking for:",
-        input.interest.trim(),
-        "",
-        "Full conversation:",
-        input.transcript,
-      ].join("\n"),
-      html: [
-        `<p><strong>Deal:</strong> ${escapeHtml(deal.reference)}</p>`,
-        `<p><strong>Name:</strong> ${escapeHtml(name)}<br>`,
-        `<strong>Email:</strong> ${escapeHtml(email)}<br>`,
-        `<strong>Phone:</strong> ${escapeHtml(input.phone?.trim() || "—")}<br>`,
-        `<strong>Company:</strong> ${escapeHtml(input.companyName?.trim() || "—")}</p>`,
-        `<p><strong>What they're looking for:</strong><br>${escapeHtml(input.interest.trim())}</p>`,
-        `<p><strong>Full conversation:</strong></p><pre>${escapeHtml(input.transcript)}</pre>`,
-      ].join(""),
-    });
-  }
+  void notifyInternal({
+    subject: `New chat lead — ${input.companyName?.trim() || name}`,
+    text: [
+      `Deal:     ${deal.reference}`,
+      `Name:     ${name}`,
+      `Email:    ${email}`,
+      `Phone:    ${input.phone?.trim() || "—"}`,
+      `Company:  ${input.companyName?.trim() || "—"}`,
+      "",
+      "What they're looking for:",
+      input.interest.trim(),
+      "",
+      "Full conversation:",
+      input.transcript,
+    ].join("\n"),
+    html: [
+      `<p><strong>Deal:</strong> ${escapeHtml(deal.reference)}</p>`,
+      `<p><strong>Name:</strong> ${escapeHtml(name)}<br>`,
+      `<strong>Email:</strong> ${escapeHtml(email)}<br>`,
+      `<strong>Phone:</strong> ${escapeHtml(input.phone?.trim() || "—")}<br>`,
+      `<strong>Company:</strong> ${escapeHtml(input.companyName?.trim() || "—")}</p>`,
+      `<p><strong>What they're looking for:</strong><br>${escapeHtml(input.interest.trim())}</p>`,
+      `<p><strong>Full conversation:</strong></p><pre>${escapeHtml(input.transcript)}</pre>`,
+    ].join(""),
+  });
 
   return { ok: true, reference: deal.reference };
 }

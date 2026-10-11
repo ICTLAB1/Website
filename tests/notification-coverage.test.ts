@@ -85,7 +85,19 @@ const REQUIRED: Array<{ what: string; file: string; fn: string; notifies: string
     what: "an enquiry submitted",
     file: "src/lib/enquiry-service.ts",
     fn: "createEnquiry",
-    notifies: "sendMail",
+    notifies: "notifyInternal",
+  },
+  {
+    what: "a requirement submitted, typed in or uploaded",
+    file: "src/lib/requirement-service.ts",
+    fn: "createRequirement",
+    notifies: "notifyInternal",
+  },
+  {
+    what: "a lead the assistant captured mid-conversation",
+    file: "src/lib/assistant/lead-service.ts",
+    fn: "captureLead",
+    notifies: "notifyInternal",
   },
   {
     /*
@@ -95,11 +107,17 @@ const REQUIRED: Array<{ what: string; file: string; fn: string; notifies: string
      * that are a sales lead rather than a support request — arrives through
      * here. It was the only inbound path not covered, which is how it came to
      * notify nobody without a single test going red.
+     *
+     * The notification it must reach is `notifyInternal` rather than
+     * `sendMail`, and that is the point of naming it: `notifyInternal` is the
+     * one function that resolves the recipient and will fall back to a second
+     * channel. A call site that reverts to a bare `sendMail` would pass a
+     * weaker check while reintroducing exactly this bug.
      */
     what: "a message sent through the public contact form",
     file: "src/app/api/contact/route.ts",
     fn: "POST",
-    notifies: "salesInbox",
+    notifies: "notifyInternal",
   },
   {
     what: "an order placed directly",

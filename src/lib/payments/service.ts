@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { formatMoney } from "@/lib/money";
-import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
+import { escapeHtml, notifyInternal, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
 import { getPaymentConfig, getCCAvenueConfig, type PaymentGateway } from "@/lib/payments/config";
 import { createCheckoutSession } from "@/lib/payments/stripe";
@@ -462,14 +462,10 @@ async function notifyPaid(
     purpose: "transactional",
   });
 
-  const internal = await salesInbox();
-  if (internal) {
-    void sendMail({
-      to: internal,
-      subject: `Payment received — ${reference} — ${amount}`,
-      text: [`Order:    ${reference}`, `Customer: ${name} <${email}>`, `Amount:   ${amount}`].join("\n"),
-    });
-  }
+  void notifyInternal({
+    subject: `Payment received — ${reference} — ${amount}`,
+    text: [`Order:    ${reference}`, `Customer: ${name} <${email}>`, `Amount:   ${amount}`].join("\n"),
+  });
 
   void notifyPaymentWhatsApp({ reference, billingName: name, billingPhone: phone, amountMinor, currency: "INR" });
 }

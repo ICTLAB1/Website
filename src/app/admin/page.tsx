@@ -21,6 +21,14 @@ export default async function AdminDashboardPage() {
     { label: "Orders", value: String(metrics.orderCount), href: "/admin/orders" },
     { label: "Enquiries", value: String(metrics.enquiryCount), href: "/admin/enquiries" },
     { label: "New enquiries", value: String(metrics.newEnquiries), href: "/admin/enquiries?status=NEW", highlight: metrics.newEnquiries > 0 },
+    /*
+     * Beside new enquiries, because to the person reading this they are the
+     * same thing: a customer who asked to buy something and is waiting. The
+     * two arrive through different forms and land in different tables, which
+     * is an implementation detail and not a reason to make somebody look in
+     * two places.
+     */
+    { label: "Unanswered leads", value: String(metrics.newLeads), href: "/admin/support?category=SALES", highlight: metrics.newLeads > 0 },
     { label: "Open quotes", value: String(metrics.quoteCount), href: "/admin/quotes" },
     { label: "Customers", value: String(metrics.customerCount), href: "/admin/customers" },
     { label: "Active products", value: String(metrics.productCount), href: "/admin/products" },

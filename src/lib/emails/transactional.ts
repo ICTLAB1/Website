@@ -1,6 +1,6 @@
 import "server-only";
 import { appUrl } from "@/lib/env";
-import { salesInbox, sendMail } from "@/lib/mail";
+import { notifyInternal, salesInbox, sendMail } from "@/lib/mail";
 import { formatMoney } from "@/lib/money";
 import { getSiteConfig } from "@/lib/site-config";
 import { renderEmailHtml, renderEmailText, type EmailContent } from "@/lib/emails/shell";
@@ -51,6 +51,28 @@ async function deliver(
   });
 }
 
+/**
+ * The same rendering, for the messages that go to this business rather than to
+ * a customer.
+ *
+ * Separate from `deliver` for two reasons. The recipient is not a parameter —
+ * `notifyInternal` resolves it, so no caller here can pass the wrong address or
+ * forget that it might be unset. And it never goes through Azure *first*: an
+ * internal alert is the start of a conversation, and a colleague who hits Reply
+ * should land on a mailbox somebody reads rather than on DoNotReply. Azure is
+ * still the fallback when no sales mailbox is configured at all, which is the
+ * difference between this and what it replaced.
+ */
+async function deliverInternal(subject: string, content: EmailContent, replyTo?: string) {
+  const config = await getSiteConfig();
+  void notifyInternal({
+    subject,
+    text: renderEmailText(content, config),
+    html: renderEmailHtml(content, config),
+    replyTo,
+  });
+}
+
 /** Both sides of a support ticket being raised. */
 export async function notifyTicketRaised(ticket: {
   reference: string;
@@ -75,11 +97,8 @@ export async function notifyTicketRaised(ticket: {
     action: { label: "View this request", url: `${appUrl()}/account/support` },
   });
 
-  const internal = await salesInbox();
-  if (!internal) return;
 
-  await deliver(
-    internal,
+  await deliverInternal(
     `New support ticket ${ticket.reference} — ${ticket.subject}`,
     {
       heading: `New ticket: ${ticket.subject}`,
@@ -94,7 +113,6 @@ export async function notifyTicketRaised(ticket: {
     // Replying to the notification reaches the customer, which is what anyone
     // reading it will try to do.
     ticket.customerEmail,
-    "sales",
   );
 }
 
@@ -115,13 +133,10 @@ export async function notifyQuoteDecision(quote: {
   customerEmail: string;
   orderReference: string | null;
 }): Promise<void> {
-  const internal = await salesInbox();
-  if (!internal) return;
 
   const accepted = quote.decision === "ACCEPTED";
 
-  await deliver(
-    internal,
+  await deliverInternal(
     `Quotation ${quote.reference} ${accepted ? "accepted" : "declined"} — ${quote.customerName}`,
     {
       heading: accepted
@@ -141,7 +156,6 @@ export async function notifyQuoteDecision(quote: {
         : { label: "Open the quotation", url: `${appUrl()}/admin/quotes/${quote.reference}` },
     },
     quote.customerEmail,
-    "sales",
   );
 }
 
@@ -161,13 +175,10 @@ export async function notifyQuoteMessage(message: {
   customerName: string;
   customerEmail: string;
 }): Promise<void> {
-  const internal = await salesInbox();
-  if (!internal) return;
 
   const revision = message.kind === "REVISION_REQUEST";
 
-  await deliver(
-    internal,
+  await deliverInternal(
     `${revision ? "Revision requested" : "Question"} on ${message.reference} — ${message.customerName}`,
     {
       heading: revision
@@ -184,7 +195,6 @@ export async function notifyQuoteMessage(message: {
       },
     },
     message.customerEmail,
-    "sales",
   );
 }
 

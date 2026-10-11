@@ -190,6 +190,18 @@ export async function sendMailVerbose(message: MailMessage): Promise<VerboseMail
         subject: message.subject,
         text: message.text,
         html: message.html,
+        /*
+         * Not optional, though it was missing here until a lead notification
+         * came through this path and arrived with nothing to reply to.
+         *
+         * `sendMail` has always passed it; this function is the verbose twin
+         * used by the admin test button, where nobody replies to anything, so
+         * the omission was invisible. It stopped being invisible the moment a
+         * real message was sent through it: on an internal notification the
+         * reply-to *is* the customer, and without it hitting Reply reaches the
+         * site's own no-reply address instead of the person who wrote in.
+         */
+        replyTo: message.replyTo,
         ...(message.attachments?.length ? { attachments: message.attachments } : {}),
       }),
     );
@@ -379,6 +391,108 @@ export async function salesInbox(): Promise<string | null> {
   const configured = (await getMailConfig()).salesNotification;
   if (configured) return configured;
   return (await getSiteConfig()).email.sales;
+}
+
+/**
+ * The copy that tells this business a customer did something.
+ *
+ * Every inbound path had written the same eight lines: resolve `salesInbox()`,
+ * guard on `if (internal)`, build the message, `void sendMail(...)`. That shape
+ * is why leads went missing, and it failed in three separate ways that all look
+ * identical from outside — nothing bounces, nothing errors, the customer is
+ * acknowledged as normal, and the only symptom is an enquiry nobody calls back:
+ *
+ *   1. No recipient. An unset optional field made `salesInbox()` null and the
+ *      guard skipped the send. `salesInbox()` now falls back to the published
+ *      sales address, so this is rare — but the guard lived at eight call
+ *      sites, and the ninth one somebody writes next year would have had to
+ *      remember it. It lives here once instead.
+ *   2. No channel. These were all `purpose: "sales"`, which is SMTP or Graph
+ *      and never Azure. A deployment whose only working channel is Azure
+ *      Communication Services — which is a supported way to run this, and the
+ *      customer-facing transactional mail is already happy on it — had every
+ *      internal notification logged and dropped.
+ *   3. No trace of success. A bare `void sendMail(...)` logs on failure and
+ *      says nothing when it works, so "did the notification go, and where?"
+ *      was unanswerable after the fact. Now it is one log line per lead.
+ *
+ * Recipient resolution and both channels are decided in this one function, so
+ * a call site cannot get any of it wrong by omission. It never throws: the
+ * thing being reported has already happened and been stored, and no lead is
+ * worth failing a customer's request over.
+ */
+export async function notifyInternal(
+  message: Omit<MailMessage, "to" | "purpose">,
+): Promise<{ delivered: boolean }> {
+  try {
+    const to = await salesInbox();
+    if (!to) {
+      /*
+       * Reachable only when the business publishes no sales address anywhere —
+       * neither the notification field nor the address on its own contact
+       * page. Warned per notification rather than once at boot, because this
+       * is precisely the silence that gets mistaken for "no enquiries came
+       * in", and a single startup line scrolls away.
+       */
+      logger.warn("internal_notification_no_recipient", { subject: message.subject });
+      return { delivered: false };
+    }
+
+    const primary = await sendMailVerbose({ ...message, to, purpose: "sales" });
+    if (primary.delivered) {
+      logger.info("internal_notification_sent", { to, subject: message.subject, via: "mailbox" });
+      return { delivered: true };
+    }
+
+    /*
+     * Azure as a second channel, but only for the failures that mean "this
+     * deployment has no sales mailbox" — not for a mailbox that exists and
+     * refused the message.
+     *
+     * That line matters. A rejection is a configured server saying no: a wrong
+     * password, a relay refusal, a recipient it will not accept. Retrying
+     * those over Azure would paper over a fault somebody needs to fix, and
+     * where the rejection came after the server had already accepted the
+     * message it would deliver the lead twice. Absence of configuration is the
+     * opposite — there is nothing to fix and nothing was sent, so the only
+     * question is whether another working channel exists.
+     */
+    const unconfigured =
+      primary.failure.kind === "no_host" ||
+      primary.failure.kind === "no_from" ||
+      primary.failure.kind === "graph_incomplete";
+
+    const config = await getMailConfig();
+    if (unconfigured && config.acs) {
+      const acs = await sendViaAzureAcs(config.acs, { ...message, to });
+      if (acs.ok) {
+        logger.info("internal_notification_sent", { to, subject: message.subject, via: "azure" });
+        return { delivered: true };
+      }
+      logger.error("internal_notification_failed", {
+        to,
+        subject: message.subject,
+        via: "azure",
+        message: acs.detail,
+      });
+      return { delivered: false };
+    }
+
+    logger.error("internal_notification_failed", {
+      to,
+      subject: message.subject,
+      via: "mailbox",
+      failure: primary.failure.kind,
+      ...("detail" in primary.failure ? { message: primary.failure.detail } : {}),
+    });
+    return { delivered: false };
+  } catch (error) {
+    logger.error("internal_notification_failed", {
+      subject: message.subject,
+      message: error instanceof Error ? error.message : String(error),
+    });
+    return { delivered: false };
+  }
 }
 
 /** Minimal HTML escape for values interpolated into email bodies. */

@@ -6,7 +6,7 @@ import { publicReference } from "@/lib/auth/tokens";
 import { documentTotals, lineIsStorable, priceLine, totalsAreStorable } from "@/lib/pricing";
 import { resolveVariantsBySku } from "@/lib/queries/catalogue";
 import { isDirectlyPurchasable } from "@/lib/catalogue/audience";
-import { escapeHtml, salesInbox, sendMail } from "@/lib/mail";
+import { escapeHtml, notifyInternal, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
 import { getBankingDetails } from "@/lib/banking-config";
 import { formatMoney } from "@/lib/money";
@@ -64,25 +64,21 @@ async function notifyOrder(
   const config = await getSiteConfig();
   const banking = getBankingDetails();
 
-  const internal = await salesInbox();
-  if (internal) {
-    void sendMail({
-      to: internal,
-      replyTo: billing.email,
-      subject: `New order ${reference} — ${billing.name}`,
-      text: [
-        `Order reference: ${reference}`,
-        `Customer:  ${billing.name}`,
-        `Email:     ${billing.email}`,
-        billing.phone ? `Phone:     ${billing.phone}` : null,
-        billing.gstin ? `GSTIN:     ${billing.gstin}` : null,
-        billing.poNumber ? `PO number: ${billing.poNumber}` : null,
-        `Total:     ${formatMoney(totalMinor)}`,
-      ]
-        .filter((line) => line !== null)
-        .join("\n"),
-    });
-  }
+  void notifyInternal({
+    replyTo: billing.email,
+    subject: `New order ${reference} — ${billing.name}`,
+    text: [
+      `Order reference: ${reference}`,
+      `Customer:  ${billing.name}`,
+      `Email:     ${billing.email}`,
+      billing.phone ? `Phone:     ${billing.phone}` : null,
+      billing.gstin ? `GSTIN:     ${billing.gstin}` : null,
+      billing.poNumber ? `PO number: ${billing.poNumber}` : null,
+      `Total:     ${formatMoney(totalMinor)}`,
+    ]
+      .filter((line) => line !== null)
+      .join("\n"),
+  });
 
   // Payment instructions are appended only when every bank field is
   // configured, and only into this email to the customer who placed this
