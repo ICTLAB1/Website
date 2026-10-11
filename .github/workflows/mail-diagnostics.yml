@@ -1,0 +1,75 @@
+name: Mail diagnostics
+
+# Read-only. Reports what production did with its notification email and
+# changes nothing — no build, no restart, no write to the database.
+#
+# It exists because "we are not getting notifications" has several causes that
+# are indistinguishable from outside the server: no address to notify, no
+# channel to send through, a channel that refused the message, or a message
+# that was delivered and filed as spam. Each leaves a different trace in the
+# container log. Guessing between them from the outside cost days; this reads
+# the answer off the machine in under a minute.
+#
+# THE REPOSITORY IS PUBLIC, so this job's output is world-readable. The script
+# it runs reports configuration as booleans and log activity as event names and
+# counts — never an address, subject, reference, customer name or rejection
+# detail. Keep it that way: anything that needs a specific message traced
+# belongs in an SSH session, not here.
+on:
+  workflow_dispatch:
+    inputs:
+      since:
+        description: How far back to read the container log (e.g. 24h, 168h)
+        required: false
+        default: 168h
+
+# Shares the deploy's lock, so this never reads a half-rebuilt stack.
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # Same handling as the deploy workflow: passed as environment variables
+      # rather than interpolated into a shell script's source, so a value
+      # containing a shell metacharacter is a value and not syntax.
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+      DEPLOY_HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
+      SINCE: ${{ inputs.since }}
+    steps:
+      - name: Configure SSH
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          if [ -n "$DEPLOY_HOST_KEY" ]; then
+            printf '%s\n' "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          fi
+
+      - name: Read mail diagnostics
+        run: |
+          set -euo pipefail
+          # `SINCE` is validated here rather than trusted: it reaches a shell on
+          # the production host, and a workflow input is attacker-controlled on
+          # a public repository by anyone who can dispatch it.
+          case "${SINCE:-168h}" in
+            *[!0-9hdm]*|'') echo "since must look like 24h or 7d" >&2; exit 1 ;;
+          esac
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            "set -eu
+             # Brings the script itself up to date. A pull is the only write
+             # this job performs, and it writes to the checkout, not the site:
+             # nothing is rebuilt and nothing is restarted, so the running
+             # containers are untouched either way.
+             sudo -u azureuser git -C /home/azureuser/app pull --quiet
+             sudo SINCE='${SINCE:-168h}' bash /home/azureuser/app/deploy/mail-diagnostics.sh"
