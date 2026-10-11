@@ -37,6 +37,25 @@ else
   printf 'consent defaults present:  %s\n' "$(grep -c "consent'*,\s*'*default" "$page" || true)"
 fi
 
+say "One canonical hostname, or two competing ones"
+
+# Why this is here, next to the tags: both hostnames were ranking for the
+# brand name on the same results page — `techzoidtechnologies.com/products`
+# and `www.techzoidtechnologies.com/services/it-procurement`. That is either
+# Google still holding old URLs it will drop, or two hosts genuinely serving
+# the same pages, which splits every inbound link between them. The
+# Caddyfile can express either direction; this reports which one is live.
+host="${SITE#https://}"
+for candidate in "$host" "www.${host#www.}"; do
+  landed="$(curl -fsS -o /dev/null -w '%{http_code} -> %{url_effective}' -L --max-time 20 \
+    -A 'Mozilla/5.0 (tag-diagnostics)' "https://$candidate" 2>/dev/null || echo 'unreachable')"
+  printf '  %-34s %s\n' "$candidate" "$landed"
+done
+echo
+echo "  Both should finish on the same hostname. If each serves itself, every"
+echo "  link to one of them is credited to the wrong site — set SITE_DOMAIN and"
+echo "  SITE_REDIRECT_FROM in deploy/.env so one permanently redirects."
+
 say "The published container ($CONTAINER)"
 
 gtm="$(mktemp)"
