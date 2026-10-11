@@ -179,6 +179,18 @@ const settingsSchema = z.object({
   grievanceName: optionalText(120),
   grievanceEmail: optionalEmail,
   grievancePhone: optionalPhone,
+
+  /*
+   * Stored independently of one another, and paired only when read.
+   *
+   * Rejecting a half-filled pair here would stop an administrator saving the
+   * form after typing the name but before the designation, which is the order
+   * anyone fills two fields in. `getSiteConfig` drops an unpaired name instead,
+   * so a half-finished edit publishes nothing rather than publishing a name
+   * under a title nobody chose.
+   */
+  directorName: optionalText(120),
+  directorTitle: optionalText(80),
 });
 
 /** The first line that is not a well-formed `https` URL, or null. */

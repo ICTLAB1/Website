@@ -56,6 +56,8 @@ type StoredSettings = {
   grievanceName: string | null;
   grievanceEmail: string | null;
   grievancePhone: string | null;
+  directorName: string | null;
+  directorTitle: string | null;
 } | null;
 
 export function SettingsForm({
@@ -164,6 +166,16 @@ export function SettingsForm({
       >
         {text("gstin", "GSTIN", effective.gstin, { placeholder: "07AABCU9603R1ZP" })}
         {text("cin", "CIN", effective.cin, { placeholder: "U72900DL2019PTC123456" })}
+      </Fieldset>
+
+      <Fieldset
+        legend="Who runs the business"
+        description="Named on the about page. Acquiring banks match this against the merchant account's KYC before enabling net banking, so it must be the person on the account rather than whoever handles the enquiry. Both fields or neither: the designation is the label the name is printed under, and it is not something this site will guess."
+      >
+        {text("directorName", "Name", effective.director?.name ?? null)}
+        {text("directorTitle", "Designation", effective.director?.title ?? null, {
+          placeholder: "Managing Director",
+        })}
       </Fieldset>
 
       <Fieldset

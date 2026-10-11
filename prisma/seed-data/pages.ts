@@ -665,6 +665,7 @@ export const pageSeeds: PageSeed[] = [
         "visible": true,
         "data": {
           "heading": "Company information",
+          "showDirector": true,
           "footnote": "Third-party product names and trademarks referenced across this site are the property of their respective owners and are used descriptively to identify the software supplied. Nothing here implies endorsement by, or affiliation with, those brand owners beyond a commercial reselling relationship."
         }
       },
@@ -1726,7 +1727,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "aec-collection",
     "title": "Autodesk AEC Collection — Pricing & What Is Included",
-    "description": "The Architecture, Engineering and Construction Collection: Revit, AutoCAD, Civil 3D, Navisworks, Infraworks and 3ds Max in one subscription, priced against buying separately.",
+    "description": "The Architecture, Engineering and Construction Collection: Revit, AutoCAD, Navisworks and 3ds Max in one subscription, priced against buying separately.",
     "keywords": [
       "aec collection",
       "autodesk collection",
@@ -1880,7 +1881,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "autocad",
     "title": "AutoCAD Licensing & Pricing",
-    "description": "AutoCAD subscriptions with all seven industry toolsets included: 2D drafting, 3D design, web and mobile access, and one- or three-year terms priced side by side.",
+    "description": "AutoCAD subscriptions with all seven industry toolsets: 2D drafting, 3D design, web and mobile access, and one- or three-year terms priced side by side.",
     "keywords": [
       "autocad",
       "autocad price",
@@ -2039,7 +2040,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "autodesk",
     "title": "Autodesk Licensing for Design & Engineering Teams",
-    "description": "AutoCAD, Revit, the AEC and Product Design collections, Maya, Fusion and Autodesk Construction Cloud, licensed per named user with collection pricing modelled honestly.",
+    "description": "AutoCAD, Revit, the AEC and Product Design collections and Autodesk Construction Cloud, licensed per named user with collection pricing modelled honestly.",
     "keywords": [
       "autodesk licensing",
       "autocad",
@@ -2216,7 +2217,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "autodesk-construction-cloud",
     "title": "Autodesk Construction Cloud — Licensing & Modules",
-    "description": "Autodesk Construction Cloud: common data environment, issue and RFI tracking, model coordination and field checklists, licensed per user across Docs, Build and BIM Collaborate.",
+    "description": "Autodesk Construction Cloud: common data environment, issue and RFI tracking, model coordination and field checklists, licensed per user across Docs and Build.",
     "keywords": [
       "autodesk construction cloud",
       "acc",
@@ -2380,7 +2381,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "cookie-policy",
     "title": "Cookie Policy",
-    "description": "Every cookie this website sets — two strictly necessary, and Google Analytics on the public pages — what each one does, and how to refuse the ones that are not necessary.",
+    "description": "Every cookie this website sets — two strictly necessary, and Google Analytics on the public pages — what each one does, and how to refuse those that are not.",
     "keywords": [
       "cookie policy",
       "cookies",
@@ -3184,7 +3185,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "microsoft",
     "title": "Microsoft Licensing, Cloud & Enterprise Solutions",
-    "description": "Microsoft 365, Office, Windows Server, SQL Server, Dynamics 365 and Azure licensing, supplied under the purchasing programme that suits how your organisation actually buys.",
+    "description": "Microsoft 365, Office, Windows Server, SQL Server, Dynamics 365 and Azure licensing, under the purchasing programme that suits how your organisation buys.",
     "keywords": [
       "microsoft licensing",
       "microsoft 365",
@@ -3897,7 +3898,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "microsoft-csp",
     "title": "Microsoft CSP — Cloud Solution Provider Programme",
-    "description": "How Microsoft's Cloud Solution Provider programme works: annual and monthly terms, mid-term seat changes, INR billing with GST, and how it compares to a volume agreement.",
+    "description": "How Microsoft's Cloud Solution Provider programme works: annual and monthly terms, mid-term seat changes, INR billing with GST, and how it compares to volume.",
     "keywords": [
       "microsoft csp",
       "cloud solution provider",
@@ -4038,7 +4039,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "microsoft-licensing",
     "title": "Microsoft Licensing Guide — CSP, EA & Volume Licensing",
-    "description": "A practical comparison of Microsoft's purchasing programmes: Cloud Solution Provider, Enterprise Agreement and volume licensing, with the thresholds that actually decide it.",
+    "description": "Comparing Microsoft's purchasing programmes: Cloud Solution Provider, Enterprise Agreement and volume licensing, with the thresholds that actually decide it.",
     "keywords": [
       "microsoft licensing",
       "enterprise agreement",
@@ -4192,7 +4193,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "microsoft-office",
     "title": "Microsoft Office Licensing — Perpetual & Subscription",
-    "description": "Microsoft Office licensing for business: perpetual Home & Business and Professional Plus licences, LTSC volume licensing, and the Microsoft 365 subscription alternative compared.",
+    "description": "Microsoft Office licensing for business: perpetual Home & Business and Professional Plus, LTSC volume licensing, and the Microsoft 365 subscription compared.",
     "keywords": [
       "microsoft office",
       "office licence",
@@ -4493,7 +4494,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "privacy",
     "title": "Privacy Policy",
-    "description": "What personal data this website collects, why, who it is shared with, how long it is kept, and the rights you have over it under the Digital Personal Data Protection Act, 2023.",
+    "description": "What personal data this site collects, why, who it is shared with, how long it is kept, and your rights over it under the Digital Personal Data Protection Act.",
     "keywords": [
       "privacy policy",
       "data protection",
@@ -4985,7 +4986,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "revit",
     "title": "Autodesk Revit Licensing & Pricing",
-    "description": "Revit subscriptions for architecture, structure and building services: BIM modelling, worksharing, automatic documentation and IFC exchange, with collection pricing compared.",
+    "description": "Revit subscriptions for architecture, structure and building services: BIM modelling, worksharing, automatic documentation and IFC exchange, per named user.",
     "keywords": [
       "revit",
       "revit price",
@@ -5140,7 +5141,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "solutions",
     "title": "Technology Solutions by Outcome & Industry",
-    "description": "Enterprise technology solutions organised by the outcome you are buying — modern workplace, cloud transformation, design and engineering, security and compliance — and by industry.",
+    "description": "Enterprise technology solutions organised by the outcome you are buying — modern workplace, cloud transformation, design and engineering, and security.",
     "keywords": [
       "technology solutions",
       "enterprise it solutions",
@@ -5572,7 +5573,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "solutions/design-engineering",
     "title": "Design & Engineering Technology Solutions",
-    "description": "CAD, BIM and creative tooling with the workstations sized against the software that will run on them, licensed as one estate across Autodesk, Adobe and SketchUp.",
+    "description": "CAD, BIM and creative tooling with workstations sized against the software that will run on them, licensed as one estate across Autodesk, Adobe and SketchUp.",
     "keywords": [
       "cad solutions",
       "bim",
@@ -5836,7 +5837,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "solutions/financial-services",
     "title": "Technology for Financial Services",
-    "description": "Retention, eDiscovery, identity controls and endpoint posture for financial services organisations, licensed against the compliance obligation rather than a checklist.",
+    "description": "Retention, eDiscovery, identity controls and endpoint posture for financial services, licensed against the compliance obligation rather than a checklist.",
     "keywords": [
       "financial services it",
       "compliance",
@@ -6484,7 +6485,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "sql-server",
     "title": "SQL Server Licensing — Core & Server Plus CAL",
-    "description": "SQL Server 2022 Standard and Enterprise licensing: per-core versus server-plus-CAL, the four-core minimum, virtualisation rules and when Enterprise is genuinely required.",
+    "description": "SQL Server 2022 Standard and Enterprise licensing: per-core versus server-plus-CAL, the four-core minimum, and when Enterprise is genuinely required.",
     "keywords": [
       "sql server",
       "sql server 2022",
@@ -6642,7 +6643,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "terms",
     "title": "Terms of Sale and Website Use",
-    "description": "The terms on which TechZoid supplies software licences, cloud services and IT solutions, how quotations and orders are formed, and the terms on which this website is provided.",
+    "description": "The terms on which TechZoid supplies software licences, cloud services and IT solutions, how quotations and orders are formed, and how this site is provided.",
     "keywords": [
       "terms of sale",
       "terms of service",
@@ -6906,7 +6907,7 @@ export const pageSeeds: PageSeed[] = [
   {
     "slug": "windows-server",
     "title": "Windows Server Licensing — Core Licences & CALs",
-    "description": "Windows Server 2025 Standard and Datacenter licensing explained: core counting rules, the sixteen-core minimum, when Datacenter becomes cheaper, and how CALs are counted.",
+    "description": "Windows Server 2025 Standard and Datacenter licensing: core counting rules, the sixteen-core minimum, when Datacenter is cheaper, and how CALs are counted.",
     "keywords": [
       "windows server",
       "windows server 2025",

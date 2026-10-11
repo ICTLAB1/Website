@@ -24,7 +24,7 @@ import { SEGMENT_DESCRIPTIONS, SEGMENT_LABELS, SEGMENT_ORDER } from "@/lib/brand
 export const metadata: Metadata = buildMetadata({
   title: "Technology Brands We Supply",
   description:
-    "Licensing and solutions across Microsoft, Adobe, Autodesk, Zoho, SketchUp, Corel, HPE and Dell Technologies — consolidated into a single procurement relationship.",
+    "Licensing and solutions across Microsoft, Adobe, Autodesk, Zoho, HPE and Dell Technologies — consolidated into a single procurement relationship.",
   path: "/brands",
 });
 

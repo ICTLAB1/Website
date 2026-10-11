@@ -51,6 +51,8 @@ import { shortenCspEaTitle } from "./2026-09-shorten-csp-ea-title";
 import { pricingArticles } from "./2026-09-pricing-articles";
 import { morePricingArticles } from "./2026-09-more-pricing-articles";
 import { m365BasicPremiumPricing } from "./2026-09-m365-basic-premium-pricing";
+import { nameTheManagingDirector } from "./2026-09-name-the-managing-director";
+import { trimLongMetaDescriptions } from "./2026-09-trim-long-meta-descriptions";
 import type { ContentMigration } from "./types";
 
 /**
@@ -115,6 +117,8 @@ export const contentMigrations: ContentMigration[] = [
   pricingArticles,
   morePricingArticles,
   m365BasicPremiumPricing,
+  nameTheManagingDirector,
+  trimLongMetaDescriptions,
 ];
 
 export type { ContentMigration };

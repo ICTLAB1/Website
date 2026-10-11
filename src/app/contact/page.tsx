@@ -10,7 +10,7 @@ import { socialLinks } from "@/lib/social";
 export const metadata: Metadata = buildMetadata({
   title: "Contact Sales",
   description:
-    "Talk to our sales and enterprise procurement teams about software licensing, cloud services and IT solutions. Existing orders and technical issues go to the support centre.",
+    "Talk to our sales and enterprise procurement teams about software licensing, cloud services and IT solutions. Existing orders go to the support centre.",
   path: "/contact",
 });
 

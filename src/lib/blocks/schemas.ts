@@ -354,6 +354,16 @@ export const companyInfoSchema = z.object({
    * the legal pages rather than beside the marketing copy.
    */
   fields: z.enum(["identity", "grievance", "all"]).optional().default("identity"),
+  /**
+   * Whether to name the proprietor, partner or managing director in the panel.
+   *
+   * Opt-in rather than part of `identity`, because `identity` is also half of
+   * `all` — the set the terms, privacy and refund pages show. Naming an
+   * individual is worth doing once, on the page that introduces the company,
+   * and repeating it at the foot of every legal page would put a person's name
+   * under four more headings without adding anything a reader came for.
+   */
+  showDirector: z.boolean().optional().default(false),
   footnote: optionalText(1200),
 });
 

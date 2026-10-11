@@ -155,6 +155,30 @@
   --animate-slide-in-right: slide-in-right var(--duration-slow) var(--ease-out-soft) both;
   --animate-scale-in: scale-in var(--duration-base) var(--ease-out-quart) both;
   --animate-shimmer: shimmer 1.4s linear infinite;
+
+  /*
+    The way out, for the two things that have one.
+
+    Shorter than the way in, which is the usual asymmetry: an entrance is
+    showing you something that was not there, and is worth a moment; a
+    dismissal is getting out of the way, and a slow one reads as lag. 140ms
+    matches the delay the mega menu already waits before closing on pointer
+    leave, so the panel starts fading exactly as that grace period ends rather
+    than sitting still and then jumping.
+  */
+  --animate-slide-up-out: slide-up-out var(--duration-fast) var(--ease-out-quart) both;
+
+  /*
+    A route change, and the only animation on this site that runs on every
+    navigation.
+
+    Deliberately the smallest thing that reads as a transition: opacity, and
+    6px of travel that the compositor does on the transform. No height, no
+    width, nothing the layout engine has to re-measure — a route transition
+    that shifts content is a Core Web Vitals regression on every page at once,
+    which is a high price for a flourish.
+  */
+  --animate-route-in: route-in var(--duration-base) var(--ease-out-quart) both;
 }
 
 @keyframes fade-in {
@@ -169,6 +193,19 @@
 
 @keyframes slide-down {
   from { opacity: 0; transform: translate3d(0, -6px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+/* The reverse, and it must end at opacity 0: under reduced motion every
+   animation here is cut to 0.01ms, so the end frame is effectively the only
+   frame, and a dismissal whose last frame is visible would never dismiss. */
+@keyframes slide-up-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translate3d(0, -6px, 0); }
+}
+
+@keyframes route-in {
+  from { opacity: 0; transform: translate3d(0, 6px, 0); }
   to { opacity: 1; transform: none; }
 }
 

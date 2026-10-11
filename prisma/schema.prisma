@@ -2258,6 +2258,21 @@ model SiteSettings {
   grievanceEmail String?
   grievancePhone String?
 
+  /// The individual who runs the business, and the designation they hold.
+  ///
+  /// Indian acquiring banks require the person behind a merchant to be named on
+  /// its website, so the name can be matched against the account's KYC. It is
+  /// the same class of fact as the CIN — an identity claim a bank checks — so it
+  /// lives here rather than in a content block, where an author could edit it.
+  ///
+  /// Both or neither. The designation is the row's label, and it is not
+  /// derivable: a proprietorship prints "Proprietor", a partnership "Partner",
+  /// a company "Managing Director" or "Director", and stating the wrong one on
+  /// a page a bank reads for KYC is worse than stating nothing. A name with no
+  /// designation is therefore not shown at all.
+  directorName  String?
+  directorTitle String?
+
   updatedAt   DateTime @updatedAt
   /// The administrator who last saved. Nullable so a row written by a migration
   /// or a restore does not have to invent an author.

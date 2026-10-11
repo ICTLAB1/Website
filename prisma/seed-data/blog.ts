@@ -125,7 +125,7 @@ The third group is the one worth acting on first.`,
     slug: "microsoft-365-business-premium-security-you-already-own",
     title: "Microsoft 365 Business Premium: the security you may already be paying for",
     excerpt:
-      "Most organisations on Business Premium use a fraction of its security capability. That unused portion is often the cheapest security improvement available to them.",
+      "Most organisations on Business Premium use a fraction of its security capability. That unused portion is often the cheapest security improvement available.",
     category: "Cybersecurity",
     tags: ["microsoft 365", "security", "intune", "defender"],
     readMinutes: 6,

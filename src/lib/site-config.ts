@@ -105,6 +105,15 @@ function stored(value: string | null | undefined): string | null {
   return trimmed ? trimmed : null;
 }
 
+/** A named officer, only when the designation to print them under is known too. */
+function director(
+  name: string | null | undefined,
+  title: string | null | undefined,
+): { name: string; title: string } | null {
+  const both = { name: stored(name), title: stored(title) };
+  return both.name && both.title ? { name: both.name, title: both.title } : null;
+}
+
 /**
  * One profile URL per line, `https` only, deduplicated, order preserved.
  *
@@ -206,6 +215,22 @@ export const getSiteConfig = cache(async () => {
       email: stored(row?.grievanceEmail) ?? optionalEnv("COMPANY_GRIEVANCE_OFFICER_EMAIL") ?? null,
       phone: stored(row?.grievancePhone) ?? optionalEnv("COMPANY_GRIEVANCE_OFFICER_PHONE") ?? null,
     },
+    /**
+     * The individual who runs the business, and the designation they hold —
+     * named on the about page because an acquiring bank matches it against the
+     * merchant account's KYC.
+     *
+     * Both or neither, the same rule `secondaryEntity` applies to a name and an
+     * address. The designation is the label the name is printed under and
+     * cannot be inferred: proprietor, partner and managing director are
+     * different legal positions, and defaulting to one of them would put a
+     * claim about somebody's role on the page a bank reads to check it. So an
+     * unlabelled name is dropped rather than given a guessed title.
+     */
+    director: director(
+      stored(row?.directorName) ?? optionalEnv("COMPANY_DIRECTOR_NAME"),
+      stored(row?.directorTitle) ?? optionalEnv("COMPANY_DIRECTOR_TITLE"),
+    ),
     address,
     hasAddress,
     formattedAddress: hasAddress
