@@ -38,14 +38,29 @@ say "Mail configuration (true/false only — no values are printed)"
 $COMPOSE exec -T db sh -c 'psql -X -A -F"=" -t -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f -' <<'SQL'
 select 'mail_settings_row_exists=' || (count(*) > 0) from "MailSettings";
 select 'provider', coalesce(max(provider::text), 'none') from "MailSettings";
-select 'smtp_host_set', coalesce(max((host is not null and host <> ''))::text, 'false') from "MailSettings";
-select 'smtp_password_set', coalesce(max((password is not null))::text, 'false') from "MailSettings";
-select 'from_address_set', coalesce(max(("fromAddress" is not null and "fromAddress" <> ''))::text, 'false') from "MailSettings";
-select 'graph_complete', coalesce(max(("graphTenantId" is not null and "graphClientId" is not null and "graphClientSecret" is not null and "graphSender" is not null))::text, 'false') from "MailSettings";
-select 'acs_enabled', coalesce(max("acsEnabled")::text, 'false') from "MailSettings";
-select 'acs_complete', coalesce(max(("acsConnectionString" is not null and "acsSenderAddress" is not null))::text, 'false') from "MailSettings";
-select 'notification_address_set', coalesce(max(("salesNotificationEmail" is not null and "salesNotificationEmail" <> ''))::text, 'false') from "MailSettings";
-select 'site_sales_address_set', coalesce(max(("emailSales" is not null and "emailSales" <> ''))::text, 'false') from "SiteSettings";
+select 'smtp_host_set', coalesce(bool_or((host is not null and host <> ''))::text, 'false') from "MailSettings";
+select 'smtp_password_set', coalesce(bool_or((password is not null))::text, 'false') from "MailSettings";
+select 'from_address_set', coalesce(bool_or(("fromAddress" is not null and "fromAddress" <> ''))::text, 'false') from "MailSettings";
+select 'graph_complete', coalesce(bool_or(("graphTenantId" is not null and "graphClientId" is not null and "graphClientSecret" is not null and "graphSender" is not null))::text, 'false') from "MailSettings";
+select 'acs_enabled', coalesce(bool_or("acsEnabled")::text, 'false') from "MailSettings";
+select 'acs_complete', coalesce(bool_or(("acsConnectionString" is not null and "acsSenderAddress" is not null))::text, 'false') from "MailSettings";
+select 'notification_address_set', coalesce(bool_or(("salesNotificationEmail" is not null and "salesNotificationEmail" <> ''))::text, 'false') from "MailSettings";
+select 'site_sales_address_set', coalesce(bool_or(("emailSales" is not null and "emailSales" <> ''))::text, 'false') from "SiteSettings";
+-- Whether the notification would be sent from the very mailbox it is sent to.
+-- Microsoft accepts that and delivers it, but a tenant rule, or Outlook's own
+-- "sent by me" handling, is one of the few remaining ways a message that the
+-- log records as delivered still never looks like an arrival.
+-- Aggregated rather than `limit 1`: both tables are singletons in practice,
+-- but a stray row makes an unordered limit pick arbitrarily, and the first
+-- version of this answered "unknown" against perfectly good settings because
+-- of it. bool_or yields null only when there is nothing to compare, which is
+-- the one case that genuinely is unknown.
+select 'sends_from_the_address_it_notifies',
+  coalesce(
+    (select bool_or(lower(m."graphSender") = lower(coalesce(nullif(m."salesNotificationEmail", ''), s."emailSales")))
+     from "MailSettings" m, "SiteSettings" s
+     where m."graphSender" is not null)::text,
+    'unknown');
 SQL
 
 say "Inbound messages stored in the last 7 days (counts only)"
@@ -56,6 +71,15 @@ select 'of_those_sales_or_enterprise', count(*) from "SupportTicket"
   where "createdAt" > now() - interval '7 days' and category in ('SALES', 'ENTERPRISE');
 select 'enquiries', count(*) from "Enquiry" where "createdAt" > now() - interval '7 days';
 SQL
+
+say "How far back the container log actually reaches"
+
+# Worth printing before the counts below, because it bounds them. `docker
+# compose logs` reads one container's own log, and a deploy replaces the
+# container — so however large $SINCE is, nothing from before the last deploy
+# exists to be found. Read "no events" together with this line or it looks like
+# evidence that nothing was ever sent.
+$COMPOSE ps --format '{{.Name}} up {{.RunningFor}}' app 2>/dev/null || echo "(could not read container age)"
 
 say "Mail events in the container log, last $SINCE (event name and count)"
 
@@ -106,6 +130,10 @@ mail_not_configured_message_skipped
     that has not had mail set up; never expected on a live site.
 
 Tickets stored but no notification events at all
-    The running image predates the change that notifies and logs. Deploy.
+    Check the container age above first. A deploy replaces the container and
+    starts its log again, so a site deployed ten minutes ago has no history to
+    show and this means only "nothing has come in since". Submit one message
+    through the contact form and run this again. If events are still absent
+    after that, the running image predates the change that notifies and logs.
 GUIDE
 printf '\n'
