@@ -96,14 +96,74 @@ for (const tag of loaderTags) {
   check(/nonce="/.test(tag), `a loader carries no nonce and the policy will refuse it: ${tag}`);
 }
 
-// ──────────────────────────────────────────────────────────────── what it denies
+// ──────────────────────────────────────────── what it denies, and where
+
+/*
+ * Two default commands, read out of the shipped bytes.
+ *
+ * The denial is no longer global, so checking that each type appears as
+ * "denied" somewhere would pass on a page that denied nothing outside one
+ * country. What has to hold is the pair: a command naming the regions and
+ * denying all four, and a command naming none and granting them.
+ */
+/*
+ * The commands as the browser will read them.
+ *
+ * Each appears twice in the bytes: once in the document and once in the flight
+ * payload Next serialises beside it. The second copy has its quotes escaped,
+ * so it is not the same string and does not deduplicate — but it is also not
+ * valid JSON on its own, which is what separates the two here. Parsing and
+ * keeping what parses leaves exactly the commands that will run.
+ */
+const consentDefaults = [...html.matchAll(/gtag\('consent', 'default', (\{.*?\})\);/g)]
+  .map((match) => {
+    try {
+      return JSON.parse(match[1]);
+    } catch {
+      return null;
+    }
+  })
+  .filter(Boolean);
+
+check(
+  consentDefaults.length === 2,
+  `expected two distinct consent defaults, found ${consentDefaults.length}`,
+);
+
+const regional = consentDefaults.find((entry) => entry && Array.isArray(entry.region));
+const global = consentDefaults.find((entry) => entry && !entry.region);
+
+check(Boolean(regional), "no region-scoped consent default — the EEA is measured without being asked");
+check(Boolean(global), "no global consent default — everywhere outside the named regions is undefined");
 
 for (const type of ["ad_storage", "ad_user_data", "ad_personalization", "analytics_storage"]) {
   check(
-    new RegExp(`"${type}":"denied"`).test(html),
-    `${type} is not denied by default on a page a visitor has not answered`,
+    regional?.[type] === "denied",
+    `${type} is not denied where consent must be asked for first`,
   );
+  check(global?.[type] === "granted", `${type} is not granted outside those regions`);
 }
+
+/*
+ * The countries themselves, in the page rather than only in the module. A
+ * region list that is correct in the source and truncated in the emitted
+ * script measures people the policy says are asked first.
+ */
+for (const code of ["DE", "FR", "IE", "GB", "CH", "NO"]) {
+  check(regional?.region?.includes(code), `${code} is missing from the region list on the page`);
+}
+check(!regional?.region?.includes("IN"), "India is in the denied list, which is not what was asked for");
+
+/*
+ * And the stored answer replayed in both directions. Replaying only
+ * acceptance was harmless while everything defaulted to denied; with a
+ * granted default it silently discards every refusal.
+ */
+check(/'denied'/.test(html) && /consent','update'/.test(html), "the page never replays a stored answer");
+check(
+  html.includes("==='denied'") || html.includes('==="denied"'),
+  "a stored refusal is not replayed, so declining is forgotten on the next page",
+);
 
 /*
  * Google's second Tag Manager snippet. Read out of the bytes rather than

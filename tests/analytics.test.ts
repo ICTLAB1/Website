@@ -7,6 +7,8 @@ import {
   analyticsDebugging,
   analyticsEnabled,
   CONSENT_DEFAULTS,
+  CONSENT_DEFAULTS_BY_REGION,
+  CONSENT_DENIED_REGIONS,
   DENIED,
   GA_MEASUREMENT_IDS,
   GOOGLE_ADS_ENABLED,
@@ -173,15 +175,44 @@ describe("a tag debugging session", () => {
 });
 
 describe("consent", () => {
-  it("denies everything by default", () => {
+  it("denies everything where consent must be asked for first", () => {
     /*
-     * The property this whole feature rests on. A default that is granted, or
-     * a consent type left out of the defaults entirely, measures a visitor who
-     * has not been asked — and the cookie policy promises the opposite.
+     * The property the EEA half of this rests on. A type granted here, or left
+     * out of this command entirely, measures a visitor in a country whose law
+     * says to ask first — and the cookie policy says we do.
      */
     for (const type of ["ad_storage", "ad_user_data", "ad_personalization", "analytics_storage"] as const) {
-      expect(CONSENT_DEFAULTS[type]).toBe("denied");
+      expect(CONSENT_DEFAULTS_BY_REGION[type]).toBe("denied");
     }
+  });
+
+  it("names every country that must be asked first, and no duplicates", () => {
+    /*
+     * Twenty-seven member states, three more in the EEA, and two equivalent
+     * regimes outside it. Counted rather than eyeballed: a country missing
+     * from this list is a visitor measured without being asked, and it is the
+     * kind of omission that reads as correct.
+     */
+    expect(new Set(CONSENT_DENIED_REGIONS).size).toBe(CONSENT_DENIED_REGIONS.length);
+    expect(CONSENT_DENIED_REGIONS).toHaveLength(32);
+
+    for (const code of ["DE", "FR", "IE", "NO", "IS", "LI", "GB", "CH"]) {
+      expect(CONSENT_DENIED_REGIONS).toContain(code);
+    }
+    // Where the business actually sells, and the reason this change was made.
+    expect(CONSENT_DENIED_REGIONS).not.toContain("IN");
+
+    for (const code of CONSENT_DENIED_REGIONS) {
+      expect(code).toMatch(/^[A-Z]{2}$/);
+    }
+  });
+
+  it("grants elsewhere, which is the half that needed the policy rewritten", () => {
+    for (const type of ["ad_storage", "ad_user_data", "ad_personalization", "analytics_storage"] as const) {
+      expect(CONSENT_DEFAULTS[type]).toBe("granted");
+    }
+    // The global command must carry no region, or it stops being the fallback.
+    expect(CONSENT_DEFAULTS).not.toHaveProperty("region");
   });
 
   it("waits for an answer before measuring", () => {
@@ -200,5 +231,12 @@ describe("consent", () => {
 
     const defaults = Object.keys(CONSENT_DEFAULTS).filter((key) => key !== "wait_for_update");
     expect(Object.keys(GRANTED).sort()).toEqual(defaults.sort());
+
+    // And the regional command answers the same set, or a type it omits keeps
+    // the granted global value in a country that must be asked first.
+    const regional = Object.keys(CONSENT_DEFAULTS_BY_REGION).filter(
+      (key) => key !== "wait_for_update" && key !== "region",
+    );
+    expect(regional.sort()).toEqual(defaults.sort());
   });
 });

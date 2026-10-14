@@ -293,39 +293,70 @@ export function analyticsDebugging(search: URLSearchParams): boolean {
 }
 
 /**
- * What every page denies until a visitor says otherwise.
+ * Where asking first is the law, and where it is the courtesy.
  *
- * Google Consent Mode v2. These four are sent as `consent: default` before any
- * `config`, so the tag knows the answer before it has anything to report — a
- * default set after the first measurement is a default that arrived too late.
+ * The EEA, the United Kingdom and Switzerland. The first because the ePrivacy
+ * Directive and the GDPR require consent before anything that is not strictly
+ * necessary; the second and third because they kept equivalent rules of their
+ * own after diverging, and a visitor in London or Zurich should not be treated
+ * as though they had not.
  *
- * All denied. Not because analytics is unwelcome, but because "denied unless
- * asked" is the only default that matches what the cookie policy says: nothing
- * that is not strictly necessary happens to a visitor who has not been asked.
- * Under denial the tag still sends a cookieless ping, so aggregate traffic is
- * still counted and no `_ga` cookie is written.
+ * Written as a list because Consent Mode takes ISO 3166 codes and there is no
+ * "EEA" token to hand it. Kept in alphabetical order so an addition is a
+ * one-line diff and a missing country is visible.
+ */
+export const CONSENT_DENIED_REGIONS = [
+  // The 27 member states.
+  "AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR",
+  "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO",
+  "SE", "SI", "SK",
+  // The rest of the EEA.
+  "IS", "LI", "NO",
+  // Equivalent regimes outside it.
+  "CH", "GB",
+] as const;
+
+/**
+ * Consent before the tag has anything to report.
  *
- * `wait_for_update` gives the banner half a second to answer on a page where
- * the visitor has already decided, so a returning visitor's own choice is
- * applied before the first page view rather than after it.
+ * Google Consent Mode v2, sent as `consent: default` before any `config` — a
+ * default that arrives after the first measurement is a default that arrived
+ * too late. `wait_for_update` gives the stored answer half a second to be
+ * replayed, so a returning visitor's own choice applies to their first page
+ * view rather than to their second.
  *
- * ## One default, not one per region
+ * ## Two commands, not one
  *
- * Consent Mode takes region-scoped defaults — deny in the EEA, allow
- * elsewhere — and this deliberately does not use them. A single global denial
- * is the only version that matches what the cookie policy promises every
- * reader, and a policy that quietly means something different depending on
- * where you are reading it from is not one worth publishing. If the business
- * ever decides to grant by default outside the EEA, it is one additional
- * `consent default` command carrying a `region` array; the wording on the
- * cookie policy has to change with it.
+ * Until October 2026 there was one, denying everything everywhere, and the
+ * reasoning written here was that a single global denial is the only version
+ * that matches what the cookie policy promises every reader.
+ *
+ * That is still true, and it is why these two must move together: the policy
+ * now says the same thing these commands say — asked first in the EEA, the UK
+ * and Switzerland; on by default elsewhere with a notice and a way to refuse.
+ * Changing either of these alone publishes a claim about somebody's data that
+ * is not what the page does.
+ *
+ * The region-scoped command wins where it applies: Consent Mode resolves by
+ * the most specific region, so the command with no `region` is the fallback
+ * for everywhere not named above, regardless of the order they are sent in.
  */
 export const CONSENT_DEFAULTS = {
+  ad_storage: "granted",
+  ad_user_data: "granted",
+  ad_personalization: "granted",
+  analytics_storage: "granted",
+  wait_for_update: 500,
+} as const;
+
+/** The same four, denied, for the regions that must be asked first. */
+export const CONSENT_DEFAULTS_BY_REGION = {
   ad_storage: "denied",
   ad_user_data: "denied",
   ad_personalization: "denied",
   analytics_storage: "denied",
   wait_for_update: 500,
+  region: CONSENT_DENIED_REGIONS,
 } as const;
 
 /**
