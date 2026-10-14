@@ -265,9 +265,31 @@ export async function listAdminCustomers(options: { q?: string; page?: number } 
   return { items, total, page, totalPages: Math.max(1, Math.ceil(total / pageSize)) };
 }
 
+/**
+ * Everyone who works here, for the screen that administers them.
+ *
+ * "Every role except CUSTOMER", not a list of the internal ones — the same way
+ * `isStaff` is written, and for the reason its comment gives: a role added to
+ * the enum must not be able to fall silently outside this.
+ *
+ * It used to be `in: ["ADMIN", "SALES"]`, which was that failure. Seven of the
+ * nine roles the create form offers were invisible here: an administrator
+ * creating a colleague as Support or Accounts got an account in the database,
+ * an audit entry and an emailed invitation, and a page that showed nothing. The
+ * account could then not be found to change its role, resend its invitation or
+ * archive it, because both of those controls are populated from this list. It
+ * looked exactly like the create had failed, and it had not — verified against
+ * a real database, where three users created through the form left one row on
+ * the page.
+ *
+ * CUSTOMER is excluded deliberately rather than by oversight: this is the staff
+ * screen and customers are administered at /admin/customers. `createUser` says
+ * so when that role is chosen, so the one role still missing from this list is
+ * the one the page tells you about.
+ */
 export async function listAdminUsers() {
   return prisma.user.findMany({
-    where: { deletedAt: null, role: { in: ["ADMIN", "SALES"] } },
+    where: { deletedAt: null, role: { not: "CUSTOMER" } },
     orderBy: { createdAt: "asc" },
     select: {
       id: true,
