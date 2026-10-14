@@ -6,6 +6,8 @@ import {
   CONSENT_DEFAULTS,
   CONSENT_KEY,
   GA_MEASUREMENT_IDS,
+  GOOGLE_ADS_ENABLED,
+  GOOGLE_ADS_ID,
   GRANTED,
   GTM_CONTAINER_ID,
   GTM_ENABLED,
@@ -97,6 +99,15 @@ export async function GoogleTag() {
     )});}}catch(e){}`,
     "gtag('js', new Date());",
     ...GA_MEASUREMENT_IDS.map((id) => `gtag('config', '${id}');`),
+    /*
+     * The Ads account, registered and nothing more.
+     *
+     * `config` announces a destination; it does not count anything. The
+     * conversion itself is counted by the tag already in the container, on the
+     * `quote_form_submit` event the four lead forms push — so this line adds a
+     * capability and not a second count.
+     */
+    ...(GOOGLE_ADS_ENABLED ? [`gtag('config', '${GOOGLE_ADS_ID}');`] : []),
     /*
      * Last, and after the consent defaults for the same reason everything else
      * is: this is the event that starts the container, and a tag inside it
