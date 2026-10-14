@@ -109,6 +109,35 @@ export const GOOGLE_ADS_ID = (process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18408
 /** Validated before it reaches a script body, exactly like the two above. */
 export const GOOGLE_ADS_ENABLED = /^AW-[0-9]{8,20}$/.test(GOOGLE_ADS_ID);
 
+/**
+ * The conversion action a submitted quote request counts towards.
+ *
+ * Paired with the account id above as `AW-…/LABEL`, which is the single string
+ * Google calls `send_to`. Built in one place so the id is never written twice.
+ *
+ * ## This is the counting half
+ *
+ * Unlike `config`, firing this records a conversion. The published container
+ * also holds a tag that counts the same event, so with both active every lead
+ * counts twice — set this empty to leave the counting to the container, or
+ * pause the container's tag and leave this set. One or the other.
+ */
+export const GOOGLE_ADS_CONVERSION_LABEL = (
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL ?? "HBAhCJCc0OccEL3h2slE"
+).trim();
+
+/**
+ * The `send_to` value, or null when either half is missing.
+ *
+ * Null rather than a half-built string: `AW-123/` and `/LABEL` are both
+ * accepted by `gtag` and both silently count nothing, which is the failure
+ * this is meant to make impossible.
+ */
+export const ADS_CONVERSION_SEND_TO =
+  GOOGLE_ADS_ENABLED && /^[A-Za-z0-9_-]{8,40}$/.test(GOOGLE_ADS_CONVERSION_LABEL)
+    ? `${GOOGLE_ADS_ID}/${GOOGLE_ADS_CONVERSION_LABEL}`
+    : null;
+
 /** Paths analytics never sees. */
 const PRIVATE_PREFIXES = ["/admin", "/account", "/api", "/login", "/register", "/reset-password"];
 
@@ -198,8 +227,32 @@ export const ANALYTICS_CSP = {
      */
     "https://analytics.google.com",
     "https://*.analytics.google.com",
+    /*
+     * Where an Ads conversion actually goes, and the reason one never arrived.
+     *
+     * `gtag('event','conversion')` — and the equivalent tag inside the
+     * container — reports to `www.googleadservices.com/pagead/conversion/…`
+     * and `googleads.g.doubleclick.net/pagead/viewthroughconversion/…`.
+     * Neither host was listed here, so the tag ran, the request was made, and
+     * the policy refused it. Nothing in Google Ads says "blocked by the site's
+     * content policy"; the conversion action simply reports that it has never
+     * received data, which is exactly what it did report.
+     *
+     * Listed under `connect` and `img` both, because which one is used depends
+     * on the browser: the ping goes out through `fetch`/`sendBeacon` where
+     * they are available and falls back to an image request where they are
+     * not, and a policy that allows only the first silently drops the
+     * fallback.
+     */
+    "https://www.googleadservices.com",
+    "https://googleads.g.doubleclick.net",
   ],
-  img: ["https://www.googletagmanager.com", "https://*.google-analytics.com"],
+  img: [
+    "https://www.googletagmanager.com",
+    "https://*.google-analytics.com",
+    "https://www.googleadservices.com",
+    "https://googleads.g.doubleclick.net",
+  ],
   /*
    * For the Tag Manager `<noscript>` frame, and nothing else.
    *

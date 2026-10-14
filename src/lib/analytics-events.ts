@@ -1,4 +1,4 @@
-import { CONVERSION_EVENTS } from "@/lib/analytics";
+import { ADS_CONVERSION_SEND_TO, CONVERSION_EVENTS } from "@/lib/analytics";
 
 /**
  * Telling the tag that something worth counting happened.
@@ -53,6 +53,7 @@ function remember(key: string): void {
 declare global {
   interface Window {
     dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
@@ -102,4 +103,34 @@ export function pushConversion(
   // `event` last, and deliberately: a container trigger reads it, and a detail
   // key colliding with it would silently fire the wrong tag — or none.
   window.dataLayer.push({ ...details, event });
+
+  /*
+   * And the Ads conversion, reported from here rather than from a container.
+   *
+   * This is the counting half, so it sits behind the same de-duplication as
+   * the push above: both run only once per reference, which is what stops a
+   * refreshed confirmation page or a re-submitted form counting a second lead.
+   *
+   * Only the quote event. The other entries in `CONVERSION_EVENTS` are not
+   * this conversion action, and sending them to the same `send_to` would file
+   * a WhatsApp click as a quote request.
+   *
+   * Guarded on the function existing, because it does not on a page where
+   * analytics is switched off — a developer's machine, a signed-in path — and
+   * a statistic is not worth an exception on the success path of somebody's
+   * enquiry.
+   *
+   * ## What this does not decide
+   *
+   * Whether Google counts it. `ad_storage` defaults to denied, so a visitor
+   * who has not accepted produces a consent-denied report rather than a
+   * conversion; and the container may hold a tag counting the same event, in
+   * which case every lead counts twice. Both are settings rather than code —
+   * see `ADS_CONVERSION_SEND_TO`.
+   */
+  if (event === CONVERSION_EVENTS.quoteFormSubmit && ADS_CONVERSION_SEND_TO) {
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "conversion", { send_to: ADS_CONVERSION_SEND_TO });
+    }
+  }
 }
