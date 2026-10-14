@@ -379,15 +379,18 @@ try {
   check(Boolean(reference), "the confirmation showed no reference to key the conversion on");
 
   /*
-   * The Ads conversion itself. One per lead, carrying the account and the
-   * label as a single `send_to` — a half-built one like `AW-123/` is accepted
-   * by gtag and counts nothing, which is the failure worth catching here.
+   * And no Ads conversion from the page, which is how this ships.
+   *
+   * The published container holds a tag on the same `quote_form_submit` event,
+   * so exactly one of the two may count a lead — with both, every lead counts
+   * twice and a Maximize Conversions campaign bids against the doubled figure.
+   * The site's half is switched off by an empty conversion label; this is the
+   * check that notices if it is ever switched back on while that tag is live.
    */
   const adsConversions = await conversionsFired();
-  check(adsConversions.length === 1, `expected one Ads conversion, saw ${adsConversions.length}`);
   check(
-    /^AW-[0-9]{8,20}\/[A-Za-z0-9_-]{8,40}$/.test(adsConversions[0]?.send_to ?? ""),
-    `the conversion send_to is not an account and label (${JSON.stringify(adsConversions[0])})`,
+    adsConversions.length === 0,
+    `the page reported ${adsConversions.length} Ads conversion(s) — the container counts this event too, so each lead would count twice`,
   );
 
   /*
@@ -403,8 +406,8 @@ try {
   );
 
   check(
-    (await conversionsFired()).length <= 1,
-    "refreshing the confirmation reported a second Ads conversion for one lead",
+    (await conversionsFired()).length === 0,
+    "refreshing the confirmation reported an Ads conversion from the page",
   );
 
   if (reference) {

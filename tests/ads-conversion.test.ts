@@ -9,6 +9,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  * report for the same reference counts nothing, that a different conversion
  * event is not filed as a quote request, and that a page with no tag on it
  * does not throw on somebody's successful enquiry.
+ *
+ * The label is supplied here rather than taken from the shipped default, which
+ * is empty because the Tag Manager container does the counting. These exercise
+ * the mechanism for the day that moves back into this codebase; the last case
+ * covers the state as it actually ships.
  */
 
 const gtag = vi.fn();
@@ -16,6 +21,7 @@ const gtag = vi.fn();
 describe("reporting a quote request to Google Ads", () => {
   beforeEach(() => {
     vi.resetModules();
+    process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL = "HBAhCJCc0OccEL3h2slE";
     gtag.mockClear();
     // A fresh page each time: the helper remembers what it has counted.
     (globalThis as unknown as { window: unknown }).window = {
@@ -88,5 +94,25 @@ describe("reporting a quote request to Google Ads", () => {
     // Analytics is off on localhost and on every signed-in path, and this runs
     // on the success path of a real enquiry.
     expect(() => pushConversion(CONVERSION_EVENTS.quoteFormSubmit, "ENQ-3")).not.toThrow();
+  });
+
+  it("reports nothing at all while the container is the counter", async () => {
+    /*
+     * How this ships. An empty label makes `send_to` null, and a null one must
+     * mean silence rather than a `gtag` call with a half-built destination —
+     * `AW-123/` is accepted and counts nothing, which would look configured
+     * and report into a void.
+     */
+    process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL = "";
+    vi.resetModules();
+
+    const { pushConversion } = await import("@/lib/analytics-events");
+    const { CONVERSION_EVENTS } = await import("@/lib/analytics");
+
+    pushConversion(CONVERSION_EVENTS.quoteFormSubmit, "ENQ-2026-QUIET", { form: "contact" });
+
+    expect(conversions()).toHaveLength(0);
+    // The dataLayer push is unaffected: that is what the container listens to.
+    expect((globalThis as unknown as { window: { dataLayer: unknown[] } }).window.dataLayer).toHaveLength(1);
   });
 });
