@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  ADS_CONVERSION_SEND_TO,
   ANALYTICS_CSP,
   ANALYTICS_DEBUG_HOSTS,
   analyticsDebugging,
@@ -74,6 +75,11 @@ describe("the Google Ads account", () => {
   it("is an Ads id and not a measurement or container id", () => {
     expect(GOOGLE_ADS_ENABLED).toBe(true);
     expect(GOOGLE_ADS_ID).toMatch(/^AW-[0-9]{8,20}$/);
+  });
+
+  it("pairs the account with the conversion label as one send_to", () => {
+    expect(ADS_CONVERSION_SEND_TO).toBe(`${GOOGLE_ADS_ID}/HBAhCJCc0OccEL3h2slE`);
+    expect(ADS_CONVERSION_SEND_TO).toMatch(/^AW-[0-9]{8,20}\/[A-Za-z0-9_-]{8,40}$/);
   });
 
   it("is rejected when it is not one, because it reaches a script body", () => {

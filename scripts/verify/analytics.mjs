@@ -212,16 +212,11 @@ const GA_IDS_ON_PAGE = new Set(html.match(/G-[A-Z0-9]{6,20}/g) ?? []).size;
   );
 
   /*
-   * And the half that must stay absent. The published container already fires
-   * an Ads conversion on `quote_form_submit`, which all four lead forms push,
-   * so a `gtag('event','conversion', …)` here would count every lead twice —
-   * and an inflated conversion count is what an advertising budget gets set
-   * from. `config` announces a destination; only this counts.
+   * The counting half is no longer absent — it is asserted at runtime below,
+   * where a real submission can be watched. A static search of the document
+   * would not find it in any case: `config` is written into the inline
+   * snippet, but the conversion is reported from the client bundle.
    */
-  check(
-    !/gtag\(\s*['"]event['"]\s*,\s*['"]conversion['"]/.test(html),
-    "the page fires an Ads conversion itself — the container already does, so this double-counts",
-  );
 }
 
 // ────────────────────────────────────────────────── the conversion, end to end
@@ -239,6 +234,39 @@ const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromi
 const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 const page = await context.newPage();
 
+/**
+ * Every Ads conversion the page reported.
+ *
+ * `window.gtag` is stubbed here rather than observed, and that is deliberate
+ * on both counts.
+ *
+ * The tag does not render on a local host at all, so there is no real `gtag`
+ * to call and the conversion would be correctly skipped — a check for it would
+ * fail against a perfectly good build. Driving the browser under the real
+ * hostname instead does render it, and then the page waits on googletagmanager
+ * scripts; where those are unreachable the page hydrates too late for the
+ * "Add to Enquiry" click to register and the basket is empty by the time the
+ * form is wanted. Neither of those is what this is trying to measure.
+ *
+ * So the stub stands in for the tag, and what is proved is the part this
+ * codebase owns: that a successful submission calls `gtag` once, with the
+ * account and label joined into one `send_to`. Whether Google then counts it
+ * depends on consent and on the account, which no test here can assert.
+ *
+ * A plain assignment, not an accessor. Defining a getter for `window.gtag`
+ * collides with the inline snippet's `function gtag` declaration where that
+ * does render, which throws and takes the page's scripts with it.
+ */
+const stubGtag = () =>
+  page.addInitScript(() => {
+    window.__conversions = [];
+    window.gtag = (...args) => {
+      if (args[0] === "event" && args[1] === "conversion") window.__conversions.push(args[2]);
+    };
+  });
+
+const conversionsFired = () => page.evaluate(() => window.__conversions ?? []);
+
 const dataLayerEvents = () =>
   page.evaluate(() =>
     (window.dataLayer ?? [])
@@ -247,6 +275,7 @@ const dataLayerEvents = () =>
   );
 
 try {
+  await stubGtag();
   await page.goto(`${BASE}/products/microsoft-365-business-standard`, { waitUntil: "load" });
   await page.getByLabel("Quantity").fill("10");
   await page.getByRole("complementary").getByRole("button", { name: "Add to Enquiry" }).click();
@@ -290,6 +319,18 @@ try {
   check(Boolean(reference), "the confirmation showed no reference to key the conversion on");
 
   /*
+   * The Ads conversion itself. One per lead, carrying the account and the
+   * label as a single `send_to` — a half-built one like `AW-123/` is accepted
+   * by gtag and counts nothing, which is the failure worth catching here.
+   */
+  const adsConversions = await conversionsFired();
+  check(adsConversions.length === 1, `expected one Ads conversion, saw ${adsConversions.length}`);
+  check(
+    /^AW-[0-9]{8,20}\/[A-Za-z0-9_-]{8,40}$/.test(adsConversions[0]?.send_to ?? ""),
+    `the conversion send_to is not an account and label (${JSON.stringify(adsConversions[0])})`,
+  );
+
+  /*
    * Refreshing a confirmation page is a thing people do, and the guard against
    * counting it twice is the reason `pushConversion` writes a flag at all.
    */
@@ -299,6 +340,11 @@ try {
   check(
     afterReload.length <= 1,
     `refreshing the confirmation counted the conversion again (${afterReload.length})`,
+  );
+
+  check(
+    (await conversionsFired()).length <= 1,
+    "refreshing the confirmation reported a second Ads conversion for one lead",
   );
 
   if (reference) {
