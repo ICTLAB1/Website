@@ -144,7 +144,19 @@ export async function createUser(
 
   return {
     status: "success",
-    message: `${user.name} has been added as ${ROLE_LABELS[role].toLowerCase()}. They have been emailed a link to choose a password.`,
+    message:
+      role === "CUSTOMER"
+        ? /*
+           * Said out loud, because this screen will not show them.
+           *
+           * The staff list is every role except CUSTOMER, so an account created
+           * with this one is correct, invited, and absent from the page that
+           * created it. Without this sentence that is indistinguishable from
+           * the create having failed — which is the exact confusion seven other
+           * roles used to cause by being missing from the list by accident.
+           */
+          `${user.name} has been added as a customer, so they appear under Customers rather than here. They have been emailed a link to choose a password.`
+        : `${user.name} has been added as ${ROLE_LABELS[role].toLowerCase()}. They have been emailed a link to choose a password.`,
   };
 }
 
