@@ -177,6 +177,53 @@ check(
   "frame-ancestors is no longer 'none' — this site can now be embedded",
 );
 
+// ──────────────────────────────────────────── the Ads account, registered once
+
+/** How many distinct GA properties this deployment configures. */
+const GA_IDS_ON_PAGE = new Set(html.match(/G-[A-Z0-9]{6,20}/g) ?? []).size;
+
+/**
+ * One `config` for the Ads account, and no conversion fired from the page.
+ *
+ * Both halves matter. Without the config the site's own tag has no Ads
+ * destination at all, which is what Google Ads was reporting as a conversion
+ * action that had never received data. With a *second* counting mechanism here
+ * — a `gtag('event','conversion', …)` on top of the container's own tag, which
+ * the published container does hold on `quote_form_submit` — every lead would
+ * count twice, and the inflated figure is what an advertising budget gets set
+ * from. So this checks for exactly one and the absence of the other.
+ */
+{
+  /*
+   * Counted against a GA config rather than against 1. Next serialises the
+   * inline script into the flight payload as well as the document, so every
+   * `config` line legitimately appears twice — asserting exactly one here
+   * failed against a correct page. What a real duplicate would look like is
+   * the Ads line appearing more often than the GA lines beside it.
+   */
+  const ads = (html.match(/gtag\('config', 'AW-[0-9]{8,20}'\)/g) ?? []).length;
+  const ga = (html.match(/gtag\('config', 'G-[A-Z0-9]{6,20}'\)/g) ?? []).length;
+  const perGaId = ga / GA_IDS_ON_PAGE;
+
+  check(ads > 0, "the Ads account is never registered, so the site's own tag has no destination");
+  check(
+    ads === perGaId,
+    `the Ads config appears ${ads} time(s) against ${perGaId} for each GA property — one of them is emitted twice`,
+  );
+
+  /*
+   * And the half that must stay absent. The published container already fires
+   * an Ads conversion on `quote_form_submit`, which all four lead forms push,
+   * so a `gtag('event','conversion', …)` here would count every lead twice —
+   * and an inflated conversion count is what an advertising budget gets set
+   * from. `config` announces a destination; only this counts.
+   */
+  check(
+    !/gtag\(\s*['"]event['"]\s*,\s*['"]conversion['"]/.test(html),
+    "the page fires an Ads conversion itself — the container already does, so this double-counts",
+  );
+}
+
 // ────────────────────────────────────────────────── the conversion, end to end
 
 /**

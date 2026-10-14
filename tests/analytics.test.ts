@@ -8,6 +8,8 @@ import {
   CONSENT_DEFAULTS,
   DENIED,
   GA_MEASUREMENT_IDS,
+  GOOGLE_ADS_ENABLED,
+  GOOGLE_ADS_ID,
   GRANTED,
   GTM_CONTAINER_ID,
   GTM_ENABLED,
@@ -64,6 +66,19 @@ describe("the measurement IDs", () => {
     expect(GA_MEASUREMENT_IDS.length).toBeGreaterThan(0);
     for (const id of GA_MEASUREMENT_IDS) {
       expect(id).toMatch(/^G-[A-Z0-9]{6,20}$/);
+    }
+  });
+});
+
+describe("the Google Ads account", () => {
+  it("is an Ads id and not a measurement or container id", () => {
+    expect(GOOGLE_ADS_ENABLED).toBe(true);
+    expect(GOOGLE_ADS_ID).toMatch(/^AW-[0-9]{8,20}$/);
+  });
+
+  it("is rejected when it is not one, because it reaches a script body", () => {
+    for (const value of ["", "AW-", "AW-123", "G-P0H1WJDZ7Y", "GTM-THHL334G", "AW-1840819014x", "aw-18408190141"]) {
+      expect(/^AW-[0-9]{8,20}$/.test(value)).toBe(false);
     }
   });
 });

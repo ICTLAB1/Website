@@ -75,6 +75,40 @@ export const GTM_CONTAINER_ID = (
 /** Validated for the same reason the measurement IDs are: it reaches a script body. */
 export const GTM_ENABLED = /^GTM-[A-Z0-9]{4,12}$/.test(GTM_CONTAINER_ID);
 
+/**
+ * The Google Ads account, registered so this site's own tag can talk to it.
+ *
+ * ## What this does, and what it deliberately does not
+ *
+ * It emits one `gtag('config', 'AW-…')`. That registers the destination and
+ * enables conversion linking from the site's own tag; it counts nothing. The
+ * thing that counts a conversion is a `gtag('event', 'conversion', …)` call or
+ * a tag in the container, and this file does not make one.
+ *
+ * That distinction is the whole reason this is safe to add. The published
+ * container already holds an Ads conversion tag — `AW-18408190141`, an `awct`
+ * tag and a Conversion Linker, triggered on `quote_form_submit`, confirmed by
+ * reading the container payload rather than by assuming. A second *counting*
+ * mechanism here would count every lead twice, and the inflated figure is what
+ * an advertising budget gets set from. A second `config` is not that.
+ *
+ * ## Why it is worth having at all
+ *
+ * Without it the Ads destination exists only inside the container, so anything
+ * the site itself ever needs to send — a conversion fired from code if the
+ * container tag is ever retired, enhanced conversions, a value on a lead — has
+ * nowhere to go. Registering it is the prerequisite for all of that and costs
+ * one line.
+ *
+ * Not secret, for the same reason the measurement IDs are not: served to every
+ * visitor in the page source, and it identifies an account rather than
+ * granting access to one. An empty value switches it off.
+ */
+export const GOOGLE_ADS_ID = (process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18408190141").trim();
+
+/** Validated before it reaches a script body, exactly like the two above. */
+export const GOOGLE_ADS_ENABLED = /^AW-[0-9]{8,20}$/.test(GOOGLE_ADS_ID);
+
 /** Paths analytics never sees. */
 const PRIVATE_PREFIXES = ["/admin", "/account", "/api", "/login", "/register", "/reset-password"];
 
