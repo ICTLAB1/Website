@@ -11,6 +11,7 @@ import {
   CONSENT_DENIED_REGIONS,
   DENIED,
   GA_MEASUREMENT_IDS,
+  GOOGLE_ADS_CONVERSION_LABEL,
   GOOGLE_ADS_ENABLED,
   GOOGLE_ADS_ID,
   GRANTED,
@@ -79,9 +80,19 @@ describe("the Google Ads account", () => {
     expect(GOOGLE_ADS_ID).toMatch(/^AW-[0-9]{8,20}$/);
   });
 
-  it("pairs the account with the conversion label as one send_to", () => {
-    expect(ADS_CONVERSION_SEND_TO).toBe(`${GOOGLE_ADS_ID}/HBAhCJCc0OccEL3h2slE`);
-    expect(ADS_CONVERSION_SEND_TO).toMatch(/^AW-[0-9]{8,20}\/[A-Za-z0-9_-]{8,40}$/);
+  it("reports no conversion from the site, because the container counts", () => {
+    /*
+     * The shipped state, and a deliberate one. Exactly one thing may count a
+     * lead: the published container holds a tag on the same
+     * `quote_form_submit` event, so a label set here as well would count every
+     * lead twice and a Maximize Conversions campaign would bid against the
+     * doubled figure.
+     *
+     * Null rather than a half-built `AW-123/`, which gtag accepts and which
+     * counts nothing while looking configured.
+     */
+    expect(GOOGLE_ADS_CONVERSION_LABEL).toBe("");
+    expect(ADS_CONVERSION_SEND_TO).toBeNull();
   });
 
   it("is rejected when it is not one, because it reaches a script body", () => {

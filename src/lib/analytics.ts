@@ -112,18 +112,38 @@ export const GOOGLE_ADS_ENABLED = /^AW-[0-9]{8,20}$/.test(GOOGLE_ADS_ID);
 /**
  * The conversion action a submitted quote request counts towards.
  *
- * Paired with the account id above as `AW-…/LABEL`, which is the single string
- * Google calls `send_to`. Built in one place so the id is never written twice.
+ * Paired with the account id above as `AW-…/LABEL`, the single string Google
+ * calls `send_to`. Empty here, which switches the site's own reporting off.
  *
- * ## This is the counting half
+ * ## Why it ships empty
  *
- * Unlike `config`, firing this records a conversion. The published container
- * also holds a tag that counts the same event, so with both active every lead
- * counts twice — set this empty to leave the counting to the container, or
- * pause the container's tag and leave this set. One or the other.
+ * Exactly one thing may count a lead. The published container holds an Ads
+ * conversion tag on `quote_form_submit` — the event all four quote forms push
+ * — so with this set as well, every lead counts twice, and a doubled
+ * conversion count is what a Maximize Conversions campaign bids against.
+ *
+ * The container is the counter. That is a choice rather than a default: the
+ * tag was already there and could not be paused from here, while this can be
+ * switched off in one line. It became the right choice once the real fault was
+ * found and fixed — `www.googleadservices.com` and
+ * `googleads.g.doubleclick.net` were missing from the content policy, so the
+ * container's tag had been reporting into a blocked request all along. With
+ * that unblocked it counts on its own.
+ *
+ * ## Switching it back
+ *
+ * Pause the container's tag in Tag Manager first, keeping the Conversion
+ * Linker, then set
+ *
+ *     NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL=HBAhCJCc0OccEL3h2slE
+ *
+ * in `deploy/.env` and redeploy. The reporting code, its de-duplication and
+ * its tests are all still here and still exercised — only the label is absent,
+ * so this is a switch rather than a removal. Do not set it while that tag is
+ * live.
  */
 export const GOOGLE_ADS_CONVERSION_LABEL = (
-  process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL ?? "HBAhCJCc0OccEL3h2slE"
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL ?? ""
 ).trim();
 
 /**
