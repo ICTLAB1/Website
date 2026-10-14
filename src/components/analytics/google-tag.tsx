@@ -4,7 +4,9 @@ import { ConsentBanner } from "@/components/analytics/consent-banner";
 import {
   analyticsEnabled,
   CONSENT_DEFAULTS,
+  CONSENT_DEFAULTS_BY_REGION,
   CONSENT_KEY,
+  DENIED,
   GA_MEASUREMENT_IDS,
   GOOGLE_ADS_ENABLED,
   GOOGLE_ADS_ID,
@@ -91,12 +93,30 @@ export async function GoogleTag() {
   const consentScript = [
     "window.dataLayer = window.dataLayer || [];",
     "function gtag(){dataLayer.push(arguments);}",
+    /*
+     * The stricter command first, though Consent Mode does not require it:
+     * resolution is by the most specific region, so the one carrying `region`
+     * wins there whatever the order. Written this way round so that reading
+     * the emitted page top to bottom shows the denial before the permission,
+     * which is the order a person checking this would expect.
+     */
+    `gtag('consent', 'default', ${JSON.stringify(CONSENT_DEFAULTS_BY_REGION)});`,
     `gtag('consent', 'default', ${JSON.stringify(CONSENT_DEFAULTS)});`,
     "gtag('set', 'ads_data_redaction', true);",
     "gtag('set', 'url_passthrough', true);",
-    `try{if(localStorage.getItem(${JSON.stringify(CONSENT_KEY)})==='granted'){gtag('consent','update',${JSON.stringify(
-      GRANTED,
-    )});}}catch(e){}`,
+    /*
+     * Whichever answer is stored, not only acceptance.
+     *
+     * This used to replay `granted` and ignore `denied`, which was harmless
+     * while everything defaulted to denied — the stored refusal and the
+     * default said the same thing. With the default now granted outside the
+     * EEA it is the opposite of harmless: a visitor who pressed Decline would
+     * have had that ignored on every page they opened afterwards, because
+     * nothing ever told the tag about it.
+     */
+    `try{var c=localStorage.getItem(${JSON.stringify(CONSENT_KEY)});` +
+      `if(c==='granted'){gtag('consent','update',${JSON.stringify(GRANTED)});}` +
+      `else if(c==='denied'){gtag('consent','update',${JSON.stringify(DENIED)});}}catch(e){}`,
     "gtag('js', new Date());",
     ...GA_MEASUREMENT_IDS.map((id) => `gtag('config', '${id}');`),
     /*

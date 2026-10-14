@@ -21,9 +21,20 @@ import { CONSENT_KEY, DENIED, GRANTED, type ConsentChoice } from "@/lib/analytic
  * It does not block the page, trap focus, or make refusing harder than
  * accepting. Both answers are one button in the same row, in the same weight;
  * a design where "reject" is a grey link three levels down is a design that
- * has decided what the answer should be. It does not reappear once answered,
- * and there is no third state where silence counts as yes — until a button is
- * pressed, everything stays denied.
+ * has decided what the answer should be. It does not reappear once answered.
+ *
+ * ## What silence means, which changed
+ *
+ * It used to mean denial everywhere, and this paragraph said so. Since the
+ * defaults became region-scoped it means denial in the EEA, the UK and
+ * Switzerland, and permission elsewhere — so the notice is still shown to
+ * everyone unanswered, because where silence permits something a person is
+ * owed the chance to say no, and a notice nobody sees is not that chance.
+ *
+ * Refusing is honoured on every later page view, which took a fix to be true:
+ * the inline script replayed a stored acceptance and ignored a stored refusal,
+ * which did not matter while the default was denial and would have silently
+ * discarded every Decline once it was not.
  *
  * ## Where the answer lives
  *
@@ -142,7 +153,16 @@ export function ConsentBanner({ mode = "banner" }: Props) {
             ? "You have accepted analytics on this browser."
             : choice === "denied"
               ? "You have refused analytics on this browser."
-              : "You have not answered yet on this browser, so analytics is switched off."}{" "}
+              : /*
+                 * Two answers, because an unanswered visitor is not in the same
+                 * position everywhere. In the EEA, the UK and Switzerland the
+                 * default is denial; elsewhere it is permission with this
+                 * notice and this button. Saying only one of those would be
+                 * false for half the people reading it, and the page cannot
+                 * know which half — Consent Mode resolves the region inside the
+                 * tag, not here.
+                 */
+                "You have not answered on this browser. In the EEA, the UK and Switzerland that means analytics is switched off; elsewhere it is on until you turn it off here."}{" "}
           Nothing about the site changes either way, and you can change this as often as you like.
         </p>
         <div className="mt-3">{buttons}</div>
@@ -164,8 +184,9 @@ export function ConsentBanner({ mode = "banner" }: Props) {
       <div className="container-page flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-2xl text-meta leading-relaxed text-ink-600">
           We use Google Analytics to see which pages and products are useful, and Google&rsquo;s
-          advertising measurement alongside it. Neither runs until you accept, and neither runs on
-          the pages you see once you are signed in. The{" "}
+          advertising measurement alongside it. Where the law requires us to ask first they stay
+          off until you accept; elsewhere you can switch them off here. Neither ever runs on the
+          pages you see once you are signed in. The{" "}
           <Link href="/cookie-policy" className="text-accent-700 underline underline-offset-2">
             cookie policy
           </Link>{" "}
