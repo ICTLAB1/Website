@@ -98,6 +98,31 @@ if (hadMail) {
   );
 }
 
+/*
+ * The export terms, so the sample shows the document the business would
+ * actually send. Left unset, a foreign-currency quotation prints the rupee
+ * terms and their GST wording — which is the fallback, and is what the sample
+ * showed before this field existed.
+ */
+const priorForeignTerms = sql(
+  `select coalesce("quoteTermsForeign", '') from "SiteSettings" where id = 'singleton'`,
+);
+const EXPORT_TERMS = "Prices are quoted in the currency shown and are the whole amount payable to us.\nPrices exclude freight, insurance, customs duties and any taxes payable in the country of import.\nNo Indian GST is charged on this supply; an export invoice is issued once the order is confirmed.\nPayment by wire transfer against invoice. Bank charges at the remitting end are payable by the buyer.\nPrices hold for the validity period shown and are subject to exchange-rate movement after it.";
+sql(
+  `update "SiteSettings" set "quoteTermsForeign" = '${EXPORT_TERMS}' where id = 'singleton'`,
+);
+
+/*
+ * Waited out, because the settings are cached for a minute and a row written
+ * by psql cannot invalidate that cache — and the cache is
+ * stale-while-revalidate, so the first read after the window still serves the
+ * old value. A run that skipped this printed the previous run's terms onto the
+ * sample, which is exactly the kind of quietly-wrong artefact a sample exists
+ * to rule out.
+ */
+console.log("  … waiting for the settings cache to turn over");
+await new Promise((resolve) => setTimeout(resolve, 70_000));
+
 sql(
   `insert into "User" (id, email, "passwordHash", name, role, "emailVerified", "createdAt", "updatedAt") values ('sms${stamp}', '${staffEmail}', '${FIXTURE_HASH}', 'Abhinav Jain', 'ADMIN', now(), now(), now())`,
 );
@@ -250,6 +275,9 @@ for (const { id, reference } of ids) {
   sql(`delete from "Enquiry" where id = '${id}e'`);
   sql(`delete from "Company" where id = '${id}c'`);
 }
+sql(
+  `update "SiteSettings" set "quoteTermsForeign" = ${priorForeignTerms === "" ? "null" : `'${priorForeignTerms.replace(/'/g, "''")}'`} where id = 'singleton'`,
+);
 sql(`delete from "Session" where "userId" = 'sms${stamp}'`);
 sql(`delete from "User" where id = 'sms${stamp}'`);
 if (hadMail) {

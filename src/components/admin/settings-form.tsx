@@ -41,6 +41,7 @@ type StoredSettings = {
   cin: string | null;
   supportHours: string | null;
   quoteTerms: string | null;
+  quoteTermsForeign: string | null;
   quoteNumberFormat: string | null;
   secondaryEntityName: string | null;
   secondaryEntityAddress: string | null;
@@ -221,7 +222,7 @@ export function SettingsForm({
 
       <Fieldset
         legend="Quotation terms"
-        description="Printed at the foot of every quotation you send. One term per line. Left blank, quotations carry no terms of their own and point to your published terms page instead — deliberately, because payment terms and delivery commitments are yours to decide and nothing here will invent them for you."
+        description="Printed at the foot of every quotation you send. One term per line. Left blank, quotations carry no terms of their own and point to your published terms page instead — deliberately, because payment terms and delivery commitments are yours to decide and nothing here will invent them for you. Two lists, because a quotation billed abroad carries no Indian GST and the rupee wording about it would be false on one."
       >
         <Field
           label="Terms and conditions"
@@ -233,6 +234,19 @@ export function SettingsForm({
             rows={7}
             defaultValue={stored?.quoteTerms ?? ""}
             placeholder={"Prices are valid for 30 days from the date of this quotation.\nPayment is due within 30 days of invoice.\nLicences are provisioned within 2 working days of a confirmed order."}
+          />
+        </Field>
+
+        <Field
+          label="Terms for dollar and dirham quotations"
+          name="quoteTermsForeign"
+          hint="Left blank, a foreign-currency quotation carries the terms above — including whatever they say about GST, which will not be true of it. Copy them here and change the lines that do not apply."
+        >
+          <Textarea
+            name="quoteTermsForeign"
+            rows={7}
+            defaultValue={stored?.quoteTermsForeign ?? ""}
+            placeholder={"Prices are valid for 30 days from the date of this quotation.\nPrices are in US dollars and are exclusive of freight, duties and any taxes payable in the country of import.\nPayment by wire transfer against invoice; bank charges are the buyer's."}
           />
         </Field>
       </Fieldset>

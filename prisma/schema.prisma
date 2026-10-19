@@ -2197,6 +2197,20 @@ model SiteSettings {
   /// instead. Markdown; one point per line.
   quoteTerms String?
 
+  /// The terms printed instead, on a quotation written in a foreign currency.
+  ///
+  /// The rupee terms state a tax position — "prices are exclusive of
+  /// applicable GST" is the usual wording — and that sentence is false on a
+  /// quotation billed in dollars or dirhams, where no Indian GST is charged at
+  /// all. One list cannot be right for both, so there are two.
+  ///
+  /// Blank means the rupee terms are used on every quotation, which is what
+  /// happened before this existed. Nothing is defaulted or derived from the
+  /// other list: these are commercial commitments, and wording this
+  /// application invented for an export sale would be worse than wording the
+  /// business chose for a domestic one. Markdown; one point per line.
+  quoteTermsForeign String?
+
   /// How quotation numbers are formed, e.g. "TZ/QT/{FY}/{SEQ:4}".
   ///
   /// Blank means no series: the document prints the internal reference, which

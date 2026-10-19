@@ -22,6 +22,7 @@ import {
   type QuotationEmailInput,
 } from "@/lib/emails/quotation";
 import { getSiteConfig } from "@/lib/site-config";
+import { termsFor } from "@/lib/quote-currency";
 import { appUrl } from "@/lib/env";
 import { logger } from "@/lib/logger";
 
@@ -425,7 +426,7 @@ export async function sendQuote(reference: string, actorId: string): Promise<Quo
       acceptUrl: `${appUrl()}/account/quotes/${reference}`,
       termsUrl: `${appUrl()}/terms`,
       config,
-      terms: config.quoteTerms,
+      terms: termsFor(quote.currency, config.quoteTerms, config.quoteTermsForeign),
       sender: quote.owner ? { name: quote.owner.name } : null,
       certifications,
       attachmentName: attachment?.filename ?? null,
