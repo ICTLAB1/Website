@@ -1042,6 +1042,17 @@ model Quote {
   taxMinor      Int    @default(0)
   totalMinor    Int    @default(0)
 
+  /// The rate the figures were converted at when this quotation was moved off
+  /// the rupee, in paise per one unit of `currency`.
+  ///
+  /// Null on a rupee quotation, and on one that was drafted in a foreign
+  /// currency without ever being converted. Nothing is recomputed from it —
+  /// the stored minor units are the price. It is here so that a dollar figure
+  /// nobody can account for six weeks later can be traced back to the rate
+  /// that produced it, which is a question that does get asked and which the
+  /// settings page cannot answer because the rate there has since moved.
+  exchangeRatePaise Int?
+
   validUntil DateTime?
   notes      String?
   sentAt     DateTime?

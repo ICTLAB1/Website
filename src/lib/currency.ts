@@ -21,9 +21,15 @@
  * to a number that includes it, which would be false. The absence is the point:
  * one number, no claim either way.
  *
- * This is a display layer and nothing more. It never reaches an order, a
- * quotation, an invoice or a payment — those stay in rupees, which is the
- * currency the money actually moves in.
+ * This is a display layer and nothing more. Nothing it computes is ever
+ * stored: a catalogue price read in dollars is still a rupee price, and the
+ * order placed against it is in rupees.
+ *
+ * A quotation is the one thing that can genuinely be *written* in another
+ * currency, and that is a different mechanism with its own rules — the figures
+ * are stored in the foreign currency's minor unit and the rupee amount is
+ * gone. It borrows the rates declared here and nothing else. See
+ * `lib/quote-currency.ts`.
  */
 
 export const DISPLAY_CURRENCIES = ["INR", "USD", "AED"] as const;

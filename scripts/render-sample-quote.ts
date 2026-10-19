@@ -47,32 +47,14 @@ const party = {
   state: "Maharashtra",
 };
 
-const bytes = renderQuotationPdf({
-  reference: "QTE-2026-4F7K2P",
-  documentNo: "TZ/QT/2026-27/0042",
-  referenceNo: "ENQ-2026-9XM4TQ",
-  version: 2,
-  currency: "INR",
-  subtotalMinor: 112317100,
-  discountMinor: 4064000,
-  taxMinor: 20217078,
-  totalMinor: 132534178,
-  validUntil: new Date("2026-09-16"),
-  issuedAt: new Date("2026-08-17"),
-  notes:
-    "Thank you for your enquiry. We are pleased to submit our best offer for the Microsoft licensing and endpoint security requirement discussed. All pricing below is inclusive of deployment support.",
-  status: "SENT",
-  paymentTerms: "50% advance, balance on delivery",
-  customerReference: "PO/MITADT/2425/078",
-  deliveryTerms: "4-6 weeks from confirmed order",
-  salesExecutive: "Abhinav Jain",
-  quotedTo: party,
-  billing: party,
-  shipping: {
-    ...party,
-    addressLines: ["Rajbaug Campus, Gate No. 2", "Loni Kalbhor, Maharashtra 412201", "India"],
-  },
-  lines: repeat([
+/*
+ * The lines, and the totals that follow from them.
+ *
+ * Computed rather than written down. They were written down, and they did not
+ * agree with the lines they summarised at any count — which let a renderer bug
+ * live in the one place a quotation is actually checked.
+ */
+const lines = repeat([
     {
       productName: "Microsoft 365 Business Standard",
       description: "Annual subscription - includes Office apps, Exchange, Teams, SharePoint",
@@ -149,9 +131,43 @@ const bytes = renderQuotationPdf({
       unitPriceMinor: 6800000,
       discountMinor: 556600,
       gstRatePercent: 18,
-      lineTotalMinor: 17124600,
+      lineTotalMinor: 81043400,
     },
-  ]),
+  ]);
+
+const subtotalMinor = lines.reduce((sum, line) => sum + line.unitPriceMinor * line.quantity, 0);
+const discountMinor = lines.reduce((sum, line) => sum + line.discountMinor, 0);
+const taxMinor = lines.reduce(
+  (sum, line) => sum + Math.round((line.lineTotalMinor * line.gstRatePercent) / 100),
+  0,
+);
+
+const bytes = renderQuotationPdf({
+  reference: "QTE-2026-4F7K2P",
+  documentNo: "TZ/QT/2026-27/0042",
+  referenceNo: "ENQ-2026-9XM4TQ",
+  version: 2,
+  currency: "INR",
+  subtotalMinor,
+  discountMinor,
+  taxMinor,
+  totalMinor: subtotalMinor - discountMinor + taxMinor,
+  validUntil: new Date("2026-09-16"),
+  issuedAt: new Date("2026-08-17"),
+  notes:
+    "Thank you for your enquiry. We are pleased to submit our best offer for the Microsoft licensing and endpoint security requirement discussed. All pricing below is inclusive of deployment support.",
+  status: "SENT",
+  paymentTerms: "50% advance, balance on delivery",
+  customerReference: "PO/MITADT/2425/078",
+  deliveryTerms: "4-6 weeks from confirmed order",
+  salesExecutive: "Abhinav Jain",
+  quotedTo: party,
+  billing: party,
+  shipping: {
+    ...party,
+    addressLines: ["Rajbaug Campus, Gate No. 2", "Loni Kalbhor, Maharashtra 412201", "India"],
+  },
+  lines,
   config: {
     tradingName: "TechZoid",
     legalName: "TechZoid Technologies Private Limited",

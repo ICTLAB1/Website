@@ -37,6 +37,17 @@ import type { SiteConfig } from "@/lib/site-config";
  * itself.
  */
 
+/*
+ * Whether Indian GST belongs anywhere on this document.
+ *
+ * It does when there is tax on it, and it does not when there is none. A
+ * quotation written in dollars or dirhams carries no GST — a supply billed
+ * abroad is an export — and printing "GST $0.00" on it asserts that the tax
+ * applies and came to nothing, which is a different claim and a false one. The
+ * rows come out, and so does the sentence promising a GST invoice: what follows
+ * a foreign-currency order is an export invoice, and this document should not
+ * say which until somebody has decided.
+ */
 export type QuotationLine = {
   productName: string;
   sku: string;
@@ -222,13 +233,14 @@ export function quotationSubject(input: QuotationEmailInput): string {
 export function quotationText(input: QuotationEmailInput): string {
   const { config, currency } = input;
   const money = (minor: number) => formatMoney(minor, currency, { showDecimals: true });
+  const chargesGst = input.taxMinor > 0;
 
   const lines = input.lines.map(
     (line) =>
       `  ${line.productName}\n` +
       `    SKU ${line.sku} · ${line.quantity} × ${money(line.unitPriceMinor)}` +
       (line.discountMinor > 0 ? ` · less ${money(line.discountMinor)}` : "") +
-      ` · GST ${line.gstRatePercent}%\n` +
+      (chargesGst ? ` · GST ${line.gstRatePercent}%\n` : "\n") +
       `    ${money(line.unitPriceMinor * line.quantity)}`,
   );
 
@@ -254,8 +266,8 @@ export function quotationText(input: QuotationEmailInput): string {
     "",
     `Subtotal:      ${money(input.subtotalMinor)}`,
     input.discountMinor > 0 ? `Discount:      − ${money(input.discountMinor)}` : null,
-    `Taxable value: ${money(input.subtotalMinor - input.discountMinor)}`,
-    `GST:           ${money(input.taxMinor)}`,
+    chargesGst ? `Taxable value: ${money(input.subtotalMinor - input.discountMinor)}` : null,
+    chargesGst ? `GST:           ${money(input.taxMinor)}` : null,
     `TOTAL:         ${money(input.totalMinor)}`,
     "",
     input.notes ? `Notes\n  ${input.notes}` : null,
@@ -271,8 +283,9 @@ export function quotationText(input: QuotationEmailInput): string {
       ? `A PDF of this quotation is attached as ${input.attachmentName}, for your records\nand for your purchase order.`
       : null,
     input.attachmentName ? "" : null,
-    "This quotation is an offer to supply and is not a tax invoice. A GST invoice",
-    "is issued once the order is confirmed.",
+    chargesGst
+      ? "This quotation is an offer to supply and is not a tax invoice. A GST invoice\nis issued once the order is confirmed."
+      : "This quotation is an offer to supply and is not an invoice. An invoice is\nissued once the order is confirmed.",
     "",
     ...(() => {
       const sign = signature(input);
@@ -295,6 +308,7 @@ export function quotationText(input: QuotationEmailInput): string {
 export function quotationHtml(input: QuotationEmailInput): string {
   const { config, currency } = input;
   const money = (minor: number) => escapeHtml(formatMoney(minor, currency, { showDecimals: true }));
+  const chargesGst = input.taxMinor > 0;
   const cell = `padding:10px 8px;border-bottom:1px solid ${RULE};font-size:13px;color:${INK};vertical-align:top`;
   const head = `padding:8px;border-bottom:2px solid ${RULE};font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:${MUTED};text-align:left`;
   const totalRow = (label: string, value: string, strong = false) => `
@@ -343,7 +357,7 @@ export function quotationHtml(input: QuotationEmailInput): string {
         <th style="${head}">Item</th>
         <th style="${head};text-align:center">Qty</th>
         <th style="${head};text-align:right">Unit</th>
-        <th style="${head};text-align:right">GST</th>
+        ${chargesGst ? `<th style="${head};text-align:right">GST</th>` : ""}
         <th style="${head};text-align:right">Amount</th>
       </tr></thead>
       <tbody>
@@ -357,7 +371,7 @@ export function quotationHtml(input: QuotationEmailInput): string {
           </td>
           <td style="${cell};text-align:center">${line.quantity}</td>
           <td style="${cell};text-align:right">${money(line.unitPriceMinor)}</td>
-          <td style="${cell};text-align:right">${line.gstRatePercent}%</td>
+          ${chargesGst ? `<td style="${cell};text-align:right">${line.gstRatePercent}%</td>` : ""}
           <td style="${cell};text-align:right;font-weight:600">${money(line.unitPriceMinor * line.quantity)}</td>
         </tr>`,
           )
@@ -370,8 +384,8 @@ export function quotationHtml(input: QuotationEmailInput): string {
     <table role="presentation" cellpadding="0" cellspacing="0" style="width:280px;margin-left:auto">
       ${totalRow("Subtotal", money(input.subtotalMinor))}
       ${input.discountMinor > 0 ? totalRow("Discount", `&minus; ${money(input.discountMinor)}`) : ""}
-      ${totalRow("Taxable value", money(input.subtotalMinor - input.discountMinor))}
-      ${totalRow("GST", money(input.taxMinor))}
+      ${chargesGst ? totalRow("Taxable value", money(input.subtotalMinor - input.discountMinor)) : ""}
+      ${chargesGst ? totalRow("GST", money(input.taxMinor)) : ""}
       <tr><td colspan="2" style="border-top:2px solid ${DARK};height:1px;font-size:0">&nbsp;</td></tr>
       ${totalRow("Total payable", money(input.totalMinor), true)}
     </table>
@@ -410,7 +424,11 @@ export function quotationHtml(input: QuotationEmailInput): string {
       }
       Our full terms of business apply and are published at
       <a href="${escapeHtml(input.termsUrl)}" style="color:${DARK}">${escapeHtml(input.termsUrl)}</a>.
-      This quotation is an offer to supply and is not a tax invoice; a GST invoice is issued once the order is confirmed.
+      ${
+        chargesGst
+          ? "This quotation is an offer to supply and is not a tax invoice; a GST invoice is issued once the order is confirmed."
+          : "This quotation is an offer to supply and is not an invoice; an invoice is issued once the order is confirmed."
+      }
     </div>
   </td></tr>
 

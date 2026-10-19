@@ -13,6 +13,7 @@ import {
   replyOnQuote,
   reviseQuotation,
   sendQuoteFollowUp,
+  setQuoteCurrency,
   setQuoteFollowUpsPaused,
   updateQuoteLine,
   updateQuoteTerms,
@@ -31,6 +32,12 @@ import {
 import { QuoteThread } from "@/components/quotes/quote-thread";
 import { QuoteVersions } from "@/components/quotes/quote-versions";
 import { formatMoney } from "@/lib/money";
+import { getSiteConfig } from "@/lib/site-config";
+import {
+  currencySymbol,
+  quotableCurrencies,
+  QUOTE_CURRENCY_LABELS,
+} from "@/lib/quote-currency";
 import { priceLine } from "@/lib/pricing";
 import { formatDate, humanise } from "@/lib/utils";
 
@@ -59,6 +66,16 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
     take: 200,
     select: { id: true, name: true },
   });
+
+  /*
+   * Which currencies this quotation could be written in.
+   *
+   * The rupee always; a dollar or a dirham only once somebody has set its rate
+   * at /admin/settings. Offering a currency with no rate would put a button on
+   * the screen whose only possible outcome is an error message.
+   */
+  const { rates } = await getSiteConfig();
+  const currencyOptions = quotableCurrencies(rates);
 
   const quote = await prisma.quote.findUnique({
     where: { reference },
@@ -103,6 +120,17 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
   if (!quote) notFound();
 
   const isDraft = quote.status === "DRAFT";
+
+  /*
+   * The symbol beside every amount on this screen.
+   *
+   * The figures stored against a quotation are in its own currency's minor
+   * unit, so a form label reading "(₹)" on a dollar quotation is not a
+   * cosmetic slip — it tells the person typing that the number they enter
+   * means something other than what it will mean.
+   */
+  const symbol = currencySymbol(quote.currency);
+  const quotesInRupees = quote.currency === "INR";
 
   /*
    * The catalogue, offered as type-ahead against the SKU field.
@@ -328,7 +356,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                           />
                         </Field>
                         <Field
-                          label="Unit price (₹)"
+                          label={`Unit price (${symbol})`}
                           name="unitPrice"
                           hint="Blank takes today's catalogue price."
                         >
@@ -337,7 +365,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                         <Field
                           label="Discount (%)"
                           name="discountPercent"
-                          hint="Applied before GST"
+                          hint={quotesInRupees ? "Applied before GST" : "Taken off the line"}
                         >
                           <Input
                             name="discountPercent"
@@ -348,13 +376,23 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                             defaultValue="0"
                           />
                         </Field>
-                        <Field
-                          label="GST (%)"
-                          name="gstRatePercent"
-                          hint="Blank uses the catalogue rate, or 18% on a line of your own."
-                        >
-                          <Input name="gstRatePercent" type="number" min={0} max={100} />
-                        </Field>
+                        {/*
+                          * Offered on a rupee quotation only.
+                          *
+                          * Indian GST is not charged on a quotation written in
+                          * dollars or dirhams, so there is no rate to set and
+                          * a field inviting one would be inviting a mistake.
+                          * See `lib/quote-currency.ts`.
+                          */}
+                        {quotesInRupees ? (
+                          <Field
+                            label="GST (%)"
+                            name="gstRatePercent"
+                            hint="Blank uses the catalogue rate, or 18% on a line of your own."
+                          >
+                            <Input name="gstRatePercent" type="number" min={0} max={100} />
+                          </Field>
+                        ) : null}
                       </div>
 
                       <details className="rounded-[--radius-md] border border-line bg-white p-4">
@@ -448,7 +486,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                               required
                             />
                           </Field>
-                          <Field label="Unit price (₹)" name="unitPrice" required>
+                          <Field label={`Unit price (${symbol})`} name="unitPrice" required>
                             <Input
                               name="unitPrice"
                               inputMode="decimal"
@@ -459,7 +497,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                           <Field
                             label="Discount (%)"
                             name="discountPercent"
-                            hint="Applied before GST"
+                            hint={quotesInRupees ? "Applied before GST" : "Taken off the line"}
                           >
                             <Input
                               name="discountPercent"
@@ -598,15 +636,79 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                     : "—"}
                 </dd>
               </div>
-              <div className="flex justify-between gap-3">
-                <dt className="text-ink-500">GST</dt>
-                <dd className="tabular-nums">{formatMoney(quote.taxMinor, quote.currency)}</dd>
-              </div>
+              {/*
+                * The tax row appears where there is tax.
+                *
+                * A quotation in dollars or dirhams carries no Indian GST, and
+                * a row reading "GST $0.00" on it is not neutral — it asserts
+                * that the tax applies and happens to be nil. The document
+                * leaves it out for the same reason.
+                */}
+              {quote.taxMinor > 0 ? (
+                <div className="flex justify-between gap-3">
+                  <dt className="text-ink-500">GST</dt>
+                  <dd className="tabular-nums">{formatMoney(quote.taxMinor, quote.currency)}</dd>
+                </div>
+              ) : null}
               <div className="flex justify-between gap-3 border-t border-line pt-2 text-[15px] font-semibold text-graphite-900">
                 <dt>Total</dt>
                 <dd className="tabular-nums">{formatMoney(quote.totalMinor, quote.currency)}</dd>
               </div>
             </dl>
+
+            <div className="mt-5 border-t border-line pt-4">
+              <h3 className="text-[13px] font-semibold text-graphite-900">Currency</h3>
+              {isDraft && currencyOptions.length > 1 ? (
+                <>
+                  <AdminForm
+                    action={setQuoteCurrency}
+                    submitLabel="Restate in this currency"
+                    pendingLabel="Restating…"
+                    compact
+                  >
+                    <input type="hidden" name="reference" value={quote.reference} />
+                    <Field label="Quote in" name="currency">
+                      <Select name="currency" defaultValue={quote.currency}>
+                        {currencyOptions.map((code) => (
+                          <option key={code} value={code}>
+                            {QUOTE_CURRENCY_LABELS[code]}
+                          </option>
+                        ))}
+                      </Select>
+                    </Field>
+                  </AdminForm>
+                  <p className="mt-3 text-[12px] leading-relaxed text-ink-500">
+                    Every line is restated at the rate set under “Prices in other currencies” at{" "}
+                    <Link href="/admin/settings" className="underline">
+                      Settings
+                    </Link>
+                    . That rate is a starting point, not the offer — check each price afterwards.
+                    Leaving the rupee takes Indian GST off every line, because a supply billed
+                    abroad is an export; coming back puts the catalogue’s rate on again.
+                  </p>
+                </>
+              ) : (
+                <p className="mt-2 text-[13px] text-ink-500">
+                  {QUOTE_CURRENCY_LABELS[quote.currency as "INR"] ?? quote.currency}
+                  {isDraft ? (
+                    <>
+                      {" — "}
+                      <Link href="/admin/settings" className="underline">
+                        set a rate
+                      </Link>{" "}
+                      for the dollar or the dirham to quote in one.
+                    </>
+                  ) : (
+                    " — only a draft can change currency."
+                  )}
+                </p>
+              )}
+              {quote.exchangeRatePaise ? (
+                <p className="mt-2 text-[12px] text-ink-500">
+                  Converted at {symbol}1 = ₹{(quote.exchangeRatePaise / 100).toFixed(2)}.
+                </p>
+              ) : null}
+            </div>
           </section>
 
           {quote.enquiry ? (

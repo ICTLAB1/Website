@@ -28,8 +28,17 @@ export async function getDashboardMetrics() {
     recentOrders,
     popularProducts,
   ] = await Promise.all([
+    /*
+     * Rupee orders only, because a sum across currencies is not a number.
+     *
+     * Money is stored as an integer of minor units, so adding a dollar order
+     * to a rupee one adds cents to paise and produces a figure that is wrong
+     * by a factor of about eighty-eight and looks perfectly plausible. The
+     * tile is labelled for what it counts; a foreign-currency total belongs in
+     * its own figure, not folded into this one.
+     */
     prisma.order.aggregate({
-      where: { status: { in: ["CONFIRMED", "PROVISIONING", "FULFILLED"] } },
+      where: { currency: "INR", status: { in: ["CONFIRMED", "PROVISIONING", "FULFILLED"] } },
       _sum: { totalMinor: true },
     }),
     prisma.order.count(),

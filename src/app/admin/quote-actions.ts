@@ -27,6 +27,17 @@ import {
   priceLine,
   totalsAreStorable,
 } from "@/lib/pricing";
+import { getSiteConfig } from "@/lib/site-config";
+import {
+  convertMinor,
+  currencySymbol,
+  gstRateAfterSwitch,
+  isQuoteCurrency,
+  ceilingLabel,
+  QUOTE_CURRENCY_LABELS,
+  ratePaise,
+  type QuoteCurrency,
+} from "@/lib/quote-currency";
 import type { AdminActionState } from "@/app/admin/actions";
 
 /**
@@ -209,6 +220,7 @@ export async function addQuoteLine(
       id: true,
       reference: true,
       status: true,
+      currency: true,
       items: {
         select: {
           unitPriceMinor: true,
@@ -276,19 +288,45 @@ export async function addQuoteLine(
     };
   }
 
-  const unitPriceMinor =
-    parsed.data.unitPrice != null && parsed.data.unitPrice !== ""
-      ? Math.round(Number(parsed.data.unitPrice) * 100)
-      : variant
-        ? variantUnitPrice(variant)
-        : 0;
+  /*
+   * Which currency the figures on this line are in.
+   *
+   * A price *typed* into the form is already in the quotation's currency —
+   * that is the figure beside the symbol in the label. A price taken from the
+   * catalogue is in rupees and has to be restated, or a $ quotation would
+   * quietly carry a rupee number under a dollar sign, which is the one failure
+   * here that nobody would catch before the customer did.
+   */
+  const currency: QuoteCurrency = isQuoteCurrency(quote.currency) ? quote.currency : "INR";
+  const typedPrice = parsed.data.unitPrice != null && parsed.data.unitPrice !== "";
+
+  let unitPriceMinor: number;
+  if (typedPrice) {
+    unitPriceMinor = Math.round(Number(parsed.data.unitPrice) * 100);
+  } else if (variant) {
+    const { rates } = await getSiteConfig();
+    const restated = convertMinor(variantUnitPrice(variant), "INR", currency, rates);
+    if (restated == null) {
+      return {
+        status: "error",
+        message: `No rate is set for the ${QUOTE_CURRENCY_LABELS[currency]} any more, so the catalogue price cannot be restated. Type the ${currency} price instead.`,
+      };
+    }
+    unitPriceMinor = restated;
+  } else {
+    unitPriceMinor = 0;
+  }
 
   const gross = unitPriceMinor * parsed.data.quantity;
   const line = priceLine({
     unitPriceMinor,
     quantity: parsed.data.quantity,
     discountMinor: discountFromPercent(gross, parsed.data.discountPercent),
-    gstRatePercent: parsed.data.gstRatePercent ?? variant?.gstRatePercent ?? 18,
+    // Indian GST is not charged on a foreign-currency quotation, and the field
+    // is hidden on one, so anything that arrives for it is ignored rather than
+    // honoured. See `lib/quote-currency.ts`.
+    gstRatePercent:
+      currency === "INR" ? (parsed.data.gstRatePercent ?? variant?.gstRatePercent ?? 18) : 0,
   });
 
   /*
@@ -302,7 +340,7 @@ export async function addQuoteLine(
   if (!lineIsStorable(line)) {
     return {
       status: "error",
-      message: "That line alone is worth more than a quotation can hold (about ₹2.14 crore).",
+      message: `That line alone is worth more than a quotation can hold (${ceilingLabel(currency)}).`,
     };
   }
   const projected = documentTotals([...quote.items.map(priceLine), line]);
@@ -310,7 +348,7 @@ export async function addQuoteLine(
     return {
       status: "error",
       message:
-        "Adding that line would take this quotation over what one document can hold (about ₹2.14 crore). Please split it across two quotations.",
+        `Adding that line would take this quotation over what one document can hold (${ceilingLabel(currency)}). Please split it across two quotations.`,
     };
   }
 
@@ -407,6 +445,7 @@ export async function updateQuoteLine(
           id: true,
           reference: true,
           status: true,
+          currency: true,
           items: {
             select: {
               id: true,
@@ -431,6 +470,7 @@ export async function updateQuoteLine(
     };
   }
 
+  const currency = item.quote.currency;
   const gross = parsed.data.unitPrice * parsed.data.quantity;
   const line = priceLine({
     unitPriceMinor: parsed.data.unitPrice,
@@ -445,7 +485,7 @@ export async function updateQuoteLine(
   if (!lineIsStorable(line)) {
     return {
       status: "error",
-      message: "That line alone is worth more than a quotation can hold (about ₹2.14 crore).",
+      message: `That line alone is worth more than a quotation can hold (${ceilingLabel(currency)}).`,
     };
   }
   const projected = documentTotals(
@@ -455,7 +495,7 @@ export async function updateQuoteLine(
     return {
       status: "error",
       message:
-        "That change would take this quotation over what one document can hold (about ₹2.14 crore). Please split it across two quotations.",
+        `That change would take this quotation over what one document can hold (${ceilingLabel(currency)}). Please split it across two quotations.`,
     };
   }
 
@@ -619,6 +659,177 @@ export async function updateQuoteTerms(
 
   revalidatePath(`/admin/quotes/${parsed.data.reference}`);
   return { status: "success", message: "Quotation terms updated." };
+}
+
+const currencySchema = z.object({
+  reference: referenceSchema("QTE"),
+  currency: z.string().trim().min(1),
+});
+
+/**
+ * Changes the currency a draft quotation is written in.
+ *
+ * Not a display setting. The figures on a quotation are stored in the minor
+ * unit of its currency, so moving a quotation to dollars restates every line
+ * at the administrator's rate and the rupee amounts are gone — which is why
+ * this is a draft-only operation and why it says so on the button. An issued
+ * quotation is a price the customer has in writing; restating it under them is
+ * what revisions exist for.
+ *
+ * The conversion is a starting point. The person quoting then edits the lines
+ * to the price they actually mean to offer, because a dollar figure arrived at
+ * by dividing a rupee figure by 88.4 is nobody's idea of a commercial price.
+ *
+ * Indian GST comes off every line on the way out of rupees and the catalogue's
+ * rate goes back on the way in. See `lib/quote-currency.ts` for why that is
+ * the honest default rather than a convenience.
+ */
+export async function setQuoteCurrency(
+  _previous: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const staff = await guard();
+  if (isFailure(staff)) return staff;
+
+  const parsed = currencySchema.safeParse({
+    reference: formData.get("reference"),
+    currency: formData.get("currency"),
+  });
+  if (!parsed.success) return { status: "error", message: "That currency is not valid." };
+  if (!isQuoteCurrency(parsed.data.currency)) {
+    return { status: "error", message: "That currency is not one this site can quote in." };
+  }
+  const target: QuoteCurrency = parsed.data.currency;
+
+  const quote = await prisma.quote.findUnique({
+    where: { reference: parsed.data.reference },
+    select: {
+      id: true,
+      reference: true,
+      status: true,
+      currency: true,
+      items: {
+        select: {
+          id: true,
+          quantity: true,
+          unitPriceMinor: true,
+          discountMinor: true,
+          variant: { select: { gstRatePercent: true } },
+        },
+      },
+    },
+  });
+  if (!quote) return { status: "error", message: "That quotation no longer exists." };
+  if (quote.status !== "DRAFT") {
+    return {
+      status: "error",
+      message:
+        "Only a draft quotation can change currency. Raise a revision and set the currency on it.",
+    };
+  }
+
+  /*
+   * The currency already on the quotation has to be one we can convert *from*.
+   *
+   * A quotation left in dollars whose dollar rate has since been cleared is
+   * the awkward case: there is no honest way to restate its figures, so it
+   * stays as it is and the message says what to do about it.
+   */
+  const source = isQuoteCurrency(quote.currency) ? quote.currency : "INR";
+  if (source === target) {
+    return { status: "success", message: `This quotation is already in ${target}.` };
+  }
+
+  const { rates } = await getSiteConfig();
+  const targetRate = ratePaise(target, rates);
+  if (targetRate == null) {
+    return {
+      status: "error",
+      message: `No rate is set for the ${QUOTE_CURRENCY_LABELS[target]}. Set one under “Prices in other currencies” at Settings first.`,
+    };
+  }
+  if (ratePaise(source, rates) == null) {
+    return {
+      status: "error",
+      message: `No rate is set for the ${QUOTE_CURRENCY_LABELS[source]} any more, so these figures cannot be restated. Set its rate at Settings, or re-enter the line prices by hand.`,
+    };
+  }
+
+  /*
+   * Every line is converted and checked before anything is written.
+   *
+   * A quotation half in one currency and half in another is unrecoverable from
+   * the screen — the person cannot tell which rows moved — so the arithmetic
+   * runs first and a line that will not fit stops the whole change.
+   */
+  const converted: Array<{ id: string; line: ReturnType<typeof priceLine> }> = [];
+  for (const item of quote.items) {
+    const unitPriceMinor = convertMinor(item.unitPriceMinor, source, target, rates);
+    const discountMinor = convertMinor(item.discountMinor, source, target, rates);
+    if (unitPriceMinor == null || discountMinor == null) {
+      return { status: "error", message: "These figures could not be restated at that rate." };
+    }
+    const line = priceLine({
+      unitPriceMinor,
+      quantity: item.quantity,
+      discountMinor,
+      gstRatePercent: gstRateAfterSwitch(target, item.variant?.gstRatePercent),
+    });
+    if (!lineIsStorable(line)) {
+      return {
+        status: "error",
+        message: `In ${target} one of these lines is worth more than a quotation can hold. Please split it across two quotations.`,
+      };
+    }
+    converted.push({ id: item.id, line });
+  }
+
+  if (!totalsAreStorable(documentTotals(converted.map((entry) => entry.line)))) {
+    return {
+      status: "error",
+      message: `In ${target} this quotation totals more than one document can hold. Please split it across two quotations.`,
+    };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    for (const { id, line } of converted) {
+      await tx.quoteItem.update({
+        where: { id },
+        data: {
+          unitPriceMinor: line.unitPriceMinor,
+          discountMinor: line.discountMinor,
+          gstRatePercent: line.gstRatePercent,
+          lineTotalMinor: line.lineTotalMinor,
+        },
+      });
+    }
+    await tx.quote.update({
+      where: { id: quote.id },
+      // Null in rupees: there is no rate to record, and leaving the old one
+      // behind would read as though the rupee figures had been converted.
+      data: { currency: target, exchangeRatePaise: target === "INR" ? null : targetRate },
+    });
+    await recalculateQuote(quote.id, tx);
+  });
+
+  await recordAudit({
+    actorId: staff.id,
+    action: "admin.quote_currency_changed",
+    entityType: "Quote",
+    entityId: quote.reference,
+    metadata: { from: source, to: target, ratePaise: targetRate, lines: converted.length },
+    ip: await clientIp(),
+  });
+
+  revalidatePath(`/admin/quotes/${quote.reference}`);
+  revalidatePath("/admin/quotes");
+  return {
+    status: "success",
+    message:
+      target === "INR"
+        ? "Quotation moved back to rupees, and GST is charged on it again. Check the line prices before issuing it."
+        : `Quotation restated in ${target} at ${currencySymbol(target)}1 = ₹${(targetRate / 100).toFixed(2)}. Indian GST has been taken off every line — check the prices before issuing it.`,
+  };
 }
 
 export async function issueQuote(

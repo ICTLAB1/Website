@@ -17,7 +17,14 @@ export default async function AdminDashboardPage() {
   const missingConfig = await getUnconfiguredIdentityKeys();
 
   const tiles = [
-    { label: "Fulfilled revenue", value: formatMoney(metrics.revenueMinor), href: "/admin/orders" },
+    {
+      // Rupee orders only — see `getDashboardMetrics`. The label says so,
+      // because a figure that quietly excluded the export business would be
+      // read as the whole of it.
+      label: "Fulfilled revenue (₹)",
+      value: formatMoney(metrics.revenueMinor),
+      href: "/admin/orders",
+    },
     { label: "Orders", value: String(metrics.orderCount), href: "/admin/orders" },
     { label: "Enquiries", value: String(metrics.enquiryCount), href: "/admin/enquiries" },
     { label: "New enquiries", value: String(metrics.newEnquiries), href: "/admin/enquiries?status=NEW", highlight: metrics.newEnquiries > 0 },
