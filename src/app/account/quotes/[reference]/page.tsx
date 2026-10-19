@@ -125,6 +125,15 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
         </section>
       ) : null}
 
+      {/*
+        * The tax column and row appear where there is tax.
+        *
+        * A quotation written in dollars or dirhams carries no Indian GST — the
+        * supply is an export — and "GST 0% · $0.00" beside every line asserts
+        * that the tax applies and came to nothing. That is a different claim
+        * from the document's, and a false one. The emailed quotation and the
+        * PDF leave it out on the same rule; see `lib/quote-currency.ts`.
+        */}
       <section>
         <h3 className="mb-4 text-[15px] font-semibold text-graphite-900">Quoted items</h3>
         <TableWrap>
@@ -135,7 +144,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
                 <Th>Qty</Th>
                 <Th>Unit price</Th>
                 <Th>Line total</Th>
-                <Th>GST</Th>
+                {quote.taxMinor > 0 ? <Th>GST</Th> : null}
               </tr>
             </thead>
             <tbody>
@@ -156,9 +165,11 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
                     <Td className="tabular-nums font-medium text-graphite-900">
                       {formatMoney(item.lineTotalMinor, quote.currency)}
                     </Td>
-                    <Td className="tabular-nums text-[13px]">
-                      {item.gstRatePercent}% · {formatMoney(line.taxMinor, quote.currency)}
-                    </Td>
+                    {quote.taxMinor > 0 ? (
+                      <Td className="tabular-nums text-[13px]">
+                        {item.gstRatePercent}% · {formatMoney(line.taxMinor, quote.currency)}
+                      </Td>
+                    ) : null}
                   </Tr>
                 );
               })}
@@ -179,10 +190,12 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
               </dd>
             </div>
           ) : null}
-          <div className="flex justify-between gap-3">
-            <dt className="text-ink-500">GST</dt>
-            <dd className="tabular-nums">{formatMoney(quote.taxMinor, quote.currency)}</dd>
-          </div>
+          {quote.taxMinor > 0 ? (
+            <div className="flex justify-between gap-3">
+              <dt className="text-ink-500">GST</dt>
+              <dd className="tabular-nums">{formatMoney(quote.taxMinor, quote.currency)}</dd>
+            </div>
+          ) : null}
           <div className="flex justify-between gap-3 border-t border-line pt-2 text-[15px] font-semibold text-graphite-900">
             <dt>Total</dt>
             <dd className="tabular-nums">{formatMoney(quote.totalMinor, quote.currency)}</dd>

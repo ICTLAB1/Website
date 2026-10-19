@@ -834,7 +834,12 @@ function drawCommercialStrip(pdf: PdfDocument, input: QuotationPdfInput, top: nu
 
 // ------------------------------------------------------------- line items
 
-function drawTableHeader(pdf: PdfDocument, top: number, currency: string): number {
+function drawTableHeader(
+  pdf: PdfDocument,
+  top: number,
+  currency: string,
+  chargesGst: boolean,
+): number {
   const height = 24;
   pdf.rect(MARGIN, top, CONTENT, height, NAVY);
 
@@ -842,12 +847,24 @@ function drawTableHeader(pdf: PdfDocument, top: number, currency: string): numbe
     const box = COLUMN_X[column.key];
 
     /*
+     * "Taxable value" only where there is tax.
+     *
+     * The column holds the line's net figure either way, but the heading is a
+     * tax classification: on a quotation that charges no Indian GST — one
+     * written in dollars or dirhams, where the supply is an export — calling
+     * that figure a taxable value states a position on tax that this document
+     * is not the right place to state. It is an amount, so it says Amount.
+     */
+    const label =
+      column.key === "taxable" && !chargesGst ? "AMOUNT" : column.label;
+
+    /*
      * The money headings carry the currency, so the cells beneath them do not
      * have to. Nine columns on A4 cannot spare "INR " on every figure, and
      * stating the unit once at the top of a column is how a ledger does it.
      */
     const money = ["price", "disc", "taxable"].includes(column.key);
-    const lines = wrap(column.label, box.width - CELL_PAD * 2, LABEL_SIZE, "sansBold").slice(0, 2);
+    const lines = wrap(label, box.width - CELL_PAD * 2, LABEL_SIZE, "sansBold").slice(0, 2);
     if (money) lines.push(`(${currency})`);
 
     let y = top + (lines.length > 1 ? 10 : 14);
@@ -865,7 +882,7 @@ function drawTableHeader(pdf: PdfDocument, top: number, currency: string): numbe
 }
 
 function drawLineItems(pdf: PdfDocument, input: QuotationPdfInput, top: number): number {
-  let y = drawTableHeader(pdf, top, input.currency);
+  let y = drawTableHeader(pdf, top, input.currency, chargesGst(input));
   let segmentTop = y;
 
   /** The box a brand mark is fitted into, and the room a text fallback needs. */
@@ -913,7 +930,7 @@ function drawLineItems(pdf: PdfDocument, input: QuotationPdfInput, top: number):
     if (y + height > PAGE_BOTTOM) {
       closeTable(pdf, segmentTop, y);
       pdf.addPage();
-      y = drawTableHeader(pdf, 48, input.currency);
+      y = drawTableHeader(pdf, 48, input.currency, chargesGst(input));
       segmentTop = y;
     }
 
@@ -1025,13 +1042,33 @@ function drawTotals(
   const boxLeft = RIGHT - boxWidth;
   const termsWidth = boxLeft - MARGIN - gap;
 
-  const gross = input.subtotalMinor + input.discountMinor;
-
-  const rows: Array<[string, string]> = [["Subtotal", pdfAmount(gross, input.currency)]];
+  /*
+   * `subtotalMinor` is the gross: the sum of quantity times unit price, before
+   * any discount. That is what `documentTotals` stores and what every other
+   * figure on the quotation is derived from.
+   *
+   * It was read here as the *net* value, which is what the hand-written
+   * fixture in `scripts/render-sample-quote.ts` happens to hold. On a
+   * quotation with no discount the two are the same number and the document
+   * was right; on one with a discount, Subtotal printed the gross plus the
+   * discount again and Taxable Value printed the gross, so the summary did not
+   * reconcile against itself and the tax lines beneath it — which are computed
+   * from the lines and were always correct — did not match the taxable value
+   * they were supposedly charged on. A customer's accounts department checks
+   * exactly that.
+   */
+  const rows: Array<[string, string]> = [
+    ["Subtotal", pdfAmount(input.subtotalMinor, input.currency)],
+  ];
   if (input.discountMinor > 0) {
     rows.push(["Total Discount", `- ${pdfAmount(input.discountMinor, input.currency)}`]);
   }
-  rows.push(["Taxable Value", pdfAmount(input.subtotalMinor, input.currency)]);
+  if (chargesGst(input)) {
+    rows.push([
+      "Taxable Value",
+      pdfAmount(input.subtotalMinor - input.discountMinor, input.currency),
+    ]);
+  }
 
   /*
    * The tax split into the heads it is actually charged under.
@@ -1044,6 +1081,10 @@ function drawTotals(
    * making on the customer's behalf.
    */
   for (const [rate, amount] of taxByRate(input.lines)) {
+    // A line at 0% is not a tax head. It is the ordinary case on a
+    // foreign-currency quotation, where no Indian GST is charged at all, and
+    // "GST (0%) 0.00" would assert a tax position rather than omit one.
+    if (rate <= 0 || amount <= 0) continue;
     for (const head of taxHeads(amount, rate, treatment)) {
       rows.push([
         `${head.label} (${formatRate(head.ratePercent)}%)`,
@@ -1134,6 +1175,18 @@ function drawTotals(
   }
 
   return Math.max(y + boxHeight, y + termsHeight) + 18;
+}
+
+/**
+ * Whether this quotation charges Indian GST at all.
+ *
+ * Read off the lines rather than passed in, so it cannot disagree with the
+ * figures beneath it. False on every foreign-currency quotation and on a rupee
+ * one whose lines are all zero-rated; where it is false the tax rows and the
+ * tax wording come off the document entirely. See `lib/quote-currency.ts`.
+ */
+function chargesGst(input: QuotationPdfInput): boolean {
+  return input.lines.some((line) => line.gstRatePercent > 0 && lineTax(line) > 0);
 }
 
 /** Taxable value grouped by GST rate, so each rate gets its own tax line. */

@@ -100,6 +100,23 @@ export async function beginPayment(
     return { ok: false, reason: "That order has no amount to pay." };
   }
 
+  /*
+   * CCAvenue is an Indian domestic gateway on this deployment's account.
+   *
+   * It would accept a request whose currency it is not enabled for and fail at
+   * its own hosted page, after the customer has left the site — or worse,
+   * collect the figure as rupees. An order quoted in dollars or dirhams
+   * therefore does not get offered it; Stripe takes those currencies natively,
+   * and where Stripe is not configured either the order is settled by invoice,
+   * which is how most foreign-currency business here is settled anyway.
+   */
+  if (gateway === "ccavenue" && order.currency !== "INR") {
+    return {
+      ok: false,
+      reason: `This order is in ${order.currency}, which that card gateway cannot take. Please pay by card using the other option, or by bank transfer against the invoice.`,
+    };
+  }
+
   if (gateway === "ccavenue") return beginCCAvenuePayment(order);
   return beginStripePayment(order);
 }
@@ -239,6 +256,7 @@ export async function recordCapture(input: {
       id: true,
       status: true,
       amountMinor: true,
+      currency: true,
       capturedAt: true,
       providerPaymentId: true,
       order: {
@@ -340,6 +358,7 @@ export async function recordCapture(input: {
     payment.order.billingEmail,
     payment.order.billingPhone,
     payment.amountMinor,
+    payment.currency,
   );
 
   return { ok: true, reference: payment.order.reference, alreadyRecorded: false };
@@ -436,9 +455,18 @@ async function notifyPaid(
   email: string,
   phone: string | null,
   amountMinor: number,
+  /*
+   * The currency the payment was taken in, not an assumption.
+   *
+   * It was "INR" here, written when a rupee was the only thing an order could
+   * be in. A dollar payment would have been confirmed to the customer as a
+   * rupee figure about eighty-eight times too small, in the one message whose
+   * whole job is to say how much arrived.
+   */
+  currency: string,
 ): Promise<void> {
   const config = await getSiteConfig();
-  const amount = formatMoney(amountMinor);
+  const amount = formatMoney(amountMinor, currency);
 
   void sendMail({
     to: email,
@@ -467,5 +495,5 @@ async function notifyPaid(
     text: [`Order:    ${reference}`, `Customer: ${name} <${email}>`, `Amount:   ${amount}`].join("\n"),
   });
 
-  void notifyPaymentWhatsApp({ reference, billingName: name, billingPhone: phone, amountMinor, currency: "INR" });
+  void notifyPaymentWhatsApp({ reference, billingName: name, billingPhone: phone, amountMinor, currency });
 }

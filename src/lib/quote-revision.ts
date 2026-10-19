@@ -56,6 +56,7 @@ export async function reviseQuote(
       userId: true,
       companyId: true,
       currency: true,
+      exchangeRatePaise: true,
       subtotalMinor: true,
       discountMinor: true,
       taxMinor: true,
@@ -134,6 +135,9 @@ export async function reviseQuote(
       userId: source.userId,
       companyId: source.companyId,
       currency: source.currency,
+      // The rate the figures were converted at carries over with them. A
+      // revision inherits the prices, so it inherits what explains them.
+      exchangeRatePaise: source.exchangeRatePaise,
       subtotalMinor: source.subtotalMinor,
       discountMinor: source.discountMinor,
       taxMinor: source.taxMinor,

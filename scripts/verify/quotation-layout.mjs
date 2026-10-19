@@ -129,6 +129,50 @@ for (const count of [1, 5, 10, 20, 55]) {
     summaryPages[0]?.includes("Taxable Value") && summaryPages[0]?.includes("Amount in Words"));
 
   /*
+   * And it adds up.
+   *
+   * Subtotal minus Total Discount is the Taxable Value, the tax lines are that
+   * value at their stated rates, and the whole thing is the grand total. This
+   * is read off the rendered page rather than computed from the input, because
+   * the bug it exists for was in the rendering: the summary was printing the
+   * gross plus the discount as the subtotal and the gross as the taxable
+   * value, so every row was individually plausible and the column did not
+   * reconcile. Only a quotation carrying a discount shows it, which is why it
+   * went unnoticed — the fixture now carries one.
+   */
+  const summary = summaryPages[0] ?? "";
+  const figure = (label) => {
+    const row = summary
+      .split("\n")
+      .find((line) => line.includes(label));
+    const amounts = row?.match(/-?\s?[\d,]+\.\d{2}/g) ?? [];
+    const last = amounts[amounts.length - 1];
+    return last == null ? null : Math.round(Number(last.replace(/[,\s]/g, "")) * 100);
+  };
+  const subtotal = figure("Subtotal");
+  const discount = figure("Total Discount");
+  const taxable = figure("Taxable Value");
+  const grand = figure("GRAND TOTAL");
+  const taxRows = summary
+    .split("\n")
+    .filter((line) => /\b(CGST|SGST|IGST|GST)\s*\(/.test(line))
+    .map((line) => {
+      const amounts = line.match(/[\d,]+\.\d{2}/g) ?? [];
+      const last = amounts[amounts.length - 1];
+      return last == null ? 0 : Math.round(Number(last.replace(/,/g, "")) * 100);
+    });
+  const tax = taxRows.reduce((sum, amount) => sum + amount, 0);
+
+  check(`${count}: the summary reconciles — subtotal less discount is the taxable value`,
+    subtotal != null && discount != null && taxable != null &&
+      Math.abs(subtotal - Math.abs(discount) - taxable) <= 1,
+    `subtotal ${subtotal} − discount ${discount} ≠ taxable ${taxable}`);
+  check(`${count}: and the taxable value plus the tax is the grand total`,
+    taxable != null && grand != null && taxRows.length > 0 &&
+      Math.abs(taxable + tax - grand) <= 2,
+    `taxable ${taxable} + tax ${tax} ≠ grand ${grand}`);
+
+  /*
    * The issuer is identified exactly once, in the letterhead.
    *
    * It used to appear twice — once at the top of page one and again in a block

@@ -75,6 +75,16 @@ function underThousand(value: number): string {
  * Paise are written as a separate clause rather than as a fraction, which is
  * the convention: "Rupees One Lakh Eighteen Thousand and Fifty Paise Only".
  */
+/**
+ * What a hundredth of the unit is called.
+ *
+ * A dirham has a hundred fils, not a hundred cents, and a document that calls
+ * them cents is one a UAE finance team has to read twice. Anything not named
+ * here falls back to cents, which is right for the dollar and is at least
+ * understood everywhere else.
+ */
+const FRACTIONS: Record<string, string> = { INR: "Paise", USD: "Cents", AED: "Fils" };
+
 export function amountInWords(minorUnits: number, currency = "INR"): string {
   const negative = minorUnits < 0;
   const absolute = Math.abs(Math.round(minorUnits));
@@ -82,14 +92,24 @@ export function amountInWords(minorUnits: number, currency = "INR"): string {
   const major = Math.floor(absolute / 100);
   const minor = absolute % 100;
 
-  const rupees = major > 0 ? spellIndian(major) : "Zero";
+  /*
+   * Crore and lakh in rupees; million and thousand in anything else.
+   *
+   * The Indian grouping is what an Indian reader parses and what the rupee
+   * figure beside it is already grouped in. "USD Twelve Lakh" on a quotation
+   * going to Dubai or Delaware is not wrong so much as unreadable by the
+   * person it is addressed to, and the words exist to be read back against the
+   * figures.
+   */
+  const whole =
+    major > 0 ? (currency === "INR" ? spellIndian(major) : spellWestern(major)) : "Zero";
   const noun = currency === "INR" ? "Rupees" : currency;
-  const fraction = currency === "INR" ? "Paise" : "Cents";
+  const fraction = FRACTIONS[currency] ?? "Cents";
 
   return [
     negative ? "Minus" : null,
     noun,
-    rupees,
+    whole,
     minor > 0 ? `and ${underThousand(minor)} ${fraction}` : null,
     "Only",
   ]
@@ -121,6 +141,32 @@ function spellIndian(value: number): string {
       const rest = value % size;
       const head = `${count >= 1000 ? spellIndian(count) : underThousand(count)} ${name}`;
       return rest > 0 ? `${head} ${spellIndian(rest)}` : head;
+    }
+  }
+
+  return underThousand(value);
+}
+
+/**
+ * A whole number in the short scale: million, thousand, then the rest.
+ *
+ * The counterpart to `spellIndian`, for the currencies whose readers group in
+ * threes. Billion is absent deliberately: a money column is a 32-bit integer
+ * of minor units, which stops a little over twenty-one million whole units, so
+ * a billion is unreachable and a name for it would be dead code.
+ */
+function spellWestern(value: number): string {
+  const units: Array<[number, string]> = [
+    [1_000_000, "Million"],
+    [1_000, "Thousand"],
+  ];
+
+  for (const [size, name] of units) {
+    if (value >= size) {
+      const count = Math.floor(value / size);
+      const rest = value % size;
+      const head = `${underThousand(count)} ${name}`;
+      return rest > 0 ? `${head} ${spellWestern(rest)}` : head;
     }
   }
 
