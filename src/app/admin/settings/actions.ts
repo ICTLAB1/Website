@@ -125,6 +125,7 @@ const settingsSchema = z.object({
   supportHours: optionalText(180),
   // Generous: these are real contract terms, not a strapline.
   quoteTerms: optionalText(4000),
+  quoteTermsForeign: optionalText(4000),
   /*
    * The quotation numbering series. Validated against the same rules the
    * renderer applies, so a format that would produce duplicate numbers is

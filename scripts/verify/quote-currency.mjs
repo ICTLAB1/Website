@@ -59,6 +59,27 @@ const priorAed = sql(`select coalesce("aedRatePaise"::text, 'NULL') from "SiteSe
 sql(`update "SiteSettings" set "usdRatePaise" = null, "aedRatePaise" = null where id = '${settingsRow}'`);
 
 /*
+ * Two lists of printed terms, so the document can be checked for the right
+ * one. Markers rather than realistic wording: what is being proved is which
+ * list reached the page, and a distinctive string says that unambiguously
+ * where two plausible paragraphs would not.
+ */
+const priorTerms = sql(`select coalesce("quoteTerms", '') from "SiteSettings" where id = '${settingsRow}'`);
+const priorForeignTerms = sql(`select coalesce("quoteTermsForeign", '') from "SiteSettings" where id = '${settingsRow}'`);
+/*
+ * Single tokens, not sentences. The renderer wraps a long term across several
+ * text-showing operators, so a marker with spaces in it would be split in the
+ * content stream and absent from any string this script searched for. A token
+ * with no spaces survives wrapping intact, and avoids the characters a PDF
+ * string escapes.
+ */
+const RUPEE_TERM = `ZQRUPEE${stamp}`;
+const FOREIGN_TERM = `ZQEXPORT${stamp}`;
+sql(
+  `update "SiteSettings" set "quoteTerms" = 'Prices exclude applicable GST. ${RUPEE_TERM}', "quoteTermsForeign" = 'Prices exclude taxes in the country of import. ${FOREIGN_TERM}' where id = '${settingsRow}'`,
+);
+
+/*
  * Settings are cached for a minute, and a row written by psql cannot
  * invalidate that cache — which is deliberate, and documented where the cache
  * is declared. The cache is also stale-while-revalidate, so the first request
@@ -68,6 +89,23 @@ sql(`update "SiteSettings" set "usdRatePaise" = null, "aedRatePaise" = null wher
  * page that offers three. So the page is reloaded until the rate shows up, or
  * the run gives up and says so rather than asserting against a stale screen.
  */
+/*
+ * The same cache, read through a document instead of a page.
+ *
+ * The printed terms come from the settings row, which is cached for a minute
+ * and stale-while-revalidate, so the first fetch after a change still carries
+ * the old list. Fetched until the expected marker appears rather than once.
+ */
+async function pdfUntil(context, url, marker) {
+  for (let attempt = 0; attempt < 30; attempt += 1) {
+    const response = await context.request.get(url);
+    const text = (await response.body()).toString("latin1");
+    if (text.includes(marker)) return text;
+    await new Promise((resolve) => setTimeout(resolve, 5_000));
+  }
+  return null;
+}
+
 async function reloadUntil(target, url, predicate) {
   for (let attempt = 0; attempt < 30; attempt += 1) {
     await target.goto(url, { waitUntil: "load" });
@@ -224,6 +262,26 @@ check(
   pdfText.includes("USD"),
 );
 
+/*
+ * The terms on an export document are the export ones.
+ *
+ * The rupee list says "exclusive of applicable GST", which is false on a
+ * quotation that charges none — and it was printed on one, because there was
+ * only ever one list. Both markers are checked: the right one present, the
+ * wrong one absent, because a page carrying both would pass a test that only
+ * looked for the first.
+ */
+const foreignPdf = await pdfUntil(
+  staff,
+  `${BASE}/account/quotes/${quoteRef}/pdf?inline=1`,
+  FOREIGN_TERM,
+);
+check("a dollar quotation prints the terms written for one", foreignPdf !== null);
+check(
+  "and not the rupee terms, whose GST wording does not apply to it",
+  foreignPdf !== null && !foreignPdf.includes(RUPEE_TERM),
+);
+
 // ── a catalogue line added to a dollar quotation ────────────────────────────
 const catalogue = sql(
   `select v.sku || '|' || coalesce(v."salePriceMinor", v."listPriceMinor") from "ProductVariant" v join "Product" p on p.id = v."productId" where p.status = 'ACTIVE' and coalesce(v."salePriceMinor", v."listPriceMinor") > 0 order by v.sku limit 1`,
@@ -272,6 +330,13 @@ check(
   quoteState(),
 );
 
+const rupeePdf = await pdfUntil(staff, `${BASE}/account/quotes/${quoteRef}/pdf?inline=1`, RUPEE_TERM);
+check("back in rupees it prints the rupee terms again", rupeePdf !== null);
+check(
+  "and not the export ones",
+  rupeePdf !== null && !rupeePdf.includes(FOREIGN_TERM),
+);
+
 // ── an issued quotation does not change currency ────────────────────────────
 sql(`update "Quote" set status = 'SENT', "sentAt" = now() where id = 'qcq${stamp}'`);
 await page.goto(`${BASE}/admin/quotes/${quoteRef}`, { waitUntil: "load" });
@@ -297,8 +362,9 @@ check(
 await browser.close();
 
 // ── clean up ────────────────────────────────────────────────────────────────
+const orNull = (value) => (value === "" ? "null" : `'${value.replace(/'/g, "''")}'`);
 sql(
-  `update "SiteSettings" set "usdRatePaise" = ${priorUsd}, "aedRatePaise" = ${priorAed} where id = '${settingsRow}'`,
+  `update "SiteSettings" set "usdRatePaise" = ${priorUsd}, "aedRatePaise" = ${priorAed}, "quoteTerms" = ${orNull(priorTerms)}, "quoteTermsForeign" = ${orNull(priorForeignTerms)} where id = '${settingsRow}'`,
 );
 sql(`delete from "AuditLog" where "entityId" in ('${quoteRef}', 'qci${stamp}')`);
 sql(`delete from "AuditLog" where metadata::text like '%${quoteRef}%'`);

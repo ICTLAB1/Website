@@ -7,6 +7,7 @@ import {
   isQuoteCurrency,
   quotableCurrencies,
   ratePaise,
+  termsFor,
 } from "@/lib/quote-currency";
 import { amountInWords } from "@/lib/pdf/money";
 import type { ExchangeRates } from "@/lib/currency";
@@ -116,5 +117,37 @@ describe("the total written out on the document", () => {
 
   it("calls a hundredth of a dirham a fils", () => {
     expect(amountInWords(367_262, "AED")).toContain("Sixty Two Fils");
+  });
+});
+
+describe("which terms are printed", () => {
+  const rupee = "Prices are exclusive of applicable GST.";
+  const abroad = "Prices are exclusive of taxes payable in the country of import.";
+
+  it("prints the rupee terms on a rupee quotation", () => {
+    expect(termsFor("INR", rupee, abroad)).toBe(rupee);
+  });
+
+  it("prints the foreign terms on a dollar or dirham one", () => {
+    expect(termsFor("USD", rupee, abroad)).toBe(abroad);
+    expect(termsFor("AED", rupee, abroad)).toBe(abroad);
+  });
+
+  it("falls back to the rupee terms when no foreign list is set", () => {
+    // The behaviour before the second field existed. Wording invented for an
+    // export sale would be a commitment the business never made.
+    expect(termsFor("USD", rupee, null)).toBe(rupee);
+    expect(termsFor("USD", rupee, "   ")).toBe(rupee);
+  });
+
+  it("keys on the currency, not on whether tax happens to be zero", () => {
+    // A rupee quotation whose lines are all zero-rated is still a domestic
+    // supply, and the domestic terms are the ones that apply to it.
+    expect(termsFor("INR", rupee, abroad)).not.toBe(abroad);
+  });
+
+  it("carries no terms either way when none are set", () => {
+    expect(termsFor("INR", null, null)).toBeNull();
+    expect(termsFor("USD", null, null)).toBeNull();
   });
 });

@@ -8,6 +8,7 @@ import { letterheadImage, loadPublicImage } from "@/lib/pdf/assets";
 import { currentPartnerBadge, currentPartnerLabel } from "@/lib/brand-partner";
 import { certificationLogo } from "@/lib/certification-logo";
 import { renderQuotationPdf, type QuotationParty } from "@/lib/pdf/quotation";
+import { termsFor } from "@/lib/quote-currency";
 
 /**
  * The quotation PDF, built from the row.
@@ -383,7 +384,7 @@ export async function buildQuotationPdf(
     logo: letterheadImage(),
     accreditations,
     banking: getBankingDetails(),
-    terms: config.quoteTerms,
+    terms: termsFor(quote.currency, config.quoteTerms, config.quoteTermsForeign),
   });
 
   /*

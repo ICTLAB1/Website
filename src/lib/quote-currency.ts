@@ -125,3 +125,31 @@ export function ceilingLabel(currency: string): string {
   if (currency === "INR") return "about ₹2.14 crore";
   return `about ${currencySymbol(currency)}21.4 million`;
 }
+
+/**
+ * Which set of printed terms a quotation carries.
+ *
+ * The rupee terms state a tax position — "prices are exclusive of applicable
+ * GST" is the usual wording, and it belongs there — which is false on a
+ * quotation billed abroad, where no Indian GST is charged. So an administrator
+ * may write a second list for those, and this is the one place that chooses
+ * between them: the emailed quotation and the PDF both come through here, so
+ * the attachment cannot contradict the message it is attached to.
+ *
+ * Keyed on the currency rather than on whether tax happens to be zero. A rupee
+ * quotation whose lines are all zero-rated is still a domestic supply under
+ * Indian terms; what changes the terms is the currency the money moves in.
+ *
+ * Falls back to the rupee terms when no foreign list is set. That is the
+ * behaviour before this existed, and it is the honest default: a list this
+ * application composed for an export sale would be a commitment the business
+ * never made.
+ */
+export function termsFor(
+  currency: string,
+  terms: string | null,
+  foreignTerms: string | null,
+): string | null {
+  if (currency === "INR") return terms;
+  return foreignTerms?.trim() ? foreignTerms : terms;
+}

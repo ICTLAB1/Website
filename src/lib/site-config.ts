@@ -281,6 +281,16 @@ export const getSiteConfig = cache(async () => {
      */
     quoteTerms: stored(row?.quoteTerms) ?? null,
     /*
+     * The terms for a quotation that is not in rupees.
+     *
+     * Same rule, and for the same reason: stored only, no fallback, no
+     * default. Null means a foreign-currency quotation carries the rupee terms
+     * — which is what it did before this existed, and is the business's
+     * problem to notice rather than this code's to paper over. See
+     * `lib/quote-currency.ts` for which list is chosen.
+     */
+    quoteTermsForeign: stored(row?.quoteTermsForeign) ?? null,
+    /*
      * How quotation numbers are formed, e.g. "TZ/QT/{FY}/{SEQ:4}".
      *
      * Stored only, with no environment fallback and no default. A numbering
