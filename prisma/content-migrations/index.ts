@@ -55,6 +55,7 @@ import { nameTheManagingDirector } from "./2026-09-name-the-managing-director";
 import { trimLongMetaDescriptions } from "./2026-09-trim-long-meta-descriptions";
 import { regionScopedConsent } from "./2026-10-region-scoped-consent";
 import { seoAuditTailEnds } from "./2026-10-seo-audit-tail-ends";
+import { delhiLocalPage } from "./2026-10-delhi-local-page";
 import type { ContentMigration } from "./types";
 
 /**
@@ -123,6 +124,7 @@ export const contentMigrations: ContentMigration[] = [
   trimLongMetaDescriptions,
   seoAuditTailEnds,
   regionScopedConsent,
+  delhiLocalPage,
 ];
 
 export type { ContentMigration };

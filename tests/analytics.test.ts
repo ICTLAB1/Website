@@ -165,6 +165,43 @@ describe("the policy the tag needs", () => {
     expect(ANALYTICS_CSP.connect).toContain("https://stats.g.doubleclick.net");
     expect(ANALYTICS_CSP.connect).toContain("https://www.google.com");
   });
+
+  it("allows every measurement host as an image as well as a connection", () => {
+    /*
+     * The bug this exists for, found by reading the live policy rather than
+     * this file: `connect-src` and `img-src` were two hand-written lists and
+     * they drifted. Four hosts — `www.google.com`,
+     * `stats.g.doubleclick.net`, `analytics.google.com` and the regional
+     * `*.analytics.google.com` — could be connected to and not loaded as an
+     * image, and `www.google.com/ads/ga-audiences` is an image request fired
+     * on every page view once an Ads link is on. Google reported it as
+     * "blocked tag resources" on five ordinary pages.
+     *
+     * Which transport carries a ping is the browser's choice — `fetch` or
+     * `sendBeacon` where available, an image where not — so the two lists
+     * have to agree or measurement works in some browsers and is silently
+     * refused in the rest.
+     */
+    expect([...ANALYTICS_CSP.img]).toEqual([...ANALYTICS_CSP.connect]);
+    for (const host of ["https://www.google.com", "https://stats.g.doubleclick.net", "https://analytics.google.com"]) {
+      expect(ANALYTICS_CSP.img).toContain(host);
+    }
+  });
+
+  it("allows the host GA4 sends an Ads linkage to", () => {
+    // Newer than the other two advertising hosts and absent from every
+    // directive, so the live policy refused it outright.
+    expect(ANALYTICS_CSP.connect).toContain("https://td.doubleclick.net");
+  });
+
+  it("still frames nothing but the container", () => {
+    /*
+     * A frame is a much larger grant than a pixel. The live diagnostics report
+     * three advertising hosts as unframeable and nothing has yet shown the
+     * tags here need a frame from any of them, so none is granted in advance.
+     */
+    expect(ANALYTICS_CSP.frame).toEqual(["https://www.googletagmanager.com"]);
+  });
 });
 
 describe("a tag debugging session", () => {

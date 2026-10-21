@@ -205,74 +205,91 @@ export function analyticsEnabled(options: {
 }
 
 /**
+ * Every Google host the tags contact to report a measurement.
+ *
+ * One list, used for both `connect-src` and `img-src`, because which of the
+ * two carries a given ping is the browser's choice and not ours: it goes out
+ * through `fetch`/`sendBeacon` where those are available and falls back to an
+ * image request where they are not. A host allowed for one transport and not
+ * the other is a measurement that works in some browsers and is silently
+ * refused in the rest.
+ *
+ * That is not hypothetical. These were maintained as two hand-written lists,
+ * and the lists drifted: `www.google.com`, `stats.g.doubleclick.net`,
+ * `analytics.google.com` and `region1.analytics.google.com` were allowed to
+ * connect and refused as images. `www.google.com/ads/ga-audiences` is an
+ * *image* request, fired on every page view once an Ads link is on — which is
+ * what Google reported as "blocked tag resources" on five ordinary pages, and
+ * why this is now one array rather than two.
+ */
+const MEASUREMENT_HOSTS = [
+  /*
+   * The advertising hosts, allowed as of 25 August 2026.
+   *
+   * `stats.g.doubleclick.net` and `www.google.com` are what GA4 contacts when
+   * Google Signals or an Ads link is on: cross-device identity, demographics,
+   * remarketing audiences. They were deliberately blocked while this site had
+   * no consent mechanism, because a cookie policy that says "no advertising
+   * or remarketing pixel" and a page that quietly contacts an ad network are
+   * not both true.
+   *
+   * What changed is not the appetite for advertising, it is that consent now
+   * gates it: `ad_storage`, `ad_user_data` and `ad_personalization` default
+   * to denied on every page, so nothing reaches these hosts in a form that
+   * can identify anybody until a visitor says yes. The policy says exactly
+   * that.
+   */
+  "https://stats.g.doubleclick.net",
+  "https://www.google.com",
+  "https://www.googletagmanager.com",
+  "https://www.google-analytics.com",
+  "https://*.google-analytics.com",
+  /*
+   * Both the bare host and the wildcard, which are not the same thing.
+   *
+   * A CSP wildcard stands for one or more subdomain labels, so
+   * `*.analytics.google.com` matches `region1.analytics.google.com` and does
+   * *not* match `analytics.google.com` itself. Listing only the wildcard is
+   * what Google's own tag diagnostics reported as a blocked resource on the
+   * live site, and it is an easy thing to get wrong twice.
+   */
+  "https://analytics.google.com",
+  "https://*.analytics.google.com",
+  /*
+   * Where an Ads conversion actually goes, and the reason one never arrived.
+   *
+   * `gtag('event','conversion')` — and the equivalent tag inside the
+   * container — reports to `www.googleadservices.com/pagead/conversion/…`
+   * and `googleads.g.doubleclick.net/pagead/viewthroughconversion/…`.
+   * Neither host was listed here, so the tag ran, the request was made, and
+   * the policy refused it. Nothing in Google Ads says "blocked by the site's
+   * content policy"; the conversion action simply reports that it has never
+   * received data, which is exactly what it did report.
+   */
+  "https://www.googleadservices.com",
+  "https://googleads.g.doubleclick.net",
+  /*
+   * Where GA4 sends the Ads linkage itself, once one is configured.
+   *
+   * Newer than the two above and absent from every directive, so it read as a
+   * blocked resource on the live policy. Same consent gate as the rest: it is
+   * contacted only once advertising storage has been granted.
+   */
+  "https://td.doubleclick.net",
+] as const;
+
+/**
  * The hosts the tag needs, by directive.
  *
  * `script-src` is listed for browsers that do not understand `strict-dynamic`;
  * ones that do ignore host sources there and rely on the nonce instead.
- * `connect-src` is the one that actually matters — without it the tag loads,
- * runs, and every measurement it tries to send is refused.
+ * `connect-src` and `img-src` carry the measurements themselves, and are the
+ * same list for the reason given above.
  */
 export const ANALYTICS_CSP = {
   script: ["https://www.googletagmanager.com"],
-  connect: [
-    /*
-     * The advertising hosts, allowed as of 25 August 2026.
-     *
-     * `stats.g.doubleclick.net` and `www.google.com` are what GA4 contacts when
-     * Google Signals or an Ads link is on: cross-device identity, demographics,
-     * remarketing audiences. They were deliberately blocked while this site had
-     * no consent mechanism, because a cookie policy that says "no advertising
-     * or remarketing pixel" and a page that quietly contacts an ad network are
-     * not both true.
-     *
-     * What changed is not the appetite for advertising, it is that consent now
-     * gates it: `ad_storage`, `ad_user_data` and `ad_personalization` default
-     * to denied on every page, so nothing reaches these hosts in a form that
-     * can identify anybody until a visitor says yes. The policy says exactly
-     * that.
-     */
-    "https://stats.g.doubleclick.net",
-    "https://www.google.com",
-    "https://www.googletagmanager.com",
-    "https://www.google-analytics.com",
-    "https://*.google-analytics.com",
-    /*
-     * Both the bare host and the wildcard, which are not the same thing.
-     *
-     * A CSP wildcard stands for one or more subdomain labels, so
-     * `*.analytics.google.com` matches `region1.analytics.google.com` and does
-     * *not* match `analytics.google.com` itself. Listing only the wildcard is
-     * what Google's own tag diagnostics reported as a blocked resource on the
-     * live site, and it is an easy thing to get wrong twice.
-     */
-    "https://analytics.google.com",
-    "https://*.analytics.google.com",
-    /*
-     * Where an Ads conversion actually goes, and the reason one never arrived.
-     *
-     * `gtag('event','conversion')` — and the equivalent tag inside the
-     * container — reports to `www.googleadservices.com/pagead/conversion/…`
-     * and `googleads.g.doubleclick.net/pagead/viewthroughconversion/…`.
-     * Neither host was listed here, so the tag ran, the request was made, and
-     * the policy refused it. Nothing in Google Ads says "blocked by the site's
-     * content policy"; the conversion action simply reports that it has never
-     * received data, which is exactly what it did report.
-     *
-     * Listed under `connect` and `img` both, because which one is used depends
-     * on the browser: the ping goes out through `fetch`/`sendBeacon` where
-     * they are available and falls back to an image request where they are
-     * not, and a policy that allows only the first silently drops the
-     * fallback.
-     */
-    "https://www.googleadservices.com",
-    "https://googleads.g.doubleclick.net",
-  ],
-  img: [
-    "https://www.googletagmanager.com",
-    "https://*.google-analytics.com",
-    "https://www.googleadservices.com",
-    "https://googleads.g.doubleclick.net",
-  ],
+  connect: MEASUREMENT_HOSTS,
+  img: MEASUREMENT_HOSTS,
   /*
    * For the Tag Manager `<noscript>` frame, and nothing else.
    *
@@ -282,6 +299,14 @@ export const ANALYTICS_CSP = {
    * frame; `frame-ancestors` governs who may put this page in one, stays
    * `'none'`, and is untouched. Allowing one Google host to be framed does not
    * make this site embeddable anywhere.
+   *
+   * Deliberately not widened to the advertising hosts. The live diagnostics
+   * report `td.doubleclick.net`, `bid.g.doubleclick.net` and
+   * `www.googleadservices.com` as unframeable, and they are — but a frame is
+   * a far larger grant than a pixel, and nothing has yet shown that the tags
+   * on this site need one. If Google still reports blocked resources once the
+   * image transport is allowed, this is the next thing to look at, with
+   * evidence rather than in advance.
    */
   frame: ["https://www.googletagmanager.com"],
 } as const;
