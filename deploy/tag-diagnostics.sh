@@ -37,6 +37,106 @@ else
   printf 'consent defaults present:  %s\n' "$(grep -c "consent'*,\s*'*default" "$page" || true)"
 fi
 
+say "What the content policy lets the tags reach"
+
+# Why this is here.
+#
+# Google Ads and GA4 report "your Content Security Policy is blocking tag
+# resources needed for measurement" and name the pages, never the resource. A
+# conversion action then shows "no data received", which reads as "you have no
+# tag" and is really "your policy refused the request". That has already
+# happened once on this site: `www.googleadservices.com` and
+# `googleads.g.doubleclick.net` were absent from the policy, so every
+# conversion ping was refused while the tag itself looked perfectly healthy.
+#
+# So rather than reason about the policy from the repository, this reads the
+# header the live site actually sends and tests each host the tags contact
+# against it. The policy is sent to every visitor on every request; there is
+# nothing private in it.
+
+header="$(curl -fsS -D - -o /dev/null --max-time 20 -A 'Mozilla/5.0 (tag-diagnostics)' "$SITE" \
+  | tr -d '\r' | grep -i '^content-security-policy:' | head -1 | cut -d' ' -f2-)"
+
+if [ -z "$header" ]; then
+  echo "(no content-security-policy header on the response)"
+else
+  # One directive's value, or empty when the directive is absent.
+  directive() {
+    printf '%s' "$header" | tr ';' '\n' | awk -v want="$1" '
+      { sub(/^[ \t]+/, ""); n = split($0, f, / +/); if (f[1] == want) { $1 = ""; sub(/^ /, ""); print } }'
+  }
+
+  # Whether a directive admits a host, honouring the one wildcard rule that is
+  # easy to get wrong: `*.example.com` matches `a.example.com` and does NOT
+  # match `example.com` itself.
+  admits() {
+    local list="$1" host="$2" entry suffix
+    for entry in $list; do
+      # An exact host, or a policy that admits any origin at all.
+      [ "$entry" = "https://$host" ] && return 0
+      [ "$entry" = "*" ] && return 0
+      [ "$entry" = "https:" ] && return 0
+      # A wildcard, stripped by parameter expansion rather than matched by a
+      # case pattern: inside double quotes a backslash is not an escape, so
+      # `"https://\*."*)` as a pattern looks for a literal backslash and never
+      # fires. That is a quiet failure — every wildcard entry reads as a block.
+      suffix="${entry#https://\*.}"
+      if [ "$suffix" != "$entry" ]; then
+        # `*.example.com` matches `a.example.com`, never `example.com` itself.
+        case "$host" in
+          *".$suffix") return 0 ;;
+        esac
+      fi
+    done
+    return 1
+  }
+
+  check() {
+    local name="$1" list="$2"; shift 2
+    printf '\n%s\n' "$name"
+    if [ -z "$list" ]; then
+      printf '  (directive absent — falls back to default-src)\n'
+      return
+    fi
+    for host in "$@"; do
+      if admits "$list" "$host"; then
+        printf '  allow   %s\n' "$host"
+      else
+        printf '  BLOCK   %s\n' "$host"
+      fi
+    done
+  }
+
+  script_src="$(directive script-src)"
+  check "script-src" "$script_src" \
+    www.googletagmanager.com www.googleadservices.com googleads.g.doubleclick.net
+  case "$script_src" in
+    *strict-dynamic*)
+      printf "  note: 'strict-dynamic' is set, so a browser that understands it\n"
+      printf '        ignores the hosts above and trusts whatever the nonced tag\n'
+      printf '        loads. Older browsers fall back to the list.\n' ;;
+  esac
+
+  # Both transports, because which one carries a ping depends on the browser:
+  # `fetch`/`sendBeacon` where available, an image request where not. A policy
+  # allowing only the first drops the fallback silently.
+  hosts="www.google-analytics.com analytics.google.com region1.analytics.google.com
+         stats.g.doubleclick.net www.google.com www.googleadservices.com
+         googleads.g.doubleclick.net td.doubleclick.net www.googletagmanager.com"
+  # shellcheck disable=SC2086
+  check "connect-src" "$(directive connect-src)" $hosts
+  # shellcheck disable=SC2086
+  check "img-src" "$(directive img-src)" $hosts
+  check "frame-src" "$(directive frame-src)" \
+    www.googletagmanager.com td.doubleclick.net bid.g.doubleclick.net www.googleadservices.com
+
+  printf '\nA BLOCK above is a resource the tags may ask for and this site refuses.\n'
+  printf 'Not every one of them is needed by every configuration — a host is only\n'
+  printf 'contacted once a feature that uses it is switched on, and nothing is\n'
+  printf 'contacted at all before a visitor consents — so treat these as the\n'
+  printf 'candidates for what Google is reporting, not as a list to allow wholesale.\n'
+fi
+
 say "One canonical hostname, or two competing ones"
 
 # Why this is here, next to the tags: both hostnames were ranking for the
