@@ -57,6 +57,7 @@ import { regionScopedConsent } from "./2026-10-region-scoped-consent";
 import { seoAuditTailEnds } from "./2026-10-seo-audit-tail-ends";
 import { delhiLocalPage } from "./2026-10-delhi-local-page";
 import { mergeDuplicateServers } from "./2026-10-merge-duplicate-servers";
+import { linkTheDelhiPage } from "./2026-10-link-the-delhi-page";
 import type { ContentMigration } from "./types";
 
 /**
@@ -127,6 +128,7 @@ export const contentMigrations: ContentMigration[] = [
   regionScopedConsent,
   delhiLocalPage,
   mergeDuplicateServers,
+  linkTheDelhiPage,
 ];
 
 export type { ContentMigration };
