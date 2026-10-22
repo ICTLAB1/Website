@@ -337,9 +337,86 @@ migration with its own testing, not a line in a security commit. The exposure
 is in the CLI and config path that runs at build and migrate time, not the
 query engine serving requests.
 
+### S3 — The privacy policy published retention periods nothing enforced
+
+**Status: Fixed, and switched on in reporting mode only.**
+
+The privacy policy publishes a table of seven retention periods and then says,
+of everything outside a statutory minimum, that it "can be, and is" deleted.
+Nothing in the codebase deleted any of it. `deleteMany` appeared only against
+sessions, tokens and rate-limit buckets; there was no scheduled purge, no cron
+entry, and no retention module.
+
+Under the Digital Personal Data Protection Act, 2023 a published retention
+period is a commitment to the person whose data it is. A commitment nothing
+implements is a false statement on a public page, which is the part that makes
+this a defect rather than a missing feature.
+
+Three of the seven rows are enforceable in this database — enquiries that led
+to nothing, closed support tickets, audit entries — and
+`src/lib/privacy/retention.ts` now implements those and names the other four
+with the reason each is held back, so the table is accounted for in full rather
+than silently partial. Two of the four are statutory *minimums* the policy
+itself says cannot be shortened; deleting against them would implement a
+sentence the policy does not contain.
+
+`POST /api/privacy/retention` **reports and deletes nothing** unless the body
+says `{"apply":true}`. That is not timidity: the first run against production
+meets however many years of backlog nobody has ever applied a rule to, so every
+eligible row is historical and the count is the only evidence of whether the
+rules say what their author meant. Against the development database the dry run
+reports 35 enquiries eligible and 9 held back for carrying a quotation, deal or
+document — so the exclusion is doing work rather than passing vacuously.
+
+### S4 — Closing a ticket recorded no closure date
+
+**Status: Fixed.**
+
+Found while implementing S3, and it is why that rule could never have fired.
+The published period for a support ticket runs "3 years from closure", and
+`resolvedAt` — the only closure date there is — was never written by the admin
+form that closes most tickets. `ticket-service.ts` stamped it on RESOLVED and
+deliberately left it alone on CLOSED, which is right for a ticket resolved on
+Tuesday and closed on Friday but leaves a ticket taken straight from OPEN to
+CLOSED with no date at all. The status form in `quote-actions.ts` never touched
+the column.
+
+So the retention rule would have reported zero for ever, the admin page said
+nothing about when a ticket was resolved, and no response-time figure could be
+computed from a closure. One helper, `closedAt`, now decides the column from the
+status in both paths: stamp on resolution, keep an existing date when a resolved
+ticket is later closed, stamp when there is none, clear on reopening.
+
+### S5 — A scheduled route's token never reached the container
+
+**Status: Fixed.**
+
+`QUOTE_FOLLOWUP_TOKEN` was documented in `.env.example`, documented in the
+deployment guide with a cron line to install, and read by the route — and absent
+from `deploy/docker-compose.prod.yml`. Compose forwards only the variables named
+in a service's `environment` block, so the value sat in the server's `.env` and
+never reached the process.
+
+The route therefore answered 404 to its own cron line. No quotation follow-up
+has ever been sent automatically, and `expireStaleQuotes()` — which the same run
+performs — never ran either, so quotation statuses have only ever been corrected
+at the moment a customer responded.
+
+Nothing about that failure is visible from outside: the route is *meant* to
+answer 404 when the token is unset, `curl` reports success because it got a
+response, and the only symptom is an absence of email. `tests/scheduled-route-tokens.test.ts`
+now walks every `route.ts`, collects each `process.env.*TOKEN` it reads, and
+fails if one is missing from the compose file or from `.env.example`.
+
 Checked and clean: `verify:authz` 17/17, `verify:attack`, no secrets in the
 client bundle (`verify:crawl` checks for leaked configuration across 269
-pages).
+pages). Security headers audited in full — `nosniff`, `DENY`,
+`strict-origin-when-cross-origin`, a nonce-based CSP with `strict-dynamic`,
+`same-origin` COOP, a permissions policy disabling camera, microphone,
+geolocation, payment and USB, and HSTS at two years with `includeSubDomains;
+preload`. Nothing to fix. Upload handling likewise: the type is taken from the
+file's magic bytes and the extension is used only to disambiguate a ZIP
+container, so a renamed executable is refused on its contents.
 
 ## Accessibility and responsiveness
 

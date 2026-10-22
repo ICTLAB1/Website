@@ -80,7 +80,7 @@ export async function getTicketForStaff(reference: string) {
 }
 
 /** Statuses on which a ticket is finished and no longer takes replies. */
-const CLOSED_STATUSES: TicketStatus[] = ["RESOLVED", "CLOSED"];
+export const CLOSED_STATUSES: TicketStatus[] = ["RESOLVED", "CLOSED"];
 
 export function ticketIsClosed(status: TicketStatus | string): boolean {
   return CLOSED_STATUSES.includes(status as TicketStatus);
@@ -146,7 +146,7 @@ export async function addStaffMessage(
 ): Promise<TicketWriteResult> {
   const ticket = await prisma.supportTicket.findUnique({
     where: { reference },
-    select: { id: true, reference: true, status: true, firstReplyAt: true },
+    select: { id: true, reference: true, status: true, firstReplyAt: true, resolvedAt: true },
   });
   if (!ticket) return { ok: false, reason: "That ticket could not be found." };
 
@@ -161,15 +161,42 @@ export async function addStaffMessage(
       data: {
         status,
         firstReplyAt: ticket.firstReplyAt ?? new Date(),
-        // Stamped when it becomes resolved, cleared if it is reopened, so the
-        // column always means "resolved as of this date" rather than "was
-        // resolved once".
-        resolvedAt: status === "RESOLVED" ? new Date() : status === "CLOSED" ? undefined : null,
+        /*
+         * Stamped when it becomes resolved or closed, cleared if it is
+         * reopened, so the column always means "closed as of this date" rather
+         * than "was resolved once".
+         *
+         * Closing keeps a resolution date it already has — a ticket resolved on
+         * Tuesday and closed on Friday was resolved on Tuesday — but stamps one
+         * when there is none. A ticket taken straight from OPEN to CLOSED used
+         * to end up closed with no closure date, which left it outside the
+         * three-year retention period the privacy policy publishes: the period
+         * runs from closure, and a closure with no date has nothing to count
+         * from. See `src/lib/privacy/retention.ts`.
+         */
+        resolvedAt: closedAt(status, ticket.resolvedAt),
       },
     }),
   ]);
 
   return { ok: true, reference: ticket.reference, ticketId: ticket.id };
+}
+
+/**
+ * What `resolvedAt` becomes when a ticket moves to `status`.
+ *
+ * Separate from the update so it can be tested without a database, because the
+ * three cases are easy to collapse into two by accident and the one that gets
+ * lost is the one nothing notices.
+ */
+export function closedAt(
+  status: TicketStatus,
+  current: Date | null,
+  now: Date = new Date(),
+): Date | null {
+  if (status === "RESOLVED") return now;
+  if (status === "CLOSED") return current ?? now;
+  return null;
 }
 
 /**

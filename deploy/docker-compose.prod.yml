@@ -82,10 +82,17 @@ services:
       # served from a guessable path and must not end up somewhere that is.
       DOCUMENT_DIR: /data/documents
 
-      # Guards the scheduled CRM delivery route. Unset means the route refuses
-      # everything, which is the safe default — set it only when a scheduler is
-      # actually going to call it. See deploy/README.md.
+      # Guards the three scheduled routes. Unset means the route refuses
+      # everything, which is the safe default — set one only when a scheduler is
+      # actually going to call it. See deploy/README.md, sections 10 to 12.
+      #
+      # All three must be listed here. Compose forwards only the variables named
+      # in this block, so a token set in the server's .env and not named here is
+      # a token the container never sees — and a route that answers 404 to the
+      # cron line somebody carefully installed.
       CRM_DELIVER_TOKEN: ${CRM_DELIVER_TOKEN:-}
+      QUOTE_FOLLOWUP_TOKEN: ${QUOTE_FOLLOWUP_TOKEN:-}
+      RETENTION_TOKEN: ${RETENTION_TOKEN:-}
 
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}

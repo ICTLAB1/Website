@@ -18,6 +18,15 @@ the answer exists, and each blocks something larger.
 | B1 | Point internal notifications at a read mailbox | One admin field |
 | B2 | Publish the Delhi telephone number | The number |
 | B4 | Export terms for foreign-currency quotations | The wording, past counsel |
+| B5 | Switch the retention job from reporting to deleting | A read of one dry-run report |
+
+B5 is the only one of these where the engineering is not merely finished but
+already deployed and running: `POST /api/privacy/retention` reports what each
+published period covers and deletes nothing. Somebody has to read one report
+against production and agree with the counts before `{"apply":true}` goes on the
+cron line. That is a deliberate human gate, not an unfinished edge — the first
+run meets a backlog nobody has ever applied a rule to, and the deletion is
+irreversible.
 
 B2 is the gate for the whole of off-page SEO: no phone, no Google Business
 Profile, no consistent citations, and `seo/listings.md` cannot begin.

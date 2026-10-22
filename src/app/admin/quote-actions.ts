@@ -20,6 +20,7 @@ import {
 import { addQuoteMessage, reviseQuote } from "@/lib/quote-revision";
 import { sendManualFollowUp } from "@/lib/quotes/follow-ups";
 import { fulfilOrder } from "@/lib/order-service";
+import { closedAt } from "@/lib/ticket-service";
 import {
   discountFromPercent,
   documentTotals,
@@ -1324,6 +1325,7 @@ export async function updateSupportTicket(
     select: {
       status: true,
       subject: true,
+      resolvedAt: true,
       user: { select: { name: true, email: true } },
     },
   });
@@ -1331,7 +1333,19 @@ export async function updateSupportTicket(
 
   await prisma.supportTicket.update({
     where: { reference: parsed.data.reference },
-    data: { status: parsed.data.status, priority: parsed.data.priority },
+    data: {
+      status: parsed.data.status,
+      priority: parsed.data.priority,
+      /*
+       * The closure date, kept in step with the status rather than left behind
+       * by it. This form is how most tickets are actually closed, and it used
+       * to change the status without touching `resolvedAt` — so a ticket closed
+       * from here had no closure date, the admin page said nothing about when
+       * it was resolved, and the three-year retention period the privacy policy
+       * measures from closure had nothing to measure from.
+       */
+      resolvedAt: closedAt(parsed.data.status, existing.resolvedAt),
+    },
   });
 
   await recordAudit({
