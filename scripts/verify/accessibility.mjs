@@ -61,7 +61,17 @@ for (const path of PAGES) {
     const results = await page.evaluate(async () => {
       // @ts-expect-error injected at runtime
       return await window.axe.run(document, {
-        runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"] },
+        /*
+         * WCAG 2.2 AA, not 2.1. The 2.2 tags add one automatable rule —
+         * `target-size`, success criterion 2.5.8 — and it is the one that
+         * matters most on a phone, where a 20px icon button is a real failure
+         * and nothing in the 2.1 set notices it. The other five criteria 2.2
+         * added cannot be decided by a rule engine; `wcag22.mjs` covers those.
+         */
+        runOnly: {
+          type: "tag",
+          values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa", "best-practice"],
+        },
       });
     });
 

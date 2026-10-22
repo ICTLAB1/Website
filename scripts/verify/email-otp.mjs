@@ -98,7 +98,19 @@ if (hadHost) {
  * timestamp it carries. A stale line from another run belongs to another user
  * id and cannot be picked up, and there is nothing left to guess about.
  */
-const LOG_GLOB = process.env.SERVER_LOG ?? "/tmp/claude-*/*/*/tasks/*.output /tmp/claude-*/*/*/scratchpad/*.out";
+/*
+ * `.log` as well as `.out` and `.output`. The glob used to cover only the first
+ * two, and a server started with `next start > server.log` — which is how it is
+ * usually started here — wrote its output to a file the glob did not match. The
+ * suite then failed two checks and reported that "the code is recoverable for
+ * this test" was false, which reads like a defect in the application and is in
+ * fact a defect in this line.
+ *
+ * `SERVER_LOG` overrides it for a server that logs somewhere else again.
+ */
+const LOG_GLOB =
+  process.env.SERVER_LOG ??
+  "/tmp/claude-*/*/*/tasks/*.output /tmp/claude-*/*/*/scratchpad/*.out /tmp/claude-*/*/*/scratchpad/*.log";
 
 /** The most recent code issued to one account, across every readable log. */
 function lastIssuedCode(userId) {

@@ -429,9 +429,55 @@ container, so a renamed executable is refused on its contents.
 - `verify:interactions` — 26/26, including that the first tab stop is the skip
   link and that it targets main content
 
-This is automated coverage, not a full WCAG 2.2 AA audit. axe-core finds a
-meaningful subset; it does not judge whether the reading order makes sense or
-whether an error message is useful.
+### A11 — The accessibility suite was testing WCAG 2.1, not 2.2
+
+**Status: Fixed.**
+
+`verify:a11y` ran axe-core with the tags `wcag2a`, `wcag2aa`, `wcag21a` and
+`wcag21aa` — so the suite reported a clean WCAG **2.1** AA run while the brief
+and this document both said 2.2. The gap is one automatable rule, and it is the
+one that matters most on a phone: `target-size`, success criterion 2.5.8, which
+fails a tap target under 24 × 24 CSS pixels with no spacing to make up for it.
+Nothing in the 2.1 set notices a 20px icon button. The 2.2 tags are now in the
+run.
+
+### WCAG 2.2 — the five criteria no rule engine can decide
+
+**Status: New suite, `verify:wcag22`, clean across 12 pages.**
+
+2.2 added six success criteria. axe-core automates exactly one of them, so a
+clean axe run at 2.2 tags is not a 2.2 audit. The new suite drives a browser
+through the other five:
+
+| Criterion | How it is decided |
+| --- | --- |
+| 2.4.11 Focus Not Obscured (AA) | Tab forty stops, and ask the browser what is painted at the centre of each focused element |
+| 2.5.7 Dragging Movements (AA) | Look for drag-only affordances; none exist, which is how the site passes |
+| 3.2.6 Consistent Help (A) | Record the help link's position as a fraction of each page's links, and compare across pages |
+| 3.3.7 Redundant Entry (A) | Every control holding personal data carries an `autocomplete` token, so a browser can refill it |
+| 3.3.8 Accessible Authentication (AA) | No password or one-time-code field blocks paste, and each names itself to a password manager |
+
+The focus check tabs for real rather than calling `.focus()` from inside the
+page, and that distinction was not academic: the first version drove focus by
+script and reported ninety-nine footer links as "off screen", which was
+measuring its own scroll timing rather than the page. It now reports only
+elements that something is painted over.
+
+It was also confirmed to bite rather than to pass vacuously — inserting a
+sticky bar over the top 400 pixels of each page turns the clean run into
+sixty-two findings. Its one known blind spot is stated in the script: an
+overlay drawn as a `::before`/`::after` pseudo-element is attributed by
+`elementFromPoint` to its originating element and is not caught.
+
+3.3.7 passes properly rather than narrowly. The enquiry form does not merely
+carry `autocomplete` tokens; it prefills from the signed-in account, so a
+returning customer is not asked for their name, company, email and telephone a
+second time.
+
+Automated coverage is still not the whole of 2.2 AA. Nothing here judges
+whether a reading order makes sense, whether an error message is useful, or
+whether a heading describes what follows it. What is now true is that the
+machine-checkable part is checked against the right version of the standard.
 
 ## Site-wide metadata
 
@@ -551,5 +597,7 @@ been inspected against the brief's checklist:
 - Navigation and conversion journey, end to end, including mobile
 - Field Core Web Vitals — the figures above are loopback measurements of bytes
   shipped, not real-user data
-- Manual accessibility review beyond what axe-core automates
+- Manual accessibility review beyond what axe-core and `verify:wcag22`
+  automate — reading order, usefulness of error messages, whether headings
+  describe what follows them
 - Brand and partnership claim verification

@@ -215,7 +215,19 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                       aria-expanded={isOpen}
                       aria-controls={`megamenu-${index}`}
                       onClick={() => (isOpen ? closeNow() : requestOpenNow(index))}
-                      className="-ml-2 py-4 pr-1 text-ink-500 hover:text-accent-700"
+                      /*
+                       * `min-w-6` is 24px, which is WCAG 2.2's minimum target
+                       * size (2.5.8) — the chevron is 14px and the box around
+                       * it was 18px wide, so this control failed the criterion
+                       * on every page at desktop width. The icon is centred in
+                       * the wider box rather than padded on one side, so it
+                       * sits where it did.
+                       *
+                       * Height was never the problem: `py-4` already makes it
+                       * 46px tall. It is the width a 14px glyph with 4px of
+                       * padding gives you.
+                       */
+                      className="-ml-2 flex min-w-6 justify-center py-4 text-ink-500 hover:text-accent-700"
                     >
                       <span className="sr-only">
                         {isOpen ? `Close ${item.label} menu` : `Open ${item.label} menu`}
