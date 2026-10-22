@@ -180,7 +180,16 @@ check("renewal reminders were scheduled", /\bUPCOMING\b/i.test(page),
 // ------------------------------------------------ dashboard now has revenue
 await admin.goto(`${BASE}/admin`, { waitUntil: "load" });
 page = await admin.locator("body").innerText();
-const revenue = page.match(/Fulfilled revenue\s*₹([\d,]+)/)?.[1];
+/*
+ * `[^\d]*` between the label and the figure, because the tile is labelled
+ * "Fulfilled revenue (₹)" — the currency is named in the label because the
+ * figure counts rupee orders only, a quotation can now be raised in dollars
+ * or dirhams, and summing across currencies would add cents to paise. A regex
+ * anchored tight to the old label failed against a correct screen, and so
+ * did `[^₹]*` — it stops at the rupee sign inside the label's own brackets.
+ * Skipping to the first digit is what actually gets past it.
+ */
+const revenue = page.match(/Fulfilled revenue[^\d]*₹\s*([\d,]+)/)?.[1];
 check("dashboard revenue reflects the fulfilled order",
   Boolean(revenue) && revenue !== "0", `₹${revenue ?? "?"}`);
 
