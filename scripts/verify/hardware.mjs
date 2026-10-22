@@ -45,7 +45,18 @@ const skip = (name, why) => results.push({ name, ok: true, skipped: true, detail
  * to a check that fails for a reason nobody can fix is to delete the check.
  */
 const observe = (detail) => results.push({ name: detail, informational: true, ok: true });
-const text = async (page) => (await page.locator("body").innerText()).replace(/\s+/g, " ");
+/*
+ * The page's own content, not the chrome around it.
+ *
+ * `main` rather than `body` because the header carries a currency selector
+ * once an administrator sets a dollar or dirham rate, and its first option
+ * reads "₹ INR". Scanning the whole body therefore found a rupee sign on every
+ * page the moment multi-currency display was switched on, and reported a price
+ * on pages that have none. The rules below are about what the page says a
+ * thing costs, which is content; the selector is navigation.
+ */
+const content = async (p) => ((await p.locator("main").count()) > 0 ? p.locator("main") : p.locator("body"));
+const text = async (page) => (await (await content(page)).innerText()).replace(/\s+/g, " ");
 
 /**
  * Money, in any of the forms this site can render it.
