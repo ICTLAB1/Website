@@ -386,6 +386,84 @@ Contact. `verify:seo` reports an inbound link for every one of 200 pages.
 dashboard tile to "Fulfilled revenue (₹)". The product was right and the check
 was stale; I had not run this suite when I made that change.
 
+## Product page template — audited
+
+All 88 product pages, against the brief's fifteen-point structure.
+
+**At 100%:** breadcrumb, `Product` structured data, brand named, image,
+summary, features, price-or-quote route, delivery and support, related
+products, enquiry call to action.
+
+**Complementary, not missing:** Specifications showed 41% and licence terms
+59%, which looks like a gap until you check whether they overlap — zero pages
+have both, zero have neither. Hardware has no licence term and software has no
+spec sheet, and the source says so where the choice is made.
+
+### A9 — FAQs on 13 of 88 product pages
+
+**Status: Verified — improved to 69 of 88.**
+
+The answers existed; they were written against the brand and published only on
+the brand page. 56 products had no FAQ of their own and a brand behind them
+with relevant answers already written. Those now appear on the product page
+under a heading that names the brand — "Frequently asked questions about
+Microsoft licensing" — so a programme-level answer cannot be read as a claim
+about one model. A product with its own answers shows those alone, as before.
+
+Nineteen remain without, because their brands have none either. Those need
+writing; inventing them to fill a template would be inventing product
+information.
+
+## Search — audited, sound
+
+Tested against the brief's own cases on the running site:
+
+| Query | Result |
+| --- | --- |
+| `M365 Business Premium` | finds Microsoft 365 Business Premium |
+| `Adobe Acrobat` | Acrobat Pro and Standard only — no Office contamination |
+| `AutoCAD` | AutoCAD plus the AEC and PDM collections that contain it |
+| `office 365`, `m365`, `acrobat pro`, `poweredge` | all return sensible sets |
+| `autocadd` (misspelt) | clean empty state offering to source it |
+
+No fuzzy matching, which the brief lists as optional. The empty state does the
+work instead, and it offers a quote route rather than a dead end.
+
+### A10 — Price checks broke the moment a foreign rate was set
+
+**Status: Verified — fixed.**
+
+`verify:prices` and `verify:hardware` enforce "hardware is quoted, never
+priced" by scanning the whole `<body>` for a rupee sign. The header's currency
+selector reads "₹ INR" once an administrator sets a dollar or dirham rate, so
+both suites would have reported a price on every hardware page the first time
+multi-currency display was switched on in production. They scan `main` now.
+
+Worth recording how it surfaced: the suites failed here, and the first
+diagnosis — that the server merge had promoted a priced record — was wrong. No
+hardware variant on this site carries a price at all. The rupee sign came from
+a USD rate left in this container by an earlier test run.
+
+## Conversion path — verified
+
+- `verify:requirements` 23/23
+- `verify:crm` 41/41
+- `verify:prices` 37/37, `verify:hardware` 23/23 (after the fix above)
+- `verify:lifecycle` 19/19 — enquiry through to fulfilment and renewal
+- `verify:acceptance` 20/20, `verify:authz` 17/17
+
+## Homepage — assessed, no restructure warranted
+
+It answers all seven of the brief's buyer questions, and its section order
+already matches what the brief proposes: hero with search, trust strip,
+featured categories, popular products, sector coverage, GeM registration,
+certifications, organisations supplied, what a first engagement looks like,
+licensing guidance, closing call to action. The statistics in the hero are read
+from the database rather than written down.
+
+Rebuilding it would be change for its own sake, which the brief warns against
+twice.
+
 ## Not yet audited
 
 Listed so the gaps are visible rather than implied complete. None of these has
