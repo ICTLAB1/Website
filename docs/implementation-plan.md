@@ -86,6 +86,40 @@ the claim is flagged, not invented or quietly dropped.
 **Small and reversible.** Products are archived, never deleted. Withdrawn URLs
 get a 301 to the nearest live equivalent rather than a 404.
 
+## Prisma 7 — scoped, not attempted
+
+Three high advisories (`prisma`, `@prisma/config`, `deepmerge-ts`) are fixable
+only by Prisma 7.10.1. It was attempted in this session, measured, and reverted
+rather than carried half-done. `npm audit` reports **0 vulnerabilities** on 7,
+so the prize is real.
+
+It is not a version bump. Prisma 7 removes `url` from the schema's `datasource`
+block and requires either a driver adapter on the `PrismaClient` constructor or
+Accelerate. Concretely:
+
+1. `prisma.config.ts` holding the connection URL for Migrate.
+2. `@prisma/adapter-pg` and `pg` added, and the adapter passed to every client.
+3. `datasource db` loses its `url`.
+4. **Fifteen places construct a `PrismaClient`** — `src/lib/db.ts`, the seed,
+   the content-migration runner, `prisma/db-status.mjs`, the content export and
+   several scripts under `scripts/`. Three of those run inside the container
+   entrypoint on every production deploy, so a missed one breaks deployment
+   rather than a page.
+5. **Thirteen interactive transactions**, including the compare-and-set that
+   claims an order in `fulfilOrder`. A driver adapter changes who owns
+   connection pooling and transaction semantics, which is exactly where this
+   codebase would feel a regression — in order fulfilment and payment capture.
+
+Why it was not bundled into this branch: it is the only change in the set that
+touches the database layer of a site taking live payments, and it arrived at
+the tail of thirteen commits due to be merged together. It wants its own
+branch, its own deploy and its own verification run — `verify:lifecycle`,
+`verify:payments` and `verify:purchase-orders` in particular, because those
+exercise the transactions.
+
+The exposure meanwhile is in the CLI and config path that runs at build and
+migrate time, not the query engine serving requests.
+
 ## Out of scope until asked
 
 The brief describes an AI product-discovery assistant, a customer portal with
