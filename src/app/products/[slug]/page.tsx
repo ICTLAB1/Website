@@ -158,6 +158,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const hardware = isHardware(product);
 
   /*
+   * The product's own FAQs, or the brand's as a fallback — never both.
+   *
+   * Mixing them would put an answer about the programme beside an answer about
+   * this model under one heading, and a reader cannot tell which is which. The
+   * heading below names the brand when these are the brand's.
+   */
+  const faqs = product.faqs.length > 0 ? product.faqs : product.brand.faqs;
+
+  /*
    * Asked of the same resolver the picture uses, so the notice appears exactly
    * when the illustration does. Deriving it a second way here — "no imageUrl",
    * say — is how a page ends up with a caveat over a real photograph, or worse,
@@ -658,10 +667,32 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </section>
       ) : null}
 
-      {product.faqs.length > 0 ? (
+      {/*
+        The product's own answers, or the brand's where it has none.
+        
+        Most of the catalogue had no FAQ section at all, while the brand behind
+        it had answers already written and published on the brand page. Those
+        are about the thing the buyer is here to buy, so showing them is reuse
+        rather than invention.
+
+        The heading says which it is. A brand-level answer is true of the
+        programme and not necessarily of this one model, and a reader who
+        cannot tell the difference has been misled by the layout — so when the
+        answers belong to the brand the heading names the brand, and the
+        product's own answers are never mixed in with them.
+      */}
+      {faqs.length > 0 ? (
         <section id="faq" className="mt-16 max-w-3xl scroll-mt-32">
-          <SectionHeader title="Frequently asked questions" as="h2" className="mb-6" />
-          <FaqList items={product.faqs.map((faq) => ({ question: faq.question, answer: faq.answer }))} />
+          <SectionHeader
+            title={
+              product.faqs.length > 0
+                ? "Frequently asked questions"
+                : `Frequently asked questions about ${product.brand.name} licensing`
+            }
+            as="h2"
+            className="mb-6"
+          />
+          <FaqList items={faqs.map((faq) => ({ question: faq.question, answer: faq.answer }))} />
         </section>
       ) : null}
 

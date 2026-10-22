@@ -446,7 +446,21 @@ const getProductBySlugUncached = async (slug: string) => {
   return prisma.product.findFirst({
     where: { slug, status: "ACTIVE", deletedAt: null },
     include: {
-      brand: true,
+      /*
+       * The brand, and the brand's own FAQs with it.
+       *
+       * Fifty-six of the eighty-eight product pages had no FAQ section at all
+       * while the brand behind them had answers already written and already
+       * published on its brand page. Those answers are about the thing the
+       * buyer is on the page to buy — how Microsoft's CSP billing works, what
+       * an Autodesk term licence covers — so carrying them onto the product
+       * page reuses published copy rather than inventing any.
+       *
+       * The product's own FAQs still win where it has them; see the page for
+       * how the two are kept distinguishable, which matters because a
+       * brand-level answer must not read as a claim about this specific model.
+       */
+      brand: { include: { faqs: { orderBy: { displayOrder: "asc" } } } },
       category: { include: { parent: true } },
       variants: {
         where: publicVariantWhere,
