@@ -62,14 +62,34 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
    * there are machines, and neither where the catalogue is empty and the honest
    * offer is that we can source it.
    */
+  /*
+   * "Catalogue", because that is what this page is.
+   *
+   * The title used to end "Licensing & Solutions", which read as an argument
+   * about how to buy the brand. The page is not that — its body is a list of
+   * the categories the brand's products sit in, with counts, followed by the
+   * products themselves. Forty pages claimed an intent none of them served.
+   *
+   * It also collided head-on with the editorial hub pages. `/brands/microsoft`
+   * was titled "Microsoft Licensing & Solutions" and `/microsoft` was titled
+   * "Microsoft Licensing, Cloud & Enterprise Solutions", with descriptions that
+   * were the same sentence with one word changed — two URLs competing for one
+   * query while the directory intent and the advisory intent each went
+   * unclaimed. Saying "catalogue" here gives the hub page the argument and this
+   * page the list.
+   *
+   * A brand with nothing behind it keeps the old wording: there is no catalogue
+   * to name, and "Products & Procurement" is the honest offer on a page whose
+   * own copy says the catalogue is empty.
+   */
   const shape = await getBrandCatalogueShape(brand.id);
   const title =
     shape.licences > 0 && shape.hardware > 0
-      ? `${brand.name} Licensing & Hardware`
+      ? `${brand.name} Catalogue — Licences & Hardware`
       : shape.licences > 0
-        ? `${brand.name} Licensing & Solutions`
+        ? `${brand.name} Catalogue — Licences & Subscriptions`
         : shape.hardware > 0
-          ? `${brand.name} Business Hardware`
+          ? `${brand.name} Catalogue — Business Hardware`
           : `${brand.name} — Products & Procurement`;
 
   return buildMetadata({

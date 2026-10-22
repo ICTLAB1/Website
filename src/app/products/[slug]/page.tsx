@@ -134,10 +134,54 @@ export default async function ProductDetailPage({ params }: PageProps) {
   ]);
 
   const defaultVariant = product.variants[0];
-  const lowestPrice = product.variants
+  const pricedVariants = product.variants.filter((variant) => variant.listPriceMinor > 0);
+  const variantPrices = product.variants
     .map((variant) => effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor))
     .filter((price) => price > 0)
-    .sort((a, b) => a - b)[0];
+    .sort((a, b) => a - b);
+  const lowestPrice = variantPrices[0];
+  const highestPrice = variantPrices[variantPrices.length - 1];
+
+  /**
+   * What a figure in the structured data actually means.
+   *
+   * Every human-facing surface on this site states the basis of a price: the
+   * product page says "Tentative price, excluding GST — subject to
+   * confirmation" and names the commitment and the term beside each SKU, the
+   * catalogue cards say "+ GST (18%) · per seat", and the price filter is
+   * labelled "Price (excl. GST)". The structured data said none of it. It
+   * emitted a bare number, which a search engine is entitled to read as the
+   * price a buyer pays — 18% under the real one, for an unstated quantity,
+   * over an unstated term.
+   *
+   * `UnitPriceSpecification` is the property for exactly this, and every value
+   * here is read off the variant rather than assumed: `valueAddedTaxIncluded`
+   * from the fact that `gstRatePercent` is applied on top, the reference
+   * quantity from `seats`, the billing period from `termMonths`. A perpetual
+   * licence has no `termMonths` and gets no billing period, rather than a
+   * default that would describe it as a subscription.
+   */
+  const priceSpecification = (variant: {
+    currency: string;
+    listPriceMinor: number;
+    salePriceMinor: number | null;
+    seats: number;
+    termMonths: number | null;
+  }) => ({
+    "@type": "UnitPriceSpecification",
+    price: (effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) / 100).toFixed(2),
+    priceCurrency: variant.currency,
+    // GST is added on the invoice, never included in a listed figure.
+    valueAddedTaxIncluded: false,
+    referenceQuantity: {
+      "@type": "QuantitativeValue",
+      value: variant.seats,
+      // C62: "one", the UN/CEFACT code for a dimensionless count.
+      unitCode: "C62",
+      unitText: variant.seats === 1 ? "user" : "users",
+    },
+    ...(variant.termMonths ? { billingDuration: `P${variant.termMonths}M` } : {}),
+  });
 
   /*
    * The one `Availability` this product has, in schema.org's vocabulary.
@@ -249,7 +293,22 @@ export default async function ProductDetailPage({ params }: PageProps) {
             "@type": "AggregateOffer",
             priceCurrency: defaultVariant?.currency ?? "INR",
             lowPrice: (lowestPrice / 100).toFixed(2),
-            offerCount: product.variants.filter((variant) => variant.listPriceMinor > 0).length,
+            /*
+             * `highPrice` as well, where the variants differ.
+             *
+             * Without it an aggregate of three commitments — ₹1,100 billed
+             * monthly, ₹11,800 billed yearly — presents as the single figure
+             * ₹1,100, which is the cheapest line on the page read as the price
+             * of the product. A range is what the page shows and a range is
+             * what this is; omitted where every variant costs the same, since
+             * `lowPrice` alone already says it.
+             */
+            ...(highestPrice && highestPrice !== lowestPrice
+              ? { highPrice: (highestPrice / 100).toFixed(2) }
+              : {}),
+            // The basis the range is quoted on, stated once for the aggregate.
+            valueAddedTaxIncluded: false,
+            offerCount: pricedVariants.length,
             availability: schemaAvailability,
             seller: { "@type": "Organization", name: config.entityName },
             /*
@@ -265,18 +324,24 @@ export default async function ProductDetailPage({ params }: PageProps) {
              * so nothing gated behind a quote or an eligibility check reaches
              * this block.
              */
-            offers: product.variants
-              .filter((variant) => variant.listPriceMinor > 0)
-              .map((variant) => ({
-                "@type": "Offer",
-                sku: variant.sku,
-                name: variant.name,
-                price: (
-                  effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) / 100
-                ).toFixed(2),
-                priceCurrency: variant.currency,
-                availability: schemaAvailability,
-              })),
+            offers: pricedVariants.map((variant) => ({
+              "@type": "Offer",
+              sku: variant.sku,
+              name: variant.name,
+              price: (
+                effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) / 100
+              ).toFixed(2),
+              priceCurrency: variant.currency,
+              availability: schemaAvailability,
+              /*
+               * The same figure again, with its basis attached. `price` stays
+               * because Google reads it; the specification is what says the
+               * number excludes GST, covers this many users, and runs for this
+               * long — which is what the page says beside the SKU and what the
+               * markup used to leave out.
+               */
+              priceSpecification: priceSpecification(variant),
+            })),
           },
         }
       : {}),
