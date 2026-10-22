@@ -56,6 +56,7 @@ import { trimLongMetaDescriptions } from "./2026-09-trim-long-meta-descriptions"
 import { regionScopedConsent } from "./2026-10-region-scoped-consent";
 import { seoAuditTailEnds } from "./2026-10-seo-audit-tail-ends";
 import { delhiLocalPage } from "./2026-10-delhi-local-page";
+import { mergeDuplicateServers } from "./2026-10-merge-duplicate-servers";
 import type { ContentMigration } from "./types";
 
 /**
@@ -125,6 +126,7 @@ export const contentMigrations: ContentMigration[] = [
   seoAuditTailEnds,
   regionScopedConsent,
   delhiLocalPage,
+  mergeDuplicateServers,
 ];
 
 export type { ContentMigration };

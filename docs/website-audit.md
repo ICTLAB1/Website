@@ -74,6 +74,38 @@ migration, not an edit to a `.tsx` file.
   server, `/brands`, `/products` and `/hardware` contain no doubled-capital
   word, and three monograms still draw on `/brands`.
 
+### A6 — Two servers listed twice
+
+**Status: Verified — fixed.**
+
+- **Where** `Product` rows `dell-poweredge-r760-server` and
+  `hpe-proliant-dl380-server`, duplicating `dell-poweredge-r760` and
+  `hpe-proliant-dl380-gen11`.
+- **Problem** Two URLs for the same machine, from two generations of the
+  catalogue. They compete for the same query and split the authority between
+  them, and they disagree with each other — one offers five configurations,
+  the other one.
+- **Evidence** Queried `Product`: the thin records have one variant each, no
+  `series` and no `formFactor`, so they are invisible to
+  `/hardware?family=servers` entirely; the detailed records carry five and
+  three variants respectively.
+- **Severity** Medium. Ordinary duplicate content, on two of the most
+  commercially significant hardware pages.
+- **Root cause** A second catalogue generation added server records without
+  reconciling them against the first.
+- **Fix** `2026-10-merge-duplicate-servers`. The detailed record survives; the
+  `featured` flag and popularity score move across to it first, so the
+  homepage does not quietly lose a slot; the thin record is archived, not
+  deleted. The withdrawn URLs 301 to the surviving product — the same machine,
+  so the destination answers the question the visitor arrived with. The
+  `Servers` category held only these two records, so the menu entry pointing
+  at it is repointed to `/hardware?family=servers`, which finds all nineteen.
+- **Verification** On a rebuilt production server: both old URLs return 301 to
+  the survivor, both survivors return 200, the sitemap lists the survivors and
+  not the duplicates, and both servers are still on the homepage. Migration
+  re-run reports "content is up to date". `verify:crawl` passes across 269
+  pages with no broken links.
+
 ### A2 — Content policy refused the measurement pixels
 
 **Status: Verified — fixed and deployed (PR #34).**
@@ -129,6 +161,54 @@ Checked, and not defects. Recorded so they are not re-investigated.
   stored as support tickets so that no inbound message is lost when email is
   down; they carry a topic, and the quote-request flow writes to `Enquiry`
   separately. Both paths confirmed working in production.
+
+## Catalogue audit — scope covered
+
+90 active products, checked structurally against the database and by rendering
+a sample. Findings above (A1, A6); everything below was checked and found
+sound, or is a business question rather than a defect.
+
+**Found sound.** No duplicate product names. No record missing a description
+or short description. No record without variants. Canonical URLs present on
+product pages. No page renders a fabricated price: the 185 zero-priced
+variants show a quote route, and `₹0` appears nowhere. `Product` structured
+data is a well-formed `AggregateOffer` with nested priced offers — an earlier
+reading of it as "an offer with no price" was wrong, because an
+`AggregateOffer` carries `lowPrice` rather than `price`.
+
+**Missing images are deliberate.** All 90 records have an empty `imageUrl`,
+and this is not a defect: `lib/representative-image.ts` supplies a category
+illustration with an explicit disclaimer that it illustrates the category
+rather than photographing the model. That disclaimer is what makes it honest,
+and it should not be removed if photographs are added piecemeal.
+
+### C1 — No product carries an HSN code
+
+**Status: Needs business input.**
+
+All 90 are null. The quotation PDF has a column for it and prints a dash. HSN
+is expected on an Indian tax invoice, so this is a commercial-compliance gap
+rather than a rendering one, and the codes are business data that cannot be
+inferred here.
+
+### C2 — Forty products claim to be in stock
+
+**Status: Needs business verification.**
+
+`availability` is `IN_STOCK` on 40 records, `MADE_TO_ORDER` on 42 and
+`ON_REQUEST` on 8. A stock claim is a commitment to a buyer and the brief is
+explicit that none should be published unsupported. Whether 40 lines are
+genuinely held is a question for the business, not a defect to fix here.
+
+### C3 — Sixty percent of the catalogue has never been source-verified
+
+**Status: Needs a process, not a code change.**
+
+`sourceCheckedAt` is null on 54 of 90. The field is exactly the
+"last verified" concept the brief asks for and it already exists; it is simply
+unused for most records. Commercial details — edition, term, availability —
+drift, and a record nobody has checked since seeding is a record that may now
+be wrong.
 
 ## Open findings
 
