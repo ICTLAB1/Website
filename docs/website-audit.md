@@ -265,18 +265,136 @@ falls back to the rupee terms and their "exclusive of applicable GST" clause,
 which is false on an export supply. The field exists and is wired through to
 both the email and the PDF.
 
+## Performance — measured
+
+Taken 22 October 2026 on a production build (`next build` + `next start`) in
+this container, over loopback. Read them as **bytes shipped**, which is what
+they measure honestly. The timings are not field Core Web Vitals: there is no
+network latency, no Caddy compression in front and no real device, so LCP here
+is faster than any real visitor will see. No figure below is estimated.
+
+Measured at 390px with 4x CPU throttling, before and after the image work:
+
+| Page | Before | After | |
+| --- | --- | --- | --- |
+| `/` | 3,240 KB | 1,111 KB | −66% |
+| `/products` | 2,732 KB | 693 KB | −75% |
+| `/hardware` | 2,685 KB | 620 KB | −77% |
+| `/contact` | 2,654 KB | 615 KB | −77% |
+
+**CLS is 0 on every page measured**, at both widths, before and after. LCP
+ranged 148–600 ms and did not regress.
+
+### P1 — 1.85 MB of PNG on every page
+
+**Status: Verified — fixed.**
+
+PNG was 2,535 KB of the homepage's 3,240 KB. Two files were most of it: the
+footer lockup at 1,113 KB and the header wordmark at 738 KB, both 2167 px wide
+and drawn at 303×44 and 191×64. As WebP at a width that still covers a 3×
+display they are 72 KB and 85 KB. Masters kept; aspect ratios preserved to
+within 0.005; `alphaQuality: 100` because a lossy alpha channel fringes against
+the charcoal footer.
+
+### P2 — A 190 KB favicon, and 14 other PNGs
+
+**Status: Verified — fixed.**
+
+1,042 KB to 360 KB, recompressed in place with no filename changed — brand
+logo paths are database values, `lib/pdf/assets.ts` looks for exactly
+`public/logo.png`, and `manifest.ts` names the icons. The quotation PDF's
+hand-rolled PNG parser accepts palette colour type, which was checked against
+the source and then confirmed by rendering the letterhead.
+
+### Remaining weight
+
+JavaScript is 149–165 KB per page and fonts 131 KB, both reasonable. The
+largest single asset left is `clients/hal.webp` at 80 KB. Nothing here is
+urgent.
+
+## Security
+
+### S1 — Seven dependency advisories, one critical
+
+**Status: Verified — four fixed, three deferred.**
+
+`next` 16.3.1 → 16.4.2 (critical: unauthenticated RCE — **Windows-hosted only,
+so this Linux deployment was never exposed**), `nodemailer` 9.0.5 → 10.2.1
+(two advisories), `source-map-js`, `deepmerge-ts`, `sharp`. The nodemailer
+major was verified end to end through the SMTP-sink suite rather than assumed.
+
+`sharp` is not imported anywhere in `src/` — it arrives as an optional
+dependency of the image optimiser, so its libheif advisory was never reachable
+from application code.
+
+### S2 — Three advisories need Prisma 7
+
+**Status: Needs a decision.**
+
+`prisma`, `@prisma/config` and `deepmerge-ts` each report high and each is
+fixable only by Prisma 7.10.1, a semver-major step from 6.19.3. That is a
+migration with its own testing, not a line in a security commit. The exposure
+is in the CLI and config path that runs at build and migrate time, not the
+query engine serving requests.
+
+Checked and clean: `verify:authz` 17/17, `verify:attack`, no secrets in the
+client bundle (`verify:crawl` checks for leaked configuration across 269
+pages).
+
+## Accessibility and responsiveness
+
+**Status: Verified — no violations found.**
+
+- `verify:a11y` — no violations across 21 pages × 2 widths
+- `verify:responsive` — no horizontal overflow or console errors across 16
+  pages × 11 widths, and no navigation panel escapes the viewport at 5 desktop
+  widths
+- `verify:interactions` — 26/26, including that the first tab stop is the skip
+  link and that it targets main content
+
+This is automated coverage, not a full WCAG 2.2 AA audit. axe-core finds a
+meaningful subset; it does not judge whether the reading order makes sense or
+whether an error message is useful.
+
+## Site-wide metadata
+
+**Status: Verified — sound.**
+
+All 200 indexed pages: 200 status, unique title, unique description, canonical,
+exactly one `<h1>`, `og:title`. No duplicate titles or descriptions. No
+description over 160 characters.
+
+One correction worth recording: an earlier pass of this reported five
+over-length descriptions. That was a measurement bug — it counted the HTML
+attribute, where `&` is `&amp;` and `'` is `&#x27;`. Decoded, the longest is
+160. Twenty titles exceed 60 characters once `| TechZoid` is appended, the
+longest 67; that is a truncation inefficiency rather than a defect, and
+rewriting twenty titles risks rankings for no proven gain.
+
+### A7 — The Delhi page was an orphan
+
+**Status: Verified — fixed.**
+
+In the sitemap, linked from nowhere. Now in the footer's Company column after
+Contact. `verify:seo` reports an inbound link for every one of 200 pages.
+
+### A8 — A stale lifecycle check
+
+**Status: Verified — fixed.**
+
+`verify:lifecycle` had been failing since the currency work renamed the
+dashboard tile to "Fulfilled revenue (₹)". The product was right and the check
+was stale; I had not run this suite when I made that change.
+
 ## Not yet audited
 
 Listed so the gaps are visible rather than implied complete. None of these has
 been inspected against the brief's checklist:
 
 - Homepage information hierarchy against the seven buyer questions
-- Full catalogue record audit — names, SKUs, duplicates, licence terms,
-  editions, GST treatment, availability claims
-- Product-page template consistency across all 93 routes
+- Product-page template consistency against the brief's fifteen-point structure
 - Navigation and conversion journey, end to end, including mobile
-- Lighthouse / Core Web Vitals measurement — no figures taken, and none will be
-  quoted until they are
-- Accessibility pass to WCAG 2.2 AA beyond the existing `verify:a11y` suite
-- Dependency vulnerability review
+- Field Core Web Vitals — the figures above are loopback measurements of bytes
+  shipped, not real-user data
+- Manual accessibility review beyond what axe-core automates
 - Brand and partnership claim verification
