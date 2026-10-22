@@ -66,16 +66,33 @@ function BrandMark({ brand, size }: { brand: BrandArtwork; size: "sm" | "md" }) 
     );
   }
 
+  /*
+   * The initial is drawn by CSS, not written into the document.
+   *
+   * It used to be a text child — `{brand.name.charAt(0)}` — inside a span
+   * marked `aria-hidden`. That hides it from a screen reader and from nothing
+   * else: `aria-hidden` is an accessibility-tree instruction, and a crawler
+   * extracting text reads the DOM. The letter sat immediately before the
+   * brand's name with no whitespace between them, so every logo-less brand
+   * rendered as its own name with its first letter doubled — "MMicrosoft",
+   * "HHPE", "OOracle", "CCorel" — and Google indexed those strings as the
+   * brand names. Thirty of the brands on file have no logo, so thirty were
+   * affected.
+   *
+   * `content: attr(...)` on a pseudo-element renders the same glyph in the
+   * same place and contributes nothing to the text layer, because a
+   * pseudo-element is not a node. The attribute is read back out by the
+   * stylesheet; it is never text in the document either.
+   */
   return (
     <span
       aria-hidden="true"
-      className={`${box} inline-flex shrink-0 items-center justify-center rounded-[--radius-sm] font-bold text-white ${
+      data-monogram={brand.name.charAt(0)}
+      className={`${box} inline-flex shrink-0 items-center justify-center rounded-[--radius-sm] font-bold text-white before:content-[attr(data-monogram)] ${
         size === "md" ? "text-body" : "text-label"
       }`}
       style={{ backgroundColor: brand.accentColor }}
-    >
-      {brand.name.charAt(0)}
-    </span>
+    />
   );
 }
 
