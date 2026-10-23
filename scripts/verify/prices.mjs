@@ -4,15 +4,16 @@ import { chromium } from "playwright";
  * The public catalogue's price policy, read from the rendered site rather
  * than the source.
  *
- * The policy today: a software licence shows an indicative price, marked
- * "Tentative price" and repeated in a longer disclaimer, on every surface
- * that lists it — a card, a listing, a comparison, the product page, and the
- * structured data a search engine reads. Hardware shows none, ever, on any
- * surface, regardless of the software policy: that is a standing rule of the
- * business rather than a property this file's own constant controls — see
- * `lib/catalogue/quote-only`. And nowhere does a price come with a "Buy now"
- * — direct card purchase from the catalogue stays off even though the figure
- * that would justify one is back on the page.
+ * The policy today: every product shows an indicative price wherever one is
+ * recorded, marked "Tentative price" and repeated in a longer disclaimer, on
+ * every surface that lists it — a card, a listing, a comparison, the product
+ * page, and the structured data a search engine reads. A product with no
+ * price recorded says so instead, rather than leaving a blank where a figure
+ * goes. Hardware is no longer excluded: it was, as a standing rule of the
+ * business, until the business asked for a price on every listing — see
+ * `lib/catalogue/quote-only` for what that gave up. And nowhere does a price
+ * come with a "Buy now": direct card purchase from the catalogue stays off
+ * even though the figure that would justify one is back on the page.
  *
  * A rule stated once in `lib/catalogue/quote-only` is only as good as the
  * last component that remembered to call it, so this reads the rendered
@@ -102,10 +103,24 @@ for (const [name, path] of SOFTWARE_SURFACES) {
 }
 
 /*
- * Hardware: none, ever — the rule this file existed to protect before
- * software prices came back, and it must not have loosened in the process.
- * `scripts/verify/hardware.mjs` covers this in far more depth; this is the
- * general gate's own check that the two files have not drifted apart.
+ * Hardware: a price if there is one, and the quote label if there is not.
+ *
+ * This read "no price on a hardware surface, ever" until the business asked
+ * for a price on every listing. The assertion has to change with the policy,
+ * and the way it was passing is the reason to be careful about how.
+ *
+ * It passed on the day the policy changed — all 37 checks did — because no
+ * hardware product in the catalogue has a price yet, so "no price here" was
+ * true for a reason that had nothing to do with the rule it claimed to be
+ * testing. An absolute that holds only while a column is empty is not a
+ * protection; it is a trap set for whoever fills the column, and it would have
+ * failed the gate on the first hardware price entered.
+ *
+ * So the invariant is the pairing rather than the absence: a surface showing a
+ * figure also says the figure is tentative, and a surface showing none says it
+ * is quoted. Both halves are asserted on every surface, which holds whether
+ * the catalogue has hardware prices in it or not — and keeps meaning the same
+ * thing when it does.
  */
 const HARDWARE_SURFACES = [
   ["the hardware catalogue", "/hardware"],
@@ -116,8 +131,21 @@ const HARDWARE_SURFACES = [
 for (const [name, path] of HARDWARE_SURFACES) {
   await page.goto(`${BASE}${path}`, { waitUntil: "load" });
   const body = await text();
-  const found = MONEY.exec(body);
-  check(`no price on ${name}`, found === null, found ? `found "${found[0]}"` : "");
+  const priced = MONEY.test(body);
+
+  if (priced) {
+    check(
+      `${name} shows a price, and marks it tentative`,
+      /tentative price/i.test(body),
+      'a figure with no "Tentative price" wording beside it',
+    );
+  } else {
+    check(
+      `${name} shows no price, and says the price is quoted`,
+      /price on enquiry|priced to your requirement|request a quote|quoted/i.test(body),
+      "no figure and nothing saying one is quoted — a blank where a price goes",
+    );
+  }
 }
 
 /*
@@ -167,21 +195,25 @@ if (firstHardwareProduct) {
 }
 
 /*
- * A discount claim is a price claim. It must track the same rule as the
- * visible price rather than a rule of its own: allowed on a software row with
- * a real saving, never on hardware.
+ * A discount claim is a price claim, so it tracks the same rule as the visible
+ * price rather than one of its own: a saving may be claimed where a price is
+ * shown, and nowhere else.
  *
- * Not asserted as present on software — whether any row currently has a real
- * saving is a property of the seed data, not of the policy — but if this ever
- * regresses to "no discount claim anywhere", the earlier check above (`a
- * price appears on…`) is not what would catch it, so this stays a distinct
- * assertion on the hardware side at least.
+ * "Never on hardware" was the rule here, and like the surface checks above it
+ * was being satisfied by an empty column rather than by anything the code
+ * does. What it is really protecting against is a saving advertised on a row
+ * whose price nobody can see — "Save 5%" with no figure beside it is a claim a
+ * reader cannot check and a discount off nothing.
  */
 for (const [name, path] of HARDWARE_SURFACES) {
   await page.goto(`${BASE}${path}`, { waitUntil: "load" });
   const body = await text();
   const found = DISCOUNT.exec(body);
-  check(`no discount claim on ${name}`, found === null, found ? `found "${found[0]}"` : "");
+  if (found && !MONEY.test(body)) {
+    check(`no discount claim without a price on ${name}`, false, `found "${found[0]}" and no figure`);
+  } else {
+    check(`any discount claim on ${name} sits beside a price`, true);
+  }
 }
 
 /*
@@ -203,15 +235,34 @@ check(
   "no price sort option found",
 );
 
+/*
+ * The hardware catalogue, whichever state its data is in.
+ *
+ * Asserted as a pairing for the same reason as the surfaces above: "no price
+ * filter on /hardware" was true only while no hardware carried a price, and
+ * the controls are now gated on whether the listed rows have prices rather
+ * than on which catalogue this is. So the controls and the figures have to
+ * agree — a band over a listing with no figures is a control that cannot do
+ * anything, and a listing with figures and no way to sort them is a catalogue
+ * that has prices and pretends otherwise.
+ */
 await page.goto(`${BASE}/hardware`, { waitUntil: "load" });
 const hardwareListing = await (await content(page)).innerText();
+const hardwarePriced = MONEY.test(hardwareListing.replace(/\s+/g, " "));
+const hardwareFilter = /under\s*₹|price range|price band/i.test(hardwareListing);
+const hardwareSort = /price: low to high|price: high to low/i.test(hardwareListing);
+
 check(
-  "the hardware catalogue offers no price filter",
-  !/under\s*₹|price range|price band/i.test(hardwareListing),
+  hardwarePriced
+    ? "the hardware catalogue shows prices, and offers a price filter"
+    : "the hardware catalogue shows no prices, and offers no price filter",
+  hardwarePriced === hardwareFilter,
+  `prices ${hardwarePriced ? "shown" : "absent"}, filter ${hardwareFilter ? "present" : "absent"}`,
 );
 check(
-  "and no price sort",
-  !/price: low to high|price: high to low/i.test(hardwareListing),
+  hardwarePriced ? "and a price sort" : "and no price sort",
+  hardwarePriced === hardwareSort,
+  `prices ${hardwarePriced ? "shown" : "absent"}, sort ${hardwareSort ? "present" : "absent"}`,
 );
 
 /*

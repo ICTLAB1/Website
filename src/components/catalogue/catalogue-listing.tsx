@@ -68,16 +68,34 @@ export async function CatalogueListing({
    */
   const showFilters = hasAnyFacet(facets);
 
+  /*
+   * Whether a price control can do anything here.
+   *
+   * This used to be `filters.kind !== "hardware"` — a test of which catalogue
+   * you were looking at, written when hardware could never carry a price. It
+   * can now: `isQuoteOnly` asks whether a price exists rather than what kind of
+   * product it is, so the hardware catalogue shows figures wherever they have
+   * been entered.
+   *
+   * The reasoning behind the old condition is still the right one, and is what
+   * this keeps: a band reading "Under ₹5,000" over a listing that shows no
+   * figures is a control that cannot do anything, and a price sort on it orders
+   * by nothing while telling the visitor there are prices to be had. So the
+   * question is the same question, asked of the rows instead of the route —
+   * and it answers itself as prices are added, with no second place to
+   * remember.
+   *
+   * `items` is this page of results rather than the whole catalogue, which is
+   * the right scope: the controls sit above these rows and are for sorting and
+   * narrowing them.
+   */
+  const anyPriced = items.some((item) =>
+    item.variants?.some((variant) => (variant.salePriceMinor ?? variant.listPriceMinor) > 0),
+  );
+
   return (
     <div className={showFilters ? "grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)]" : ""}>
-      {/*
-        No price filter on the hardware catalogue, because there are no
-        prices there to filter by — hardware stays quote-only regardless of
-        the software catalogue's own price policy, and a band of
-        "Under ₹5,000" over a listing that shows no figures is a control that
-        cannot do anything. Software prices are back — see
-        `lib/catalogue/quote-only` — so its filter is too.
-      */}
+      {/* The price filter appears where there are prices. See `anyPriced`. */}
       {showFilters ? (
       <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
         <div className="hidden lg:block">
@@ -85,14 +103,14 @@ export async function CatalogueListing({
             facets={facets}
             params={params}
             basePath={basePath}
-            showPrice={filters.kind !== "hardware"}
+            showPrice={anyPriced}
           />
         </div>
         <MobileFilterPanel
           facets={facets}
           params={params}
           basePath={basePath}
-          showPrice={filters.kind !== "hardware"}
+          showPrice={anyPriced}
         />
       </aside>
       ) : null}
@@ -122,11 +140,10 @@ export async function CatalogueListing({
             <span className="shrink-0 text-[13px] text-ink-500">Sort</span>
             <div className="scroll-x -mx-1 flex min-w-0 gap-1 px-1">
               {SORT_OPTIONS.filter(
-                // A price sort on a catalogue with no prices orders by nothing
+                // A price sort on a listing with no prices orders by nothing
                 // and tells the visitor there are prices to be had.
                 (option) =>
-                  filters.kind !== "hardware" ||
-                  (option.value !== "price-asc" && option.value !== "price-desc"),
+                  anyPriced || (option.value !== "price-asc" && option.value !== "price-desc"),
               ).map((option) => {
                 const active = (filters.sort ?? "relevance") === option.value;
                 return (
