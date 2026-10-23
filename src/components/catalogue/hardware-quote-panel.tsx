@@ -1,21 +1,35 @@
 import Link from "next/link";
 
 import { AddToEnquiryButton } from "@/components/enquiry/add-to-enquiry-button";
+import { formatMoney } from "@/lib/money";
 
 /**
  * The buying panel on a hardware page.
  *
- * Stands in for the variant selector, which exists to compare licence terms and
- * show what each costs. Neither applies here: a commercial laptop is configured
- * to a requirement and quoted against a quantity, so there is nothing to choose
- * between and nothing to price on a public page.
+ * Stands in for the variant selector, which exists to compare licence terms:
+ * that part does not apply here, because a server or a laptop is configured to
+ * a requirement rather than chosen from a list of licence lengths. Adding the
+ * model to an enquiry that can also hold licences is what moves the sale, so
+ * one request produces one quotation covering the laptops and the Microsoft 365
+ * that goes on them.
  *
- * What replaces it is the thing that actually moves the sale — adding the model
- * to an enquiry that can also hold licences, so one request produces one
- * quotation covering the laptops and the Microsoft 365 that goes on them.
+ * ## It shows a price where one is recorded
  *
- * There is no price prop and no way to pass one in. That is the guarantee, in
- * the shape of the component rather than in a comment about it.
+ * It used to take no price and have no way to accept one — "the guarantee, in
+ * the shape of the component rather than in a comment about it", written when
+ * hardware was quote-only by standing rule. The business has since asked for a
+ * price on every listing, and that shape became the reason a priced server
+ * showed its figure on its catalogue card and in its structured data but not
+ * on its own page.
+ *
+ * Three surfaces, two agreeing and one silent, is worse than any of the three
+ * policies: a shopper sees a price in a listing, clicks through, and the page
+ * it came from does not mention it. Found by putting a price on one server
+ * locally and running `verify:prices`, which is the state the catalogue will be
+ * in once the business fills in the figures.
+ *
+ * `fromPriceMinor` is null where nothing is recorded, and then this reads
+ * exactly as it did before.
  */
 export function HardwareQuotePanel({
   partNumber,
@@ -23,6 +37,7 @@ export function HardwareQuotePanel({
   productSlug,
   brandName,
   supplierName,
+  fromPriceMinor,
 }: {
   /** The manufacturer's part number, where the record carries one. */
   partNumber: string | null;
@@ -30,10 +45,40 @@ export function HardwareQuotePanel({
   productSlug: string;
   brandName: string;
   supplierName: string;
+  /**
+   * The lowest configuration price on record, in paise, or null where none is.
+   *
+   * "From", not "the price": a build is one of several configurations and the
+   * cheapest is the only figure that is true of the product rather than of one
+   * variant of it. Quoting a single number for a machine that comes six ways
+   * would be the kind of price a buyer holds you to.
+   */
+  fromPriceMinor: number | null;
 }) {
   return (
     <div className="rounded-[--radius-lg] border border-line bg-white p-6">
       <h2 className="text-subsection font-semibold text-graphite-900">Request a quote</h2>
+
+      {fromPriceMinor !== null ? (
+        <div className="mt-3">
+          <p className="flex items-baseline gap-2">
+            <span className="text-label uppercase tracking-wide text-ink-500">From</span>
+            <span className="text-[1.75rem] font-semibold leading-none text-graphite-900">
+              {formatMoney(fromPriceMinor, "INR")}
+            </span>
+          </p>
+          {/*
+            The same sentence the variant selector puts beside a software price,
+            in the same words. A buyer comparing a laptop with the licences for
+            it should not be told the two figures mean different things.
+          */}
+          <p className="mt-2 text-label leading-relaxed text-ink-500">
+            Tentative price, excluding GST — subject to confirmation, and quoted against the
+            configuration and quantity you need.
+          </p>
+        </div>
+      ) : null}
+
       <p className="mt-2 text-meta leading-relaxed text-ink-600">
         Configured to your requirement and priced against your quantity. Quotations are itemised,
         carry GST, and can cover several manufacturers on one document.

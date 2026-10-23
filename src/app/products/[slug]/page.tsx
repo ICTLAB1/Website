@@ -671,6 +671,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
                * manufacturer's identifier. The panel omits the row instead.
                */
               partNumber={product.partNumber ?? defaultVariant?.partNumber ?? null}
+              /*
+               * The lowest recorded configuration price, or null. `lowestPrice`
+               * is already computed above for the structured data, so the panel
+               * and the markup cannot show different figures.
+               */
+              fromPriceMinor={isQuoteOnly(product) ? null : (lowestPrice ?? null)}
               productName={product.name}
               productSlug={product.slug}
               brandName={product.brand.name}
