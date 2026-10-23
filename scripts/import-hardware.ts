@@ -27,6 +27,7 @@ import { basename, join } from "node:path";
 
 import { PrismaClient } from "@prisma/client";
 
+import { refuseRemoteDatabase } from "./lib/write-guard";
 import { detectImage } from "../src/lib/image-bytes";
 import { applyHardwareFile, hardwareFileSchema } from "../prisma/seed-data/hardware";
 
@@ -37,6 +38,12 @@ const dryRun = rest.includes("--dry-run");
 const archiveMissing = rest.includes("--archive-missing");
 const imagesIndex = rest.indexOf("--images");
 const imagesDir = imagesIndex >= 0 ? (rest[imagesIndex + 1] ?? null) : null;
+
+/*
+ * A dry run reads and reports; only a real run is refused, so inspecting a
+ * remote catalogue stays possible and changing one by accident does not.
+ */
+if (!dryRun) refuseRemoteDatabase("import-hardware");
 
 if (!filePath) {
   console.error(

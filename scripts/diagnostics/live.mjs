@@ -7,7 +7,15 @@
  * changed. Two findings in this codebase's audit were originally misdiagnosed
  * from the source and settled in minutes by reading production instead.
  *
- * It asserts the things the last release changed, and nothing else:
+ * It asserts the things a release changed, and nothing else. Two releases are
+ * covered now, in two sections, and the distinction matters: every check in the
+ * first section passes whether or not the second release landed. Reporting
+ * "46/46 passed" from that section alone, for a deploy somebody could not see
+ * the results of, is exactly the mistake this file exists to prevent — so when
+ * a release publishes something, its checks go in a section of their own,
+ * named after it, rather than being left implied by the ones already here.
+ *
+ * From the release before:
  *
  *   - the Microsoft URLs each state one purpose, and no two share a title or
  *     description;
@@ -18,6 +26,19 @@
  *   - a product's structured data states the basis of its prices;
  *   - the brand monogram is not in the document text;
  *   - the withdrawn duplicate server URLs redirect rather than 404.
+ *
+ * From the October release:
+ *
+ *   - five products that either did not exist before or had no price serve
+ *     the figure they were given;
+ *   - the Microsoft quote page carries both plan comparison tables;
+ *   - a product icon is served, and the product page references it;
+ *   - the hardware catalogue shows prices at all, which it did not.
+ *
+ * From the Adobe clean-up:
+ *
+ *   - the Adobe catalogue lists the approved products under the approved
+ *     names, at the approved figures, and carries none of the imported ones.
  *
  * Everything it prints is already public: a title, a canonical, a robots tag
  * and a JSON-LD block are served to every visitor. Nothing here reads a
@@ -276,6 +297,130 @@ if (productPage.status !== 200) {
     );
   }
 }
+
+// ── what the October release actually published ───────────────────────────
+console.log("\nThe October release");
+
+/*
+ * The checks above this point were written for the previous release and pass
+ * whether or not this one landed — which is how "46/46" came to be reported
+ * for a deploy somebody could not see the results of. These assert the things
+ * that release added: products that did not exist before, prices on products
+ * that had none, the comparison tables, and an icon.
+ */
+const NEW_PRODUCTS = [
+  ["/products/adobe-photoshop-teams", "50,280"],
+  ["/products/autocad", "1,41,250"],
+  ["/products/microsoft-365-e7", "1,23,525"],
+  ["/products/office-365-e1", "12,450"],
+  ["/products/dell-poweredge-r260", "3,27,500"],
+];
+
+for (const [path, figure] of NEW_PRODUCTS) {
+  const page = await fetchPage(path);
+  if (page.status !== 200) {
+    check(`${path} is served`, false, `status ${page.status}`);
+    continue;
+  }
+  const visible = textOf(page.body);
+  check(`${path} shows ₹${figure}`, visible.includes(figure), `the page does not contain ${figure}`);
+}
+
+const quote = await fetchPage("/get-a-quote/microsoft");
+const tables = (quote.body.match(/<table/g) ?? []).length;
+check("the Microsoft quote page carries two comparison tables", tables === 2, `${tables} table(s)`);
+check(
+  "and the enterprise table names its columns",
+  /Microsoft 365 E7/.test(quote.body) && /Business Premium/.test(quote.body),
+  "plan column headings not found",
+);
+
+const icon = await fetchPage("/products/adobe-photoshop-teams.png", { redirect: "follow" });
+check("a product icon is served", icon.status === 200, `status ${icon.status}`);
+
+const photoshop = await fetchPage("/products/adobe-photoshop-teams");
+check(
+  "and the product page renders it",
+  photoshop.body.includes("adobe-photoshop-teams.png"),
+  "no reference to the icon in the page",
+);
+
+const hardware = await fetchPage("/hardware");
+const hardwareText = textOf(hardware.body);
+check(
+  "the hardware catalogue shows prices",
+  /₹\s*[\d,]{5,}/.test(hardwareText),
+  "no rupee figures on the hardware catalogue",
+);
+
+// ── the Adobe catalogue, after the imported rows were withdrawn ───────────
+console.log("\nThe Adobe clean-up");
+
+/*
+ * These fail until `2026-10-adobe-withdraw-imported` has run in production,
+ * which is the point of them. The live site carried 106 Adobe products, 82 of
+ * them imported from Adobe's channel sheet with no margin on the figures, and
+ * the ones it recognised it renamed and re-SKU'd — so a card read 36,674 while
+ * the product page behind it read 50,280.
+ *
+ * Nothing above this caught any of it, because everything above reads product
+ * pages and the product pages were the half that was right.
+ */
+const adobe = await fetchPage("/brands/adobe");
+const adobeText = textOf(adobe.body);
+
+check(
+  "Creative Cloud is listed under the name the business approved",
+  adobeText.includes("Adobe Creative Cloud All Apps for Teams"),
+  "the catalogue still calls it something else",
+);
+check(
+  "and not the channel sheet's name for it",
+  !adobeText.includes("Creative Cloud Pro for Teams"),
+  "the imported name is still on the page",
+);
+check(
+  "at the figure the business named",
+  adobeText.includes("1,07,000"),
+  "₹1,07,000 is not on the Adobe catalogue",
+);
+check(
+  "and not the imported one",
+  !adobeText.includes("97,874"),
+  "₹97,874 is still on the Adobe catalogue",
+);
+check(
+  "no card carries an unmargined imported price",
+  !adobeText.includes("36,674"),
+  "₹36,674 is still on the Adobe catalogue",
+);
+
+/*
+ * The brand page is the right probe for the five above: it lists Creative
+ * Cloud, Acrobat Pro, Photoshop, Single App, Illustrator and Premiere — which
+ * is six of the seven records the import hijacked, so every imported figure
+ * that mattered appears on this one page.
+ */
+const allApps = await fetchPage("/products/adobe-creative-cloud-all-apps-teams");
+check(
+  "and the product page behind the card agrees",
+  textOf(allApps.body).includes("1,07,000"),
+  `status ${allApps.status}; ₹1,07,000 not on the page`,
+);
+
+const duplicate = await fetchPage("/products/after-effects-for-teams", { redirect: "manual" });
+check(
+  "a withdrawn duplicate redirects to the product that survives",
+  duplicate.status === 301 && (duplicate.location ?? "").endsWith("/products/adobe-after-effects-teams"),
+  `status ${duplicate.status}, location ${duplicate.location ?? "none"}`,
+);
+
+const withdrawn = await fetchPage("/products/acrobat-sign-solutions-for-business");
+check(
+  "and one with no equivalent is gone rather than priced at ₹97",
+  withdrawn.status === 404,
+  `status ${withdrawn.status}`,
+);
 
 // ── the monogram, and the withdrawn URLs ──────────────────────────────────
 console.log("\nEarlier repairs, still holding");

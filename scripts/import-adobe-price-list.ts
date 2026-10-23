@@ -1,3 +1,4 @@
+import { refuseRemoteDatabase } from "./lib/write-guard";
 import { PrismaClient } from "@prisma/client";
 
 import { buildSearchText } from "./lib/price-list";
@@ -59,6 +60,12 @@ async function main() {
     return index >= 0 ? args[index + 1] : undefined;
   };
   const dryRun = args.includes("--dry-run");
+  /*
+   * A dry run reads and reports; only a real run is refused, so inspecting a
+   * remote catalogue stays possible and changing one by accident does not.
+   */
+  if (!dryRun) refuseRemoteDatabase("import-adobe-price-list");
+
   const workbook = flag("workbook");
 
   if (!workbook) {

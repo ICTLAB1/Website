@@ -69,6 +69,7 @@ import { microsoftPriceList } from "./2026-10-microsoft-price-list";
 import { dtpPriceList } from "./2026-10-dtp-price-list";
 import { adobeProductIcons } from "./2026-10-adobe-product-icons";
 import { microsoftComparisonTables } from "./2026-10-microsoft-comparison-tables";
+import { adobeWithdrawImported } from "./2026-10-adobe-withdraw-imported";
 import type { ContentMigration } from "./types";
 
 /**
@@ -151,6 +152,12 @@ export const contentMigrations: ContentMigration[] = [
   dtpPriceList,
   adobeProductIcons,
   microsoftComparisonTables,
+  /*
+   * After `adobeProductIcons`, and after everything else that writes to an
+   * Adobe row: this one decides which rows survive, so anything that runs
+   * later would be writing to records it has just withdrawn.
+   */
+  adobeWithdrawImported,
 ];
 
 export type { ContentMigration };
