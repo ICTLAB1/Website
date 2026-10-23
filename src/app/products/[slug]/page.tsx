@@ -243,7 +243,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
      * So a real photograph is declared and an illustration is not, and the
      * rich result arrives when the photograph does.
      */
-    ...(photo.src && !photo.representative ? { image: absoluteUrl(photo.src) } : {}),
+    /*
+     * Hardware only, now that software carries an application icon.
+     *
+     * Setting `imageUrl` on the Adobe products made this declare the icon as
+     * the product's image, and `verify:seo` caught what that meant: the page
+     * announced a photograph to a search engine and showed none, because the
+     * photo frame is drawn for hardware. The surfaces disagreed.
+     *
+     * Rendering the icon fixes half of it and not the right half. `image` on
+     * a Product means a picture of the product, and Google wants one large
+     * enough to put beside a result — these marks are 18 to 40 pixels square,
+     * cut from a screenshot. Declaring one is a poor rich result at best and a
+     * rejected one at worst, and it is not what the property is for. The icon
+     * is shown to a reader, who can see what it is, and withheld from the
+     * markup, which cannot.
+     */
+    ...(photo.src && !photo.representative && hardware ? { image: absoluteUrl(photo.src) } : {}),
     /*
      * The manufacturer's own part number, where the catalogue holds one.
      *
@@ -426,7 +442,29 @@ export default async function ProductDetailPage({ params }: PageProps) {
             {product.featured ? <Badge tone="brand">Featured</Badge> : null}
           </div>
 
-          <h1 className="mt-3 text-3xl leading-tight sm:text-[2.35rem]">{product.name}</h1>
+          {/*
+            The application mark beside the name, for a licence.
+            
+            Hardware has a photograph further down the page; software had
+            nothing at all, so a product page opened with a line of text where
+            the publisher's own catalogue opens with a recognisable icon. It is
+            decorative here in the strict sense — the name is right beside it
+            and says the same thing — so it carries an empty alt and is not
+            announced twice.
+          */}
+          <div className="mt-3 flex items-start gap-3">
+            {!hardware && product.imageUrl ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={product.imageUrl}
+                alt=""
+                className="mt-1.5 h-8 w-8 shrink-0 rounded-md object-contain sm:mt-2"
+                loading="eager"
+                decoding="async"
+              />
+            ) : null}
+            <h1 className="text-3xl leading-tight sm:text-[2.35rem]">{product.name}</h1>
+          </div>
 
           {hardware ? (
             <p className="mt-2 text-lead font-medium text-ink-600">

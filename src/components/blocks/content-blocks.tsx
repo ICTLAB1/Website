@@ -999,7 +999,26 @@ export function ComparisonTableBlock({
     <BlockSection tone={tone}>
       <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
 
-      <div className="scroll-x -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+      {/*
+        `tabIndex` and a role, because the container scrolls.
+        
+        A div with `overflow-x: auto` can be dragged with a mouse or a finger
+        and reached by nothing else: a keyboard user tabs past it and never
+        sees the columns off the right edge. axe calls this
+        `scrollable-region-focusable` and it is a serious failure, which is how
+        it was found — the table is the most complex block on the site and was
+        the one block type no audited page rendered until this one was added to
+        the list.
+
+        The label names the table rather than saying "scrollable region", so a
+        screen reader announces what the thing is and not how it behaves.
+      */}
+      <div
+        className="scroll-x -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0"
+        tabIndex={0}
+        role="region"
+        aria-label={data.heading ?? "Plan comparison"}
+      >
         <table className="w-full min-w-[34rem] border-collapse text-left">
           <thead>
             <tr className="border-b border-line">
