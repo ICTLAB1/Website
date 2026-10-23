@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AddToEnquiryButton } from "@/components/enquiry/add-to-enquiry-button";
+import { TENTATIVE_PRICE_NOTE } from "@/lib/catalogue/quote-only";
 import { formatMoney } from "@/lib/money";
 
 /**
@@ -68,13 +69,13 @@ export function HardwareQuotePanel({
             </span>
           </p>
           {/*
-            The same sentence the variant selector puts beside a software price,
-            in the same words. A buyer comparing a laptop with the licences for
-            it should not be told the two figures mean different things.
+            The shared sentence, so a buyer comparing a laptop with the licences
+            for it is not told the two figures mean different things. The
+            configuration clause is the one thing true here and nowhere else.
           */}
           <p className="mt-2 text-label leading-relaxed text-ink-500">
-            Tentative price, excluding GST — subject to confirmation, and quoted against the
-            configuration and quantity you need.
+            {TENTATIVE_PRICE_NOTE} Hardware is quoted against the configuration and quantity you
+            need.
           </p>
         </div>
       ) : null}

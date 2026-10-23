@@ -7,7 +7,11 @@ import { showPrice, statesTaxSeparately, type PriceDisplay } from "@/lib/price-d
 import { getDisplayCurrency } from "@/lib/display-currency";
 import { humanise } from "@/lib/utils";
 import { hardwareClassLabel, isHardware } from "@/lib/catalogue/hardware";
-import { DIRECT_PURCHASE_ENABLED, isQuoteOnly } from "@/lib/catalogue/quote-only";
+import {
+  DIRECT_PURCHASE_ENABLED,
+  isQuoteOnly,
+  TENTATIVE_PRICE_SHORT,
+} from "@/lib/catalogue/quote-only";
 import { ProductPhoto } from "@/components/catalogue/product-photo";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 import { ratingsForProducts } from "@/lib/queries/reviews";
@@ -220,6 +224,17 @@ export function ProductCard({
                 Tentative price
                 {statesTaxSeparately(display) ? `, excl. GST (${variant!.gstRatePercent}%)` : ""}{" "}
                 &middot; {variant!.seats > 1 ? `${variant!.seats} seats` : "per seat"}
+                {/*
+                  The short form of the shared note. A card in a grid of
+                  twenty-four has no room for the full sentence, and the full
+                  sentence repeated twenty-four times is how small print stops
+                  being read — but the one thing a buyer can act on belongs
+                  here, because this card also appears on the home page, on
+                  brand pages and on service pages, where nothing around it
+                  invites them to ask.
+                */}
+                {" · "}
+                {TENTATIVE_PRICE_SHORT}
                 {canBuyDirect ? (
                   <>
                     {" · "}

@@ -10,7 +10,11 @@ import { AccreditationMark } from "@/components/marketing/accreditation-mark";
 import { BlockHeading, BlockLink, BlockSection } from "@/components/blocks/primitives";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ResolvedBlockData } from "@/lib/blocks/resolve";
-import { isQuoteOnly, QUOTE_ONLY_LABEL } from "@/lib/catalogue/quote-only";
+import {
+  isQuoteOnly,
+  QUOTE_ONLY_LABEL,
+  TENTATIVE_PRICE_NOTE,
+} from "@/lib/catalogue/quote-only";
 import { effectivePriceMinor, formatMoney } from "@/lib/money";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 import { getSiteConfig } from "@/lib/site-config";
@@ -771,6 +775,22 @@ export function PlansBlock({
           );
         })}
       </Reveal>
+
+      {/*
+        Once below the grid, not on each card. These pages are where paid
+        traffic lands, so the figure above has to be a credible number and the
+        reader has to be told what to do about it — but four repetitions of the
+        same three lines under four cards is small print nobody finishes.
+
+        Rendered only where a price is actually shown. A block whose products
+        are all quoted has no figure to qualify, and a note about pricing under
+        a grid that states none reads as a page whose prices failed to load.
+      */}
+      {products.some((product) => !isQuoteOnly(product)) ? (
+        <p className="mt-6 max-w-3xl text-label leading-relaxed text-ink-500">
+          {TENTATIVE_PRICE_NOTE}
+        </p>
+      ) : null}
     </BlockSection>
   );
 }

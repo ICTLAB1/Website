@@ -103,13 +103,42 @@ export const QUOTE_ONLY_LABEL = "Price on enquiry";
  *
  * One sentence, reused everywhere a price is shown, so the wording cannot
  * drift between a card and a product page the way two hand-written captions
- * would. It says two things and only two: the number can still move, and a
- * written quotation is what fixes it — which is also what `/terms` says about
- * catalogue prices, so this is consistent with the contract rather than a
+ * would. It says three things: the number can still move, a written quotation
+ * is what fixes it, and the way to get one — which is also what `/terms` says
+ * about catalogue prices, so it is consistent with the contract rather than a
  * separate claim beside it.
+ *
+ * ## It was not actually being used
+ *
+ * Until now this constant appeared in exactly one place in the codebase: a
+ * comment in `variant-selector.tsx` explaining that the panel writes its own
+ * wording rather than reading this. Every priced surface had its own sentence,
+ * which is the condition this file exists to prevent, and the reason the
+ * invitation to ask for a better price was on none of them.
+ *
+ * ## The invitation is the point of it
+ *
+ * A figure with "subject to confirmation" under it tells a buyer the number
+ * might change and gives them nothing to do about it. The business prices
+ * against quantity, licensing programme and commitment term, and the published
+ * figure is the one before any of that is taken into account — so the sentence
+ * now says where a better one comes from. That is a true statement about how
+ * this business quotes, not a promise of a particular discount: the quotation
+ * fixes the number and nothing here does.
  */
 export const TENTATIVE_PRICE_NOTE =
-  "Tentative price, subject to confirmation. Final pricing is fixed on a written quotation before any order is placed.";
+  "Indicative price, excluding GST. Final pricing is confirmed on a written quotation, which takes account of your quantity, licensing programme and commitment term. For a discounted quotation, contact our sales team or raise an enquiry and we will get in touch with you.";
+
+/**
+ * The same offer where there is no room for the sentence.
+ *
+ * A catalogue card sits in a grid of twenty-four and already carries the
+ * figure, the GST position and the unit. The full note below a card is three
+ * lines of small print repeated twenty-four times, which is how a disclaimer
+ * stops being read. This says the one thing a buyer can act on, and the
+ * product page behind the card carries the rest.
+ */
+export const TENTATIVE_PRICE_SHORT = "Better pricing on enquiry";
 
 /*
  * Only the variants now. `formFactor` and `purchaseMode` were read when the

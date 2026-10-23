@@ -11,7 +11,7 @@ import {
   statesTaxSeparately,
   type PriceDisplay,
 } from "@/lib/price-display";
-import { CATALOGUE_IS_QUOTE_ONLY, DIRECT_PURCHASE_ENABLED } from "@/lib/catalogue/quote-only";
+import { CATALOGUE_IS_QUOTE_ONLY, DIRECT_PURCHASE_ENABLED, TENTATIVE_PRICE_NOTE } from "@/lib/catalogue/quote-only";
 import { cn, humanise } from "@/lib/utils";
 import { audienceNote, isDirectlyPurchasable } from "@/lib/catalogue/audience";
 import type { VariantAudience } from "@prisma/client";
@@ -348,17 +348,28 @@ export function VariantSelector({
           ) : (
             <>
               {/*
-                "Tentative" is the word the business asked for, put beside the
-                figure rather than only in a shared constant: a buyer reading
-                this panel should not have to know that `TENTATIVE_PRICE_NOTE`
-                exists elsewhere to learn the number can move.
+                The shared sentence, not a copy of it. This panel used to write
+                its own wording, with a comment explaining why — and the result
+                was that when the business added the invitation to ask for a
+                better price, the one surface a buyer reads before deciding was
+                the surface that did not say it.
+
+                The rupee case is the shared note verbatim. A converted figure
+                gets its own leading clause, because "excluding GST" is false
+                of a dollar or dirham total and the constant cannot know which
+                it is being read beside.
               */}
-              {statesTaxSeparately(display)
-                ? "Tentative price, excluding GST — subject to confirmation."
-                : "Tentative price, converted from our rupee list price at the rate we publish — subject to confirmation."}{" "}
-              Final pricing, delivery timelines and licensing terms are fixed on a written
-              quotation before any order is placed.
-              {statesTaxSeparately(display) ? "" : " Orders are placed and invoiced in Indian rupees."}
+              {statesTaxSeparately(display) ? (
+                TENTATIVE_PRICE_NOTE
+              ) : (
+                <>
+                  Indicative price, converted from our rupee list price at the rate we publish.
+                  Final pricing is confirmed on a written quotation, which takes account of your
+                  quantity, licensing programme and commitment term. For a discounted quotation,
+                  contact our sales team or raise an enquiry and we will get in touch with you.
+                  Orders are placed and invoiced in Indian rupees.
+                </>
+              )}
             </>
           )}
         </p>
