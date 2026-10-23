@@ -10,6 +10,9 @@ import { AccreditationMark } from "@/components/marketing/accreditation-mark";
 import { BlockHeading, BlockLink, BlockSection } from "@/components/blocks/primitives";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ResolvedBlockData } from "@/lib/blocks/resolve";
+import { isQuoteOnly, QUOTE_ONLY_LABEL } from "@/lib/catalogue/quote-only";
+import { effectivePriceMinor, formatMoney } from "@/lib/money";
+import type { ProductListItem } from "@/lib/queries/catalogue";
 import { getSiteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
@@ -651,14 +654,98 @@ export async function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }
   );
 }
 
-export function PlansBlock({ data, tone }: { data: BlockData<"PLANS">; tone?: "plain" | "muted" }) {
+/**
+ * A plan comparison that publishes what each plan costs.
+ *
+ * ## It used to publish nothing of the kind
+ *
+ * The block took a `productSlug` and used it for one thing: a link labelled
+ * "View pricing". A page built on it could be headed "The plans, and what they
+ * cost", note "per user, excluding GST at 18%", and carry no figure anywhere —
+ * which is what the three brand quote pages were about to ship as, having been
+ * written on the understanding that this block rendered the catalogue price.
+ * It did not. Now it does.
+ *
+ * ## The figure comes from the catalogue, never from the page
+ *
+ * `products` is resolved from the `productSlug`s by `plansFor`, so the number
+ * shown is the row the quotation engine charges from. There is no price field
+ * in the block's stored payload and no way to put one there: a figure typed
+ * into content is correct the day it is written and wrong the first time a
+ * publisher moves a list, and two copies of a price is how a page and an
+ * invoice come to disagree.
+ *
+ * ## Why the variant's own name is printed beside the money
+ *
+ * Because without it the comparison lies, and this catalogue proves it.
+ * Acrobat Standard for Teams is ₹16,320 — an annual commitment billed yearly.
+ * Acrobat Pro for Teams is ₹1,850 — an annual commitment billed *monthly*. A
+ * bare "from" price puts them side by side with Pro looking nine times cheaper
+ * than Standard, on a page whose whole purpose is to be a credible number for
+ * somebody arriving from a priced advertisement.
+ *
+ * So each card states the amount, what it is per, and which commitment it is
+ * the price of, in the variant's own recorded words. Nothing is normalised
+ * into a monthly equivalent: dividing an annual figure by twelve produces a
+ * number that is on no price list and in no quotation.
+ *
+ * A plan whose product carries no price shows the quote label instead, through
+ * the same `isQuoteOnly` every other surface asks.
+ */
+export function PlansBlock({
+  data,
+  products,
+  tone,
+}: {
+  data: BlockData<"PLANS">;
+  /** The catalogue rows for the named slugs, in the order the block names them. */
+  products: ProductListItem[];
+  tone?: "plain" | "muted";
+}) {
+  const bySlug = new Map(products.map((product) => [product.slug, product]));
+
   return (
     <BlockSection tone={tone}>
       <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
       <Reveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {data.items.map((plan, index) => (
+        {data.items.map((plan, index) => {
+          const product = plan.productSlug ? bySlug.get(plan.productSlug) : undefined;
+
+          /*
+           * The variant the product page leads with, which is `isDefault`
+           * first and then cheapest — the ordering `productListSelect`
+           * already applies. Reading the same one means the card and the
+           * page a reader clicks through to cannot show different figures.
+           */
+          const variant = product?.variants.find(
+            (candidate) => (candidate.salePriceMinor ?? candidate.listPriceMinor) > 0,
+          );
+          const priced = product && variant && !isQuoteOnly(product);
+          const amount = variant
+            ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor)
+            : 0;
+
+          return (
           <div key={index} className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5">
             <h3 className="text-body font-semibold text-graphite-900">{plan.name}</h3>
+
+            {product ? (
+              <div className="mt-3">
+                {priced ? (
+                  <>
+                    <p className="text-[1.5rem] font-semibold leading-none text-graphite-900">
+                      {formatMoney(amount, variant.currency)}
+                    </p>
+                    <p className="mt-1.5 text-label leading-snug text-ink-500">
+                      {variant.seats > 1 ? `${variant.seats} seats` : "per user"} · {variant.name}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-meta font-medium text-ink-600">{QUOTE_ONLY_LABEL}</p>
+                )}
+              </div>
+            ) : null}
+
             <p className="mt-2 text-meta leading-relaxed text-ink-600">{plan.summary}</p>
             {plan.points.length > 0 ? (
               <ul className="mt-4 space-y-1.5">
@@ -675,11 +762,14 @@ export function PlansBlock({ data, tone }: { data: BlockData<"PLANS">; tone?: "p
                 href={`/products/${plan.productSlug}`}
                 className="underline-grow mt-auto pt-4 text-meta font-medium text-accent-700"
               >
-                View pricing
+                {/* The figure is on this card now, so the link offers the detail
+                    behind it rather than promising the price itself. */}
+                {priced ? "All terms and options" : "View pricing"}
               </BlockLink>
             ) : null}
           </div>
-        ))}
+          );
+        })}
       </Reveal>
     </BlockSection>
   );

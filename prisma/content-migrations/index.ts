@@ -59,6 +59,9 @@ import { delhiLocalPage } from "./2026-10-delhi-local-page";
 import { mergeDuplicateServers } from "./2026-10-merge-duplicate-servers";
 import { linkTheDelhiPage } from "./2026-10-link-the-delhi-page";
 import { microsoftPagePurposes } from "./2026-10-microsoft-page-purposes";
+import { quoteMicrosoft } from "./2026-10-quote-page-microsoft";
+import { quoteAdobe } from "./2026-10-quote-page-adobe";
+import { quoteAutodesk } from "./2026-10-quote-page-autodesk";
 import type { ContentMigration } from "./types";
 
 /**
@@ -131,6 +134,9 @@ export const contentMigrations: ContentMigration[] = [
   mergeDuplicateServers,
   linkTheDelhiPage,
   microsoftPagePurposes,
+  quoteMicrosoft,
+  quoteAdobe,
+  quoteAutodesk,
 ];
 
 export type { ContentMigration };

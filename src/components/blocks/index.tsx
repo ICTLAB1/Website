@@ -209,7 +209,14 @@ export function BlockRenderer({
           case "CTA_BANNER":
             return <CtaBannerBlock key={block.id} data={block.data} />;
           case "PLANS":
-            return <PlansBlock key={block.id} data={block.data} tone={tone} />;
+            return (
+              <PlansBlock
+                key={block.id}
+                data={block.data}
+                products={(resolved.products.get(block.id) ?? []) as ProductListItem[]}
+                tone={tone}
+              />
+            );
           case "COMPANY_INFO":
             return <CompanyInfoBlock key={block.id} data={block.data} tone={tone} />;
           case "NOTICE":
