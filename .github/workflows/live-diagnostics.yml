@@ -1,0 +1,57 @@
+name: Live diagnostics
+
+# Read-only. Reports what the live site is actually serving, and changes
+# nothing.
+#
+# It exists because a green deploy is not evidence that a page changed. This
+# release moved page copy through a content migration, which the container
+# entrypoint applies on start — so the deploy can succeed and the copy can stay
+# as it was, and nothing in the Actions log would say so. Reading the pages
+# answers it; reasoning about the repository cannot answer it at all.
+#
+# It also covers the case where the machine the work was done on cannot reach
+# the production host. A runner can, and needs nothing of ours to do it: two
+# dozen ordinary GET requests to public pages. No SSH, no deploy key, no
+# database, nothing to disturb.
+#
+# Everything it prints is public. A title, a canonical, a robots tag and a
+# JSON-LD block are served to every visitor.
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: The public origin to read
+        required: false
+        default: https://techzoidtechnologies.com
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Nothing is written, so nothing is granted beyond reading this repository.
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Read the live site
+        env:
+          SITE: ${{ inputs.site }}
+        run: |
+          set -euo pipefail
+          # Validated rather than trusted: on a public repository a workflow
+          # input is controlled by anyone who can dispatch the workflow, and
+          # this one reaches a URL.
+          case "${SITE:-}" in
+            https://[a-zA-Z0-9.-]*) ;;
+            *) echo "site must be https:// followed by a plain hostname" >&2; exit 1 ;;
+          esac
+          case "${SITE#https://}" in
+            *[!a-zA-Z0-9.-]*) echo "site hostname has unexpected characters" >&2; exit 1 ;;
+          esac
+          # No install step: the script uses Node's own fetch and nothing else.
+          node scripts/diagnostics/live.mjs
