@@ -4,6 +4,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ButtonLink } from "@/components/ui/button";
 import { CatalogueListing } from "@/components/catalogue/catalogue-listing";
 import { parseCatalogueParams, type RawSearchParams } from "@/lib/catalogue-params";
+import { TENTATIVE_PRICE_NOTE } from "@/lib/catalogue/quote-only";
 import { buildMetadata } from "@/lib/seo";
 
 type PageProps = { searchParams: Promise<RawSearchParams> };
@@ -50,8 +51,14 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         </h1>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-600">
           Licensing across Microsoft, Adobe, Autodesk, Zoho, SketchUp, Corel and enterprise
-          infrastructure. Every price shown excludes GST and is confirmed on a written
-          quotation before any order is placed.
+          infrastructure.{" "}
+          {/*
+            The shared note rather than a sentence of its own. This header used
+            to say prices exclude GST and are confirmed on a quotation, which is
+            true and tells a reader nothing they can act on — and it was a third
+            hand-written copy of a rule that now lives in one place.
+          */}
+          {TENTATIVE_PRICE_NOTE}
         </p>
       </header>
 
