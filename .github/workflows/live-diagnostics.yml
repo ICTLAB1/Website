@@ -66,5 +66,7 @@ jobs:
           status=0
           node scripts/diagnostics/live.mjs || status=$?
           node scripts/diagnostics/catalogue.mjs \
-            /brands/adobe /brands/autodesk /brands/microsoft
+            '/products?brand=adobe' \
+            '/products?brand=autodesk' \
+            '/products?brand=microsoft'
           exit "$status"

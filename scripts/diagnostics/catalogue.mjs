@@ -57,15 +57,44 @@ function cards(body) {
   return rows;
 }
 
-for (const path of PATHS) {
-  const response = await fetch(`${SITE}${path}`, {
-    headers: { "user-agent": "techzoid-live-diagnostics" },
-  });
-  const body = await response.text();
-  console.log(`\n${path}  →  ${response.status}`);
-  if (response.status !== 200) continue;
+/*
+ * Every page of the listing, not the first.
+ *
+ * A brand page shows six cards and a catalogue page shows a screenful, so a
+ * report that reads one page answers "what is on the first page" while
+ * sounding like it answered "what is in the catalogue". It follows `page`
+ * until a page adds no slug it has not already seen, and stops at 25 either
+ * way so a listing that paginates for ever cannot hold the runner open.
+ */
+async function listing(path) {
+  const rows = [];
+  const seen = new Set();
+  let status = 0;
 
-  const rows = cards(body);
+  for (let page = 1; page <= 25; page += 1) {
+    const separator = path.includes("?") ? "&" : "?";
+    const url = `${SITE}${path}${page === 1 ? "" : `${separator}page=${page}`}`;
+    const response = await fetch(url, { headers: { "user-agent": "techzoid-live-diagnostics" } });
+    if (page === 1) status = response.status;
+    if (response.status !== 200) break;
+
+    const body = await response.text();
+    const fresh = cards(body).filter((row) => !seen.has(row.slug));
+    if (fresh.length === 0) break;
+    for (const row of fresh) {
+      seen.add(row.slug);
+      rows.push(row);
+    }
+  }
+
+  return { status, rows };
+}
+
+for (const path of PATHS) {
+  const { status, rows } = await listing(path);
+  console.log(`\n${path}  →  ${status}`);
+  if (status !== 200) continue;
+
   console.log(`${rows.length} product card(s)\n`);
   for (const row of rows) {
     console.log(`  ${row.price.padStart(12)}  ${row.sku.padEnd(24)}  ${row.slug}`);
