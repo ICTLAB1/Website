@@ -183,14 +183,29 @@ if (firstSoftwareProduct) {
   check("the product page still emits structured data", blocks.length > 0, `${blocks.length} blocks`);
 }
 
+/*
+ * The hardware page's structured data has to agree with its own visible text.
+ *
+ * This asserted "no price reaches a hardware product page's structured data",
+ * which was the third absolute in this file satisfied by an empty column. It
+ * would also have been wrong in a way that mattered: the product page used to
+ * exclude hardware from its offer by name, so once prices were entered a
+ * hardware page would have shown a figure to a shopper and none to a search
+ * engine. The surfaces disagreeing is the defect; the absence of a price is
+ * not.
+ */
 if (firstHardwareProduct) {
   await page.goto(`${BASE}${firstHardwareProduct}`, { waitUntil: "load" });
   const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
-  const offending = blocks.filter((block) => /"(price|lowPrice|highPrice)"/.test(block));
+  const inMarkup = blocks.some((block) => /"(price|lowPrice|highPrice)"/.test(block));
+  const onPage = MONEY.test((await text()).replace(/\s+/g, " "));
+
   check(
-    "no price reaches a hardware product page's structured data",
-    offending.length === 0,
-    offending[0]?.slice(0, 120) ?? "",
+    onPage
+      ? "a priced hardware page offers the same price to a search engine"
+      : "an unpriced hardware page offers no price to a search engine either",
+    inMarkup === onPage,
+    `page ${onPage ? "shows" : "shows no"} price, markup ${inMarkup ? "carries" : "carries no"} price`,
   );
 }
 

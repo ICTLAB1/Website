@@ -271,14 +271,19 @@ export default async function ProductDetailPage({ params }: PageProps) {
      */
     ...(hardware ? { manufacturer: { "@type": "Organization", name: product.brand.name } } : {}),
     /*
-     * No offer on hardware, deliberately.
+     * An offer wherever there is a price, and `isQuoteOnly` is the one question
+     * asked.
      *
-     * Hardware is quoted, never listed at a price, so there is no figure to
-     * put in an offer — and a price-bearing structured-data block is exactly
-     * the thing a search engine surfaces as a number beside the result. The
-     * `lowestPrice` test below would already fall through, since these rows
-     * carry no price; naming the case keeps somebody from "fixing" that later
-     * by defaulting it to zero, which reads as free.
+     * This used to exclude hardware by name, on the reasoning that hardware is
+     * quoted and never listed at a price. That stopped being true when the
+     * business asked for a price on every listing: the exclusion would have
+     * left a hardware page showing a figure to a shopper and none to a search
+     * engine, which is the surfaces disagreeing with each other — the thing
+     * the rest of this block exists to prevent.
+     *
+     * `lowestPrice` and `isQuoteOnly` together already say everything the
+     * excluded term said: no price, no offer. Nothing here may default a
+     * missing price to zero, which reads as free.
      */
     /*
      * The offer matches what the page itself shows: a price on a software
@@ -287,7 +292,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
      * the same `isQuoteOnly` question as the visible price rather than a
      * separate rule that could quietly disagree with it.
      */
-    ...(lowestPrice && !hardware && !isQuoteOnly(product)
+    ...(lowestPrice && !isQuoteOnly(product)
       ? {
           offers: {
             "@type": "AggregateOffer",
