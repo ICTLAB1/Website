@@ -62,6 +62,7 @@ import { microsoftPagePurposes } from "./2026-10-microsoft-page-purposes";
 import { quoteMicrosoft } from "./2026-10-quote-page-microsoft";
 import { quoteAdobe } from "./2026-10-quote-page-adobe";
 import { quoteAutodesk } from "./2026-10-quote-page-autodesk";
+import { linkTheQuotePages } from "./2026-10-link-the-quote-pages";
 import type { ContentMigration } from "./types";
 
 /**
@@ -137,6 +138,7 @@ export const contentMigrations: ContentMigration[] = [
   quoteMicrosoft,
   quoteAdobe,
   quoteAutodesk,
+  linkTheQuotePages,
 ];
 
 export type { ContentMigration };
