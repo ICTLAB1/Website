@@ -925,3 +925,138 @@ export function NoticeBlock({ data, tone }: { data: BlockData<"NOTICE">; tone?: 
     </BlockSection>
   );
 }
+
+/**
+ * A feature comparison: capabilities down the side, plans across the top.
+ *
+ * ## Why the cells are three states and not free text
+ *
+ * Every mark in this table is a claim that a plan does or does not include
+ * something, read by somebody deciding what to buy. Free text is how one of
+ * those claims gets written that nobody can check against a source, so the
+ * schema allows "included", "add-on", "absent" and a short note — and a note
+ * is for the qualifications a publisher's own chart gives ("Plan 2", "Web
+ * only"), never for turning an absence into a sentence.
+ *
+ * ## The absent case is marked, not left blank
+ *
+ * An empty cell is ambiguous: it reads as "not included" to one person and
+ * "not stated" to another, and in a table with a hundred cells it reads as a
+ * rendering fault to a third. A dash says it, and the screen-reader text says
+ * it in words — because a blank cell announces nothing at all, and a row of
+ * silence is the one thing a screen reader cannot distinguish from a broken
+ * table.
+ *
+ * ## Scrolling
+ *
+ * The table scrolls sideways inside its own container rather than widening the
+ * page. The feature column is sticky, because a comparison whose row labels
+ * scroll off is a grid of marks attached to nothing — which is how these
+ * tables fail on a phone, and most of this site's traffic is on one.
+ */
+export function ComparisonTableBlock({
+  data,
+  tone,
+}: {
+  data: BlockData<"COMPARISON_TABLE">;
+  tone?: "plain" | "muted";
+}) {
+  const cell = (value: BlockData<"COMPARISON_TABLE">["groups"][number]["rows"][number]["cells"][number]) => {
+    if (typeof value === "object") {
+      return <span className="text-label text-ink-600">{value.note}</span>;
+    }
+    if (value === "yes") {
+      return (
+        <>
+          <span aria-hidden="true" className="text-[1.05rem] font-semibold text-accent-700">
+            ✓
+          </span>
+          <span className="sr-only">Included</span>
+        </>
+      );
+    }
+    if (value === "addon") {
+      return (
+        <>
+          <span aria-hidden="true" className="text-label font-medium text-ink-600">
+            Add-on
+          </span>
+          <span className="sr-only">Available as an add-on</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <span aria-hidden="true" className="text-ink-400">
+          —
+        </span>
+        <span className="sr-only">Not included</span>
+      </>
+    );
+  };
+
+  return (
+    <BlockSection tone={tone}>
+      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
+
+      <div className="scroll-x -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+        <table className="w-full min-w-[34rem] border-collapse text-left">
+          <thead>
+            <tr className="border-b border-line">
+              <th scope="col" className="sticky left-0 z-10 bg-white py-3 pr-4 text-label font-semibold uppercase tracking-wide text-ink-500">
+                Feature
+              </th>
+              {data.columns.map((column) => (
+                <th
+                  key={column}
+                  scope="col"
+                  className="px-3 py-3 text-center text-meta font-semibold text-graphite-900"
+                >
+                  {column}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          {data.groups.map((group) => (
+            <tbody key={group.heading}>
+              <tr className="bg-surface-muted">
+                {/*
+                  A group heading spans the table rather than sitting in the
+                  first column, so the plan columns underneath keep their
+                  alignment and a reader does not have to work out whether the
+                  heading is itself a feature.
+                */}
+                <th
+                  scope="colgroup"
+                  colSpan={data.columns.length + 1}
+                  className="py-2.5 pl-0 pr-4 text-label font-semibold uppercase tracking-wide text-graphite-900"
+                >
+                  {group.heading}
+                </th>
+              </tr>
+              {group.rows.map((row) => (
+                <tr key={row.label} className="border-b border-line/70">
+                  <th
+                    scope="row"
+                    className="sticky left-0 z-10 bg-white py-3 pr-4 text-meta font-normal leading-snug text-ink-700"
+                  >
+                    {row.label}
+                  </th>
+                  {row.cells.map((value, index) => (
+                    <td key={index} className="px-3 py-3 text-center align-middle">
+                      {cell(value)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          ))}
+        </table>
+      </div>
+
+      {data.source ? (
+        <p className="mt-4 text-label leading-relaxed text-ink-500">{data.source}</p>
+      ) : null}
+    </BlockSection>
+  );
+}

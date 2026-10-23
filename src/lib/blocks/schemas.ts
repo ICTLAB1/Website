@@ -432,6 +432,63 @@ export const plansSchema = z.object({
     .max(8),
 });
 
+/**
+ * A feature-comparison table: one row per capability, one column per plan.
+ *
+ * Deliberately not a free-text table. Every cell is one of three states —
+ * included, available as an add-on, or absent — because a comparison table is
+ * a page full of capability claims and free text is how a claim gets written
+ * that nobody can check. "Plan 2" and "Web only" are real answers Microsoft's
+ * own chart gives, so a `note` carries those; what a `note` cannot do is turn
+ * an absence into a sentence.
+ *
+ * Columns are named rather than taken from the products, so a table can
+ * compare editions this catalogue does not stock a row for, and so a renamed
+ * product cannot silently relabel a column of claims.
+ */
+const comparisonTableSchema = z.object({
+  eyebrow: z.string().trim().max(80).optional(),
+  heading: z.string().trim().max(160).optional(),
+  description: z.string().trim().max(600).optional(),
+  /** The plan names, left to right. The first table column is the feature. */
+  columns: z.array(z.string().trim().min(1).max(60)).min(2).max(6),
+  groups: z
+    .array(
+      z.object({
+        heading: z.string().trim().min(1).max(120),
+        rows: z
+          .array(
+            z.object({
+              label: z.string().trim().min(1).max(200),
+              /**
+               * One entry per column, in the same order. A row with the wrong
+               * number of cells is rejected rather than padded: a short row
+               * would silently read as "absent" for the columns it omits,
+               * which is a claim about a plan nobody made.
+               */
+              cells: z
+                .array(
+                  z.union([
+                    z.literal("yes"),
+                    z.literal("addon"),
+                    z.literal("no"),
+                    z.object({ note: z.string().trim().min(1).max(40) }),
+                  ]),
+                )
+                .min(2)
+                .max(6),
+            }),
+          )
+          .min(1)
+          .max(60),
+      }),
+    )
+    .min(1)
+    .max(20),
+  /** Where the comparison came from, shown under the table. */
+  source: z.string().trim().max(200).optional(),
+});
+
 export const BLOCK_SCHEMAS = {
   HERO: heroSchema,
   RICH_TEXT: richTextSchema,
@@ -453,6 +510,7 @@ export const BLOCK_SCHEMAS = {
   NOTICE: noticeSchema,
   CTA_BANNER: ctaBannerSchema,
   PLANS: plansSchema,
+  COMPARISON_TABLE: comparisonTableSchema,
   TESTIMONIALS: testimonialsSchema,
 } as const;
 
@@ -524,6 +582,10 @@ export const BLOCK_SEEDS: { [T in BlockType]: BlockData<T> } = {
   NOTICE: noticeSchema.parse({ tone: "info", markdown: "Something worth saying before the rest of the page." }),
   CTA_BANNER: ctaBannerSchema.parse({ heading: "New call to action", tone: "dark" }),
   PLANS: plansSchema.parse({ items: [{ name: "Plan", summary: "What it includes." }] }),
+  COMPARISON_TABLE: comparisonTableSchema.parse({
+    columns: ["Plan A", "Plan B"],
+    groups: [{ heading: "Group", rows: [{ label: "Feature", cells: ["yes", "no"] }] }],
+  }),
   TESTIMONIALS: testimonialsSchema.parse({ heading: "What our customers say", source: "featured", limit: 3 }),
 };
 
@@ -549,5 +611,6 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
   NOTICE: "Notice",
   CTA_BANNER: "Call to action",
   PLANS: "Plan comparison",
+  COMPARISON_TABLE: "Comparison table",
   TESTIMONIALS: "Testimonials",
 };

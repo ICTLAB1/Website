@@ -68,6 +68,7 @@ import { autodeskPriceList } from "./2026-10-autodesk-price-list";
 import { microsoftPriceList } from "./2026-10-microsoft-price-list";
 import { dtpPriceList } from "./2026-10-dtp-price-list";
 import { adobeProductIcons } from "./2026-10-adobe-product-icons";
+import { microsoftComparisonTables } from "./2026-10-microsoft-comparison-tables";
 import type { ContentMigration } from "./types";
 
 /**
@@ -149,6 +150,7 @@ export const contentMigrations: ContentMigration[] = [
   microsoftPriceList,
   dtpPriceList,
   adobeProductIcons,
+  microsoftComparisonTables,
 ];
 
 export type { ContentMigration };

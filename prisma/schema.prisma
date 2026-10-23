@@ -343,6 +343,7 @@ enum PageSectionType {
   CTA_BANNER
   PLANS
   TESTIMONIALS
+  COMPARISON_TABLE
 }
 
 enum BannerTone {
