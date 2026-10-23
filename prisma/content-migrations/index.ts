@@ -71,6 +71,7 @@ import { adobeProductIcons } from "./2026-10-adobe-product-icons";
 import { microsoftComparisonTables } from "./2026-10-microsoft-comparison-tables";
 import { adobeWithdrawImported } from "./2026-10-adobe-withdraw-imported";
 import { comparisonOnThePlanHub } from "./2026-10-comparison-on-the-plan-hub";
+import { restoreTheAdobeCopy } from "./2026-10-restore-the-adobe-copy";
 import type { ContentMigration } from "./types";
 
 /**
@@ -160,6 +161,7 @@ export const contentMigrations: ContentMigration[] = [
    */
   adobeWithdrawImported,
   comparisonOnThePlanHub,
+  restoreTheAdobeCopy,
 ];
 
 export type { ContentMigration };

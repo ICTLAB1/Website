@@ -394,10 +394,24 @@ check(
   adobeText.includes("Adobe Creative Cloud All Apps for Teams"),
   "the catalogue still calls it something else",
 );
+/*
+ * Anywhere on the page, not just in the headings.
+ *
+ * This is the check that caught the second half of the import's damage. The
+ * withdrawal migration restored the names, so the heading read "All Apps"
+ * while the description under it still read "Adobe Creative Cloud Pro for
+ * Teams from Adobe, available as an annual commitment" — the sheet's name
+ * surviving in copy a rename does not reach.
+ */
 check(
   "and not the channel sheet's name for it",
   !adobeText.includes("Creative Cloud Pro for Teams"),
   "the imported name is still on the page",
+);
+check(
+  "nor the sentence the import generated in place of the copy",
+  !adobeText.includes("from Adobe, available as"),
+  "a generated description is still on a card",
 );
 check(
   "at the figure the business named",
