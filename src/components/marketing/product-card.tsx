@@ -108,7 +108,36 @@ export function ProductCard({
           {!quoteOnly && saving ? <Badge tone="success">{saving}% off</Badge> : null}
         </div>
 
-        <h3 className="mt-2 text-body font-semibold leading-snug text-graphite-900">
+        <h3 className="mt-2 flex items-start gap-2 text-body font-semibold leading-snug text-graphite-900">
+          {/*
+            The application icon, beside the name rather than above the card.
+            
+            A licence had no image at all before this: the photo frame above is
+            drawn for hardware only, and the representative-illustration system
+            answers by form factor, which a licence does not have. So an Adobe
+            card sat in a grid beside hardware carrying photographs with nothing
+            but a title.
+
+            Beside the name and small, for two reasons. The frame above is a
+            product photograph and these are 18-pixel marks — put one in there
+            and it is either lost in white space or enlarged into a blur. And it
+            is where the publisher's own catalogue puts it, which is where a
+            buyer who has seen that catalogue will look.
+
+            `alt=""` because the name is the next thing in the same heading: a
+            screen reader announcing "Photoshop, Adobe Photoshop for Teams"
+            reads the mark twice and tells nobody anything.
+          */}
+          {!hardware && product.imageUrl ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={product.imageUrl}
+              alt=""
+              className="mt-0.5 h-5 w-5 shrink-0 rounded-[4px] object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : null}
           <Link href={`/products/${product.slug}`} className="hover:text-accent-700">
             {/* Stretching the link would swallow the buttons below, so the
                 anchor stays on the title only. */}
