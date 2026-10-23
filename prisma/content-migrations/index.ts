@@ -59,6 +59,16 @@ import { delhiLocalPage } from "./2026-10-delhi-local-page";
 import { mergeDuplicateServers } from "./2026-10-merge-duplicate-servers";
 import { linkTheDelhiPage } from "./2026-10-link-the-delhi-page";
 import { microsoftPagePurposes } from "./2026-10-microsoft-page-purposes";
+import { quoteMicrosoft } from "./2026-10-quote-page-microsoft";
+import { quoteAdobe } from "./2026-10-quote-page-adobe";
+import { quoteAutodesk } from "./2026-10-quote-page-autodesk";
+import { linkTheQuotePages } from "./2026-10-link-the-quote-pages";
+import { adobePriceList } from "./2026-10-adobe-price-list";
+import { autodeskPriceList } from "./2026-10-autodesk-price-list";
+import { microsoftPriceList } from "./2026-10-microsoft-price-list";
+import { dtpPriceList } from "./2026-10-dtp-price-list";
+import { adobeProductIcons } from "./2026-10-adobe-product-icons";
+import { microsoftComparisonTables } from "./2026-10-microsoft-comparison-tables";
 import type { ContentMigration } from "./types";
 
 /**
@@ -131,6 +141,16 @@ export const contentMigrations: ContentMigration[] = [
   mergeDuplicateServers,
   linkTheDelhiPage,
   microsoftPagePurposes,
+  quoteMicrosoft,
+  quoteAdobe,
+  quoteAutodesk,
+  linkTheQuotePages,
+  adobePriceList,
+  autodeskPriceList,
+  microsoftPriceList,
+  dtpPriceList,
+  adobeProductIcons,
+  microsoftComparisonTables,
 ];
 
 export type { ContentMigration };

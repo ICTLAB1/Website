@@ -14,7 +14,7 @@ import { certificationLogo } from "@/lib/certification-logo";
 import { effectivePriceMinor, formatTerm } from "@/lib/money";
 import { showPrice, statesTaxSeparately } from "@/lib/price-display";
 import { getDisplayCurrency } from "@/lib/display-currency";
-import { isQuoteOnly } from "@/lib/catalogue/quote-only";
+import { isQuoteOnly, TENTATIVE_PRICE_NOTE } from "@/lib/catalogue/quote-only";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 import { formatDate } from "@/lib/utils";
@@ -190,6 +190,21 @@ export async function PriceComparisonBlock({
           </Reveal>
 
           {data.note ? <p className="mt-4 text-meta text-ink-500">{data.note}</p> : null}
+
+          {/*
+            A price comparison is the surface where a figure is read hardest —
+            it is put beside a competitor's on purpose — so the qualification
+            and the route to a better number belong under it rather than only
+            on the product page a reader may not reach.
+
+            Once, below the grid, and only where a price is shown: a comparison
+            of quoted products has no figure to qualify.
+          */}
+          {products.some((product) => !isQuoteOnly(product)) ? (
+            <p className="mt-4 max-w-3xl text-label leading-relaxed text-ink-500">
+              {TENTATIVE_PRICE_NOTE}
+            </p>
+          ) : null}
         </>
       )}
     </BlockSection>

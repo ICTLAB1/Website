@@ -85,6 +85,38 @@ async function comparisonFor(
     .filter((row): row is ProductListItem => row !== undefined);
 }
 
+/**
+ * The catalogue rows a PLANS block names, in the order it names them.
+ *
+ * The block publishes prices, and this is where they come from. Nothing about
+ * a figure is stored in the page: a price typed into a content migration is
+ * correct on the day it is written and wrong the first time a publisher moves
+ * a list, and there would then be two copies of it — the one on the page and
+ * the one the quotation engine charges from. This reads the second.
+ *
+ * Missing rows are dropped rather than rendered empty, exactly as a grid and a
+ * comparison drop them: a plan whose product has been archived since the page
+ * was written keeps its description and loses its price, which is the honest
+ * outcome and the one `verify:cms` can see.
+ */
+async function plansFor(
+  block: Extract<ParsedBlock, { type: "PLANS" }>,
+): Promise<ProductListItem[]> {
+  const slugs = block.data.items
+    .map((item) => item.productSlug)
+    .filter((slug): slug is string => Boolean(slug));
+  if (slugs.length === 0) return [];
+
+  const rows = await prisma.product.findMany({
+    where: { status: "ACTIVE", deletedAt: null, slug: { in: slugs } },
+    select: productListSelect,
+  });
+
+  return slugs
+    .map((slug) => rows.find((row) => row.slug === slug))
+    .filter((row): row is ProductListItem => row !== undefined);
+}
+
 async function productsFor(
   block: Extract<ParsedBlock, { type: "PRODUCT_GRID" }>,
 ): Promise<ProductListItem[]> {
@@ -339,6 +371,7 @@ export async function resolveBlocks(
     ...blocks.map(async (block) => {
       if (block.type === "PRODUCT_GRID") products.set(block.id, await productsFor(block));
       else if (block.type === "PRICE_COMPARISON") products.set(block.id, await comparisonFor(block));
+      else if (block.type === "PLANS") products.set(block.id, await plansFor(block));
       else if (block.type === "COLLECTION_GRID") collections.set(block.id, await collectionFor(block));
       else if (block.type === "LOGO_MARQUEE") collections.set(block.id, await marqueeFor(block));
       else if (block.type === "INDUSTRY_GRID")

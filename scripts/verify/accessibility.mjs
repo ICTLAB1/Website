@@ -23,6 +23,13 @@ const PAGES = [
   // auditing one audits the shape of all of them.
   "/industries", "/industries/aec",
   `/buy?sku=${encodeURIComponent(BUY_SKU)}`, "/buy/confirmed?ref=ORD-2026-ABC123",
+  /*
+   * One of the quote pages, for the comparison table on it. The table is the
+   * most structurally complex thing on the site — sticky row headers, a group
+   * heading spanning the width, and cells whose entire meaning is carried by a
+   * symbol — and it was the only block type no audited page rendered.
+   */
+  "/get-a-quote/microsoft",
 ];
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });

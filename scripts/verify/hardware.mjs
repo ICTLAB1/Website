@@ -94,10 +94,31 @@ const response = await page.goto(`${BASE}/hardware`, { waitUntil: "load" });
 check("the hardware catalogue is served", response?.status() === 200, `status ${response?.status()}`);
 
 const listing = await text(page);
-check("no price appears on the hardware catalogue", !MONEY.test(listing), MONEY.exec(listing)?.[0] ?? "");
+
+/*
+ * The catalogue qualifies whatever it shows.
+ *
+ * This asserted "no price appears on the hardware catalogue" and "it says
+ * plainly that hardware is not listed at a price" — the standing rule until
+ * the business asked for a price on every listing. Both then failed on the
+ * first hardware price loaded, which is the same empty-column trap
+ * `verify:prices` carried and had corrected; this file was not updated with
+ * it, and the gap only showed when real figures arrived.
+ *
+ * The invariant that survives the policy change is the pairing: a listing
+ * showing figures says they are indicative and where a firm one comes from,
+ * and a listing showing none says the price is quoted. Either state passes,
+ * and neither can drift into showing a bare number.
+ */
+const listingPriced = MONEY.test(listing);
 check(
-  "it says plainly that hardware is quoted rather than priced",
-  listing.includes("not listed at a price"),
+  listingPriced
+    ? "the hardware catalogue shows prices, and qualifies them"
+    : "the hardware catalogue shows no prices, and says they are quoted",
+  listingPriced
+    ? /indicative price|tentative price/i.test(listing)
+    : /not listed at a price|quoted rather than priced|price on enquiry|request a quote/i.test(listing),
+  listingPriced ? "figures with no qualification beside them" : "no figures and nothing saying they are quoted",
 );
 
 for (const range of CONSUMER) {
@@ -237,7 +258,15 @@ if (cards === 0) {
     const narrowed = await countAt(brandLink);
     check("a brand filter narrows the listing", narrowed > 0 && narrowed <= cards, `${narrowed} of ${cards}`);
     const filtered = await text(page);
-    check("no price appears on a filtered listing", !MONEY.test(filtered), MONEY.exec(filtered)?.[0] ?? "");
+    // Same pairing as the unfiltered catalogue: a filter changes which rows
+    // are shown, never what a figure on one of them means.
+    const filteredPriced = MONEY.test(filtered);
+    check(
+      filteredPriced ? "a filtered listing qualifies its prices" : "a filtered listing says its prices are quoted",
+      filteredPriced
+        ? /indicative price|tentative price/i.test(filtered)
+        : /not listed at a price|quoted rather than priced|price on enquiry|request a quote/i.test(filtered),
+    );
   } else {
     skip("a brand filter narrows the listing", "no brand entry points rendered");
   }
@@ -248,7 +277,13 @@ if (cards === 0) {
   await page.goto(`${BASE}${productHref}`, { waitUntil: "load" });
   const detail = await text(page);
 
-  check("a model is reachable and quoted rather than priced", !MONEY.test(detail), MONEY.exec(detail)?.[0] ?? "");
+  const detailPriced = MONEY.test(detail);
+  check(
+    detailPriced ? "a model is reachable, priced and qualified" : "a model is reachable and quoted rather than priced",
+    detailPriced
+      ? /indicative price|tentative price/i.test(detail)
+      : /request a quote|price on enquiry|quoted/i.test(detail),
+  );
   check("it offers a quote rather than a purchase", detail.includes("Request a quote"), productHref);
   check("it names the manufacturer and who supplies it", /supplied by/i.test(detail));
   check("it carries a specification table", detail.includes("Specifications"));
@@ -262,10 +297,20 @@ if (cards === 0) {
   const jsonLd = await page
     .locator('script[type="application/ld+json"]')
     .evaluateAll((nodes) => nodes.map((node) => node.textContent ?? ""));
+  /*
+   * The markup agrees with the page. Asserted as a pairing rather than an
+   * absence for the same reason as the surfaces above — and because the
+   * failure that matters is the two disagreeing, not either state on its own:
+   * a page showing a figure while the structured data withholds it hands a
+   * search engine a different story than the shopper gets.
+   */
+  const markupPriced = jsonLd.some((block) => /"(price|lowPrice|highPrice)"/.test(block));
   check(
-    "no price reaches the structured data either",
-    !jsonLd.some((block) => /"(price|lowPrice|highPrice)"/.test(block)),
-    jsonLd.find((block) => /"price/.test(block))?.slice(0, 120) ?? "",
+    detailPriced
+      ? "the structured data carries the price the page shows"
+      : "the structured data withholds a price, as the page does",
+    markupPriced === detailPriced,
+    `page ${detailPriced ? "shows" : "shows no"} price, markup ${markupPriced ? "carries" : "carries no"} price`,
   );
 
   // ── search ────────────────────────────────────────────────────────────────

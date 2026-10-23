@@ -243,7 +243,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
      * So a real photograph is declared and an illustration is not, and the
      * rich result arrives when the photograph does.
      */
-    ...(photo.src && !photo.representative ? { image: absoluteUrl(photo.src) } : {}),
+    /*
+     * Hardware only, now that software carries an application icon.
+     *
+     * Setting `imageUrl` on the Adobe products made this declare the icon as
+     * the product's image, and `verify:seo` caught what that meant: the page
+     * announced a photograph to a search engine and showed none, because the
+     * photo frame is drawn for hardware. The surfaces disagreed.
+     *
+     * Rendering the icon fixes half of it and not the right half. `image` on
+     * a Product means a picture of the product, and Google wants one large
+     * enough to put beside a result — these marks are 18 to 40 pixels square,
+     * cut from a screenshot. Declaring one is a poor rich result at best and a
+     * rejected one at worst, and it is not what the property is for. The icon
+     * is shown to a reader, who can see what it is, and withheld from the
+     * markup, which cannot.
+     */
+    ...(photo.src && !photo.representative && hardware ? { image: absoluteUrl(photo.src) } : {}),
     /*
      * The manufacturer's own part number, where the catalogue holds one.
      *
@@ -271,14 +287,19 @@ export default async function ProductDetailPage({ params }: PageProps) {
      */
     ...(hardware ? { manufacturer: { "@type": "Organization", name: product.brand.name } } : {}),
     /*
-     * No offer on hardware, deliberately.
+     * An offer wherever there is a price, and `isQuoteOnly` is the one question
+     * asked.
      *
-     * Hardware is quoted, never listed at a price, so there is no figure to
-     * put in an offer — and a price-bearing structured-data block is exactly
-     * the thing a search engine surfaces as a number beside the result. The
-     * `lowestPrice` test below would already fall through, since these rows
-     * carry no price; naming the case keeps somebody from "fixing" that later
-     * by defaulting it to zero, which reads as free.
+     * This used to exclude hardware by name, on the reasoning that hardware is
+     * quoted and never listed at a price. That stopped being true when the
+     * business asked for a price on every listing: the exclusion would have
+     * left a hardware page showing a figure to a shopper and none to a search
+     * engine, which is the surfaces disagreeing with each other — the thing
+     * the rest of this block exists to prevent.
+     *
+     * `lowestPrice` and `isQuoteOnly` together already say everything the
+     * excluded term said: no price, no offer. Nothing here may default a
+     * missing price to zero, which reads as free.
      */
     /*
      * The offer matches what the page itself shows: a price on a software
@@ -287,7 +308,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
      * the same `isQuoteOnly` question as the visible price rather than a
      * separate rule that could quietly disagree with it.
      */
-    ...(lowestPrice && !hardware && !isQuoteOnly(product)
+    ...(lowestPrice && !isQuoteOnly(product)
       ? {
           offers: {
             "@type": "AggregateOffer",
@@ -421,7 +442,29 @@ export default async function ProductDetailPage({ params }: PageProps) {
             {product.featured ? <Badge tone="brand">Featured</Badge> : null}
           </div>
 
-          <h1 className="mt-3 text-3xl leading-tight sm:text-[2.35rem]">{product.name}</h1>
+          {/*
+            The application mark beside the name, for a licence.
+            
+            Hardware has a photograph further down the page; software had
+            nothing at all, so a product page opened with a line of text where
+            the publisher's own catalogue opens with a recognisable icon. It is
+            decorative here in the strict sense — the name is right beside it
+            and says the same thing — so it carries an empty alt and is not
+            announced twice.
+          */}
+          <div className="mt-3 flex items-start gap-3">
+            {!hardware && product.imageUrl ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={product.imageUrl}
+                alt=""
+                className="mt-1.5 h-8 w-8 shrink-0 rounded-md object-contain sm:mt-2"
+                loading="eager"
+                decoding="async"
+              />
+            ) : null}
+            <h1 className="text-3xl leading-tight sm:text-[2.35rem]">{product.name}</h1>
+          </div>
 
           {hardware ? (
             <p className="mt-2 text-lead font-medium text-ink-600">
@@ -666,6 +709,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
                * manufacturer's identifier. The panel omits the row instead.
                */
               partNumber={product.partNumber ?? defaultVariant?.partNumber ?? null}
+              /*
+               * The lowest recorded configuration price, or null. `lowestPrice`
+               * is already computed above for the structured data, so the panel
+               * and the markup cannot show different figures.
+               */
+              fromPriceMinor={isQuoteOnly(product) ? null : (lowestPrice ?? null)}
               productName={product.name}
               productSlug={product.slug}
               brandName={product.brand.name}

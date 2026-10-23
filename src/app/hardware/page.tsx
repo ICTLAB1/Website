@@ -6,6 +6,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { CatalogueListing } from "@/components/catalogue/catalogue-listing";
 import { getHardwareBrands, getHardwareFormFactors } from "@/lib/queries/hardware";
 import { FAMILY_LANDINGS, familyLandingKey } from "@/lib/catalogue/families";
+import { TENTATIVE_PRICE_NOTE } from "@/lib/catalogue/quote-only";
 import { parseCatalogueParams, type RawSearchParams } from "@/lib/catalogue-params";
 import { buildMetadata } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
@@ -122,8 +123,15 @@ export default async function HardwarePage({ searchParams }: PageProps) {
           otherwise read their absence as a page that failed to load.
         */}
         <p className="mt-3 text-meta leading-relaxed text-ink-500">
-          Hardware is not listed at a price. Configuration, quantity and delivery schedule all
-          move the figure, so every model here is quoted rather than priced.
+          {/*
+            This said hardware is never listed at a price, which stopped being
+            true when the business asked for a price on every listing. It now
+            qualifies whatever is shown and says where a better figure comes
+            from, in the same words as every other priced surface — with the
+            configuration clause that is true here and nowhere else.
+          */}
+          {TENTATIVE_PRICE_NOTE} Configuration, quantity and delivery schedule all move a
+          hardware figure, so a model with no price shown is quoted against your build.
         </p>
       </header>
 

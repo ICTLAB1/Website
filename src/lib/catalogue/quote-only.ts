@@ -1,26 +1,38 @@
-import type { FormFactor, PurchaseMode } from "@prisma/client";
-
-import { isHardware } from "@/lib/catalogue/hardware";
 
 /**
  * Whether a product is quoted rather than priced on the public site.
  *
- * ## The rule today: hardware only, plus the per-row exceptions
+ * ## The rule today: a price if there is one, for everything
  *
- * `CATALOGUE_IS_QUOTE_ONLY` is off. Software licences show an indicative price
- * — on a card, on the product page, in the structured data — with a
- * disclaimer that the figure is subject to confirmation, alongside GST and
- * the term it applies to. A written quotation still fixes the number: nothing
- * here makes a price binding, and nothing here re-enables a card checkout —
- * see `DIRECT_PURCHASE_ENABLED` below, which is the separate decision that
- * controls that.
+ * `CATALOGUE_IS_QUOTE_ONLY` is off, and every product — software or hardware —
+ * shows an indicative price wherever one is recorded: on a card, on the
+ * product page, in the structured data, with a disclaimer that the figure is
+ * subject to confirmation, alongside GST and the term it applies to. A written
+ * quotation still fixes the number: nothing here makes a price binding, and
+ * nothing here re-enables a card checkout — see `DIRECT_PURCHASE_ENABLED`
+ * below, which is the separate decision that controls that.
  *
- * Hardware stays quote-only regardless of this constant. That was true when
- * the whole catalogue went quote-only and it did not change back with this
- * flag: HP, Dell and HPE configurations are priced against a specification a
- * buyer chooses, not a catalogue figure, and it has been a standing rule of
- * this business from before any of this file existed that no hardware price
- * is shown in public. `isHardware(product)` below is unconditional.
+ * ## Hardware used to be excluded, and no longer is
+ *
+ * It was quote-only regardless of this constant, on the reasoning that HP,
+ * Dell and HPE configurations are priced against a specification a buyer
+ * chooses rather than from a catalogue figure — a standing rule of this
+ * business from before this file existed. The business has since asked for a
+ * price on every listing, and that instruction cannot be met by a rule that
+ * hides prices which exist.
+ *
+ * Two things follow, and both are worth knowing rather than discovering.
+ *
+ * The reasoning behind the old rule has not stopped being true: a hardware
+ * price is only meaningful against a configuration. What answers it now is the
+ * disclaimer every price carries, the same one the software prices rely on —
+ * not the absence of the figure.
+ *
+ * And the rule was a guard as well as a policy. It meant a mis-imported record
+ * or a supplier cost typed into the admin panel could not reach a public card.
+ * That protection is gone by instruction. What remains is that the figure has
+ * to be written to a price field rather than a cost field, and that no price
+ * on this site is presented as an offer capable of acceptance.
  *
  * This was on once before — briefly, catalogue-wide — on the reasoning that
  * licensing prices move with programme, term, quantity and the customer's own
@@ -35,9 +47,9 @@ import { isHardware } from "@/lib/catalogue/hardware";
  *
  * ## Why a constant rather than deleting the code
  *
- * The per-row conditions underneath governed before the catalogue went
- * quote-only and they govern again now that it has come back off — hardware,
- * an enquiry-only purchase mode, a row with no usable price. Keeping them as
+ * The condition underneath governed before the catalogue went quote-only and
+ * governs again now that it has come back off — a row with no usable price.
+ * Keeping it as
  * a function this flag sits in front of, rather than inlining a price check
  * everywhere, is what let this reverse in one place instead of a search for
  * every surface that had learned to hide a price.
@@ -55,9 +67,9 @@ import { isHardware } from "@/lib/catalogue/hardware";
 /**
  * The switch. `true` means the catalogue quotes rather than prices.
  *
- * `false` restores the per-row behaviour below: hardware and enquiry-only
- * rows stay quote-only, everything else shows its price. Flipping this alone
- * does not restore direct card purchase — see `DIRECT_PURCHASE_ENABLED`.
+ * `false` restores the behaviour below: a product shows its price if it has
+ * one, and the quote label if it does not. Flipping this alone does not
+ * restore direct card purchase — see `DIRECT_PURCHASE_ENABLED`.
  */
 export const CATALOGUE_IS_QUOTE_ONLY = false;
 
@@ -91,17 +103,50 @@ export const QUOTE_ONLY_LABEL = "Price on enquiry";
  *
  * One sentence, reused everywhere a price is shown, so the wording cannot
  * drift between a card and a product page the way two hand-written captions
- * would. It says two things and only two: the number can still move, and a
- * written quotation is what fixes it — which is also what `/terms` says about
- * catalogue prices, so this is consistent with the contract rather than a
+ * would. It says three things: the number can still move, a written quotation
+ * is what fixes it, and the way to get one — which is also what `/terms` says
+ * about catalogue prices, so it is consistent with the contract rather than a
  * separate claim beside it.
+ *
+ * ## It was not actually being used
+ *
+ * Until now this constant appeared in exactly one place in the codebase: a
+ * comment in `variant-selector.tsx` explaining that the panel writes its own
+ * wording rather than reading this. Every priced surface had its own sentence,
+ * which is the condition this file exists to prevent, and the reason the
+ * invitation to ask for a better price was on none of them.
+ *
+ * ## The invitation is the point of it
+ *
+ * A figure with "subject to confirmation" under it tells a buyer the number
+ * might change and gives them nothing to do about it. The business prices
+ * against quantity, licensing programme and commitment term, and the published
+ * figure is the one before any of that is taken into account — so the sentence
+ * now says where a better one comes from. That is a true statement about how
+ * this business quotes, not a promise of a particular discount: the quotation
+ * fixes the number and nothing here does.
  */
 export const TENTATIVE_PRICE_NOTE =
-  "Tentative price, subject to confirmation. Final pricing is fixed on a written quotation before any order is placed.";
+  "Indicative price, excluding GST. Final pricing is confirmed on a written quotation, which takes account of your quantity, licensing programme and commitment term. For a discounted quotation, contact our sales team or raise an enquiry and we will get in touch with you.";
 
+/**
+ * The same offer where there is no room for the sentence.
+ *
+ * A catalogue card sits in a grid of twenty-four and already carries the
+ * figure, the GST position and the unit. The full note below a card is three
+ * lines of small print repeated twenty-four times, which is how a disclaimer
+ * stops being read. This says the one thing a buyer can act on, and the
+ * product page behind the card carries the rest.
+ */
+export const TENTATIVE_PRICE_SHORT = "Better pricing on enquiry";
+
+/*
+ * Only the variants now. `formFactor` and `purchaseMode` were read when the
+ * decision turned on what kind of product this was; they are kept as optional
+ * and ignored so that callers passing a wider product object — there are
+ * several, each with a different select — do not all have to change.
+ */
 type PriceableProduct = {
-  formFactor?: FormFactor | null;
-  purchaseMode?: PurchaseMode;
   variants?: Array<{ listPriceMinor: number; salePriceMinor: number | null }>;
 };
 
@@ -114,14 +159,51 @@ type PriceableProduct = {
 export function isQuoteOnly(product: PriceableProduct): boolean {
   if (CATALOGUE_IS_QUOTE_ONLY) return true;
 
-  // Hardware is quote-only as a requirement of the business rather than as a
-  // property of a row: one mis-imported record, or one price typed into the
-  // admin panel to note a cost, and a general price test would put a figure on
-  // a public card.
-  if (isHardware(product)) return true;
-  if (product.purchaseMode === "ENQUIRY") return true;
+  /*
+   * One question now: is there a price to show?
+   *
+   * This used to ask three, and two of them were about what kind of product it
+   * was rather than what was known about it. Hardware was quote-only
+   * unconditionally, and so was any row whose `purchaseMode` was ENQUIRY — so
+   * a product with a perfectly good list price in the database showed "Price
+   * on enquiry" because of its classification. Four did exactly that: both
+   * Windows Server 2025 editions and both SQL Server 2022 editions carried
+   * prices nobody could see.
+   *
+   * The business asked for a price on every listing. That cannot be answered
+   * by a rule that hides prices which exist, so the classification rules are
+   * gone and the only test left is the honest one. The practical effect is
+   * that a figure entered in the admin panel appears on the site, for any
+   * product, with no code change — which is what "every listing has a price"
+   * needs, because 48 of the 88 active products have no price anywhere in the
+   * database today and no rule here can conjure one.
+   *
+   * ## What was given up, stated plainly
+   *
+   * The hardware rule was a guard as well as a policy: it meant that one
+   * mis-imported record, or one figure typed into the admin panel to note a
+   * supplier cost, could not put a price on a public card. That protection is
+   * gone, deliberately and on instruction. Two things still stand between a
+   * stray figure and a customer — it has to be written to `listPriceMinor` or
+   * `salePriceMinor`, which are the price fields and not a cost field, and
+   * every price on the site carries `TENTATIVE_PRICE_NOTE` saying the figure
+   * is confirmed on a written quotation before any order is placed.
+   *
+   * A hardware product with no price still shows the quote label, because the
+   * alternative is a card with a blank where a price goes, which reads as a
+   * page that failed to load.
+   */
+  const prices = (product.variants ?? []).map(
+    (variant) => variant.salePriceMinor ?? variant.listPriceMinor,
+  );
 
-  const variant = product.variants?.[0];
-  if (!variant) return true;
-  return (variant.salePriceMinor ?? variant.listPriceMinor) <= 0;
+  /*
+   * Any variant, not the first one. `variants[0]` was the old test, and it
+   * would hide a whole product's pricing because one configuration happened
+   * to be sorted first and happened to be unpriced. No product in the
+   * catalogue is in that state today — it was checked — but the old rule made
+   * it harmless and this one makes it matter, so it is answered here rather
+   * than left to be discovered.
+   */
+  return !prices.some((price) => price > 0);
 }

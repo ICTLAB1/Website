@@ -43,6 +43,7 @@ const SHAPES: Record<BlockType, string> = {
   ICON_POINTS: `{ "eyebrow"?, "heading"?, "items": [{ "label", "detail"? }] }`,
   LINK_LIST: `{ "eyebrow"?, "heading"?, "description"?, "layout"?: "cards" | "chips" | "inline", "itemAction"?, "items": [{ "label", "href", "description"? }] }`,
   KEY_VALUE_LIST: `{ "eyebrow"?, "heading"?, "items": [{ "key", "value" }] }`,
+  COMPARISON_TABLE: `{ "heading"?, "description"?, "source"?, "columns": ["Plan A", "Plan B"], "groups": [{ "heading", "rows": [{ "label", "cells": ["yes" | "addon" | "no" | { "note" }] }] }] }`,
   CHIP_LIST: `{ "eyebrow"?, "heading"?, "description"?, "items": ["…"], "footnote"? }`,
   SPLIT_PANEL: `{ "eyebrow"?, "heading", "description"?, "bulletsIntro"?, "bullets"?: ["…"], "tiles"?: ["…"], "logo"?: { "src": "/marks/…", "alt" } }`,
   STAT_BAR: `{ "eyebrow"?, "heading"?, "items": [{ "label", "source": "literal" | "productCount" | "skuCount" | "brandCount" | "categoryCount", "value"? }] }`,

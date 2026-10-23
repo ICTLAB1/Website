@@ -10,6 +10,13 @@ import { AccreditationMark } from "@/components/marketing/accreditation-mark";
 import { BlockHeading, BlockLink, BlockSection } from "@/components/blocks/primitives";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ResolvedBlockData } from "@/lib/blocks/resolve";
+import {
+  isQuoteOnly,
+  QUOTE_ONLY_LABEL,
+  TENTATIVE_PRICE_NOTE,
+} from "@/lib/catalogue/quote-only";
+import { effectivePriceMinor, formatMoney } from "@/lib/money";
+import type { ProductListItem } from "@/lib/queries/catalogue";
 import { getSiteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
@@ -651,14 +658,98 @@ export async function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }
   );
 }
 
-export function PlansBlock({ data, tone }: { data: BlockData<"PLANS">; tone?: "plain" | "muted" }) {
+/**
+ * A plan comparison that publishes what each plan costs.
+ *
+ * ## It used to publish nothing of the kind
+ *
+ * The block took a `productSlug` and used it for one thing: a link labelled
+ * "View pricing". A page built on it could be headed "The plans, and what they
+ * cost", note "per user, excluding GST at 18%", and carry no figure anywhere —
+ * which is what the three brand quote pages were about to ship as, having been
+ * written on the understanding that this block rendered the catalogue price.
+ * It did not. Now it does.
+ *
+ * ## The figure comes from the catalogue, never from the page
+ *
+ * `products` is resolved from the `productSlug`s by `plansFor`, so the number
+ * shown is the row the quotation engine charges from. There is no price field
+ * in the block's stored payload and no way to put one there: a figure typed
+ * into content is correct the day it is written and wrong the first time a
+ * publisher moves a list, and two copies of a price is how a page and an
+ * invoice come to disagree.
+ *
+ * ## Why the variant's own name is printed beside the money
+ *
+ * Because without it the comparison lies, and this catalogue proves it.
+ * Acrobat Standard for Teams is ₹16,320 — an annual commitment billed yearly.
+ * Acrobat Pro for Teams is ₹1,850 — an annual commitment billed *monthly*. A
+ * bare "from" price puts them side by side with Pro looking nine times cheaper
+ * than Standard, on a page whose whole purpose is to be a credible number for
+ * somebody arriving from a priced advertisement.
+ *
+ * So each card states the amount, what it is per, and which commitment it is
+ * the price of, in the variant's own recorded words. Nothing is normalised
+ * into a monthly equivalent: dividing an annual figure by twelve produces a
+ * number that is on no price list and in no quotation.
+ *
+ * A plan whose product carries no price shows the quote label instead, through
+ * the same `isQuoteOnly` every other surface asks.
+ */
+export function PlansBlock({
+  data,
+  products,
+  tone,
+}: {
+  data: BlockData<"PLANS">;
+  /** The catalogue rows for the named slugs, in the order the block names them. */
+  products: ProductListItem[];
+  tone?: "plain" | "muted";
+}) {
+  const bySlug = new Map(products.map((product) => [product.slug, product]));
+
   return (
     <BlockSection tone={tone}>
       <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
       <Reveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {data.items.map((plan, index) => (
+        {data.items.map((plan, index) => {
+          const product = plan.productSlug ? bySlug.get(plan.productSlug) : undefined;
+
+          /*
+           * The variant the product page leads with, which is `isDefault`
+           * first and then cheapest — the ordering `productListSelect`
+           * already applies. Reading the same one means the card and the
+           * page a reader clicks through to cannot show different figures.
+           */
+          const variant = product?.variants.find(
+            (candidate) => (candidate.salePriceMinor ?? candidate.listPriceMinor) > 0,
+          );
+          const priced = product && variant && !isQuoteOnly(product);
+          const amount = variant
+            ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor)
+            : 0;
+
+          return (
           <div key={index} className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5">
             <h3 className="text-body font-semibold text-graphite-900">{plan.name}</h3>
+
+            {product ? (
+              <div className="mt-3">
+                {priced ? (
+                  <>
+                    <p className="text-[1.5rem] font-semibold leading-none text-graphite-900">
+                      {formatMoney(amount, variant.currency)}
+                    </p>
+                    <p className="mt-1.5 text-label leading-snug text-ink-500">
+                      {variant.seats > 1 ? `${variant.seats} seats` : "per user"} · {variant.name}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-meta font-medium text-ink-600">{QUOTE_ONLY_LABEL}</p>
+                )}
+              </div>
+            ) : null}
+
             <p className="mt-2 text-meta leading-relaxed text-ink-600">{plan.summary}</p>
             {plan.points.length > 0 ? (
               <ul className="mt-4 space-y-1.5">
@@ -675,12 +766,31 @@ export function PlansBlock({ data, tone }: { data: BlockData<"PLANS">; tone?: "p
                 href={`/products/${plan.productSlug}`}
                 className="underline-grow mt-auto pt-4 text-meta font-medium text-accent-700"
               >
-                View pricing
+                {/* The figure is on this card now, so the link offers the detail
+                    behind it rather than promising the price itself. */}
+                {priced ? "All terms and options" : "View pricing"}
               </BlockLink>
             ) : null}
           </div>
-        ))}
+          );
+        })}
       </Reveal>
+
+      {/*
+        Once below the grid, not on each card. These pages are where paid
+        traffic lands, so the figure above has to be a credible number and the
+        reader has to be told what to do about it — but four repetitions of the
+        same three lines under four cards is small print nobody finishes.
+
+        Rendered only where a price is actually shown. A block whose products
+        are all quoted has no figure to qualify, and a note about pricing under
+        a grid that states none reads as a page whose prices failed to load.
+      */}
+      {products.some((product) => !isQuoteOnly(product)) ? (
+        <p className="mt-6 max-w-3xl text-label leading-relaxed text-ink-500">
+          {TENTATIVE_PRICE_NOTE}
+        </p>
+      ) : null}
     </BlockSection>
   );
 }
@@ -812,6 +922,160 @@ export function NoticeBlock({ data, tone }: { data: BlockData<"NOTICE">; tone?: 
           <Markdown body={data.markdown} className="prose-content text-meta leading-relaxed" />
         </div>
       </div>
+    </BlockSection>
+  );
+}
+
+/**
+ * A feature comparison: capabilities down the side, plans across the top.
+ *
+ * ## Why the cells are three states and not free text
+ *
+ * Every mark in this table is a claim that a plan does or does not include
+ * something, read by somebody deciding what to buy. Free text is how one of
+ * those claims gets written that nobody can check against a source, so the
+ * schema allows "included", "add-on", "absent" and a short note — and a note
+ * is for the qualifications a publisher's own chart gives ("Plan 2", "Web
+ * only"), never for turning an absence into a sentence.
+ *
+ * ## The absent case is marked, not left blank
+ *
+ * An empty cell is ambiguous: it reads as "not included" to one person and
+ * "not stated" to another, and in a table with a hundred cells it reads as a
+ * rendering fault to a third. A dash says it, and the screen-reader text says
+ * it in words — because a blank cell announces nothing at all, and a row of
+ * silence is the one thing a screen reader cannot distinguish from a broken
+ * table.
+ *
+ * ## Scrolling
+ *
+ * The table scrolls sideways inside its own container rather than widening the
+ * page. The feature column is sticky, because a comparison whose row labels
+ * scroll off is a grid of marks attached to nothing — which is how these
+ * tables fail on a phone, and most of this site's traffic is on one.
+ */
+export function ComparisonTableBlock({
+  data,
+  tone,
+}: {
+  data: BlockData<"COMPARISON_TABLE">;
+  tone?: "plain" | "muted";
+}) {
+  const cell = (value: BlockData<"COMPARISON_TABLE">["groups"][number]["rows"][number]["cells"][number]) => {
+    if (typeof value === "object") {
+      return <span className="text-label text-ink-600">{value.note}</span>;
+    }
+    if (value === "yes") {
+      return (
+        <>
+          <span aria-hidden="true" className="text-[1.05rem] font-semibold text-accent-700">
+            ✓
+          </span>
+          <span className="sr-only">Included</span>
+        </>
+      );
+    }
+    if (value === "addon") {
+      return (
+        <>
+          <span aria-hidden="true" className="text-label font-medium text-ink-600">
+            Add-on
+          </span>
+          <span className="sr-only">Available as an add-on</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <span aria-hidden="true" className="text-ink-400">
+          —
+        </span>
+        <span className="sr-only">Not included</span>
+      </>
+    );
+  };
+
+  return (
+    <BlockSection tone={tone}>
+      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
+
+      {/*
+        `tabIndex` and a role, because the container scrolls.
+        
+        A div with `overflow-x: auto` can be dragged with a mouse or a finger
+        and reached by nothing else: a keyboard user tabs past it and never
+        sees the columns off the right edge. axe calls this
+        `scrollable-region-focusable` and it is a serious failure, which is how
+        it was found — the table is the most complex block on the site and was
+        the one block type no audited page rendered until this one was added to
+        the list.
+
+        The label names the table rather than saying "scrollable region", so a
+        screen reader announces what the thing is and not how it behaves.
+      */}
+      <div
+        className="scroll-x -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0"
+        tabIndex={0}
+        role="region"
+        aria-label={data.heading ?? "Plan comparison"}
+      >
+        <table className="w-full min-w-[34rem] border-collapse text-left">
+          <thead>
+            <tr className="border-b border-line">
+              <th scope="col" className="sticky left-0 z-10 bg-white py-3 pr-4 text-label font-semibold uppercase tracking-wide text-ink-500">
+                Feature
+              </th>
+              {data.columns.map((column) => (
+                <th
+                  key={column}
+                  scope="col"
+                  className="px-3 py-3 text-center text-meta font-semibold text-graphite-900"
+                >
+                  {column}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          {data.groups.map((group) => (
+            <tbody key={group.heading}>
+              <tr className="bg-surface-muted">
+                {/*
+                  A group heading spans the table rather than sitting in the
+                  first column, so the plan columns underneath keep their
+                  alignment and a reader does not have to work out whether the
+                  heading is itself a feature.
+                */}
+                <th
+                  scope="colgroup"
+                  colSpan={data.columns.length + 1}
+                  className="py-2.5 pl-0 pr-4 text-label font-semibold uppercase tracking-wide text-graphite-900"
+                >
+                  {group.heading}
+                </th>
+              </tr>
+              {group.rows.map((row) => (
+                <tr key={row.label} className="border-b border-line/70">
+                  <th
+                    scope="row"
+                    className="sticky left-0 z-10 bg-white py-3 pr-4 text-meta font-normal leading-snug text-ink-700"
+                  >
+                    {row.label}
+                  </th>
+                  {row.cells.map((value, index) => (
+                    <td key={index} className="px-3 py-3 text-center align-middle">
+                      {cell(value)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          ))}
+        </table>
+      </div>
+
+      {data.source ? (
+        <p className="mt-4 text-label leading-relaxed text-ink-500">{data.source}</p>
+      ) : null}
     </BlockSection>
   );
 }

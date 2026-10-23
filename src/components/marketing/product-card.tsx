@@ -7,7 +7,11 @@ import { showPrice, statesTaxSeparately, type PriceDisplay } from "@/lib/price-d
 import { getDisplayCurrency } from "@/lib/display-currency";
 import { humanise } from "@/lib/utils";
 import { hardwareClassLabel, isHardware } from "@/lib/catalogue/hardware";
-import { DIRECT_PURCHASE_ENABLED, isQuoteOnly } from "@/lib/catalogue/quote-only";
+import {
+  DIRECT_PURCHASE_ENABLED,
+  isQuoteOnly,
+  TENTATIVE_PRICE_SHORT,
+} from "@/lib/catalogue/quote-only";
 import { ProductPhoto } from "@/components/catalogue/product-photo";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 import { ratingsForProducts } from "@/lib/queries/reviews";
@@ -40,6 +44,8 @@ export function ProductCard({
   rating?: Aggregate | null;
 }) {
   const variant = product.variants[0];
+  /* The product's number, or this build's, or none. Never the SKU — see below. */
+  const partNumber = product.partNumber ?? variant?.partNumber ?? null;
   const price = variant ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) : 0;
   const saving = variant ? discountPercent(variant.listPriceMinor, variant.salePriceMinor) : null;
   const hardware = isHardware(product);
@@ -102,7 +108,36 @@ export function ProductCard({
           {!quoteOnly && saving ? <Badge tone="success">{saving}% off</Badge> : null}
         </div>
 
-        <h3 className="mt-2 text-body font-semibold leading-snug text-graphite-900">
+        <h3 className="mt-2 flex items-start gap-2 text-body font-semibold leading-snug text-graphite-900">
+          {/*
+            The application icon, beside the name rather than above the card.
+            
+            A licence had no image at all before this: the photo frame above is
+            drawn for hardware only, and the representative-illustration system
+            answers by form factor, which a licence does not have. So an Adobe
+            card sat in a grid beside hardware carrying photographs with nothing
+            but a title.
+
+            Beside the name and small, for two reasons. The frame above is a
+            product photograph and these are 18-pixel marks — put one in there
+            and it is either lost in white space or enlarged into a blur. And it
+            is where the publisher's own catalogue puts it, which is where a
+            buyer who has seen that catalogue will look.
+
+            `alt=""` because the name is the next thing in the same heading: a
+            screen reader announcing "Photoshop, Adobe Photoshop for Teams"
+            reads the mark twice and tells nobody anything.
+          */}
+          {!hardware && product.imageUrl ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={product.imageUrl}
+              alt=""
+              className="mt-0.5 h-5 w-5 shrink-0 rounded-[4px] object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : null}
           <Link href={`/products/${product.slug}`} className="hover:text-accent-700">
             {/* Stretching the link would swallow the buttons below, so the
                 anchor stays on the title only. */}
@@ -134,7 +169,22 @@ export function ProductCard({
               <dt className="w-20 shrink-0 text-ink-500">Type</dt>
               <dd className="text-ink-600">{hardwareClassLabel(product.formFactor!)}</dd>
             </div>
-            {variant ? (
+            {/*
+              The manufacturer's number, or no row at all — never the SKU.
+              
+              This printed `variant.sku`, which is this site's internal key and
+              for a build is a generated string: every HPE and Dell card read
+              "Part no. hpe-proliant-dl380-gen11-c1". Under that heading it is
+              the site inventing a manufacturer's identifier, and a buyer who
+              searches for it finds nothing or, worse, somebody else's product.
+
+              `HardwareQuotePanel` already states this rule and omits the row;
+              the card was the surface that had not been told. Most records
+              carry no part number today, so the row disappears from most
+              cards — which is the correct outcome, because an omitted field is
+              honest and a wrong identifier is not.
+            */}
+            {partNumber ? (
               <div className="flex gap-2">
                 <dt className="w-20 shrink-0 text-ink-500">Part no.</dt>
                 {/*
@@ -144,7 +194,7 @@ export function ProductCard({
                   however much overflow is hidden. Two pixels of sideways scroll
                   on a phone, from one card in a grid of six.
                 */}
-                <dd className="min-w-0 truncate font-mono text-ink-600">{variant.sku}</dd>
+                <dd className="min-w-0 truncate font-mono text-ink-600">{partNumber}</dd>
               </div>
             ) : null}
           </dl>
@@ -203,6 +253,17 @@ export function ProductCard({
                 Tentative price
                 {statesTaxSeparately(display) ? `, excl. GST (${variant!.gstRatePercent}%)` : ""}{" "}
                 &middot; {variant!.seats > 1 ? `${variant!.seats} seats` : "per seat"}
+                {/*
+                  The short form of the shared note. A card in a grid of
+                  twenty-four has no room for the full sentence, and the full
+                  sentence repeated twenty-four times is how small print stops
+                  being read — but the one thing a buyer can act on belongs
+                  here, because this card also appears on the home page, on
+                  brand pages and on service pages, where nothing around it
+                  invites them to ask.
+                */}
+                {" · "}
+                {TENTATIVE_PRICE_SHORT}
                 {canBuyDirect ? (
                   <>
                     {" · "}
