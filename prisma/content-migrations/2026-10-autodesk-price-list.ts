@@ -1,12 +1,17 @@
+import { MARGIN_PERCENT, sellingPriceMinor } from "./margin";
 import type { ContentMigration } from "./types";
 
 /**
  * The Autodesk catalogue, priced from the supplied list.
  *
  * Same instruction as `2026-10-adobe-price-list`: publish the products, annual
- * prices only, undiscounted figures. The margin is not added here — the
- * business named AutoCAD's price directly, at ₹1,33,340 a year including GST,
- * which is the Autodesk list exactly and leaves no room for one.
+ * prices only, undiscounted figures, plus the margin in `margin.ts`.
+ *
+ * The business named AutoCAD's price directly — ₹1,33,340 a year including GST
+ * — and that figure turns out to be the Autodesk list exactly rather than a
+ * price with anything added, which is how the margin's base was established
+ * here. The margin then goes on top of it, which the business confirmed
+ * against AutoCAD's own resulting figure.
  *
  * ## The figures include GST, and that was established rather than assumed
  *
@@ -56,8 +61,10 @@ type Entry = {
   slug: string;
   name: string;
   /**
-   * The undiscounted annual price per seat, in rupees, EXCLUDING GST —
-   * already converted from the tax-inclusive figure the list shows.
+   * Autodesk's own undiscounted annual price per seat, in rupees, EXCLUDING
+   * GST — already converted from the tax-inclusive figure the list shows. The
+   * margin is added to it in the code, so this column stays comparable with
+   * the source and can be checked against it line by line.
    * Null where Autodesk publishes no price.
    */
   exGstRupees: number | null;
@@ -149,8 +156,7 @@ const ENTRIES: Entry[] = [
     shortDescription: "Prepay with tokens for flexible access to 100+ Autodesk products, for project-based work and product exploration." },
 ];
 
-const PROVENANCE =
-  "Autodesk India price list supplied by the business, 23 October 2026 — annual, per seat, undiscounted. Converted from the tax-inclusive figure the list shows by dividing by 1.18.";
+const PROVENANCE = `Autodesk India price list supplied by the business, 23 October 2026 — annual, per seat, undiscounted. Converted from the tax-inclusive figure the list shows by dividing by 1.18, plus the ${MARGIN_PERCENT}% margin.`;
 
 export const autodeskPriceList: ContentMigration = {
   id: "2026-10-autodesk-price-list",
@@ -219,7 +225,7 @@ export const autodeskPriceList: ContentMigration = {
        * priced at zero, which is what `adobe-creative-cloud-enterprise`
        * carries and what `isQuoteOnly` already answers correctly.
        */
-      const listPriceMinor = entry.exGstRupees === null ? 0 : entry.exGstRupees * 100;
+      const listPriceMinor = entry.exGstRupees === null ? 0 : sellingPriceMinor(entry.exGstRupees);
       if (entry.exGstRupees === null) unpriced += 1;
 
       const variant = await prisma.productVariant.findUnique({

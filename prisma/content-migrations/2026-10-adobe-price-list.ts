@@ -1,3 +1,4 @@
+import { MARGIN_PERCENT, sellingPriceMinor } from "./margin";
 import type { ContentMigration } from "./types";
 
 /**
@@ -8,6 +9,9 @@ import type { ContentMigration } from "./types";
  * show annual prices only, and sell at the Adobe price plus ₹5,000 per user.
  * Creative Cloud All Apps was given its own figure, ₹1,07,000, rather than
  * derived.
+ *
+ * The margin is {@link MARGIN_PERCENT}%, shared with the other two price
+ * lists rather than copied into each.
  *
  * ## This writes business records, which migrations usually do not
  *
@@ -49,8 +53,12 @@ import type { ContentMigration } from "./types";
  * tentative and fixed on a written quotation.
  */
 
-/** Added to every supplied Adobe figure, in paise. ₹5,000 per user per year. */
-const MARGIN_MINOR = 500_000;
+/*
+ * The margin is `MARGIN_PERCENT`, shared with the Autodesk and Microsoft
+ * lists. It was a flat ₹5,000 per user when only this list existed; the
+ * business replaced it with a percentage once the same question was asked of
+ * three publishers at once. See `margin.ts`.
+ */
 
 type Entry = {
   slug: string;
@@ -398,8 +406,7 @@ const ENTRIES: Entry[] = [
 ];
 
 /** Where each figure came from, written into the price history. */
-const PROVENANCE =
-  "Adobe reseller price list supplied by the business, 23 October 2026 — annual, per licence, excluding GST, plus ₹5,000 per user.";
+const PROVENANCE = `Adobe reseller price list supplied by the business, 23 October 2026 — annual, per licence, excluding GST, plus the ${MARGIN_PERCENT}% margin.`;
 
 export const adobePriceList: ContentMigration = {
   id: "2026-10-adobe-price-list",
@@ -429,10 +436,17 @@ export const adobePriceList: ContentMigration = {
         continue;
       }
 
+      /*
+       * A figure the business named directly is the price; a figure read off
+       * the publisher's list is a cost the margin goes on top of. Creative
+       * Cloud All Apps is the only one of the first kind here — ₹1,07,000 is
+       * not Adobe's list for it (that is ₹74,400) but a price already chosen,
+       * so adding to it would be charging the margin twice.
+       */
       const listPriceMinor =
         entry.listRupees !== undefined
           ? entry.listRupees * 100
-          : entry.adobeRupees * 100 + MARGIN_MINOR;
+          : sellingPriceMinor(entry.adobeRupees);
 
       const existing = await prisma.product.findUnique({
         where: { slug: entry.slug },
