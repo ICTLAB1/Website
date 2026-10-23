@@ -587,6 +587,92 @@ from the database rather than written down.
 Rebuilding it would be change for its own sake, which the brief warns against
 twice.
 
+### A12 — A validation library was writing to customers
+
+**Status: Fixed.**
+
+Found by submitting the contact form empty and reading the page, which is the
+only way this one surfaces — the schema looks fine:
+
+```
+Business email    String must contain at least 3 character(s)
+```
+
+It names a programming type, counts characters instead of saying what to do,
+and sits beside messages written for a person — "Enter your full name.", "Tell
+us a little more (at least 10 characters)." The email validator was the only
+one on that form with no message, so Zod supplied its own.
+
+It was not one field. Every `.max()` in the shared schemas was messageless, so
+pasting an over-long value into any field on the site produced the same
+sentence, and every `z.enum()` produced worse:
+
+```
+Invalid enum value. Expected 'SALES' | 'ENTERPRISE' | 'SUPPORT' | 'GENERAL',
+received ''
+```
+
+which also publishes the internal identifiers of every option.
+
+Fixed in two places, because one of them is a floor and the other is the point.
+`lib/zod-messages.ts` installs a global error map, so a validator with no
+message still produces a sentence written for a person — thirty-seven files
+define schemas, and adding a message to each validator fixes today and nothing
+about the next schema somebody writes. The shared helpers then carry explicit
+messages where the generic cannot be specific: `trimmed()` messages its own
+maximum, and the email, SKU and country minimums say what they mean rather than
+quoting a threshold.
+
+`tests/validation-messages.test.ts` submits what a browser submits — every
+field present, empty or malformed, never a missing key — to all eighteen shared
+schemas and fails on anything that reads like a library default. Removing the
+error map fails it on eight of them.
+
+Confirmed on the rendered page, not from the test: empty email now reads "Enter
+your email address.", an over-long one "Use 254 characters or fewer.", a bad
+topic "Choose one of the options."
+
+## Catalogue record audit — complete
+
+**Status: Structurally clean. Four data gaps, all needing the business.**
+
+The implementation plan put this first among the repairs, and it is now done
+across all 88 active products and their 268 variants.
+
+Clean, and each checked rather than assumed:
+
+| Checked | Result |
+| --- | --- |
+| SKUs used by more than one product | 0 |
+| Normalised product-name collisions | 0 — the two duplicate servers were the only pair |
+| Variant names disagreeing with `termMonths` | 0 |
+| Variants not at 18% GST | 0 |
+| Products with no short description | 0 |
+| Products with no variants | 0 |
+| Hardware builds with no `formFactor`, so `/hardware` cannot find them | 0 |
+| Products hiding a price because their *first* variant is unpriced | 0 |
+
+The last two were suspicions, and both were wrong. Twelve unpriced variants sit
+on products `isHardware()` calls software — four of them storage, networking and
+a workstation — but they carry no build on any variant and `isQuoteOnly()`
+catches every one of them on its final guard, so no page shows a broken price.
+
+The remaining gaps are data, not defects, and none can be filled from here:
+
+| | Gap | Needs |
+| --- | --- | --- |
+| C1 | 88 of 88 products have no HSN/SAC code | The codes, from the business's tax filings |
+| C2 | 40 products claim `IN_STOCK`, unverified | See below — materially softer than recorded |
+| C3 | 84 of 88 have no manufacturer part number | The line cards |
+| C4 | 19 products have no FAQ of their own *and* no brand FAQ to fall back on | All 19 are HP; one set of HP brand FAQs fixes all of them |
+
+**C2 is softer than this document previously said.** All 40 `IN_STOCK` claims
+are on software; not one is on hardware. "In stock" for a CSP subscription or a
+download entitlement is not a warehouse claim — it is available on demand — and
+hardware, which is where the claim would be a real exposure, makes no stock
+claim at all. It is still worth confirming the 40 are provisionable, but it is
+not the misstatement risk it was recorded as.
+
 ## Not yet audited
 
 Listed so the gaps are visible rather than implied complete. None of these has

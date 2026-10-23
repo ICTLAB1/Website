@@ -1,4 +1,8 @@
 import { z } from "zod";
+// Imported for its effect: it installs the message map, so no validator in
+// this file can show a customer a sentence written by the library. See
+// `lib/zod-messages.ts`.
+import "@/lib/zod-messages";
 import { isValidGstin } from "@/lib/gstin";
 import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/password-policy";
 
@@ -8,10 +12,22 @@ import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/password-policy"
  * fields (role, price, status) into a create or update.
  */
 
-const trimmed = (max: number) => z.string().trim().max(max);
+/*
+ * The maximum carries a message of its own.
+ *
+ * Every `.max()` in this file came through here with no message, so pasting an
+ * over-long value into any field on the site produced "String must contain at
+ * most 254 character(s)". The map in `zod-messages.ts` would now catch it, but
+ * saying it here keeps the sentence beside the rule it describes, and the two
+ * agree on wording.
+ */
+const trimmed = (max: number) =>
+  z.string().trim().max(max, `Use ${max} characters or fewer.`);
 
 export const emailSchema = trimmed(254)
-  .min(3)
+  // Not a length rule: it is how this schema says the field is required, and
+  // an empty box should be told so rather than given a character count.
+  .min(3, "Enter your email address.")
   .email("Enter a valid email address.")
   .transform((value) => value.toLowerCase());
 
@@ -84,7 +100,7 @@ export const quantitySchema = z
   .max(100_000, "For volumes above 100,000 seats, contact enterprise sales.");
 
 export const enquiryItemSchema = z.object({
-  sku: trimmed(64).min(1),
+  sku: trimmed(64).min(1, "Choose a product."),
   quantity: quantitySchema,
   note: trimmed(500).optional(),
 });
@@ -95,7 +111,7 @@ export const enquirySchema = z.object({
   contactEmail: emailSchema,
   contactPhone: phoneSchema,
   gstin: gstinSchema.optional().or(z.literal("")),
-  country: trimmed(80).min(2).default("India"),
+  country: trimmed(80).min(2, "Enter the country.").default("India"),
   city: trimmed(80).optional().or(z.literal("")),
   userCount: z.coerce.number().int().min(1).max(1_000_000).optional(),
   requirements: trimmed(4000).optional().or(z.literal("")),
@@ -196,7 +212,7 @@ export function fieldErrorsOf(error: z.ZodError): Record<string, string[]> {
  * buyer raises one up front.
  */
 export const directOrderSchema = z.object({
-  sku: trimmed(64).min(1),
+  sku: trimmed(64).min(1, "Choose a product."),
   quantity: quantitySchema,
   contactName: trimmed(120).min(2, "Enter your full name."),
   companyName: trimmed(160).min(2, "Enter your company name."),
