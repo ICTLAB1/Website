@@ -40,6 +40,8 @@ export function ProductCard({
   rating?: Aggregate | null;
 }) {
   const variant = product.variants[0];
+  /* The product's number, or this build's, or none. Never the SKU — see below. */
+  const partNumber = product.partNumber ?? variant?.partNumber ?? null;
   const price = variant ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) : 0;
   const saving = variant ? discountPercent(variant.listPriceMinor, variant.salePriceMinor) : null;
   const hardware = isHardware(product);
@@ -134,7 +136,22 @@ export function ProductCard({
               <dt className="w-20 shrink-0 text-ink-500">Type</dt>
               <dd className="text-ink-600">{hardwareClassLabel(product.formFactor!)}</dd>
             </div>
-            {variant ? (
+            {/*
+              The manufacturer's number, or no row at all — never the SKU.
+              
+              This printed `variant.sku`, which is this site's internal key and
+              for a build is a generated string: every HPE and Dell card read
+              "Part no. hpe-proliant-dl380-gen11-c1". Under that heading it is
+              the site inventing a manufacturer's identifier, and a buyer who
+              searches for it finds nothing or, worse, somebody else's product.
+
+              `HardwareQuotePanel` already states this rule and omits the row;
+              the card was the surface that had not been told. Most records
+              carry no part number today, so the row disappears from most
+              cards — which is the correct outcome, because an omitted field is
+              honest and a wrong identifier is not.
+            */}
+            {partNumber ? (
               <div className="flex gap-2">
                 <dt className="w-20 shrink-0 text-ink-500">Part no.</dt>
                 {/*
@@ -144,7 +161,7 @@ export function ProductCard({
                   however much overflow is hidden. Two pixels of sideways scroll
                   on a phone, from one card in a grid of six.
                 */}
-                <dd className="min-w-0 truncate font-mono text-ink-600">{variant.sku}</dd>
+                <dd className="min-w-0 truncate font-mono text-ink-600">{partNumber}</dd>
               </div>
             ) : null}
           </dl>

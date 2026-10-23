@@ -113,6 +113,16 @@ export const productListSelect = {
   // which it was holding would be told wrongly somewhere.
   series: true,
   formFactor: true,
+  /*
+   * The manufacturer's own part number, for the card's "Part no." row.
+   *
+   * Selected because the card used to print `variant.sku` there instead — this
+   * site's internal key, which for a build is a generated string like
+   * `hpe-proliant-dl380-gen11-c1`. Under the heading "Part number" that is the
+   * site inventing a manufacturer's identifier, which is the exact mistake
+   * `HardwareQuotePanel` documents and avoids.
+   */
+  partNumber: true,
   imageUrl: true,
   brand: { select: { slug: true, name: true, accentColor: true } },
   category: { select: { slug: true, name: true } },
@@ -131,6 +141,7 @@ export const productListSelect = {
       salePriceMinor: true,
       gstRatePercent: true,
       isDefault: true,
+      partNumber: true,
     },
   },
 } satisfies Prisma.ProductSelect;
