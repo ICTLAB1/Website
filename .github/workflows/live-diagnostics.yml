@@ -53,5 +53,18 @@ jobs:
           case "${SITE#https://}" in
             *[!a-zA-Z0-9.-]*) echo "site hostname has unexpected characters" >&2; exit 1 ;;
           esac
-          # No install step: the script uses Node's own fetch and nothing else.
-          node scripts/diagnostics/live.mjs
+          # No install step: the scripts use Node's own fetch and nothing else.
+          #
+          # Both run, and the assertions decide the exit code. The listing is
+          # printed even when they fail — especially then: the assertions say
+          # something is wrong and the listing is what says what. One step
+          # rather than two so the host above is validated once.
+          #
+          # The paths are fixed rather than taken as an input, for the same
+          # reason the host is validated: on a public repository an input is
+          # controlled by anyone who can dispatch this.
+          status=0
+          node scripts/diagnostics/live.mjs || status=$?
+          node scripts/diagnostics/catalogue.mjs \
+            /brands/adobe /brands/autodesk /brands/microsoft
+          exit "$status"
