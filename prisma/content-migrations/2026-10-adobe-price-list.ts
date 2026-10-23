@@ -83,7 +83,12 @@ type Entry = {
  * "per licence excl. GST" column; the monthly column is deliberately not
  * carried across.
  */
-const ENTRIES: Entry[] = [
+/**
+ * Exported so `2026-10-adobe-withdraw-imported` can say "these and no others"
+ * without transcribing twenty-two slugs a second time. The approved set is one
+ * list; a copy of it is a second list that will one day disagree with this one.
+ */
+export const ADOBE_ENTRIES: Entry[] = [
   // ── document workflow ───────────────────────────────────────────────────
   {
     slug: "adobe-acrobat-pro-teams",
@@ -101,7 +106,16 @@ const ENTRIES: Entry[] = [
   },
   {
     slug: "adobe-acrobat-standard-teams",
-    name: "Adobe Acrobat Standard DC for Teams",
+    /*
+     * No "DC". The supplied sheet still carries Adobe's old branding, which
+     * this list otherwise transcribes as given; Adobe retired the suffix and
+     * the seeded record never had it, so the site has always called this
+     * "Acrobat Standard for Teams". The name was only ever read when creating
+     * a product that did not exist, so this had no effect until
+     * `2026-10-adobe-withdraw-imported` started asserting names — at which
+     * point it would have renamed a correct record to a stale one.
+     */
+    name: "Adobe Acrobat Standard for Teams",
     adobeRupees: 18_984,
     sku: "ADB-ACR-STD-TEAM-A1",
     category: "document-workflow",
@@ -420,7 +434,7 @@ export const adobePriceList: ContentMigration = {
     if (!brand) return "no Adobe brand to price against; nothing changed";
 
     const categories = await prisma.category.findMany({
-      where: { slug: { in: [...new Set(ENTRIES.map((entry) => entry.category))] } },
+      where: { slug: { in: [...new Set(ADOBE_ENTRIES.map((entry) => entry.category))] } },
       select: { id: true, slug: true },
     });
     const categoryBySlug = new Map(categories.map((category) => [category.slug, category.id]));
@@ -429,7 +443,7 @@ export const adobePriceList: ContentMigration = {
     let repriced = 0;
     const skipped: string[] = [];
 
-    for (const entry of ENTRIES) {
+    for (const entry of ADOBE_ENTRIES) {
       const categoryId = categoryBySlug.get(entry.category);
       if (!categoryId) {
         skipped.push(`${entry.slug} (no ${entry.category} category)`);

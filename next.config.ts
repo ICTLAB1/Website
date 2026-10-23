@@ -91,6 +91,88 @@ const nextConfig: NextConfig = {
         statusCode: 301,
       },
 
+      /*
+       * The Adobe products the channel price-list import added twice.
+       *
+       * `2026-10-adobe-withdraw-imported` archives the imported copy of each
+       * pair. These point at the surviving record for the same reason the two
+       * servers above do: it is the same product, so the destination answers
+       * the question the visitor arrived with.
+       *
+       * Only the fourteen that have a surviving equivalent are here. The other
+       * sixty-eight withdrawn URLs are left to 404, because a redirect to a
+       * product the visitor did not ask for is a worse answer than none.
+       */
+      {
+        source: "/products/after-effects-for-teams",
+        destination: "/products/adobe-after-effects-teams",
+        statusCode: 301,
+      },
+      {
+        source: "/products/animate-flash-professional-for-teams",
+        destination: "/products/adobe-animate-teams",
+        statusCode: 301,
+      },
+      {
+        source: "/products/audition-for-teams",
+        destination: "/products/adobe-audition-teams",
+        statusCode: 301,
+      },
+      {
+        source: "/products/dreamweaver-for-teams",
+        destination: "/products/adobe-dreamweaver-teams",
+        statusCode: 301,
+      },
+      {
+        source: "/products/incopy-for-teams",
+        destination: "/products/adobe-incopy-teams",
+        statusCode: 301,
+      },
+      {
+        source: "/products/indesign-for-teams",
+        destination: "/products/adobe-indesign-teams",
+        statusCode: 301,
+      },
+      {
+        source: "/products/lightroom-w-classic-for-teams",
+        destination: "/products/adobe-lightroom-teams",
+        statusCode: 301,
+      },
+      {
+        source: "/products/adobe-express-for-teams",
+        destination: "/products/adobe-express-teams",
+        statusCode: 301,
+      },
+      {
+        source: "/products/acrobat-studio-for-teams",
+        destination: "/products/adobe-acrobat-studio",
+        statusCode: 301,
+      },
+      {
+        source: "/products/ai-assistant-for-acrobat-for-teams",
+        destination: "/products/adobe-ai-assistant-for-acrobat",
+        statusCode: 301,
+      },
+      {
+        source: "/products/substance-3d-collection-for-teams",
+        destination: "/products/adobe-substance-3d-collection",
+        statusCode: 301,
+      },
+      {
+        source: "/products/adobe-firefly-pro-for-teams-4k-credits",
+        destination: "/products/adobe-firefly-pro",
+        statusCode: 301,
+      },
+      {
+        source: "/products/adobe-firefly-pro-plus-for-teams-10k-credits",
+        destination: "/products/adobe-firefly-pro-plus",
+        statusCode: 301,
+      },
+      {
+        source: "/products/adobe-firefly-premium-for-teams-50k-credits",
+        destination: "/products/adobe-firefly-premium",
+        statusCode: 301,
+      },
       { source: "/shop", destination: "/products", statusCode: 301 },
       { source: "/shop/:path*", destination: "/products", statusCode: 301 },
       { source: "/product/:slug", destination: "/products/:slug", statusCode: 301 },
