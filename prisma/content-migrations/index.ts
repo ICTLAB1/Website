@@ -63,6 +63,8 @@ import { quoteMicrosoft } from "./2026-10-quote-page-microsoft";
 import { quoteAdobe } from "./2026-10-quote-page-adobe";
 import { quoteAutodesk } from "./2026-10-quote-page-autodesk";
 import { linkTheQuotePages } from "./2026-10-link-the-quote-pages";
+import { adobePriceList } from "./2026-10-adobe-price-list";
+import { autodeskPriceList } from "./2026-10-autodesk-price-list";
 import type { ContentMigration } from "./types";
 
 /**
@@ -139,6 +141,8 @@ export const contentMigrations: ContentMigration[] = [
   quoteAdobe,
   quoteAutodesk,
   linkTheQuotePages,
+  adobePriceList,
+  autodeskPriceList,
 ];
 
 export type { ContentMigration };
