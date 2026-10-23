@@ -55,6 +55,16 @@ const SLUGS = [
   "adobe-premiere-pro-teams",
   "adobe-stock-10-assets",
   "adobe-substance-3d-collection",
+  /*
+   * The three Creative Cloud records share one mark, cut from the plan cards
+   * in the first screenshot rather than the product grid — they are not in
+   * that grid, and Adobe gives the suite one icon rather than one per edition.
+   * It is 40 pixels square, twice the size of the rest, because the plan cards
+   * are drawn larger.
+   */
+  "adobe-creative-cloud-all-apps-teams",
+  "adobe-creative-cloud-single-app-teams",
+  "adobe-creative-cloud-enterprise",
 ];
 
 export const adobeProductIcons: ContentMigration = {
