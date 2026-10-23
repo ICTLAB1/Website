@@ -51,7 +51,18 @@ const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromi
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 const page = await context.newPage();
 
-const text = async () => (await page.locator("body").innerText()).replace(/\s+/g, " ");
+/*
+ * The page's own content, not the chrome around it.
+ *
+ * `main` rather than `body` because the header carries a currency selector
+ * once an administrator sets a dollar or dirham rate, and its first option
+ * reads "₹ INR". Scanning the whole body therefore found a rupee sign on every
+ * page the moment multi-currency display was switched on, and reported a price
+ * on pages that have none. The rules below are about what the page says a
+ * thing costs, which is content; the selector is navigation.
+ */
+const content = (p) => (p.locator("main").count().then((n) => (n > 0 ? p.locator("main") : p.locator("body"))));
+const text = async () => (await (await content(page)).innerText()).replace(/\s+/g, " ");
 
 /**
  * A product slug for each catalogue, taken from the catalogue rather than
@@ -180,7 +191,7 @@ for (const [name, path] of HARDWARE_SURFACES) {
  * thing rather than the version that briefly disabled it everywhere.
  */
 await page.goto(`${BASE}/products`, { waitUntil: "load" });
-const softwareListing = await page.locator("body").innerText();
+const softwareListing = await (await content(page)).innerText();
 check(
   "the software catalogue offers a price filter",
   /price \(excl\. gst\)|price\b/i.test(softwareListing) && /under\s*₹/i.test(softwareListing),
@@ -193,7 +204,7 @@ check(
 );
 
 await page.goto(`${BASE}/hardware`, { waitUntil: "load" });
-const hardwareListing = await page.locator("body").innerText();
+const hardwareListing = await (await content(page)).innerText();
 check(
   "the hardware catalogue offers no price filter",
   !/under\s*₹|price range|price band/i.test(hardwareListing),

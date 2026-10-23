@@ -560,7 +560,67 @@ purpose.
 
 ---
 
-## 12. Housekeeping
+## 12. Applying the published retention periods
+
+The privacy policy publishes a retention table — how long enquiries, tickets,
+audit entries and commercial records are kept — and says that everything outside
+a statutory minimum "can be, and is" deleted. This is what performs it. Three of
+the seven rows are enforceable in this database; `src/lib/privacy/retention.ts`
+says which, and why the other four are not.
+
+**It reports before it deletes, and that distinction is the whole point.** A
+`POST` with no body counts what each rule covers and deletes nothing. The same
+call with `{"apply":true}` deletes. The first run against a live database meets
+however many years of backlog nobody has ever applied a retention rule to, and
+the counts are the only chance to find out whether the rules mean what their
+author thought before the deletion is irreversible.
+
+**1. Give it a token**, as for the two routes above:
+
+```bash
+openssl rand -hex 32
+# Add it to the .env file used by docker compose:
+#   RETENTION_TOKEN=<the value you just generated>
+cd /srv/techzoid/deploy && docker compose -f docker-compose.prod.yml up -d
+```
+
+**2. Run it once by hand and read the result.**
+
+```bash
+curl -sS -X POST -H "x-retention-token: <the value>" \
+  https://techzoidtechnologies.com/api/privacy/retention | python3 -m json.tool
+```
+
+Each rule reports the cut-off date, how many rows are `eligible`, and how many
+are `heldBack` — in scope by date but kept because deleting them would orphan a
+quotation, order, deal or uploaded document. A held-back count that never falls
+is how you discover a rule that can never fire; it is reported rather than
+silently skipped for exactly that reason.
+
+**3. Once somebody has read a report and agrees with it**, put it on a daily
+cron with `apply`. Four in the morning, Indian time, is 22:30 UTC the day
+before:
+
+```bash
+crontab -e
+# 30 22 * * * curl -sS -X POST -H "x-retention-token: <the value>" -H 'content-type: application/json' -d '{"apply":true}' https://techzoidtechnologies.com/api/privacy/retention >/dev/null
+```
+
+Daily is right. After the first run clears the backlog, a day's worth of
+newly-expired rows is a handful, and a rule that runs daily fails visibly rather
+than once a quarter.
+
+Without `RETENTION_TOKEN` the route refuses everything and answers 404 — the
+safe default for the one scheduled endpoint that deletes customer records.
+
+**Deleting is not cascading.** Every relation from an enquiry or a ticket to a
+commercial record is `SetNull`, so nothing here destroys a quotation, order,
+invoice or licence. Those are held for eight years under the Companies Act and
+the route never touches them.
+
+---
+
+## 13. Housekeeping
 
 Two functions are safe to run on a schedule, and neither is a correctness
 requirement — expiry is also checked at the moment a customer responds:

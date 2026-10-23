@@ -43,12 +43,12 @@ import { cn } from "@/lib/utils";
  * font.
  */
 /** Wordmark and aperture, no strapline. For headers and anywhere tight. */
-const WORDMARK_LIGHT = "/brand-assets/techzoid-wordmark.png";
-const WORDMARK_DARK = "/brand-assets/techzoid-wordmark-reversed.png";
+const WORDMARK_LIGHT = "/brand-assets/techzoid-wordmark.webp";
+const WORDMARK_DARK = "/brand-assets/techzoid-wordmark-reversed.webp";
 
 /** The full lockup including the strapline. Needs ~80 px of height to read. */
-const LOCKUP_LIGHT = "/brand-assets/techzoid-logo.png";
-const LOCKUP_DARK = "/brand-assets/techzoid-logo-reversed.png";
+const LOCKUP_LIGHT = "/brand-assets/techzoid-logo.webp";
+const LOCKUP_DARK = "/brand-assets/techzoid-logo-reversed.webp";
 
 /** The aperture alone, square and centred. Favicons, app icons, avatars. */
 export const BRAND_ICON = "/brand-assets/techzoid-icon.png";
@@ -91,11 +91,20 @@ export function BrandLogo({
       alt=""
       aria-hidden="true"
       className={cn("h-11 w-auto max-w-full object-contain object-left", className)}
-      // The intrinsic size of whichever cut is being used, so the browser
-      // reserves the right box before the file arrives and the header does not
-      // jump as it loads.
-      width={2167}
-      height={withStrapline ? 725 : 314}
+      /*
+       * The intrinsic size of whichever cut is being used, so the browser
+       * reserves the right box before the file arrives and the header does not
+       * jump as it loads.
+       *
+       * The two cuts are served at different widths because they are
+       * different shapes: the wordmark is a thin strip and the lockup is
+       * nearly square once the strapline is under it, so one width would mean
+       * either a soft wordmark or a needlessly large lockup. Both keep the
+       * master's aspect ratio exactly — 2167:314 and 2167:725 — so the box
+       * reserved here is the box the file fills.
+       */
+      width={withStrapline ? 1000 : 1200}
+      height={withStrapline ? 335 : 174}
       decoding="async"
     />
   );

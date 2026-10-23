@@ -21,6 +21,37 @@ Not a 404 — which is why it takes a moment to spot.
 | `techzoid-logo-reversed.png` | The same lockup for dark grounds. Derived. |
 | `techzoid-icon.png` | The aperture alone, 512×512, centred with padding. Derived. |
 
+### The `.webp` derivatives are what the site serves
+
+The four PNGs above are masters. The **pages reference the `.webp` cuts beside
+them**, and `components/brand/logo.tsx` points at those rather than at the PNGs.
+
+The reason is weight. The wordmark is 2167 px wide and renders at 303×44 in the
+header; the reversed lockup renders at 191×64 in the footer. Between them they
+were **1.85 MB on every page of the site** — 2.5 MB of the homepage's 3.2 MB
+was PNG. As WebP at a sensible width they are 157 KB, and the page dropped from
+3,240 KB to 1,546 KB with no visible change.
+
+| Derivative | From | Width | Quality | Size |
+|---|---|---|---|---|
+| `techzoid-wordmark.webp` | `techzoid-wordmark.png` | 1200 | 90 | 72 KB (was 738 KB) |
+| `techzoid-wordmark-reversed.webp` | `techzoid-wordmark-reversed.png` | 1200 | 90 | 68 KB (was 584 KB) |
+| `techzoid-logo.webp` | `techzoid-logo.png` | 1000 | 82 | 257 KB (was 940 KB) |
+| `techzoid-logo-reversed.webp` | `techzoid-logo-reversed.png` | 1000 | 82 | 85 KB (was 1,113 KB) |
+
+Regenerate with `sharp`, resizing by **width only** so the height follows and
+the master's aspect ratio is kept — 2167:314 for the wordmark, 2167:725 for the
+lockup. `logo.tsx` declares those derived dimensions as the image's `width` and
+`height`, which is what reserves the right box before the file arrives; change a
+width here and change it there, or the header will jump as it loads.
+
+Keep `alphaQuality: 100`. The marks are transparent and a lossy alpha channel
+shows as a grey fringe on the charcoal footer, which is exactly where the
+reversed cut is used.
+
+The light lockup is converted for completeness and is not currently fetched by
+any page — only the footer uses the strapline cut, and the footer is dark.
+
 And derived into place elsewhere:
 
 - `public/logo.png` — 900 px wide, for the quotation letterhead

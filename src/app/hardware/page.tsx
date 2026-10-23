@@ -5,6 +5,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ButtonLink } from "@/components/ui/button";
 import { CatalogueListing } from "@/components/catalogue/catalogue-listing";
 import { getHardwareBrands, getHardwareFormFactors } from "@/lib/queries/hardware";
+import { FAMILY_LANDINGS, familyLandingKey } from "@/lib/catalogue/families";
 import { parseCatalogueParams, type RawSearchParams } from "@/lib/catalogue-params";
 import { buildMetadata } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
@@ -15,6 +16,31 @@ type PageProps = { searchParams: Promise<RawSearchParams> };
 
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
   const params = await searchParams;
+
+  /*
+   * A family on its own is a landing page; everything else is a filtered view.
+   *
+   * `/hardware?family=servers` is what the main menu links to, and it is the
+   * only route to the servers in this catalogue — they carry a form factor
+   * rather than a category. It was `noindex` under a rule that treated every
+   * parameterised view as a near-duplicate, so the site had no indexable page
+   * for servers at all, while linking to one from the navigation of every page.
+   *
+   * `?sort=`, `?page=`, `?min=`, `?brand=` and the rest keep that rule, and
+   * `?family=servers&sort=price-asc` keeps it too: that one really is a
+   * near-duplicate of the landing page beside it. See
+   * `lib/catalogue/families.ts`.
+   */
+  const landing = familyLandingKey(params);
+  if (landing) {
+    const copy = FAMILY_LANDINGS[landing];
+    return buildMetadata({
+      title: copy.title,
+      description: copy.description,
+      path: `/hardware?family=${landing}`,
+    });
+  }
+
   const hasFilters = Object.keys(params).some((key) => key !== "page" && params[key]);
 
   return buildMetadata({
@@ -45,6 +71,16 @@ export default async function HardwarePage({ searchParams }: PageProps) {
   const params = await searchParams;
   const filters = { ...parseCatalogueParams(params), kind: "hardware" as const };
 
+  /*
+   * The heading and the sentence under it follow the metadata. An indexable
+   * page whose body says "commercial computers for business and enterprise"
+   * when its title says "rack and tower servers" is a near-duplicate in
+   * everything but the tab, and would have deserved the noindex it used to
+   * carry.
+   */
+  const landing = familyLandingKey(params);
+  const copy = landing ? FAMILY_LANDINGS[landing] : null;
+
   const [brands, formFactors, config] = await Promise.all([
     getHardwareBrands(),
     getHardwareFormFactors(),
@@ -53,14 +89,32 @@ export default async function HardwarePage({ searchParams }: PageProps) {
 
   return (
     <div className="container-page pb-16">
-      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Business computers" }]} />
+      <Breadcrumb
+        items={
+          copy
+            ? [
+                { label: "Home", href: "/" },
+                { label: "Business computers", href: "/hardware" },
+                { label: copy.heading },
+              ]
+            : [{ label: "Home", href: "/" }, { label: "Business computers" }]
+        }
+      />
 
       <header className="mb-8 max-w-3xl">
-        <h1 className="text-3xl sm:text-4xl">Commercial computers for business and enterprise</h1>
+        <h1 className="text-3xl sm:text-4xl">
+          {copy ? copy.heading : "Commercial computers for business and enterprise"}
+        </h1>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-600">
-          Business-class laptops, desktops and workstations for enterprise, government, PSU,
-          education and corporate requirements — sourced from the manufacturers and supplied by{" "}
-          {config.entityName} on one quotation, alongside the licensing that goes on them.
+          {copy ? (
+            copy.intro
+          ) : (
+            <>
+              Business-class laptops, desktops and workstations for enterprise, government, PSU,
+              education and corporate requirements — sourced from the manufacturers and supplied
+              by {config.entityName} on one quotation, alongside the licensing that goes on them.
+            </>
+          )}
         </p>
         {/*
           Said once, at the top, in the plainest words available. The catalogue

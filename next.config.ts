@@ -71,6 +71,26 @@ const nextConfig: NextConfig = {
     return [
       // Legacy-style URLs are redirected to their clean equivalents rather than
       // being left to 404, so any existing inbound links keep working.
+      /*
+       * The two servers that were each listed twice.
+       *
+       * `2026-10-merge-duplicate-servers` archives the thinner record of each
+       * pair. These point at the surviving record rather than at the
+       * catalogue, because it is the same machine — so the destination answers
+       * the question the visitor arrived with, and the authority the withdrawn
+       * URL earned lands on the page that replaces it.
+       */
+      {
+        source: "/products/dell-poweredge-r760-server",
+        destination: "/products/dell-poweredge-r760",
+        statusCode: 301,
+      },
+      {
+        source: "/products/hpe-proliant-dl380-server",
+        destination: "/products/hpe-proliant-dl380-gen11",
+        statusCode: 301,
+      },
+
       { source: "/shop", destination: "/products", statusCode: 301 },
       { source: "/shop/:path*", destination: "/products", statusCode: 301 },
       { source: "/product/:slug", destination: "/products/:slug", statusCode: 301 },
