@@ -227,7 +227,19 @@ if (product) {
   );
 
   const prices = (aggregate?.offers ?? []).map((offer) => Number(offer.price));
-  check("and names every priced variant", prices.length > 1, `${prices.length} offers`);
+  /*
+   * At least one, not more than one.
+   *
+   * This asserted `> 1` because every plan carried an annual and a monthly
+   * line. `2026-10-microsoft-price-list` archived the monthly ones — "annual
+   * prices only" was the instruction, and it also removed a comparison defect
+   * where a monthly instalment sat beside an annual total — so a correct page
+   * now has exactly one offer and this read as a failure. What the check is
+   * actually for is that the block names the variants rather than collapsing
+   * them to a single figure, and the per-offer assertions below are what
+   * establish that; this one only has to catch an empty list.
+   */
+  check("and names the priced variants", prices.length >= 1, `${prices.length} offers`);
   check(
     "with a high price as well as a low one, where they differ",
     Math.max(...prices) === Math.min(...prices) || Number(aggregate?.highPrice) === Math.max(...prices),

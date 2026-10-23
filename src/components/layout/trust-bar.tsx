@@ -236,7 +236,15 @@ export async function TrustBar() {
         {offices.length > 0 ? (
           <Link
             href="/contact"
-            className="flex items-center gap-2 text-label text-ink-500 transition-colors hover:text-graphite-900"
+            /*
+              `min-h-6` for WCAG 2.2 target size (2.5.8). The label text sets a
+              line box under 24px, so the anchor — the whole of which is the
+              target — was 20px tall at every breakpoint. `items-center` was
+              already here and does the centring; this only gives it the height
+              to centre within, so nothing moves visually on a band that is
+              taller than this anyway.
+            */
+            className="flex min-h-6 items-center gap-2 text-label text-ink-500 transition-colors hover:text-graphite-900"
           >
             <span>Offices</span>
             <span className="font-semibold text-graphite-900">{offices.join(" · ")}</span>

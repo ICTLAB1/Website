@@ -126,8 +126,19 @@ export const QUOTE_ONLY_LABEL = "Price on enquiry";
  * this business quotes, not a promise of a particular discount: the quotation
  * fixes the number and nothing here does.
  */
+/*
+ * "Tentative", not "indicative".
+ *
+ * The business asked, in those words, that the prices be described as
+ * tentative. The card says "Tentative price, excl. GST"; this said
+ * "Indicative price, excluding GST", so the two surfaces describing the same
+ * figure used two different words for it — and the one a buyer reads on the
+ * product page, where the commitment is made, was not the one the business
+ * chose. `scripts/verify/indexation.mjs` had been asserting the agreed wording
+ * all along and was the thing that said so.
+ */
 export const TENTATIVE_PRICE_NOTE =
-  "Indicative price, excluding GST. Final pricing is confirmed on a written quotation, which takes account of your quantity, licensing programme and commitment term. For a discounted quotation, contact our sales team or raise an enquiry and we will get in touch with you.";
+  "Tentative price, excluding GST. Final pricing is confirmed on a written quotation, which takes account of your quantity, licensing programme and commitment term. For a discounted quotation, contact our sales team or raise an enquiry and we will get in touch with you.";
 
 /**
  * The same offer where there is no room for the sentence.

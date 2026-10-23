@@ -70,6 +70,7 @@ import { dtpPriceList } from "./2026-10-dtp-price-list";
 import { adobeProductIcons } from "./2026-10-adobe-product-icons";
 import { microsoftComparisonTables } from "./2026-10-microsoft-comparison-tables";
 import { adobeWithdrawImported } from "./2026-10-adobe-withdraw-imported";
+import { comparisonOnThePlanHub } from "./2026-10-comparison-on-the-plan-hub";
 import type { ContentMigration } from "./types";
 
 /**
@@ -158,6 +159,7 @@ export const contentMigrations: ContentMigration[] = [
    * later would be writing to records it has just withdrawn.
    */
   adobeWithdrawImported,
+  comparisonOnThePlanHub,
 ];
 
 export type { ContentMigration };

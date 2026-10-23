@@ -31,7 +31,8 @@
  *
  *   - five products that either did not exist before or had no price serve
  *     the figure they were given;
- *   - the Microsoft quote page carries both plan comparison tables;
+ *   - the Microsoft 365 plan hub carries both comparison tables, and the
+ *     quote page that links to it does not carry them too;
  *   - a product icon is served, and the product page references it;
  *   - the hardware catalogue shows prices at all, which it did not.
  *
@@ -324,15 +325,34 @@ for (const [path, figure] of NEW_PRODUCTS) {
   }
   const visible = textOf(page.body);
   check(`${path} shows ₹${figure}`, visible.includes(figure), `the page does not contain ${figure}`);
+  check(
+    `  and calls it a tentative price`,
+    /tentative price, excluding gst/i.test(visible),
+    "the agreed wording is not on the page",
+  );
 }
 
-const quote = await fetchPage("/get-a-quote/microsoft");
-const tables = (quote.body.match(/<table/g) ?? []).length;
-check("the Microsoft quote page carries two comparison tables", tables === 2, `${tables} table(s)`);
+/*
+ * On `/microsoft-365`, not the quote page.
+ *
+ * `2026-10-comparison-on-the-plan-hub` moved them there: the quote page's
+ * own "Related pages" list offers "Compare all Microsoft 365 plans" and
+ * points at `/microsoft-365`, so the comparison was on the page a reader was
+ * sent away from and missing from the page they were sent to. The business
+ * went looking for it and did not find it, which is how that came to light.
+ */
+const planHub = await fetchPage("/microsoft-365");
+const tables = (planHub.body.match(/<table/g) ?? []).length;
+check("the Microsoft 365 plan hub carries two comparison tables", tables === 2, `${tables} table(s)`);
 check(
   "and the enterprise table names its columns",
-  /Microsoft 365 E7/.test(quote.body) && /Business Premium/.test(quote.body),
+  /Microsoft 365 E7/.test(planHub.body) && /Business Premium/.test(planHub.body),
   "plan column headings not found",
+);
+check(
+  "and the quote page no longer carries them as well",
+  !(await fetchPage("/get-a-quote/microsoft")).body.includes("<table"),
+  "the same matrix is on two indexable URLs",
 );
 
 const icon = await fetchPage("/products/adobe-photoshop-teams.png", { redirect: "follow" });
