@@ -367,6 +367,21 @@ check(
   "fewer cards reference the mark than the brand page lists",
 );
 
+/*
+ * Autodesk points at the brand file rather than one of its own: there is no
+ * per-product Autodesk artwork, and the supplied logo pack turned out to
+ * contain none either. `2026-10-autodesk-product-icon` says why that is a
+ * reference and not a copy.
+ */
+const autodeskMark = await fetchPage("/brands/autodesk.svg", { redirect: "follow" });
+check("the Autodesk mark is served", autodeskMark.status === 200, `status ${autodeskMark.status}`);
+const autodeskBrand = await fetchPage("/brands/autodesk");
+check(
+  "and the Autodesk cards carry it",
+  (autodeskBrand.body.match(/\/brands\/autodesk\.svg/g) ?? []).length >= 6,
+  "fewer cards reference the mark than the brand page lists",
+);
+
 const photoshop = await fetchPage("/products/adobe-photoshop-teams");
 check(
   "and the product page renders it",

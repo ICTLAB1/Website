@@ -73,6 +73,7 @@ import { adobeWithdrawImported } from "./2026-10-adobe-withdraw-imported";
 import { comparisonOnThePlanHub } from "./2026-10-comparison-on-the-plan-hub";
 import { restoreTheAdobeCopy } from "./2026-10-restore-the-adobe-copy";
 import { microsoftProductIcon } from "./2026-10-microsoft-product-icon";
+import { autodeskProductIcon } from "./2026-10-autodesk-product-icon";
 import type { ContentMigration } from "./types";
 
 /**
@@ -164,6 +165,7 @@ export const contentMigrations: ContentMigration[] = [
   comparisonOnThePlanHub,
   restoreTheAdobeCopy,
   microsoftProductIcon,
+  autodeskProductIcon,
 ];
 
 export type { ContentMigration };
