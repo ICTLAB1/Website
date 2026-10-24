@@ -112,7 +112,7 @@ export async function executeTool(
   name: string,
   input: unknown,
   context: ToolExecutionContext,
-): Promise<{ content: string; isError?: boolean }> {
+): Promise<{ content: string; isError?: boolean; leadReference?: string }> {
   if (name === "search_catalogue") {
     const query = typeof (input as { query?: unknown })?.query === "string" ? (input as { query: string }).query : "";
     const products = await searchProducts(query, 5);
@@ -359,7 +359,14 @@ export async function executeTool(
     });
 
     if (!result.ok) return { content: result.reason, isError: true };
-    return { content: `Lead recorded as ${result.reference}. Thank the visitor and let them know our sales team will be in touch.` };
+    return {
+      content: `Lead recorded as ${result.reference}. Thank the visitor and let them know our sales team will be in touch.`,
+      // Handed back structurally rather than left to be read out of the
+      // sentence above: the stored conversation is linked to the deal by this,
+      // and parsing a reference out of prose the model also reads is the kind
+      // of coupling that breaks the day the wording is improved.
+      leadReference: result.reference,
+    };
   }
 
   return { content: `Unknown tool: ${name}`, isError: true };

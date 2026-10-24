@@ -94,6 +94,14 @@ export function ChatWidget({ assistantName }: { assistantName: string }) {
   const [error, setError] = useState<string | null>(null);
   const [leadCaptured, setLeadCaptured] = useState(false);
   const [greeting, setGreeting] = useState(false);
+  /*
+   * Issued by the server on the first turn and echoed back on the rest, so
+   * the whole exchange lands on one stored row. Held in state rather than
+   * storage: it is worth nothing after the tab closes, and a conversation id
+   * that outlived the conversation would append today's questions to
+   * yesterday's transcript.
+   */
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -150,8 +158,16 @@ export function ChatWidget({ assistantName }: { assistantName: string }) {
     setPending(true);
     setError(null);
 
-    const result = await postJson<{ reply: string; leadCaptured: boolean }>("/api/chat", {
+    const result = await postJson<{
+      reply: string;
+      leadCaptured: boolean;
+      conversationId: string | null;
+    }>("/api/chat", {
       messages: next,
+      conversationId,
+      // The page the visitor was on when they opened the conversation, which
+      // is most of what makes a transcript legible a month later.
+      startedOn: pathname ?? null,
     });
 
     setPending(false);
@@ -162,6 +178,7 @@ export function ChatWidget({ assistantName }: { assistantName: string }) {
     }
 
     setMessages([...next, { role: "assistant", content: result.data.reply }]);
+    if (result.data.conversationId) setConversationId(result.data.conversationId);
     if (result.data.leadCaptured) setLeadCaptured(true);
   }
 

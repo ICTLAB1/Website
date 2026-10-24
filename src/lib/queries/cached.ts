@@ -75,6 +75,7 @@ export const DATE_KEYS = new Set([
   "sentAt",
   "sourceCheckedAt",
   "stageChangedAt",
+  "startedAt",
   "startsAt",
   "submittedAt",
   "supersededAt",

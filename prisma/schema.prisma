@@ -760,7 +760,7 @@ model Product {
   /// a person searching "civil 3d license price" nothing about why this result
   /// rather than the next. Null means the name is used, which is right for most
   /// of the catalogue.
-  seoTitle       String?
+  seoTitle String?
 
   /// Search-result description, overriding the sentence composed from
   /// `shortDescription`. Same reasoning, and the same default when null.
@@ -1777,41 +1777,33 @@ model Certification {
 /// be indistinguishable from the real ones the moment it shipped.
 /**
  * A customer whose logo may be shown on the public site.
- *
  * A separate model from `Company`, and deliberately so. A Company is a
  * commercial record — orders, quotations, addresses, people — and most of them
  * will never appear on a marketing page. This holds only what a logo strip
  * needs, so putting a customer on the website is an explicit act rather than a
  * side effect of them buying something.
- *
  * ## Why permission is four columns rather than a checkbox
- *
  * The same reasoning as `Brand.partnerLabel`, and for a stronger reason. A
  * customer's name and mark are their property, and a supplier displaying them
  * is making a claim the customer may be asked to confirm. So the record has to
  * hold not just *that* somebody said yes, but who, when, and where the
  * evidence is — the difference between a permission somebody remembers and one
  * somebody can produce.
- *
  * Nothing reaches the public site unless `permissionConfirmedAt` is set *and*
  * `published` is on *and* there is artwork. See `lib/client-logo`, which is the
  * only place that decides.
  */
 /**
  * A sector this business supplies, and what it supplies to it.
- *
  * Rows rather than page copy for the usual reason: the same sixteen sectors
  * appear on the homepage grid, in the filter, on their own detail pages and in
  * the sitemap, and four copies of a list is four places to forget an edit.
- *
  * ## What a row may and may not say
- *
  * `summary` and `description` describe what this business supplies to a
  * sector, drawn from the catalogue and the service list. They are not the place
  * for a customer, a case study, a headcount or an outcome — a sector is not a
  * reference, and a sentence that reads like one is a claim nothing here can
  * support. Customers live in ClientLogo, with a permission on the record.
- *
  * `solutions` holds labels, not promises: each one names something the
  * catalogue actually carries or a service that actually exists.
  */
@@ -1876,18 +1868,18 @@ model ClientLogo {
 
   /// Who granted permission, in words a person can check: a name and a role,
   /// not an identifier.
-  permissionHolder    String?
+  permissionHolder      String?
   /// Where the evidence is. An email subject and date, a contract clause, a
   /// file reference — free text, because the point is that somebody can find
   /// it, not that a machine can parse it.
-  permissionReference String?
+  permissionReference   String?
   /// When permission was confirmed. Null means it has not been, whatever the
   /// other columns say.
   permissionConfirmedAt DateTime?
   /// Whether to show it. Off by default, including for a row whose permission
   /// is recorded — recording a permission and deciding to use it are two
   /// decisions.
-  published Boolean @default(false)
+  published             Boolean   @default(false)
 
   displayOrder Int       @default(100)
   deletedAt    DateTime?
@@ -2347,7 +2339,7 @@ model PaymentSettings {
   /// There is no publishable key here, and that is not an omission: this
   /// deployment redirects to Stripe's hosted Checkout rather than embedding
   /// card fields, so no Stripe credential is ever handed to a browser.
-  stripeSecretKey     String?
+  stripeSecretKey String?
 
   /// The webhook signing secret, `whsec_…`. Also encrypted.
   ///
@@ -3175,4 +3167,63 @@ model JobPosting {
 
   @@index([closedAt, displayOrder])
   @@index([slug])
+}
+
+/// One visitor's conversation with the chat assistant.
+///
+/// ## Why this exists at all
+///
+/// The assistant was stateless by design: the client held the conversation
+/// and resent it each turn, and nothing was written anywhere unless the
+/// visitor became a lead. That is a clean design and it meant the only
+/// conversations anybody could read were the ones that already worked. Every
+/// visitor who asked a question the assistant answered badly, or asked for
+/// something the catalogue does not carry, or got as far as a price and left,
+/// was invisible — and that is the population worth knowing about.
+///
+/// ## Why one row and not a row per message
+///
+/// The transcript is written whole on every turn, read as a whole by a human
+/// in the admin panel, and deleted as a whole by the retention sweep. Nothing
+/// queries an individual message. A `messages` array on one row makes each of
+/// those a single statement, and makes "delete everything about this
+/// conversation" impossible to get half-right.
+model ChatConversation {
+  id String @id @default(cuid())
+
+  /// `[{ role, content }]`, the same shape the client sends and the model
+  /// takes. Validated against the route's own schema before it is written,
+  /// so nothing reaches this column that was not already good enough to send
+  /// to the model.
+  messages Json
+
+  /// The lead this conversation produced, by reference rather than relation.
+  ///
+  /// Deliberately not a foreign key: the transcript is also copied onto the
+  /// Deal as an Activity when the lead is captured, and this row is swept on
+  /// its own schedule. A relation would make the retention sweep's deletion
+  /// either cascade into commercial records or be blocked by them, and both
+  /// are worse than a string that may one day name a deal that has been
+  /// archived.
+  leadReference String?
+
+  /// SHA-256 of the source address and the application secret, truncated.
+  ///
+  /// Not the address. This exists to answer two questions — "is one person
+  /// generating all of this?" and "is this the same visitor as the turn
+  /// before?" — and neither needs an identifier that can be read back. It
+  /// cannot be reversed to an address without the secret, and it is not
+  /// reversible to a person with it.
+  ipHash String?
+
+  /// The page the conversation started on, which is most of what makes a
+  /// transcript legible a month later.
+  startedOn String?
+
+  startedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// The retention sweep orders by this, and the admin list reads it newest
+  /// first.
+  @@index([updatedAt])
 }
