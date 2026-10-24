@@ -8,6 +8,7 @@ import { getAssistantConfig } from "@/lib/assistant/config";
 import { buildSystemPrompt } from "@/lib/assistant/prompt";
 import { createMessage, type ChatMessage, type ContentBlock } from "@/lib/assistant/anthropic";
 import { TOOLS, executeTool } from "@/lib/assistant/tools";
+import { attachLead, hashSource, recordTurn } from "@/lib/assistant/conversation-store";
 import { logger } from "@/lib/logger";
 
 /**
@@ -32,6 +33,15 @@ const messageSchema = z.object({
 
 const schema = z.object({
   messages: z.array(messageSchema).min(1).max(40),
+  /*
+   * Issued by the server on the first turn and echoed back on the rest, so
+   * the turns of one conversation land on one row. Optional because the first
+   * turn has none, and never trusted on its own — `recordTurn` only appends
+   * to a row whose source matches.
+   */
+  conversationId: z.string().max(40).nullish(),
+  /** The page the conversation started on, for reading it back later. */
+  startedOn: z.string().max(200).nullish(),
   // Honeypot: a real visitor never fills this in.
   website: z.string().max(0).optional(),
 });
@@ -64,7 +74,14 @@ export const POST = withErrorHandling("chat.message", async (request: Request) =
     return jsonError("bad_request", "The request could not be read.");
   }
 
-  if (parsed.data.website) {
+  /*
+   * Bound to a local before the closure below captures it. Narrowing from
+   * `parsed.success` does not survive into a function body, and the closure
+   * is what stores the turn.
+   */
+  const payload = parsed.data;
+
+  if (payload.website) {
     // Honeypot — answered as if nothing were wrong, so a bot cannot tell.
     return jsonOk({ reply: "Thanks for your message!", leadCaptured: false });
   }
@@ -79,6 +96,27 @@ export const POST = withErrorHandling("chat.message", async (request: Request) =
 
   let messages: ChatMessage[] = parsed.data.messages.map((m) => ({ role: m.role, content: m.content }));
   let leadCaptured = false;
+  let leadReference: string | null = null;
+
+  const ipHash = hashSource(ip);
+
+  /*
+   * Stored after the reply is known, not before, so a row always holds a
+   * complete exchange rather than a question whose answer was lost to a model
+   * outage. Every failure inside is swallowed and logged — see
+   * `conversation-store` — because the thing being observed must never be
+   * broken by the observing of it.
+   */
+  async function store(reply: string): Promise<string | null> {
+    const id = await recordTurn({
+      conversationId: payload.conversationId ?? null,
+      messages: [...payload.messages, { role: "assistant" as const, content: reply }],
+      ipHash,
+      startedOn: payload.startedOn ?? null,
+    });
+    if (leadReference) await attachLead(id, leadReference);
+    return id;
+  }
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
     const result = await createMessage(config.apiKey, { system, messages, tools: TOOLS });
@@ -95,10 +133,8 @@ export const POST = withErrorHandling("chat.message", async (request: Request) =
         .join("\n")
         .trim();
 
-      return jsonOk({
-        reply: text || "Sorry, I didn't quite catch that — could you say it differently?",
-        leadCaptured,
-      });
+      const reply = text || "Sorry, I didn't quite catch that — could you say it differently?";
+      return jsonOk({ reply, leadCaptured, conversationId: await store(reply) });
     }
 
     // Assistant's turn, tool calls included, goes back into history verbatim —
@@ -113,7 +149,10 @@ export const POST = withErrorHandling("chat.message", async (request: Request) =
     const toolResults: ContentBlock[] = [];
     for (const use of toolUses) {
       const outcome = await executeTool(use.name, use.input, { transcript });
-      if (use.name === "capture_lead" && !outcome.isError) leadCaptured = true;
+      if (use.name === "capture_lead" && !outcome.isError) {
+        leadCaptured = true;
+        leadReference = outcome.leadReference ?? null;
+      }
       toolResults.push({
         type: "tool_result",
         tool_use_id: use.id,
@@ -126,8 +165,7 @@ export const POST = withErrorHandling("chat.message", async (request: Request) =
   }
 
   logger.warn("chat_tool_rounds_exhausted", {});
-  return jsonOk({
-    reply: "Let me get someone from our team to help with that directly — could you share your email so they can follow up?",
-    leadCaptured,
-  });
+  const exhausted =
+    "Let me get someone from our team to help with that directly — could you share your email so they can follow up?";
+  return jsonOk({ reply: exhausted, leadCaptured, conversationId: await store(exhausted) });
 });

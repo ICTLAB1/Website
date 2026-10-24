@@ -37,6 +37,14 @@ const findings = [];
 const note = (path, criterion, detail) => findings.push({ path, criterion, detail });
 
 /**
+ * Focused controls something paints over, but not out of sight.
+ *
+ * Printed at the end rather than failed on — see `focusNotObscured` for why
+ * the criterion draws the line there, and why these are still worth reading.
+ */
+const overlaps = [];
+
+/**
  * 2.4.11 Focus Not Obscured (Minimum), AA.
  *
  * Presses Tab for real and, at each stop, asks the browser what is actually
@@ -71,6 +79,26 @@ const note = (path, criterion, detail) => findings.push({ path, criterion, detai
  * what a header needs to be to hold anything — is caught: inserting one over
  * the top 400px of each page turns this check's clean run into sixty-two
  * findings, which is how it was confirmed to bite at all.
+ *
+ * ## Why the centre point alone is not the criterion
+ *
+ * It was, and it reported something that is not a violation. 2.4.11 (Minimum)
+ * says a focused component must not be **entirely** hidden by author content;
+ * partial obscuring is what 2.4.12 (Enhanced, AAA) forbids, which this site
+ * does not claim. A single centre-point sample cannot tell the two apart, and
+ * the thing that exposed it was the chat launcher: a 56px button fixed in the
+ * bottom-right corner, which at 390px wide lands on the right-hand third of
+ * the home page's search submit — measured at 37% of the button's area, its
+ * centre inside the launcher and twenty-five of twenty-five sampled points
+ * still its own everywhere else. Reported as a violation, that is a check
+ * failing a page for a floating launcher the standard permits, which is how a
+ * suite earns a reputation for crying wolf.
+ *
+ * So the element is now sampled across its own area: if it owns none of its
+ * points it is entirely hidden and that is a failure. If it owns some, the
+ * overlap is printed at the end with the fraction covered — because a launcher
+ * sitting over a tap target is still worth somebody's judgement, and the way
+ * to keep that judgement available is to show it rather than to fail on it.
  */
 async function focusNotObscured(page, path) {
   for (let i = 0; i < 40; i += 1) {
@@ -91,6 +119,26 @@ async function focusNotObscured(page, path) {
       if (!painted || painted === active) return null;
       if (active.contains(painted) || painted.contains(active)) return null;
 
+      /*
+       * The centre is covered. Whether that is a violation depends on how much
+       * else is, so the element's own area is sampled on a 5x5 grid inset from
+       * the edges — a border or a focus ring at the very edge belongs to a
+       * parent and would read as covered on every element on the page.
+       */
+      const isItsOwn = (x, y) => {
+        const hit = document.elementFromPoint(x, y);
+        return Boolean(hit) && (hit === active || active.contains(hit) || hit.contains(active));
+      };
+
+      let own = 0;
+      let sampled = 0;
+      for (let gx = 1; gx <= 5; gx += 1) {
+        for (let gy = 1; gy <= 5; gy += 1) {
+          sampled += 1;
+          if (isItsOwn(rect.left + (rect.width * gx) / 6, rect.top + (rect.height * gy) / 6)) own += 1;
+        }
+      }
+
       const cover = painted.closest("*");
       const position = cover ? getComputedStyle(cover).position : "";
 
@@ -98,15 +146,22 @@ async function focusNotObscured(page, path) {
         html: active.outerHTML.slice(0, 100),
         by: `${painted.tagName.toLowerCase()}${painted.className ? `.${String(painted.className).split(" ")[0]}` : ""}`,
         position,
+        entirelyHidden: own === 0,
+        covered: `${sampled - own}/${sampled} sampled points`,
       };
     });
 
-    if (problem) {
+    if (problem?.entirelyHidden) {
       note(
         path,
         "2.4.11 Focus Not Obscured",
-        `covered by ${problem.by} (position: ${problem.position || "static"}): ${problem.html}`,
+        `entirely hidden by ${problem.by} (position: ${problem.position || "static"}): ${problem.html}`,
       );
+    } else if (problem) {
+      overlaps.push({
+        path,
+        detail: `${problem.covered} covered by ${problem.by} (position: ${problem.position || "static"}): ${problem.html}`,
+      });
     }
   }
 }
@@ -272,6 +327,18 @@ if (present.length > 1) {
       .map(([path, position]) => `${path} ${position.toFixed(2)}`);
     note("across pages", "3.2.6 Consistent Help", `help link order varies: ${worst.join(", ")}`);
   }
+}
+
+if (overlaps.length > 0) {
+  console.log(
+    `Partly covered on focus — ${overlaps.length} control${overlaps.length === 1 ? "" : "s"}. ` +
+      "Permitted by 2.4.11 (Minimum), forbidden by 2.4.12 (Enhanced, AAA), and\n" +
+      "worth a look where the cover is a floating launcher over a tap target:",
+  );
+  for (const overlap of overlaps) {
+    console.log(`  ${overlap.path}\n    ${overlap.detail}`);
+  }
+  console.log("");
 }
 
 if (findings.length === 0) {

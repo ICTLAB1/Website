@@ -59,7 +59,10 @@ function subject(row: string): string {
 describe("published retention periods", () => {
   it("every published row is accounted for", () => {
     const rows = publishedRows();
-    expect(rows.length).toBe(7);
+    // Eight since the chat assistant started keeping conversations. The count
+    // is a guard that the parser found the right table, not a claim about the
+    // policy — but it is also the line that makes adding a row a decision.
+    expect(rows.length).toBe(8);
 
     const covered = new Set(
       [...RETENTION_RULES.map((rule) => rule.published), ...RETENTION_FLOORS.map((f) => f.published)]

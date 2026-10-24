@@ -75,6 +75,7 @@ import { restoreTheAdobeCopy } from "./2026-10-restore-the-adobe-copy";
 import { microsoftProductIcon } from "./2026-10-microsoft-product-icon";
 import { autodeskProductIcon } from "./2026-10-autodesk-product-icon";
 import { moreBrandFaqs } from "./2026-10-more-brand-faqs";
+import { privacyTheAssistant } from "./2026-10-privacy-the-assistant";
 import type { ContentMigration } from "./types";
 
 /**
@@ -168,6 +169,7 @@ export const contentMigrations: ContentMigration[] = [
   microsoftProductIcon,
   autodeskProductIcon,
   moreBrandFaqs,
+  privacyTheAssistant,
 ];
 
 export type { ContentMigration };

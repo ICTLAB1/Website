@@ -36,6 +36,12 @@ const SECTIONS: Array<{ heading: string; links: Array<{ href: string; label: str
        * administrator can clear is a queue that sits for a week.
        */
       { href: "/admin/reviews", label: "Reviews" },
+      /*
+       * Admin-only, like the audit log and for the same reason: a visitor
+       * typed these words expecting them to reach this business, not
+       * everybody in it.
+       */
+      { href: "/admin/conversations", label: "Chat conversations", adminOnly: true },
     ],
   },
   {

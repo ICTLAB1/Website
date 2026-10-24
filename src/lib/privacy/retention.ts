@@ -69,7 +69,7 @@ import { addMonthsUtc } from "@/lib/utils";
  * does not fall is how you discover a rule that can never fire.
  */
 
-export type RetentionRuleId = "enquiries" | "support-tickets" | "audit-logs";
+export type RetentionRuleId = "enquiries" | "support-tickets" | "audit-logs" | "chat-conversations";
 
 export type RetentionRule = {
   id: RetentionRuleId;
@@ -105,6 +105,12 @@ export const RETENTION_RULES: RetentionRule[] = [
     published: "Security and audit logs — 12 months",
     months: 12,
     measuredFrom: "the entry being written",
+  },
+  {
+    id: "chat-conversations",
+    published: "Chat conversations with the assistant — 12 months",
+    months: 12,
+    measuredFrom: "the last message",
   },
 ];
 
@@ -244,6 +250,30 @@ async function runAuditLogs(cutoff: Date, apply: boolean) {
   return { eligible, heldBack: 0, deleted };
 }
 
+async function runChatConversations(cutoff: Date, apply: boolean) {
+  /*
+   * Measured from the last message rather than the first, because a
+   * conversation resumed after a month is a month old, not two.
+   *
+   * Nothing holds one back. The transcript of a conversation that became a
+   * lead is also copied onto the deal as an Activity when the lead is
+   * captured, and that copy lives under the commercial retention period where
+   * it belongs; this row is the observational one and twelve months of it is
+   * a ceiling rather than a floor. `leadReference` is a string rather than a
+   * relation precisely so this deletion can never reach a commercial record.
+   */
+  const inScope = { updatedAt: { lt: cutoff } };
+
+  const eligible = await prisma.chatConversation.count({ where: inScope });
+
+  let deleted = 0;
+  if (apply && eligible > 0) {
+    ({ count: deleted } = await prisma.chatConversation.deleteMany({ where: inScope }));
+  }
+
+  return { eligible, heldBack: 0, deleted };
+}
+
 const RUNNERS: Record<RetentionRuleId, (cutoff: Date, apply: boolean) => Promise<{
   eligible: number;
   heldBack: number;
@@ -252,6 +282,7 @@ const RUNNERS: Record<RetentionRuleId, (cutoff: Date, apply: boolean) => Promise
   enquiries: runEnquiries,
   "support-tickets": runSupportTickets,
   "audit-logs": runAuditLogs,
+  "chat-conversations": runChatConversations,
 };
 
 /**
