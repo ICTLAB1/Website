@@ -35,6 +35,8 @@
  *     quote page that links to it does not carry them too;
  *   - a product icon is served, and the product page references it;
  *   - the hardware catalogue shows prices at all, which it did not.
+ *   - every product has an FAQ, including the nineteen HP ones that had none,
+ *     and the HPE answer no longer says hardware is not priced.
  *
  * From the Adobe clean-up:
  *
@@ -478,6 +480,44 @@ check(
   "and one with no equivalent is gone rather than priced at ₹97",
   withdrawn.status === 404,
   `status ${withdrawn.status}`,
+);
+
+// ── the FAQ every product now has ────────────────────────────────────────
+console.log("\nFAQs");
+
+/*
+ * Nineteen HP products showed no FAQ at all before `2026-10-more-brand-faqs`:
+ * the product page falls back to `product.brand.faqs`, and HP was the one
+ * brand with a catalogue and no brand FAQs. This reads one of them.
+ */
+const hp = await fetchPage("/products/hp-proone-440-g9-all-in-one");
+const hpText = textOf(hp.body);
+check(
+  "an HP product page carries the brand's FAQs",
+  hpText.includes("What separates the Pro, Elite and Z ranges?"),
+  `status ${hp.status}; the question is not on the page`,
+);
+check(
+  "and declares them as a FAQPage",
+  hp.body.includes('"FAQPage"'),
+  "no FAQPage block in the structured data",
+);
+
+/*
+ * And the one that had stopped being true: HPE asked why hardware is not
+ * priced, on a page that prices it.
+ */
+const hpe = await fetchPage("/brands/hpe");
+const hpeText = textOf(hpe.body);
+check(
+  "the HPE answer no longer denies the prices",
+  !hpeText.includes("Why is hardware quoted rather than priced online?"),
+  "the superseded question is still on the page",
+);
+check(
+  "and explains the figure instead",
+  hpeText.includes("What does the price on a server listing cover?"),
+  "the replacement question is not on the page",
 );
 
 // ── the monogram, and the withdrawn URLs ──────────────────────────────────
