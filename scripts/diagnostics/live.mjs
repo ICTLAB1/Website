@@ -358,6 +358,15 @@ check(
 const icon = await fetchPage("/products/adobe-photoshop-teams.png", { redirect: "follow" });
 check("a product icon is served", icon.status === 200, `status ${icon.status}`);
 
+const microsoftMark = await fetchPage("/products/microsoft.png", { redirect: "follow" });
+check("the Microsoft mark is served", microsoftMark.status === 200, `status ${microsoftMark.status}`);
+const microsoftBrand = await fetchPage("/brands/microsoft");
+check(
+  "and every Microsoft card carries it",
+  (microsoftBrand.body.match(/\/products\/microsoft\.png/g) ?? []).length >= 6,
+  "fewer cards reference the mark than the brand page lists",
+);
+
 const photoshop = await fetchPage("/products/adobe-photoshop-teams");
 check(
   "and the product page renders it",
