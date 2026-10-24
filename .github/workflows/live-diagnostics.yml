@@ -23,6 +23,14 @@ on:
         description: The public origin to read
         required: false
         default: https://techzoidtechnologies.com
+      chat:
+        # Off by default: it spends a model call and leaves a transcript in
+        # Admin -> Chat conversations beside real visitors' questions. Worth
+        # having after a release that touched the assistant, not on every run.
+        description: Also send one real message to the assistant
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   diagnose:
@@ -41,6 +49,7 @@ jobs:
       - name: Read the live site
         env:
           SITE: ${{ inputs.site }}
+          CHAT: ${{ inputs.chat && '1' || '0' }}
         run: |
           set -euo pipefail
           # Validated rather than trusted: on a public repository a workflow
@@ -69,4 +78,8 @@ jobs:
             '/products?brand=adobe' \
             '/products?brand=autodesk' \
             '/products?brand=microsoft'
+          # The one check that cannot be made for free, so it is asked for
+          # rather than assumed. CHAT is read by the script, not interpolated
+          # into it.
+          CHAT="$CHAT" node scripts/diagnostics/assistant-chat.mjs || status=$?
           exit "$status"
