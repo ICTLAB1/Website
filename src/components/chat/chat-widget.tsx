@@ -35,6 +35,53 @@ import { postJson } from "@/lib/csrf-client";
  */
 const REVEAL_AFTER_SCROLL_PX = 480;
 
+/**
+ * The pages where offering help is help rather than interruption.
+ *
+ * A visitor reading the careers page or a blog post is not deciding what to
+ * buy, and a greeting there is a pop-up. These four are where somebody is
+ * looking at a price: a product, the hardware catalogue, a quote page, or the
+ * Microsoft plan hub with the comparison tables on it. The business asked for
+ * an assistant that converts, and converting starts with not being resented.
+ */
+const INTENT_PATHS = [/^\/products\/[^/]+$/, /^\/hardware/, /^\/get-a-quote\//, /^\/microsoft-365$/];
+
+/**
+ * How long a visitor reads before being offered help.
+ *
+ * Long enough that they have looked at the page and formed a question;
+ * short enough that they have not already left. The timer restarts on
+ * navigation, so moving between two product pages does not accumulate.
+ */
+const GREETING_AFTER_MS = 20_000;
+
+/**
+ * One offer per visit, remembered for the tab.
+ *
+ * `sessionStorage`, not `localStorage`: a visitor who waved it away today
+ * should not be re-greeted on every page of this visit, and a visitor who
+ * comes back next week is a new conversation worth opening. Reads and writes
+ * are wrapped because a private window with site data blocked throws on
+ * access, and a chat widget is not worth a crashed page.
+ */
+const GREETED_KEY = "techzoid.assistant.greeted";
+
+function alreadyGreeted(): boolean {
+  try {
+    return window.sessionStorage.getItem(GREETED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function rememberGreeted(): void {
+  try {
+    window.sessionStorage.setItem(GREETED_KEY, "1");
+  } catch {
+    /* Blocked storage is not a reason to fail. The offer simply repeats. */
+  }
+}
+
 type Message = { role: "user" | "assistant"; content: string };
 
 export function ChatWidget({ assistantName }: { assistantName: string }) {
@@ -46,6 +93,7 @@ export function ChatWidget({ assistantName }: { assistantName: string }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [leadCaptured, setLeadCaptured] = useState(false);
+  const [greeting, setGreeting] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -64,6 +112,30 @@ export function ChatWidget({ assistantName }: { assistantName: string }) {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  /*
+   * The offer of help, on a page where it is one.
+   *
+   * Deliberately not an auto-opened panel. On a phone the panel is most of
+   * the screen, and a widget that covers the price somebody came to read is a
+   * worse outcome than one nobody clicks. This is a line of text beside the
+   * button: ignorable, dismissable, and one tap from a conversation.
+   */
+  useEffect(() => {
+    if (open || messages.length > 0) return;
+    if (!pathname || !INTENT_PATHS.some((pattern) => pattern.test(pathname))) return;
+    if (alreadyGreeted()) return;
+
+    const timer = window.setTimeout(() => {
+      // Re-checked on fire: twenty seconds is long enough for the visitor to
+      // have opened the panel themselves, or for another tab to have greeted.
+      if (alreadyGreeted()) return;
+      setGreeting(true);
+      rememberGreeted();
+    }, GREETING_AFTER_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [pathname, open, messages.length]);
 
   if (pathname?.startsWith("/admin") || pathname?.startsWith("/account")) return null;
 
@@ -174,20 +246,74 @@ export function ChatWidget({ assistantName }: { assistantName: string }) {
           </form>
         </div>
       ) : (
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className={`flex h-14 w-14 items-center justify-center rounded-full bg-accent-700 text-white shadow-[0_10px_28px_-8px_rgb(0_0_0/0.4)] transition-opacity duration-300 motion-reduce:transition-none hover:bg-accent-800 active:bg-accent-900 ${
-            pastHero ? "opacity-100" : "pointer-events-none opacity-0"
-          }`}
-          aria-label={`Chat with ${assistantName}`}
-          // Out of the tab order until it is actually visible — otherwise a
-          // keyboard user lands on an invisible button before reaching the
-          // hero's own controls.
-          tabIndex={pastHero ? 0 : -1}
-        >
-          <ChatIcon />
-        </button>
+        <div className="flex flex-col items-end gap-3">
+          {/*
+            `role="status"` and a polite live region, so a screen reader is
+            told the offer arrived rather than having it appear silently —
+            and `polite` rather than `assertive` because it must never
+            interrupt what is being read.
+
+            Focus stays where it is. Moving it here would wrench a visitor out
+            of the page mid-sentence, which is the behaviour that makes people
+            hate these things.
+          */}
+          {/*
+            `pastHero` as well, for the reason the button waits on it: above
+            that line this corner belongs to the hero's own calls to action,
+            and a card there covers them on exactly the short viewports the
+            scroll delay was added for.
+          */}
+          {greeting && pastHero ? (
+            <div
+              role="status"
+              aria-live="polite"
+              className="max-w-[17rem] rounded-[--radius-lg] border border-line bg-white p-4 shadow-[0_12px_32px_-12px_rgb(0_0_0/0.3)]"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-meta leading-relaxed text-ink-700">
+                  Hi — I&rsquo;m {assistantName}. Want me to check pricing or availability on
+                  anything here?
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setGreeting(false)}
+                  className="-mr-1 -mt-1 grid h-6 w-6 shrink-0 place-items-center rounded text-ink-500 hover:text-graphite-900"
+                  aria-label="Dismiss"
+                >
+                  <CloseIcon />
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setGreeting(false);
+                  setOpen(true);
+                }}
+                className="mt-3 w-full rounded-[--radius-md] bg-accent-700 px-3 py-2 text-label font-semibold text-white hover:bg-accent-800 active:bg-accent-900"
+              >
+                Ask a question
+              </button>
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={() => {
+              setGreeting(false);
+              setOpen(true);
+            }}
+            className={`flex h-14 w-14 items-center justify-center rounded-full bg-accent-700 text-white shadow-[0_10px_28px_-8px_rgb(0_0_0/0.4)] transition-opacity duration-300 motion-reduce:transition-none hover:bg-accent-800 active:bg-accent-900 ${
+              pastHero ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
+            aria-label={`Chat with ${assistantName}`}
+            // Out of the tab order until it is actually visible — otherwise a
+            // keyboard user lands on an invisible button before reaching the
+            // hero's own controls.
+            tabIndex={pastHero ? 0 : -1}
+          >
+            <ChatIcon />
+          </button>
+        </div>
       )}
     </div>
   );
