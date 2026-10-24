@@ -27,8 +27,21 @@ const ANTHROPIC_VERSION = "2023-06-01";
  * from the loop in `/api/chat`: it already echoes the assistant's content back
  * verbatim, because the API requires exactly what it sent before it will
  * accept the matching `tool_result`, and that is also the rule for thinking
- * blocks. `effort` is set low below — this is a two-sentence answer in a chat
- * box, and depth here buys latency rather than a better reply.
+ * blocks.
+ *
+ * ## Why there is no `effort` here yet
+ *
+ * There was, set low, which is the right setting for a two-sentence answer in
+ * a chat box — depth buys latency a visitor is watching rather than a better
+ * reply. It came out again on the same night it went in, for a reason worth
+ * recording: the live assistant is refusing every request in about a second,
+ * which is what a rejected key looks like, and until somebody can get one
+ * successful reply out of it nobody can tell an unaccepted request field from
+ * a bad credential. The smallest request the documentation vouches for is the
+ * one to leave in front of that fix. Put `output_config: { effort: "low" }`
+ * back once the assistant answers at all — it is a latency and cost
+ * improvement, and it will be verifiable in one dispatch of
+ * `scripts/diagnostics/assistant-chat.mjs`.
  */
 export const ASSISTANT_MODEL = "claude-haiku-5-5";
 
@@ -86,10 +99,6 @@ export async function createMessage(
       body: JSON.stringify({
         model: ASSISTANT_MODEL,
         max_tokens: input.maxTokens ?? 1024,
-        // Two or three sentences in a chat widget. Higher effort would buy
-        // depth this answer has no room for, and pay for it in latency a
-        // visitor is sitting and watching.
-        output_config: { effort: "low" },
         system: input.system,
         messages: input.messages,
         tools: input.tools,
