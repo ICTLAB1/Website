@@ -1013,8 +1013,30 @@ export function ComparisonTableBlock({
         The label names the table rather than saying "scrollable region", so a
         screen reader announces what the thing is and not how it behaves.
       */}
+      {/*
+        `contain: paint`, because `overflow-x: auto` alone does not stop this
+        table widening the document.
+
+        The wrapper clips correctly — it measures 390px inside a 390px viewport
+        and the page cannot be scrolled sideways — but Chromium still counts
+        the 544px table into `documentElement.scrollWidth`, which reads 517 on a
+        phone. `verify:responsive` calls that a horizontal scroll and is right
+        to: a number that says the document is wider than the screen is a
+        number other things act on, and it was masking the one real overflow
+        the suite exists to find.
+
+        Measured rather than guessed. With the sticky cells made static it is
+        still 517; with the negative margin removed, still 517; with
+        `contain: paint` on this element, 390.
+
+        Narrow on purpose. `.scroll-x` is on sixteen components, several of
+        them navigation strips where something is meant to escape the box —
+        `admin-nav` turns the scroller off entirely at `lg` — and paint
+        containment would clip those. Here there is a table inside and nothing
+        that needs to leave.
+      */}
       <div
-        className="scroll-x -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0"
+        className="scroll-x -mx-4 overflow-x-auto px-4 [contain:paint] sm:mx-0 sm:px-0"
         tabIndex={0}
         role="region"
         aria-label={data.heading ?? "Plan comparison"}
