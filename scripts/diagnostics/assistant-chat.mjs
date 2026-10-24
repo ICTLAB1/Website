@@ -71,6 +71,18 @@ if (!csrf) {
 
 let status = 0;
 let payload = null;
+/*
+ * Timed, because the time is the diagnosis.
+ *
+ * `createMessage` aborts at thirty seconds, so a failure that takes about that
+ * long means the container never reached the API — egress, DNS, a firewall. A
+ * failure in about a second means it reached it and was turned away, which is
+ * a rejected key, a model the account cannot use, or a malformed request. The
+ * widget tells a visitor neither of those things, and rightly, but somebody
+ * reading this needs to know which half to look in, and the container log is
+ * not always to hand.
+ */
+const started = Date.now();
 try {
   const response = await fetch(`${SITE}/api/chat`, {
     method: "POST",
@@ -94,7 +106,19 @@ try {
   process.exit(1);
 }
 
-check("the post is accepted", status === 200, `status ${status}${payload ? ` — ${JSON.stringify(payload).slice(0, 300)}` : ""}`);
+const elapsed = Date.now() - started;
+
+check(
+  "the post is accepted",
+  status === 200,
+  `status ${status} after ${(elapsed / 1000).toFixed(1)}s` +
+    `${payload ? ` — ${JSON.stringify(payload).slice(0, 300)}` : ""}` +
+    (status === 200
+      ? ""
+      : elapsed > 20_000
+        ? "\n          Twenty seconds or more: the container did not reach the API. Look at egress, DNS and any firewall in front of it."
+        : "\n          A second or two: the API was reached and refused the request. Look at the stored key, the model id, and the tool definitions."),
+);
 
 /*
  * `{ ok, data }`, which is the envelope every route here answers in — not the
