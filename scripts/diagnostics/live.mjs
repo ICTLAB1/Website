@@ -43,6 +43,18 @@
  *   - the Adobe catalogue lists the approved products under the approved
  *     names, at the approved figures, and carries none of the imported ones.
  *
+ * From the assistant release:
+ *
+ *   - the widget is mounted, which it only is once a key has been stored —
+ *     so this one check answers "is the assistant actually live" in a way no
+ *     green deploy can;
+ *   - the chat endpoint is deployed and still refuses a post with no CSRF
+ *     token;
+ *   - the privacy policy names Anthropic, counts it among the transfers
+ *     outside India, and publishes the twelve-month retention of
+ *     conversations;
+ *   - the transcripts are behind the sign-in.
+ *
  * Everything it prints is already public: a title, a canonical, a robots tag
  * and a JSON-LD block are served to every visitor. Nothing here reads a
  * cookie, signs in, or touches the database, so there is nothing it could
@@ -550,6 +562,75 @@ check(
   "and is linked from the footer of the home page",
   root.body.includes('href="/software-licensing-company-delhi"'),
   "no link to it in the home page markup",
+);
+
+console.log("\nThe assistant");
+
+/*
+ * Whether the assistant is switched on in production at all.
+ *
+ * The widget is gated server-side: `ChatWidgetGate` renders nothing unless a
+ * row exists with `enabled` set and an API key stored, so the presence of the
+ * launcher in the home page markup is the only honest answer to "is it live",
+ * and a deploy cannot provide it. This check failing while the rest of this
+ * section passes means the code shipped and nobody has entered a key yet —
+ * Admin → Settings → the assistant — which is a different problem from a
+ * release that did not land, so it says so rather than being lumped in.
+ */
+check(
+  "the assistant is configured, so the widget is mounted",
+  /aria-label="Chat with [^"]+"/.test(root.body),
+  "no launcher in the home page markup: either no API key is stored, or the " +
+    "assistant is switched off in Admin \u2192 Settings",
+);
+
+/*
+ * Posted without the CSRF header on purpose. A 403 proves the endpoint is
+ * deployed, reachable, and still refusing a cross-site post; it costs nothing
+ * at Anthropic because the guard runs before the model is called. A 404 would
+ * mean this release did not land; a 500 would mean it landed broken.
+ */
+const chatEndpoint = await (async () => {
+  try {
+    const response = await fetch(`${SITE}/api/chat`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ messages: [] }),
+    });
+    return response.status;
+  } catch (error) {
+    return `error ${String(error)}`;
+  }
+})();
+check(
+  "the chat endpoint is deployed and refuses a post with no CSRF token",
+  chatEndpoint === 403,
+  `status ${chatEndpoint}`,
+);
+
+const privacy = await fetchPage("/privacy");
+const privacyText = textOf(privacy.body);
+check(
+  "the privacy policy names Anthropic among the recipients",
+  privacyText.includes("Anthropic"),
+  "the content migration that adds it has not run",
+);
+check(
+  "and publishes the twelve-month conversation retention",
+  privacyText.includes("Chat conversations with the assistant"),
+  "no row for it in the retention table",
+);
+check(
+  "and counts it among the transfers outside India",
+  privacyText.includes("Apart from those three"),
+  "the transfers paragraph still accounts for two destinations",
+);
+
+const transcripts = await fetchPage("/admin/conversations", { redirect: "manual" });
+check(
+  "the transcripts are behind the sign-in",
+  transcripts.status >= 300 && transcripts.status < 400,
+  `status ${transcripts.status} rather than a redirect to the sign-in`,
 );
 
 // ── result ────────────────────────────────────────────────────────────────
