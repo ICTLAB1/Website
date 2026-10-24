@@ -153,7 +153,7 @@ const ADDITIONS: BrandFaq[] = [
     order: 20,
     question: "Is a workstation worth it over a business desktop?",
     answer:
-      "Where the software is certified against workstation graphics — CAD, simulation, colour-critical work — yes, because the vendor's support conversation assumes it. For office work it is money spent on headroom nobody uses.",
+      "Where the software is certified against workstation graphics — CAD, simulation, colour-critical work — yes, because the software publisher's own support assumes it. For office work it is money spent on headroom nobody uses.",
   },
   {
     brand: "dell",
