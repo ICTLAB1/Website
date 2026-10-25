@@ -208,7 +208,14 @@ export function FormError({ children }: { children: ReactNode }) {
   return (
     <div
       role="alert"
-      className="rounded-[--radius-md] border border-danger-600/30 bg-danger-50 px-4 py-3 text-[13px] text-danger-700"
+      /*
+       * `whitespace-pre-line` so a message that is written as more than one
+       * paragraph arrives as more than one paragraph. Nothing changes for the
+       * single-sentence messages that are most of them — it only stops a
+       * deliberate line break being collapsed, which is what happened to the
+       * first error on this site long enough to explain itself.
+       */
+      className="whitespace-pre-line rounded-[--radius-md] border border-danger-600/30 bg-danger-50 px-4 py-3 text-[13px] leading-relaxed text-danger-700"
     >
       {children}
     </div>
