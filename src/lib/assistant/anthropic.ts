@@ -76,7 +76,14 @@ export type CreateMessageResult =
       content: ContentBlock[];
       stopReason: string;
     }
-  | { ok: false; reason: string };
+  /*
+   * `reason` is what a visitor is allowed to read — deliberately vague, because
+   * the state of this business's API credentials is nobody else's business.
+   * `status` and `detail` are what the API actually said, for the one caller
+   * that has already proved it is an administrator. Nothing on the public path
+   * reads them.
+   */
+  | { ok: false; reason: string; status?: number; detail?: string };
 
 export async function createMessage(
   apiKey: string,
@@ -112,7 +119,11 @@ export async function createMessage(
     logger.error("assistant_unreachable", {
       message: error instanceof Error ? error.message : "unknown",
     });
-    return { ok: false, reason: "The assistant could not be reached." };
+    return {
+      ok: false,
+      reason: "The assistant could not be reached.",
+      detail: error instanceof Error ? error.message : "unknown",
+    };
   }
 
   const payload = (await response.json().catch(() => null)) as {
@@ -126,12 +137,22 @@ export async function createMessage(
       status: response.status,
       message: payload?.error?.message ?? "",
     });
-    return { ok: false, reason: "The assistant is unavailable right now." };
+    return {
+      ok: false,
+      reason: "The assistant is unavailable right now.",
+      status: response.status,
+      detail: payload?.error?.message ?? "",
+    };
   }
 
   if (!Array.isArray(payload?.content)) {
     logger.error("assistant_response_malformed", { status: response.status });
-    return { ok: false, reason: "The assistant returned an unusable response." };
+    return {
+      ok: false,
+      reason: "The assistant returned an unusable response.",
+      status: response.status,
+      detail: "the response carried no content array",
+    };
   }
 
   return { ok: true, content: payload.content, stopReason: payload.stop_reason ?? "end_turn" };
