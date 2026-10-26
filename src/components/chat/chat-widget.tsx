@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { postJson } from "@/lib/csrf-client";
@@ -44,7 +45,17 @@ const REVEAL_AFTER_SCROLL_PX = 480;
  * Microsoft plan hub with the comparison tables on it. The business asked for
  * an assistant that converts, and converting starts with not being resented.
  */
-const INTENT_PATHS = [/^\/products\/[^/]+$/, /^\/hardware/, /^\/get-a-quote\//, /^\/microsoft-365$/];
+/*
+ * `/enquiry`, not `/get-a-quote`.
+ *
+ * The third pattern here used to be `/^\/get-a-quote\//`, which matched
+ * nothing: there is no such route on this site, and the trailing slash meant
+ * it would not have matched even if there were. A dead entry in a list like
+ * this is invisible — the greeting still appeared on the other three paths, so
+ * nothing looked broken, and the one page where a visitor is furthest down the
+ * funnel was the page that never got offered help.
+ */
+const INTENT_PATHS = [/^\/products\/[^/]+$/, /^\/hardware/, /^\/enquiry$/, /^\/microsoft-365$/];
 
 /**
  * How long a visitor reads before being offered help.
@@ -84,7 +95,15 @@ function rememberGreeted(): void {
 
 type Message = { role: "user" | "assistant"; content: string };
 
-export function ChatWidget({ assistantName }: { assistantName: string }) {
+export function ChatWidget({
+  assistantName,
+  salesEmail,
+  salesPhone,
+}: {
+  assistantName: string;
+  salesEmail: string | null;
+  salesPhone: string | null;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [pastHero, setPastHero] = useState(false);
@@ -231,8 +250,56 @@ export function ChatWidget({ assistantName }: { assistantName: string }) {
               </div>
             ) : null}
 
+            {/*
+              A failed turn is not the end of the conversation.
+
+              The message above is deliberately vague, and has to be — what is
+              actually wrong is usually a credential, and the state of this
+              business's credentials is not something to publish on a public
+              page. But a visitor reading one red line with nothing after it
+              has been stopped rather than helped, and this widget exists to
+              capture enquiries, not to lose them politely.
+
+              So the same three ways through the footer carries, handed to this
+              component when the page rendered: a quote form, an address, a
+              number. None of them depends on the model, the key, or any
+              further request succeeding, which is what makes them a fallback
+              rather than a second thing to go wrong.
+            */}
             {error ? (
-              <p className="rounded-[--radius-md] bg-danger-50 px-3 py-2 text-label text-danger-700">{error}</p>
+              <div className="space-y-2 rounded-[--radius-md] bg-danger-50 px-3 py-2">
+                <p className="text-label text-danger-700">{error}</p>
+                <p className="text-label leading-relaxed text-ink-700">
+                  In the meantime our team can pick this up directly:
+                </p>
+                <ul className="space-y-1 text-label leading-relaxed">
+                  <li>
+                    <Link href="/enquiry" className="font-semibold text-accent-700 underline hover:text-accent-800">
+                      Request a quotation
+                    </Link>
+                  </li>
+                  {salesEmail ? (
+                    <li>
+                      <a
+                        href={`mailto:${salesEmail}`}
+                        className="font-semibold text-accent-700 underline hover:text-accent-800"
+                      >
+                        {salesEmail}
+                      </a>
+                    </li>
+                  ) : null}
+                  {salesPhone ? (
+                    <li>
+                      <a
+                        href={`tel:${salesPhone.replace(/[^\d+]/g, "")}`}
+                        className="font-semibold text-accent-700 underline hover:text-accent-800"
+                      >
+                        {salesPhone}
+                      </a>
+                    </li>
+                  ) : null}
+                </ul>
+              </div>
             ) : null}
 
             {leadCaptured ? (
