@@ -15,6 +15,8 @@
 
 import { chromium } from "playwright";
 
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
+
 import { request } from "node:http";
 
 const PORT = 3000;
@@ -292,6 +294,7 @@ const GA_IDS_ON_PAGE = new Set(html.match(/G-[A-Z0-9]{6,20}/g) ?? []).size;
  */
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+await suppressFestiveGreeting(context);
 const page = await context.newPage();
 
 /**

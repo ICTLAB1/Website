@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { writeFileSync, rmSync } from "node:fs";
 
@@ -21,6 +23,7 @@ const password = "CorrectHorse9";
 
 // ------------------------------------------- customer: register and enquire
 const customer = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+await suppressFestiveGreeting(customer);
 const cust = await customer.newPage();
 
 await cust.goto(`${BASE}/register`, { waitUntil: "load" });
@@ -50,6 +53,7 @@ check("enquiry submitted while signed in", Boolean(enquiryRef), enquiryRef ?? ""
 
 // ------------------------------------------------- staff: quote the enquiry
 const staff = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+await suppressFestiveGreeting(staff);
 const admin = await staff.newPage();
 await admin.goto(`${BASE}/login`, { waitUntil: "load" });
 await admin.getByLabel("Business email").fill("admin@example.test");

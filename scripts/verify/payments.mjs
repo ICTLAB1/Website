@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { createHmac } from "node:crypto";
 
@@ -121,6 +123,7 @@ const capturedEvent = (sessionId, paymentIntentId, amount) => ({
 // a usable secret, every signature check below would fail and say so.
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1400 } });
+await suppressFestiveGreeting(context);
 const page = await context.newPage();
 
 await page.goto(`${BASE}/login`, { waitUntil: "load" });

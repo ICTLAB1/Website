@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -72,6 +74,7 @@ const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromi
 
 async function signIn(email) {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1200 } });
+  await suppressFestiveGreeting(context);
   const page = await context.newPage();
   await page.goto(`${BASE}/login`, { waitUntil: "load" });
   await page.getByLabel("Business email").fill(email);
@@ -84,6 +87,7 @@ async function signIn(email) {
 /** Does the customer's name appear anywhere a visitor can see? */
 async function onPublicHomepage() {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  await suppressFestiveGreeting(context);
   const page = await context.newPage();
   await page.goto(BASE, { waitUntil: "load" });
   const html = await page.content();
@@ -169,6 +173,7 @@ check("published with the permission recorded as well, still shown", await onPub
 // accessible name it has — the belt shows no text beside a logo.
 {
   const named = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  await suppressFestiveGreeting(named);
   const shown = await named.newPage();
   await shown.goto(BASE, { waitUntil: "load" });
   /*

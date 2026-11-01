@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { writeFileSync, rmSync } from "node:fs";
 
@@ -81,6 +83,7 @@ async function signIn(context, email, secret) {
 }
 
 const staff = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+await suppressFestiveGreeting(staff);
 await signIn(staff, staffEmail, password);
 const page = await staff.newPage();
 await page.goto(`${BASE}/admin/quotes/${quoteRef}`, { waitUntil: "load" });

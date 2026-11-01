@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
 
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
+
 /**
  * What is offered for indexing, and on what basis a price is stated.
  *
@@ -31,6 +33,7 @@ const check = (label, ok, detail = "") => {
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const context = await browser.newContext();
+await suppressFestiveGreeting(context);
 const page = await context.newPage();
 
 /** Title, description, canonical and robots, as the document declares them. */

@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { writeFileSync, rmSync } from "node:fs";
 
@@ -61,6 +63,7 @@ async function signIn(context, email, secret) {
 
 // ------------------------------------------------- the customer sends the PO
 const customer = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+await suppressFestiveGreeting(customer);
 await signIn(customer, customerEmail, password);
 const customerPage = await customer.newPage();
 await customerPage.goto(`${BASE}/account/orders/${orderRef}`, { waitUntil: "load" });
@@ -105,7 +108,9 @@ const documentReference = sql(`select reference from "Document" where "orderId" 
 
 // ------------------------------------------------------- who may read it
 {
-  const stranger = await (await browser.newContext()).newPage();
+  const festiveCtx = await browser.newContext();
+  await suppressFestiveGreeting(festiveCtx);
+  const stranger = await festiveCtx.newPage();
   const response = await stranger.request.get(`${BASE}/documents/${documentReference}`);
   check(
     "a stranger cannot fetch the purchase order",
@@ -125,6 +130,7 @@ check(
 
 // ---------------------------------------------------- staff check and verify
 const staff = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+await suppressFestiveGreeting(staff);
 await signIn(staff, process.env.ADMIN_EMAIL ?? "admin@example.test", process.env.ADMIN_PASSWORD ?? "ChangeMe!Admin123");
 const staffPage = await staff.newPage();
 await staffPage.goto(`${BASE}/admin/orders/${orderRef}`, { waitUntil: "load" });

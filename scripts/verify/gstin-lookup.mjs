@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { writeFileSync, rmSync } from "node:fs";
 import http from "node:http";
@@ -94,6 +96,7 @@ sql(
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const context = await browser.newContext();
+await suppressFestiveGreeting(context);
 const login = await context.newPage();
 await login.goto(`${BASE}/login`, { waitUntil: "load" });
 await login.getByLabel("Business email").fill(customerEmail);

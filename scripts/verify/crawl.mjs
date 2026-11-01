@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
 
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
+
 /**
  * Walks the whole public site and checks what a visitor would actually see.
  *
@@ -42,6 +44,7 @@ const FORBIDDEN = [
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+await suppressFestiveGreeting(context);
 const page = await context.newPage();
 
 const problems = [];

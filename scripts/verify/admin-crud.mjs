@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
 
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
+
 /**
  * Exercises the generic admin CRUD framework end to end and, critically,
  * checks that each change reaches the public site without a redeploy.
@@ -10,6 +12,7 @@ const results = [];
 const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), detail });
 
 const staff = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+await suppressFestiveGreeting(staff);
 const page = await staff.newPage();
 await page.goto(`${BASE}/login`, { waitUntil: "load" });
 await page.getByLabel("Business email").fill(process.env.ADMIN_EMAIL ?? "admin@example.test");

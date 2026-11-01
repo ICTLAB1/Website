@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { firstPurchasableSku } from "./lib/live-sku.mjs";
 
 const BASE = "http://localhost:3000";
@@ -36,6 +38,7 @@ const problems = [];
 for (const [name, path] of PAGES) {
   for (const width of WIDTHS) {
     const context = await browser.newContext({ viewport: { width, height: 900 } });
+    await suppressFestiveGreeting(context);
     const page = await context.newPage();
     const consoleErrors = [];
     page.on("console", (msg) => { if (msg.type() === "error") consoleErrors.push(msg.text()); });
@@ -94,6 +97,7 @@ for (const [name, path] of PAGES) {
  */
 for (const width of [1024, 1280, 1440, 1600, 1920]) {
   const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: "reduce" });
+  await suppressFestiveGreeting(context);
   const page = await context.newPage();
   await page.goto(`${BASE}/`, { waitUntil: "load", timeout: 20000 });
 

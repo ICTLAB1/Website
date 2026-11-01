@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { writeFileSync, rmSync } from "node:fs";
 
@@ -77,11 +79,13 @@ async function signIn(context, email, secret) {
 }
 
 const admin = await browser.newContext({ viewport: { width: 1440, height: 1200 } });
+await suppressFestiveGreeting(admin);
 await signIn(admin, adminEmail, password);
 const page = await admin.newPage();
 
 // ── the careers page exists with nothing open ───────────────────────────────
 const anon = await browser.newContext();
+await suppressFestiveGreeting(anon);
 const anonPage = await anon.newPage();
 const emptyResponse = await anonPage.goto(`${BASE}/careers`, { waitUntil: "load" });
 const emptyText = (await anonPage.locator("body").innerText()).replace(/\s+/g, " ");
@@ -196,6 +200,7 @@ check("a role dated in the future is not advertised yet", !futureList.includes(t
 
 // ── only an administrator may post one ──────────────────────────────────────
 const sales = await browser.newContext();
+await suppressFestiveGreeting(sales);
 await signIn(sales, salesEmail, password);
 const salesPage = await sales.newPage();
 const salesAt = await salesPage.goto(`${BASE}/admin/jobs`, { waitUntil: "load" });
@@ -206,6 +211,7 @@ check(
 );
 
 const stranger = await browser.newContext();
+await suppressFestiveGreeting(stranger);
 const strangerPage = await stranger.newPage();
 await strangerPage.goto(`${BASE}/admin/jobs`, { waitUntil: "load" });
 check("a signed-out caller is sent to sign in", strangerPage.url().includes("/login"));

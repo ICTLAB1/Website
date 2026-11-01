@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { writeFileSync, rmSync } from "node:fs";
 
@@ -100,6 +102,7 @@ async function signIn(context, email, secret) {
 }
 
 const customer = await browser.newContext({ viewport: { width: 1280, height: 1200 } });
+await suppressFestiveGreeting(customer);
 await signIn(customer, customerEmail, password);
 const customerPage = await customer.newPage();
 
@@ -168,6 +171,7 @@ check(
 // -------------------------------------------- another organisation sees none
 {
   const outsider = await browser.newContext();
+  await suppressFestiveGreeting(outsider);
   await signIn(outsider, outsiderEmail, password);
   const outsiderPage = await outsider.newPage();
 
@@ -193,6 +197,7 @@ check(
 
 // --------------------------------------------------------- delivery ---
 const staff = await browser.newContext({ viewport: { width: 1440, height: 1200 } });
+await suppressFestiveGreeting(staff);
 await signIn(staff, process.env.ADMIN_EMAIL ?? "admin@example.test", process.env.ADMIN_PASSWORD ?? "ChangeMe!Admin123");
 const staffPage = await staff.newPage();
 

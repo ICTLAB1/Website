@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { createHash } from "node:crypto";
@@ -113,7 +115,9 @@ async function signIn(context, email, secret = password) {
 const FIXTURE_HASH = "$2b$12$Y1EnHFQUoF4sKzWulgpRre1IGREZUDi/nFfN6QycEnigobTHRMj5e";
 
 const alpha = await browser.newContext();
+await suppressFestiveGreeting(alpha);
 const beta = await browser.newContext();
+await suppressFestiveGreeting(beta);
 await register(alpha, alphaEmail, `Alpha Systems ${stamp}`);
 
 sql(`insert into "Company" (id, name, country, "createdAt", "updatedAt") values ('orgc${stamp}', 'Beta Traders ${stamp}', 'India', now(), now())`);
@@ -186,6 +190,7 @@ await alphaPage.close();
 let colleagueSignedIn = false;
 if (linkMatch) {
   const setup = await browser.newContext();
+  await suppressFestiveGreeting(setup);
   const setupPage = await setup.newPage();
   await setupPage.goto(linkMatch[0].replace(/^https?:\/\/[^/]+/, BASE), { waitUntil: "load" });
   const field = setupPage.getByLabel("New password");
@@ -205,6 +210,7 @@ check("the invitation lets the colleague set their own password", colleagueSigne
 
 // ------------------------------- the colleague sees the organisation's quote
 const colleague = await browser.newContext();
+await suppressFestiveGreeting(colleague);
 await signIn(colleague, colleagueEmail);
 const colleaguePage = await colleague.newPage();
 await colleaguePage.goto(`${BASE}/account/quotes`, { waitUntil: "load" });

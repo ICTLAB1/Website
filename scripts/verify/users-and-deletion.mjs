@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
 
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
+
 /**
  * Creating accounts, and removing records.
  *
@@ -21,6 +23,7 @@ const text = async (page) => (await page.locator("body").innerText()).replace(/\
 
 async function signIn(email, password) {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1200 } });
+  await suppressFestiveGreeting(context);
   const page = await context.newPage();
   await page.goto(`${BASE}/login`, { waitUntil: "load" });
   await page.getByLabel("Business email").fill(email);
@@ -64,6 +67,7 @@ check("the new user has never signed in", listed.includes("Not yet"));
 // ───────────────────────────────── the account cannot be signed in to yet
 {
   const context = await browser.newContext();
+  await suppressFestiveGreeting(context);
   const page = await context.newPage();
   await page.goto(`${BASE}/login`, { waitUntil: "load" });
   await page.getByLabel("Business email").fill(salesEmail);
@@ -181,6 +185,7 @@ check("the panel surfaces the set-up link when mail cannot be sent", Boolean(lin
 
 if (linkMatch) {
   const context = await browser.newContext();
+  await suppressFestiveGreeting(context);
   const page = await context.newPage();
   await page.goto(linkMatch[0], { waitUntil: "load" });
   await page.getByLabel(/New password/i).fill(inviteePassword);
@@ -298,6 +303,7 @@ if (linkMatch) {
 
 {
   const context = await browser.newContext();
+  await suppressFestiveGreeting(context);
   const page = await context.newPage();
   const response = await page.goto(`${BASE}/admin/users`, { waitUntil: "load" });
   check(

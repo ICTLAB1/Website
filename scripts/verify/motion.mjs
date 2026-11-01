@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
 
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
+
 /**
  * Verifies the motion layer.
  *
@@ -16,6 +18,7 @@ const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), d
 // ------------------------------------------------------- motion enabled
 {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  await suppressFestiveGreeting(ctx);
   const page = await ctx.newPage();
   await page.goto(BASE, { waitUntil: "load" });
   // The hidden state is applied after hydration, deliberately: elements are
@@ -100,6 +103,7 @@ const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), d
 // ------------------------------------------------------ reduced motion
 {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
+  await suppressFestiveGreeting(ctx);
   const page = await ctx.newPage();
   await page.goto(BASE, { waitUntil: "load" });
   await page.waitForTimeout(400);
@@ -128,6 +132,7 @@ const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), d
 // ---------------------------------------------------- no layout shift
 {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  await suppressFestiveGreeting(ctx);
   const page = await ctx.newPage();
   await page.goto(BASE, { waitUntil: "load" });
   await page.evaluate(() => {
@@ -188,6 +193,7 @@ const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), d
  */
 {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  await suppressFestiveGreeting(ctx);
   const page = await ctx.newPage();
   await page.goto(BASE, { waitUntil: "load" });
 
@@ -246,6 +252,7 @@ const check = (name, ok, detail = "") => results.push({ name, ok: Boolean(ok), d
     viewport: { width: 1440, height: 900 },
     reducedMotion: "reduce",
   });
+  await suppressFestiveGreeting(ctx);
   const page = await ctx.newPage();
   await page.goto(BASE, { waitUntil: "load" });
 
@@ -310,6 +317,7 @@ for (const reduced of ["no-preference", "reduce"]) {
     viewport: { width: 1440, height: 1000 },
     reducedMotion: reduced,
   });
+  await suppressFestiveGreeting(ctx);
   const page = await ctx.newPage();
   await page.goto(`${BASE}/industries`, { waitUntil: "load" });
   await page.waitForTimeout(400);
@@ -367,6 +375,7 @@ for (const reduced of ["no-preference", "reduce"]) {
  */
 {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  await suppressFestiveGreeting(ctx);
   const page = await ctx.newPage();
   await page.goto(BASE, { waitUntil: "load" });
 
@@ -427,6 +436,7 @@ for (const reduced of ["no-preference", "reduce"]) {
 // -------------------------------------------------- menus animate open
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
+  await suppressFestiveGreeting(ctx);
   const page = await ctx.newPage();
   await page.goto(BASE, { waitUntil: "load" });
   await page.getByRole("button", { name: /menu/i }).first().click();

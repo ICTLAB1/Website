@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { writeFileSync, rmSync } from "node:fs";
 
@@ -133,6 +135,7 @@ async function productSchema(page, slug) {
 
 // ── no reviews: a section, but no stars and no markup ───────────────────────
 const anon = await browser.newContext();
+await suppressFestiveGreeting(anon);
 const anonPage = await anon.newPage();
 
 const before = await productSchema(anonPage, bought.slug);
@@ -153,6 +156,7 @@ check("and no star rating is drawn", !/out of 5/i.test(emptyText));
 
 // ── the buyer can review what they bought ──────────────────────────────────
 const buyer = await browser.newContext();
+await suppressFestiveGreeting(buyer);
 await signIn(buyer, buyerEmail);
 const buyerPage = await buyer.newPage();
 
@@ -290,6 +294,7 @@ check(
 
 // ── somebody who bought nothing cannot review anything ─────────────────────
 const stranger = await browser.newContext();
+await suppressFestiveGreeting(stranger);
 await signIn(stranger, strangerEmail);
 const strangerPage = await stranger.newPage();
 await strangerPage.goto(`${BASE}/account/reviews`, { waitUntil: "load" });
@@ -302,6 +307,7 @@ check(
 
 // ── moderation publishes it, and only then ─────────────────────────────────
 const admin = await browser.newContext();
+await suppressFestiveGreeting(admin);
 await signIn(admin, adminEmail);
 const adminPage = await admin.newPage();
 await adminPage.goto(`${BASE}/admin/reviews`, { waitUntil: "load" });

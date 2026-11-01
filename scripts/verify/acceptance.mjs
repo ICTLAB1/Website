@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 
 /**
@@ -27,6 +29,7 @@ const navLabel = `Acceptance link ${stamp}`;
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const admin = await browser.newContext({ viewport: { width: 1440, height: 1200 } });
+await suppressFestiveGreeting(admin);
 const page = await admin.newPage();
 
 await page.goto(`${BASE}/login`, { waitUntil: "load" });
@@ -104,7 +107,9 @@ await utilityForm.getByRole("button", { name: "Add to this menu" }).click();
 await page.waitForTimeout(2500);
 
 // ------------------------------------------------- what a visitor now sees
-const visitor = await (await browser.newContext()).newPage();
+const festiveCtx = await browser.newContext();
+await suppressFestiveGreeting(festiveCtx);
+const visitor = await festiveCtx.newPage();
 
 await visitor.goto(`${BASE}/${slug}`, { waitUntil: "load" });
 const rendered = await visitor.locator("main").innerText();
