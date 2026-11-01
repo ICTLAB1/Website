@@ -43,6 +43,12 @@
  *   - the Adobe catalogue lists the approved products under the approved
  *     names, at the approved figures, and carries none of the imported ones.
  *
+ * From the Diwali campaign:
+ *
+ *   - the greeting and its offer shipped. It renders nothing server-side, so
+ *     this reads the chunks the home page loads rather than the markup; what
+ *     it proves is that the code is there, not that it opens.
+ *
  * From the assistant release:
  *
  *   - the widget is mounted, which it only is once a key has been stored —
@@ -631,6 +637,53 @@ check(
   "the transcripts are behind the sign-in",
   transcripts.status >= 300 && transcripts.status < 400,
   `status ${transcripts.status} rather than a redirect to the sign-in`,
+);
+
+console.log("\nThe Diwali greeting");
+
+/*
+ * What this can and cannot conclude, stated rather than implied.
+ *
+ * The greeting renders nothing on the server — deliberately, because whether
+ * this visitor has already dismissed it is only knowable in their browser,
+ * and markup that said "open" would flash it at somebody who closed it two
+ * pages ago. So there is nothing in the HTML to look for, and this script has
+ * no browser to run the component in.
+ *
+ * What it can prove is that the code shipped: the component is imported by
+ * the root layout, so its chunk is among the scripts the home page pulls in,
+ * and its own copy is inside that chunk. If the deploy had not landed, the
+ * text would be in none of them.
+ *
+ * What it cannot prove is that the greeting actually opens for a visitor —
+ * that is a browser's job, and `verify:interactions` does it against a local
+ * server with seven checks. Nor does it notice the campaign ending: the
+ * import is static, so the chunk stays in the build after the gate stops
+ * rendering it. The date logic is held still by tests/festival-campaign.test
+ * instead, from both sides.
+ */
+const chunkPaths = [...new Set([...root.body.matchAll(/\/_next\/static\/chunks\/[^"']+?\.js/g)].map((m) => m[0]))];
+check("the home page pulls in its script chunks", chunkPaths.length > 0, "no chunk references in the markup");
+
+let greetingChunk = null;
+let offerChunk = null;
+for (const path of chunkPaths.slice(0, 40)) {
+  const chunk = await fetchPage(path);
+  if (chunk.status !== 200) continue;
+  if (!greetingChunk && chunk.body.includes("Happy Diwali")) greetingChunk = path;
+  if (!offerChunk && chunk.body.includes("Big discounts on quantity orders")) offerChunk = path;
+  if (greetingChunk && offerChunk) break;
+}
+
+check(
+  "the Diwali greeting is deployed",
+  Boolean(greetingChunk),
+  `"Happy Diwali" is in none of the ${chunkPaths.length} chunks the home page loads`,
+);
+check(
+  "and carries the festive offer",
+  Boolean(offerChunk),
+  "the offer wording is not in any chunk the home page loads",
 );
 
 // ── result ────────────────────────────────────────────────────────────────
