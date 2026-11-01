@@ -655,6 +655,12 @@ console.log("\nThe Diwali greeting");
  * and its own copy is inside that chunk. If the deploy had not landed, the
  * text would be in none of them.
  *
+ * The strings below are the greeting's own copy, so a rewrite of the panel
+ * has to come back here. That is deliberate: a check that looked for
+ * something vaguer would have kept passing when the wording changed, which
+ * is the failure mode worth avoiding in a check about whether a deploy
+ * landed.
+ *
  * What it cannot prove is that the greeting actually opens for a visitor —
  * that is a browser's job, and `verify:interactions` does it against a local
  * server with seven checks. Nor does it notice the campaign ending: the
@@ -671,7 +677,7 @@ for (const path of chunkPaths.slice(0, 40)) {
   const chunk = await fetchPage(path);
   if (chunk.status !== 200) continue;
   if (!greetingChunk && chunk.body.includes("Happy Diwali")) greetingChunk = path;
-  if (!offerChunk && chunk.body.includes("Big discounts on quantity orders")) offerChunk = path;
+  if (!offerChunk && chunk.body.includes("Festive savings on bulk orders")) offerChunk = path;
   if (greetingChunk && offerChunk) break;
 }
 
