@@ -22,5 +22,10 @@ export async function FestivalGreetingGate() {
   if (!(await campaignIsRunning())) return null;
 
   const site = await getSiteConfig();
+  /*
+   * Only the trading name. The configured tagline is not passed: the supplied
+   * logo already has one lettered into the artwork, and the stored tagline is
+   * a different sentence — the two stacked read as a mistake.
+   */
   return <FestivalGreeting tradingName={site.tradingName} />;
 }
