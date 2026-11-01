@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 
 /**
@@ -17,6 +19,7 @@ const stamp = Date.now().toString().slice(-6);
 const slug = `editor-check-${stamp}`;
 
 const staff = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+await suppressFestiveGreeting(staff);
 const page = await staff.newPage();
 await page.goto(`${BASE}/login`, { waitUntil: "load" });
 await page.getByLabel("Business email").fill(process.env.ADMIN_EMAIL ?? "admin@example.test");
@@ -151,7 +154,9 @@ await page.getByLabel("Status").selectOption("PUBLISHED");
 await page.getByRole("button", { name: /Save page/i }).click();
 await page.waitForTimeout(2000);
 
-const visitor = await (await browser.newContext()).newPage();
+const festiveCtx = await browser.newContext();
+await suppressFestiveGreeting(festiveCtx);
+const visitor = await festiveCtx.newPage();
 await visitor.goto(`${BASE}/${slug}`, { waitUntil: "load" });
 const published = await visitor.locator("body").innerText();
 check("publishing makes the page public immediately", published.includes(`Typed headline ${stamp}`),

@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { mkdirSync, writeFileSync } from "node:fs";
 
 /**
@@ -17,6 +19,7 @@ mkdirSync(OUT, { recursive: true });
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, reducedMotion: "reduce" });
+await suppressFestiveGreeting(ctx);
 const page = await ctx.newPage();
 
 const snapshot = {};

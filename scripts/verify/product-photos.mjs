@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -123,6 +125,7 @@ sql(
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1200 } });
+await suppressFestiveGreeting(context);
 const page = await context.newPage();
 
 await page.goto(`${BASE}/login`, { waitUntil: "load" });
@@ -256,6 +259,7 @@ check(
 
 // ── a signed-out caller ─────────────────────────────────────────────────────
 const stranger = await browser.newContext();
+await suppressFestiveGreeting(stranger);
 const refused = await stranger.request.post(`${BASE}/admin/products/photos`, {
   multipart: { productId: `ppp${stamp}`, photo: { name: "x.png", mimeType: "image/png", buffer: Buffer.from([0x89, 0x50, 0x4e, 0x47]) } },
   failOnStatusCode: false,

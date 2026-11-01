@@ -10,6 +10,7 @@ import { BasketProvider } from "@/components/enquiry/basket-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { GoogleTag, GoogleTagManagerNoScript } from "@/components/analytics/google-tag";
 import { ChatWidgetGate } from "@/components/chat/chat-widget-gate";
+import { FestivalGreetingGate } from "@/components/marketing/festival-greeting-gate";
 import { JsonLd, organizationSchema, websiteSchema } from "@/lib/seo";
 import { appUrl } from "@/lib/env";
 import { getSiteIdentity } from "@/lib/site-config";
@@ -141,6 +142,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </ToastProvider>
 
         <ChatWidgetGate />
+        <FestivalGreetingGate />
 
         <JsonLd data={await organizationSchema()} />
         <JsonLd data={await websiteSchema()} />

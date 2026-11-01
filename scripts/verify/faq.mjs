@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
 
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
+
 /**
  * The FAQ accordion.
  *
@@ -12,7 +14,9 @@ import { chromium } from "playwright";
 
 const BASE = "http://localhost:3000";
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
-const page = await (await browser.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
+const festiveCtx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+await suppressFestiveGreeting(festiveCtx);
+const page = await festiveCtx.newPage();
 const problems = [];
 
 await page.goto(`${BASE}/support`, { waitUntil: "load" });

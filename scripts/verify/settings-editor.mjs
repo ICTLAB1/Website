@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { createRequire } from "node:module";
 import { readFileSync } from "node:fs";
 
@@ -35,6 +37,7 @@ const officerEmail = `grievance-${stamp}@example.test`;
 const line1 = `${stamp} Verification House`;
 
 const admin = await browser.newContext({ viewport: { width: 1440, height: 1400 } });
+await suppressFestiveGreeting(admin);
 const page = await admin.newPage();
 
 await page.goto(`${BASE}/login`, { waitUntil: "load" });

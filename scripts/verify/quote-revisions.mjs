@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { writeFileSync, rmSync } from "node:fs";
 
@@ -64,6 +66,7 @@ async function signIn(context, email, secret) {
 
 // ------------------------------------- the customer asks for it to be changed
 const customer = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+await suppressFestiveGreeting(customer);
 await signIn(customer, customerEmail, password);
 const customerPage = await customer.newPage();
 await customerPage.goto(`${BASE}/account/quotes/${quoteRef}`, { waitUntil: "load" });
@@ -88,6 +91,7 @@ check(
 
 // --------------------------------------------------------- staff revise it
 const staff = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+await suppressFestiveGreeting(staff);
 await signIn(staff, process.env.ADMIN_EMAIL ?? "admin@example.test", process.env.ADMIN_PASSWORD ?? "ChangeMe!Admin123");
 const staffPage = await staff.newPage();
 await staffPage.goto(`${BASE}/admin/quotes/${quoteRef}`, { waitUntil: "load" });
@@ -156,6 +160,7 @@ check(
   );
 
   const outsider = await browser.newContext();
+  await suppressFestiveGreeting(outsider);
   await signIn(outsider, outsiderEmail, password);
   const outsiderPage = await outsider.newPage();
   const response = await outsiderPage.goto(`${BASE}/account/quotes/${revisedRef}`, {
@@ -202,7 +207,9 @@ check(
    * reached, so the check is "no PDF came back" rather than a status code: the
    * redirect is followed and answers 200 with an HTML page.
    */
-  const anonymous = await (await browser.newContext()).newPage();
+  const festiveCtx = await browser.newContext();
+  await suppressFestiveGreeting(festiveCtx);
+  const anonymous = await festiveCtx.newPage();
   const refused = await anonymous.request.get(`${BASE}/account/quotes/${revisedRef}/pdf`);
   const refusedType = refused.headers()["content-type"] ?? "";
   check(

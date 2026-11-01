@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
 
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
+
 /**
  * Exercises the navigation editor the way an administrator would.
  *
@@ -21,6 +23,7 @@ const label = `Verify ${stamp}`;
 const childLabel = `Verify child ${stamp}`;
 
 const admin = await browser.newContext({ viewport: { width: 1440, height: 1200 } });
+await suppressFestiveGreeting(admin);
 const page = await admin.newPage();
 await page.goto(`${BASE}/login`, { waitUntil: "load" });
 await page.getByLabel("Business email").fill(process.env.ADMIN_EMAIL ?? "admin@example.test");

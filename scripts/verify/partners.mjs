@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { writeFileSync, rmSync } from "node:fs";
 
@@ -36,7 +38,9 @@ const sql = (statement) => {
 };
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
-const page = await (await browser.newContext()).newPage();
+const festiveCtx = await browser.newContext();
+await suppressFestiveGreeting(festiveCtx);
+const page = await festiveCtx.newPage();
 
 const text = async (path) => {
   const response = await page.goto(`${BASE}${path}`, { waitUntil: "load" });
@@ -97,6 +101,7 @@ sql(`update "Brand" set "partnerReference" = null where slug = '${published}'`);
  * takes, which is the only combination worth asserting on.
  */
 const staff = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+await suppressFestiveGreeting(staff);
 const admin = await staff.newPage();
 await admin.goto(`${BASE}/login`, { waitUntil: "load" });
 await admin.getByLabel("Business email").fill(process.env.ADMIN_EMAIL ?? "admin@example.test");

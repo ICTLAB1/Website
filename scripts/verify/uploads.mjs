@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -48,6 +50,7 @@ writeFileSync(files.huge, Buffer.alloc(600 * 1024, 0x41));
 // ── sign in ─────────────────────────────────────────────────────────────────
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1200 } });
+await suppressFestiveGreeting(context);
 const page = await context.newPage();
 
 await page.goto(`${BASE}/login`, { waitUntil: "load" });
@@ -167,7 +170,9 @@ if (stored) {
 
 // ── the public site uses it ─────────────────────────────────────────────────
 {
-  const visitor = await (await browser.newContext()).newPage();
+  const festiveCtx = await browser.newContext();
+  await suppressFestiveGreeting(festiveCtx);
+  const visitor = await festiveCtx.newPage();
   await visitor.goto(`${BASE}/brands?fresh=${Date.now()}`, { waitUntil: "load" });
   const count = await visitor.locator('main img[src^="/uploads/"]').count();
   check("the logo reaches the public brand cards", count > 0, `${count} image(s)`);
@@ -176,7 +181,9 @@ if (stored) {
 
 // ── SALES may not upload ────────────────────────────────────────────────────
 {
-  const anon = await (await browser.newContext()).newPage();
+  const festiveCtx = await browser.newContext();
+  await suppressFestiveGreeting(festiveCtx);
+  const anon = await festiveCtx.newPage();
   const response = await anon.goto(brandUrl, { waitUntil: "load" });
   check(
     "the brand page is not reachable without signing in",

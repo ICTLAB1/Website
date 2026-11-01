@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 
 /**
@@ -62,6 +64,7 @@ async function signIn(context, email, password) {
 }
 
 const salesContext = await browser.newContext();
+await suppressFestiveGreeting(salesContext);
 await register(salesContext, salesEmail);
 sql(`update "User" set role='SALES' where email='${salesEmail}'`);
 await salesContext.clearCookies();
@@ -86,6 +89,7 @@ check("the SALES fixture holds a session", salesCookies.length > 0);
 
 // ------------------------- an ADMIN page, submitted with a SALES session
 const admin = await browser.newContext({ viewport: { width: 1440, height: 1200 } });
+await suppressFestiveGreeting(admin);
 await signIn(admin, process.env.ADMIN_EMAIL ?? "admin@example.test",
   process.env.ADMIN_PASSWORD ?? "ChangeMe!Admin123");
 const adminCookies = await admin.cookies();

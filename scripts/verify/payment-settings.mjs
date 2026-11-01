@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 
 /**
@@ -23,6 +25,7 @@ const secretKey = `sk_test_${stamp}abcdefghijklmnop`;
 const webhookSecret = `verify_hook_${stamp}_yyy`;
 
 const admin = await browser.newContext({ viewport: { width: 1440, height: 1400 } });
+await suppressFestiveGreeting(admin);
 const page = await admin.newPage();
 
 await page.goto(`${BASE}/login`, { waitUntil: "load" });

@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
 
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
+
 /**
  * The hardware catalogue, checked against the promises it makes.
  *
@@ -84,6 +86,7 @@ const CONSUMER = [
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+await suppressFestiveGreeting(context);
 const page = await context.newPage();
 
 const consoleErrors = [];
@@ -332,7 +335,9 @@ check(
 
 // ── mobile ──────────────────────────────────────────────────────────────────
 {
-  const narrow = await (await browser.newContext({ viewport: { width: 390, height: 844 } })).newPage();
+  const festiveCtx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  await suppressFestiveGreeting(festiveCtx);
+  const narrow = await festiveCtx.newPage();
   await narrow.goto(`${BASE}/hardware`, { waitUntil: "load" });
   await narrow.waitForTimeout(600);
   const overflow = await narrow.evaluate(

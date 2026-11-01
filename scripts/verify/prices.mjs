@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
 
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
+
 /**
  * The public catalogue's price policy, read from the rendered site rather
  * than the source.
@@ -50,6 +52,7 @@ const DISCOUNT = /\b\d{1,2}%\s*off\b|\bsave\s+\d{1,2}%/i;
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+await suppressFestiveGreeting(context);
 const page = await context.newPage();
 
 /*

@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { createHmac, randomUUID } from "node:crypto";
 import { writeFileSync, rmSync } from "node:fs";
@@ -80,7 +82,9 @@ sql(
  * refusal below.
  */
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
-const page = await (await browser.newContext()).newPage();
+const festiveCtx = await browser.newContext();
+await suppressFestiveGreeting(festiveCtx);
+const page = await festiveCtx.newPage();
 
 await page.goto(`${BASE}/login`, { waitUntil: "load" });
 await page.getByLabel("Business email").fill(process.env.ADMIN_EMAIL ?? "admin@example.test");

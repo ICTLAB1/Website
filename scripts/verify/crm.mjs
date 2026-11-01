@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { writeFileSync, rmSync } from "node:fs";
 
@@ -71,6 +73,7 @@ async function signIn(context, email, secret) {
 }
 
 const staff = await browser.newContext({ viewport: { width: 1600, height: 1200 } });
+await suppressFestiveGreeting(staff);
 await signIn(staff, staffEmail, password);
 const page = await staff.newPage();
 
@@ -281,6 +284,7 @@ check(
 );
 
 const adminContext = await browser.newContext({ viewport: { width: 1400, height: 1100 } });
+await suppressFestiveGreeting(adminContext);
 /*
  * The seeded administrator, with the seed's own default when the environment
  * does not name one.
@@ -349,6 +353,7 @@ check(
 
 // ── nothing reaches a customer ──────────────────────────────────────────────
 const customer = await browser.newContext();
+await suppressFestiveGreeting(customer);
 await signIn(customer, customerEmail, password);
 const theirs = await customer.newPage();
 
@@ -381,6 +386,7 @@ check(
 
 // ── a signed-out caller ─────────────────────────────────────────────────────
 const stranger = await browser.newContext();
+await suppressFestiveGreeting(stranger);
 const strangerPage = await stranger.newPage();
 await strangerPage.goto(`${BASE}/admin/pipeline`, { waitUntil: "load" });
 check(

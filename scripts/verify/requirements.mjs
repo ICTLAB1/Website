@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { writeFileSync, rmSync } from "node:fs";
 
@@ -33,7 +35,9 @@ const email = `req_probe${stamp}@example.test`;
 const company = `Requirement Probe ${stamp}`;
 
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
-const page = await (await browser.newContext({ viewport: { width: 1280, height: 1000 } })).newPage();
+const festiveCtx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+await suppressFestiveGreeting(festiveCtx);
+const page = await festiveCtx.newPage();
 
 // ------------------------------------------------ a visitor, not signed in
 await page.goto(`${BASE}/requirement`, { waitUntil: "load" });
@@ -90,7 +94,9 @@ check(
 );
 
 // ------------------------------------------- it is an enquiry like any other
-const admin = await (await browser.newContext({ viewport: { width: 1440, height: 1100 } })).newPage();
+const festiveAdminCtx = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+await suppressFestiveGreeting(festiveAdminCtx);
+const admin = await festiveAdminCtx.newPage();
 await admin.goto(`${BASE}/login`, { waitUntil: "load" });
 await admin.getByLabel("Business email").fill(process.env.ADMIN_EMAIL ?? "admin@example.test");
 await admin.getByLabel("Password").fill(process.env.ADMIN_PASSWORD ?? "ChangeMe!Admin123");
@@ -208,7 +214,9 @@ check("the file itself is stored and attached", /^DOC-\d{4}-[A-Z0-9]{6}$/.test(d
 
 // ------------------------------------------------ who may fetch that file
 {
-  const anonymous = await (await browser.newContext()).newPage();
+  const festiveCtx = await browser.newContext();
+  await suppressFestiveGreeting(festiveCtx);
+  const anonymous = await festiveCtx.newPage();
   const response = await anonymous.goto(`${BASE}/documents/${documentReference}`, {
     waitUntil: "load",
   });
@@ -224,6 +232,7 @@ check("the file itself is stored and attached", /^DOC-\d{4}-[A-Z0-9]{6}$/.test(d
   // A signed-in customer at a different organisation: the same 404, which is
   // also all they should be able to learn.
   const outsider = await browser.newContext();
+  await suppressFestiveGreeting(outsider);
   const outsiderPage = await outsider.newPage();
   await outsiderPage.goto(`${BASE}/login`, { waitUntil: "load" });
   await outsiderPage.getByLabel("Business email").fill(process.env.ADMIN_EMAIL ?? "admin@example.test");

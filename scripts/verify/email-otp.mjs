@@ -1,4 +1,6 @@
 import { chromium } from "playwright";
+
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { writeFileSync, rmSync } from "node:fs";
 
@@ -157,6 +159,7 @@ async function signIn(context, email) {
 }
 
 const mineContext = await browser.newContext();
+await suppressFestiveGreeting(mineContext);
 await signIn(mineContext, mine);
 const page = await mineContext.newPage();
 
@@ -244,6 +247,7 @@ check("a new code replaces the old one", freshCode !== null && freshCode !== rea
 if (freshCode) {
   // Somebody else's session must not be able to spend it.
   const theirContext = await browser.newContext();
+  await suppressFestiveGreeting(theirContext);
   await signIn(theirContext, theirs);
   const theirPage = await theirContext.newPage();
   await theirPage.goto(`${BASE}/verify-email/required`, { waitUntil: "load" });

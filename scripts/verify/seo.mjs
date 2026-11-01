@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
 
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
+
 /**
  * SEO fundamentals, on the rendered page rather than in the metadata helper.
  *
@@ -10,7 +12,9 @@ import { chromium } from "playwright";
 
 const BASE = "http://localhost:3000";
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
-const page = await (await browser.newContext()).newPage();
+const festiveCtx = await browser.newContext();
+await suppressFestiveGreeting(festiveCtx);
+const page = await festiveCtx.newPage();
 const problems = [];
 
 const sitemap = await (await fetch(`${BASE}/sitemap.xml`)).text();
