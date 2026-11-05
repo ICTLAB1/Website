@@ -4,6 +4,7 @@ import { suppressFestiveGreeting } from "./lib/festive.mjs";
 import { execFileSync } from "node:child_process";
 import { createHmac, randomUUID } from "node:crypto";
 import { writeFileSync, rmSync } from "node:fs";
+import { request as httpRequest } from "node:http";
 
 /**
  * The half of the CRM integration where another system changes this pipeline.
@@ -344,6 +345,112 @@ check(
     `select coalesce("userId",'(null)') from "Activity" where subject = 'Called them back ${stamp}'`,
   ) === "(null)",
 );
+
+/*
+ * ── what the endpoint will not even read ──────────────────────────────────
+ *
+ * The size limit is checked here as well as in tests/read-limited-body.test,
+ * because the unit test proves the function and this proves the wiring: that
+ * the route reaches for the limited read rather than `request.text()`, and
+ * answers 413 rather than 404 or 500.
+ *
+ * All three bodies below are correctly signed. A refusal has to come from the
+ * size or the shape, not from the signature — otherwise the check would pass
+ * against a route with no limit at all.
+ */
+{
+  const before = stageOf();
+  const huge = "x".repeat(200_000);
+  const oversized = await deliver(envelope({ data: { to: "NEGOTIATION", reason: huge } }));
+  check(
+    "a body over the limit is refused with 413",
+    oversized.status === 413,
+    `status ${oversized.status}`,
+  );
+  check("and changed nothing", stageOf() === before, `${before} → ${stageOf()}`);
+
+  /*
+   * Chunked, with no declared length at all.
+   *
+   * Under-declaring the length is not the reachable attack it looks like: the
+   * HTTP parser bounds the body by `content-length`, so the extra bytes are
+   * never part of this request, and `fetch` will not even send them. What is
+   * reachable is `transfer-encoding: chunked`, where the size is not known
+   * until the body ends — which is precisely the case the old check could not
+   * see, because it measured only after reading to that end.
+   *
+   * Sent through `node:http` because `fetch` insists on framing it itself.
+   */
+  const chunked = await new Promise((resolve) => {
+    const payload = JSON.stringify(envelope({ data: { to: "NEGOTIATION", reason: "y".repeat(200_000) } }));
+    const request = httpRequest(
+      {
+        host: "localhost",
+        port: 3000,
+        path: "/api/crm/inbound",
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "transfer-encoding": "chunked",
+          "x-crm-signature": sign(payload, SECRET, new Date()),
+        },
+      },
+      (response) => {
+        response.resume();
+        resolve({ status: response.statusCode });
+      },
+    );
+    request.on("error", (error) => resolve({ status: 0, error: String(error) }));
+    // Written in pieces so the limit has something to stop in the middle of.
+    for (let at = 0; at < payload.length; at += 8192) request.write(payload.slice(at, at + 8192));
+    request.end();
+  });
+  check(
+    "a chunked body with no declared length is refused once it grows too big",
+    chunked.status === 413,
+    `status ${chunked.status}${chunked.error ? ` — ${chunked.error}` : ""}`,
+  );
+
+  // Signed, inside the limit, and not JSON: 400, distinct from both 413 and
+  // the 404 an unsigned call gets.
+  const malformedBody = "{not json at all";
+  const malformed = await fetch(`${BASE}/api/crm/inbound`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-crm-signature": sign(malformedBody, SECRET, new Date()),
+    },
+    body: malformedBody,
+  });
+  check("a signed body that is not JSON is refused with 400", malformed.status === 400, `status ${malformed.status}`);
+  check("and changed nothing", stageOf() === before, `${before} → ${stageOf()}`);
+}
+
+/*
+ * ── the same delivery, eight times at once ────────────────────────────────
+ *
+ * A sender that times out and retries does not wait its turn. The idempotency
+ * claim is an insert, so concurrent retries race it; exactly one may apply and
+ * the rest must come back as duplicates rather than as errors or as eight
+ * applications of the same stage change.
+ */
+{
+  const once = envelope({ data: { to: "NEGOTIATION" } });
+  const replies = await Promise.all(Array.from({ length: 8 }, () => deliver(once)));
+  const accepted = replies.filter((reply) => reply.status === 200);
+  const duplicates = replies.filter((reply) => reply.json?.duplicate === true);
+
+  check(
+    "eight concurrent retries are all accepted",
+    accepted.length === 8,
+    replies.map((reply) => reply.status).join(","),
+  );
+  check(
+    "and exactly one of them is not a duplicate",
+    duplicates.length === 7,
+    `${duplicates.length} duplicates of 8`,
+  );
+}
 
 // ── switching receiving off closes the door ────────────────────────────────
 sql(`update "CrmSettings" set "inboundEnabled" = false where id = 'singleton'`);
