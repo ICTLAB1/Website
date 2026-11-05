@@ -65,7 +65,7 @@ export async function moderateReview(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard("staff");
+  const staff = await guard({ capability: "content.write" });
   if (isFailure(staff)) return staff;
 
   const id = String(formData.get("id") ?? "");
@@ -120,7 +120,7 @@ export async function respondToReview(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard("staff");
+  const staff = await guard({ capability: "content.write" });
   if (isFailure(staff)) return staff;
 
   const id = String(formData.get("id") ?? "");

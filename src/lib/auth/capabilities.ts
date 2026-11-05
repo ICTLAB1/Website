@@ -41,7 +41,18 @@ export type Capability =
   | "settings.manage"
   | "reports.read"
   /** Internal cost, margin and commission. Never a customer capability. */
-  | "margins.read";
+  | "margins.read"
+  /**
+   * Returning money that has already been taken.
+   *
+   * Separate from `orders.write` on purpose. Fulfilling an order, verifying a
+   * purchase order and moving a status are operational work, and procurement
+   * and operations do them all day. Marking a payment refunded moves money
+   * back out of the business, and the roles that should be able to do that are
+   * not the same set — so it is its own capability rather than a line item
+   * inside somebody else's.
+   */
+  | "payments.refund";
 
 const ALL: Capability[] = [
   "catalogue.write",
@@ -60,6 +71,7 @@ const ALL: Capability[] = [
   "settings.manage",
   "reports.read",
   "margins.read",
+  "payments.refund",
 ];
 
 /**
@@ -123,7 +135,14 @@ export const STAFF_CAPABILITIES: Record<UserRole, readonly Capability[]> = {
 
   OPERATIONS: ["customers.read", "quotes.read", "orders.read", "orders.write", "support.read"],
 
-  ACCOUNTS: ["customers.read", "quotes.read", "orders.read", "orders.write", "reports.read"],
+  ACCOUNTS: [
+    "customers.read",
+    "quotes.read",
+    "orders.read",
+    "orders.write",
+    "reports.read",
+    "payments.refund",
+  ],
 
   SUPPORT: ["customers.read", "orders.read", "support.read", "support.write"],
 

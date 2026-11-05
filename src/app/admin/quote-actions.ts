@@ -6,10 +6,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { prisma } from "@/lib/db";
-import { requireStaff } from "@/lib/auth/guards";
 import { recordAudit } from "@/lib/audit";
 import { clientIp } from "@/lib/auth/request";
-import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { fieldErrorsOf } from "@/lib/validation";
 import {
   createQuoteFromEnquiry,
@@ -40,6 +38,7 @@ import {
   type QuoteCurrency,
 } from "@/lib/quote-currency";
 import type { AdminActionState } from "@/app/admin/actions";
+import { guard, isFailure } from "@/lib/admin/guard";
 
 /**
  * Quotation and order administration.
@@ -52,25 +51,23 @@ import type { AdminActionState } from "@/app/admin/actions";
 const referenceSchema = (prefix: string) =>
   z.string().trim().regex(new RegExp(`^${prefix}-\\d{4}-[A-Z0-9]{6}$`), "Invalid reference.");
 
-async function guard(): Promise<{ id: string } | AdminActionState> {
-  const staff = await requireStaff();
-  const limit = hit(`admin:${staff.id}`, LIMITS.adminWrite.limit, LIMITS.adminWrite.windowSeconds);
-  if (!limit.allowed) {
-    return { status: "error", message: "Too many changes in a short period. Please slow down." };
-  }
-  return { id: staff.id };
-}
-
-function isFailure(value: { id: string } | AdminActionState): value is AdminActionState {
-  return "status" in value;
-}
+/*
+ * The shared guard, not a private one.
+ *
+ * This file used to define its own `guard()` next to this comment: the same
+ * rate limit, the same shape, and `requireStaff()` with no capability check.
+ * Being a local copy, it also meant the central guard could be tightened —
+ * as it now has been — without touching the sixteen most sensitive actions in
+ * the admin panel, which is the failure mode a duplicated security prelude
+ * always has. Every action below now names the capability it needs.
+ */
 
 /** Drafts a quotation from an enquiry and opens it for editing. */
 export async function draftQuote(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "quotes.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = referenceSchema("ENQ").safeParse(formData.get("reference"));
@@ -191,7 +188,7 @@ export async function addQuoteLine(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "quotes.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = newLineSchema.safeParse({
@@ -414,7 +411,7 @@ export async function updateQuoteLine(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "quotes.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = lineSchema.safeParse({
@@ -544,7 +541,7 @@ export async function removeQuoteLine(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "quotes.write" });
   if (isFailure(staff)) return staff;
 
   const itemId = String(formData.get("itemId") ?? "").trim();
@@ -603,7 +600,7 @@ export async function updateQuoteTerms(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "quotes.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = validitySchema.safeParse({
@@ -689,7 +686,7 @@ export async function setQuoteCurrency(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "quotes.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = currencySchema.safeParse({
@@ -837,7 +834,7 @@ export async function issueQuote(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "quotes.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = referenceSchema("QTE").safeParse(formData.get("reference"));
@@ -876,7 +873,7 @@ export async function reviseQuotation(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "quotes.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = revisionSchema.safeParse({
@@ -927,7 +924,7 @@ export async function sendQuoteFollowUp(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "quotes.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = followUpSchema.safeParse({
@@ -976,7 +973,7 @@ export async function setQuoteFollowUpsPaused(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "quotes.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = pauseSchema.safeParse({
@@ -1021,7 +1018,7 @@ export async function replyOnQuote(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "quotes.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = replySchema.safeParse({
@@ -1071,7 +1068,7 @@ export async function verifyPurchaseOrder(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "orders.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = verifySchema.safeParse({ reference: formData.get("reference") });
@@ -1111,7 +1108,7 @@ export async function updateOrderStatus(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "orders.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = orderStatusSchema.safeParse({
@@ -1216,7 +1213,7 @@ export async function markPaymentRefunded(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "payments.refund" });
   if (isFailure(staff)) return staff;
 
   const parsed = paymentRefundSchema.safeParse({
@@ -1271,7 +1268,7 @@ export async function fulfilOrderAction(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "orders.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = referenceSchema("ORD").safeParse(formData.get("reference"));
@@ -1308,7 +1305,7 @@ export async function updateSupportTicket(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard();
+  const staff = await guard({ capability: "support.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = ticketSchema.safeParse({

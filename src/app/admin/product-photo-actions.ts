@@ -76,7 +76,7 @@ export async function uploadProductPhoto(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard("staff");
+  const staff = await guard({ capability: "catalogue.write" });
   if (isFailure(staff)) return staff;
 
   const product = await findProduct(formData);
@@ -145,7 +145,7 @@ export async function removeProductPhoto(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard("staff");
+  const staff = await guard({ capability: "catalogue.write" });
   if (isFailure(staff)) return staff;
 
   const product = await findProduct(formData);

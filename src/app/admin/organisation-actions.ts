@@ -6,7 +6,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { recordAudit } from "@/lib/audit";
 import { clientIp } from "@/lib/auth/request";
-import { requireStaff } from "@/lib/auth/guards";
+import { requireCapability } from "@/lib/auth/guards";
 import { can } from "@/lib/auth/capabilities";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { fieldErrorsOf, gstinSchema, phoneSchema, emailSchema } from "@/lib/validation";
@@ -31,7 +31,7 @@ export async function setAccountManager(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await requireStaff();
+  const staff = await requireCapability("customers.write");
   if (!can(staff, "customers.write")) {
     return { status: "error", message: "Your role does not include changing customer records." };
   }
@@ -118,7 +118,7 @@ export async function saveCompany(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await requireStaff();
+  const staff = await requireCapability("customers.write");
   if (!can(staff, "customers.write")) {
     return { status: "error", message: "Your role does not include changing customer records." };
   }
@@ -215,7 +215,7 @@ export async function saveCompanyAddress(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await requireStaff();
+  const staff = await requireCapability("customers.write");
   if (!can(staff, "customers.write")) {
     return { status: "error", message: "Your role does not include changing customer records." };
   }
@@ -299,7 +299,7 @@ export async function deleteCompanyAddress(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await requireStaff();
+  const staff = await requireCapability("customers.write");
   if (!can(staff, "customers.write")) {
     return { status: "error", message: "Your role does not include changing customer records." };
   }
@@ -343,7 +343,7 @@ export async function saveCompanyContact(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await requireStaff();
+  const staff = await requireCapability("customers.write");
   if (!can(staff, "customers.write")) {
     return { status: "error", message: "Your role does not include changing customer records." };
   }
@@ -417,7 +417,7 @@ export async function deleteCompanyContact(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await requireStaff();
+  const staff = await requireCapability("customers.write");
   if (!can(staff, "customers.write")) {
     return { status: "error", message: "Your role does not include changing customer records." };
   }

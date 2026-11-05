@@ -22,10 +22,12 @@ import { ACTIVITY_KINDS, DEAL_SOURCES, DEAL_STAGES } from "@/lib/crm/pipeline";
 /**
  * Writing to the pipeline.
  *
- * `guard("staff")` throughout: the pipeline is what the sales team does all
- * day, and an admin-only pipeline is a pipeline the sales team keeps in a
- * spreadsheet instead. Every action still re-checks on the server — the
- * navigation hiding a link is not a control.
+ * `enquiries.write` throughout, not admin: the pipeline is what the sales
+ * team does all day, and an admin-only pipeline is a pipeline the sales team
+ * keeps in a spreadsheet instead. It is not "any member of staff" either,
+ * which is what this said and did until recently — support, operations and
+ * accounts could all move a deal to WON. Every action re-checks on the
+ * server; the navigation hiding a link is not a control.
  *
  * The rules that decide whether a write is allowed live in
  * `lib/crm/deal-service`, not here. These functions parse a form and hand it
@@ -74,7 +76,7 @@ export async function createDealAction(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard("staff");
+  const staff = await guard({ capability: "enquiries.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = dealSchema.safeParse({
@@ -133,7 +135,7 @@ export async function updateDealAction(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard("staff");
+  const staff = await guard({ capability: "enquiries.write" });
   if (isFailure(staff)) return staff;
 
   const reference = String(formData.get("reference") ?? "").trim();
@@ -190,7 +192,7 @@ export async function moveDealStageAction(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard("staff");
+  const staff = await guard({ capability: "enquiries.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = z
@@ -236,7 +238,7 @@ export async function createDealFromEnquiryAction(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard("staff");
+  const staff = await guard({ capability: "enquiries.write" });
   if (isFailure(staff)) return staff;
 
   const reference = String(formData.get("reference") ?? "").trim();
@@ -277,7 +279,7 @@ export async function logActivityAction(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard("staff");
+  const staff = await guard({ capability: "enquiries.write" });
   if (isFailure(staff)) return staff;
 
   const parsed = activitySchema.safeParse({
@@ -320,7 +322,7 @@ export async function completeFollowUpAction(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await guard("staff");
+  const staff = await guard({ capability: "enquiries.write" });
   if (isFailure(staff)) return staff;
 
   const id = String(formData.get("activityId") ?? "").trim();
