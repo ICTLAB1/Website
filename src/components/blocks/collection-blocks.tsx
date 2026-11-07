@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import Link from "next/link";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { BrandCard, BrandStrip } from "@/components/marketing/brand-card";
@@ -296,12 +298,15 @@ function CertificationCard({ certification }: { certification: CertificationRow 
       {seal ? (
         /* Square artwork on a white card, so the dimensions are stated and
            the browser reserves the space before the file arrives. */
-        /* eslint-disable-next-line @next/next/no-img-element */
-        <img
+        /* Optimised on delivery for the same reason as the trust bar's copy
+           of these seals, and with the same caveat: the file on disk stays at
+           420 pixels because the quotation PDF embeds it. */
+        <Image
           src={seal}
           alt=""
           aria-hidden="true"
           className="mb-3 h-11 w-11 object-contain"
+          sizes="88px"
           width={420}
           height={420}
           loading="lazy"

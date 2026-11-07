@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import "server-only";
 
 import Link from "next/link";
@@ -172,14 +174,34 @@ export async function TrustBar() {
                       both dimensions and the browser reserves the space before
                       the file arrives.
                     */
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
+/*
+                      Optimised on delivery, not resized on disk.
+
+                      These are 420-pixel seals rendering in a 36-pixel box:
+                      ISO 27001 is 40 KB, 20000-1 is 37 KB and 9001 is 34 KB,
+                      which was 111 KB of certification artwork on every page
+                      of the site. Measured 7 November 2026.
+
+                      The files stay as they are. `lib/pdf/assets.ts` reads
+                      them off disk at full resolution to embed in quotation
+                      PDFs, where 420 pixels is right and 36 would print as a
+                      smudge — so the master has to stay big and only the
+                      delivered copy should be small.
+
+                      Safe to optimise here, where the publisher badges above
+                      are not: a seal is square by definition, the file set is
+                      fixed in `lib/certification-logo.ts`, and the dimensions
+                      were already stated. `sizes` describes the box so the
+                      generated srcset stops at what is asked for.
+                    */
+                    <Image
                       src={seal}
                       alt=""
                       aria-hidden="true"
                       className="h-9 w-9 object-contain sm:h-10 sm:w-10"
                       width={420}
                       height={420}
+                      sizes="80px"
                       loading="lazy"
                       decoding="async"
                     />

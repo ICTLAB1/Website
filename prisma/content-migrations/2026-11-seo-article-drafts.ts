@@ -1,7 +1,7 @@
 import type { ContentMigration } from "./types";
 
 /**
- * Seventeen articles, written as drafts, for a person to review before any of
+ * Eighteen articles, written as drafts, for a person to review before any of
  * them is published.
  *
  * ## Why articles and not landing pages
@@ -98,6 +98,68 @@ type Draft = {
 };
 
 const DRAFTS: Draft[] = [
+  {
+    slug: "what-is-a-digital-licence",
+    title: "What is a digital licence, and how is it different from a product key?",
+    excerpt:
+      "A digital licence ties the right to run software to an account or a device rather than to a string of characters you type in. Knowing which one you hold changes what happens when the hardware dies.",
+    category: "Licensing practice",
+    tags: ["digital licence", "product key", "activation", "licensing"],
+    readMinutes: 6,
+    body: `A digital licence — Microsoft also calls it a digital entitlement — is the right to run software, recorded against an account or a specific device rather than handed to you as a string of characters.
+
+This article exists because a URL has been asking for it. \`/post/what-is-a-digital-license\` carries a large number of inbound links from the previous site and was redirected to an article that was never written, so every one of those visitors reached a 404.
+
+## The difference, in one line
+
+A **product key** is a credential you hold and type in. A **digital licence** is a record somebody else holds, that recognises you or your machine.
+
+That sounds like a technicality. It decides what happens on the day something breaks.
+
+## What each does when the hardware fails
+
+**With a product key**, reinstalling means finding the key. If it was on a sticker that has worn off, in an email from a supplier who no longer exists, or in a spreadsheet nobody has opened since the person who made it left, the licence is effectively gone — you own it and cannot prove or use it.
+
+**With a digital licence tied to an account**, you sign in and the entitlement follows you. Nothing to find.
+
+**With a digital licence tied to a device**, the activation is held against that machine's hardware identity. Reinstalling on the same machine is automatic. Moving to a different machine may not be possible at all, depending on how the licence was acquired.
+
+That last case is the one that surprises people, and it is the common one: an operating system licence that arrived pre-installed is usually tied to the machine for life.
+
+## Where each turns up
+
+- **Pre-installed operating systems** — a device-tied digital licence, almost always. Not transferable to another machine.
+- **Subscriptions** — an account-tied digital licence. Microsoft 365, Creative Cloud and Autodesk subscriptions all work this way: the person signs in, and the entitlement is checked against the directory.
+- **Volume licensing** — usually keys, plus an agreement and a licensing portal. The portal is the real record; the key is a convenience.
+- **Retail boxed software** — historically a key, increasingly an account-tied entitlement redeemed with a one-time code.
+
+## Why this matters for compliance
+
+Neither a key nor a digital licence is *proof* of licence. The proof is the paperwork: an invoice in your organisation's name, an agreement or enrolment number, and portal access showing the entitlement sits with you.
+
+This is the point organisations miss most often. A machine that activates is not a machine that is licensed to you — a volume key resold as a single licence activates perfectly and belongs to somebody else's agreement. See [how to buy genuine Microsoft licences in India](/blog/how-to-buy-genuine-microsoft-licences-in-india), and [preparing for a software licence audit](/blog/preparing-for-a-software-licence-audit) for what to keep.
+
+## What to do about an estate you inherited
+
+1. Work out which licences are account-tied. Those you can see in an admin console, and they are the easy half.
+2. For device-tied licences, record which device. When the device is retired the licence usually goes with it, and budgeting for its replacement is better done in advance than on the day.
+3. For key-based licences, find the purchase records rather than the keys. A key with no invoice behind it is the thing an audit asks about.
+4. Record renewal dates for anything subscription-based. A perpetual licence forgotten keeps working; a subscription forgotten stops.
+
+## Common questions
+
+**If I have a digital licence do I still need a key?** Generally not — that is the point of it. Some volume scenarios still issue keys alongside, for deployment rather than for proof.
+
+**Can a device-tied licence be moved?** Depends entirely on how it was acquired. An OEM licence that arrived with a machine stays with that machine. A retail licence often can be moved. Check the terms for the one you hold rather than the general case.
+
+**We changed the motherboard and activation failed.** Device-tied activation keys on hardware identity, and the motherboard is usually the largest part of that identity. There are recovery routes that depend on whether the licence was linked to an account beforehand — which is a good argument for linking it before you need to.
+
+**Is a digital licence safer than a key?** For losing it, yes: there is nothing to lose. For proving it, no — both rest on the same paperwork.
+
+## Where to go next
+
+The licensing programmes and how each records entitlement are on [Microsoft licensing](/microsoft-licensing), and the subscription-versus-perpetual decision in [perpetual versus subscription licensing](/blog/perpetual-versus-subscription-software-licensing). If you have inherited an estate and do not know which licences are which, [software asset management](/services/software-asset-management) is the service that works it out.`,
+  },
   {
     slug: "microsoft-365-business-standard-vs-business-premium",
     title: "Microsoft 365 Business Standard vs Business Premium: what the extra actually buys",
@@ -1288,7 +1350,7 @@ The Windows editions and current pricing are on [Windows Server](/windows-server
 
 export const seoArticleDrafts: ContentMigration = {
   id: "2026-11-seo-article-drafts",
-  describe: "seventeen licensing articles, as drafts for review, published by nobody",
+  describe: "eighteen licensing articles, as drafts for review, published by nobody",
 
   async apply(prisma) {
     const slugs = DRAFTS.map((draft) => draft.slug);

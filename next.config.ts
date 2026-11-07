@@ -578,8 +578,34 @@ const nextConfig: NextConfig = {
          * catch-all learning about; the article is what makes this a redirect
          * rather than a polite dead end.
          */
+        /*
+         * ## Repointed 2026-11-07, because the replacement article does not exist
+         *
+         * The comment above describes the intent correctly and the article it
+         * depends on was never written. `/blog/what-is-a-digital-licence` has
+         * never existed — not in the database, not in the sitemap, not on the
+         * live site. So this rule sent every one of those inbound links
+         * through a 301 into a 404, which is worse than the soft-404 it was
+         * written to avoid: a dead end that also spends the redirect.
+         *
+         * `verify:seo` has been reporting it — "carries 1866 inbound link(s)
+         * and lands on /blog/what-is-a-digital-licence (404)". The check was
+         * working; nobody was reading it. That is the more useful half of the
+         * finding, and the reason this comment is long.
+         *
+         * It now points at the closest published article. Not ideal — a reader
+         * asking what a digital licence is gets the perpetual-versus-
+         * subscription comparison, which answers an adjacent question — but a
+         * relevant live page beats a 404 by a wide margin while the real
+         * article is written.
+         *
+         * `2026-11-seo-article-drafts` carries that article as a draft, at the
+         * slug this rule used to name. **When it is published, change this
+         * destination back to `/blog/what-is-a-digital-licence`** and the
+         * original intent is restored with the article actually behind it.
+         */
         source: "/post/what-is-a-digital-license",
-        destination: "/blog/what-is-a-digital-licence",
+        destination: "/blog/perpetual-versus-subscription-software-licensing",
         statusCode: 301,
       },
 
