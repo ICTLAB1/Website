@@ -176,36 +176,63 @@ Nine of the twenty Microsoft results and at least four Adobe results put
 query, Google's own AI Overview is a guide to checking that claim, and a
 third-party PDF explaining how to verify it ranks **fifth**.
 
-That is the currency of this market, and it is a claim TechZoid cannot make on
-a new page without documentation. The live site already carries
-`Microsoft Solutions Partner` and `Adobe Certified Reseller` badges on the
-home page, and the `Organization` JSON-LD asserts five credentials:
+That is the currency of this market. **TechZoid can make it, and the evidence
+is already on file** — I checked after writing the first draft of this
+document, which claimed the opposite.
 
-```
-ISO 9001:2015 — Quality Management System
-ISO 27001:2022 — Information Security Management System
-ISO/IEC 20000-1:2018 — IT Service Management System
-Udyam Registration — Micro Enterprise (MSME)
-Startup India — DPIIT-Recognized Startup
-```
+`prisma/seed-data/partner-status.ts` records six designations confirmed by the
+business on **23 August 2026**, two of them with the exact programme wording
+because the business supplied the issued badge for each:
 
-I have not changed or removed any of these — they may well all be current, and
-they are not mine to retire. But they need documentary confirmation on file,
-because structured data asserting a partner status the vendor would not confirm
-is both an E-E-A-T risk and a trademark one. **This is the one decision that
-gates the highest-value keyword cluster**, and it is yours, not a technical
-question:
+| Brand | Designation | Badge on file |
+| --- | --- | --- |
+| Microsoft | **Solutions Partner** | yes |
+| Adobe | **Certified Reseller** | yes |
+| HP, Cisco, Acer, Zoho | "Partner" (placeholder) | no |
 
-- If the Microsoft and Adobe partner statuses are current and documented, the
-  "X reseller india" head terms become targetable, and the badges should also
-  appear on the brand landing pages where the query lands.
-- If they are not, those head terms should be left alone, and the strategy
-  below is the whole plan rather than the first half of it.
+The handling is stricter than most sites manage. `src/lib/brand-partner.ts`
+will not print a designation unless it is on file, dated by a person, and
+deliberately published; the badge is gated on the same check as the words, so
+"a lapsed designation comes down in words and stays up as a picture" cannot
+happen. And the claim **expires on its own after 400 days**
+(`CONFIRMATION_VALID_DAYS`), rather than staying up until somebody notices.
 
-Either way, **do not chase the head terms first.** Positions 1–10 are held by
+The five credentials in `Organization` JSON-LD are held to the same standard.
+`prisma/seed-data/certifications.ts` records each one transcribed from the
+certificate itself — standard, certificate number, issuing body, scope, issue
+and expiry dates, and a verification URL — on the stated reasoning that "a
+number that does not match the certificate is worse than no number at all".
+
+So there is no claim to retire here, and two things to do instead:
+
+**Re-confirm before the designations lapse.** Confirmed 23 August 2026 plus
+400 days puts the automatic expiry at roughly **late September 2027**. On that
+date the Microsoft and Adobe badges disappear from the site by design. That is
+correct behaviour and it needs a diary entry, not a code change.
+
+**Supply the programme wording for the other four.** HP, Cisco, Acer and Zoho
+sit at the placeholder "Partner", which the seed file calls "deliberately the
+weakest claim that is still true". In a market where nine of the top twenty
+Microsoft results put a specific tier in the title tag, a precise designation
+is worth more than a generic one — and for these four it is a matter of
+supplying wording that already exists, not of acquiring anything.
+
+**This makes the head terms targetable.** My first draft advised leaving
+"microsoft 365 reseller india" and "adobe reseller india" alone on the grounds
+that the authorisation claim was unavailable. It is available and documented,
+so the brand pages that those queries land on should carry the designation and
+the badge — `/microsoft`, `/microsoft-365`, `/adobe` and
+`/adobe-creative-cloud`. On the Adobe query in particular, where Google's own
+AI Overview is a guide to verifying authorisation and a third-party PDF about
+verification ranks fifth, a documented, verifiable designation is the whole
+differentiator.
+
+Even so, **do not chase the head terms first.** Positions 1–10 are held by
 Microsoft, Adobe, Autodesk, global resellers with real authority, and
-directories. A domain rank of 116 with 102 referring domains does not displace
-them this year.
+directories, and all three head terms carry an AI Overview that takes the
+click. A domain rank of 116 with 102 referring domains does not displace them
+this year. The designation is a reason to put the badge where the query lands,
+not a reason to reorder the priorities below.
 
 ---
 
