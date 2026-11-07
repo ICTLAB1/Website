@@ -390,6 +390,37 @@ says so. It never touches a page you have edited yourself: each change is
 matched against the exact text it expects to replace, and anything that has
 moved on is reported and left alone.
 
+### One-time step when upgrading past the non-root change
+
+The image now runs as the unprivileged `node` user rather than as root, and
+creates `/data/uploads` and `/data/documents` owned by it. Docker applies that
+ownership only when it *initialises* an empty named volume, so a deployment
+whose `uploads` and `documents` volumes already exist still has them owned by
+root — and the application can no longer write there.
+
+Nothing looks wrong until somebody tries. The site serves normally, the health
+check passes, and the first logo upload or quotation attachment after the
+deploy fails with `EACCES`. Run this once, on the first deploy that includes
+this change:
+
+```bash
+cd /srv/techzoid/deploy
+docker compose -f docker-compose.prod.yml run --rm --user root --entrypoint sh \
+  app -c 'chown -R node:node /data'
+docker compose -f docker-compose.prod.yml up -d
+```
+
+Then confirm it took, as the application's own user:
+
+```bash
+docker compose -f docker-compose.prod.yml exec app id -u        # not 0
+docker compose -f docker-compose.prod.yml exec app \
+  sh -c 'touch /data/uploads/.probe && rm /data/uploads/.probe && echo writable'
+```
+
+A deployment created after this change needs none of it: the volumes are
+initialised from the image and inherit the right ownership.
+
 ### Deploying from GitHub Actions instead of a terminal
 
 `.github/workflows/deploy.yml` runs the exact four commands above over SSH.
@@ -422,11 +453,41 @@ the VM (the same file section 1 seeded from your own key), then paste the
 secret. Delete both files locally once they're in place; nothing here needs
 to keep a copy of either.
 
-A fourth, optional secret hardens host verification: run
-`ssh-keyscan -H <host>` once by hand and set its output as
-`DEPLOY_HOST_KEY`. Without it, each run trusts whatever key the host
-presents that run rather than a value you pinned yourself — still checked
-against what it presented, just not against a value fixed in advance.
+A fourth secret, `DEPLOY_HOST_KEY`, is **required** — the workflow stops
+before connecting if it is unset. Run `ssh-keyscan -H <host>` once, from
+somewhere you trust, and paste the output in:
+
+```bash
+ssh-keyscan -H <the VM's IP or hostname>
+```
+
+| Secret | Value |
+| --- | --- |
+| `DEPLOY_HOST_KEY` | The output of the command above, pinned once. |
+
+This used to be optional, and without it the workflow ran `ssh-keyscan`
+against the host at deploy time and trusted whatever answered. That is not a
+weaker form of host-key verification; it is none. Whoever replies on port 22
+in that moment is accepted and handed the deploy key. Pinning the value means
+the runner is checking the server's identity against something a person with
+access to these settings chose, rather than against the server's own claim.
+
+### The deploy will not run untested code
+
+`deploy.yml` runs the same mandatory checks as CI — type check, lint, the unit
+test suite, and a production build — in a `verify` job, and the job that
+touches the VM declares `needs: verify`. If any check fails the deploy is
+skipped and the VM is not contacted.
+
+They are re-run here rather than trusted from the pull request's CI run,
+because a manual deploy can be fired at any ref at any later time; a green run
+on an earlier commit says nothing about the one being deployed.
+
+The workflow also names an `environment: production`. On its own that changes
+nothing. Add required reviewers to it under **Settings → Environments →
+production** and each production deploy then waits for a second person to
+approve it — the one part of this that cannot be expressed in the workflow
+file.
 
 If you'd rather it deployed automatically on every push to `main`, add
 `push: { branches: [main] }` under `on:` in the workflow file — nothing else

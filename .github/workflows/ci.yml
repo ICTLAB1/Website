@@ -1,0 +1,211 @@
+name: CI
+
+# The gates a change has to pass before anyone can consider deploying it.
+#
+# This repository had none. Every check in it — typecheck, lint, 950-odd unit
+# tests, forty-odd verification suites, the production build — existed and ran
+# only when somebody remembered to run it, which meant the answer to "has this
+# been tested" was whatever the last person said.
+#
+# Deployment stays manual and stays on `workflow_dispatch`; see deploy.yml,
+# which runs the same mandatory checks again before it touches the VM. Pushing
+# to main does not deploy, and that is deliberate: this is a site taking real
+# payments, and "merged" is not the same decision as "live".
+on:
+  pull_request:
+  push:
+    branches-ignore:
+      # main is covered by the pull request that reaches it, and by deploy.yml
+      # re-running these checks at deploy time.
+      - main
+
+concurrency:
+  # A second push to the same branch makes the first one's answer irrelevant.
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Types, lint, tests, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci`, not `npm install`: the lockfile is the input, and a run that
+      # quietly resolved a different tree would be testing something other than
+      # what deploys.
+      - run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Production build
+        run: npm run build
+        env:
+          # The build compiles and never reaches a database; Prisma's client
+          # generation only needs a well-formed URL.
+          DATABASE_URL: postgresql://build:build@localhost:5432/build?schema=public
+
+  dependencies:
+    name: Dependency advisories
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Runtime dependencies only. A development-only advisory is worth knowing
+      # about and is not a reason to block a release of code that does not ship
+      # it; `npm audit` without the flag conflates the two.
+      #
+      # High and above fails. The current tree has four high advisories whose
+      # only fix is a major version bump, so this will fail until those are
+      # taken deliberately rather than silently — which is the intended
+      # behaviour of a gate, not a reason to lower it.
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+  image:
+    name: Container builds, boots and runs unprivileged
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # The hardening in Dockerfile and deploy/docker-compose.prod.yml cannot be
+    # checked by reading it. This job builds the real image and starts it the
+    # way production does — non-root, every capability dropped, no new
+    # privileges — and fails if it will not come up or comes up as root.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci -d ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the production image
+        run: docker build -t techzoid-app:ci .
+
+      - name: Start it as production does
+        run: |
+          set -euo pipefail
+          docker run -d --name app \
+            --network host \
+            --cap-drop ALL \
+            --security-opt no-new-privileges:true \
+            --tmpfs /tmp \
+            -e NODE_ENV=production \
+            -e DATABASE_URL='postgresql://ci:ci@127.0.0.1:5432/ci?schema=public' \
+            -e APP_URL='http://localhost:3000' \
+            -e AUTH_SECRET='ci-only-secret-value-at-least-32-characters-long' \
+            -e SEED_ADMIN_EMAIL='ci-admin@example.test' \
+            -e SEED_ADMIN_PASSWORD='ci-only-password-not-a-real-one' \
+            -e UPLOAD_DIR=/data/uploads \
+            -e DOCUMENT_DIR=/data/documents \
+            techzoid-app:ci
+
+      - name: Wait for it to answer
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://localhost:3000/api/health >/dev/null 2>&1; then
+              echo "healthy after ${attempt}0s"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::the container never became healthy" >&2
+          docker logs app >&2 || true
+          exit 1
+
+      - name: It is not running as root
+        run: |
+          set -euo pipefail
+          uid="$(docker exec app id -u)"
+          echo "container uid: ${uid}"
+          if [ "$uid" = "0" ]; then
+            echo "::error::the application is running as root" >&2
+            exit 1
+          fi
+
+      - name: It can still write where it must
+        # The ownership of /data is set in the image so a new named volume
+        # inherits it. If that regresses, uploads fail at runtime with EACCES
+        # and nothing else looks wrong — so it is checked here instead.
+        run: |
+          set -euo pipefail
+          docker exec app sh -c 'printf ok > /data/uploads/ci-probe && cat /data/uploads/ci-probe'
+          docker exec app sh -c 'printf ok > /data/documents/ci-probe && cat /data/documents/ci-probe'
+
+      - name: Migrations ran
+        run: |
+          set -euo pipefail
+          docker logs app 2>&1 | grep -q "applying migrations" \
+            || { echo "::error::the entrypoint did not run migrations" >&2; docker logs app >&2; exit 1; }
+
+      # Caddy is hardened the same way in deploy/docker-compose.prod.yml, and
+      # it is the container where that is least obviously safe: it runs as root
+      # and binds 80 and 443, so it needs CAP_NET_BIND_SERVICE and nothing
+      # else. "Nothing else" is a claim about what Caddy does at startup — it
+      # writes its own config, manages certificates and opens sockets — and
+      # the way to find out that one of those wanted a capability we dropped is
+      # a front door that will not start, on the live site, at deploy time.
+      #
+      # So it is checked here instead, with the same flags and an internal
+      # config, which answers the only question CI can answer: does it come up
+      # and serve with those capabilities. It does not exercise ACME, which
+      # needs a real domain.
+      - name: Caddy starts with only NET_BIND_SERVICE
+        run: |
+          set -euo pipefail
+          printf ':80 {\n\trespond "ci" 200\n}\n' > /tmp/Caddyfile.ci
+          docker run -d --name caddy-ci \
+            --cap-drop ALL \
+            --cap-add NET_BIND_SERVICE \
+            --security-opt no-new-privileges:true \
+            -p 8080:80 \
+            -v /tmp/Caddyfile.ci:/etc/caddy/Caddyfile:ro \
+            caddy:2-alpine
+          for attempt in $(seq 1 20); do
+            if [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/ || true)" = "200" ]; then
+              echo "caddy answered after ${attempt}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::caddy did not serve with ALL dropped and NET_BIND_SERVICE added" >&2
+          docker logs caddy-ci >&2 || true
+          exit 1
+
+      - name: Container logs
+        if: always()
+        run: |
+          docker logs app 2>&1 | tail -60
+          docker logs caddy-ci 2>&1 | tail -40 || true

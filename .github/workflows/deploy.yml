@@ -17,7 +17,62 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # The gate. Deployment is manual, but "manual" only means a person chose the
+  # moment — it never meant the code had been checked. Before this job existed
+  # the deploy step ran `git pull && docker compose up -d --build` against the
+  # live VM from whatever `main` happened to contain, and the build inside the
+  # container was the first thing to look at the code at all. A type error, a
+  # failing test or a lint violation reached production and was discovered
+  # there.
+  #
+  # These are the same checks ci.yml runs on every pull request, repeated here
+  # rather than trusted from an earlier run: a successful CI run proves
+  # something about the commit it ran on, and a manual deploy can be fired at
+  # any ref at any later time. Re-running them costs a few minutes of a
+  # deployment that happens by hand anyway.
+  verify:
+    name: Mandatory checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Production build
+        run: npm run build
+        env:
+          # Compiles without reaching a database; Prisma's client generation
+          # only needs a well-formed URL.
+          DATABASE_URL: postgresql://build:build@localhost:5432/build?schema=public
+
   deploy:
+    # Nothing reaches the VM unless the checks above passed. `needs` is the
+    # whole mechanism: a failure in `verify` leaves this job skipped, and a
+    # skipped deploy is the correct outcome for code that does not compile.
+    needs: verify
+    # Named so that required reviewers can be attached to it in the
+    # repository's Environments settings — the one piece of this that cannot
+    # be expressed in a workflow file. Without reviewers configured this
+    # behaves exactly as before (whoever can dispatch the workflow deploys);
+    # with them, a second person has to approve each production deploy.
+    environment: production
     runs-on: ubuntu-latest
     # Five minutes covers a git pull and a Docker rebuild comfortably; a hang
     # here almost always means the SSH connection itself is stuck, not that
@@ -42,17 +97,28 @@ jobs:
           chmod 700 ~/.ssh
           printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          # DEPLOY_HOST_KEY, if set, is the output of `ssh-keyscan -H <host>`
-          # run once by hand and pinned as a secret — the stronger option,
-          # verifying the server's identity against a value only someone with
-          # repo-secret access chose. Without it, this falls back to trusting
-          # whatever key the host presents on this run (TOFU each time),
-          # which is the weaker but still functional default.
-          if [ -n "$DEPLOY_HOST_KEY" ]; then
-            printf '%s\n' "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
-          else
-            ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          # DEPLOY_HOST_KEY is the output of `ssh-keyscan -H <host>`, run once
+          # by hand and pinned as a repository secret. It is now required.
+          #
+          # This used to fall back to `ssh-keyscan` at deploy time when the
+          # secret was absent — trust on first use, on every run. That is not
+          # a weaker version of host-key verification; it is none at all.
+          # Whoever answers on port 22 at that moment is accepted and handed a
+          # deploy key, so anyone able to sit between the runner and the VM for
+          # one run takes the credential and the deployment with it. The
+          # fallback also hid its own absence: a deployment with no pinned key
+          # looked exactly like a deployment with one.
+          #
+          # Failing here is the point. A deploy that cannot prove which machine
+          # it is talking to should stop, not proceed hopefully.
+          if [ -z "$DEPLOY_HOST_KEY" ]; then
+            echo "::error::DEPLOY_HOST_KEY is not set. Pin the host key before deploying:" >&2
+            echo "  ssh-keyscan -H <host>   # run once, from somewhere you trust" >&2
+            echo "  then save the output as the DEPLOY_HOST_KEY repository secret." >&2
+            exit 1
           fi
+          printf '%s\n' "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
 
       - name: Deploy
         run: |
