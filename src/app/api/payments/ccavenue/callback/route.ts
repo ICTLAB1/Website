@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { CCAVENUE_CALLBACK_MAX_BYTES, readLimitedBody } from "@/lib/http/read-limited-body";
 import { prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { getCCAvenueConfig } from "@/lib/payments/config";
@@ -27,8 +28,22 @@ import { appUrl } from "@/lib/env";
  * body says.
  */
 export async function POST(request: Request) {
-  const raw = await request.text();
-  const params = new URLSearchParams(raw);
+  /*
+   * Bounded as it arrives. This endpoint is unauthenticated — anyone who
+   * finds the URL can post to it — and it has to read the body before it can
+   * decide anything about it, so the body is what a stranger gets to choose
+   * the size of.
+   */
+  const limited = await readLimitedBody(request, CCAVENUE_CALLBACK_MAX_BYTES);
+  if (!limited.ok) {
+    logger.warn("ccavenue_callback_body_rejected", { reason: limited.reason });
+    return new NextResponse(
+      limited.reason === "too_large" ? "That response is too large." : "That response could not be read.",
+      { status: limited.reason === "too_large" ? 413 : 400 },
+    );
+  }
+
+  const params = new URLSearchParams(limited.raw);
   const encResponse = params.get("encResp");
 
   const config = await getCCAvenueConfig();

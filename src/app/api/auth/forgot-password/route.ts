@@ -1,4 +1,5 @@
 import { jsonError, jsonOk, withErrorHandling } from "@/lib/api";
+import { requireJsonBody } from "@/lib/http/json-body";
 import { verifyCsrf } from "@/lib/auth/csrf";
 import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { ipFromRequest } from "@/lib/auth/request";
@@ -28,7 +29,7 @@ export const POST = withErrorHandling("auth.forgotPassword", async (request: Req
 
   let body: unknown;
   try {
-    body = await request.json();
+    body = await requireJsonBody(request);
   } catch {
     return jsonError("bad_request", "The request could not be read.");
   }

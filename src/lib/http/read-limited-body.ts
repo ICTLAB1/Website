@@ -121,3 +121,54 @@ export async function readLimitedBody(
  */
 export const CRM_INBOUND_MAX_BYTES = 64 * 1024;
 export const STRIPE_WEBHOOK_MAX_BYTES = 1024 * 1024;
+
+/**
+ * CCAvenue posts one form field, `encResp`, holding hex-encoded AES-128-CBC.
+ *
+ * Hex doubles the size and the plaintext is a few hundred bytes of
+ * `key=value&…`, so a genuine callback is low single-figure kilobytes. 32 KB
+ * leaves an order of magnitude of headroom for a reply carrying more fields
+ * than this integration reads, and still refuses a body that is not a
+ * callback at all.
+ */
+export const CCAVENUE_CALLBACK_MAX_BYTES = 32 * 1024;
+
+/**
+ * What an ordinary JSON endpoint will accept.
+ *
+ * None of this application's public JSON routes takes anything large: the
+ * biggest is a chat turn, capped by its own schema at forty messages of two
+ * thousand characters. 128 KB is far above every legitimate request and far
+ * below what an unauthenticated caller could otherwise make this process hold.
+ *
+ * Routes that genuinely need more say so by passing their own limit — the
+ * webhooks above do — rather than this number creeping upward for all of them.
+ */
+export const JSON_BODY_MAX_BYTES = 128 * 1024;
+
+export type LimitedJson =
+  | { ok: true; value: unknown }
+  | { ok: false; reason: "too_large" | "unreadable" | "not_json" };
+
+/**
+ * Reads and parses a JSON body under a byte limit.
+ *
+ * The limit is applied to the bytes, before the parse, which is the order that
+ * matters: `request.json()` buffers the whole body and only then discovers it
+ * is twenty megabytes of nothing. Returning the reason separately lets the
+ * caller answer 413 where it is a size problem and 400 where it is a shape
+ * problem, rather than flattening both into one unhelpful status.
+ */
+export async function readLimitedJson(
+  request: Request,
+  maxBytes: number = JSON_BODY_MAX_BYTES,
+): Promise<LimitedJson> {
+  const body = await readLimitedBody(request, maxBytes);
+  if (!body.ok) return { ok: false, reason: body.reason };
+
+  try {
+    return { ok: true, value: JSON.parse(body.raw) };
+  } catch {
+    return { ok: false, reason: "not_json" };
+  }
+}
