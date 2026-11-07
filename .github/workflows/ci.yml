@@ -165,10 +165,27 @@ jobs:
           docker exec app sh -c 'printf ok > /data/documents/ci-probe && cat /data/documents/ci-probe'
 
       - name: Migrations ran
+        # The log is captured before it is searched, rather than piped into
+        # `grep -q`, and that is the whole point of the shape.
+        #
+        # `docker logs app | grep -q …` under `set -o pipefail` fails *when the
+        # match is found*: `grep -q` exits the moment it sees the string and
+        # closes the pipe, `docker logs` is killed by SIGPIPE and exits 141,
+        # and pipefail reports the pipeline as 141. The first run of this job
+        # failed exactly that way, with "applying migrations" plainly in the
+        # log it had just printed — a check that fails on success, which is
+        # worse than no check because it teaches people to ignore the job.
         run: |
           set -euo pipefail
-          docker logs app 2>&1 | grep -q "applying migrations" \
-            || { echo "::error::the entrypoint did not run migrations" >&2; docker logs app >&2; exit 1; }
+          log="$(docker logs app 2>&1)"
+          case "$log" in
+            *"applying migrations"*) echo "the entrypoint ran migrations" ;;
+            *)
+              echo "::error::the entrypoint did not run migrations" >&2
+              printf '%s\n' "$log" >&2
+              exit 1
+              ;;
+          esac
 
       # Caddy is hardened the same way in deploy/docker-compose.prod.yml, and
       # it is the container where that is least obviously safe: it runs as root
