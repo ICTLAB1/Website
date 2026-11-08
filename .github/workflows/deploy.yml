@@ -132,6 +132,28 @@ jobs:
              # with, and running as its own owner sidesteps git'"'"'s
              # dubious-ownership check (CVE-2022-24765) entirely.
              sudo -u azureuser git -C /home/azureuser/app pull
+             # ── Ownership of the data volumes ──────────────────────────────
+             #
+             # The image now runs as `node` rather than root. Docker applies
+             # the image'"'"'s ownership of /data only when it *initialises* an
+             # empty named volume, and techzoid_uploads and techzoid_documents
+             # already hold files — so they stay root-owned and the
+             # unprivileged app cannot write to them.
+             #
+             # Nothing looks wrong when that happens. The site serves, the
+             # health check passes, and the first logo upload or purchase-order
+             # attachment fails with EACCES. That is a customer finding it.
+             #
+             # So it is done here rather than left as a step in the README for
+             # somebody to remember once. It runs as root in a throwaway
+             # container, is idempotent, costs a second, and is a no-op on
+             # every deploy after the first. It runs *before* the new image
+             # starts, so there is no window where the app is up against
+             # volumes it cannot write to.
+             sudo docker compose --project-directory /home/azureuser/app/deploy \
+               -f /home/azureuser/app/deploy/docker-compose.prod.yml \
+               run --rm --no-deps --user root --entrypoint sh app \
+               -c '"'"'chown -R node:node /data && echo "data volumes owned by node"'"'"'
              # `cd` is a shell builtin, so it cannot be sudo'"'"'ed on its own —
              # it would run as the unprivileged deploy user, which cannot even
              # traverse into azureuser'"'"'s home directory. --project-directory
