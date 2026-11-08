@@ -1,4 +1,5 @@
 import "server-only";
+import type { GuardLevel } from "@/lib/admin/guard";
 
 import { tags } from "@/lib/cache";
 
@@ -87,7 +88,13 @@ export type DeletableConfig = {
   model: DeletableModel;
   label: { singular: string; plural: string };
   /** Privilege required. Staff records and customers are administrator-only. */
-  guard: "staff" | "admin";
+  /*
+   * Every deletable is "admin" today — deleting a record is the largest thing
+   * anyone can do to it. The capability form exists so a future entry can ask
+   * for something narrower by name, rather than for the removed "staff"
+   * level, which only asked whether the caller was on the payroll.
+   */
+  guard: GuardLevel;
   /** Whether the model carries `deletedAt` and can therefore be archived. */
   softDelete: boolean;
   /**

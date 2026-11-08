@@ -1,4 +1,5 @@
 import type { FieldDescriptor } from "@/lib/admin/fields";
+import type { GuardLevel } from "@/lib/admin/guard";
 import { tags } from "@/lib/cache";
 
 /**
@@ -57,7 +58,13 @@ export type ResourceConfig = {
    * Privilege required to write. Content that changes what every visitor sees
    * is "admin"; SALES keeps its commercial surfaces and nothing more.
    */
-  guard: "staff" | "admin";
+  /*
+   * What editing this resource requires. Every resource here is "admin"
+   * today; the capability form exists so that a resource which should be
+   * editable by, say, procurement can say so rather than falling back to
+   * "any member of staff", which is what the removed "staff" level meant.
+   */
+  guard: GuardLevel;
   fields: FieldDescriptor[];
   listColumns: ListColumn[];
   /** Columns searched by the list screen's GET form. */

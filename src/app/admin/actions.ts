@@ -7,7 +7,7 @@ import type { EnquiryStatus } from "@prisma/client";
 
 import { prisma } from "@/lib/db";
 import { canTransition, RFQ_STATUSES, RFQ_STATUS_LABELS } from "@/lib/rfq";
-import { requireAdmin, requireStaff } from "@/lib/auth/guards";
+import { requireAdmin, requireCapability } from "@/lib/auth/guards";
 import { recordAudit } from "@/lib/audit";
 import { clientIp } from "@/lib/auth/request";
 import { fieldErrorsOf } from "@/lib/validation";
@@ -111,7 +111,7 @@ export async function saveProduct(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await requireStaff();
+  const staff = await requireCapability("catalogue.write");
   const limit = hit(`admin:${staff.id}`, LIMITS.adminWrite.limit, LIMITS.adminWrite.windowSeconds);
   if (!limit.allowed) {
     return { status: "error", message: "Too many changes in a short period. Please slow down." };
@@ -257,7 +257,7 @@ export async function archiveProduct(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await requireStaff();
+  const staff = await requireCapability("catalogue.write");
   const productId = String(formData.get("productId") ?? "").trim();
   if (!productId) return { status: "error", message: "No product specified." };
 
@@ -339,7 +339,7 @@ export async function saveVariant(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await requireStaff();
+  const staff = await requireCapability("catalogue.write");
 
   const productId = String(formData.get("productId") ?? "").trim();
   const variantId = String(formData.get("variantId") ?? "").trim() || null;
@@ -515,7 +515,7 @@ export async function saveSpec(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requireStaff();
+  await requireCapability("catalogue.write");
 
   const productId = String(formData.get("productId") ?? "").trim();
   const specId = String(formData.get("specId") ?? "").trim() || null;
@@ -566,7 +566,7 @@ export async function deleteSpec(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  await requireStaff();
+  await requireCapability("catalogue.write");
 
   const productId = String(formData.get("productId") ?? "").trim();
   const specId = String(formData.get("specId") ?? "").trim();
@@ -590,7 +590,7 @@ export async function updateEnquiry(
   _previous: AdminActionState,
   formData: FormData,
 ): Promise<AdminActionState> {
-  const staff = await requireStaff();
+  const staff = await requireCapability("enquiries.write");
 
   const parsed = enquiryUpdateSchema.safeParse({
     reference: formData.get("reference"),

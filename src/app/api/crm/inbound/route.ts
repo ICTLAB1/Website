@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/db";
+import { CRM_INBOUND_MAX_BYTES, readLimitedBody } from "@/lib/http/read-limited-body";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";
 import { ipFromRequest } from "@/lib/auth/request";
@@ -62,14 +63,23 @@ export async function POST(request: Request) {
   if (!signature) return notFound();
 
   /*
-   * Bounded before it is read into memory. This endpoint is unauthenticated
-   * until the signature is checked, and the signature cannot be checked without
-   * the body — so the body is what an attacker gets to choose the size of.
+   * Bounded *as* it is read, not after. This endpoint is unauthenticated until
+   * the signature is checked, and the signature cannot be checked without the
+   * body — so the body is what an attacker gets to choose the size of, and the
+   * limit has to bite before the allocation rather than after it. See
+   * `readLimitedBody`, which also fixes two smaller faults in the check this
+   * replaces: it counted UTF-16 code units rather than bytes, so the 64 KB
+   * budget admitted about 192 KB; and a chunked body with no declared length
+   * was not measured until it had all arrived.
    */
-  const raw = await request.text();
-  if (raw.length > 64_000) {
-    return Response.json({ ok: false, detail: "Body too large." }, { status: 413 });
+  const body0 = await readLimitedBody(request, CRM_INBOUND_MAX_BYTES);
+  if (!body0.ok) {
+    if (body0.reason === "too_large") {
+      return Response.json({ ok: false, detail: "Body too large." }, { status: 413 });
+    }
+    return Response.json({ ok: false, detail: "Body could not be read." }, { status: 400 });
   }
+  const raw = body0.raw;
 
   if (!verifySignature(raw, signature, secret)) {
     logger.warn("crm_inbound_bad_signature", { ip: ipFromRequest(request) });

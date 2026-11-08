@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 
 /**
@@ -19,13 +21,28 @@ import { cn } from "@/lib/utils";
  * so it is the same mark, not a recoloured one. Both are derived from the
  * single supplied master; see `public/brand/README.md`.
  *
- * ## Why an `<img>` and not `next/image`
+ * ## Why `next/image`, having previously been an `<img>`
  *
- * The optimiser wants an intrinsic size for artwork that is already local,
- * already sized for its slot, and served from the same origin. What matters for
- * layout stability is the fixed height below, which is here regardless. The
- * width is `auto` so the lockup keeps its own proportions rather than being
- * squeezed by a container.
+ * This used to be a plain `<img>`, on the grounds that the artwork was
+ * "already sized for its slot". Measured on 7 November 2026, it was not:
+ *
+ *   /brand-assets/techzoid-logo-reversed.webp   2167x725   85 KB
+ *   /brand-assets/techzoid-wordmark.webp        2167x314   72 KB
+ *
+ * The header renders the wordmark at `h-11` — 44 CSS pixels tall against a
+ * 314-pixel master — and the footer carries the reversed lockup. Together that
+ * was 157 KB of logo on the home page, the two largest assets on it, for slots
+ * measured in tens of pixels.
+ *
+ * The masters are left exactly as they are. They are read off disk for
+ * generated quotation PDFs (`lib/pdf/writer.ts`), where the full resolution is
+ * the point. Optimising on delivery gives the browser a small AVIF and print
+ * the master, which resizing the files would not.
+ *
+ * `width` and `height` stay the intrinsic dimensions of whichever cut is in
+ * use, for the same reason as before — the browser reserves the right box and
+ * the header does not jump. `sizes` describes the slot rather than the file,
+ * which is what stops the generated srcset carrying sizes nothing asks for.
  */
 
 /*
@@ -85,11 +102,18 @@ export function BrandLogo({
      * how the master was supplied. It is decorative either way — the words are
      * on the about page, in prose, where they can be read.
      */
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={src}
       alt=""
       aria-hidden="true"
+      /*
+       * The header's wordmark is the largest contentful paint candidate on
+       * most pages and is above the fold on every one, so it is fetched with
+       * priority rather than lazily. The full lockup lives in the footer and
+       * is not.
+       */
+      priority={!withStrapline}
+      sizes={withStrapline ? "(max-width: 768px) 200px, 260px" : "(max-width: 768px) 240px, 320px"}
       className={cn("h-11 w-auto max-w-full object-contain object-left", className)}
       /*
        * The intrinsic size of whichever cut is being used, so the browser

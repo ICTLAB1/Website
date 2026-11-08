@@ -27,6 +27,8 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./backups:/backups
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
@@ -117,6 +119,22 @@ services:
       # order to a rebuild is not the same order of mistake as losing a logo.
       - documents:/data/documents
     # Also no `ports:`. Only Caddy talks to the app, over the internal network.
+    #
+    # Nothing in this container needs to become more privileged than it starts,
+    # and it starts as `node` (see the Dockerfile). `no-new-privileges` closes
+    # the setuid route out of that, and dropping every capability closes the
+    # rest: a Node process serving HTTP on 3000 needs none of them.
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    # Somewhere to write that is not the image. The root filesystem is left
+    # writable for now because the entrypoint clears the Next cache directory
+    # on every start and Next writes there while serving; making it read-only
+    # means mounting that path separately and clearing its contents rather
+    # than the mount point itself. Worth doing, not worth doing blind.
+    tmpfs:
+      - /tmp
     healthcheck:
       # Asks the app whether it can reach its database, which is the failure
       # `restart: unless-stopped` alone will not catch: a Next.js server whose
@@ -162,6 +180,14 @@ services:
       # redirect then never fires, and an empty value would fail to parse.
       SITE_REDIRECT_FROM: ${SITE_REDIRECT_FROM:?set SITE_REDIRECT_FROM, or SITE_DOMAIN again if there is only one name}
       TLS_EMAIL: ${TLS_EMAIL:?set TLS_EMAIL for certificate expiry notices}
+    # Caddy binds 80 and 443, so it keeps exactly the one capability that
+    # allows a low port and gives up the rest.
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data

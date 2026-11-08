@@ -183,6 +183,28 @@ for (const [legacy, expected, links] of RECLAIMED) {
     if (hops > 1) {
       problems.push(`${legacy} reaches ${expected} in ${hops} hops; a legacy URL must redirect once`);
     }
+  } else if (status === 200) {
+    /*
+     * Live, but not where it was meant to go.
+     *
+     * Worth saying differently from the dead case, because the two need
+     * different work and the old message read the same for both. This one is
+     * a redirect parked on a stand-in: the links are being spent on a page
+     * that answers an adjacent question, which is a real loss but not an
+     * emergency.
+     *
+     * It still counts as a problem and still fails. `/post/what-is-a-digital-license`
+     * is the standing example — 1,866 links, pointed at an article the
+     * comment above calls "the only one whose destination had to be written
+     * before the redirect could exist", which was never written. The rule
+     * caught that from the day it was added. Nobody read it, and the links
+     * spent two migrations landing on a 404. Making the message quieter is
+     * how that happens again, so it does not get quieter; it gets clearer.
+     */
+    problems.push(
+      `${legacy} carries ${links} inbound link(s) and lands on a stand-in, ${current} (200), ` +
+        `not ${expected} — the intended destination still does not exist`,
+    );
   } else {
     problems.push(
       `${legacy} carries ${links} inbound link(s) and lands on ${current} (${status}), not ${expected}`,

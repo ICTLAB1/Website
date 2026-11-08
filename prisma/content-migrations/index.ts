@@ -1,3 +1,5 @@
+import { seoArticleDrafts } from "./2026-11-seo-article-drafts";
+import { seoPageDrafts } from "./2026-11-seo-page-drafts";
 import { brandLogos } from "./2026-08-brand-logos";
 import { gemMark } from "./2026-08-gem-mark";
 import { partnerStatusMigration } from "./2026-08-partner-status";
@@ -170,6 +172,12 @@ export const contentMigrations: ContentMigration[] = [
   autodeskProductIcon,
   moreBrandFaqs,
   privacyTheAssistant,
+  /*
+   * Last, and both create DRAFT rows only. Nothing they write is reachable
+   * or indexable until a person publishes it in the admin panel.
+   */
+  seoArticleDrafts,
+  seoPageDrafts,
 ];
 
 export type { ContentMigration };

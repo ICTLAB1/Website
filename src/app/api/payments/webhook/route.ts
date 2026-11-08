@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getPaymentConfig } from "@/lib/payments/config";
 import { verifyWebhookSignature } from "@/lib/payments/stripe";
 import { recordCapture, recordFailure } from "@/lib/payments/service";
+import { readLimitedBody, STRIPE_WEBHOOK_MAX_BYTES } from "@/lib/http/read-limited-body";
 import { logger } from "@/lib/logger";
 
 /**
@@ -34,7 +35,23 @@ import { logger } from "@/lib/logger";
  * is taken first and parsed only after the signature has verified against it.
  */
 export const POST = withErrorHandling("payments.webhook", async (request: Request) => {
-  const raw = await request.text();
+  /*
+   * Bounded as it is read. This route had no limit at all: it is reachable by
+   * anyone who can find the URL, and it buffered whatever was sent before
+   * looking at the signature. The ceiling is set where a genuine Stripe event
+   * cannot reach it — see `STRIPE_WEBHOOK_MAX_BYTES` — so compatibility is
+   * unchanged and an arbitrary body no longer is.
+   */
+  const limited = await readLimitedBody(request, STRIPE_WEBHOOK_MAX_BYTES);
+  if (!limited.ok) {
+    if (limited.reason === "too_large") {
+      // 413 and never retried: a body over the ceiling is not a transient
+      // condition, and Stripe treats 4xx as final.
+      return new NextResponse(null, { status: 413 });
+    }
+    return new NextResponse(null, { status: 400 });
+  }
+  const raw = limited.raw;
   const signature = request.headers.get("stripe-signature");
 
   const config = await getPaymentConfig();

@@ -38,21 +38,46 @@ RUN npm run build
 # -------------------------------------------------------------------- runtime
 FROM base AS runtime
 ENV NODE_ENV=production
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/.next ./.next
-COPY --from=build /app/public ./public
-COPY --from=build /app/package.json ./package.json
-COPY --from=build /app/next.config.ts ./next.config.ts
-COPY --from=build /app/tsconfig.json ./tsconfig.json
+
+# Everything the application owns is copied as `node`, the unprivileged user
+# the official image already provides (uid 1000). Doing it with `--chown` on
+# each COPY rather than a `RUN chown -R` afterwards keeps the layers small:
+# a recursive chown rewrites every file into a new layer.
+COPY --from=build --chown=node:node /app/node_modules ./node_modules
+COPY --from=build --chown=node:node /app/.next ./.next
+COPY --from=build --chown=node:node /app/public ./public
+COPY --from=build --chown=node:node /app/package.json ./package.json
+COPY --from=build --chown=node:node /app/next.config.ts ./next.config.ts
+COPY --from=build --chown=node:node /app/tsconfig.json ./tsconfig.json
 # Carries the schema, the seed, and the content migrations the entrypoint runs.
-COPY --from=build /app/prisma ./prisma
+COPY --from=build --chown=node:node /app/prisma ./prisma
 # Older one-shot corrections, kept for the record and runnable with
 # `docker compose exec app node scripts/audit/…`. Content changes are no longer
 # written this way: they go in prisma/content-migrations/ and are applied by the
 # entrypoint, so a deploy is the whole operation. See the note there.
-COPY --from=build /app/scripts/audit ./scripts/audit
+COPY --from=build --chown=node:node /app/scripts/audit ./scripts/audit
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# The upload and document directories, created in the image so that a *new*
+# named volume inherits this ownership when Docker initialises it.
+#
+# This does nothing for a volume that already exists — Docker only seeds an
+# empty one — so an existing deployment needs a one-time chown before the
+# container can write to it. That step is in deploy/README.md; without it the
+# first upload after this change fails with EACCES and nothing else looks
+# wrong, which is the sort of thing that is discovered by a customer.
+RUN mkdir -p /data/uploads /data/documents && chown -R node:node /data
+
+# /app itself, so the application can create files beside the ones copied in.
+# The COPYs above set ownership on their own contents, not on the working
+# directory WORKDIR made as root; Next writes into .next while serving and the
+# entrypoint deletes .next/cache on every start.
+RUN chown node:node /app
+
+# Dropped here rather than in compose so the image is non-root wherever it is
+# run, including by hand. Port 3000 is above 1024, so nothing is given up.
+USER node
 
 EXPOSE 3000
 ENTRYPOINT ["docker-entrypoint.sh"]
