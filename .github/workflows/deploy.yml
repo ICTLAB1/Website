@@ -150,10 +150,23 @@ jobs:
              # every deploy after the first. It runs *before* the new image
              # starts, so there is no window where the app is up against
              # volumes it cannot write to.
-             sudo docker compose --project-directory /home/azureuser/app/deploy \
-               -f /home/azureuser/app/deploy/docker-compose.prod.yml \
-               run --rm --no-deps --user root --entrypoint sh app \
-               -c '"'"'chown -R node:node /data && echo "data volumes owned by node"'"'"'
+             #
+             # Plain `docker run`, not `docker compose run`, and that is the
+             # whole point of the shape. The app service drops every
+             # capability, and `compose run` inherits the service'"'"'s security
+             # options — so CAP_CHOWN is gone and even `--user root` cannot
+             # chown. The first attempt at this failed exactly that way:
+             # "chown: changing ownership of '"'"'/data/uploads'"'"': Operation not
+             # permitted". A throwaway container outside the compose service
+             # has its default capabilities and can.
+             #
+             # uid 1000 is `node` in the official node images, which this one
+             # is built from. That is asserted in ci.yml rather than trusted,
+             # so a base image that ever changed it fails there and not here.
+             sudo docker run --rm \
+               -v techzoid_uploads:/data/uploads \
+               -v techzoid_documents:/data/documents \
+               alpine:3 sh -c '"'"'chown -R 1000:1000 /data/uploads /data/documents && echo "data volumes owned by uid 1000"'"'"'
              # `cd` is a shell builtin, so it cannot be sudo'"'"'ed on its own —
              # it would run as the unprivileged deploy user, which cannot even
              # traverse into azureuser'"'"'s home directory. --project-directory

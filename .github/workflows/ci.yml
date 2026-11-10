@@ -145,13 +145,29 @@ jobs:
           docker logs app >&2 || true
           exit 1
 
-      - name: It is not running as root
+      - name: It is not running as root, and is uid 1000
+        # Two assertions, and the second is not pedantry.
+        #
+        # deploy.yml chowns the existing data volumes to 1000:1000 on its way
+        # past, because Docker only applies the image's ownership to a volume
+        # it initialises empty and production's are long since full. It cannot
+        # ask the image what `node` resolves to — the compose service drops
+        # CAP_CHOWN, so the chown runs in a throwaway container that has no
+        # /etc/passwd entry for `node` and must use the number.
+        #
+        # So the number is pinned here instead of assumed there. If a future
+        # base image ever moves `node` off 1000, this fails on a pull request
+        # rather than silently handing production's uploads to the wrong user.
         run: |
           set -euo pipefail
           uid="$(docker exec app id -u)"
           echo "container uid: ${uid}"
           if [ "$uid" = "0" ]; then
             echo "::error::the application is running as root" >&2
+            exit 1
+          fi
+          if [ "$uid" != "1000" ]; then
+            echo "::error::the application runs as uid ${uid}, but deploy.yml chowns the data volumes to 1000" >&2
             exit 1
           fi
 
