@@ -1,7 +1,17 @@
-import { readFileSync } from "node:fs";
-
 /**
- * Keeping the festive greeting out of suites that are testing something else.
+ * Kept after the Diwali 2026 campaign was removed, and deliberately so.
+ *
+ * Forty-one suites call this. The greeting it suppressed is gone — the
+ * component, its date gate and its tests went with the campaign on
+ * 10 November 2026 — so this now writes a key nothing reads, which costs a
+ * few microseconds per context and nothing else.
+ *
+ * Editing forty-one files to delete a harmless no-op would be a large diff
+ * for no behaviour, and the next campaign would want it back. The companion
+ * `campaignIsRunning` is gone, because that one threw when the source file it
+ * read no longer existed.
+ *
+ * What it used to do, which is what the next campaign should restore:
  *
  * The Diwali greeting is a modal: it covers the page on the first view of a
  * visit, and its backdrop swallows clicks aimed at anything behind it. That is
@@ -22,8 +32,6 @@ import { readFileSync } from "node:fs";
  * is wrapped — exactly as the component's own is. A throw here would fail the
  * page before the suite had asserted anything.
  *
- * This file goes when the campaign does; `src/lib/marketing/festival-campaign`
- * is the other half to delete.
  */
 export const FESTIVE_SEEN_KEY = "techzoid.diwali.2026.seen";
 
@@ -35,34 +43,4 @@ export async function suppressFestiveGreeting(context) {
       /* Blocked storage: the greeting may appear, and the suite will say so. */
     }
   }, FESTIVE_SEEN_KEY);
-}
-
-/**
- * Whether the campaign is still on, read from the one place that defines it.
- *
- * The suite runs under plain `node`, which cannot import the TypeScript
- * module that holds the date — so it reads the constant out of the source
- * instead. That is deliberately not a second copy of the date: a suite with
- * its own idea of when the campaign ends would keep checking a greeting that
- * had stopped rendering, or stop checking one that had not, and either way
- * the failure would be blamed on the feature. `tests/retention.test.ts` ties
- * itself to published copy the same way and for the same reason.
- *
- * A source that no longer matches this shape throws rather than guessing,
- * because the guess would be "the campaign is over", which is the answer that
- * silently stops testing.
- */
-export function campaignIsRunning(now = Date.now()) {
-  const source = readFileSync(
-    new URL("../../../src/lib/marketing/festival-campaign.ts", import.meta.url),
-    "utf8",
-  );
-  const found = /CAMPAIGN_ENDS_AT = Date\.parse\("([^"]+)"\)/.exec(source);
-  if (!found) {
-    throw new Error(
-      "Could not read CAMPAIGN_ENDS_AT from src/lib/marketing/festival-campaign.ts. " +
-        "If the campaign has been removed, remove the festive block from interactions.mjs too.",
-    );
-  }
-  return now < Date.parse(found[1]);
 }
