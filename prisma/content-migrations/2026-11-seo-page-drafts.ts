@@ -113,7 +113,7 @@ const GEM: Draft = {
   slug: "gem-software-supplier",
   title: "Software on GeM: how government buys licences, and what to specify",
   description:
-    "How software licences are procured through the Government e-Marketplace and other public routes, what a specification needs to produce comparable bids, and what a department should hold as proof of licence.",
+    "How software licences are procured through the Government e-Marketplace and other public routes, what a specification needs, and what to file after award.",
   keywords: [
     "gem software seller",
     "government software supplier india",
@@ -307,7 +307,7 @@ const NOIDA: Draft = {
   slug: "software-licensing-company-noida",
   title: "Software licensing for Noida businesses",
   description:
-    "Licensing, renewals and software asset management for companies in Noida and Greater Noida — Microsoft, Adobe, Autodesk and Zoho, invoiced in India with GST. Our office is in Pitampura, New Delhi.",
+    "Licensing, renewals and software asset management for companies in Noida and Greater Noida. Microsoft, Adobe, Autodesk and Zoho, invoiced in India with GST.",
   keywords: [
     "software licensing company noida",
     "microsoft 365 reseller noida",
@@ -452,7 +452,7 @@ const GURUGRAM: Draft = {
   slug: "software-licensing-company-gurugram",
   title: "Software licensing for Gurugram businesses",
   description:
-    "Licensing, renewals and compliance evidence for corporate offices in Gurugram — Microsoft, Adobe, Autodesk and Zoho, invoiced in India with GST. Our office is in Pitampura, New Delhi.",
+    "Licensing, renewals and compliance evidence for corporate offices in Gurugram. Microsoft, Adobe, Autodesk and Zoho, invoiced in India with GST.",
   keywords: [
     "software licensing company gurugram",
     "microsoft 365 reseller gurgaon",

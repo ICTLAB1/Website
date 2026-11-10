@@ -1,3 +1,4 @@
+import { publishTheSeoDrafts } from "./2026-11-publish-the-seo-drafts";
 import { seoArticleDrafts } from "./2026-11-seo-article-drafts";
 import { seoPageDrafts } from "./2026-11-seo-page-drafts";
 import { brandLogos } from "./2026-08-brand-logos";
@@ -179,6 +180,11 @@ export const contentMigrations: ContentMigration[] = [
    */
   seoArticleDrafts,
   seoPageDrafts,
+  /*
+   * After both, necessarily: it publishes what they create, and links the two
+   * pages nothing else points at before making them indexable.
+   */
+  publishTheSeoDrafts,
   /* Titles and descriptions of three published hubs; nothing else. */
   hubTitlesSayReseller,
 ];
