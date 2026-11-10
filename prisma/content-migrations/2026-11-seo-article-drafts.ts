@@ -84,6 +84,29 @@ import type { ContentMigration } from "./types";
  * mechanism and not by figure, because the figures are amended and an article
  * asserting last year's limit is worse than one that says where to look.
  *
+ * ## One of these eighteen is a fallback, not a new article
+ *
+ * `what-is-a-digital-licence` was written here on the belief that no such
+ * article existed. That was wrong, and the correction is worth recording
+ * rather than quietly deleting.
+ *
+ * `2026-08-digital-licence-article` wrote it in August and publishes it, and
+ * on a freshly seeded database it is there and PUBLISHED — verified by running
+ * the full migration chain locally on 10 November 2026, where this migration
+ * reported "1 already existed" and skipped it.
+ *
+ * It is missing from the *live* database specifically, where
+ * `/blog/what-is-a-digital-licence` answers 404 while
+ * `/post/what-is-a-digital-license` redirects to it. A content migration runs
+ * once and is recorded, so the August one will not run again to repair it.
+ * Whether the row was deleted, soft-deleted or unpublished from the admin
+ * panel cannot be determined from here.
+ *
+ * The entry below is therefore a fallback and not a duplicate: same slug, so
+ * at most one can exist, and this one is created only where the row is absent.
+ * Where August's article is present — in any state — this leaves it alone,
+ * including where somebody unpublished it on purpose.
+ *
  * Idempotent. Creates nothing that already exists, by slug.
  */
 
@@ -107,8 +130,6 @@ const DRAFTS: Draft[] = [
     tags: ["digital licence", "product key", "activation", "licensing"],
     readMinutes: 6,
     body: `A digital licence — Microsoft also calls it a digital entitlement — is the right to run software, recorded against an account or a specific device rather than handed to you as a string of characters.
-
-This article exists because a URL has been asking for it. \`/post/what-is-a-digital-license\` carries a large number of inbound links from the previous site and was redirected to an article that was never written, so every one of those visitors reached a 404.
 
 ## The difference, in one line
 
