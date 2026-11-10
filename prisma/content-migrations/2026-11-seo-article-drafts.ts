@@ -125,7 +125,7 @@ const DRAFTS: Draft[] = [
     slug: "what-is-a-digital-licence",
     title: "What is a digital licence, and how is it different from a product key?",
     excerpt:
-      "A digital licence ties the right to run software to an account or a device rather than to a string of characters you type in. Knowing which one you hold changes what happens when the hardware dies.",
+      "A digital licence ties the right to run software to an account or a device, not a product key. Which one you hold decides what happens when hardware dies.",
     category: "Licensing practice",
     tags: ["digital licence", "product key", "activation", "licensing"],
     readMinutes: 6,
@@ -183,9 +183,9 @@ The licensing programmes and how each records entitlement are on [Microsoft lice
   },
   {
     slug: "microsoft-365-business-standard-vs-business-premium",
-    title: "Microsoft 365 Business Standard vs Business Premium: what the extra actually buys",
+    title: "Microsoft 365 Business Standard vs Premium: what the extra buys",
     excerpt:
-      "Both plans give your team the same Office applications. The difference is entirely security and device management — and whether you need it depends on questions that have nothing to do with Word.",
+      "Both plans give your team the same Office apps. The difference is entirely security and device management, and whether you need it turns on four questions.",
     category: "Microsoft licensing",
     tags: ["microsoft 365", "business premium", "business standard", "licensing"],
     readMinutes: 7,
@@ -246,7 +246,7 @@ The plan comparison with current pricing for both is on the [Microsoft 365 plans
     slug: "microsoft-office-ltsc-2024-vs-microsoft-365",
     title: "Office LTSC 2024 vs Microsoft 365: buying software once, or renting it",
     excerpt:
-      "One is a perpetual licence for a fixed set of applications on a specific machine. The other is a subscription to a service. Most organisations that compare them on price are comparing the wrong thing.",
+      "One is a perpetual licence for a fixed set of apps on a device. The other is a subscription to a service. Comparing them on price compares the wrong thing.",
     category: "Microsoft licensing",
     tags: ["office ltsc 2024", "microsoft 365", "perpetual licensing", "volume licensing"],
     readMinutes: 7,
@@ -297,9 +297,9 @@ The LTSC editions and what each one includes are on the [Office LTSC page](/micr
   },
   {
     slug: "how-to-buy-genuine-microsoft-licences-in-india",
-    title: "How to buy genuine Microsoft licences in India — and how to check what you bought",
+    title: "How to buy genuine Microsoft licences in India",
     excerpt:
-      "The market has a lot of cheap keys in it, and most of them are not what they appear to be. Here is how the legitimate channels work and how to verify a licence you already hold.",
+      "The legitimate channels, why the cheap keys are cheap, and how to audit the licences your organisation already holds before somebody else audits them.",
     category: "Microsoft licensing",
     tags: ["genuine software", "microsoft licensing", "compliance", "india"],
     readMinutes: 8,
@@ -363,7 +363,7 @@ The Microsoft licensing programmes and which suits which size of organisation ar
     slug: "microsoft-365-licensing-guide-for-indian-businesses",
     title: "A Microsoft 365 licensing guide for Indian businesses",
     excerpt:
-      "Which plan family applies to you, where the seat caps bite, what gets licensed per user versus per device, and the five decisions that actually determine what you pay.",
+      "Which plan family applies, where the 300-seat cap bites, what is licensed separately, and the five decisions that actually determine what you pay.",
     category: "Microsoft licensing",
     tags: ["microsoft 365", "licensing guide", "india", "csp"],
     readMinutes: 9,
@@ -435,7 +435,7 @@ The plans with current pricing are on [Microsoft 365](/microsoft-365), the progr
     slug: "windows-server-2025-licensing-explained",
     title: "Windows Server 2025 licensing explained: cores, CALs, and virtual machines",
     excerpt:
-      "Server licensing has three dimensions that get conflated — the cores in the machine, the users or devices connecting to it, and how many operating system environments you intend to run.",
+      "Server licensing has three dimensions that get conflated: the cores in the machine, the users connecting to it, and how many virtual machines you will run.",
     category: "Microsoft licensing",
     tags: ["windows server 2025", "core licensing", "cals", "virtualisation"],
     readMinutes: 8,
@@ -505,7 +505,7 @@ The editions and current pricing are on the [Windows Server page](/windows-serve
     slug: "adobe-creative-cloud-for-enterprise",
     title: "Adobe Creative Cloud for enterprise: what changes above a handful of seats",
     excerpt:
-      "Teams and Enterprise are not the same product at different volumes. The difference is who controls the identity, the assets and the deployment — which matters more than the per-seat figure.",
+      "Teams and Enterprise are not the same product at different volumes. The difference is who controls the identity, the assets and the deployment.",
     category: "Adobe licensing",
     tags: ["adobe creative cloud", "enterprise licensing", "etla", "teams"],
     readMinutes: 7,
@@ -573,7 +573,7 @@ The Adobe programmes and current pricing are on the [Adobe licensing page](/adob
     slug: "autocad-subscription-versus-the-alternatives",
     title: "AutoCAD subscription versus the alternatives: Flex, LT, and the collections",
     excerpt:
-      "A named-user subscription is not the only way to license AutoCAD, and for occasional users it is frequently the most expensive. Four options, and the arithmetic for choosing between them.",
+      "A named-user subscription is not the only way to license AutoCAD, and for occasional users it is the most expensive. Four options and the arithmetic.",
     category: "Autodesk licensing",
     tags: ["autocad", "autodesk flex", "aec collection", "named user"],
     readMinutes: 7,
@@ -637,7 +637,7 @@ The AutoCAD editions and current pricing are on the [AutoCAD page](/autocad), th
     slug: "autodesk-aec-collection-explained",
     title: "The Autodesk AEC Collection explained: what is in it and who it is for",
     excerpt:
-      "A bundle of around twenty products that is cheaper than buying two of them separately. Which means the question is not whether it is good value, but whether your team uses two.",
+      "A bundle of around twenty products that costs less than two of them bought apart. So the question is not whether it is good value, but who uses two.",
     category: "Autodesk licensing",
     tags: ["aec collection", "revit", "civil 3d", "navisworks", "bim"],
     readMinutes: 7,
@@ -713,7 +713,7 @@ The Collection's contents and current pricing are on the [AEC Collection page](/
     slug: "how-government-departments-procure-genuine-software",
     title: "How government departments and PSUs procure genuine software in India",
     excerpt:
-      "The procurement route determines nearly everything about the purchase — what documentation is needed, how price is established, and what the department holds afterwards as proof of licence.",
+      "The procurement route decides nearly everything: what documentation is needed, how price is established, and what the department holds as proof of licence.",
     category: "Government procurement",
     tags: ["government procurement", "gem", "psu", "tender", "compliance"],
     readMinutes: 9,
@@ -783,7 +783,7 @@ The public-sector page covers how we work with departments and PSUs: [government
     slug: "common-software-licensing-mistakes",
     title: "Ten software licensing mistakes that cost real money",
     excerpt:
-      "Every one of these is routine, none of them is exotic, and most are found during a renewal or an audit rather than at the point they were made.",
+      "Ten habits that cost real money, every one of them routine, and most found during a renewal or an audit rather than at the point they were made.",
     category: "Licensing practice",
     tags: ["licensing", "compliance", "software asset management", "renewals"],
     readMinutes: 8,
@@ -858,7 +858,7 @@ An annual reconciliation — installations against entitlements, usage against s
   },
   {
     slug: "adobe-creative-cloud-price-in-india",
-    title: "What Adobe Creative Cloud costs a business in India, and what changes the figure",
+    title: "What Adobe Creative Cloud costs a business in India",
     excerpt:
       "The published per-seat figure is the start of the calculation, not the end. Plan type, All Apps versus single app, term length and programme all move it.",
     category: "Adobe licensing",
@@ -929,7 +929,7 @@ Current pricing per edition is on [Adobe](/adobe) and [Adobe Creative Cloud](/ad
     slug: "microsoft-365-copilot-licensing-in-india",
     title: "Microsoft 365 Copilot licensing: the prerequisites nobody mentions",
     excerpt:
-      "Copilot is a per-user add-on with conditions attached — a qualifying base plan, data you are willing to have it read, and permissions that are already correct.",
+      "Copilot is a per-user add-on with conditions attached: a qualifying base plan, content it can reach, and permissions that are already correct.",
     category: "Microsoft licensing",
     tags: ["copilot", "microsoft 365", "add-on", "licensing"],
     readMinutes: 6,
@@ -991,7 +991,7 @@ The base plans Copilot sits on are on [Microsoft 365](/microsoft-365), and the l
     slug: "autodesk-flex-versus-named-user-subscriptions",
     title: "Autodesk Flex versus named-user subscriptions: counting the days",
     excerpt:
-      "Flex is pre-paid tokens drawn down per day of use. Whether it beats a subscription is pure arithmetic, and most firms have never done it.",
+      "Flex is pre-paid tokens drawn down per day of use. Whether it beats a subscription is pure arithmetic, and most firms have never done the sum.",
     category: "Autodesk licensing",
     tags: ["autodesk flex", "named user", "tokens", "autocad"],
     readMinutes: 6,
@@ -1071,7 +1071,7 @@ Product pricing is on [AutoCAD](/autocad), [Revit](/revit) and [AEC Collection](
     slug: "preparing-for-a-software-licence-audit",
     title: "Preparing for a software licence audit before anyone asks",
     excerpt:
-      "An audit is a documentation exercise. Organisations that fail one usually had the licences and could not prove it.",
+      "An audit is a documentation exercise. The organisations that fail one usually held the licences all along and could not produce the paperwork.",
     category: "Licensing practice",
     tags: ["licence audit", "compliance", "software asset management"],
     readMinutes: 7,
@@ -1150,7 +1150,7 @@ Annually, and before any renewal of consequence. An estate reconciled two years 
     slug: "microsoft-365-versus-google-workspace-for-indian-smes",
     title: "Microsoft 365 or Google Workspace: choosing for an Indian SME",
     excerpt:
-      "Both do mail, files and meetings competently. The decision turns on what your people already know, what your customers send you, and what you need to control.",
+      "Both do mail, files and meetings well. The decision turns on what your customers send you, what your people know, and what you need to control.",
     category: "Productivity",
     tags: ["microsoft 365", "google workspace", "comparison", "sme"],
     readMinutes: 7,
@@ -1228,7 +1228,7 @@ The Microsoft plans are on [Microsoft 365](/microsoft-365) and the migration ser
     slug: "adobe-vip-versus-vip-marketplace",
     title: "Adobe VIP and VIP Marketplace: the same programme, bought two ways",
     excerpt:
-      "Both are the Value Incentive Plan. The difference is who holds the commercial relationship, how billing works, and who you ring when a seat assignment goes wrong.",
+      "Both are the Value Incentive Plan. What differs is who holds the commercial relationship, how billing works, and who watches the renewal date.",
     category: "Adobe licensing",
     tags: ["adobe vip", "vip marketplace", "licensing", "renewals"],
     readMinutes: 5,
@@ -1296,7 +1296,7 @@ The Adobe products and current pricing are on [Adobe](/adobe), [Adobe Creative C
     slug: "windows-11-pro-versus-enterprise-for-business",
     title: "Windows 11 Pro or Enterprise: what the upgrade actually licenses",
     excerpt:
-      "Enterprise is not bought as a boxed product for a bare machine. It is an upgrade right on top of a device already licensed for Pro, and that changes the arithmetic.",
+      "Enterprise is not a boxed product for a bare machine. It is an upgrade right on top of a device already licensed for Pro, which changes the arithmetic.",
     category: "Microsoft licensing",
     tags: ["windows 11", "pro", "enterprise", "licensing"],
     readMinutes: 6,

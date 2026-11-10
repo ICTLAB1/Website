@@ -593,19 +593,20 @@ const nextConfig: NextConfig = {
          * working; nobody was reading it. That is the more useful half of the
          * finding, and the reason this comment is long.
          *
-         * It now points at the closest published article. Not ideal — a reader
-         * asking what a digital licence is gets the perpetual-versus-
-         * subscription comparison, which answers an adjacent question — but a
-         * relevant live page beats a 404 by a wide margin while the real
-         * article is written.
+         * Restored on 10 November 2026, once the article existed again.
          *
-         * `2026-11-seo-article-drafts` carries that article as a draft, at the
-         * slug this rule used to name. **When it is published, change this
-         * destination back to `/blog/what-is-a-digital-licence`** and the
-         * original intent is restored with the article actually behind it.
+         * It pointed at the perpetual-versus-subscription comparison for two
+         * days — an adjacent question, and a relevant live page beats a 404 by
+         * a wide margin — while `2026-11-seo-article-drafts` carried the
+         * replacement as a draft. `2026-11-publish-the-seo-drafts` publishes
+         * it, so this points where the rule always meant to point, with the
+         * article actually behind it.
+         *
+         * Verified rather than assumed: `verify:seo` fails this rule whenever
+         * the destination does not resolve, and it names the intended slug.
          */
         source: "/post/what-is-a-digital-license",
-        destination: "/blog/perpetual-versus-subscription-software-licensing",
+        destination: "/blog/what-is-a-digital-licence",
         statusCode: 301,
       },
 
