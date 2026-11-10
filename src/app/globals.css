@@ -71,7 +71,7 @@
   --color-danger-600: #dc2626;
   --color-danger-700: #b91c1c;
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+  --font-sans: var(--font-inter-rupee), var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   /* Used only by the logo strapline, which is set in italic serif. Kept as a
      system stack: one line of text does not justify a webfont request. */
@@ -189,6 +189,20 @@
 @keyframes rise {
   from { opacity: 0; transform: translate3d(0, 14px, 0); }
   to { opacity: 1; transform: none; }
+}
+
+/*
+  The hero's heading and lead paragraph: the same movement, never invisible.
+
+  On most pages one of those two is the largest thing painted, and `rise`
+  starts it at opacity 0 — so the page's main content was, by construction, not
+  there on first paint, and its measured paint time was the animation's rather
+  than the network's. Sliding it in without the fade keeps the motion and lets
+  the text count from the first frame.
+*/
+@keyframes rise-solid {
+  from { transform: translate3d(0, 14px, 0); }
+  to { transform: none; }
 }
 
 @keyframes slide-down {
@@ -772,6 +786,9 @@
 
   .animate-rise {
     animation: var(--animate-rise);
+  }
+  .animate-rise-solid {
+    animation: rise-solid var(--duration-reveal) var(--ease-out-soft) both;
   }
   .animate-fade-in {
     animation: var(--animate-fade-in);

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import Link from "next/link";
 import "./globals.css";
 
@@ -19,6 +20,31 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
+});
+
+/*
+ * The rupee sign, and nothing else: 1.2 KB.
+ *
+ * Inter's Latin file has no ₹ — Google files it under "latin-ext", an 85 KB
+ * download — and nearly every page here prints a price. So every visitor was
+ * fetching 85 KB of Vietnamese and Central European letterforms to draw one
+ * glyph, on the pages adverts point at.
+ *
+ * This is that one glyph cut from the same Inter variable font, declared for
+ * U+20B9 only and placed ahead of Inter in the stack (see `--font-sans`), so
+ * the browser takes ₹ from here and never has a reason to ask for latin-ext.
+ * A page with a genuinely Latin Extended character on it still gets the full
+ * file; nothing is removed, it is only no longer needed.
+ *
+ * Not preloaded: a page without a price does not use it.
+ */
+const interRupee = localFont({
+  src: "./fonts/inter-rupee.woff2",
+  weight: "100 900",
+  display: "swap",
+  preload: false,
+  variable: "--font-inter-rupee",
+  declarations: [{ prop: "unicode-range", value: "U+20B9" }],
 });
 
 export const metadata: Metadata = {
@@ -108,7 +134,7 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN" className={inter.variable}>
+    <html lang="en-IN" className={`${inter.variable} ${interRupee.variable}`}>
       <body className="flex min-h-dvh flex-col bg-white antialiased">
         {/*
           Immediately after <body>, where Google asks for it, and before the

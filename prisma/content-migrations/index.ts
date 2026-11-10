@@ -79,6 +79,7 @@ import { autodeskProductIcon } from "./2026-10-autodesk-product-icon";
 import { moreBrandFaqs } from "./2026-10-more-brand-faqs";
 import { privacyTheAssistant } from "./2026-10-privacy-the-assistant";
 import type { ContentMigration } from "./types";
+import { hubTitlesSayReseller } from "./2026-11-hub-titles-say-reseller";
 
 /**
  * Every content migration, in the order they are applied.
@@ -178,6 +179,8 @@ export const contentMigrations: ContentMigration[] = [
    */
   seoArticleDrafts,
   seoPageDrafts,
+  /* Titles and descriptions of three published hubs; nothing else. */
+  hubTitlesSayReseller,
 ];
 
 export type { ContentMigration };

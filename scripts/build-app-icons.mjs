@@ -38,8 +38,16 @@ const SOURCE = "public/brand-assets/techzoid-icon.png";
 /** Margin around the trimmed mark, as a share of the finished icon. */
 const MARGIN = 0.06;
 
+/*
+ * The browser icon is 96px, not 512.
+ *
+ * It is drawn at 16 to 32 CSS pixels, so 96 covers a 3x display with nothing
+ * to spare, and it is fetched on every first visit: at 512 it was 58 KB, more
+ * than the page's own stylesheet. The 512 and 192 sizes an installed app wants
+ * are declared in `src/app/manifest.ts` and come from the brand asset.
+ */
 const OUTPUTS = [
-  { file: "src/app/icon.png", size: 512, ground: null },
+  { file: "src/app/icon.png", size: 96, ground: null },
   { file: "src/app/apple-icon.png", size: 180, ground: "#ffffff" },
 ];
 
