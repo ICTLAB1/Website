@@ -1,6 +1,6 @@
 import { chromium } from "playwright";
 
-import { campaignIsRunning, suppressFestiveGreeting } from "./lib/festive.mjs";
+import { suppressFestiveGreeting } from "./lib/festive.mjs";
 
 const BASE = "http://localhost:3000";
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
@@ -182,71 +182,6 @@ const check = (name, condition, detail = "") =>
   await page.waitForTimeout(200);
   check("skip link targets main content", page.url().includes("#main-content"), page.url());
   await ctx.close();
-}
-
-// --------------------------------------------------------- festive greeting
-/*
- * The Diwali greeting, while there is one.
- *
- * Deliberately not suppressed in this block — it is the thing under test. It
- * is also the only modal on the public site, so what matters is less that it
- * appears than that it gets out of the way: by Escape, once per visit rather
- * than once per page, and never over a form somebody is trying to fill in.
- * That last one is not hypothetical. The first version of the component
- * copied the chat widget's `/admin` and `/account` rule, and `/login` is
- * neither — the backdrop sat on the Sign in button and this suite was what
- * found it.
- *
- * The whole block, the component and `lib/festive.mjs` come out together when
- * the campaign is over; until then it reports the skip rather than passing
- * silently, because a check that quietly stops checking is worse than no
- * check.
- */
-if (campaignIsRunning()) {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 800 } });
-  const page = await ctx.newPage();
-  const greeting = page.getByRole("dialog", { name: /diwali/i });
-
-  await page.goto(BASE, { waitUntil: "load" });
-  await page.waitForTimeout(600);
-  check("the festive greeting appears on arrival", (await greeting.count()) === 1);
-
-  check(
-    "focus moves into it",
-    await page.evaluate(() => {
-      const dialog = document.querySelector('[role="dialog"][aria-modal="true"]');
-      return Boolean(dialog && document.activeElement && dialog.contains(document.activeElement));
-    }),
-  );
-
-  check(
-    "its call to action is the enquiry form",
-    (await page.getByRole("link", { name: /festive quotation/i }).getAttribute("href")) === "/enquiry",
-  );
-
-  await page.keyboard.press("Escape");
-  await page.waitForTimeout(300);
-  check("Escape dismisses it", (await greeting.count()) === 0);
-  check(
-    "and the page scrolls again",
-    (await page.evaluate(() => document.body.style.overflow)) !== "hidden",
-  );
-
-  await page.goto(`${BASE}/products`, { waitUntil: "load" });
-  await page.waitForTimeout(600);
-  check("it greets once per visit, not once per page", (await greeting.count()) === 0);
-
-  await ctx.close();
-
-  // The page it must never cover, and the reason this block exists.
-  const signIn = await browser.newContext();
-  const login = await signIn.newPage();
-  await login.goto(`${BASE}/login`, { waitUntil: "load" });
-  await login.waitForTimeout(600);
-  check("it stays off the sign-in page", (await login.getByRole("dialog", { name: /diwali/i }).count()) === 0);
-  await signIn.close();
-} else {
-  console.log("  — festive greeting: the campaign is over; nothing to check (remove this block)");
 }
 
 await browser.close();
