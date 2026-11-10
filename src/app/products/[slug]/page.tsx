@@ -26,6 +26,7 @@ import { productRating, productReviews } from "@/lib/queries/reviews";
 import { mayPublishAggregateRating, MAX_RATING, MIN_RATING } from "@/lib/reviews";
 import { ReviewList } from "@/components/reviews/review-list";
 import { getSiteConfig } from "@/lib/site-config";
+import { QuickEnquiry } from "@/components/enquiry/quick-enquiry";
 import { getDisplayCurrency } from "@/lib/display-currency";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -816,6 +817,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
         than after the invitation to go and look at something else.
       */}
       <ReviewList reviews={reviews} summary={rating} />
+
+      {/*
+        The same short form the landing pages end with, naming this product.
+        "Add to enquiry" suits somebody building a list; this suits somebody
+        who wants one price and would otherwise have to leave the page to ask.
+      */}
+      <QuickEnquiry
+        contained={false}
+        subject={product.name}
+        source="product_page"
+        heading={`Get a quotation for ${product.name}`}
+      />
 
       {related.length > 0 ? (
         <section className="mt-16">

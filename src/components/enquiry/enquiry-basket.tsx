@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { useBasket } from "@/components/enquiry/basket-provider";
+import { RequirementForm } from "@/components/enquiry/requirement-form";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -16,7 +17,6 @@ import {
   Select,
   Textarea,
 } from "@/components/ui/form";
-import { EmptyState } from "@/components/ui/states";
 import { CONVERSION_EVENTS } from "@/lib/analytics";
 import { pushConversion } from "@/lib/analytics-events";
 import { formatMoney } from "@/lib/money";
@@ -126,28 +126,43 @@ export function EnquiryBasket({
     );
   }
 
+  /*
+   * An empty basket is not a dead end.
+   *
+   * Every page's main button — "Get Enterprise Quote" — lands here, and most
+   * people who press it have added nothing: they came from an advert for one
+   * product and want its price. This used to answer them with "Your enquiry
+   * basket is empty" and two links, and no field to type into. They wanted a
+   * quotation and were shown a shopping instruction.
+   *
+   * So an empty basket shows the requirement form. Same action, same enquiry,
+   * same reference as `/requirement`; the catalogue stays one link away for
+   * anyone who did mean to build a basket.
+   */
   if (lines.length === 0) {
     return (
-      <EmptyState
-        title="Your enquiry basket is empty"
-        description="Add products from the catalogue to build a multi-brand enquiry, then request a consolidated quotation covering all of them."
-        action={
-          <div className="flex flex-wrap justify-center gap-3">
-            <Link
-              href="/products"
-              className="inline-flex h-11 items-center justify-center rounded-[--radius-md] bg-accent-700 px-5 text-sm font-medium text-white hover:bg-accent-800"
-            >
-              Browse catalogue
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex h-11 items-center justify-center rounded-[--radius-md] border border-line-strong px-5 text-sm font-medium text-graphite-900 hover:bg-graphite-50"
-            >
-              Describe a requirement instead
-            </Link>
-          </div>
-        }
-      />
+      <div className="max-w-3xl" id="enquiry-form">
+        <h2 className="text-[1.25rem]">Tell us what you need and we will quote it</h2>
+        <p className="mt-2 mb-8 text-[15px] leading-relaxed text-ink-600">
+          You have not added any products, and you do not have to. Name the product or describe
+          the requirement below. Prefer to pick from the list?{" "}
+          <Link href="/products" className="text-accent-700 underline underline-offset-2">
+            Browse the catalogue
+          </Link>
+          .
+        </p>
+        <RequirementForm
+          compact
+          slots={1}
+          source="enquiry_empty_basket"
+          defaults={{
+            contactName: prefill.contactName || undefined,
+            contactEmail: prefill.contactEmail || undefined,
+            contactPhone: prefill.phone || undefined,
+            companyName: prefill.companyName || undefined,
+          }}
+        />
+      </div>
     );
   }
 

@@ -120,7 +120,9 @@ export async function submitRequirement(
     contactPhone: formData.get("contactPhone"),
     companyName: formData.get("companyName"),
     gstin: String(formData.get("gstin") ?? "").toUpperCase(),
-    city: formData.get("city"),
+    // Absent, not blank, on the compact form — which has no city field — and
+    // `null` is not a string as far as the schema is concerned.
+    city: String(formData.get("city") ?? ""),
   });
   if (!contact.success) {
     return {

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { BlockRenderer } from "@/components/blocks";
+import { QuickEnquiry } from "@/components/enquiry/quick-enquiry";
 import { DocumentDates } from "@/components/marketing/document-dates";
 import { getPage } from "@/lib/queries/pages";
 import { resolveBlocks } from "@/lib/blocks/resolve";
@@ -47,6 +48,20 @@ export async function cmsMetadata(slug: string, path: string): Promise<Metadata>
   });
 }
 
+/**
+ * Which CMS pages end with the enquiry form.
+ *
+ * The ones that sell something: every page attached to a brand (the hubs and
+ * the product landing pages), the pricing pages, the city pages and the
+ * licensing guides. Not the policies, the about page or the resource centre —
+ * a quotation form under the refund policy is noise.
+ */
+const QUOTE_PAGE = /^(get-a-quote\/|software-licensing-company-|gem-software-supplier$|microsoft-csp$|microsoft-licensing$|enterprise$|solutions(\/|$))/;
+
+function endsWithQuoteForm(page: { slug: string; brandSlug: string | null }): boolean {
+  return page.brandSlug !== null || QUOTE_PAGE.test(page.slug);
+}
+
 export async function CmsPage({ slug }: { slug: string }) {
   const page = await getPage(slug);
 
@@ -84,6 +99,8 @@ export async function CmsPage({ slug }: { slug: string }) {
         The page still says everything about it in editable copy; this is only
         the pair of buttons that copy refers to.
       */}
+      {endsWithQuoteForm(page) ? <QuickEnquiry source="landing_page" /> : null}
+
       {slug === "cookie-policy" ? (
         <section className="container-page pb-14 lg:pb-18">
           <h2 className="mb-3 text-section">Your answer</h2>

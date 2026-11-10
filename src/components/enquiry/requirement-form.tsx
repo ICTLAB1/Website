@@ -22,11 +22,11 @@ import { useRequirementConversion } from "@/components/enquiry/use-requirement-c
  * document.
  */
 
-function SubmitButton() {
+function SubmitButton({ label = "Send my requirement" }: { label?: string }) {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" size="lg" disabled={pending}>
-      {pending ? "Sending…" : "Send my requirement"}
+      {pending ? "Sending…" : label}
     </Button>
   );
 }
@@ -34,9 +34,14 @@ function SubmitButton() {
 function LineSlot({
   index,
   required,
+  compact = false,
+  defaultDescription,
 }: {
   index: number;
   required: boolean;
+  /** Description and quantity only. The specification fields are for hardware. */
+  compact?: boolean;
+  defaultDescription?: string;
 }) {
   const name = (field: string) => `lines.${index}.${field}`;
 
@@ -54,9 +59,10 @@ function LineSlot({
             required={required}
             maxLength={200}
             autoComplete="off"
+            defaultValue={defaultDescription}
           />
         </Field>
-        <Field label="Quantity" name={name("quantity")}>
+        <Field label={compact ? "Users" : "Quantity"} name={name("quantity")}>
           <Input
             name={name("quantity")}
             type="number"
@@ -68,6 +74,8 @@ function LineSlot({
         </Field>
       </div>
 
+      {compact ? null : (
+        <>
       <Field
         label="Preferred brands"
         name={name("brands")}
@@ -100,6 +108,8 @@ function LineSlot({
       <Field label="Anything else about this line" name={name("note")}>
         <Textarea name={name("note")} rows={2} maxLength={600} />
       </Field>
+        </>
+      )}
     </Fieldset>
   );
 }
@@ -107,6 +117,9 @@ function LineSlot({
 export function RequirementForm({
   slots,
   defaults,
+  compact = false,
+  subject,
+  source = "requirement",
 }: {
   slots: number;
   defaults: {
@@ -116,12 +129,26 @@ export function RequirementForm({
     companyName?: string;
     gstin?: string;
   };
+  /**
+   * The short version, for a landing page.
+   *
+   * One line, a notes box and the four contact fields the action requires —
+   * seven inputs instead of thirty-odd. It posts to the same action and
+   * produces the same enquiry; everything it leaves out was optional already.
+   * Somebody arriving from an advert for one product should not be shown
+   * processor and memory fields before they can ask its price.
+   */
+  compact?: boolean;
+  /** Prefills the first line, so the form on a product page names the product. */
+  subject?: string;
+  /** Which form this was, reported alongside the conversion. */
+  source?: string;
 }) {
   const [state, formAction] = useActionState<RequirementState, FormData>(submitRequirement, {
     status: "idle",
   });
 
-  useRequirementConversion(state, "requirement");
+  useRequirementConversion(state, source);
 
   if (state.status === "success" && state.reference) {
     return (
@@ -151,16 +178,31 @@ export function RequirementForm({
   }
 
   return (
-    <form action={formAction} className="space-y-10">
+    <form action={formAction} className={compact ? "space-y-6" : "space-y-10"}>
       {state.status === "error" && state.message ? <FormError>{state.message}</FormError> : null}
 
       <FormStateProvider fieldErrors={state.fieldErrors ?? {}}>
         <div className="space-y-8">
-          {Array.from({ length: slots }, (_, index) => (
-            <LineSlot key={index} index={index} required={index === 0} />
+          {Array.from({ length: compact ? 1 : slots }, (_, index) => (
+            <LineSlot
+              key={index}
+              index={index}
+              required={index === 0}
+              compact={compact}
+              defaultDescription={index === 0 ? subject : undefined}
+            />
           ))}
         </div>
 
+        {compact ? (
+          <Field
+            label="Anything else we should know"
+            name="context"
+            hint="Optional — term, renewal date, existing licences, a tender to answer."
+          >
+            <Textarea name="context" rows={3} maxLength={2000} />
+          </Field>
+        ) : (
         <Fieldset legend="When and where">
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Required by" name="requiredBy" hint="A date, or “end of Q3”.">
@@ -185,6 +227,7 @@ export function RequirementForm({
             <Textarea name="context" rows={4} maxLength={2000} />
           </Field>
         </Fieldset>
+        )}
 
         <Fieldset legend="Who to come back to">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -224,6 +267,8 @@ export function RequirementForm({
                 autoComplete="organization"
               />
             </Field>
+            {compact ? null : (
+              <>
             <Field label="GSTIN" name="gstin" hint="If you have one. It goes on the quotation.">
               <Input
                 name="gstin"
@@ -236,12 +281,14 @@ export function RequirementForm({
             <Field label="City" name="city">
               <Input name="city" maxLength={80} autoComplete="address-level2" />
             </Field>
+              </>
+            )}
           </div>
         </Fieldset>
       </FormStateProvider>
 
       <div className="border-t border-line pt-6">
-        <SubmitButton />
+        <SubmitButton label={compact ? "Get my quotation" : undefined} />
         <p className="mt-3 text-label text-ink-500">
           Sending this places no order and commits you to nothing.
         </p>

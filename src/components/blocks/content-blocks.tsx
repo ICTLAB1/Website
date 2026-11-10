@@ -150,7 +150,7 @@ export function HeroBlock({
 
           <h1
             className={cn(
-              "animate-rise text-display",
+              "animate-rise-solid text-display",
               dark ? "text-white" : "text-graphite-900",
             )}
           >
@@ -160,7 +160,7 @@ export function HeroBlock({
           {data.subheadline ? (
             <p
               className={cn(
-                "mt-5 max-w-2xl animate-rise text-lead",
+                "mt-5 max-w-2xl animate-rise-solid text-lead",
                 dark ? "text-graphite-200" : "text-ink-600",
               )}
               style={{ animationDelay: "80ms" }}
