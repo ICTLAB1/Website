@@ -60,9 +60,16 @@
 	redir @needs_canonical https://{$SITE_DOMAIN}{uri} permanent
 
 	reverse_proxy app:3000 {
-		# The app reads the client address from X-Forwarded-For for rate
-		# limiting and audit logs. Caddy sets it from the real connection, and
-		# because the app is not otherwise reachable, a client cannot forge it.
+		# The app reads the client address from X-Real-IP, which this line sets
+		# from the real connection on every request, replacing anything the
+		# client sent. The app is not reachable except through here, so that
+		# value is one a client cannot choose.
+		#
+		# It must stay X-Real-IP and not X-Forwarded-For. Caddy *appends* the
+		# real address to any inbound X-Forwarded-For rather than replacing it,
+		# so that header's left-most entry is whatever the client put there —
+		# which is exactly the value the app must not key a rate limit on. See
+		# src/lib/auth/request.ts.
 		header_up X-Real-IP {remote_host}
 	}
 
