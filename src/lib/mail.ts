@@ -134,6 +134,7 @@ async function tryAzureAcs(
 
 export async function sendMailVerbose(message: MailMessage): Promise<VerboseMailResult> {
   const config = await getMailConfig();
+  message = { ...message, replyTo: resolveReplyTo(message.replyTo, await salesInbox()) };
 
   const acs = await tryAzureAcs(message, config);
   if (acs) {
@@ -298,6 +299,7 @@ export type MailMessage = {
 
 export async function sendMail(message: MailMessage): Promise<{ delivered: boolean }> {
   const config = await getMailConfig();
+  message = { ...message, replyTo: resolveReplyTo(message.replyTo, await salesInbox()) };
 
   const acs = await tryAzureAcs(message, config);
   if (acs) {
@@ -391,6 +393,34 @@ export async function salesInbox(): Promise<string | null> {
   const configured = (await getMailConfig()).salesNotification;
   if (configured) return configured;
   return (await getSiteConfig()).email.sales;
+}
+
+/**
+ * The address a reply lands on, under one rule for the whole site: the address
+ * the caller chose, or the sales inbox when it chose none.
+ *
+ * It exists so no outbound message is sent with nothing to reply to. The From
+ * address is a no-reply (DoNotReply@…) by policy, so a message with no reply-to
+ * sends the customer's answer into a mailbox nobody reads. This used to depend
+ * on every customer-facing path remembering to set it — and two did not:
+ * a quotation and a quote follow-up both went to the customer with no reply-to,
+ * so a customer replying to a quotation reached the no-reply address and was
+ * lost. Defaulting it here, below every send, closes that for good and for any
+ * path written next.
+ *
+ * An explicit reply-to always wins, which is exactly what keeps the internal
+ * lead notifications pointing at the customer who wrote in: those pass the
+ * customer's own address, so a colleague hitting Reply on the alert reaches the
+ * lead, not the sales inbox they are reading it in.
+ */
+export function resolveReplyTo(
+  explicit: string | undefined,
+  salesFallback: string | null,
+): string | undefined {
+  const chosen = explicit?.trim();
+  if (chosen) return chosen;
+  const sales = salesFallback?.trim();
+  return sales || undefined;
 }
 
 /**

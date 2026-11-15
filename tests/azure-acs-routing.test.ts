@@ -33,6 +33,14 @@ vi.mock("@/lib/logger", () => ({
   logger: { warn: () => {}, info: () => {}, error: () => {} },
 }));
 
+// salesInbox() — now consulted below every send to default a missing Reply-To —
+// reads the site config for the published sales address. These tests are about
+// channel routing, not Reply-To, so the address is a fixture; its own policy is
+// proven in tests/mail-reply-to.test.ts.
+vi.mock("@/lib/site-config", () => ({
+  getSiteConfig: async () => ({ email: { sales: "sales@techzoidtechnologies.com" } }),
+}));
+
 const azureSend = vi.fn(async (..._args: unknown[]) => ({ ok: true as const }));
 vi.mock("@/lib/mail/azure-acs", () => ({
   sendViaAzureAcs: azureSend,
