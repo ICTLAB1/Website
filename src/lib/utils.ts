@@ -25,6 +25,22 @@ export function formatDate(value: Date | string | null | undefined): string {
   }).format(date);
 }
 
+/** An instant as India time, e.g. "20 Nov 2026, 11:59 pm IST". */
+export function formatIst(value: Date | string | null | undefined): string {
+  if (!value) return "—";
+  const date = typeof value === "string" ? new Date(value) : value;
+  if (Number.isNaN(date.getTime())) return "—";
+  return `${new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date)} IST`;
+}
+
 export function formatDateTime(value: Date | string | null | undefined): string {
   if (!value) return "—";
   const date = typeof value === "string" ? new Date(value) : value;

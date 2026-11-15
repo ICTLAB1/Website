@@ -7,6 +7,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { TrustBar } from "@/components/layout/trust-bar";
+import { CampaignGate } from "@/components/marketing/campaign-gate";
 import { BasketProvider } from "@/components/enquiry/basket-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { GoogleTag, GoogleTagManagerNoScript } from "@/components/analytics/google-tag";
@@ -159,6 +160,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               gets out of the way as the reader scrolls.
             */}
             <TrustBar />
+            <CampaignGate />
             <main id="main-content" className="flex-1">
               {children}
             </main>

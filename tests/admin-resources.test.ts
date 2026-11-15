@@ -62,9 +62,12 @@ describe("resolveResource", () => {
 
 describe("schemaFor", () => {
   const fields = RESOURCES.banners.fields;
+  // Campaigns also require a format and a frequency to be chosen.
+  const chosen = { format: "BANNER", frequency: "ONCE" };
 
   it("accepts a valid submission", () => {
     const parsed = schemaFor(fields).safeParse({
+      ...chosen,
       name: "Spring promotion",
       message: "Renewals close on the 30th.",
       tone: "PROMO",
@@ -85,17 +88,17 @@ describe("schemaFor", () => {
   });
 
   it("treats an absent checkbox as false rather than undefined", () => {
-    const parsed = schemaFor(fields).parse({ name: "A", message: "B", tone: "INFO" });
+    const parsed = schemaFor(fields).parse({ ...chosen, name: "A", message: "B", tone: "INFO" });
     expect(parsed.active).toBe(false);
   });
 
   it("does not turn an empty number into NaN", () => {
-    const parsed = schemaFor(fields).parse({ name: "A", message: "B", tone: "INFO", displayOrder: "" });
+    const parsed = schemaFor(fields).parse({ ...chosen, name: "A", message: "B", tone: "INFO", displayOrder: "" });
     expect(Number.isNaN(parsed.displayOrder)).toBe(false);
   });
 
   it("rejects a malformed date", () => {
-    const parsed = schemaFor(fields).safeParse({ name: "A", message: "B", tone: "INFO", startsAt: "30-02-2026" });
+    const parsed = schemaFor(fields).safeParse({ ...chosen, name: "A", message: "B", tone: "INFO", startsAt: "30-02-2026" });
     expect(parsed.success).toBe(false);
   });
 });
@@ -125,10 +128,17 @@ describe("toPrismaData", () => {
   });
 
   it("converts a date field to a Date and a blank one to null", () => {
+    const fields = RESOURCES.jobs.fields.filter((f) => f.name === "postedOn" || f.name === "closesOn");
+    const data = toPrismaData(fields, { postedOn: "2026-05-06", closesOn: "" });
+    expect(data.postedOn).toBeInstanceOf(Date);
+    expect(data.closesOn).toBeNull();
+  });
+
+  it("converts a date-and-time field to the India-time instant, and a blank one to null", () => {
     const data = toPrismaData(RESOURCES.banners.fields, {
-      name: "A", message: "B", tone: "INFO", startsAt: "2026-05-06", endsAt: "",
+      name: "A", message: "B", tone: "INFO", startsAt: "2026-05-06T09:30", endsAt: "",
     });
-    expect(data.startsAt).toBeInstanceOf(Date);
+    expect((data.startsAt as Date).toISOString()).toBe("2026-05-06T04:00:00.000Z");
     expect(data.endsAt).toBeNull();
   });
 

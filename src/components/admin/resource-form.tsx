@@ -72,6 +72,9 @@ function controlFor(
     case "date":
       return <Input name={field.name} type="date" defaultValue={text} />;
 
+    case "datetime":
+      return <Input name={field.name} type="datetime-local" defaultValue={text} step={60} />;
+
     case "select":
     case "relation":
       return (

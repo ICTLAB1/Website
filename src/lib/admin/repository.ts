@@ -1,4 +1,5 @@
 import "server-only";
+import { toIstLocal } from "@/lib/campaigns";
 import { prisma } from "@/lib/db";
 import type { RelationSource, FieldDescriptor } from "@/lib/admin/fields";
 import { fromLines } from "@/lib/admin/fields";
@@ -199,6 +200,9 @@ export function toFormValues(
       case "date":
         values[field.name] =
           value instanceof Date ? value.toISOString().slice(0, 10) : "";
+        break;
+      case "datetime":
+        values[field.name] = value instanceof Date ? toIstLocal(value) : "";
         break;
       case "number":
         values[field.name] = value === null || value === undefined ? "" : String(value);

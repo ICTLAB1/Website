@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { parseIstLocal } from "@/lib/campaigns";
+
 /**
  * Field descriptors.
  *
@@ -45,6 +47,15 @@ export type FieldDescriptor =
   | (Common & { kind: "relation"; required?: boolean; resource: RelationSource })
   | (Common & { kind: "lines"; maxItems?: number })
   | (Common & { kind: "date"; required?: boolean })
+  /**
+   * A date and a time, entered and shown in India time (IST, +05:30).
+   *
+   * Stored as the instant it names. The plain `date` kind reads "20 Nov" as
+   * midnight UTC, which is 05:30 IST — so something meant to end at the close of
+   * the 19th keeps running into the morning of the 20th. Use this for anything
+   * that switches on or off at a moment rather than on a day.
+   */
+  | (Common & { kind: "datetime"; required?: boolean })
   /**
    * Raw JSON, for a column with no dedicated form yet — the same fallback
    * the CMS block editor keeps behind an "Edit as JSON" disclosure on every
@@ -125,6 +136,15 @@ export function schemaFor(fields: FieldDescriptor[]): z.ZodType<Record<string, u
       case "lines":
         shape[field.name] = z.string().max(20_000).optional().default("");
         break;
+
+      case "datetime": {
+        const moment = z
+          .string()
+          .trim()
+          .refine((text) => parseIstLocal(text) !== null, "Choose a date and time.");
+        shape[field.name] = field.required ? moment : moment.or(z.literal("")).optional();
+        break;
+      }
 
       case "date": {
         const date = z
@@ -229,6 +249,12 @@ export function toPrismaData(
       case "date": {
         const text = typeof value === "string" ? value.trim() : "";
         data[field.name] = text === "" ? null : new Date(`${text}T00:00:00.000Z`);
+        break;
+      }
+
+      case "datetime": {
+        const text = typeof value === "string" ? value.trim() : "";
+        data[field.name] = text === "" ? null : parseIstLocal(text);
         break;
       }
 
