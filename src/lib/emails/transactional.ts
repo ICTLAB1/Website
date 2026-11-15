@@ -1,6 +1,6 @@
 import "server-only";
 import { appUrl } from "@/lib/env";
-import { notifyInternal, salesInbox, sendMail } from "@/lib/mail";
+import { notifyInternal, sendMail } from "@/lib/mail";
 import { formatMoney } from "@/lib/money";
 import { getSiteConfig } from "@/lib/site-config";
 import { renderEmailHtml, renderEmailText, type EmailContent } from "@/lib/emails/shell";
@@ -27,11 +27,12 @@ import { humanise } from "@/lib/utils";
  * marked otherwise is a status notice to a customer, not a document or a
  * conversation, which is exactly what that channel is for.
  *
- * A transactional message with no explicit `replyTo` gets the sales inbox as
- * one anyway. The address in the From header no longer belongs to a mailbox
- * anybody reads — that is the point of it — but three of the messages below
- * say "reply to this email" in their own copy, and every one of them must
- * keep meaning that.
+ * No `replyTo` is set here any more, and that is deliberate. The From address
+ * is a no-reply, and several messages below say "reply to this email" in their
+ * own copy, so every one needs a reply-to that reaches a person. That is now a
+ * single rule in `sendMail` — `resolveReplyTo` defaults a missing reply-to to
+ * the sales inbox — rather than a thing each sender remembers. Passing one
+ * explicitly still wins, for the rare message that should reply elsewhere.
  */
 async function deliver(
   to: string,
@@ -46,7 +47,7 @@ async function deliver(
     subject,
     text: renderEmailText(content, config),
     html: renderEmailHtml(content, config),
-    replyTo: replyTo ?? (purpose === "transactional" ? ((await salesInbox()) ?? undefined) : undefined),
+    replyTo,
     purpose,
   });
 }

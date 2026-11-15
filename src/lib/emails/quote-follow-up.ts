@@ -129,7 +129,7 @@ function content(input: QuoteFollowUpInput): EmailContent {
     ],
     action: { label: "Open the quotation", url: input.quoteUrl },
     footnote: input.sender
-      ? `Sent by ${input.sender.name} at ${input.config.tradingName}. Replying to this email reaches them directly.`
+      ? `Sent by ${input.sender.name} at ${input.config.tradingName}. Replying to this email reaches our sales team.`
       : `Replying to this email reaches the team handling your quotation at ${input.config.tradingName}.`,
   };
 }
