@@ -32,7 +32,7 @@ export type ListColumn = {
   /** Field to read for the cell, resolved with dot notation for relations. */
   path: string;
   /** How to present the value. */
-  format?: "text" | "slug" | "badge" | "boolean" | "date" | "number";
+  format?: "text" | "slug" | "badge" | "boolean" | "date" | "datetime" | "number";
   /** Makes the cell a link to the record's edit page. */
   primary?: boolean;
 };
@@ -694,35 +694,47 @@ export const RESOURCES: Record<ResourceKey, ResourceConfig> = {
   banners: {
     key: "banners",
     model: "banner",
-    label: { singular: "Banner", plural: "Banners" },
-    description: "Site-wide notices. Only one active banner shows at a time, by display order.",
+    label: { singular: "Campaign", plural: "Campaigns" },
+    description:
+      "Announcements shown to visitors as a banner under the menu or a pop-up, on the pages you choose, between the times you set (India time).",
     guard: "admin",
     softDelete: false,
     orderBy: [{ displayOrder: "asc" }],
-    searchFields: ["name", "message"],
+    searchFields: ["name", "message", "title"],
     tagsFor: () => [tags.banners],
     listColumns: [
       { header: "Name", path: "name", primary: true },
-      { header: "Message", path: "message" },
-      { header: "Tone", path: "tone", format: "badge" },
-      { header: "Starts", path: "startsAt", format: "date" },
-      { header: "Ends", path: "endsAt", format: "date" },
-      { header: "Active", path: "active", format: "boolean" },
+      { header: "Shown as", path: "format", format: "badge" },
+      { header: "Starts", path: "startsAt", format: "datetime" },
+      { header: "Ends", path: "endsAt", format: "datetime" },
+      { header: "On", path: "active", format: "boolean" },
     ],
     fields: [
-      { kind: "text", name: "name", label: "Internal name", required: true, maxLength: 120, hint: "Never shown to visitors.", group: "Identity" },
-      { kind: "textarea", name: "message", label: "Message", required: true, rows: 2, maxLength: 300, group: "Content" },
-      { kind: "text", name: "linkLabel", label: "Link label", maxLength: 60, group: "Content" },
-      { kind: "text", name: "href", label: "Link target", maxLength: 300, hint: "A path on this site, e.g. /enterprise", group: "Content" },
-      { kind: "select", name: "tone", label: "Tone", required: true, options: [
+      { kind: "text", name: "name", label: "Internal name", required: true, maxLength: 120, hint: "Never shown to visitors.", group: "Campaign" },
+      { kind: "select", name: "format", label: "Shown as", required: true, options: [
+        { value: "BANNER", label: "Banner — a slim bar under the menu" },
+        { value: "MODAL", label: "Pop-up — a box over the page" },
+      ], hint: "A pop-up is kept off sign-in, checkout and form pages automatically.", group: "Campaign" },
+      { kind: "text", name: "title", label: "Pop-up heading", maxLength: 100, hint: "Pop-ups only. A banner shows just the message.", group: "Message" },
+      { kind: "textarea", name: "message", label: "Message", required: true, rows: 3, maxLength: 300, group: "Message" },
+      { kind: "text", name: "linkLabel", label: "Button or link text", maxLength: 60, hint: "Leave blank for no button.", group: "Message" },
+      { kind: "text", name: "href", label: "Where the button goes", maxLength: 300, hint: "A path on this site such as /enterprise, or an https:// address.", group: "Message" },
+      { kind: "select", name: "tone", label: "Colour", required: true, options: [
         { value: "INFO", label: "Information" },
         { value: "PROMO", label: "Promotion" },
         { value: "WARNING", label: "Warning" },
-      ], group: "Presentation" },
-      { kind: "date", name: "startsAt", label: "Starts", group: PUBLICATION_GROUP },
-      { kind: "date", name: "endsAt", label: "Ends", group: PUBLICATION_GROUP },
-      { kind: "number", name: "displayOrder", label: "Display order", min: 0, max: 10_000, group: PUBLICATION_GROUP },
-      { kind: "checkbox", name: "active", label: "Active", group: PUBLICATION_GROUP },
+      ], group: "Message" },
+      { kind: "lines", name: "pages", label: "Show on these pages", maxItems: 40, hint: "One per line. /products/* means that section and everything in it. Leave empty for every public page.", group: "Where and when" },
+      { kind: "datetime", name: "startsAt", label: "Starts (India time)", hint: "Leave empty to start as soon as it is switched on.", group: "Where and when" },
+      { kind: "datetime", name: "endsAt", label: "Ends (India time)", hint: "It switches itself off at this moment. Leave empty to run until you turn it off.", group: "Where and when" },
+      { kind: "select", name: "frequency", label: "After a visitor closes it", required: true, options: [
+        { value: "ONCE_PER_DAY", label: "Show again after a day" },
+        { value: "ONCE", label: "Never show it to them again" },
+        { value: "EVERY_VISIT", label: "Show again on their next visit" },
+      ], group: "Where and when" },
+      { kind: "number", name: "delaySeconds", label: "Pop-up delay (seconds)", min: 0, max: 60, hint: "How long after arriving a pop-up opens.", group: "Where and when" },
+      { kind: "number", name: "displayOrder", label: "Priority", min: 0, max: 10_000, hint: "Lowest number wins when several apply to one page.", group: "Where and when" },
+      { kind: "checkbox", name: "active", label: "Switched on", group: "Where and when" },
     ],
   },
 };

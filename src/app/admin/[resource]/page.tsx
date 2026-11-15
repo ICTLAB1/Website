@@ -10,7 +10,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { requireAdmin, requireStaff } from "@/lib/auth/guards";
 import { resolveResource, RESOURCE_KEYS, type ResourceKey } from "@/lib/admin/resources";
 import { listRecords, readPath } from "@/lib/admin/repository";
-import { formatDate, humanise } from "@/lib/utils";
+import { formatDate, formatIst, humanise } from "@/lib/utils";
 
 /**
  * Generic list screen for any registry-declared resource.
@@ -46,6 +46,8 @@ function Cell({ value, format }: { value: unknown; format?: string }) {
       return value ? <Badge tone="brand">Yes</Badge> : <span className="text-ink-400">No</span>;
     case "date":
       return <>{formatDate(value as Date)}</>;
+    case "datetime":
+      return <>{formatIst(value as Date)}</>;
     case "badge":
       return <StatusBadge status={String(value)} />;
     case "slug":

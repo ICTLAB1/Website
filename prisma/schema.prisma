@@ -346,6 +346,21 @@ enum PageSectionType {
   COMPARISON_TABLE
 }
 
+/// How a campaign is shown. A row with no format predates the campaign
+/// builder and is never shown: the old Banner feature had an admin screen and
+/// no renderer, so any rows left in it were never meant to go live.
+enum CampaignFormat {
+  BANNER
+  MODAL
+}
+
+/// How often one visitor sees the same campaign again after dismissing it.
+enum CampaignFrequency {
+  EVERY_VISIT
+  ONCE_PER_DAY
+  ONCE
+}
+
 enum BannerTone {
   INFO
   PROMO
@@ -2027,6 +2042,18 @@ model Banner {
   displayOrder Int        @default(100)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+
+  /// Campaign builder fields. All additive and nullable (or defaulted), so the
+  /// migration cannot change what any existing row does. See src/lib/campaigns.ts.
+  format       CampaignFormat?
+  /// Heading of a MODAL; unused by a BANNER.
+  title        String?
+  /// Page paths it shows on, one per line, `*` as a trailing wildcard.
+  /// Empty means every public page.
+  pages        String[]   @default([])
+  frequency    CampaignFrequency @default(ONCE_PER_DAY)
+  /// Seconds after arrival before a MODAL opens.
+  delaySeconds Int        @default(4)
 
   @@index([active, startsAt, endsAt])
 }

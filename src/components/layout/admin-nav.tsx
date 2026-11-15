@@ -59,7 +59,7 @@ const SECTIONS: Array<{ heading: string; links: Array<{ href: string; label: str
       { href: "/admin/navigation", label: "Navigation", adminOnly: true },
       { href: "/admin/services", label: "Services", adminOnly: true },
       { href: "/admin/faqs", label: "FAQs", adminOnly: true },
-      { href: "/admin/banners", label: "Banners", adminOnly: true },
+      { href: "/admin/banners", label: "Campaigns", adminOnly: true },
       { href: "/admin/posts", label: "Articles", adminOnly: true },
       { href: "/admin/jobs", label: "Jobs", adminOnly: true },
       { href: "/admin/testimonials", label: "Testimonials", adminOnly: true },
