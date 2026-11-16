@@ -383,6 +383,9 @@ export default async function BrandPage({ params }: PageProps) {
                 <li key={category.slug}>
                   <Link
                     href={`/products?brand=${brand.slug}&category=${category.slug}`}
+                    // One of the brand × category pairs that multiplied into the
+                    // filter-URL flood; visitors follow it, crawlers need not.
+                    rel="nofollow"
                     className="group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
                   >
                     <span className="text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
