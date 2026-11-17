@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { NextRequest } from "next/server";
 
-import nextConfig from "../next.config";
-import { legacyRedirects, PRODUCT_PAGE_REDIRECTS, POST_REDIRECTS } from "@/lib/legacy-redirects";
+import nextConfig, { legacyRedirects, PRODUCT_PAGE_REDIRECTS, POST_REDIRECTS } from "../next.config";
 import { proxy } from "@/proxy";
 
 /**

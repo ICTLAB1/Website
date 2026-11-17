@@ -47,7 +47,7 @@ contains it, or — where asked for — the publisher's hub. Examples: SQL Serve
 2022 → the same product; Windows Server 2022 → 2025; BIM 360 → Autodesk
 Construction Cloud; Defender for Business → the Business Premium page, which
 includes it; the AutoCAD toolset → AutoCAD. The full table is
-`src/lib/legacy-redirects.ts`.
+`next.config.ts (`legacyRedirects`)`.
 
 **Posts.** Redirected to the article or page that answers the same question
 (Defender guide → the Business Premium security article; "authorised resellers"
