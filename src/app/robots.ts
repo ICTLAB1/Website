@@ -46,6 +46,8 @@ export default function robots(): MetadataRoute.Robots {
           "/reset-password",
           "/track-order",
           "/search",
+          // Wix's internal API, answered 410 by the proxy; no reason to crawl it.
+          "/_api/",
           /*
            * The faceted catalogue URLs: blocked, but only the combinatorial
            * ones. See `FACET_DISALLOW` for the rules and, more usefully, for why

@@ -134,10 +134,14 @@ function buildCsp(
  * be a typo than a page that once existed.
  */
 const RETIRED_PREFIXES = [
+  // Whatever `legacyRedirects` does not map: a retired product or post with no
+  // honest destination. (`/service-page/` and `/blog/categories/` are gone from
+  // this list because every URL under them now redirects.)
   "/product-page/",
-  "/service-page/",
-  "/blog/categories/",
   "/post/",
+  // Wix's internal API. There was never a page here to redirect to, and a 410
+  // says so once instead of leaving crawlers to retry a 404.
+  "/_api/",
 ];
 
 /*

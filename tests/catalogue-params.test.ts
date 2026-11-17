@@ -93,3 +93,51 @@ describe("catalogue params", () => {
     for (const chip of chips) expect(chip.removeHref.startsWith("/products")).toBe(true);
   });
 });
+
+/**
+ * The shape of the 82 URLs Search Console reported as server errors (crawled
+ * 24-25 October): every parameter repeated, a price ceiling, and filters that
+ * contradict each other (Autodesk software with hardware series). The page
+ * answers all of them with a normal "no matching products" 200 today; this pins
+ * the part that is pure — parsing — so a change to it cannot turn one of those
+ * URLs back into an exception.
+ */
+describe("a crawler's giant, contradictory filter URL", () => {
+  const search =
+    "brand=autodesk&max=5000&form=desktop-sff&form=desktop-tower&series=pro-2&series=pro-400" +
+    "&sort=newest&category=infrastructure-hardware&licence=csp&licence=subscription-annual";
+  const params: Record<string, string | string[]> = {};
+  for (const [key, value] of new URLSearchParams(search)) {
+    const existing = params[key];
+    params[key] = existing === undefined ? value : [...(Array.isArray(existing) ? existing : [existing]), value];
+  }
+
+  it("parses without throwing, keeping every repeated value", () => {
+    const parsed = parseCatalogueParams(params);
+    expect(parsed.brand).toEqual(["autodesk"]);
+    expect(parsed.formFactor).toEqual(["desktop-sff", "desktop-tower"]);
+    expect(parsed.series).toEqual(["pro-2", "pro-400"]);
+    expect(parsed.maxPriceMinor).toBe(500_000);
+    expect(parsed.sort).toBe("newest");
+  });
+
+  it("turns licence values the database does not know into plain strings, not an error", () => {
+    // `csp` becomes `CSP`, which is not a licence type. The query layer drops
+    // values outside the enum before they reach Prisma; here the parser just
+    // has to hand them over as strings and never throw.
+    expect(parseCatalogueParams(params).licenceType).toEqual(["CSP", "SUBSCRIPTION_ANNUAL"]);
+  });
+
+  it("survives hostile and absurd values as well", () => {
+    expect(() =>
+      parseCatalogueParams({
+        brand: Array.from({ length: 500 }, (_, i) => `b${i}`),
+        max: "9".repeat(400),
+        min: "-1",
+        page: "99999999999999999999",
+        series: ["%00", "'; drop table", "a".repeat(5000)],
+        sort: ["price-asc", "bogus"],
+      }),
+    ).not.toThrow();
+  });
+});

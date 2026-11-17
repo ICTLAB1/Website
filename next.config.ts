@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+import { legacyRedirects } from "./src/lib/legacy-redirects";
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
@@ -664,6 +666,13 @@ const nextConfig: NextConfig = {
         destination: "/products/adobe-creative-cloud-all-apps-teams",
         statusCode: 301,
       },
+
+      /*
+       * The previous site's remaining URLs, from one table. Placed above the
+       * `/ar/` catch-all on purpose: Next applies the first match, so below it
+       * the `/ar/product-page/...` entries these include would never be reached.
+       */
+      ...legacyRedirects,
 
       /*
        * The catch-all, and it must stay the last `/ar/` rule: Next.js applies
