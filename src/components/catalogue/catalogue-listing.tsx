@@ -149,6 +149,7 @@ export async function CatalogueListing({
                 return (
                   <Link
                     key={option.value}
+                    rel="nofollow"
                     href={buildCatalogueHref(
                       params,
                       { sort: option.value === "relevance" ? null : option.value },
@@ -174,6 +175,7 @@ export async function CatalogueListing({
               <li key={chip.label}>
                 <Link
                   href={chip.removeHref}
+                  rel="nofollow"
                   className="inline-flex items-center gap-1.5 rounded-[--radius-sm] border border-line-strong bg-white py-1 pl-2.5 pr-2 text-[12px] text-ink-700 hover:border-danger-600 hover:text-danger-700"
                 >
                   {chip.label}

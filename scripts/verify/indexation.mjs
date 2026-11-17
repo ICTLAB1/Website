@@ -167,30 +167,59 @@ const base = await meta("/products");
 check("but /products itself is indexable", !/noindex/i.test(base.robots), base.robots);
 
 /*
- * robots.txt must not block what the meta tags are deciding. A `Disallow`
- * stops the crawl, so the `noindex` above is never read and the canonical
- * never followed — the two directives do not stack, the robots rule disables
- * the meta rule.
+ * robots.txt, read as a crawler reads it.
+ *
+ * The policy changed on purpose. This used to assert that no rule carried a
+ * query string, on the argument that a `Disallow` stops the crawler reading the
+ * `noindex`. True, and it cost 257,000 crawled filter permutations once the
+ * rules were removed: `noindex` keeps a page out of the index, not out of the
+ * crawl. So the combinatorial URLs are blocked again — and the half that must
+ * stay true is asserted instead: nothing that is *meant* to be indexed, or
+ * that carries the site's own navigation, may be caught by a rule.
  */
 await page.goto(`${BASE}/robots.txt`, { waitUntil: "load" });
 const robots = await page.locator("body").innerText();
 
-/*
- * Read as "no Disallow line mentions a query string". Simpler than listing the
- * six patterns that used to be here and checking each one: any rule carrying a
- * `?` is blocking a parameterised URL, which is the whole category this must
- * not do, and a new one somebody adds later is caught without being enumerated.
- */
-const disallowsAQuery = robots
+const disallows = robots
   .split("\n")
   .map((line) => line.trim())
-  .filter((line) => /^Disallow:/i.test(line) && line.includes("?"));
+  .filter((line) => /^Disallow:/i.test(line))
+  .map((line) => line.replace(/^Disallow:\s*/i, ""))
+  .filter(Boolean);
 
-check(
-  "no robots.txt rule disallows a parameterised URL",
-  disallowsAQuery.length === 0,
-  disallowsAQuery.join(" | "),
-);
+// Google's matching: prefix, `*` for any run, `$` to anchor the end.
+function blocked(target) {
+  return disallows.some((pattern) => {
+    const anchored = pattern.endsWith("$");
+    const body = anchored ? pattern.slice(0, -1) : pattern;
+    const source = body
+      .split("*")
+      .map((part) => part.replace(/[.+?^${}()|[\]\\]/g, "\\$&"))
+      .join(".*");
+    return new RegExp(`^${source}${anchored ? "$" : ""}`).test(target);
+  });
+}
+
+for (const url of [
+  "/products?brand=autodesk&series=z4",
+  "/products?brand=autodesk&category=cad",
+  "/products?sort=price-asc",
+  "/hardware?family=servers&sort=price-asc",
+]) {
+  check(`robots.txt blocks the permutation ${url}`, blocked(url), "");
+}
+
+for (const url of [
+  "/products",
+  "/products?category=software",
+  "/products?brand=microsoft",
+  "/products?page=2",
+  ...FAMILIES.map((family) => `/hardware?family=${family}`),
+]) {
+  check(`robots.txt leaves ${url} crawlable`, !blocked(url), "");
+}
+
+check("robots.txt has no Host line (Google ignores it)", !/^Host:/im.test(robots), "");
 
 check(
   "robots.txt still disallows the transactional paths",

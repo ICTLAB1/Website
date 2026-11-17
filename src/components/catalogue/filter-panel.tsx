@@ -128,6 +128,10 @@ function FacetLink({
     <li>
       <Link
         href={href}
+        // A filter is a way of narrowing a view, not a page to discover. Without
+        // this every facet value on every listing is a followable link, and the
+        // combinations multiply into the hundreds of thousands (see crawl-rules).
+        rel="nofollow"
         className={`flex items-center gap-2.5 rounded-[--radius-sm] px-2 py-1.5 text-meta transition-colors ${
           active ? "bg-accent-50 text-accent-800" : "text-ink-700 hover:bg-surface-muted"
         } ${indented ? "ml-3" : ""}`}
