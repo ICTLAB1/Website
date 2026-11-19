@@ -22,6 +22,8 @@ export type NavColumn = { heading: string; href: string; links: NavLink[] };
 export type PrimaryNavItem = {
   label: string;
   href: string;
+  /** A small count shown beside the label, e.g. open jobs on Careers. Never set by the database. */
+  badge?: number;
   megaMenu?: NavColumn[];
   simpleMenu?: NavLink[];
 };

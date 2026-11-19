@@ -159,6 +159,19 @@ export function MobileNav({
                       ) : (
                         <Link href={item.href} className="block px-4 py-3.5 text-body font-medium text-graphite-900">
                           {item.label}
+                          {item.badge ? (
+                            <>
+                              <span
+                                aria-hidden="true"
+                                className="ml-2 inline-flex min-w-5 items-center justify-center rounded-full bg-accent-700 px-1.5 text-[12px] font-semibold leading-5 text-white"
+                              >
+                                {item.badge}
+                              </span>
+                              <span className="sr-only">
+                                , {item.badge} open {item.badge === 1 ? "position" : "positions"}
+                              </span>
+                            </>
+                          ) : null}
                         </Link>
                       )}
                     </li>

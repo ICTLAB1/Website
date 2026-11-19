@@ -6,6 +6,7 @@ import { BasketButton } from "@/components/layout/basket-button";
 import { SearchBox } from "@/components/layout/search-box";
 import { ButtonLink } from "@/components/ui/button";
 import { getNavigation } from "@/lib/queries/navigation";
+import { getOpenJobCount } from "@/lib/queries/hr-feed";
 import { getSessionUser } from "@/lib/auth/session";
 import { getSiteConfig } from "@/lib/site-config";
 import { getDisplayCurrency } from "@/lib/display-currency";
@@ -17,12 +18,23 @@ import { CurrencySwitcher } from "@/components/layout/currency-switcher";
  * drawer, search, basket count) are client components.
  */
 export async function Header() {
-  const [user, config, navigation, display] = await Promise.all([
+  const [user, config, rawNavigation, display, openJobs] = await Promise.all([
     getSessionUser(),
     Promise.resolve(getSiteConfig()),
     getNavigation(),
     getDisplayCurrency(),
+    // Waits at most a second and a half and never throws: no badge, not an error.
+    getOpenJobCount(),
   ]);
+
+  // The count rides on the Careers item for this render only. It is not stored,
+  // and it is absent when the feed has no jobs or cannot be read.
+  const navigation = {
+    ...rawNavigation,
+    primary: rawNavigation.primary.map((item) =>
+      item.href === "/careers" && openJobs > 0 ? { ...item, badge: openJobs } : item,
+    ),
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-white">

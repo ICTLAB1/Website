@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CmsPage, cmsMetadata } from "@/lib/cms-route";
+import { HiringStrip } from "@/components/careers/hiring-strip";
 
 /**
  * The home page.
@@ -13,5 +14,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  return <CmsPage slug="" />;
+  return (
+    <>
+      <CmsPage slug="" />
+      {/* Only when HR has open jobs; renders nothing otherwise. */}
+      <HiringStrip />
+    </>
+  );
 }

@@ -122,6 +122,11 @@ export const legacyRedirects: LegacyRedirect[] = [
   permanent("/trainingandprograms", "/services"),
   permanent("/book-online", "/contact"),
   permanent("/refund", "/refund-policy"),
+
+  // The per-role pages of the old in-site job board. Jobs now live in the HR
+  // portal; the roles that were listed here have no page of their own any more,
+  // and `/careers` is where a visitor following an old link can find the way in.
+  permanent("/careers/:slug", "/careers"),
 ];
 
 const nextConfig: NextConfig = {

@@ -7997,6 +7997,15 @@ export const pageSeeds: PageSeed[] = [
 
 export const navigationSeeds: NavigationSeed[] = [
   {
+    "key": "header:careers",
+    "parentKey": null,
+    "menu": "HEADER",
+    "label": "Careers",
+    "href": "/careers",
+    "description": null,
+    "displayOrder": 170
+  },
+  {
     "key": "header:about",
     "parentKey": null,
     "menu": "HEADER",
