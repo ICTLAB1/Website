@@ -1,28 +1,23 @@
 import { chromium } from "playwright";
 
 import { suppressFestiveGreeting } from "./lib/festive.mjs";
-import { execFileSync } from "node:child_process";
-import { writeFileSync, rmSync } from "node:fs";
 
 /**
- * Posting a job, and what happens to it afterwards.
+ * The careers page, which now only sends job seekers to the HR portal.
  *
- * The property this suite exists for is the one nobody notices going wrong: a
- * role that has closed must stop being advertised **everywhere at once**. Not
- * only on the careers list — also on its own page, in the sitemap, and in the
- * `JobPosting` structured data Google reads. A site whose sitemap submits a
- * vacancy as live while the page says it has closed is a site whose job markup
- * stops being trusted, and nothing surfaces that until the listings quietly
- * disappear from results.
+ * What it checks is what the page promises and what could quietly stop being
+ * true: the portal buttons really leave for the portal, in the same tab; the
+ * page holds no form and no applicant data; the menu, the mobile menu and the
+ * footer all reach it; it fits a phone with no sideways scroll and with
+ * buttons a thumb can hit; and the old in-site role pages still end up
+ * somewhere useful instead of a dead end.
  *
- * So each of those four surfaces is asked separately, before and after.
- *
- * It also checks the things that make the markup valid at all. Google drops a
- * posting with no `datePosted` or `hiringOrganization` without saying so, and
- * `CONTRACT` is not one of its employment types — `CONTRACTOR` is.
+ * Run against a server with a seeded database (the menu row comes from the
+ * seed or the `2026-11-careers-menu-item` content migration).
  */
 
 const BASE = process.env.BASE ?? "http://localhost:3000";
+const PORTAL = "https://hr.techzoidtechnologies.com/careers";
 const results = [];
 const check = (name, ok, detail = "") => {
   const result = { name, ok: Boolean(ok), detail };
@@ -30,201 +25,84 @@ const check = (name, ok, detail = "") => {
   console.log(`  ${result.ok ? "✓" : "✗"} ${result.name}${result.ok || !result.detail ? "" : ` — ${result.detail}`}`);
 };
 
-const scratch = `/tmp/verify-careers-${process.pid}.sql`;
-const sql = (statement) => {
-  writeFileSync(scratch, statement, { mode: 0o644 });
-  return execFileSync("su", ["postgres", "-c", `psql -tA -d ictlab -f ${scratch}`], {
-    encoding: "utf8",
-  }).trim();
-};
-
-const stamp = Date.now().toString().slice(-6);
-const FIXTURE_HASH = "$2b$12$Y1EnHFQUoF4sKzWulgpRre1IGREZUDi/nFfN6QycEnigobTHRMj5e";
-const password = "CorrectHorse9";
-const adminEmail = `cr_admin${stamp}@example.test`;
-const salesEmail = `cr_sales${stamp}@example.test`;
-const slug = `probe-role-${stamp}`;
-
-/*
- * Sweep any role an earlier aborted run left open.
- *
- * The cleanup at the bottom only runs if the script gets there, and a role
- * posted by this suite is live: on the careers page, on its own URL and in the
- * sitemap. `scripts/verify/product-photos.mjs` leaked a fixture product exactly
- * this way and it sat in the sitemap for a day. `scripts/verify/seo.mjs` fails
- * the gate on a fixture-shaped slug now; this keeps the window to one run.
- */
-const swept = sql(
-  `with gone as (delete from "JobPosting" where slug like 'probe-role-%' returning id) select count(*) from gone`,
-);
-if (swept !== "0") console.log(`  (swept ${swept} role(s) left by an earlier run)`);
-
-sql(
-  `insert into "User" (id, email, "passwordHash", name, role, "emailVerified", "createdAt", "updatedAt") values ('cra${stamp}', '${adminEmail}', '${FIXTURE_HASH}', 'Careers Probe Admin', 'ADMIN', now(), now(), now())`,
-);
-sql(
-  `insert into "User" (id, email, "passwordHash", name, role, "emailVerified", "createdAt", "updatedAt") values ('crs${stamp}', '${salesEmail}', '${FIXTURE_HASH}', 'Careers Probe Sales', 'SALES', now(), now(), now())`,
-);
-
 const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" });
 
-async function signIn(context, email, secret) {
+for (const [label, viewport] of [
+  ["phone 375px", { width: 375, height: 800 }],
+  ["tablet 768px", { width: 768, height: 1024 }],
+  ["desktop 1440px", { width: 1440, height: 900 }],
+]) {
+  console.log(`\n${label}`);
+  const context = await browser.newContext({ viewport });
+  await suppressFestiveGreeting(context);
   const page = await context.newPage();
-  await page.goto(`${BASE}/login`, { waitUntil: "load" });
-  await page.getByLabel("Business email").fill(email);
-  await page.getByLabel("Password").fill(secret);
-  await page.getByRole("button", { name: "Sign in" }).click();
-  await page.waitForURL(/\/(admin|account)/, { timeout: 20000 });
-  await page.close();
+  await page.goto(`${BASE}/careers`, { waitUntil: "networkidle" });
+
+  check("one H1", (await page.locator("h1").count()) === 1);
+  check("four H2s in the page body", (await page.locator("main h2").count()) === 4);
+
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  check("no sideways scroll", overflow <= 0, `${overflow}px wider than the screen`);
+
+  const buttons = page.locator(`main a[href="${PORTAL}"]`);
+  check("two buttons go to the portal", (await buttons.count()) === 2, String(await buttons.count()));
+  const heights = await buttons.evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().height)));
+  check("each portal button is at least 44px tall", heights.every((h) => h >= 44), heights.join(", "));
+  const targets = await page.locator("main a[target]").count();
+  check("no link opens a new tab", targets === 0, `${targets} with a target`);
+
+  const mail = await page.locator('main a[href="mailto:hr.preeti@techzoidtechnologies.com"]').count();
+  check("the mailto link is there", mail === 1);
+  check("no form or file input on the page", (await page.locator("main form, main input").count()) === 0);
+  check("team chips are not links", (await page.locator("main section:has(h2:text('Teams we hire for')) a").count()) === 0);
+
+  await context.close();
 }
 
-const admin = await browser.newContext({ viewport: { width: 1440, height: 1200 } });
-await suppressFestiveGreeting(admin);
-await signIn(admin, adminEmail, password);
-const page = await admin.newPage();
+console.log("\nnavigation");
+{
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  await suppressFestiveGreeting(context);
+  const page = await context.newPage();
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
 
-// ── the careers page exists with nothing open ───────────────────────────────
-const anon = await browser.newContext();
-await suppressFestiveGreeting(anon);
-const anonPage = await anon.newPage();
-const emptyResponse = await anonPage.goto(`${BASE}/careers`, { waitUntil: "load" });
-const emptyText = (await anonPage.locator("body").innerText()).replace(/\s+/g, " ");
-check("the careers page is served", emptyResponse?.status() === 200, `status ${emptyResponse?.status()}`);
-/*
- * A careers page that 404s when nothing is open loses whatever ranking it has
- * built and tells a speculative applicant nothing.
- */
-check(
-  "with nothing open it still says something useful",
-  /no open roles/i.test(emptyText) || /open role/i.test(emptyText),
-  emptyText.slice(0, 160),
-);
+  const desktop = page.locator('nav[aria-label="Primary"] a[href="/careers"]');
+  check("the desktop menu has Careers", (await desktop.count()) >= 1);
+  const labels = await page.locator('nav[aria-label="Primary"] > ul > li > a, nav[aria-label="Primary"] > ul > li > div > a').allInnerTexts();
+  check("and it is the last top-level item", labels.at(-1)?.trim() === "Careers", labels.join(" | "));
+  check("the footer links to it", (await page.locator('footer a[href="/careers"]').count()) >= 1);
 
-// ── post a role ─────────────────────────────────────────────────────────────
-await page.goto(`${BASE}/admin/jobs/new`, { waitUntil: "load" });
-check("an administrator can reach the job form", page.url().includes("/admin/jobs/new"), page.url());
+  await desktop.first().click();
+  await page.waitForURL(/\/careers$/);
+  check("clicking it opens /careers", new URL(page.url()).pathname === "/careers");
+  await context.close();
 
-const title = `Probe Role ${stamp}`;
-await page.getByLabel("Role title").fill(title);
-await page.getByLabel("URL").fill(slug);
-await page.getByLabel("Summary").fill("A fixture role used to prove the careers pages work.");
-await page.getByLabel("The role").fill("## What you would do\n\nProve that this page renders.");
-await page.getByLabel("Location").fill("New Delhi");
-await page.getByLabel("Applications to").fill("careers-probe@example.test");
-await page.getByLabel("Posted").fill("2026-08-01");
-await page.getByRole("button", { name: /Create|Save/ }).first().click();
-await page.waitForTimeout(3000);
-
-const jobId = sql(`select id from "JobPosting" where slug = '${slug}'`);
-check("the role is stored", jobId.length > 0, jobId);
-
-// ── it is live on all four surfaces ─────────────────────────────────────────
-const listText = await anonPage.goto(`${BASE}/careers`, { waitUntil: "load" })
-  .then(() => anonPage.locator("body").innerText());
-check("it appears on the careers list", listText.includes(title));
-
-const detail = await anonPage.goto(`${BASE}/careers/${slug}`, { waitUntil: "load" });
-check("its own page is served", detail?.status() === 200, `status ${detail?.status()}`);
-
-const html = await anonPage.content();
-const posting = (() => {
-  for (const m of html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)) {
-    const parsed = JSON.parse(m[1].replaceAll("\\u003c", "<"));
-    if (parsed["@type"] === "JobPosting") return parsed;
-  }
-  return null;
-})();
-
-check("it carries JobPosting structured data", posting !== null);
-if (posting) {
-  // Google drops a posting missing any of these, without a message.
-  for (const field of ["title", "description", "datePosted", "employmentType", "hiringOrganization"]) {
-    check(`the posting declares ${field}`, Boolean(posting[field]));
-  }
-  check(
-    "the hiring organisation is named and linked",
-    Boolean(posting.hiringOrganization?.name && posting.hiringOrganization?.logo),
-  );
-  check(
-    "the employment type uses schema.org's vocabulary",
-    ["FULL_TIME", "PART_TIME", "CONTRACTOR", "INTERN", "TEMPORARY", "OTHER"].includes(
-      posting.employmentType,
-    ),
-    posting.employmentType,
-  );
-  /*
-   * No pay was entered, so none may be claimed. An empty or zeroed
-   * `baseSalary` is an advertised figure that nobody agreed.
-   */
-  check("no pay is claimed when none was entered", posting.baseSalary === undefined);
+  const phone = await browser.newContext({ viewport: { width: 375, height: 800 } });
+  await suppressFestiveGreeting(phone);
+  const p = await phone.newPage();
+  await p.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  await p.getByRole("button", { name: /menu/i }).first().click();
+  const mobile = p.locator('[role="dialog"] a[href="/careers"], nav a[href="/careers"]:visible');
+  await mobile.first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+  check("the mobile menu shows Careers", (await mobile.filter({ visible: true }).count()) >= 1);
+  await phone.close();
 }
 
-const sitemapLive = await (await fetch(`${BASE}/sitemap.xml`)).text();
-check("it is in the sitemap", sitemapLive.includes(`/careers/${slug}`));
+console.log("\nold role pages");
+for (const slug of ["business-development-managerexecutive", "sales-executive-it-sales", "anything-else"]) {
+  const response = await fetch(`${BASE}/careers/${slug}`, { redirect: "manual" });
+  check(
+    `/careers/${slug} redirects to /careers`,
+    response.status === 301 && new URL(response.headers.get("location") ?? "", BASE).pathname === "/careers",
+    `${response.status} ${response.headers.get("location")}`,
+  );
+}
 
-// ── closing it takes it off every surface ───────────────────────────────────
-sql(`update "JobPosting" set "closedAt" = now() where slug = '${slug}'`);
-
-const closedList = await anonPage.goto(`${BASE}/careers`, { waitUntil: "load" })
-  .then(() => anonPage.locator("body").innerText());
-check("a closed role leaves the careers list", !closedList.includes(title));
-
-const closedPage = await anonPage.goto(`${BASE}/careers/${slug}`, { waitUntil: "load" });
-const closedHtml = await anonPage.content();
-/*
- * Not a 404. The URL has been advertised — on a job board, in an email, on
- * somebody's saved tab — and a dead end tells that candidate nothing.
- */
-check("its page still answers rather than 404ing", closedPage?.status() === 200, `status ${closedPage?.status()}`);
-check("and says the role has closed", /no longer open/i.test(await anonPage.locator("body").innerText()));
-check("the JobPosting markup is gone", !closedHtml.includes('"JobPosting"'));
-check(
-  "and it is marked noindex, so search engines drop it",
-  /<meta name="robots"[^>]*noindex/i.test(closedHtml),
-);
-
-const sitemapClosed = await (await fetch(`${BASE}/sitemap.xml`)).text();
-check("it leaves the sitemap", !sitemapClosed.includes(`/careers/${slug}`));
-
-// ── a date closes it without anybody acting ─────────────────────────────────
-sql(`update "JobPosting" set "closedAt" = null, "closesOn" = now() - interval '1 day' where slug = '${slug}'`);
-const expiredList = await anonPage.goto(`${BASE}/careers`, { waitUntil: "load" })
-  .then(() => anonPage.locator("body").innerText());
-check("a role past its closing date closes itself", !expiredList.includes(title));
-
-// ── a future posting date holds it back ─────────────────────────────────────
-sql(`update "JobPosting" set "closesOn" = null, "postedOn" = now() + interval '7 days' where slug = '${slug}'`);
-const futureList = await anonPage.goto(`${BASE}/careers`, { waitUntil: "load" })
-  .then(() => anonPage.locator("body").innerText());
-check("a role dated in the future is not advertised yet", !futureList.includes(title));
-
-// ── only an administrator may post one ──────────────────────────────────────
-const sales = await browser.newContext();
-await suppressFestiveGreeting(sales);
-await signIn(sales, salesEmail, password);
-const salesPage = await sales.newPage();
-const salesAt = await salesPage.goto(`${BASE}/admin/jobs`, { waitUntil: "load" });
-check(
-  "a sales account cannot manage jobs",
-  !salesPage.url().endsWith("/admin/jobs") || salesAt?.status() === 404,
-  `landed on ${salesPage.url()} with ${salesAt?.status()}`,
-);
-
-const stranger = await browser.newContext();
-await suppressFestiveGreeting(stranger);
-const strangerPage = await stranger.newPage();
-await strangerPage.goto(`${BASE}/admin/jobs`, { waitUntil: "load" });
-check("a signed-out caller is sent to sign in", strangerPage.url().includes("/login"));
+const sitemap = await (await fetch(`${BASE}/sitemap.xml`)).text();
+check("the sitemap lists /careers", /<loc>[^<]*\/careers<\/loc>/.test(sitemap));
+check("and no longer lists any /careers/<role>", !/<loc>[^<]*\/careers\/[^<]+<\/loc>/.test(sitemap));
 
 await browser.close();
-
-// ── clean up ────────────────────────────────────────────────────────────────
-sql(`delete from "JobPosting" where slug = '${slug}'`);
-sql(`delete from "AuditLog" where "entityId" = '${jobId}'`);
-sql(`delete from "Session" where "userId" in ('cra${stamp}', 'crs${stamp}')`);
-sql(`delete from "User" where id in ('cra${stamp}', 'crs${stamp}')`);
-rmSync(scratch, { force: true });
-
-const failed = results.filter((result) => !result.ok).length;
-console.log(`\n${results.length - failed}/${results.length} careers checks passed`);
-process.exit(failed ? 1 : 0);
+const failed = results.filter((r) => !r.ok);
+console.log(`\n${results.length - failed.length}/${results.length} checks passed`);
+process.exit(failed.length ? 1 : 0);
