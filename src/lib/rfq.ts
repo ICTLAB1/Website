@@ -66,6 +66,16 @@ export const requirementSchema = z.object({
   budgetNote: text(120).optional(),
   /** Anything else: standards to meet, a tender to answer, an existing estate. */
   context: text(2000).optional(),
+  /**
+   * The contact's job title, from the landing-page enquiry form.
+   *
+   * Kept here rather than in a column of its own: an `Enquiry` has no field for
+   * it, and a migration to add one would touch a table every screen reads for
+   * something that is shown to staff and never filtered on. It rides in the
+   * stored requirement, and `describeRequirement` writes it into the text every
+   * existing screen and email already shows.
+   */
+  contactDesignation: text(120).optional(),
 });
 
 export type Requirement = z.infer<typeof requirementSchema>;

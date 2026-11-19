@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { BlockRenderer } from "@/components/blocks";
 import { QuickEnquiry } from "@/components/enquiry/quick-enquiry";
+import { LandingEnquiry } from "@/components/enquiry/landing-enquiry";
+import { leadPageFor } from "@/lib/lead-pages";
 import { DocumentDates } from "@/components/marketing/document-dates";
 import { getPage } from "@/lib/queries/pages";
 import { resolveBlocks } from "@/lib/blocks/resolve";
@@ -74,6 +76,9 @@ export async function CmsPage({ slug }: { slug: string }) {
     faqTopic: page.faqTopic,
   });
 
+  // These pages open with the enquiry form instead of ending with it.
+  const opensWithForm = leadPageFor(slug) !== null;
+
   return (
     <>
       {page.breadcrumb.length > 0 ? (
@@ -84,7 +89,12 @@ export async function CmsPage({ slug }: { slug: string }) {
       <BlockRenderer
         blocks={page.blocks}
         resolved={resolved}
-        afterHero={<DocumentDates page={page} />}
+        afterHero={
+          <>
+            <DocumentDates page={page} />
+            {opensWithForm ? <LandingEnquiry slug={slug} /> : null}
+          </>
+        }
       />
 
       {/*
@@ -99,7 +109,8 @@ export async function CmsPage({ slug }: { slug: string }) {
         The page still says everything about it in editable copy; this is only
         the pair of buttons that copy refers to.
       */}
-      {endsWithQuoteForm(page) ? <QuickEnquiry source="landing_page" /> : null}
+      {/* Not on a page that already opened with the form: two copies would share an id and a purpose. */}
+      {endsWithQuoteForm(page) && !opensWithForm ? <QuickEnquiry source="landing_page" /> : null}
 
       {slug === "cookie-policy" ? (
         <section className="container-page pb-14 lg:pb-18">

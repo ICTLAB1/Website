@@ -132,6 +132,37 @@ export async function submitRequirement(
     };
   }
 
+  /*
+   * The landing-page form, which asks for two things the others are forgiving
+   * about: a job title, and an actual quantity. Everywhere else a blank
+   * quantity becomes 1 ("a server" has told us the number, in words); here the
+   * field is labelled "Estimated quantity or number of licences" and is
+   * required, so a blank is a visitor who skipped it, not one who meant "one".
+   *
+   * Whether this is that form is read from the submission, which a client
+   * controls. That only decides how strict the checks are; nothing here is
+   * more permissive when it is absent, because the strict checks are a subset
+   * of the ones every form gets.
+   */
+  const landing = formData.get("form") === "landing";
+  const designation = String(formData.get("contactDesignation") ?? "").trim();
+  const landingErrors: Record<string, string[]> = {};
+  if (landing) {
+    if (designation.length < 2) landingErrors.contactDesignation = ["Enter your designation."];
+    if (designation.length > 120) landingErrors.contactDesignation = ["Keep your designation under 120 characters."];
+    const quantity = Number.parseInt(String(formData.get("lines.0.quantity") ?? "").trim(), 10);
+    if (!Number.isFinite(quantity) || quantity < 1) {
+      landingErrors["lines.0.quantity"] = ["Enter how many — a number of 1 or more."];
+    }
+  }
+  if (Object.keys(landingErrors).length > 0) {
+    return {
+      status: "error",
+      message: "Please correct the highlighted fields.",
+      fieldErrors: landingErrors,
+    };
+  }
+
   const lines = Array.from({ length: REQUIREMENT_LINE_SLOTS }, (_, index) =>
     readLine(formData, index),
   ).filter((line) => line !== null);
@@ -150,6 +181,7 @@ export async function submitRequirement(
     requiredBy: String(formData.get("requiredBy") ?? "").trim() || undefined,
     budgetNote: String(formData.get("budgetNote") ?? "").trim() || undefined,
     context: String(formData.get("context") ?? "").trim() || undefined,
+    contactDesignation: designation || undefined,
   });
   if (!requirement.success) {
     return {
