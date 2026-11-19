@@ -121,6 +121,7 @@ export function describeRequirement(requirement: Requirement): string {
   const parts = [requirement.lines.map((line) => `• ${describeLine(line)}`).join("\n")];
 
   const facts = [
+    requirement.contactDesignation ? `Contact's designation: ${requirement.contactDesignation}` : null,
     requirement.requiredBy ? `Required by: ${requirement.requiredBy}` : null,
     requirement.deliveryLocation ? `Deliver to: ${requirement.deliveryLocation}` : null,
     requirement.budgetNote ? `Indicative budget: ${requirement.budgetNote}` : null,
@@ -149,6 +150,7 @@ async function notify(
       "",
       `Company:   ${contact.companyName}`,
       `Contact:   ${contact.contactName}`,
+      requirement.contactDesignation ? `Role:      ${requirement.contactDesignation}` : null,
       `Email:     ${contact.contactEmail}`,
       `Phone:     ${contact.contactPhone}`,
       contact.gstin ? `GSTIN:     ${contact.gstin}` : null,

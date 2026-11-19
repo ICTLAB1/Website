@@ -82,6 +82,8 @@ import { privacyTheAssistant } from "./2026-10-privacy-the-assistant";
 import type { ContentMigration } from "./types";
 import { hubTitlesSayReseller } from "./2026-11-hub-titles-say-reseller";
 import { careersMenuItem } from "./2026-11-careers-menu-item";
+import { leadLandingPages } from "./2026-11-lead-landing-pages";
+import { linkTheLeadPages } from "./2026-11-link-the-lead-pages";
 
 /**
  * Every content migration, in the order they are applied.
@@ -190,6 +192,10 @@ export const contentMigrations: ContentMigration[] = [
   hubTitlesSayReseller,
   /* A single top-level menu row; nothing else. */
   careersMenuItem,
+  /* After nothing in particular: it creates four pages that do not exist, or leaves them be. */
+  leadLandingPages,
+  /* After the pages exist, so a link is never added to a 404. */
+  linkTheLeadPages,
 ];
 
 export type { ContentMigration };
