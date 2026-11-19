@@ -1,4 +1,5 @@
 import { ADS_CONVERSION_SEND_TO, CONVERSION_EVENTS } from "@/lib/analytics";
+import { rememberLead, trackLead } from "@/lib/meta-client";
 
 /**
  * Telling the tag that something worth counting happened.
@@ -132,5 +133,20 @@ export function pushConversion(
     if (typeof window.gtag === "function") {
       window.gtag("event", "conversion", { send_to: ADS_CONVERSION_SEND_TO });
     }
+  }
+
+  /*
+   * And Meta's `Lead`, for the same occurrence and behind the same guard.
+   *
+   * Every form that counts a quote request comes through this function, which
+   * is why Meta is told from here rather than from four call sites. The
+   * reference is remembered so the thank-you page can report the lead if this
+   * page could not (consent given there, or the navigation won the race); both
+   * paths use the one event id, so Meta sees one lead. Does nothing unless the
+   * visitor accepted analytics.
+   */
+  if (event === CONVERSION_EVENTS.quoteFormSubmit) {
+    rememberLead(once);
+    trackLead(once, details?.form);
   }
 }

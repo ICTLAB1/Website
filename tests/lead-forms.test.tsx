@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // The form posts to a server action; rendering it needs the action to exist, not to run.
 vi.mock("@/app/requirement/actions", () => ({ submitRequirement: vi.fn() }));
+// The success path navigates to /thank-you; a static render has no router to ask.
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => "/" }));
 
 import { LandingEnquiryForm } from "@/components/enquiry/landing-enquiry-form";
 import { LEAD_PAGES, NOT_SURE, leadPageFor } from "@/lib/lead-pages";

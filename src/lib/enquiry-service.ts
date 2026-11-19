@@ -1,5 +1,6 @@
 import "server-only";
 import type { z } from "zod";
+import { attributionLines, type Attribution } from "@/lib/attribution";
 import { prisma } from "@/lib/db";
 import { publicReference } from "@/lib/auth/tokens";
 import { resolveVariantsBySku } from "@/lib/queries/catalogue";
@@ -23,6 +24,17 @@ export type EnquiryInput = z.infer<typeof enquirySchema>;
 export type EnquiryResult =
   | { ok: true; reference: string }
   | { ok: false; reason: "no_valid_items"; message: string };
+
+/**
+ * The requirements text with the campaign appended, so the admin screen and the
+ * CRM record — which show this column — say where the enquiry came from.
+ */
+function withCampaign(requirements: string | undefined, attribution: Attribution | undefined) {
+  const campaign = attributionLines(attribution);
+  const parts = [requirements?.trim(), campaign.length > 0 ? campaign.join("\n") : undefined];
+  const text = parts.filter(Boolean).join("\n\n");
+  return text || null;
+}
 
 export async function createEnquiry(
   input: EnquiryInput,
@@ -80,7 +92,7 @@ export async function createEnquiry(
       country: input.country || "India",
       city: input.city || null,
       userCount: input.userCount ?? null,
-      requirements: input.requirements || null,
+      requirements: withCampaign(input.requirements, input.attribution),
       timeline: input.timeline,
       userId: context.userId ?? null,
       companyId: context.companyId ?? null,
@@ -136,6 +148,9 @@ async function notify(
       lines,
       "",
       input.requirements ? `Requirements:\n${input.requirements}` : null,
+      ...(attributionLines(input.attribution).length > 0
+        ? ["", ...attributionLines(input.attribution)]
+        : []),
     ]
       .filter((line) => line !== null)
       .join("\n"),

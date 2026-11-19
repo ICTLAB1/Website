@@ -3,6 +3,7 @@ import { z } from "zod";
 // this file can show a customer a sentence written by the library. See
 // `lib/zod-messages.ts`.
 import "@/lib/zod-messages";
+import { attributionSchema } from "@/lib/attribution";
 import { isValidGstin } from "@/lib/gstin";
 import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/password-policy";
 
@@ -122,6 +123,7 @@ export const enquirySchema = z.object({
     .max(60, "An enquiry can contain at most 60 line items."),
   // Honeypot: a real visitor never fills this in.
   website: z.string().max(0).optional(),
+  attribution: attributionSchema.optional(),
 });
 
 /**
@@ -157,6 +159,7 @@ export const contactSchema = z.object({
   topic: z.enum(CONTACT_TOPICS).default("GENERAL"),
   message: trimmed(4000).min(10, "Tell us a little more (at least 10 characters)."),
   website: z.string().max(0).optional(),
+  attribution: attributionSchema.optional(),
 });
 
 export const profileSchema = z.object({

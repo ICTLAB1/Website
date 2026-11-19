@@ -1,5 +1,6 @@
 "use server";
 
+import { attributionFromForm } from "@/lib/attribution";
 import { z } from "zod";
 
 import { getSessionUser } from "@/lib/auth/session";
@@ -135,6 +136,7 @@ export async function uploadRequirement(
     requiredBy: contact.data.requiredBy || undefined,
     deliveryLocation: contact.data.deliveryLocation || undefined,
     context: contact.data.context || undefined,
+    attribution: attributionFromForm(formData),
   });
   if (!requirement.success) {
     logger.error("boq_requirement_invalid", { lines: lines.length });

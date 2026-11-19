@@ -11,6 +11,7 @@ import { CampaignGate } from "@/components/marketing/campaign-gate";
 import { BasketProvider } from "@/components/enquiry/basket-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { GoogleTag, GoogleTagManagerNoScript } from "@/components/analytics/google-tag";
+import { MetaPixel } from "@/components/analytics/meta-pixel";
 import { ChatWidgetGate } from "@/components/chat/chat-widget-gate";
 import { JsonLd, organizationSchema, websiteSchema } from "@/lib/seo";
 import { appUrl } from "@/lib/env";
@@ -180,6 +181,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           waits for a measurement.
         */}
         <GoogleTag />
+
+        {/* Meta's pixel: defined here, run only once the visitor has accepted. */}
+        <MetaPixel />
       </body>
     </html>
   );

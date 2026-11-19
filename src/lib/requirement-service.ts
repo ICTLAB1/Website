@@ -2,6 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/db";
 import { publicReference } from "@/lib/auth/tokens";
+import { attributionLines } from "@/lib/attribution";
 import { escapeHtml, notifyInternal, sendMail } from "@/lib/mail";
 import { getSiteConfig } from "@/lib/site-config";
 import { logger } from "@/lib/logger";
@@ -129,6 +130,8 @@ export function describeRequirement(requirement: Requirement): string {
 
   if (facts.length > 0) parts.push(facts.join("\n"));
   if (requirement.context) parts.push(requirement.context);
+  const campaign = attributionLines(requirement.attribution);
+  if (campaign.length > 0) parts.push(campaign.join("\n"));
 
   return parts.join("\n\n");
 }
@@ -162,6 +165,9 @@ async function notify(
       requirement.deliveryLocation ? `Deliver to: ${requirement.deliveryLocation}` : null,
       requirement.budgetNote ? `Indicative budget: ${requirement.budgetNote}` : null,
       requirement.context ? `\nContext:\n${requirement.context}` : null,
+      ...(attributionLines(requirement.attribution).length > 0
+        ? ["", ...attributionLines(requirement.attribution)]
+        : []),
       review > 0
         ? `\n${review} line(s) came from an uploaded document and have not been confirmed by the customer. Check them before quoting.`
         : null,
