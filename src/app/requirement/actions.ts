@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 
+import { attributionFromForm } from "@/lib/attribution";
 import { getSessionUser } from "@/lib/auth/session";
 import { canTransact } from "@/lib/auth/guards";
 import { canInCompany } from "@/lib/auth/capabilities";
@@ -182,6 +183,7 @@ export async function submitRequirement(
     budgetNote: String(formData.get("budgetNote") ?? "").trim() || undefined,
     context: String(formData.get("context") ?? "").trim() || undefined,
     contactDesignation: designation || undefined,
+    attribution: attributionFromForm(formData),
   });
   if (!requirement.success) {
     return {

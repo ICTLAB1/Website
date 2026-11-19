@@ -9,6 +9,7 @@ import { Field, Fieldset, FormError, FormStateProvider, Input, Textarea } from "
 import { uploadRequirement } from "@/app/requirement/upload/actions";
 import { ACCEPTED_DOCUMENTS, DOCUMENT_ACCEPT_ATTRIBUTE } from "@/lib/document-bytes";
 import type { RequirementState } from "@/lib/rfq";
+import { AttributionFields } from "@/components/analytics/attribution-fields";
 import { useRequirementConversion } from "@/components/enquiry/use-requirement-conversion";
 
 function SubmitButton() {
@@ -68,6 +69,7 @@ export function BoqUploadForm({
 
   return (
     <form action={formAction} className="space-y-10" encType="multipart/form-data">
+      <AttributionFields />
       {state.status === "error" && state.message ? <FormError>{state.message}</FormError> : null}
 
       <FormStateProvider fieldErrors={state.fieldErrors ?? {}}>

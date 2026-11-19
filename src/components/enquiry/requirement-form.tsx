@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Field, Fieldset, FormError, FormStateProvider, Input, Textarea } from "@/components/ui/form";
 import { submitRequirement } from "@/app/requirement/actions";
 import type { RequirementState } from "@/lib/rfq";
+import { AttributionFields } from "@/components/analytics/attribution-fields";
 import { useRequirementConversion } from "@/components/enquiry/use-requirement-conversion";
 
 /**
@@ -179,6 +180,7 @@ export function RequirementForm({
 
   return (
     <form action={formAction} className={compact ? "space-y-6" : "space-y-10"}>
+      <AttributionFields />
       {state.status === "error" && state.message ? <FormError>{state.message}</FormError> : null}
 
       <FormStateProvider fieldErrors={state.fieldErrors ?? {}}>

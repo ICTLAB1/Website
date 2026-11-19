@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FormError, FormStateProvider, Input, Select } from "@/components/ui/form";
 import { submitRequirement } from "@/app/requirement/actions";
 import type { RequirementState } from "@/lib/rfq";
+import { AttributionFields } from "@/components/analytics/attribution-fields";
 import { useRequirementConversion } from "@/components/enquiry/use-requirement-conversion";
 
 /**
@@ -87,6 +88,7 @@ export function LandingEnquiryForm({
     <form action={formAction} className="space-y-5">
       {/* Tells the server this is the strict form: designation and quantity required. */}
       <input type="hidden" name="form" value="landing" />
+      <AttributionFields />
 
       {state.status === "error" && state.message ? <FormError>{state.message}</FormError> : null}
 

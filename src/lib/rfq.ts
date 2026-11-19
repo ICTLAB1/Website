@@ -1,4 +1,6 @@
 import { z } from "zod";
+
+import { attributionSchema } from "@/lib/attribution";
 import type { EnquiryStatus } from "@prisma/client";
 
 /**
@@ -76,6 +78,8 @@ export const requirementSchema = z.object({
    * existing screen and email already shows.
    */
   contactDesignation: text(120).optional(),
+  /** The ad the visitor arrived from, kept so sales can see which campaign an enquiry came from. */
+  attribution: attributionSchema.optional(),
 });
 
 export type Requirement = z.infer<typeof requirementSchema>;

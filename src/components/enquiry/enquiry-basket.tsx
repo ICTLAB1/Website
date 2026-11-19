@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { AttributionFields } from "@/components/analytics/attribution-fields";
+import { attributionFromForm } from "@/lib/attribution";
 import { useBasket } from "@/components/enquiry/basket-provider";
 import { RequirementForm } from "@/components/enquiry/requirement-form";
 import { Button } from "@/components/ui/button";
@@ -83,6 +85,7 @@ export function EnquiryBasket({
       requirements: String(form.get("requirements") ?? ""),
       timeline: String(form.get("timeline") ?? "EXPLORING"),
       website: String(form.get("website") ?? ""),
+      attribution: attributionFromForm(form),
       items: lines.map((line) => ({
         sku: line.sku,
         quantity: line.quantity,
@@ -274,6 +277,7 @@ export function EnquiryBasket({
 
           <FormStateProvider fieldErrors={fieldErrors}>
             <form onSubmit={onSubmit} noValidate className="mt-6 space-y-8">
+              <AttributionFields />
             {formError ? (
               <FormError>
                 {formError}

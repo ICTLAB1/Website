@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+
+import { AttributionFields } from "@/components/analytics/attribution-fields";
+import { attributionFromForm } from "@/lib/attribution";
 
 import { CONVERSION_EVENTS } from "@/lib/analytics";
 import { pushConversion } from "@/lib/analytics-events";
@@ -28,6 +32,7 @@ const TOPICS = [
 ];
 
 export function ContactForm({ defaultTopic = "GENERAL" }: { defaultTopic?: string }) {
+  const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [correlationId, setCorrelationId] = useState<string | null>(null);
@@ -50,6 +55,7 @@ export function ContactForm({ defaultTopic = "GENERAL" }: { defaultTopic?: strin
       topic: String(form.get("topic") ?? "GENERAL"),
       message: String(form.get("message") ?? ""),
       website: String(form.get("website") ?? ""),
+      attribution: attributionFromForm(form),
     });
 
     setPending(false);
@@ -88,6 +94,8 @@ export function ContactForm({ defaultTopic = "GENERAL" }: { defaultTopic?: strin
     }
 
     setReference(result.data.reference);
+    // The thank-you page confirms receipt; the reference is already remembered for it.
+    router.push("/thank-you");
   }
 
   if (reference) {
@@ -103,6 +111,7 @@ export function ContactForm({ defaultTopic = "GENERAL" }: { defaultTopic?: strin
   return (
     <FormStateProvider fieldErrors={fieldErrors}>
       <form onSubmit={onSubmit} noValidate className="space-y-5">
+      <AttributionFields />
       {error ? (
         <FormError>
           {error}
