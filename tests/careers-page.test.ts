@@ -8,13 +8,13 @@ const PORTAL = "https://hr.techzoidtechnologies.com/careers";
 const html = renderToStaticMarkup(CareersPage());
 
 describe("the careers page", () => {
-  it("has one H1 and a proper H2 for each of the five sections", () => {
+  it("has one H1 and a proper H2 for each section", () => {
     expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
     const h2 = [...html.matchAll(/<h2[^>]*>(.*?)<\/h2>/g)].map((m) => m[1]);
     expect(h2).toEqual([
+      "Open positions",
       "Why work with us",
       "How hiring works",
-      "Teams we hire for",
       "Don’t see a role that fits?",
     ]);
   });
@@ -30,9 +30,19 @@ describe("the careers page", () => {
     ]) {
       expect(html).toContain(title);
     }
-    for (const team of ["Sales / Business Development", "Pre-sales &amp; Technical", "Operations &amp; GeM", "Accounts"]) {
-      expect(html).toContain(team);
-    }
+  });
+
+  it("has a banner button that scrolls to the jobs list, which is where it lands", () => {
+    expect(html).toContain('href="#jobs"');
+    expect(html).toContain("See open positions");
+    expect(html).toContain('id="jobs"');
+  });
+
+  it("reserves space for the jobs while they load, so the page below does not move", () => {
+    // `renderToStaticMarkup` does not wait for the async list, so it renders the
+    // placeholder, which is exactly the state under test.
+    expect(html).toContain('aria-busy="true"');
+    expect(html).toContain("Loading open positions");
   });
 
   it("has four numbered steps, as an ordered list", () => {
@@ -43,31 +53,20 @@ describe("the careers page", () => {
     for (const n of ["1", "2", "3", "4"]) expect(ol).toContain(`>${n}</span>`);
   });
 
-  it("sends both 'View open positions' buttons to the portal, in the same tab", () => {
-    const links = [...html.matchAll(/<a [^>]*>/g)].map((m) => m[0]).filter((a) => a.includes("hr.techzoidtechnologies.com"));
-    expect(links).toHaveLength(2);
-    for (const link of links) {
-      expect(link).toContain(`href="${PORTAL}"`);
-    }
-    expect([...html.matchAll(/View open positions/g)]).toHaveLength(2);
-  });
-
-  it("never opens a new tab", () => {
+  it("ends with the portal button and the HR mailto, in the same tab", () => {
+    const closing = html.match(/Don’t see a role that fits\?[\s\S]*$/)?.[0] ?? "";
+    expect(closing).toContain(`href="${PORTAL}"`);
+    expect(closing).toContain("Open careers portal");
+    expect(closing).toContain('href="mailto:hr.preeti@techzoidtechnologies.com"');
     expect(html).not.toMatch(/target=/);
   });
 
-  it("links the HR address with mailto", () => {
-    expect(html).toContain('href="mailto:hr.preeti@techzoidtechnologies.com"');
-  });
-
-  it("has no form and takes no applicant data", () => {
+  it("has no form, takes no applicant data, and carries no JobPosting markup", () => {
     expect(html).not.toMatch(/<form[\s>]/);
     expect(html).not.toMatch(/<input[\s>]/);
-  });
-
-  it("keeps the team chips as plain text, not links", () => {
-    const section = html.match(/Teams we hire for[\s\S]*?<\/section>/)?.[0] ?? "";
-    expect(section).not.toMatch(/<a[\s>]/);
+    // Only the breadcrumb's structured data is allowed here. The HR portal's own
+    // job pages carry JobPosting, and a second copy would duplicate it.
+    expect(html).not.toMatch(/JobPosting/);
   });
 });
 

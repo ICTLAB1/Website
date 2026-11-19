@@ -2,33 +2,29 @@ import type { Metadata } from "next";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ButtonLink } from "@/components/ui/button";
+import { Suspense } from "react";
+
+import { JobsSkeleton, LiveJobs, HR_EMAIL } from "@/components/careers/live-jobs";
+import { PORTAL_URL } from "@/lib/hr-feed";
 import { buildMetadata } from "@/lib/seo";
 
 /**
- * Careers: where a job seeker is sent to the HR portal.
+ * Careers: the open jobs, live from the HR system.
  *
- * ## This page holds no jobs and no application form
+ * ## The jobs are not ours
  *
- * Open roles, their details, the application form and the resume upload all
- * live in the HR system at `PORTAL`, and applications go straight into it. This
- * site stores nothing about an applicant, and lists no vacancy of its own — a
- * second list would only ever drift out of date behind the portal's.
- *
- * It used to be a job board backed by this site's own database. That page, the
- * per-role pages under `/careers/<role>` and their `JobPosting` markup were
- * retired when the portal launched; the role URLs redirect here (see
- * `next.config.ts`) so links already out in the world still land somewhere
- * useful.
+ * They come from the HR system's public feed (see `queries/hr-feed.ts`), are
+ * cached for about a minute, and are never written to this site's files or
+ * database. When HR closes a job it leaves the feed and leaves this page with
+ * it. Applications happen on the HR portal: this page links there, takes no
+ * applicant data, and carries no `JobPosting` markup — the portal's own job
+ * pages already have it, and a second copy on this domain would be a duplicate
+ * for Google to reconcile.
  *
  * ## Same tab
  *
- * Every portal link opens in the current tab, with no `target="_blank"`. A job
- * seeker on a phone should not be left with a second tab to find their way back
- * from, and the portal is the next step of the same journey.
+ * Every link to the portal opens in the current tab, with no `target="_blank"`.
  */
-
-const PORTAL = "https://hr.techzoidtechnologies.com/careers";
-const HR_EMAIL = "hr.preeti@techzoidtechnologies.com";
 
 export const metadata: Metadata = buildMetadata({
   title: "Careers at TechZoid Technologies | Jobs in New Delhi",
@@ -109,13 +105,6 @@ const STEPS = [
   "Offer sent by email, which you can accept online.",
 ];
 
-const TEAMS = [
-  "Sales / Business Development",
-  "Pre-sales & Technical",
-  "Operations & GeM",
-  "Accounts",
-];
-
 export default function CareersPage() {
   return (
     <div className="container-page pb-16">
@@ -128,13 +117,25 @@ export default function CareersPage() {
           Build India&rsquo;s digital backbone with people who care.
         </p>
         <div className="mt-8">
-          <ButtonLink href={PORTAL} size="lg" className="w-full sm:w-auto">
-            View open positions
+          <ButtonLink href="#jobs" size="lg" className="w-full sm:w-auto">
+            See open positions
           </ButtonLink>
         </div>
       </section>
 
-      {/* b) Why work with us */}
+      {/* b) The live jobs list: the main part of the page */}
+      <section id="jobs" className="mb-14 scroll-mt-40" aria-labelledby="jobs-heading">
+        <h2 id="jobs-heading" className="mb-6 text-section">
+          Open positions
+        </h2>
+        {/* Streams in behind a placeholder of the same height, so the sections
+            below do not move when the cards arrive. */}
+        <Suspense fallback={<JobsSkeleton />}>
+          <LiveJobs />
+        </Suspense>
+      </section>
+
+      {/* c) Why work with us */}
       <section className="mb-14" aria-labelledby="why-heading">
         <h2 id="why-heading" className="mb-6 text-section">
           Why work with us
@@ -153,7 +154,7 @@ export default function CareersPage() {
         </ul>
       </section>
 
-      {/* c) How hiring works */}
+      {/* d) How hiring works */}
       <section className="mb-14" aria-labelledby="hiring-heading">
         <h2 id="hiring-heading" className="mb-6 text-section">
           How hiring works
@@ -177,23 +178,6 @@ export default function CareersPage() {
         </ol>
       </section>
 
-      {/* d) Teams we hire for: text only, not links */}
-      <section className="mb-14" aria-labelledby="teams-heading">
-        <h2 id="teams-heading" className="mb-6 text-section">
-          Teams we hire for
-        </h2>
-        <ul className="flex flex-wrap gap-3">
-          {TEAMS.map((team) => (
-            <li
-              key={team}
-              className="rounded-full border border-line-strong bg-white px-4 py-2 text-[14px] font-medium text-graphite-800"
-            >
-              {team}
-            </li>
-          ))}
-        </ul>
-      </section>
-
       {/* e) Closing strip */}
       <section
         aria-labelledby="closing-heading"
@@ -212,8 +196,8 @@ export default function CareersPage() {
           </a>
         </p>
         <div className="mt-6">
-          <ButtonLink href={PORTAL} className="w-full sm:w-auto">
-            View open positions
+          <ButtonLink href={PORTAL_URL} className="w-full sm:w-auto">
+            Open careers portal
           </ButtonLink>
         </div>
       </section>

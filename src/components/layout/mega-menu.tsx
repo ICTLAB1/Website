@@ -208,6 +208,19 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                     )}
                   >
                     {item.label}
+                    {item.badge ? (
+                      <>
+                        <span
+                          aria-hidden="true"
+                          className="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-accent-700 px-1.5 text-[11px] font-semibold leading-5 text-white"
+                        >
+                          {item.badge}
+                        </span>
+                        <span className="sr-only">
+                          , {item.badge} open {item.badge === 1 ? "position" : "positions"}
+                        </span>
+                      </>
+                    ) : null}
                   </Link>
                   {hasPanel ? (
                     <button
