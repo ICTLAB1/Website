@@ -89,6 +89,10 @@ jobs:
       DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
       DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
       DEPLOY_HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
+      # Server-only. Piped to the VM over ssh stdin (never on a command line)
+      # and written into deploy/.env by deploy/set-env.sh. Empty = leave the
+      # VM's .env as it is.
+      META_CAPI_TOKEN: ${{ secrets.META_CAPI_TOKEN }}
     steps:
       - name: Configure SSH
         run: |
@@ -123,7 +127,10 @@ jobs:
       - name: Deploy
         run: |
           set -euo pipefail
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
+          # The token is the only thing on ssh's stdin, and printf is a shell
+          # builtin, so it appears in no process list. No `set -x` anywhere in
+          # this step: that is what would echo it.
+          printf '%s' "$META_CAPI_TOKEN" | ssh -T -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
             "$DEPLOY_USER@$DEPLOY_HOST" \
             'set -eu
              # The repo (owned by azureuser) lives at /home/azureuser/app.
@@ -132,6 +139,10 @@ jobs:
              # with, and running as its own owner sidesteps git'"'"'s
              # dubious-ownership check (CVE-2022-24765) entirely.
              sudo -u azureuser git -C /home/azureuser/app pull
+             # Write the Meta token into deploy/.env, from stdin. Must run before
+             # anything else here reads stdin; nothing below does (each is
+             # redirected from /dev/null). Prints the length, never the value.
+             sudo bash /home/azureuser/app/deploy/set-env.sh META_CAPI_TOKEN
              # ── Ownership of the data volumes ──────────────────────────────
              #
              # The image now runs as `node` rather than root. Docker applies
@@ -166,11 +177,23 @@ jobs:
              sudo docker run --rm \
                -v techzoid_uploads:/data/uploads \
                -v techzoid_documents:/data/documents \
-               alpine:3 sh -c '"'"'chown -R 1000:1000 /data/uploads /data/documents && echo "data volumes owned by uid 1000"'"'"'
+               alpine:3 sh -c '"'"'chown -R 1000:1000 /data/uploads /data/documents && echo "data volumes owned by uid 1000"'"'"' </dev/null
              # `cd` is a shell builtin, so it cannot be sudo'"'"'ed on its own —
              # it would run as the unprivileged deploy user, which cannot even
              # traverse into azureuser'"'"'s home directory. --project-directory
              # keeps the whole docker compose invocation, cd included, under
              # one sudo.
              sudo docker compose --project-directory /home/azureuser/app/deploy \
-               -f /home/azureuser/app/deploy/docker-compose.prod.yml up -d --build'
+               -f /home/azureuser/app/deploy/docker-compose.prod.yml up -d --build </dev/null
+             # `up -d` recreates the container when its environment changed, so
+             # a new token takes effect here. Then ask the running container what
+             # it sees: the length of the token and whether Meta accepts it, never the
+             # token. Waits for the container to come up first.
+             compose="sudo docker compose --project-directory /home/azureuser/app/deploy -f /home/azureuser/app/deploy/docker-compose.prod.yml"
+             for i in $(seq 1 30); do
+               $compose exec -T app true </dev/null >/dev/null 2>&1 && break
+               sleep 2
+             done
+             rc=0
+             $compose exec -T app node - < /home/azureuser/app/deploy/check-meta.mjs || rc=$?
+             if [ "$rc" -eq 3 ]; then echo "::error::the app container has no META_CAPI_TOKEN"; exit 1; fi'
