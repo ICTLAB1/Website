@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { CONVERSION_EVENTS } from "@/lib/analytics";
@@ -31,9 +32,13 @@ import type { RequirementState } from "@/lib/rfq";
  */
 export function useRequirementConversion(state: RequirementState, form: string): void {
   const reference = state.status === "success" ? state.reference : undefined;
+  const router = useRouter();
 
   useEffect(() => {
     if (!reference) return;
     pushConversion(CONVERSION_EVENTS.quoteFormSubmit, reference, { form });
-  }, [reference, form]);
+    // Counted first, then on to the thank-you page: the reference is already
+    // remembered for it, and the page confirms what happens next.
+    router.push("/thank-you");
+  }, [reference, form, router]);
 }

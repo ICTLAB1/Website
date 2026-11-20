@@ -1,3 +1,4 @@
+import { attributionLines } from "@/lib/attribution";
 import { jsonError, jsonOk, withErrorHandling } from "@/lib/api";
 import { requireJsonBody } from "@/lib/http/json-body";
 import { verifyCsrf } from "@/lib/auth/csrf";
@@ -53,6 +54,8 @@ export const POST = withErrorHandling("contact.create", async (request: Request)
   const input = parsed.data;
   const user = await getSessionUser();
   const reference = publicReference("TKT");
+  const campaign = attributionLines(input.attribution);
+  if (campaign.length > 0) campaign.unshift("");
 
   await prisma.supportTicket.create({
     data: {
@@ -67,6 +70,7 @@ export const POST = withErrorHandling("contact.create", async (request: Request)
         input.companyName ? `Company: ${input.companyName}` : null,
         "",
         input.message,
+        ...campaign,
       ]
         .filter((line) => line !== null)
         .join("\n"),
@@ -86,6 +90,7 @@ export const POST = withErrorHandling("contact.create", async (request: Request)
       input.companyName ? `Company:   ${input.companyName}` : null,
       "",
       input.message,
+      ...campaign,
     ]
       .filter((line) => line !== null)
       .join("\n"),

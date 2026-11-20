@@ -6,6 +6,7 @@ import {
   analyticsDebugging,
   analyticsEnabled,
 } from "@/lib/analytics";
+import { META_CSP, META_ENABLED } from "@/lib/meta";
 
 /**
  * Request proxy: security headers and Content Security Policy.
@@ -58,6 +59,8 @@ function buildCsp(
   allowAnalytics: boolean,
   allowTagDebug: boolean,
 ): string {
+  // Meta's hosts, only where analytics runs and only while the pixel is switched on.
+  const metaHosts = META_ENABLED ? META_CSP : { script: [], connect: [], img: [] };
   const directives: Record<string, string[]> = {
     "default-src": ["'self'"],
     "script-src": [
@@ -66,7 +69,7 @@ function buildCsp(
       // Lets nonce-verified scripts load their own dependencies, and is ignored
       // by browsers too old to understand it.
       "'strict-dynamic'",
-      ...(allowAnalytics ? [...ANALYTICS_CSP.script] : []),
+      ...(allowAnalytics ? [...ANALYTICS_CSP.script, ...metaHosts.script] : []),
       ...(allowTagDebug ? [...ANALYTICS_DEBUG_HOSTS] : []),
       // Next.js dev tooling evaluates code; never enabled in production.
       ...(isDevelopment ? ["'unsafe-eval'"] : []),
@@ -78,11 +81,11 @@ function buildCsp(
       "'self'",
       "data:",
       "blob:",
-      ...(allowAnalytics ? [...ANALYTICS_CSP.img] : []),
+      ...(allowAnalytics ? [...ANALYTICS_CSP.img, ...metaHosts.img] : []),
     ],
     "connect-src": [
       "'self'",
-      ...(allowAnalytics ? [...ANALYTICS_CSP.connect] : []),
+      ...(allowAnalytics ? [...ANALYTICS_CSP.connect, ...metaHosts.connect] : []),
       ...(allowTagDebug ? [...ANALYTICS_DEBUG_HOSTS] : []),
       ...(isDevelopment ? ["ws:", "wss:"] : []),
     ],

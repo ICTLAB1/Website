@@ -56,6 +56,8 @@ type Props = {
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
+    fbq?: (...args: unknown[]) => void;
+    tzMetaLoad?: () => void;
   }
 }
 
@@ -118,6 +120,14 @@ export function ConsentBanner({ mode = "banner" }: Props) {
       // remember anything.
     }
     window.gtag?.("consent", "update", value === "granted" ? GRANTED : DENIED);
+    /*
+     * Meta follows the same answer. Accepting loads its pixel (a no-op if it
+     * already loaded); refusing, or changing a yes to a no from the cookie
+     * policy, tells a loaded pixel to stop. The script cannot be unloaded, but
+     * revoked consent stops it setting cookies and sending events.
+     */
+    if (value === "granted") window.tzMetaLoad?.();
+    else window.fbq?.("consent", "revoke");
     setAnswered(value);
   };
 
