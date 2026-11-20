@@ -17,7 +17,11 @@ try {
   });
   const body = await response.json().catch(() => ({}));
   if (response.ok) console.log(`Meta accepted the token for dataset ${pixel} ("${body.name ?? "?"}")`);
-  else console.log(`Meta answered ${response.status}: ${String(body?.error?.message ?? "no detail").slice(0, 200)}`);
+  else {
+    console.log(`Meta answered ${response.status}: ${String(body?.error?.message ?? "no detail").slice(0, 200)}`);
+    // A token Meta refuses is as good as none: fail so the deploy says so.
+    process.exitCode = 4;
+  }
 } catch (error) {
   console.log(`Could not reach Meta from the container: ${error instanceof Error ? error.message : error}`);
 }

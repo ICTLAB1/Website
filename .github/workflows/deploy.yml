@@ -130,9 +130,13 @@ jobs:
           # The token is the only thing on ssh's stdin, and printf is a shell
           # builtin, so it appears in no process list. No `set -x` anywhere in
           # this step: that is what would echo it.
+          # Whether a token was supplied, told to the VM so it knows whether a
+          # missing one in the container is a failure or just not configured yet.
+          expect_meta=0
+          if [ -n "$META_CAPI_TOKEN" ]; then expect_meta=1; fi
           printf '%s' "$META_CAPI_TOKEN" | ssh -T -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
             "$DEPLOY_USER@$DEPLOY_HOST" \
-            'set -eu
+            "expect_meta=$expect_meta; "'set -eu
              # The repo (owned by azureuser) lives at /home/azureuser/app.
              # Pull as azureuser, not root: azureuser already has GitHub'"'"'s
              # host key and the credentials this checkout authenticates
@@ -195,5 +199,7 @@ jobs:
                sleep 2
              done
              rc=0
-             $compose exec -T app node - < /home/azureuser/app/deploy/check-meta.mjs || rc=$?
-             if [ "$rc" -eq 3 ]; then echo "::error::the app container has no META_CAPI_TOKEN"; exit 1; fi'
+             # Read as root: the file is in the azureuser home directory, which this user cannot open.
+             sudo cat /home/azureuser/app/deploy/check-meta.mjs | $compose exec -T app node - || rc=$?
+             if [ "$expect_meta" = 1 ] && [ "$rc" -ne 0 ]; then echo "::error::could not confirm the app container has a working META_CAPI_TOKEN (exit $rc)"; exit 1; fi
+             if [ "$rc" -eq 3 ]; then echo "META_CAPI_TOKEN is not configured (no secret supplied)"; fi'
