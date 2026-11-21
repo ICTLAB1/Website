@@ -24,7 +24,7 @@ const OTHER = "Other";
 
 function Chip({ children }: { children: React.ReactNode }) {
   return (
-    <li className="rounded-full border border-line-strong bg-white px-3 py-1 text-[13px] font-medium text-graphite-800">
+    <li className="rounded-full bg-graphite-50 px-3 py-1 text-[13px] font-medium text-graphite-800 ring-1 ring-inset ring-line">
       {children}
     </li>
   );
@@ -36,7 +36,7 @@ function JobCard({ job }: { job: DisplayJob }) {
   const hasDetail = job.responsibilities.length > 0 || job.requirements.length > 0;
 
   return (
-    <li className="rounded-[--radius-lg] border border-line bg-white p-5 sm:p-6">
+    <li className="rounded-[--radius-lg] border border-line bg-white p-5 transition-all duration-200 hover:border-accent-300 hover:shadow-[0_10px_30px_-12px_rgba(32,28,24,0.18)] motion-reduce:transition-none sm:p-6">
       {job.department ? (
         <p className="mb-1.5 text-label font-semibold uppercase tracking-[0.12em] text-accent-700">
           {job.department}

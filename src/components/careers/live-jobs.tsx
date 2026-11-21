@@ -19,7 +19,7 @@ export function JobsSection({ careers }: { careers: Careers }) {
 
   if (careers.state === "empty") {
     return (
-      <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
+      <div className="rounded-[--radius-lg] border border-dashed border-line-strong bg-surface-muted p-6 sm:p-8">
         <p className="text-[16px] leading-relaxed text-graphite-900">
           No openings right now. Send your resume to{" "}
           <a
