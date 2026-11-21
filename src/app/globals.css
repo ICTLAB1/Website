@@ -44,6 +44,16 @@
   --color-sky-600: #327dae;
   --color-sky-700: #29668e;
 
+  /* The careers pages' own palette, taken from the TechZoid logo: deep navy,
+     technology blue and orange. Scoped by name to /careers so the rest of the
+     site keeps its warm graphite and gold. Orange is for large type and thin
+     accents only: white on it is under 4.5:1, so buttons are navy. */
+  --color-career-navy: #0b2a5b;
+  --color-career-navy-dark: #071b3d;
+  --color-career-blue: #0a5bc4;
+  --color-career-orange: #e8650a;
+  --color-career-mist: #f3f6fb;
+
   --color-ink-50: #f7f8f9;
   --color-ink-100: #eceef1;
   --color-ink-200: #dcdfe4;
