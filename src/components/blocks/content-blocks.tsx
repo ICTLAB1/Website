@@ -140,6 +140,12 @@ export function HeroBlock({
         `aria-hidden` and `pointer-events-none`: it is texture, not content.
       */}
       {dark ? <HeroPattern /> : null}
+      {dark ? (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-0 hidden h-20 w-72 bg-career-orange [clip-path:polygon(0_100%,100%_100%,0_30%)] lg:block"
+        />
+      ) : null}
 
       <div className="container-page relative py-14 lg:py-20">
         <div
@@ -630,9 +636,27 @@ export async function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }
     ? (config.email.enterprise ?? config.email.sales ?? null)
     : null;
   return (
-    <section className={dark ? "bg-graphite-900" : data.tone === "accent" ? "bg-accent-50" : "border-y border-line bg-surface-muted"}>
-      <div className="container-page py-14 lg:py-18">
-        <Reveal className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
+    <section className={dark ? "" : data.tone === "accent" ? "bg-accent-50" : "border-y border-line bg-surface-muted"}>
+      <div className={cn("container-page", dark ? "py-10 lg:py-14" : "py-14 lg:py-18")}>
+        <Reveal
+          className={cn(
+            "flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between",
+            dark &&
+              "relative isolate overflow-hidden rounded-[--radius-xl] bg-career-navy-dark px-6 py-12 sm:px-12 sm:py-14",
+          )}
+        >
+          {dark ? (
+            <>
+              <span
+                aria-hidden="true"
+                className="absolute -right-10 -top-10 -z-10 h-56 w-56 rotate-12 bg-career-blue/30 [clip-path:polygon(0_0,100%_0,100%_100%)]"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute bottom-0 left-0 -z-10 h-16 w-64 bg-career-orange [clip-path:polygon(0_100%,100%_100%,0_25%)]"
+              />
+            </>
+          ) : null}
           <div className="max-w-2xl">
             <h2 className={cn("text-section", dark ? "text-white" : "text-graphite-900")}>
               {data.heading}

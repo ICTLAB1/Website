@@ -37,11 +37,17 @@ export function SectionHeader({
           className={cn(
             Heading === "h1"
               ? "text-title"
-              : "text-section",
+              : "text-[clamp(1.6rem,1.25rem+1.4vw,2.25rem)] font-bold leading-tight text-career-navy",
           )}
         >
           {title}
         </Heading>
+        {Heading !== "h1" ? (
+          <span
+            aria-hidden="true"
+            className={cn("mt-4 block h-[3px] w-12 bg-career-orange", centered && "mx-auto")}
+          />
+        ) : null}
         {description ? (
           <p className="mt-3 text-body leading-relaxed text-ink-600">{description}</p>
         ) : null}
