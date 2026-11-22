@@ -77,7 +77,7 @@ export function ProductCard({
    * all render mixed grids, so this has to hold both anyway.
    */
   return (
-    <article className="card-hover group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white">
+    <article className="card-hover group flex h-full flex-col rounded-(--radius-lg) border border-line bg-white">
       {hardware ? (
         <div className="border-b border-line p-4 pb-0">
           <ProductPhoto
@@ -284,7 +284,7 @@ export function ProductCard({
       <div className="flex gap-2 border-t border-line p-3">
         <Link
           href={`/products/${product.slug}`}
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-[--radius-md] border border-line-strong text-meta font-medium text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50"
+          className="inline-flex h-10 flex-1 items-center justify-center rounded-(--radius-md) border border-line-strong text-meta font-medium text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50"
         >
           View details
         </Link>

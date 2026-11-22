@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { PagePhoto } from "@/components/marketing/page-photo";
+import { PhotoBackdrop } from "@/components/marketing/page-photo";
 import { photoForPath } from "@/lib/page-photos";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ButtonLink } from "@/components/ui/button";
@@ -83,7 +83,11 @@ export async function generateMetadata({
   });
 }
 
-export default async function IndustryPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function IndustryPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const industry = await industryBySlug(slug);
   if (!industry) notFound();
@@ -103,13 +107,21 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
             tagline: true,
             accentColor: true,
             logoUrl: true,
-            _count: { select: { products: { where: { status: "ACTIVE", deletedAt: null } } } },
+            _count: {
+              select: {
+                products: { where: { status: "ACTIVE", deletedAt: null } },
+              },
+            },
           },
         })
       : [],
     industry.serviceSlugs.length > 0
       ? prisma.service.findMany({
-          where: { slug: { in: industry.serviceSlugs }, published: true, deletedAt: null },
+          where: {
+            slug: { in: industry.serviceSlugs },
+            published: true,
+            deletedAt: null,
+          },
           select: { slug: true, name: true, summary: true, category: true },
         })
       : [],
@@ -121,7 +133,11 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
             name: true,
             summary: true,
             icon: true,
-            _count: { select: { products: { where: { status: "ACTIVE", deletedAt: null } } } },
+            _count: {
+              select: {
+                products: { where: { status: "ACTIVE", deletedAt: null } },
+              },
+            },
           },
         })
       : [],
@@ -139,7 +155,9 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
   const brandRows = inOrder(industry.brandSlugs, brands);
   const serviceRows = inOrder(industry.serviceSlugs, services);
   const categoryRows = inOrder(industry.categorySlugs, categories);
-  const others = siblings.filter((row) => row.slug !== industry.slug).slice(0, 6);
+  const others = siblings
+    .filter((row) => row.slug !== industry.slug)
+    .slice(0, 6);
 
   const photo = photoForPath(`/industries/${industry.slug}`);
 
@@ -153,46 +171,68 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
             { label: industry.name },
           ]}
         />
-
-        <div
-          className={photo ? "lg:grid lg:grid-cols-[minmax(0,1fr)_34rem] lg:items-stretch lg:gap-12" : undefined}
-        >
-        <header className="flex max-w-3xl flex-col gap-4">
-          <span
-            aria-hidden="true"
-            className="inline-flex h-12 w-12 items-center justify-center rounded-[--radius-md] bg-accent-50 text-accent-700"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d={glyph(industry.icon)} />
-            </svg>
-          </span>
-          <h1 className="text-3xl sm:text-4xl">{industry.name}</h1>
-          <p className="text-[16px] leading-relaxed text-ink-600">{industry.summary}</p>
-          <div className="flex flex-wrap gap-3">
-            <ButtonLink href="/enquiry">Tell us what you need</ButtonLink>
-            <ButtonLink href="/contact" variant="outline">
-              Talk to us
-            </ButtonLink>
-          </div>
-        </header>
-        {photo ? <PagePhoto photo={photo} className="mt-8 lg:mt-0" /> : null}
-        </div>
       </div>
+
+      <section
+        className={
+          photo
+            ? "relative isolate overflow-hidden border-y border-graphite-800 bg-graphite-900"
+            : "container-page"
+        }
+      >
+        {photo ? <PhotoBackdrop photo={photo} /> : null}
+        <div className={photo ? "container-page py-12 lg:py-16" : undefined}>
+          <header className="flex max-w-3xl flex-col gap-4 lg:max-w-2xl">
+            <span
+              aria-hidden="true"
+              className={`inline-flex h-12 w-12 items-center justify-center rounded-(--radius-md) ${
+                photo
+                  ? "bg-white/10 text-white"
+                  : "bg-accent-50 text-accent-700"
+              }`}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d={glyph(industry.icon)} />
+              </svg>
+            </span>
+            <h1 className={`text-3xl sm:text-4xl ${photo ? "text-white" : ""}`}>
+              {industry.name}
+            </h1>
+            <p
+              className={`text-[16px] leading-relaxed ${photo ? "text-graphite-100" : "text-ink-600"}`}
+            >
+              {industry.summary}
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <ButtonLink href="/enquiry">Tell us what you need</ButtonLink>
+              <ButtonLink
+                href="/contact"
+                variant={photo ? "onDark" : "outline"}
+              >
+                Talk to us
+              </ButtonLink>
+            </div>
+          </header>
+        </div>
+      </section>
 
       {industry.description ? (
         <section className="container-page pt-10">
           <div className="max-w-3xl">
             <h2 className="text-section">How this sector buys</h2>
-            <Markdown body={industry.description} className="prose-content mt-3 text-body" />
+            <Markdown
+              body={industry.description}
+              className="prose-content mt-3 text-body"
+            />
           </div>
         </section>
       ) : null}
@@ -209,7 +249,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
             {industry.solutions.map((solution) => (
               <li
                 key={solution}
-                className="rounded-[--radius-md] border border-line bg-white px-3.5 py-2 text-meta font-medium text-ink-700"
+                className="rounded-(--radius-md) border border-line bg-white px-3.5 py-2 text-meta font-medium text-ink-700"
               >
                 {solution}
               </li>
@@ -230,7 +270,10 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
             {categoryRows.map((category, index) => (
               <Reveal key={category.slug} delay={Math.min(index * 45, 180)}>
                 <CategoryCard
-                  category={{ ...category, count: category._count.products || undefined }}
+                  category={{
+                    ...category,
+                    count: category._count.products || undefined,
+                  }}
                 />
               </Reveal>
             ))}
@@ -249,7 +292,12 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {brandRows.map((brand, index) => (
               <Reveal key={brand.slug} delay={Math.min(index * 45, 180)}>
-                <BrandCard brand={{ ...brand, productCount: brand._count.products || undefined }} />
+                <BrandCard
+                  brand={{
+                    ...brand,
+                    productCount: brand._count.products || undefined,
+                  }}
+                />
               </Reveal>
             ))}
           </div>
@@ -269,7 +317,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
               <Reveal key={service.slug} delay={Math.min(index * 45, 180)}>
                 <Link
                   href={`/services/${service.slug}`}
-                  className="lift flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5 hover:border-graphite-300"
+                  className="lift flex h-full flex-col rounded-(--radius-lg) border border-line bg-white p-5 hover:border-graphite-300"
                 >
                   <span className="text-label font-semibold uppercase tracking-wide text-accent-700">
                     {service.category}
@@ -288,13 +336,15 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
       ) : null}
 
       <section className="container-page pt-14">
-        <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
+        <div className="rounded-(--radius-lg) border border-line bg-surface-muted p-6 sm:p-8">
           <h2 className="text-section">How the purchase runs</h2>
           <p className="mt-3 max-w-3xl text-body leading-relaxed text-ink-600">
-            Tell us the requirement and we quote it — licensing, hardware and services on one
-            document, priced to your configuration and quantity. You raise one purchase order, we
-            fulfil against it, and the entitlements and renewal dates stay on your account so the
-            next cycle starts from a record rather than from a search of somebody&rsquo;s inbox.
+            Tell us the requirement and we quote it — licensing, hardware and
+            services on one document, priced to your configuration and quantity.
+            You raise one purchase order, we fulfil against it, and the
+            entitlements and renewal dates stay on your account so the next
+            cycle starts from a record rather than from a search of
+            somebody&rsquo;s inbox.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <ButtonLink href="/enquiry">Build an enquiry</ButtonLink>
@@ -313,7 +363,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
               <li key={other.slug}>
                 <Link
                   href={`/industries/${other.slug}`}
-                  className="block rounded-[--radius-md] border border-line bg-white px-3 py-1.5 text-meta text-ink-700 transition-colors hover:border-graphite-400 hover:text-graphite-900"
+                  className="block rounded-(--radius-md) border border-line bg-white px-3 py-1.5 text-meta text-ink-700 transition-colors hover:border-graphite-400 hover:text-graphite-900"
                 >
                   {other.name}
                 </Link>

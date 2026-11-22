@@ -18,7 +18,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center rounded-[--radius-lg] border border-dashed border-line-strong bg-surface-muted px-6 py-14 text-center",
+        "flex flex-col items-center justify-center rounded-(--radius-lg) border border-dashed border-line-strong bg-surface-muted px-6 py-14 text-center",
         className,
       )}
     >
@@ -45,7 +45,7 @@ export function ErrorState({
   as?: "h2" | "h3";
 }) {
   return (
-    <div className="rounded-[--radius-lg] border border-danger-600/25 bg-danger-50 px-6 py-8 text-center">
+    <div className="rounded-(--radius-lg) border border-danger-600/25 bg-danger-50 px-6 py-8 text-center">
       <Heading className="text-base font-semibold text-danger-700">{title}</Heading>
       {description ? <p className="mt-2 text-sm text-ink-700">{description}</p> : null}
       {correlationId ? (
@@ -62,7 +62,7 @@ export function ErrorState({
 export function Skeleton({ className }: { className?: string }) {
   return (
     <div
-      className={cn("animate-pulse rounded-[--radius-sm] bg-surface-sunken", className)}
+      className={cn("animate-pulse rounded-(--radius-sm) bg-surface-sunken", className)}
       aria-hidden="true"
     />
   );
@@ -84,7 +84,7 @@ export function ProductGridSkeleton({ count = 9 }: { count?: number }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: count }).map((_, index) => (
-        <div key={index} className="rounded-[--radius-lg] border border-line bg-white p-5">
+        <div key={index} className="rounded-(--radius-lg) border border-line bg-white p-5">
           <Skeleton className="h-4 w-20" />
           <Skeleton className="mt-3 h-5 w-3/4" />
           <Skeleton className="mt-2 h-4 w-full" />

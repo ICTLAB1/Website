@@ -80,7 +80,7 @@ export function MobileNav({
         onClick={openDrawer}
         aria-expanded={open}
         aria-controls="mobile-navigation"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-graphite-900 lg:hidden"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-(--radius-md) border border-line-strong text-graphite-900 lg:hidden"
       >
         <span className="sr-only">Open menu</span>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -100,7 +100,7 @@ export function MobileNav({
             role="dialog"
             aria-modal="true"
             aria-label="Site navigation"
-            className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-white shadow-[--shadow-overlay] animate-slide-in-right"
+            className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-white shadow-(--shadow-overlay) animate-slide-in-right"
           >
             <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
               {current.kind === "root" ? (
@@ -109,7 +109,7 @@ export function MobileNav({
                 <button
                   type="button"
                   onClick={pop}
-                  className="-ml-1 inline-flex items-center gap-1.5 rounded-[--radius-sm] px-1 py-1 text-sm font-semibold text-graphite-900"
+                  className="-ml-1 inline-flex items-center gap-1.5 rounded-(--radius-sm) px-1 py-1 text-sm font-semibold text-graphite-900"
                 >
                   <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path d="M12.5 15.5 8 11l4.5-4.5v9z" />
@@ -120,7 +120,7 @@ export function MobileNav({
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="rounded-[--radius-sm] p-1.5 text-ink-500 hover:bg-surface-sunken"
+                className="rounded-(--radius-sm) p-1.5 text-ink-500 hover:bg-surface-sunken"
               >
                 <span className="sr-only">Close menu</span>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -262,7 +262,7 @@ export function MobileNav({
               <Link
                 href="/enquiry"
                 className={cn(
-                  "flex h-12 w-full items-center justify-center rounded-[--radius-md]",
+                  "flex h-12 w-full items-center justify-center rounded-(--radius-md)",
                   "bg-accent-700 text-sm font-semibold text-white",
                 )}
               >

@@ -102,7 +102,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
         <p className="mt-3">
           <a
             href={`/account/quotes/${quote.reference}/pdf`}
-            className="inline-flex h-9 items-center rounded-[--radius-md] border border-line-strong px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-400"
+            className="inline-flex h-9 items-center rounded-(--radius-md) border border-line-strong px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-400"
           >
             Download PDF
           </a>
@@ -208,7 +208,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
         <QuoteThread messages={quote.messages} staffLabel={config.tradingName} />
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <div className="rounded-(--radius-lg) border border-line bg-white p-5">
             <AccountForm
               action={askAboutQuote}
               submitLabel="Send question"
@@ -223,7 +223,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
             </AccountForm>
           </div>
 
-          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <div className="rounded-(--radius-lg) border border-line bg-white p-5">
             <AccountForm
               action={requestQuoteRevision}
               submitLabel="Request a revision"
@@ -245,7 +245,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
       </section>
 
       {quote.notes ? (
-        <section className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+        <section className="rounded-(--radius-lg) border border-line bg-surface-muted p-5">
           <h3 className="text-[15px] font-semibold text-graphite-900">Notes on this quotation</h3>
           <p className="mt-2 whitespace-pre-wrap text-[13px] leading-relaxed text-ink-700">
             {quote.notes}
@@ -254,7 +254,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
       ) : null}
 
       {quote.orders.length > 0 ? (
-        <section className="rounded-[--radius-lg] border border-success-600/30 bg-success-50 p-5">
+        <section className="rounded-(--radius-lg) border border-success-600/30 bg-success-50 p-5">
           <h3 className="text-[15px] font-semibold text-success-700">Order raised</h3>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
             This quotation has been accepted and order{" "}
@@ -265,7 +265,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
           </p>
         </section>
       ) : decidable ? (
-        <section className="max-w-xl rounded-[--radius-lg] border border-line bg-white p-5">
+        <section className="max-w-xl rounded-(--radius-lg) border border-line bg-white p-5">
           <h3 className="text-[15px] font-semibold text-graphite-900">Respond to this quotation</h3>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             Accepting raises an order against these prices. No payment is taken here — we invoice
@@ -301,7 +301,7 @@ export default async function AccountQuoteDetailPage({ params }: PageProps) {
           </div>
         </section>
       ) : (
-        <section className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+        <section className="rounded-(--radius-lg) border border-line bg-surface-muted p-5">
           <h3 className="text-[15px] font-semibold text-graphite-900">
             {expired ? "This quotation has expired" : "No action available"}
           </h3>

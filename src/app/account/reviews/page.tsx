@@ -58,7 +58,7 @@ export default async function AccountReviewsPage() {
             {pending.map((product) => (
               <li
                 key={product.id}
-                className="rounded-[--radius-lg] border border-line bg-white p-5"
+                className="rounded-(--radius-lg) border border-line bg-white p-5"
               >
                 <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
                   <h3 className="text-[15px] font-semibold text-graphite-900">
@@ -141,7 +141,7 @@ export default async function AccountReviewsPage() {
             {written.map((review) => (
               <li
                 key={review.id}
-                className="rounded-[--radius-lg] border border-line bg-white p-5"
+                className="rounded-(--radius-lg) border border-line bg-white p-5"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -171,7 +171,7 @@ export default async function AccountReviewsPage() {
                 </p>
 
                 {review.response ? (
-                  <div className="mt-3 rounded-[--radius-md] border-l-2 border-accent-600 bg-surface-muted px-4 py-3">
+                  <div className="mt-3 rounded-(--radius-md) border-l-2 border-accent-600 bg-surface-muted px-4 py-3">
                     <p className="text-label font-semibold uppercase tracking-[0.08em] text-ink-500">
                       Our reply
                     </p>

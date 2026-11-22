@@ -22,7 +22,7 @@ export function CompanyTabs() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Company" className="mt-6 border-b border-line">
+    <nav aria-label="Company settings" className="mt-6 border-b border-line">
       <ul className="scroll-x -mb-px flex gap-1">
         {TABS.map((tab) => {
           const active = tab.exact ? pathname === tab.href : pathname.startsWith(tab.href);

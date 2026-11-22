@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import Link from "next/link";
+import { headers } from "next/headers";
 import "./globals.css";
 
 import { Header } from "@/components/layout/header";
@@ -10,7 +11,10 @@ import { TrustBar } from "@/components/layout/trust-bar";
 import { CampaignGate } from "@/components/marketing/campaign-gate";
 import { BasketProvider } from "@/components/enquiry/basket-provider";
 import { ToastProvider } from "@/components/ui/toast";
-import { GoogleTag, GoogleTagManagerNoScript } from "@/components/analytics/google-tag";
+import {
+  GoogleTag,
+  GoogleTagManagerNoScript,
+} from "@/components/analytics/google-tag";
 import { MetaPixel } from "@/components/analytics/meta-pixel";
 import { ChatWidgetGate } from "@/components/chat/chat-widget-gate";
 import { JsonLd, organizationSchema, websiteSchema } from "@/lib/seo";
@@ -65,7 +69,7 @@ export const metadata: Metadata = {
      * the content migration that corrected it. This value is the safety net for
      * a route that has neither.
      */
-    default: `${getSiteIdentity().tradingName} | Enterprise Software Licensing & IT Solutions`,
+    default: `${getSiteIdentity().tradingName} | Software Licensing, IT Hardware & Solutions`,
     /*
      * The suffix is the trading name, not a description of the business.
      *
@@ -133,7 +137,20 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  /*
+   * The staff area is an application, not a page of the public site: it has its
+   * own sidebar and its own sign-out, so the public header, trust bar, campaign
+   * banner and footer are left off it. The proxy sets the path on every request.
+   */
+  const staffArea = ((await headers()).get("x-pathname") ?? "").startsWith(
+    "/admin",
+  );
+
   return (
     <html lang="en-IN" className={`${inter.variable} ${interRupee.variable}`}>
       <body className="flex min-h-dvh flex-col bg-white antialiased">
@@ -147,25 +164,25 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* First tab stop on every page. */}
         <Link
           href="#main-content"
-          className="sr-only-focusable absolute left-4 top-4 z-[100] rounded-[--radius-md] bg-graphite-900 px-4 py-2 text-sm font-medium text-white"
+          className="sr-only-focusable absolute left-4 top-4 z-[100] rounded-(--radius-md) bg-graphite-900 px-4 py-2 text-sm font-medium text-white"
         >
           Skip to main content
         </Link>
 
         <ToastProvider>
           <BasketProvider>
-            <Header />
+            {staffArea ? null : <Header />}
             {/*
               Under the navigation rather than inside it: the header is sticky
               and this is not, so the band introduces the page once and then
               gets out of the way as the reader scrolls.
             */}
-            <TrustBar />
-            <CampaignGate />
+            {staffArea ? null : <TrustBar />}
+            {staffArea ? null : <CampaignGate />}
             <main id="main-content" className="flex-1">
               {children}
             </main>
-            <Footer />
+            {staffArea ? null : <Footer />}
           </BasketProvider>
         </ToastProvider>
 

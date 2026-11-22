@@ -108,7 +108,7 @@ function ObjectList({
   sectionId: string;
 }) {
   return (
-    <fieldset className="min-w-0 rounded-[--radius-md] border border-line bg-surface-muted p-4">
+    <fieldset className="min-w-0 rounded-(--radius-md) border border-line bg-surface-muted p-4">
       <legend className="px-1 text-[13px] font-semibold text-graphite-900">{field.label}</legend>
       {field.hint ? <p className="mb-3 text-[12px] text-ink-500">{field.hint}</p> : null}
 
@@ -120,7 +120,7 @@ function ObjectList({
         ) : null}
 
         {rows.map((row, index) => (
-          <div key={index} className="rounded-[--radius-md] border border-line bg-white p-4">
+          <div key={index} className="rounded-(--radius-md) border border-line bg-white p-4">
             <p className="mb-3 text-[12px] font-medium uppercase tracking-wide text-ink-500">
               {field.itemLabel} {index + 1}
             </p>

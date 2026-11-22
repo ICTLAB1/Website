@@ -1,7 +1,7 @@
 # Image licences
 
 Photographs on the home, solution, industry and service pages (`src/lib/page-photos.ts`,
-files in `public/images/site/`) are licensed from Adobe Stock, 22 November 2026, one
+files in `public/images/site/`, 1600 pixels wide, laid behind each page opening) are licensed from Adobe Stock, 22 November 2026, one
 standard licence each. Keep this table current when a picture is replaced.
 
 | File | Adobe Stock id | Subject |
@@ -24,3 +24,17 @@ standard licence each. Keep this table current when a picture is replaced.
 
 These are stock photographs of a sector or a technology. They are not TechZoid staff,
 offices or customers, and no page may say or imply that they are.
+
+## Careers page
+
+The careers page (`src/lib/careers-media.ts`, files in `public/images/careers/`) uses the same
+licensed photographs, re-cropped, replacing earlier crops from design mockups that were too
+small to display sharply.
+
+| File | Adobe Stock id |
+|---|---|
+| hero.jpg | 607796653 |
+| life.jpg, cat-corp.jpg | 480395302 |
+| cat-sales.jpg | 321799860 |
+| cat-tech.jpg | 487552894 |
+| cat-ops.jpg | 322557278 |

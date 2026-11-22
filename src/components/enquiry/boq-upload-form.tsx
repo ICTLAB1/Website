@@ -48,7 +48,7 @@ export function BoqUploadForm({
 
   if (state.status === "success" && state.reference) {
     return (
-      <div className="rounded-[--radius-lg] border border-line bg-white p-8">
+      <div className="rounded-(--radius-lg) border border-line bg-white p-8">
         <h2 className="text-[1.25rem]">Requirement received</h2>
         <p className="mt-3 text-body leading-relaxed text-ink-600">{state.message}</p>
         <p className="mt-4 text-meta leading-relaxed text-ink-600">
@@ -58,7 +58,7 @@ export function BoqUploadForm({
         <div className="mt-6">
           <Link
             href="/account/enquiries"
-            className="inline-flex h-11 items-center rounded-[--radius-md] bg-graphite-900 px-5 text-meta font-medium text-white hover:bg-graphite-800"
+            className="inline-flex h-11 items-center rounded-(--radius-md) bg-graphite-900 px-5 text-meta font-medium text-white hover:bg-graphite-800"
           >
             Track it in your account
           </Link>
@@ -85,7 +85,7 @@ export function BoqUploadForm({
               type="file"
               required
               accept={DOCUMENT_ACCEPT_ATTRIBUTE}
-              className="file:mr-3 file:rounded-[--radius-sm] file:border-0 file:bg-graphite-900 file:px-3 file:py-1.5 file:text-white"
+              className="file:mr-3 file:rounded-(--radius-sm) file:border-0 file:bg-graphite-900 file:px-3 file:py-1.5 file:text-white"
             />
           </Field>
 

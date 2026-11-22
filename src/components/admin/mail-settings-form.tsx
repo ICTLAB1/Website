@@ -130,7 +130,7 @@ export function MailSettingsForm({ settings }: { settings: MailSettingsView }) {
 
       <div hidden={graph}>
       {settings.usingEnvironment && !graph ? (
-        <p className="rounded-[--radius-md] border border-line bg-surface-muted p-3 text-[12px] leading-relaxed text-ink-600">
+        <p className="rounded-(--radius-md) border border-line bg-surface-muted p-3 text-[12px] leading-relaxed text-ink-600">
           These fields are empty because the mail server is currently set in the server&rsquo;s own
           configuration file. Filling them in here takes over from that, and takes effect
           immediately — no redeploy. Clearing one again hands it back.
@@ -298,7 +298,7 @@ export function MailSettingsForm({ settings }: { settings: MailSettingsView }) {
         </Field>
 
         {settings.acsBrokenConfiguration ? (
-          <p className="rounded-[--radius-md] border border-amber-300 bg-amber-50 p-3 text-[12px] leading-relaxed text-amber-800">
+          <p className="rounded-(--radius-md) border border-amber-300 bg-amber-50 p-3 text-[12px] leading-relaxed text-amber-800">
             Switched on, but the connection string or the sender address is missing — system mail
             is still going out from the mailbox configured above until both are set.
           </p>

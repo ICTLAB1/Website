@@ -43,7 +43,7 @@ export function ReviewList({ reviews, summary }: { reviews: Review[]; summary: A
       />
 
       {summary.average === null ? (
-        <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-6">
+        <div className="rounded-(--radius-lg) border border-line bg-surface-muted p-6">
           <p className="text-[15px] text-ink-600">
             No reviews for this yet. Reviews here are open only to customers who bought the
             product from us, so there are fewer of them than on a marketplace — and every one
@@ -52,7 +52,7 @@ export function ReviewList({ reviews, summary }: { reviews: Review[]; summary: A
         </div>
       ) : (
         <>
-          <div className="mb-8 flex flex-col gap-6 rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:flex-row sm:items-center sm:gap-10">
+          <div className="mb-8 flex flex-col gap-6 rounded-(--radius-lg) border border-line bg-surface-muted p-6 sm:flex-row sm:items-center sm:gap-10">
             <div className="flex shrink-0 flex-col gap-1.5">
               <p className="flex items-baseline gap-2">
                 <span className="text-3xl font-semibold tabular-nums text-graphite-900">
@@ -101,7 +101,7 @@ export function ReviewList({ reviews, summary }: { reviews: Review[]; summary: A
             {reviews.map((review) => (
               <li
                 key={review.id}
-                className="rounded-[--radius-lg] border border-line bg-white p-5 sm:p-6"
+                className="rounded-(--radius-lg) border border-line bg-white p-5 sm:p-6"
               >
                 <article className="flex flex-col gap-2.5">
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -133,7 +133,7 @@ export function ReviewList({ reviews, summary }: { reviews: Review[]; summary: A
                   </p>
 
                   {review.response ? (
-                    <div className="mt-1.5 rounded-[--radius-md] border-l-2 border-accent-600 bg-surface-muted px-4 py-3">
+                    <div className="mt-1.5 rounded-(--radius-md) border-l-2 border-accent-600 bg-surface-muted px-4 py-3">
                       <p className="text-label font-semibold uppercase tracking-[0.08em] text-ink-500">
                         Our reply
                         {review.respondedAt ? (

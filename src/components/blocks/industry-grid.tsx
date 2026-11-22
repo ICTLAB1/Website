@@ -89,7 +89,7 @@ export function IndustryGridBlock({
               aria-current={chosen?.slug === industry.slug ? "true" : undefined}
               className={
                 chosen?.slug === industry.slug
-                  ? "h-full rounded-[--radius-lg] ring-2 ring-accent-500 ring-offset-2"
+                  ? "h-full rounded-(--radius-lg) ring-2 ring-accent-500 ring-offset-2"
                   : "h-full"
               }
             >
@@ -109,8 +109,8 @@ function FilterChip({ href, label, current }: { href: string; label: string; cur
       aria-current={current ? "true" : undefined}
       className={
         current
-          ? "rounded-[--radius-md] border border-graphite-900 bg-graphite-900 px-3 py-1.5 text-label font-medium text-white"
-          : "rounded-[--radius-md] border border-line bg-white px-3 py-1.5 text-label font-medium text-ink-700 transition-colors hover:border-graphite-300 hover:text-graphite-900"
+          ? "rounded-(--radius-md) border border-graphite-900 bg-graphite-900 px-3 py-1.5 text-label font-medium text-white"
+          : "rounded-(--radius-md) border border-line bg-white px-3 py-1.5 text-label font-medium text-ink-700 transition-colors hover:border-graphite-300 hover:text-graphite-900"
       }
     >
       {label}

@@ -18,7 +18,7 @@ export function Pagination({
 
   const pages = pageWindow(page, totalPages);
   const linkClass =
-    "inline-flex h-9 min-w-9 items-center justify-center rounded-[--radius-md] border px-2.5 text-sm";
+    "inline-flex h-9 min-w-9 items-center justify-center rounded-(--radius-md) border px-2.5 text-sm";
 
   return (
     <nav aria-label="Pagination" className="mt-10 flex flex-wrap items-center justify-center gap-1.5">

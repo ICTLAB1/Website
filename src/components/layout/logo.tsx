@@ -32,7 +32,7 @@ export function Logo({
       href="/"
       aria-label={`${name} — home`}
       className={cn(
-        "inline-flex min-w-0 items-center rounded-[--radius-sm]",
+        "inline-flex min-w-0 items-center rounded-(--radius-sm)",
         onDark ? "text-white" : "text-graphite-900",
         className,
       )}

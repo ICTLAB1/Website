@@ -61,7 +61,7 @@ export function DeliveryPanel({ order }: { order: DeliveryFacts }) {
   if (order.deliveredAt) facts.push(["Delivered", formatDateTime(order.deliveredAt)]);
 
   return (
-    <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+    <section className="rounded-(--radius-lg) border border-line bg-white p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-[15px] font-semibold text-graphite-900">Delivery</h3>
         <Badge tone={DELIVERY_STAGE_TONES[stage]}>{DELIVERY_STAGE_LABELS[stage]}</Badge>
@@ -77,7 +77,7 @@ export function DeliveryPanel({ order }: { order: DeliveryFacts }) {
         stop trusting.
       */}
       {overdue ? (
-        <p className="mt-3 rounded-[--radius-md] border border-warning-600/40 bg-warning-50 px-4 py-3 text-[13px] leading-relaxed text-ink-700">
+        <p className="mt-3 rounded-(--radius-md) border border-warning-600/40 bg-warning-50 px-4 py-3 text-[13px] leading-relaxed text-ink-700">
           This is past the date we expected. We are chasing it — contact us if you need it sooner
           and we will tell you what we know.
         </p>
@@ -95,7 +95,7 @@ export function DeliveryPanel({ order }: { order: DeliveryFacts }) {
       ) : null}
 
       {order.deliveryNote ? (
-        <p className="mt-4 whitespace-pre-line rounded-[--radius-md] bg-surface-muted px-4 py-3 text-[13px] leading-relaxed text-ink-700">
+        <p className="mt-4 whitespace-pre-line rounded-(--radius-md) bg-surface-muted px-4 py-3 text-[13px] leading-relaxed text-ink-700">
           {order.deliveryNote}
         </p>
       ) : null}

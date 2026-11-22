@@ -43,7 +43,7 @@ export default async function EnquirySubmittedPage({ searchParams }: PageProps) 
         <h1 className="mt-6 text-3xl sm:text-[2.25rem]">Enquiry received</h1>
 
         {reference ? (
-          <div className="mt-6 inline-block rounded-[--radius-lg] border border-line bg-surface-muted px-6 py-4">
+          <div className="mt-6 inline-block rounded-(--radius-lg) border border-line bg-surface-muted px-6 py-4">
             <p className="text-[12px] uppercase tracking-wide text-ink-500">Your reference</p>
             <p className="mt-1 font-mono text-[20px] font-semibold text-graphite-900">{reference}</p>
           </div>
@@ -55,7 +55,7 @@ export default async function EnquirySubmittedPage({ searchParams }: PageProps) 
           {reference ? " with this reference" : ""}.
         </p>
 
-        <div className="mt-8 rounded-[--radius-lg] border border-line bg-white p-6 text-left">
+        <div className="mt-8 rounded-(--radius-lg) border border-line bg-white p-6 text-left">
           <h2 className="text-[15px] font-semibold text-graphite-900">What happens next</h2>
           <ol className="mt-4 space-y-3 text-[14px] leading-relaxed text-ink-600">
             <li className="flex gap-3">

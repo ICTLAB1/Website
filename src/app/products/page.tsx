@@ -1,18 +1,27 @@
+import { PhotoHeader } from "@/components/marketing/page-photo";
+import { photoForPath } from "@/lib/page-photos";
 import type { Metadata } from "next";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ButtonLink } from "@/components/ui/button";
 import { CatalogueListing } from "@/components/catalogue/catalogue-listing";
-import { parseCatalogueParams, type RawSearchParams } from "@/lib/catalogue-params";
+import {
+  parseCatalogueParams,
+  type RawSearchParams,
+} from "@/lib/catalogue-params";
 import { TENTATIVE_PRICE_NOTE } from "@/lib/catalogue/quote-only";
 import { buildMetadata } from "@/lib/seo";
 
 type PageProps = { searchParams: Promise<RawSearchParams> };
 
-export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
   const params = await searchParams;
   const query = Array.isArray(params.q) ? params.q[0] : params.q;
-  const hasFilters = Object.keys(params).some((key) => key !== "page" && params[key]);
+  const hasFilters = Object.keys(params).some(
+    (key) => key !== "page" && params[key],
+  );
 
   /*
    * "Licensing from Every Major Brand" was the claim here, and it is not one
@@ -41,46 +50,59 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const filters = parseCatalogueParams(params);
 
-  return (
-    <div className="container-page pb-16">
-      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Products" }]} />
+  const photo = photoForPath("/products");
 
-      <header className="mb-8 max-w-3xl">
-        <h1 className="text-3xl sm:text-4xl">
-          {filters.q ? `Results for “${filters.q}”` : "Software catalogue"}
-        </h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-600">
-          Licensing across Microsoft, Adobe, Autodesk, Zoho, SketchUp, Corel and enterprise
-          infrastructure.{" "}
-          {/*
+  return (
+    <>
+      <div className="container-page">
+        <Breadcrumb
+          items={[{ label: "Home", href: "/" }, { label: "Products" }]}
+        />
+      </div>
+      {photo ? (
+        <PhotoHeader photo={photo}>
+          <h1 className="text-3xl text-white sm:text-4xl">
+            {filters.q ? `Results for “${filters.q}”` : "Software catalogue"}
+          </h1>
+          <p className="mt-3 text-[15px] leading-relaxed text-graphite-100">
+            Licensing across Microsoft, Adobe, Autodesk, Zoho, SketchUp, Corel
+            and enterprise infrastructure.{" "}
+            {/*
             The shared note rather than a sentence of its own. This header used
             to say prices exclude GST and are confirmed on a quotation, which is
             true and tells a reader nothing they can act on — and it was a third
             hand-written copy of a rule that now lives in one place.
           */}
-          {TENTATIVE_PRICE_NOTE}
-        </p>
-      </header>
+            {TENTATIVE_PRICE_NOTE}
+          </p>
+        </PhotoHeader>
+      ) : null}
+      <div className="container-page pb-16 pt-10">
+        <CatalogueListing
+          params={params}
+          filters={filters}
+          basePath="/products"
+        />
 
-      <CatalogueListing params={params} filters={filters} basePath="/products" />
-
-      <div className="mt-14 rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
-        <h2 className="text-[1.25rem]">Cannot find what you need?</h2>
-        <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-600">
-          This catalogue lists our most-requested licensing. We source considerably more than is
-          listed here, including hardware configurations and publisher products that are only
-          ever quoted. Tell us the requirement and we will price it.
-        </p>
-        <div className="mt-5 flex flex-wrap gap-3">
-          <ButtonLink href="/enquiry">Request enterprise pricing</ButtonLink>
-          <ButtonLink href="/contact" variant="outline">
-            Talk to a specialist
-          </ButtonLink>
-          <ButtonLink href="/hardware" variant="outline">
-            Business laptops &amp; desktops
-          </ButtonLink>
+        <div className="mt-14 rounded-(--radius-lg) border border-line bg-surface-muted p-6 sm:p-8">
+          <h2 className="text-[1.25rem]">Cannot find what you need?</h2>
+          <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-600">
+            This catalogue lists our most-requested licensing. We source
+            considerably more than is listed here, including hardware
+            configurations and publisher products that are only ever quoted.
+            Tell us the requirement and we will price it.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <ButtonLink href="/enquiry">Request enterprise pricing</ButtonLink>
+            <ButtonLink href="/contact" variant="outline">
+              Talk to a specialist
+            </ButtonLink>
+            <ButtonLink href="/hardware" variant="outline">
+              Business laptops &amp; desktops
+            </ButtonLink>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -57,7 +57,7 @@ export default async function AccountDevicesPage() {
         {devices.length > 0 ? (
           <dl className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {(["active", "expiring", "expired", "unknown"] as const).map((state) => (
-              <div key={state} className="rounded-[--radius-lg] border border-line bg-white p-4">
+              <div key={state} className="rounded-(--radius-lg) border border-line bg-white p-4">
                 <dt className="text-[12px] font-semibold uppercase tracking-[0.08em] text-ink-500">
                   {WARRANTY_LABELS[state]}
                 </dt>
@@ -127,7 +127,7 @@ export default async function AccountDevicesPage() {
       )}
 
       {mayWrite ? (
-        <section className="max-w-2xl rounded-[--radius-lg] border border-line bg-white p-5">
+        <section className="max-w-2xl rounded-(--radius-lg) border border-line bg-white p-5">
           <h3 className="text-[15px] font-semibold text-graphite-900">Add a device</h3>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             Only the make and model are required. Leave a date blank if you do not have it —
@@ -187,7 +187,7 @@ export default async function AccountDevicesPage() {
           </div>
         </section>
       ) : (
-        <p className="rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
+        <p className="rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
           Your access is read-only. A colleague with IT or procurement access can add a device.
         </p>
       )}

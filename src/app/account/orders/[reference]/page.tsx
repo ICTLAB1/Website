@@ -167,7 +167,7 @@ export default async function AccountOrderPage({ params }: PageProps) {
       </section>
 
       {closed ? null : mayUpload ? (
-        <section className="max-w-xl rounded-[--radius-lg] border border-line bg-white p-5">
+        <section className="max-w-xl rounded-(--radius-lg) border border-line bg-white p-5">
           <h3 className="text-[15px] font-semibold text-graphite-900">Send your purchase order</h3>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             {ACCEPTED_DOCUMENTS}, up to 10 MB. We check it against this order before confirming —
@@ -187,7 +187,7 @@ export default async function AccountOrderPage({ params }: PageProps) {
                   type="file"
                   required
                   accept={DOCUMENT_ACCEPT_ATTRIBUTE}
-                  className="file:mr-3 file:rounded-[--radius-sm] file:border-0 file:bg-graphite-900 file:px-3 file:py-1.5 file:text-white"
+                  className="file:mr-3 file:rounded-(--radius-sm) file:border-0 file:bg-graphite-900 file:px-3 file:py-1.5 file:text-white"
                 />
               </Field>
               <Field
@@ -205,13 +205,13 @@ export default async function AccountOrderPage({ params }: PageProps) {
           </div>
         </section>
       ) : (
-        <p className="rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
+        <p className="rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
           Your access is read-only. A colleague with procurement or finance access can send the
           purchase order.
         </p>
       )}
 
-      <section className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+      <section className="rounded-(--radius-lg) border border-line bg-surface-muted p-5">
         <h3 className="text-[15px] font-semibold text-graphite-900">Billing</h3>
         <dl className="mt-3 space-y-2 text-[13px]">
           {[

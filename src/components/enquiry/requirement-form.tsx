@@ -153,7 +153,7 @@ export function RequirementForm({
 
   if (state.status === "success" && state.reference) {
     return (
-      <div className="rounded-[--radius-lg] border border-line bg-white p-8">
+      <div className="rounded-(--radius-lg) border border-line bg-white p-8">
         <h2 className="text-[1.25rem]">Requirement received</h2>
         <p className="mt-3 text-body leading-relaxed text-ink-600">{state.message}</p>
         <p className="mt-4 text-meta leading-relaxed text-ink-600">
@@ -163,13 +163,13 @@ export function RequirementForm({
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/account/enquiries"
-            className="inline-flex h-11 items-center rounded-[--radius-md] bg-graphite-900 px-5 text-meta font-medium text-white hover:bg-graphite-800"
+            className="inline-flex h-11 items-center rounded-(--radius-md) bg-graphite-900 px-5 text-meta font-medium text-white hover:bg-graphite-800"
           >
             Track it in your account
           </Link>
           <Link
             href="/products"
-            className="inline-flex h-11 items-center rounded-[--radius-md] border border-line-strong px-5 text-meta font-medium text-graphite-900 hover:border-graphite-400"
+            className="inline-flex h-11 items-center rounded-(--radius-md) border border-line-strong px-5 text-meta font-medium text-graphite-900 hover:border-graphite-400"
           >
             Browse the catalogue
           </Link>

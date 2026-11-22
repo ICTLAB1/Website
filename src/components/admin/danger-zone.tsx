@@ -53,7 +53,7 @@ export function DangerZone({
     <section
       className={
         className ??
-        "mt-10 rounded-[--radius-lg] border border-danger-600/30 bg-danger-50/40 p-5"
+        "mt-10 rounded-(--radius-lg) border border-danger-600/30 bg-danger-50/40 p-5"
       }
     >
       <h2 className="text-[15px] font-semibold text-graphite-900">Remove this {noun}</h2>
@@ -97,7 +97,7 @@ export function DangerZone({
           </div>
 
           {retentionNote ? (
-            <p className="rounded-[--radius-md] border border-warning-600/40 bg-warning-50 p-3 text-[13px] leading-relaxed text-graphite-900">
+            <p className="rounded-(--radius-md) border border-warning-600/40 bg-warning-50 p-3 text-[13px] leading-relaxed text-graphite-900">
               {retentionNote}
             </p>
           ) : null}

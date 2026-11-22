@@ -86,7 +86,7 @@ export default async function AdminDevicesPage({ searchParams }: PageProps) {
           <Link
             href="/admin/devices"
             className={cn(
-              "rounded-[--radius-md] px-3 py-2 text-[13px]",
+              "rounded-(--radius-md) px-3 py-2 text-[13px]",
               !filter ? "bg-graphite-900 font-medium text-white" : "text-ink-600 hover:bg-white",
             )}
           >
@@ -97,7 +97,7 @@ export default async function AdminDevicesPage({ searchParams }: PageProps) {
               key={entry}
               href={`/admin/devices?warranty=${entry}`}
               className={cn(
-                "rounded-[--radius-md] px-3 py-2 text-[13px]",
+                "rounded-(--radius-md) px-3 py-2 text-[13px]",
                 filter === entry
                   ? "bg-graphite-900 font-medium text-white"
                   : "text-ink-600 hover:bg-white",
@@ -157,7 +157,7 @@ export default async function AdminDevicesPage({ searchParams }: PageProps) {
       )}
 
       {mayWrite && companies.length > 0 ? (
-        <section className="max-w-3xl rounded-[--radius-lg] border border-line bg-white p-5">
+        <section className="max-w-3xl rounded-(--radius-lg) border border-line bg-white p-5">
           <h2 className="text-[1.05rem]">Record a device for a customer</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             For a delivery being entered on the customer&rsquo;s behalf. Leave a date blank rather

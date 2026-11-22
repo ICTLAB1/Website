@@ -56,7 +56,7 @@ export default async function VerificationRequiredPage() {
           email on a phone and filling this form on a laptop cannot follow a
           link across the gap; they can read six digits across it.
         */}
-        <div className="mt-8 rounded-[--radius-lg] border border-line bg-white p-5">
+        <div className="mt-8 rounded-(--radius-lg) border border-line bg-white p-5">
           <h2 className="text-[15px] font-semibold text-graphite-900">Enter your code</h2>
           <AdminForm
             action={confirmVerificationCode}
@@ -92,7 +92,7 @@ export default async function VerificationRequiredPage() {
           </AdminForm>
         </div>
 
-        <div className="mt-8 rounded-[--radius-lg] border border-line bg-white p-5">
+        <div className="mt-8 rounded-(--radius-lg) border border-line bg-white p-5">
           <h2 className="text-[15px] font-semibold text-graphite-900">Why we ask</h2>
           <p className="mt-2 text-[14px] leading-relaxed text-ink-600">
             Quotations, order confirmations, invoices and licence keys are all sent to this
@@ -101,7 +101,7 @@ export default async function VerificationRequiredPage() {
           </p>
         </div>
 
-        <div className="mt-6 rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+        <div className="mt-6 rounded-(--radius-lg) border border-line bg-surface-muted p-5">
           <h2 className="text-[15px] font-semibold text-graphite-900">
             What you can still do
           </h2>

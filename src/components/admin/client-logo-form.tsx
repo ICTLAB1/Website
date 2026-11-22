@@ -48,7 +48,7 @@ export function ClientLogoForm({
   const live = conditions.every((condition) => !condition.required || condition.met);
 
   return (
-    <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+    <section className="rounded-(--radius-lg) border border-line bg-white p-5">
       <h2 className="text-[15px] font-semibold text-graphite-900">Logo</h2>
       <p className="mt-2 text-meta leading-relaxed text-ink-600">
         Uploading a file does not put it on the site — {clientName}&rsquo;s mark appears once the
@@ -62,7 +62,7 @@ export function ClientLogoForm({
         {conditions.map((condition) => (
           <li
             key={condition.label}
-            className={`inline-flex items-center gap-2 rounded-[--radius-md] border px-3 py-1.5 text-label ${
+            className={`inline-flex items-center gap-2 rounded-(--radius-md) border px-3 py-1.5 text-label ${
               condition.met
                 ? "border-line bg-surface-muted text-graphite-900"
                 : "border-dashed border-line-strong text-ink-500"
@@ -83,12 +83,12 @@ export function ClientLogoForm({
 
       {current ? (
         <div className="mt-4 flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-3 rounded-[--radius-md] border border-line bg-white p-3">
+          <div className="flex items-center gap-3 rounded-(--radius-md) border border-line bg-white p-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={current} alt={`${clientName} logo`} className="h-10 w-auto max-w-[8rem] object-contain" />
             <span className="text-label text-ink-500">on white</span>
           </div>
-          <div className="flex items-center gap-3 rounded-[--radius-md] border border-graphite-700 bg-graphite-900 p-3">
+          <div className="flex items-center gap-3 rounded-(--radius-md) border border-graphite-700 bg-graphite-900 p-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={current} alt="" className="h-10 w-auto max-w-[8rem] object-contain" />
             <span className="text-label text-graphite-400">on charcoal</span>

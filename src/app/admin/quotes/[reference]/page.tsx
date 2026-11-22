@@ -206,13 +206,13 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
               href={`/account/quotes/${quote.reference}/pdf?inline=1`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-9 items-center rounded-[--radius-md] border border-line-strong px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-400"
+              className="inline-flex h-9 items-center rounded-(--radius-md) border border-line-strong px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-400"
             >
               Preview PDF
             </a>
             <a
               href={`/account/quotes/${quote.reference}/pdf`}
-              className="inline-flex h-9 items-center rounded-[--radius-md] border border-line-strong px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-400"
+              className="inline-flex h-9 items-center rounded-(--radius-md) border border-line-strong px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-400"
             >
               Download PDF
             </a>
@@ -296,7 +296,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                   what the screen is for; hiding it behind a disclosure, next to
                   fifteen collapsed line editors, is how it went unnoticed.
                 */}
-                <section className="mt-6 rounded-[--radius-lg] border border-line-strong bg-surface-muted p-5">
+                <section className="mt-6 rounded-(--radius-lg) border border-line-strong bg-surface-muted p-5">
                   <h3 className="text-[15px] font-semibold text-graphite-900">Add a line</h3>
                   <p className="mt-1 text-[13px] leading-relaxed text-ink-600">
                     Give a SKU and the catalogue fills in the rest. Leave it blank for a service,
@@ -395,7 +395,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                         ) : null}
                       </div>
 
-                      <details className="rounded-[--radius-md] border border-line bg-white p-4">
+                      <details className="rounded-(--radius-md) border border-line bg-white p-4">
                         <summary className="cursor-pointer text-[13px] font-medium text-graphite-900">
                           Description, brand, HSN and unit
                         </summary>
@@ -434,7 +434,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                   {quote.items.map((item) => (
                   <details
                     key={item.id}
-                    className="rounded-[--radius-lg] border border-line bg-white p-5"
+                    className="rounded-(--radius-lg) border border-line bg-white p-5"
                   >
                     <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
                       {/*
@@ -579,7 +579,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                 </div>
               </>
             ) : (
-              <p className="mt-4 rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
+              <p className="mt-4 rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
                 This quotation has been issued, so its lines are frozen. The customer was given a
                 stated validity period against these prices — raise a new quotation to change them.
               </p>
@@ -621,7 +621,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
         </div>
 
         <aside className="space-y-6">
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">Totals</h2>
             <dl className="mt-4 space-y-2 text-[13px]">
               <div className="flex justify-between gap-3">
@@ -712,7 +712,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
           </section>
 
           {quote.enquiry ? (
-            <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <section className="rounded-(--radius-lg) border border-line bg-white p-5">
               <h2 className="text-[15px] font-semibold text-graphite-900">Customer</h2>
               <dl className="mt-4 space-y-2.5 text-[13px]">
                 {[
@@ -730,7 +730,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
             </section>
           ) : null}
 
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="mb-4 text-[15px] font-semibold text-graphite-900">Terms</h2>
             <AdminForm
               action={updateQuoteTerms}
@@ -792,7 +792,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
           </section>
 
           {revisable ? (
-            <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <section className="rounded-(--radius-lg) border border-line bg-white p-5">
               <h2 className="text-[15px] font-semibold text-graphite-900">Revise</h2>
               <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
                 Raises version {(versions[0]?.version ?? quote.version) + 1} as a new draft with
@@ -817,7 +817,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
           ) : null}
 
           {isDraft ? (
-            <section className="rounded-[--radius-lg] border border-accent-600/40 bg-accent-50 p-5">
+            <section className="rounded-(--radius-lg) border border-accent-600/40 bg-accent-50 p-5">
               <h2 className="text-[15px] font-semibold text-graphite-900">Issue this quotation</h2>
               <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
                 Sending emails the customer a link to review and accept it, and freezes these
@@ -838,7 +838,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
                 href={`/account/quotes/${quote.reference}/pdf?inline=1`}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-4 inline-flex h-9 items-center rounded-[--radius-md] border border-graphite-400 bg-white px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-900"
+                className="mt-4 inline-flex h-9 items-center rounded-(--radius-md) border border-graphite-400 bg-white px-3.5 text-[13px] font-medium text-graphite-900 hover:border-graphite-900"
               >
                 Preview the PDF first
               </a>
@@ -874,7 +874,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
         <section className="max-w-3xl">
           <h2 className="mb-4 text-[1.05rem]">Follow-ups</h2>
 
-          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <div className="rounded-(--radius-lg) border border-line bg-white p-5">
             <p className="text-meta text-ink-600">
               {!followUpSettings.enabled
                 ? "Automatic follow-ups are switched off for the whole site. You can still send one by hand."
@@ -967,7 +967,7 @@ export default async function AdminQuoteDetailPage({ params }: PageProps) {
       <section className="max-w-3xl">
         <h2 className="mb-4 text-[1.05rem]">Questions from the customer</h2>
         <QuoteThread messages={quote.messages} />
-        <div className="mt-5 rounded-[--radius-lg] border border-line bg-white p-5">
+        <div className="mt-5 rounded-(--radius-lg) border border-line bg-white p-5">
           <AdminForm
             action={replyOnQuote}
             submitLabel="Send reply"

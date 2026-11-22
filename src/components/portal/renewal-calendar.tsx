@@ -42,7 +42,7 @@ export function RenewalCalendar({
             <div className="flex h-24 items-end justify-center">
               {month.count > 0 ? (
                 <div
-                  className={cn("w-8 rounded-t-[--radius-sm]", BARS[URGENCY_TONES[month.urgency]])}
+                  className={cn("w-8 rounded-t-(--radius-sm)", BARS[URGENCY_TONES[month.urgency]])}
                   style={{ height: `${Math.max(12, (month.count / busiest) * 96)}px` }}
                 />
               ) : (

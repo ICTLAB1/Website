@@ -15,11 +15,13 @@ relationship is true.
 |---|---|---|
 | `microsoft-solutions-partner.png` | Solutions Partner | Microsoft |
 | `adobe-certified-reseller.png` | Certified Reseller | Adobe |
+| `hp-business-partner.png` | Business Partner | HP |
 
-Both were supplied by the business from the publishers' own partner programmes.
+All three were supplied by the business from the publishers' own partner programmes.
 Each was trimmed of its transparent margin and scaled to 160 pixels tall — four
 times the height it renders at — and nothing else was changed. No recolouring,
 no cropping into the lockup, no removal of the publisher's mark from the badge.
+The HP file as supplied had solid black pixels in its four rounded corners, where the plate should have been transparent; those pixels were made transparent and nothing inside the badge was touched.
 Every one of these programmes prohibits exactly that, and an altered badge is no
 longer the badge that was issued.
 

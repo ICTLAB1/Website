@@ -17,7 +17,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: `${config.tradingName} — Enterprise Technology`,
     short_name: config.tradingName,
     description:
-      "Enterprise software licensing, cloud and IT solutions from one procurement partner.",
+      "Enterprise software licensing, IT hardware, cloud and IT solutions from one procurement partner.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

@@ -95,7 +95,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
       </TableWrap>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+        <section className="rounded-(--radius-lg) border border-line bg-white p-5">
           <h2 className="text-[15px] font-semibold text-graphite-900">Add a user</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             You never set their password. They are emailed a link to choose their own, which
@@ -127,7 +127,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
         </section>
 
         <div className="space-y-6">
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">
               Change a user&rsquo;s role
             </h2>
@@ -160,7 +160,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
             </div>
           </section>
 
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">Send a new set-up link</h2>
             <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
               For somebody who never received their invitation, or who is locked out. Any earlier
@@ -196,7 +196,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
             {others.map((user) => (
               <details
                 key={user.id}
-                className="rounded-[--radius-lg] border border-line bg-white p-5"
+                className="rounded-(--radius-lg) border border-line bg-white p-5"
               >
                 <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
                   {user.name} — {user.email}
@@ -205,7 +205,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                   config={DELETABLE.users}
                   id={user.id}
                   reference={user.email}
-                  className="mt-4 rounded-[--radius-md] border border-danger-600/30 bg-danger-50/40 p-4"
+                  className="mt-4 rounded-(--radius-md) border border-danger-600/30 bg-danger-50/40 p-4"
                 />
               </details>
             ))}

@@ -48,7 +48,7 @@ export default async function AdminFollowUpsPage() {
       </header>
 
       {followUps.length === 0 ? (
-        <p className="rounded-[--radius-lg] border border-dashed border-line-strong bg-surface-muted p-5 text-[14px] text-ink-600">
+        <p className="rounded-(--radius-lg) border border-dashed border-line-strong bg-surface-muted p-5 text-[14px] text-ink-600">
           Nothing outstanding. Follow-ups are logged against a deal — set a date when you log a
           call and it appears here until it is done.
         </p>
@@ -57,7 +57,7 @@ export default async function AdminFollowUpsPage() {
           {followUps.map((activity) => (
             <li
               key={activity.id}
-              className="rounded-[--radius-lg] border border-line bg-white p-4"
+              className="rounded-(--radius-lg) border border-line bg-white p-4"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                 <p className="text-[14px] font-medium text-graphite-900">

@@ -27,7 +27,7 @@ export async function CertificationStrip() {
           {certifications.map((certification) => (
             <li
               key={certification.id}
-              className="flex items-baseline gap-2 rounded-[--radius-md] border border-graphite-700 bg-graphite-800 px-3 py-1.5"
+              className="flex items-baseline gap-2 rounded-(--radius-md) border border-graphite-700 bg-graphite-800 px-3 py-1.5"
             >
               {/*
                 The standard alone. The certificate number was here too — the

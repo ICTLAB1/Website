@@ -53,7 +53,7 @@ export default async function AccountTicketPage({ params }: PageProps) {
         </p>
 
         {ticket.device ? (
-          <p className="mt-3 rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-700">
+          <p className="mt-3 rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-700">
             About{" "}
             <Link
               href={`/account/devices/${ticket.device.reference}`}
@@ -79,7 +79,7 @@ export default async function AccountTicketPage({ params }: PageProps) {
       </section>
 
       {closed ? (
-        <p className="rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] leading-relaxed text-ink-600">
+        <p className="rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-[13px] leading-relaxed text-ink-600">
           This ticket is {ticket.status === "RESOLVED" ? "resolved" : "closed"}. If the problem is
           back, please{" "}
           <Link href="/account/support" className="font-medium text-accent-700 hover:underline">
@@ -89,7 +89,7 @@ export default async function AccountTicketPage({ params }: PageProps) {
         </p>
       ) : mayWrite ? (
         <>
-          <section className="max-w-2xl rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="max-w-2xl rounded-(--radius-lg) border border-line bg-white p-5">
             <h3 className="text-[15px] font-semibold text-graphite-900">Reply</h3>
             <div className="mt-5">
               <AccountForm
@@ -105,7 +105,7 @@ export default async function AccountTicketPage({ params }: PageProps) {
             </div>
           </section>
 
-          <section className="max-w-xl rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="max-w-xl rounded-(--radius-lg) border border-line bg-white p-5">
             <h3 className="text-[15px] font-semibold text-graphite-900">Attach a file</h3>
             <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
               A screenshot of the error, a photograph of the damage, a log. {ACCEPTED_DOCUMENTS}, up
@@ -124,7 +124,7 @@ export default async function AccountTicketPage({ params }: PageProps) {
                     type="file"
                     required
                     accept={DOCUMENT_ACCEPT_ATTRIBUTE}
-                    className="file:mr-3 file:rounded-[--radius-sm] file:border-0 file:bg-graphite-900 file:px-3 file:py-1.5 file:text-white"
+                    className="file:mr-3 file:rounded-(--radius-sm) file:border-0 file:bg-graphite-900 file:px-3 file:py-1.5 file:text-white"
                   />
                 </Field>
               </AccountForm>
@@ -132,7 +132,7 @@ export default async function AccountTicketPage({ params }: PageProps) {
           </section>
         </>
       ) : (
-        <p className="rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
+        <p className="rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
           Your access is read-only. A colleague with support access can reply here.
         </p>
       )}

@@ -1,3 +1,5 @@
+import { PhotoHeader } from "@/components/marketing/page-photo";
+import { photoForPath } from "@/lib/page-photos";
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { BrandSegment } from "@prisma/client";
@@ -8,7 +10,11 @@ import { BrandCard } from "@/components/marketing/brand-card";
 import { ButtonLink } from "@/components/ui/button";
 import { getBrands } from "@/lib/queries/content";
 import { buildMetadata } from "@/lib/seo";
-import { SEGMENT_DESCRIPTIONS, SEGMENT_LABELS, SEGMENT_ORDER } from "@/lib/brand-segments";
+import {
+  SEGMENT_DESCRIPTIONS,
+  SEGMENT_LABELS,
+  SEGMENT_ORDER,
+} from "@/lib/brand-segments";
 
 /*
  * The title says "supply", not "authorised to resell".
@@ -55,59 +61,75 @@ export default async function BrandsPage() {
 
   // Declared order first, then anything not yet classified — visible rather
   // than hidden, so an unclassified brand is a prompt rather than a silence.
-  const groups: Array<{ key: BrandSegment | "OTHER"; label: string; description: string | null }> = [
-    ...SEGMENT_ORDER.filter((segment) => bySegment.has(segment)).map((segment) => ({
-      key: segment as BrandSegment | "OTHER",
-      label: SEGMENT_LABELS[segment],
-      description: SEGMENT_DESCRIPTIONS[segment],
-    })),
+  const groups: Array<{
+    key: BrandSegment | "OTHER";
+    label: string;
+    description: string | null;
+  }> = [
+    ...SEGMENT_ORDER.filter((segment) => bySegment.has(segment)).map(
+      (segment) => ({
+        key: segment as BrandSegment | "OTHER",
+        label: SEGMENT_LABELS[segment],
+        description: SEGMENT_DESCRIPTIONS[segment],
+      }),
+    ),
     ...(bySegment.has("OTHER")
       ? [{ key: "OTHER" as const, label: "Other brands", description: null }]
       : []),
   ];
 
+  const photo = photoForPath("/brands");
+
   return (
-    <div className="container-page pb-16">
-      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Brands" }]} />
+    <>
+      <div className="container-page">
+        <Breadcrumb
+          items={[{ label: "Home", href: "/" }, { label: "Brands" }]}
+        />
+      </div>
+      {photo ? (
+        <PhotoHeader photo={photo}>
+          <h1 className="text-3xl text-white sm:text-4xl">
+            Technology brands we supply
+          </h1>
+          <p className="mt-4 text-[16px] leading-relaxed text-graphite-100">
+            Each publisher licenses its software differently, and those
+            differences have real commercial consequences. These pages set out
+            how each one works and where the decisions usually cost
+            organisations money.
+          </p>
+        </PhotoHeader>
+      ) : null}
+      <div className="container-page pb-16 pt-10">
+        {groups.map((group) => (
+          <section key={group.key} className="mb-12">
+            <SectionHeader
+              title={group.label}
+              description={group.description ?? undefined}
+              className="mb-5"
+              as="h2"
+            />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {(bySegment.get(group.key) ?? []).map((brand) => (
+                <BrandCard
+                  key={brand.slug}
+                  brand={{ ...brand, productCount: brand._count.products }}
+                />
+              ))}
+            </div>
+          </section>
+        ))}
 
-      <header className="mb-10 max-w-3xl">
-        <h1 className="text-3xl sm:text-4xl">Technology brands we supply</h1>
-        <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
-          Each publisher licenses its software differently, and those differences have real
-          commercial consequences. These pages set out how each one works and where the
-          decisions usually cost organisations money.
-        </p>
-      </header>
+        {onRequest.length > 0 ? (
+          <section className="mb-12">
+            <SectionHeader
+              title="Available on request"
+              description="We can source and licence these on the same terms as anything above. There is no public catalogue for them yet, so tell us what you need and we will quote it."
+              className="mb-5"
+              as="h2"
+            />
 
-      {groups.map((group) => (
-        <section key={group.key} className="mb-12">
-          <SectionHeader
-            title={group.label}
-            description={group.description ?? undefined}
-            className="mb-5"
-            as="h2"
-          />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {(bySegment.get(group.key) ?? []).map((brand) => (
-              <BrandCard
-                key={brand.slug}
-                brand={{ ...brand, productCount: brand._count.products }}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
-
-      {onRequest.length > 0 ? (
-        <section className="mb-12">
-          <SectionHeader
-            title="Available on request"
-            description="We can source and licence these on the same terms as anything above. There is no public catalogue for them yet, so tell us what you need and we will quote it."
-            className="mb-5"
-            as="h2"
-          />
-
-          {/*
+            {/*
             Named rather than carded — but linked.
 
             A card promises a page with a catalogue on it, and these pages have
@@ -123,41 +145,42 @@ export default async function BrandsPage() {
             Fortinet has to guess the URL. Every page in the sitemap needs a
             path to it from a page a person can reach.
           */}
-          <ul className="flex flex-wrap gap-x-3 gap-y-2">
-            {onRequest.map((brand) => (
-              <li key={brand.slug}>
-                <Link
-                  href={`/brands/${brand.slug}`}
-                  className="block rounded-[--radius-md] border border-line bg-white px-3 py-1.5 text-meta text-ink-700 transition-colors hover:border-graphite-400 hover:text-graphite-900"
-                >
-                  {brand.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+            <ul className="flex flex-wrap gap-x-3 gap-y-2">
+              {onRequest.map((brand) => (
+                <li key={brand.slug}>
+                  <Link
+                    href={`/brands/${brand.slug}`}
+                    className="block rounded-(--radius-md) border border-line bg-white px-3 py-1.5 text-meta text-ink-700 transition-colors hover:border-graphite-400 hover:text-graphite-900"
+                  >
+                    {brand.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
 
-          <div className="mt-6">
+            <div className="mt-6">
+              <ButtonLink href="/enquiry" variant="outline">
+                Ask about a brand
+              </ButtonLink>
+            </div>
+          </section>
+        ) : null}
+
+        <section className="mt-16 rounded-(--radius-lg) border border-line bg-surface-muted p-6 sm:p-8">
+          <SectionHeader
+            title="Working with several of these at once?"
+            description="Most organisations do. Consolidating them onto one quotation and one purchase order removes a substantial amount of administrative work from your finance team."
+            className="mb-6"
+            as="h2"
+          />
+          <div className="flex flex-wrap gap-3">
+            <ButtonLink href="/enterprise">Enterprise procurement</ButtonLink>
             <ButtonLink href="/enquiry" variant="outline">
-              Ask about a brand
+              Build an enquiry
             </ButtonLink>
           </div>
         </section>
-      ) : null}
-
-      <section className="mt-16 rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
-        <SectionHeader
-          title="Working with several of these at once?"
-          description="Most organisations do. Consolidating them onto one quotation and one purchase order removes a substantial amount of administrative work from your finance team."
-          className="mb-6"
-          as="h2"
-        />
-        <div className="flex flex-wrap gap-3">
-          <ButtonLink href="/enterprise">Enterprise procurement</ButtonLink>
-          <ButtonLink href="/enquiry" variant="outline">
-            Build an enquiry
-          </ButtonLink>
-        </div>
-      </section>
-    </div>
+      </div>
+    </>
   );
 }

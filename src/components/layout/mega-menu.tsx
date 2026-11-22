@@ -299,10 +299,10 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                     onMouseEnter={cancelClose}
                     onMouseLeave={scheduleClose}
                     className={cn(
-                      "absolute top-full z-50 border border-line bg-white shadow-[--shadow-overlay]",
+                      "absolute top-full z-50 border border-line bg-white shadow-(--shadow-overlay)",
                       isOpen && "animate-slide-down origin-top",
                       isExiting && "animate-slide-up-out origin-top",
-                      "rounded-b-[--radius-lg]",
+                      "rounded-b-(--radius-lg)",
                       item.megaMenu
                         // Spans the page container, so its edges are the
                         // container's edges whatever the viewport width and
@@ -366,7 +366,7 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                             <Link
                               href={link.href}
                               onClick={closeNow}
-                              className="block rounded-[--radius-sm] px-3 py-2 hover:bg-surface-muted"
+                              className="block rounded-(--radius-sm) px-3 py-2 hover:bg-surface-muted"
                             >
                               <span className="block text-sm font-medium text-graphite-900">
                                 {link.label}

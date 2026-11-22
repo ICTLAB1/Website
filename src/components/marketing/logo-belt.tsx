@@ -99,7 +99,7 @@ function BeltFace({ item }: { item: BeltItem }) {
     <>
       <span
         aria-hidden="true"
-        className="inline-grid h-5 w-5 shrink-0 place-items-center rounded-[--radius-sm] text-label font-bold text-white"
+        className="inline-grid h-5 w-5 shrink-0 place-items-center rounded-(--radius-sm) text-label font-bold text-white"
         style={{ backgroundColor: item.accentColor }}
       >
         {item.name.charAt(0)}
@@ -147,7 +147,7 @@ export function LogoWall({
           in this repository is normalised to a common height before it is
           committed. See public/brands/README.md.
         */
-        className="grid grid-cols-2 overflow-hidden rounded-[--radius-lg] border border-line bg-white sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        className="grid grid-cols-2 overflow-hidden rounded-(--radius-lg) border border-line bg-white sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
         data-desaturate={desaturate ? "true" : "false"}
       >
         {items.map((item, index) => (

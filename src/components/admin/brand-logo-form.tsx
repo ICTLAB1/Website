@@ -27,7 +27,7 @@ export function BrandLogoForm({
   const current = safeBrandLogo(logoUrl);
 
   return (
-    <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+    <section className="rounded-(--radius-lg) border border-line bg-white p-5">
       <h2 className="text-[15px] font-semibold text-graphite-900">Logo</h2>
       <p className="mt-2 text-meta leading-relaxed text-ink-600">
         Shown on the brand cards and in the header strip. Without one, {brandName} keeps the
@@ -37,19 +37,19 @@ export function BrandLogoForm({
 
       {current ? (
         <div className="mt-4 flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-3 rounded-[--radius-md] border border-line bg-white p-3">
+          <div className="flex items-center gap-3 rounded-(--radius-md) border border-line bg-white p-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={current} alt={`${brandName} logo`} className="h-10 w-10 object-contain" />
             <span className="text-label text-ink-500">on white</span>
           </div>
-          <div className="flex items-center gap-3 rounded-[--radius-md] border border-graphite-700 bg-graphite-900 p-3">
+          <div className="flex items-center gap-3 rounded-(--radius-md) border border-graphite-700 bg-graphite-900 p-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={current} alt="" className="h-10 w-10 object-contain" />
             <span className="text-label text-graphite-400">on charcoal</span>
           </div>
         </div>
       ) : (
-        <p className="mt-4 rounded-[--radius-md] border border-dashed border-line-strong bg-surface-muted px-4 py-3 text-meta text-ink-500">
+        <p className="mt-4 rounded-(--radius-md) border border-dashed border-line-strong bg-surface-muted px-4 py-3 text-meta text-ink-500">
           No logo set. {brandName} shows a lettered tile.
         </p>
       )}

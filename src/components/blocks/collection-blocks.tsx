@@ -148,8 +148,8 @@ export async function PriceComparisonBlock({
                   key={product.id}
                   className={
                     ours
-                      ? "flex flex-col rounded-[--radius-lg] border-2 border-accent-600 bg-white p-5"
-                      : "flex flex-col rounded-[--radius-lg] border border-line bg-white p-5"
+                      ? "flex flex-col rounded-(--radius-lg) border-2 border-accent-600 bg-white p-5"
+                      : "flex flex-col rounded-(--radius-lg) border border-line bg-white p-5"
                   }
                 >
                   <p className="text-label uppercase tracking-[0.12em] text-ink-500">
@@ -281,7 +281,7 @@ function CertificationCard({ certification }: { certification: CertificationRow 
   const seal = certificationLogo(certification.standard);
 
   return (
-    <div className="flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5">
+    <div className="flex h-full flex-col rounded-(--radius-lg) border border-line bg-white p-5">
       {/*
         The seal above the title, not instead of it and not beside it.
 
@@ -495,7 +495,7 @@ export function CollectionGridBlock({
             <li key={category.name}>
               <Link
                 href={`/blog?category=${encodeURIComponent(category.name)}`}
-                className="lift inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-meta font-medium text-ink-700 hover:border-graphite-300 hover:text-graphite-900"
+                className="lift inline-flex items-center gap-2 rounded-(--radius-md) border border-line bg-white px-4 py-2.5 text-meta font-medium text-ink-700 hover:border-graphite-300 hover:text-graphite-900"
               >
                 {category.name}
                 <span className="text-ink-500">{category.count}</span>
@@ -549,7 +549,7 @@ export function CollectionGridBlock({
             <Link
               key={service.slug}
               href={`/services/${service.slug}`}
-              className="lift group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 hover:border-graphite-300"
+              className="lift group flex flex-col rounded-(--radius-lg) border border-line bg-white p-5 hover:border-graphite-300"
             >
               <span className="text-label font-semibold uppercase tracking-[0.1em] text-accent-700">
                 {service.category}
@@ -570,7 +570,7 @@ export function CollectionGridBlock({
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="lift group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 hover:border-graphite-300"
+              className="lift group flex flex-col rounded-(--radius-lg) border border-line bg-white p-5 hover:border-graphite-300"
             >
               <span className="text-label font-semibold uppercase tracking-[0.1em] text-accent-700">
                 {post.category}

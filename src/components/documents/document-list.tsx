@@ -50,7 +50,7 @@ export function DocumentList({
       {documents.map((document) => (
         <li
           key={document.reference}
-          className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-[--radius-md] border border-line bg-white px-4 py-3"
+          className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-(--radius-md) border border-line bg-white px-4 py-3"
         >
           <div className="min-w-0">
             <Link

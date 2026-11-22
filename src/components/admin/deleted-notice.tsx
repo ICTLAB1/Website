@@ -24,7 +24,7 @@ export function DeletedNotice({
   return (
     <p
       role="status"
-      className="rounded-[--radius-md] border border-line-strong bg-surface-muted px-4 py-3 text-[13px] text-graphite-900"
+      className="rounded-(--radius-md) border border-line-strong bg-surface-muted px-4 py-3 text-[13px] text-graphite-900"
     >
       The {noun} <span className="font-medium">{reference.slice(0, 120)}</span> has been
       permanently deleted.

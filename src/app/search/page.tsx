@@ -33,7 +33,7 @@ function ResultGroup({ heading, results }: { heading: string; results: SearchRes
         {heading}
         <span className="text-[13px] font-normal text-ink-500">({results.length})</span>
       </h2>
-      <ul className="divide-y divide-line rounded-[--radius-lg] border border-line bg-white">
+      <ul className="divide-y divide-line rounded-(--radius-lg) border border-line bg-white">
         {results.map((result) => (
           <li key={result.href}>
             <Link href={result.href} className="flex items-start gap-4 px-5 py-4 hover:bg-surface-muted">
@@ -44,7 +44,7 @@ function ResultGroup({ heading, results }: { heading: string; results: SearchRes
                 </span>
               </span>
               {result.badge ? (
-                <span className="mt-0.5 shrink-0 rounded-[--radius-xs] bg-ink-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-600">
+                <span className="mt-0.5 shrink-0 rounded-(--radius-xs) bg-ink-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-600">
                   {result.badge}
                 </span>
               ) : null}

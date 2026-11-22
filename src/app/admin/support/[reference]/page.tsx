@@ -75,7 +75,7 @@ export default async function AdminTicketPage({ params }: PageProps) {
         </p>
 
         {ticket.device ? (
-          <p className="mt-3 rounded-[--radius-md] border border-line bg-white px-4 py-3 text-[13px] text-ink-700">
+          <p className="mt-3 rounded-(--radius-md) border border-line bg-white px-4 py-3 text-[13px] text-ink-700">
             About {ticket.device.brandName} {ticket.device.model}
             {ticket.device.serial ? ` · serial ${ticket.device.serial}` : " · serial not recorded"} ·{" "}
             <span className="font-mono">{ticket.device.reference}</span>
@@ -97,7 +97,7 @@ export default async function AdminTicketPage({ params }: PageProps) {
       </section>
 
       {mayReply ? (
-        <section className="max-w-3xl rounded-[--radius-lg] border border-line bg-white p-5">
+        <section className="max-w-3xl rounded-(--radius-lg) border border-line bg-white p-5">
           <h2 className="text-[1.05rem]">Reply</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             Goes on the ticket and to the customer by email. Setting the status to
@@ -129,7 +129,7 @@ export default async function AdminTicketPage({ params }: PageProps) {
           </div>
         </section>
       ) : (
-        <p className="max-w-3xl rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
+        <p className="max-w-3xl rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
           Your account can read support tickets but not answer them.
         </p>
       )}

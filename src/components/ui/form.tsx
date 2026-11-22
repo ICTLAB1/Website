@@ -46,7 +46,7 @@ export function useFieldError(name?: string): string | undefined {
 }
 
 const CONTROL_BASE =
-  "w-full rounded-[--radius-md] border bg-white px-3 text-sm text-ink-900 " +
+  "w-full rounded-(--radius-md) border bg-white px-3 text-sm text-ink-900 " +
   "placeholder:text-ink-500 transition-colors " +
   "disabled:cursor-not-allowed disabled:bg-surface-sunken disabled:text-ink-500";
 
@@ -124,7 +124,7 @@ export function Field({
       {control}
 
       {hint ? (
-        <p id={hintId} className="text-[12px] text-ink-500">
+        <p id={hintId} className="text-[12px] text-ink-500 [overflow-wrap:anywhere]">
           {hint}
         </p>
       ) : null}
@@ -192,7 +192,7 @@ export function Checkbox({
       <input
         id={id}
         type="checkbox"
-        className="mt-0.5 h-4 w-4 shrink-0 rounded-[--radius-xs] border-line-strong accent-[var(--color-accent-700)]"
+        className="mt-0.5 h-4 w-4 shrink-0 rounded-(--radius-xs) border-line-strong accent-[var(--color-accent-700)]"
         {...props}
       />
       <label htmlFor={id} className="text-[13px] leading-snug text-ink-700">
@@ -215,7 +215,7 @@ export function FormError({ children }: { children: ReactNode }) {
        * deliberate line break being collapsed, which is what happened to the
        * first error on this site long enough to explain itself.
        */
-      className="whitespace-pre-line rounded-[--radius-md] border border-danger-600/30 bg-danger-50 px-4 py-3 text-[13px] leading-relaxed text-danger-700"
+      className="whitespace-pre-line rounded-(--radius-md) border border-danger-600/30 bg-danger-50 px-4 py-3 text-[13px] leading-relaxed text-danger-700"
     >
       {children}
     </div>
@@ -227,7 +227,7 @@ export function FormSuccess({ children }: { children: ReactNode }) {
   return (
     <div
       role="status"
-      className="rounded-[--radius-md] border border-success-600/30 bg-success-50 px-4 py-3 text-[13px] text-success-700"
+      className="rounded-(--radius-md) border border-success-600/30 bg-success-50 px-4 py-3 text-[13px] text-success-700"
     >
       {children}
     </div>
@@ -249,7 +249,7 @@ export function Fieldset({
     <fieldset className={cn("min-w-0", className)}>
       <legend className="text-sm font-semibold text-graphite-900">{legend}</legend>
       {description ? <p className="mt-1 text-[13px] text-ink-500">{description}</p> : null}
-      <div className="mt-4 grid gap-4">{children}</div>
+      <div className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-4">{children}</div>
     </fieldset>
   );
 }

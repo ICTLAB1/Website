@@ -88,7 +88,7 @@ export default async function AdminSettingsPage() {
       </header>
 
       {missing.length > 0 ? (
-        <div className="rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-5">
+        <div className="rounded-(--radius-lg) border border-warning-600/40 bg-warning-50 p-5">
           <h2 className="text-[15px] font-semibold text-warning-700">Still to fill in</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
             These are not set anywhere. The public site leaves the corresponding details out
@@ -97,7 +97,7 @@ export default async function AdminSettingsPage() {
           </p>
           <ul className="mt-3 flex flex-wrap gap-2">
             {missing.map((key) => (
-              <li key={key} className="rounded-[--radius-sm] bg-white px-2 py-1 font-mono text-[11px] text-ink-700">
+              <li key={key} className="rounded-(--radius-sm) bg-white px-2 py-1 font-mono text-[11px] text-ink-700">
                 {key}
               </li>
             ))}

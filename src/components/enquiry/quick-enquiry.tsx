@@ -41,7 +41,7 @@ export async function QuickEnquiry({
       aria-labelledby="quote-heading"
       className={contained ? "container-page scroll-mt-32 pb-14 lg:pb-18" : "mt-16 scroll-mt-32"}
     >
-      <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
+      <div className="rounded-(--radius-lg) border border-line bg-surface-muted p-6 sm:p-8">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] lg:gap-12">
           <div>
             <h2 id="quote-heading" className="text-section">
@@ -63,7 +63,7 @@ export async function QuickEnquiry({
               </p>
             ) : null}
           </div>
-          <div className="rounded-[--radius-md] border border-line bg-white p-5 sm:p-6">
+          <div className="rounded-(--radius-md) border border-line bg-white p-5 sm:p-6">
             <RequirementForm compact slots={1} subject={subject} source={source} defaults={{}} />
           </div>
         </div>

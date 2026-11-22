@@ -1,45 +1,71 @@
 import Image from "next/image";
 
 import type { SitePhoto } from "@/lib/page-photos";
-import { cn } from "@/lib/utils";
 
 /**
- * One picture beside a page's opening, sized to fill the space beside the text.
+ * A page opening's photograph, laid behind its text.
  *
- * On a wide screen it takes the whole height of the opening and about a third of
- * its width, cropped (never stretched out of shape) to fit; on a phone it sits
- * under the text at full width in a 3:2 frame. The files are 832 pixels wide, so
- * at the 544 it is shown at on a desktop it is sharp, and twice that on a
- * high-density screen.
+ * The picture fills the whole band and a navy wash runs across it: solid
+ * where the headline sits, thinning to the right so the photograph shows. On a
+ * phone the wash is even, because the text spans the width there. The parent
+ * must be `relative isolate overflow-hidden`; the picture and the wash sit
+ * below the content in the stacking order, so the content needs nothing extra.
+ *
+ * The photograph is cropped to fill, never stretched out of shape, and the
+ * files are 1600 pixels wide so a full-width band stays sharp. Its alt text is
+ * kept for the record but it is decorative here: the page's own heading says
+ * what the page is about.
  */
-export function PagePhoto({
+export function PhotoBackdrop({
   photo,
-  className,
-  onDark = false,
+  priority = true,
 }: {
   photo: SitePhoto;
-  className?: string;
-  /** Uses a lighter hairline when the picture sits on a dark band. */
-  onDark?: boolean;
+  priority?: boolean;
 }) {
   return (
-    <figure
-      className={cn(
-        "relative aspect-[3/2] w-full overflow-hidden rounded-[--radius-lg] border lg:aspect-auto lg:h-full lg:min-h-[19rem]",
-        onDark ? "border-white/15" : "border-line",
-        className,
-      )}
-    >
+    <>
       <Image
         src={photo.src}
-        alt={photo.alt}
+        alt=""
         fill
-        // Always at the top of the page, beside the opening, so it must not be
-        // lazy-loaded: a deferred picture there is a late largest-contentful-paint.
-        priority
-        sizes="(min-width: 1024px) 34rem, 92vw"
-        className="object-cover"
+        priority={priority}
+        sizes="100vw"
+        className="-z-20 object-cover object-[85%_22%]"
       />
-    </figure>
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-career-navy-dark/85 lg:bg-transparent lg:bg-gradient-to-r lg:from-career-navy-dark lg:from-35% lg:via-career-navy-dark/85 lg:via-55% lg:to-career-navy-dark/10"
+      />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-0 hidden h-20 w-72 bg-career-orange [clip-path:polygon(0_100%,100%_100%,0_30%)] lg:block"
+      />
+    </>
+  );
+}
+
+/**
+ * A listing or index page's opening: breadcrumb above, then a full-width band
+ * with the photograph behind the page's own heading and introduction.
+ *
+ * The children are the heading and its text; this adds the band and the
+ * photograph. Used by the catalogue, hardware, brands, blog, contact, support
+ * and industries pages.
+ */
+export function PhotoHeader({
+  photo,
+  children,
+}: {
+  photo: SitePhoto;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="relative isolate overflow-hidden border-y border-graphite-800 bg-graphite-900">
+      <PhotoBackdrop photo={photo} />
+      <div className="container-page relative py-12 lg:py-14">
+        <header className="max-w-3xl lg:max-w-2xl">{children}</header>
+      </div>
+    </section>
   );
 }

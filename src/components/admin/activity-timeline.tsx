@@ -49,7 +49,7 @@ export function ActivityTimeline({
 }) {
   if (activities.length === 0) {
     return (
-      <p className="rounded-[--radius-lg] border border-dashed border-line-strong bg-surface-muted p-5 text-[14px] text-ink-600">
+      <p className="rounded-(--radius-lg) border border-dashed border-line-strong bg-surface-muted p-5 text-[14px] text-ink-600">
         {emptyMessage}
       </p>
     );
@@ -67,8 +67,8 @@ export function ActivityTimeline({
             key={activity.id}
             className={
               system
-                ? "rounded-[--radius-md] border border-line bg-surface-muted px-4 py-2.5"
-                : "rounded-[--radius-lg] border border-line bg-white p-4"
+                ? "rounded-(--radius-md) border border-line bg-surface-muted px-4 py-2.5"
+                : "rounded-(--radius-lg) border border-line bg-white p-4"
             }
           >
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">

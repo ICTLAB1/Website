@@ -1,3 +1,5 @@
+import { PhotoBackdrop } from "@/components/marketing/page-photo";
+import { photoForPath } from "@/lib/page-photos";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -17,29 +19,37 @@ export const metadata: Metadata = buildMetadata({
 export default async function ServicesPage() {
   const services = await getServices();
 
-  const grouped = services.reduce<Record<string, typeof services>>((accumulator, service) => {
-    const bucket = accumulator[service.category] ?? [];
-    bucket.push(service);
-    accumulator[service.category] = bucket;
-    return accumulator;
-  }, {});
+  const grouped = services.reduce<Record<string, typeof services>>(
+    (accumulator, service) => {
+      const bucket = accumulator[service.category] ?? [];
+      bucket.push(service);
+      accumulator[service.category] = bucket;
+      return accumulator;
+    },
+    {},
+  );
+
+  const photo = photoForPath("/services");
 
   return (
     <div className="pb-16">
       <div className="container-page">
-        <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Services" }]} />
+        <Breadcrumb
+          items={[{ label: "Home", href: "/" }, { label: "Services" }]}
+        />
       </div>
 
-      <section className="border-y border-line bg-graphite-900">
-        <div className="container-page py-14 lg:py-16">
-          <div className="max-w-3xl">
+      <section className="relative isolate overflow-hidden border-y border-line bg-graphite-900">
+        {photo ? <PhotoBackdrop photo={photo} /> : null}
+        <div className="container-page relative py-14 lg:py-16">
+          <div className="max-w-3xl lg:max-w-2xl">
             <h1 className="text-3xl leading-tight text-white sm:text-[2.5rem]">
               Services that make the licensing worth owning
             </h1>
             <p className="mt-5 text-[16px] leading-relaxed text-graphite-200">
-              Software delivers nothing until it is deployed, adopted and kept running. These
-              engagements cover the work between a purchase order and a system your
-              organisation actually relies on.
+              Software delivers nothing until it is deployed, adopted and kept
+              running. These engagements cover the work between a purchase order
+              and a system your organisation actually relies on.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/contact">Discuss a requirement</ButtonLink>
@@ -60,7 +70,7 @@ export default async function ServicesPage() {
                 <Link
                   key={service.slug}
                   href={`/services/${service.slug}`}
-                  className="group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
+                  className="group flex h-full flex-col rounded-(--radius-lg) border border-line bg-white p-5 transition-colors hover:border-graphite-300"
                 >
                   <h3 className="text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
                     {service.name}

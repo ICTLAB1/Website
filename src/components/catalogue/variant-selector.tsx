@@ -99,7 +99,7 @@ export function VariantSelector({
   const gst = gstAmountMinor(lineTotal, selected.gstRatePercent);
 
   return (
-    <div className="rounded-[--radius-lg] border border-line bg-white">
+    <div className="rounded-(--radius-lg) border border-line bg-white">
       {variants.length > 1 ? (
         <fieldset className="border-b border-line px-5 py-4">
           <legend className="text-label font-semibold uppercase tracking-[0.1em] text-ink-500">
@@ -113,7 +113,7 @@ export function VariantSelector({
                 <label
                   key={variant.sku}
                   className={cn(
-                    "flex cursor-pointer items-start gap-3 rounded-[--radius-md] border p-3 transition-colors",
+                    "flex cursor-pointer items-start gap-3 rounded-(--radius-md) border p-3 transition-colors",
                     active
                       ? "border-accent-600 bg-accent-50"
                       : "border-line-strong hover:border-ink-300",
@@ -183,7 +183,7 @@ export function VariantSelector({
         </dl>
 
         {quoteOnly ? (
-          <div className="rounded-[--radius-md] border border-line bg-surface-muted p-4">
+          <div className="rounded-(--radius-md) border border-line bg-surface-muted p-4">
             <p className="text-lead font-semibold text-graphite-900">Price on enquiry</p>
             <p className="mt-1 text-meta leading-relaxed text-ink-600">
               This product is quoted against your configuration and volume. Send us the
@@ -241,11 +241,11 @@ export function VariantSelector({
                 const parsed = Number.parseInt(event.target.value, 10);
                 setQuantity(Number.isFinite(parsed) ? Math.min(100000, Math.max(1, parsed)) : 1);
               }}
-              className="h-11 w-full rounded-[--radius-md] border border-line-strong px-3 text-sm tabular-nums"
+              className="h-11 w-full rounded-(--radius-md) border border-line-strong px-3 text-sm tabular-nums"
             />
           </div>
           {quoteOnly ? null : (
-            <div className="flex-1 rounded-[--radius-md] bg-surface-muted px-4 py-2.5 text-right">
+            <div className="flex-1 rounded-(--radius-md) bg-surface-muted px-4 py-2.5 text-right">
               {/*
                 In rupees: the subtotal, the GST on it, and the total —
                 the breakdown an Indian buyer needs for input credit.
@@ -282,7 +282,7 @@ export function VariantSelector({
           qualify should learn that here, not after ordering.
         */}
         {eligibility ? (
-          <p className="mt-4 rounded-[--radius-md] border border-warning-600/40 bg-warning-50 p-3 text-meta leading-relaxed text-graphite-900">
+          <p className="mt-4 rounded-(--radius-md) border border-warning-600/40 bg-warning-50 p-3 text-meta leading-relaxed text-graphite-900">
             {eligibility}
           </p>
         ) : null}

@@ -13,7 +13,7 @@ export function BasketButton({ className }: { className?: string }) {
     <Link
       href="/enquiry"
       className={cn(
-        "relative inline-flex h-10 items-center gap-2 rounded-[--radius-md] border border-line-strong px-3 text-sm font-medium text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50",
+        "relative inline-flex h-10 items-center gap-2 rounded-(--radius-md) border border-line-strong px-3 text-sm font-medium text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50",
         className,
       )}
     >

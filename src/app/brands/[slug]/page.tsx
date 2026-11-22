@@ -241,7 +241,7 @@ export default async function BrandPage({ params }: PageProps) {
           <div className="max-w-3xl">
             <span
               aria-hidden="true"
-              className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-[--radius-md] text-xl font-bold text-white"
+              className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-(--radius-md) text-xl font-bold text-white"
               style={{ backgroundColor: brand.accentColor }}
             >
               {brand.name.charAt(0)}
@@ -262,7 +262,7 @@ export default async function BrandPage({ params }: PageProps) {
             <PartnerBadgeArtwork
               brand={brand}
               height="h-11"
-              className="mt-4 rounded-[--radius-md] bg-white px-3 py-2"
+              className="mt-4 rounded-(--radius-md) bg-white px-3 py-2"
             />
             <p className="mt-5 text-[16px] leading-relaxed text-graphite-200">{brand.summary}</p>
 
@@ -355,7 +355,7 @@ export default async function BrandPage({ params }: PageProps) {
                 </div>
               ))}
             </div>
-            <div className="mt-10 rounded-[--radius-lg] border border-line bg-surface-muted p-6">
+            <div className="mt-10 rounded-(--radius-lg) border border-line bg-surface-muted p-6">
               <h3 className="text-[1.125rem]">Request a {brand.name} quote</h3>
               <p className="mt-2 max-w-2xl text-meta leading-relaxed text-ink-600">
                 Volume requirements, standard-build configurations and staged delivery are handled
@@ -386,7 +386,7 @@ export default async function BrandPage({ params }: PageProps) {
                     // One of the brand × category pairs that multiplied into the
                     // filter-URL flood; visitors follow it, crawlers need not.
                     rel="nofollow"
-                    className="group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
+                    className="group flex h-full flex-col rounded-(--radius-lg) border border-line bg-white p-5 transition-colors hover:border-graphite-300"
                   >
                     <span className="text-[15px] font-semibold text-graphite-900 group-hover:text-accent-700">
                       {category.name}
@@ -443,7 +443,7 @@ export default async function BrandPage({ params }: PageProps) {
                 body: "Seats reassigned as staff join and leave, so your licence count tracks your headcount in both directions rather than only upwards.",
               },
             ].map((item) => (
-              <div key={item.title} className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <div key={item.title} className="rounded-(--radius-lg) border border-line bg-white p-5">
                 <h3 className="text-[15px] font-semibold text-graphite-900">{item.title}</h3>
                 <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{item.body}</p>
               </div>
@@ -459,7 +459,7 @@ export default async function BrandPage({ params }: PageProps) {
                 <Link
                   key={service.slug}
                   href={`/services/${service.slug}`}
-                  className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
+                  className="group flex flex-col rounded-(--radius-lg) border border-line bg-white p-5 transition-colors hover:border-graphite-300"
                 >
                   <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700">
                     {service.category}
@@ -500,7 +500,7 @@ export default async function BrandPage({ params }: PageProps) {
           </section>
         ) : null}
 
-        <section className="rounded-[--radius-lg] bg-graphite-900 p-8 sm:p-10">
+        <section className="rounded-(--radius-lg) bg-graphite-900 p-8 sm:p-10">
           <h2 className="text-[1.6rem] text-white">Get {brand.name} pricing</h2>
           <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-graphite-200">
             Tell us the products and seat counts you need. We will return a written quotation

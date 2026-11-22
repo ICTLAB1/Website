@@ -57,7 +57,7 @@ export function HardwareQuotePanel({
   fromPriceMinor: number | null;
 }) {
   return (
-    <div className="rounded-[--radius-lg] border border-line bg-white p-6">
+    <div className="rounded-(--radius-lg) border border-line bg-white p-6">
       <h2 className="text-subsection font-semibold text-graphite-900">Request a quote</h2>
 
       {fromPriceMinor !== null ? (
@@ -132,7 +132,7 @@ export function HardwareQuotePanel({
         />
         <Link
           href={`/enquiry?product=${encodeURIComponent(productSlug)}`}
-          className="inline-flex h-11 w-full items-center justify-center rounded-[--radius-md] border border-line-strong text-meta font-medium text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50"
+          className="inline-flex h-11 w-full items-center justify-center rounded-(--radius-md) border border-line-strong text-meta font-medium text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50"
         >
           Request enterprise quote
         </Link>

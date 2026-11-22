@@ -87,7 +87,7 @@ export async function Header() {
             </div>
             <Link
               href="/search"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-graphite-900 lg:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-(--radius-md) border border-line-strong text-graphite-900 lg:hidden"
             >
               <span className="sr-only">Search</span>
               <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -101,7 +101,7 @@ export async function Header() {
 
             <Link
               href={user ? "/account" : "/login"}
-              className="hidden h-10 w-10 items-center justify-center rounded-[--radius-md] border border-line-strong text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50 sm:inline-flex lg:hidden xl:inline-flex"
+              className="hidden h-10 w-10 items-center justify-center rounded-(--radius-md) border border-line-strong text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50 sm:inline-flex lg:hidden xl:inline-flex"
             >
               <span className="sr-only">{user ? "My account" : "Sign in"}</span>
               <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

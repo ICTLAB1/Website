@@ -236,7 +236,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
         </div>
 
         <aside className="space-y-6">
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">Totals</h2>
             <dl className="mt-4 space-y-2 text-[13px]">
               <div className="flex justify-between gap-3">
@@ -262,7 +262,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
             </dl>
           </section>
 
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">Billing</h2>
             <dl className="mt-4 space-y-2.5 text-[13px]">
               {[
@@ -283,7 +283,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           </section>
 
           {isFulfilled ? (
-            <section className="rounded-[--radius-lg] border border-success-600/30 bg-success-50 p-5">
+            <section className="rounded-(--radius-lg) border border-success-600/30 bg-success-50 p-5">
               <h2 className="text-[15px] font-semibold text-success-700">Fulfilled</h2>
               <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
                 Fulfilled {formatDateTime(order.fulfilledAt)}. Licence and renewal records were
@@ -292,7 +292,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
             </section>
           ) : (
             <>
-              <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <section className="rounded-(--radius-lg) border border-line bg-white p-5">
                 <h2 className="mb-4 text-[15px] font-semibold text-graphite-900">Update</h2>
                 <AdminForm
                   action={updateOrderStatus}
@@ -325,7 +325,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
               </section>
 
               {canFulfil ? (
-                <section className="rounded-[--radius-lg] border border-accent-600/40 bg-accent-50 p-5">
+                <section className="rounded-(--radius-lg) border border-accent-600/40 bg-accent-50 p-5">
                   <h2 className="text-[15px] font-semibold text-graphite-900">Fulfil this order</h2>
                   <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
                     Creates a licence record for every line, and a renewal reminder for each
@@ -347,7 +347,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
         </aside>
       </div>
 
-      <section className="max-w-3xl rounded-[--radius-lg] border border-line bg-white p-5">
+      <section className="max-w-3xl rounded-(--radius-lg) border border-line bg-white p-5">
         <h2 className="text-[1.05rem]">Delivery</h2>
         <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
           Everything here is shown to the customer. The tracking link must be an ordinary web
@@ -431,7 +431,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
           .map((document) => (
             <div
               key={document.reference}
-              className="mt-4 rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-4"
+              className="mt-4 rounded-(--radius-lg) border border-warning-600/40 bg-warning-50 p-4"
             >
               <p className="text-[13px] leading-relaxed text-ink-700">
                 Open <span className="font-medium">{document.filename}</span> and check it against

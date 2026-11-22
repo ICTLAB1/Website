@@ -124,7 +124,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
 
           <section>
             <h2 className="mb-4 text-[1.05rem]">Requirements</h2>
-            <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <div className="rounded-(--radius-lg) border border-line bg-white p-5">
               <p className="whitespace-pre-wrap text-[14px] leading-relaxed text-ink-700">
                 {enquiry.requirements || "No additional requirements were provided."}
               </p>
@@ -140,7 +140,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
             is a judgement a person makes, so this is a button rather than
             something that happens automatically to every enquiry.
           */}
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">Pipeline</h2>
             {enquiry.deals.length > 0 ? (
               <p className="mt-2 text-[13px] leading-relaxed text-ink-700">
@@ -173,7 +173,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
             )}
           </section>
 
-          <section className="rounded-[--radius-lg] border border-accent-600/40 bg-accent-50 p-5">
+          <section className="rounded-(--radius-lg) border border-accent-600/40 bg-accent-50 p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">Prepare a quotation</h2>
             <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-ink-700">
               Drafts a quotation from these lines, priced from the current catalogue. You can
@@ -227,7 +227,7 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
         </div>
 
         <aside className="space-y-6">
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">Contact</h2>
             <dl className="mt-4 space-y-2.5 text-[13px]">
               {[
@@ -250,14 +250,14 @@ export default async function AdminEnquiryDetailPage({ params }: PageProps) {
             <div className="mt-4 flex flex-wrap gap-2 border-t border-line pt-4">
               <a
                 href={`mailto:${enquiry.contactEmail}?subject=${encodeURIComponent(`Your enquiry ${enquiry.reference}`)}`}
-                className="inline-flex h-9 items-center rounded-[--radius-md] border border-line-strong px-3 text-[13px] font-medium text-graphite-900 hover:bg-graphite-50"
+                className="inline-flex h-9 items-center rounded-(--radius-md) border border-line-strong px-3 text-[13px] font-medium text-graphite-900 hover:bg-graphite-50"
               >
                 Reply by email
               </a>
             </div>
           </section>
 
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="mb-4 text-[15px] font-semibold text-graphite-900">Update</h2>
             <AdminForm
               action={updateEnquiry}

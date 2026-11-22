@@ -1,13 +1,21 @@
+import { PhotoHeader } from "@/components/marketing/page-photo";
+import { photoForPath } from "@/lib/page-photos";
 import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ButtonLink } from "@/components/ui/button";
 import { CatalogueListing } from "@/components/catalogue/catalogue-listing";
-import { getHardwareBrands, getHardwareFormFactors } from "@/lib/queries/hardware";
+import {
+  getHardwareBrands,
+  getHardwareFormFactors,
+} from "@/lib/queries/hardware";
 import { FAMILY_LANDINGS, familyLandingKey } from "@/lib/catalogue/families";
 import { TENTATIVE_PRICE_NOTE } from "@/lib/catalogue/quote-only";
-import { parseCatalogueParams, type RawSearchParams } from "@/lib/catalogue-params";
+import {
+  parseCatalogueParams,
+  type RawSearchParams,
+} from "@/lib/catalogue-params";
 import { buildMetadata } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
 import { safeBrandLogo } from "@/lib/brand-logo";
@@ -15,7 +23,9 @@ import { AccreditationMark } from "@/components/marketing/accreditation-mark";
 
 type PageProps = { searchParams: Promise<RawSearchParams> };
 
-export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
   const params = await searchParams;
 
   /*
@@ -42,7 +52,9 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
     });
   }
 
-  const hasFilters = Object.keys(params).some((key) => key !== "page" && params[key]);
+  const hasFilters = Object.keys(params).some(
+    (key) => key !== "page" && params[key],
+  );
 
   return buildMetadata({
     title: "Business Laptops & Desktops — Commercial Computers",
@@ -70,7 +82,10 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
  */
 export default async function HardwarePage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const filters = { ...parseCatalogueParams(params), kind: "hardware" as const };
+  const filters = {
+    ...parseCatalogueParams(params),
+    kind: "hardware" as const,
+  };
 
   /*
    * The heading and the sentence under it follow the metadata. An indexable
@@ -88,141 +103,159 @@ export default async function HardwarePage({ searchParams }: PageProps) {
     getSiteConfig(),
   ]);
 
-  return (
-    <div className="container-page pb-16">
-      <Breadcrumb
-        items={
-          copy
-            ? [
-                { label: "Home", href: "/" },
-                { label: "Business computers", href: "/hardware" },
-                { label: copy.heading },
-              ]
-            : [{ label: "Home", href: "/" }, { label: "Business computers" }]
-        }
-      />
+  const photo = photoForPath("/hardware");
 
-      <header className="mb-8 max-w-3xl">
-        <h1 className="text-3xl sm:text-4xl">
-          {copy ? copy.heading : "Commercial computers for business and enterprise"}
-        </h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-600">
-          {copy ? (
-            copy.intro
-          ) : (
-            <>
-              Business-class laptops, desktops and workstations for enterprise, government, PSU,
-              education and corporate requirements — sourced from the manufacturers and supplied
-              by {config.entityName} on one quotation, alongside the licensing that goes on them.
-            </>
-          )}
-        </p>
-        {/*
+  return (
+    <>
+      <div className="container-page">
+        <Breadcrumb
+          items={
+            copy
+              ? [
+                  { label: "Home", href: "/" },
+                  { label: "Business computers", href: "/hardware" },
+                  { label: copy.heading },
+                ]
+              : [{ label: "Home", href: "/" }, { label: "Business computers" }]
+          }
+        />
+      </div>
+      {photo ? (
+        <PhotoHeader photo={photo}>
+          <h1 className="text-3xl text-white sm:text-4xl">
+            {copy
+              ? copy.heading
+              : "Commercial computers for business and enterprise"}
+          </h1>
+          <p className="mt-3 text-[15px] leading-relaxed text-graphite-100">
+            {copy ? (
+              copy.intro
+            ) : (
+              <>
+                Business-class laptops, desktops and workstations for
+                enterprise, government, PSU, education and corporate
+                requirements — sourced from the manufacturers and supplied by{" "}
+                {config.entityName} on one quotation, alongside the licensing
+                that goes on them.
+              </>
+            )}
+          </p>
+          {/*
           Said once, at the top, in the plainest words available. The catalogue
           deliberately carries no prices, and a visitor who expects them will
           otherwise read their absence as a page that failed to load.
         */}
-        <p className="mt-3 text-meta leading-relaxed text-ink-500">
-          {/*
+          <p className="mt-3 text-meta leading-relaxed text-graphite-200">
+            {/*
             This said hardware is never listed at a price, which stopped being
             true when the business asked for a price on every listing. It now
             qualifies whatever is shown and says where a better figure comes
             from, in the same words as every other priced surface — with the
             configuration clause that is true here and nowhere else.
           */}
-          {TENTATIVE_PRICE_NOTE} Configuration, quantity and delivery schedule all move a
-          hardware figure, so a model with no price shown is quoted against your build.
-        </p>
-      </header>
+            {TENTATIVE_PRICE_NOTE} Configuration, quantity and delivery schedule
+            all move a hardware figure, so a model with no price shown is quoted
+            against your build.
+          </p>
+        </PhotoHeader>
+      ) : null}
+      <div className="container-page pb-16 pt-10">
+        {brands.length > 0 ? (
+          <section className="mb-10" aria-labelledby="by-brand">
+            <h2 id="by-brand" className="mb-4 text-section">
+              Shop by brand
+            </h2>
+            <ul className="flex flex-wrap gap-3">
+              {brands.map((brand) => {
+                const logo = safeBrandLogo(brand.logoUrl);
+                return (
+                  <li key={brand.slug}>
+                    <Link
+                      href={`/hardware?brand=${brand.slug}`}
+                      className="inline-flex items-center gap-3 rounded-(--radius-md) border border-line bg-white px-4 py-3 lift hover:border-graphite-300"
+                    >
+                      {logo ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={logo}
+                          alt=""
+                          className="h-5 w-auto max-w-[4.5rem] shrink-0 object-contain object-left"
+                        />
+                      ) : null}
+                      <span className="text-meta font-medium text-graphite-900">
+                        {brand.name}
+                      </span>
+                      <span className="text-label text-ink-500">
+                        {brand.count}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ) : null}
 
-      {brands.length > 0 ? (
-        <section className="mb-10" aria-labelledby="by-brand">
-          <h2 id="by-brand" className="mb-4 text-section">
-            Shop by brand
-          </h2>
-          <ul className="flex flex-wrap gap-3">
-            {brands.map((brand) => {
-              const logo = safeBrandLogo(brand.logoUrl);
-              return (
-                <li key={brand.slug}>
+        {formFactors.length > 0 ? (
+          <section className="mb-10" aria-labelledby="by-type">
+            <h2 id="by-type" className="mb-4 text-section">
+              Shop by product type
+            </h2>
+            <ul className="flex flex-wrap gap-3">
+              {formFactors.map((formFactor) => (
+                <li key={formFactor.value}>
                   <Link
-                    href={`/hardware?brand=${brand.slug}`}
-                    className="inline-flex items-center gap-3 rounded-[--radius-md] border border-line bg-white px-4 py-3 lift hover:border-graphite-300"
+                    href={`/hardware?form=${formFactor.value}`}
+                    className="inline-flex items-center gap-2 rounded-(--radius-md) border border-line bg-white px-4 py-2.5 text-meta font-medium text-graphite-900 lift hover:border-graphite-300"
                   >
-                    {logo ? (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
-                        src={logo}
-                        alt=""
-                        className="h-5 w-auto max-w-[4.5rem] shrink-0 object-contain object-left"
-                      />
-                    ) : null}
-                    <span className="text-meta font-medium text-graphite-900">{brand.name}</span>
-                    <span className="text-label text-ink-500">{brand.count}</span>
+                    {formFactor.label}
+                    <span className="text-label font-normal text-ink-500">
+                      {formFactor.count}
+                    </span>
                   </Link>
                 </li>
-              );
-            })}
-          </ul>
-        </section>
-      ) : null}
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
-      {formFactors.length > 0 ? (
-        <section className="mb-10" aria-labelledby="by-type">
-          <h2 id="by-type" className="mb-4 text-section">
-            Shop by product type
-          </h2>
-          <ul className="flex flex-wrap gap-3">
-            {formFactors.map((formFactor) => (
-              <li key={formFactor.value}>
-                <Link
-                  href={`/hardware?form=${formFactor.value}`}
-                  className="inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-meta font-medium text-graphite-900 lift hover:border-graphite-300"
-                >
-                  {formFactor.label}
-                  <span className="text-label font-normal text-ink-500">{formFactor.count}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+        <CatalogueListing
+          params={params}
+          filters={filters}
+          basePath="/hardware"
+          emptyDescription="No commercial models match these filters yet. Tell us the specification you need and we will source and quote it."
+        />
 
-      <CatalogueListing
-        params={params}
-        filters={filters}
-        basePath="/hardware"
-        emptyDescription="No commercial models match these filters yet. Tell us the specification you need and we will source and quote it."
-      />
-
-      <div className="mt-14 rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
-        <h2 className="text-[1.25rem]">Need bulk quantity?</h2>
-        <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-600">
-          Volume requirements, staged delivery, standard-build configurations and asset tagging
-          are handled on the quotation. Government and PSU procurement, including requirements
-          that must be routed through the Government e-Marketplace, are supported.
-        </p>
-        {/*
+        <div className="mt-14 rounded-(--radius-lg) border border-line bg-surface-muted p-6 sm:p-8">
+          <h2 className="text-[1.25rem]">Need bulk quantity?</h2>
+          <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-600">
+            Volume requirements, staged delivery, standard-build configurations
+            and asset tagging are handled on the quotation. Government and PSU
+            procurement, including requirements that must be routed through the
+            Government e-Marketplace, are supported.
+          </p>
+          {/*
           The mark earns its place here because this paragraph is where a public
           buyer learns the GeM route is open to them. It is deliberately not on
           the cards or in the footer: beside a product it would read as an
           endorsement of that product rather than a statement about the seller.
         */}
-        <AccreditationMark
-          src="/marks/gem.webp"
-          alt="Government e Marketplace (GeM)"
-          className="mt-5 h-12"
-        />
-        <div className="mt-5 flex flex-wrap gap-3">
-          <ButtonLink href="/requirement">Tell us what you need</ButtonLink>
-          <ButtonLink href="/enquiry" variant="outline">
-            Request enterprise quote
-          </ButtonLink>
-          <ButtonLink href="/contact" variant="outline">
-            Talk to a specialist
-          </ButtonLink>
+          <AccreditationMark
+            src="/marks/gem.webp"
+            alt="Government e Marketplace (GeM)"
+            className="mt-5 h-12"
+          />
+          <div className="mt-5 flex flex-wrap gap-3">
+            <ButtonLink href="/requirement">Tell us what you need</ButtonLink>
+            <ButtonLink href="/enquiry" variant="outline">
+              Request enterprise quote
+            </ButtonLink>
+            <ButtonLink href="/contact" variant="outline">
+              Talk to a specialist
+            </ButtonLink>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -145,20 +145,20 @@ export function NavigationEditor({
       </div>
 
       {items.length === 0 ? (
-        <p className="rounded-[--radius-lg] border border-dashed border-line-strong px-5 py-8 text-center text-[14px] text-ink-500">
+        <p className="rounded-(--radius-lg) border border-dashed border-line-strong px-5 py-8 text-center text-[14px] text-ink-500">
           This menu is empty.
         </p>
       ) : (
         <ol className="space-y-4">
           {items.map((item, index) => (
-            <li key={item.id} className="rounded-[--radius-lg] border border-line bg-white">
+            <li key={item.id} className="rounded-(--radius-lg) border border-line bg-white">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3">
                 <div className="flex items-center gap-3">
                   <span className="font-mono text-[11px] text-ink-400">{index + 1}</span>
                   <span className="text-[14px] font-semibold text-graphite-900">{item.label}</span>
                   <span className="font-mono text-[12px] text-ink-500">{item.href ?? "—"}</span>
                   {!item.visible ? (
-                    <span className="rounded-[--radius-sm] bg-surface-sunken px-2 py-0.5 text-[11px] uppercase tracking-wide text-ink-500">
+                    <span className="rounded-(--radius-sm) bg-surface-sunken px-2 py-0.5 text-[11px] uppercase tracking-wide text-ink-500">
                       Hidden
                     </span>
                   ) : null}
@@ -180,7 +180,7 @@ export function NavigationEditor({
                     {item.children.map((child) => (
                       <div
                         key={child.id}
-                        className="rounded-[--radius-md] border border-line bg-surface-muted p-4"
+                        className="rounded-(--radius-md) border border-line bg-surface-muted p-4"
                       >
                         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
                           <div className="flex items-center gap-3">
@@ -204,7 +204,7 @@ export function NavigationEditor({
                         {child.children.length > 0 ? (
                           <ul className="mt-4 space-y-3 border-l-2 border-line pl-4">
                             {child.children.map((leaf) => (
-                              <li key={leaf.id} className="rounded-[--radius-md] bg-white p-4">
+                              <li key={leaf.id} className="rounded-(--radius-md) bg-white p-4">
                                 <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
                                   <span className="text-[13px] text-graphite-900">{leaf.label}</span>
                                   <RowControls item={leaf} />
@@ -221,7 +221,7 @@ export function NavigationEditor({
                       </div>
                     ))}
 
-                    <div className="rounded-[--radius-md] border border-dashed border-line-strong p-4">
+                    <div className="rounded-(--radius-md) border border-dashed border-line-strong p-4">
                       <AddForm menu={menu} parentId={item.id} label="Add beneath this item" />
                     </div>
                   </div>
@@ -232,7 +232,7 @@ export function NavigationEditor({
         </ol>
       )}
 
-      <div className="rounded-[--radius-lg] border border-dashed border-line-strong p-5">
+      <div className="rounded-(--radius-lg) border border-dashed border-line-strong p-5">
         <p className="mb-3 text-[13px] font-medium text-graphite-900">Add a top-level item</p>
         <AddForm menu={menu} label="Add to this menu" />
       </div>

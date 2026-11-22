@@ -24,19 +24,21 @@ export function AccountNav() {
   return (
     <nav aria-label="Account" className="lg:sticky lg:top-32">
       {/* Horizontal scroller on small screens, vertical list from lg up. */}
-      <ul className="scroll-x -mx-1 flex gap-1 border-b border-line px-1 pb-px lg:mx-0 lg:flex-col lg:gap-0.5 lg:border-b-0 lg:px-0">
+      <ul className="scroll-x flex gap-1 rounded-(--radius-lg) border border-line bg-white p-1.5 shadow-[0_8px_24px_-18px_rgba(11,42,91,0.35)] lg:flex-col lg:gap-0.5">
         {LINKS.map((link) => {
-          const active = link.exact ? pathname === link.href : pathname.startsWith(link.href);
+          const active = link.exact
+            ? pathname === link.href
+            : pathname.startsWith(link.href);
           return (
             <li key={link.href} className="shrink-0 lg:shrink">
               <Link
                 href={link.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "block whitespace-nowrap rounded-[--radius-md] px-3 py-2.5 text-body transition-colors",
+                  "block whitespace-nowrap rounded-(--radius-md) border-l-[3px] px-3 py-2.5 text-body transition-colors",
                   active
-                    ? "bg-graphite-900 font-medium text-white"
-                    : "text-ink-700 hover:bg-surface-muted hover:text-graphite-900",
+                    ? "border-career-orange bg-career-navy font-medium text-white"
+                    : "border-transparent text-ink-700 hover:bg-career-mist hover:text-graphite-900",
                 )}
               >
                 {link.label}

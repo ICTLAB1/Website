@@ -80,8 +80,8 @@ export default async function AdminCrmSettingsPage() {
       <section
         className={
           connection.connected
-            ? "rounded-[--radius-lg] border border-success-200 bg-success-50 p-5"
-            : "rounded-[--radius-lg] border border-line-strong bg-surface-muted p-5"
+            ? "rounded-(--radius-lg) border border-success-200 bg-success-50 p-5"
+            : "rounded-(--radius-lg) border border-line-strong bg-surface-muted p-5"
         }
       >
         <p className="flex flex-wrap items-center gap-3">
@@ -117,7 +117,7 @@ export default async function AdminCrmSettingsPage() {
         </div>
 
         {outbox.recent.length === 0 ? (
-          <p className="rounded-[--radius-lg] border border-dashed border-line-strong bg-surface-muted p-5 text-[14px] text-ink-600">
+          <p className="rounded-(--radius-lg) border border-dashed border-line-strong bg-surface-muted p-5 text-[14px] text-ink-600">
             Nothing yet. Events appear here as soon as somebody raises or moves a deal.
           </p>
         ) : (
@@ -184,7 +184,7 @@ export default async function AdminCrmSettingsPage() {
       </section>
 
       {/* ── configuration ──────────────────────────────────────────────── */}
-      <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+      <section className="rounded-(--radius-lg) border border-line bg-white p-5">
         <h2 className="text-[15px] font-semibold text-graphite-900">Endpoint</h2>
         <div className="mt-4">
           <AdminForm action={saveCrmSettings} submitLabel="Save" pendingLabel="Saving…">
@@ -233,7 +233,7 @@ export default async function AdminCrmSettingsPage() {
       </section>
 
       {/* ── receiving ──────────────────────────────────────────────────── */}
-      <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+      <section className="rounded-(--radius-lg) border border-line bg-white p-5">
         <h2 className="text-[15px] font-semibold text-graphite-900">
           Receiving changes from your CRM
         </h2>
@@ -241,7 +241,7 @@ export default async function AdminCrmSettingsPage() {
           The other direction. A stage moved, a deal won or lost, or an activity logged in your
           CRM is applied to the deal here. Give your CRM this address:
         </p>
-        <p className="mt-3 break-all rounded-[--radius-md] border border-line bg-surface-muted px-3 py-2 font-mono text-[12px] text-graphite-900">
+        <p className="mt-3 break-all rounded-(--radius-md) border border-line bg-surface-muted px-3 py-2 font-mono text-[12px] text-graphite-900">
           {absoluteUrl("/api/crm/inbound")}
         </p>
 
@@ -356,7 +356,7 @@ export default async function AdminCrmSettingsPage() {
       </section>
 
       {/* ── what the far end receives ──────────────────────────────────── */}
-      <section className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+      <section className="rounded-(--radius-lg) border border-line bg-surface-muted p-5">
         <h2 className="text-[15px] font-semibold text-graphite-900">What your CRM will receive</h2>
         <p className="mt-2 text-meta leading-relaxed text-ink-600">
           A JSON <code className="font-mono">POST</code> per event, version {CRM_EVENT_VERSION},

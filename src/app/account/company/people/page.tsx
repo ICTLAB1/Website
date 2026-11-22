@@ -36,7 +36,7 @@ export default async function CompanyPeoplePage() {
       <div className="max-w-3xl">
         <h2 className="text-[1.15rem]">People</h2>
         <CompanyTabs />
-        <p className="mt-8 rounded-[--radius-lg] border border-line bg-surface-muted px-5 py-4 text-[14px] leading-relaxed text-ink-600">
+        <p className="mt-8 rounded-(--radius-lg) border border-line bg-surface-muted px-5 py-4 text-[14px] leading-relaxed text-ink-600">
           Add your company details first. Colleagues belong to a company, so there is nothing to
           add them to yet.
         </p>
@@ -146,7 +146,7 @@ export default async function CompanyPeoplePage() {
       </TableWrap>
 
       {mayManage ? (
-        <section className="mt-12 max-w-xl rounded-[--radius-lg] border border-line bg-white p-6">
+        <section className="mt-12 max-w-xl rounded-(--radius-lg) border border-line bg-white p-6">
           <h3 className="text-[1.05rem]">Add a colleague</h3>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             They are emailed a link to choose their own password. Nobody here, including you, ever
@@ -184,7 +184,7 @@ export default async function CompanyPeoplePage() {
           </div>
         </section>
       ) : (
-        <p className="mt-8 rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
+        <p className="mt-8 rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
           Only a company administrator can add colleagues or change access levels.
         </p>
       )}

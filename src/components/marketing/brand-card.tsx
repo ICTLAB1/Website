@@ -88,7 +88,7 @@ function BrandMark({ brand, size }: { brand: BrandArtwork; size: "sm" | "md" }) 
     <span
       aria-hidden="true"
       data-monogram={brand.name.charAt(0)}
-      className={`${box} inline-flex shrink-0 items-center justify-center rounded-[--radius-sm] font-bold text-white before:content-[attr(data-monogram)] ${
+      className={`${box} inline-flex shrink-0 items-center justify-center rounded-(--radius-sm) font-bold text-white before:content-[attr(data-monogram)] ${
         size === "md" ? "text-body" : "text-label"
       }`}
       style={{ backgroundColor: brand.accentColor }}
@@ -114,7 +114,7 @@ export function BrandCard({
   return (
     <Link
       href={`/brands/${brand.slug}`}
-      className="group flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 lift hover:border-graphite-300"
+      className="group flex flex-col rounded-(--radius-lg) border border-line bg-white p-5 lift hover:border-graphite-300"
     >
       <span className="mb-4 inline-flex">
         <BrandMark brand={brand} size="md" />
@@ -156,7 +156,7 @@ export function BrandStrip({
         <li key={brand.slug}>
           <Link
             href={`/brands/${brand.slug}`}
-            className="inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-3.5 py-2 text-meta font-medium text-ink-700 lift hover:border-graphite-300 hover:text-graphite-900"
+            className="inline-flex items-center gap-2 rounded-(--radius-md) border border-line bg-white px-3.5 py-2 text-meta font-medium text-ink-700 lift hover:border-graphite-300 hover:text-graphite-900"
           >
             <BrandMark brand={brand} size="sm" />
             {brand.name}

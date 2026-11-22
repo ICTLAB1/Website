@@ -48,7 +48,7 @@ export function QuoteThread({
       {messages.map((message) => (
         <li
           key={message.id}
-          className={`rounded-[--radius-md] border p-4 ${
+          className={`rounded-(--radius-md) border p-4 ${
             message.fromStaff
               ? "border-accent-600/25 bg-accent-50/50"
               : "border-line bg-white"

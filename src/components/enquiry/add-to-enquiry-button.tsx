@@ -47,7 +47,7 @@ export function AddToEnquiryButton({
       type="button"
       onClick={onAdd}
       className={cn(
-        "inline-flex items-center justify-center rounded-[--radius-md] font-medium transition-colors",
+        "inline-flex items-center justify-center rounded-(--radius-md) font-medium transition-colors",
         "bg-graphite-900 text-white hover:bg-graphite-800",
         compact ? "h-10 flex-1 px-3 text-[13px]" : "h-11 px-5 text-sm",
         fullWidth && "w-full",

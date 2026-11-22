@@ -161,7 +161,7 @@ export function BuyNowForm({
           </FormError>
         ) : null}
 
-        <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+        <section className="rounded-(--radius-lg) border border-line bg-white p-5">
           <h2 className="text-body font-semibold text-graphite-900">{productName}</h2>
           <p className="mt-1 text-meta text-ink-600">{variantName}</p>
           <p className="mt-1 font-mono text-label text-ink-500">{sku}</p>
@@ -182,10 +182,10 @@ export function BuyNowForm({
                   const parsed = Number.parseInt(event.target.value, 10);
                   setQuantity(Number.isFinite(parsed) ? Math.min(100000, Math.max(1, parsed)) : 1);
                 }}
-                className="h-11 w-full rounded-[--radius-md] border border-line-strong px-3 text-sm tabular-nums"
+                className="h-11 w-full rounded-(--radius-md) border border-line-strong px-3 text-sm tabular-nums"
               />
             </div>
-            <dl className="flex-1 rounded-[--radius-md] bg-surface-muted px-4 py-3 text-right text-meta">
+            <dl className="flex-1 rounded-(--radius-md) bg-surface-muted px-4 py-3 text-right text-meta">
               <div className="flex justify-between gap-3">
                 <dt className="text-ink-500">Subtotal</dt>
                 <dd className="tabular-nums">{formatMoney(net, currency)}</dd>
@@ -287,7 +287,7 @@ export function BuyNowForm({
                 {gateways.map((option) => (
                   <label
                     key={option}
-                    className={`flex cursor-pointer items-center gap-2 rounded-[--radius-sm] border px-3 py-1.5 text-meta ${
+                    className={`flex cursor-pointer items-center gap-2 rounded-(--radius-sm) border px-3 py-1.5 text-meta ${
                       gateway === option
                         ? "border-accent-600 bg-accent-50/60 text-graphite-900"
                         : "border-line-strong text-ink-600 hover:bg-surface-muted"
@@ -360,7 +360,7 @@ function PaymentChoice({
 }) {
   return (
     <label
-      className={`flex cursor-pointer gap-3 rounded-[--radius-md] border p-4 transition-colors duration-150 ${
+      className={`flex cursor-pointer gap-3 rounded-(--radius-md) border p-4 transition-colors duration-150 ${
         selected
           ? "border-accent-600 bg-accent-50/60"
           : "border-line-strong bg-white hover:border-line-strong hover:bg-surface-muted"

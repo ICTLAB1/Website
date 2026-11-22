@@ -63,8 +63,8 @@ export function ProductPhoto({
   const representative = safe !== null && resolved.representative;
   const frame =
     ratio === "16/10"
-      ? "aspect-[16/10] w-full overflow-hidden rounded-[--radius-md] bg-white"
-      : "aspect-[4/3] w-full overflow-hidden rounded-[--radius-md] bg-white";
+      ? "aspect-[16/10] w-full overflow-hidden rounded-(--radius-md) bg-white"
+      : "aspect-[4/3] w-full overflow-hidden rounded-(--radius-md) bg-white";
 
   if (!safe) {
     return (
@@ -106,7 +106,7 @@ export function ProductPhoto({
           // aria-hidden: the alt text above already carries this, and a screen
           // reader announcing it twice is noise rather than clarity.
           aria-hidden="true"
-          className="absolute bottom-1.5 right-1.5 rounded-[--radius-sm] bg-graphite-900/75 px-1.5 py-0.5 text-[10px] font-medium leading-tight tracking-wide text-white"
+          className="absolute bottom-1.5 right-1.5 rounded-(--radius-sm) bg-graphite-900/75 px-1.5 py-0.5 text-[10px] font-medium leading-tight tracking-wide text-white"
         >
           {REPRESENTATIVE_IMAGE_BADGE}
         </span>
