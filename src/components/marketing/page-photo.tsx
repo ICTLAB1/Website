@@ -44,3 +44,28 @@ export function PhotoBackdrop({
     </>
   );
 }
+
+/**
+ * A listing or index page's opening: breadcrumb above, then a full-width band
+ * with the photograph behind the page's own heading and introduction.
+ *
+ * The children are the heading and its text; this adds the band and the
+ * photograph. Used by the catalogue, hardware, brands, blog, contact, support
+ * and industries pages.
+ */
+export function PhotoHeader({
+  photo,
+  children,
+}: {
+  photo: SitePhoto;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="relative isolate overflow-hidden border-y border-graphite-800 bg-graphite-900">
+      <PhotoBackdrop photo={photo} />
+      <div className="container-page relative py-12 lg:py-14">
+        <header className="max-w-3xl lg:max-w-2xl">{children}</header>
+      </div>
+    </section>
+  );
+}

@@ -1,3 +1,5 @@
+import { PhotoHeader } from "@/components/marketing/page-photo";
+import { photoForPath } from "@/lib/page-photos";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -40,176 +42,197 @@ export default async function ContactPage() {
     },
   ];
 
-  const anyChannelConfigured = channels.some((channel) => channel.email || channel.phone);
+  const anyChannelConfigured = channels.some(
+    (channel) => channel.email || channel.phone,
+  );
+
+  const photo = photoForPath("/contact");
 
   return (
-    <div className="container-page pb-16">
-      {localBusiness ? <JsonLd data={localBusiness} /> : null}
-      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Contact" }]} />
+    <>
+      <div className="container-page">
+        {localBusiness ? <JsonLd data={localBusiness} /> : null}
+        <Breadcrumb
+          items={[{ label: "Home", href: "/" }, { label: "Contact" }]}
+        />
+      </div>
+      {photo ? (
+        <PhotoHeader photo={photo}>
+          <h1 className="text-3xl text-white sm:text-4xl">Talk to sales</h1>
+          <p className="mt-4 text-[16px] leading-relaxed text-graphite-100">
+            Tell us what you need. You do not need a finished product list — a
+            seat count, a renewal date or a description of what you are trying
+            to do is enough to start.
+          </p>
+        </PhotoHeader>
+      ) : null}
+      <div className="container-page pb-16 pt-10">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
+          <section aria-labelledby="contact-form-heading">
+            <h2 id="contact-form-heading" className="mb-6 text-[1.25rem]">
+              Send us a message
+            </h2>
+            <ContactForm />
+          </section>
 
-      <header className="mb-10 max-w-3xl">
-        <h1 className="text-3xl sm:text-4xl">Talk to sales</h1>
-        <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
-          Tell us what you need. You do not need a finished product list — a seat count, a
-          renewal date or a description of what you are trying to do is enough to start.
-        </p>
-      </header>
+          <aside className="min-w-0 space-y-4">
+            {anyChannelConfigured
+              ? channels.map((channel) => (
+                  <div
+                    key={channel.title}
+                    className="rounded-[--radius-lg] border border-line bg-white p-5"
+                  >
+                    <h2 className="text-[15px] font-semibold text-graphite-900">
+                      {channel.title}
+                    </h2>
+                    <p className="mt-1.5 text-[13px] leading-relaxed text-ink-600">
+                      {channel.body}
+                    </p>
+                    <div className="mt-3 space-y-1.5 text-[13px]">
+                      {channel.email ? (
+                        <a
+                          href={`mailto:${channel.email}`}
+                          className="block break-all font-medium text-accent-700 hover:underline"
+                        >
+                          {channel.email}
+                        </a>
+                      ) : null}
+                      {channel.phone ? (
+                        <a
+                          href={`tel:${channel.phone.replace(/\s/g, "")}`}
+                          className="block font-medium text-accent-700 hover:underline"
+                        >
+                          {channel.phone}
+                        </a>
+                      ) : null}
+                    </div>
+                  </div>
+                ))
+              : null}
 
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
-        <section aria-labelledby="contact-form-heading">
-          <h2 id="contact-form-heading" className="mb-6 text-[1.25rem]">
-            Send us a message
-          </h2>
-          <ContactForm />
-        </section>
-
-        <aside className="min-w-0 space-y-4">
-          {anyChannelConfigured ? (
-            channels.map((channel) => (
-              <div key={channel.title} className="rounded-[--radius-lg] border border-line bg-white p-5">
-                <h2 className="text-[15px] font-semibold text-graphite-900">{channel.title}</h2>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-ink-600">{channel.body}</p>
-                <div className="mt-3 space-y-1.5 text-[13px]">
-                  {channel.email ? (
-                    <a
-                      href={`mailto:${channel.email}`}
-                      className="block break-all font-medium text-accent-700 hover:underline"
-                    >
-                      {channel.email}
-                    </a>
-                  ) : null}
-                  {channel.phone ? (
-                    <a
-                      href={`tel:${channel.phone.replace(/\s/g, "")}`}
-                      className="block font-medium text-accent-700 hover:underline"
-                    >
-                      {channel.phone}
-                    </a>
-                  ) : null}
-                </div>
-              </div>
-            ))
-          ) : null}
-
-          {config.formattedAddress ? (
-            <div className="rounded-[--radius-lg] border border-line bg-white p-5">
-              {/*
+            {config.formattedAddress ? (
+              <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+                {/*
                 "India office" only once there is a second one to tell it apart
                 from. On a business trading from one place the heading stays
                 "Office", because naming a country there implies a network that
                 may not exist.
               */}
-              <h2 className="text-[15px] font-semibold text-graphite-900">
-                {config.secondaryEntity ? "India office" : "Office"}
-              </h2>
-              <address className="mt-2 text-[13px] not-italic leading-relaxed text-ink-600">
-                {config.formattedAddress}
-              </address>
-              {/*
+                <h2 className="text-[15px] font-semibold text-graphite-900">
+                  {config.secondaryEntity ? "India office" : "Office"}
+                </h2>
+                <address className="mt-2 text-[13px] not-italic leading-relaxed text-ink-600">
+                  {config.formattedAddress}
+                </address>
+                {/*
                 The Indian company's registrations, under the Indian address.
                 Both of them: a CIN is what identifies the registered company at
                 the MCA, and a reader checking one is checking the other.
               */}
-              {config.primaryRegistrations.length > 0 ? (
-                <dl className="mt-3 border-t border-line pt-3 font-mono text-[12px] text-ink-500">
-                  {config.primaryRegistrations.map((entry) => (
-                    <div key={entry.label} className="flex gap-2">
-                      <dt>{entry.label}</dt>
-                      <dd className="text-ink-600">{entry.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              ) : null}
-            </div>
-          ) : null}
+                {config.primaryRegistrations.length > 0 ? (
+                  <dl className="mt-3 border-t border-line pt-3 font-mono text-[12px] text-ink-500">
+                    {config.primaryRegistrations.map((entry) => (
+                      <div key={entry.label} className="flex gap-2">
+                        <dt>{entry.label}</dt>
+                        <dd className="text-ink-600">{entry.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
+              </div>
+            ) : null}
 
-          {config.secondaryEntity ? (
-            <div className="rounded-[--radius-lg] border border-line bg-white p-5">
-              <h2 className="text-[15px] font-semibold text-graphite-900">
-                {config.secondaryEntity.name}
-              </h2>
-              <address className="mt-2 whitespace-pre-line text-[13px] not-italic leading-relaxed text-ink-600">
-                {config.secondaryEntity.address}
-              </address>
-              {config.secondaryEntity.phone ? (
-                <p className="mt-3 border-t border-line pt-3 text-[13px]">
-                  <a
-                    href={`tel:${config.secondaryEntity.phone.replace(/[^+\d]/g, "")}`}
-                    className="text-accent-700 hover:underline"
-                  >
-                    {config.secondaryEntity.phone}
-                  </a>
-                </p>
-              ) : null}
-              {/*
+            {config.secondaryEntity ? (
+              <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+                <h2 className="text-[15px] font-semibold text-graphite-900">
+                  {config.secondaryEntity.name}
+                </h2>
+                <address className="mt-2 whitespace-pre-line text-[13px] not-italic leading-relaxed text-ink-600">
+                  {config.secondaryEntity.address}
+                </address>
+                {config.secondaryEntity.phone ? (
+                  <p className="mt-3 border-t border-line pt-3 text-[13px]">
+                    <a
+                      href={`tel:${config.secondaryEntity.phone.replace(/[^+\d]/g, "")}`}
+                      className="text-accent-700 hover:underline"
+                    >
+                      {config.secondaryEntity.phone}
+                    </a>
+                  </p>
+                ) : null}
+                {/*
                 The branch's own registrations, never the Indian ones. A GSTIN
                 repeated under an overseas address attaches a tax identifier to
                 the wrong jurisdiction; a free-zone licence number and a TRN are
                 what a finance team actually checks this office against.
               */}
-              {config.secondaryEntity.registrations.length > 0 ? (
-                <dl className="mt-3 border-t border-line pt-3 font-mono text-[12px] text-ink-500">
-                  {config.secondaryEntity.registrations.map((entry) => (
-                    <div key={entry.label} className="flex gap-2">
-                      <dt className="shrink-0">{entry.label}</dt>
-                      <dd className="text-ink-600">{entry.value}</dd>
-                    </div>
+                {config.secondaryEntity.registrations.length > 0 ? (
+                  <dl className="mt-3 border-t border-line pt-3 font-mono text-[12px] text-ink-500">
+                    {config.secondaryEntity.registrations.map((entry) => (
+                      <div key={entry.label} className="flex gap-2">
+                        <dt className="shrink-0">{entry.label}</dt>
+                        <dd className="text-ink-600">{entry.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
+              </div>
+            ) : null}
+
+            {social.length > 0 ? (
+              <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+                <h2 className="text-[15px] font-semibold text-graphite-900">
+                  Elsewhere
+                </h2>
+                <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
+                  The same business, on the networks it posts to.
+                </p>
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {social.map((link) => (
+                    <li key={link.name}>
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="me noopener noreferrer"
+                        className="inline-flex h-8 items-center rounded-[--radius-md] border border-line px-3 text-[13px] text-ink-600 transition-colors hover:border-graphite-900 hover:text-graphite-900"
+                      >
+                        {link.name}
+                      </a>
+                    </li>
                   ))}
-                </dl>
-              ) : null}
-            </div>
-          ) : null}
+                </ul>
+              </div>
+            ) : null}
 
-          {social.length > 0 ? (
-            <div className="rounded-[--radius-lg] border border-line bg-white p-5">
-              <h2 className="text-[15px] font-semibold text-graphite-900">Elsewhere</h2>
-              <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
-                The same business, on the networks it posts to.
-              </p>
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {social.map((link) => (
-                  <li key={link.name}>
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="me noopener noreferrer"
-                      className="inline-flex h-8 items-center rounded-[--radius-md] border border-line px-3 text-[13px] text-ink-600 transition-colors hover:border-graphite-900 hover:text-graphite-900"
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-
-          {/*
+            {/*
             Support was removed from the channel list above, so this page has to
             say where it went. Without it, a customer with a licence problem
             would find only a sales form.
           */}
-          <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
-            <h2 className="text-[15px] font-semibold text-graphite-900">
-              Already a customer?
-            </h2>
-            <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
-              Existing orders, renewals, licence administration and technical issues are
-              handled by the support centre, where they are tracked against your account.
-            </p>
-            {config.supportHours ? (
+            <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+              <h2 className="text-[15px] font-semibold text-graphite-900">
+                Already a customer?
+              </h2>
               <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
-                {config.supportHours}
+                Existing orders, renewals, licence administration and technical
+                issues are handled by the support centre, where they are tracked
+                against your account.
               </p>
-            ) : null}
-            <Link
-              href="/support"
-              className="mt-3 inline-block text-[13px] font-medium text-accent-700 hover:underline"
-            >
-              Go to support
-            </Link>
-          </div>
-        </aside>
+              {config.supportHours ? (
+                <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
+                  {config.supportHours}
+                </p>
+              ) : null}
+              <Link
+                href="/support"
+                className="mt-3 inline-block text-[13px] font-medium text-accent-700 hover:underline"
+              >
+                Go to support
+              </Link>
+            </div>
+          </aside>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

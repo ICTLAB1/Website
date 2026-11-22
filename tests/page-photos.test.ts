@@ -6,6 +6,7 @@ import { heroSchema } from "@/lib/blocks/schemas";
 import { PAGE_PHOTOS, photoForPath } from "@/lib/page-photos";
 import { industrySeeds } from "../prisma/seed-data/industries";
 import { services } from "../prisma/seed-data/services";
+import { pageSeeds } from "../prisma/seed-data/pages";
 
 describe("the photographs on the solution, industry and service pages", () => {
   it("every one is a file that exists, with a description and its real shape", async () => {
@@ -23,6 +24,25 @@ describe("the photographs on the solution, industry and service pages", () => {
     const known = new Set([
       ...industrySeeds.map((i) => `/industries/${i.slug}`),
       ...services.map((s) => `/services/${s.slug}`),
+      ...pageSeeds.map((p) => `/${p.slug}`),
+      // Index and listing routes that are not CMS pages
+      "/products",
+      "/hardware",
+      "/brands",
+      "/blog",
+      "/contact",
+      "/support",
+      "/industries",
+      "/services",
+      // CMS pages created by content migrations rather than the seed
+      "/corporate-it-solutions",
+      "/adobe-licensing",
+      "/get-a-quote/microsoft",
+      "/get-a-quote/adobe",
+      "/get-a-quote/autodesk",
+      "/software-licensing-company-delhi",
+      "/software-licensing-company-gurugram",
+      "/software-licensing-company-noida",
       "/solutions/modern-workplace",
       "/solutions/cloud-transformation",
       "/solutions/security-compliance",
@@ -60,7 +80,7 @@ describe("the photographs on the solution, industry and service pages", () => {
     expect(photoForPath("/industries/healthcare")).not.toBeNull();
     expect(photoForPath("/industries/healthcare/")).not.toBeNull();
     expect(photoForPath("/")).not.toBeNull();
-    for (const bad of ["/about", "/industries", "constructor", "__proto__", "/toString"]) {
+    for (const bad of ["/privacy", "/terms", "/login", "constructor", "__proto__", "/toString"]) {
       expect(photoForPath(bad), bad).toBeNull();
     }
   });

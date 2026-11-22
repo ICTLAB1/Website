@@ -1,3 +1,5 @@
+import { PhotoHeader } from "@/components/marketing/page-photo";
+import { photoForPath } from "@/lib/page-photos";
 import type { Metadata } from "next";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -31,28 +33,40 @@ export default async function IndustriesPage({
   const selected = typeof raw === "string" ? raw : undefined;
 
   const industries = await publishedIndustries();
+  const photo = photoForPath("/industries");
 
   return (
     <>
       <div className="container-page">
-        <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Industries" }]} />
-
-        <header className="max-w-3xl">
-          <h1 className="text-3xl sm:text-4xl">Industries we serve</h1>
-          <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
-            Technology procurement and solutions for enterprises, institutions, government
-            organisations and mission-critical environments. Each sector buys differently; these
-            pages set out what that difference is and what we supply into it.
-          </p>
-        </header>
+        <Breadcrumb
+          items={[{ label: "Home", href: "/" }, { label: "Industries" }]}
+        />
       </div>
+
+      {photo ? (
+        <PhotoHeader photo={photo}>
+          <h1 className="text-3xl text-white sm:text-4xl">
+            Industries we serve
+          </h1>
+          <p className="mt-4 text-[16px] leading-relaxed text-graphite-100">
+            Technology procurement and solutions for enterprises, institutions,
+            government organisations and mission-critical environments. Each
+            sector buys differently; these pages set out what that difference is
+            and what we supply into it.
+          </p>
+        </PhotoHeader>
+      ) : null}
 
       {/*
         Rendered with no heading of its own — the page already has an h1 saying
         the same thing, and a second copy of it as an h2 immediately below is
         the kind of duplication the SEO gate exists to catch.
       */}
-      <IndustryGridBlock data={{ filterable: true, limit: 40 }} rows={industries} selected={selected} />
+      <IndustryGridBlock
+        data={{ filterable: true, limit: 40 }}
+        rows={industries}
+        selected={selected}
+      />
     </>
   );
 }
