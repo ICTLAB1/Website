@@ -1,3 +1,4 @@
+import { PartnerShowcase } from "@/components/marketing/partner-showcase";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -29,37 +30,51 @@ export default async function EnquiryPage() {
     : null;
 
   const profile = user
-    ? await prisma.user.findUnique({ where: { id: user.id }, select: { phone: true } })
+    ? await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { phone: true },
+      })
     : null;
 
   return (
-    <div className="container-page pb-16">
-      <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Enquiry" }]} />
+    <>
+      <div className="container-page pb-16">
+        <Breadcrumb
+          items={[{ label: "Home", href: "/" }, { label: "Enquiry" }]}
+        />
 
-      <header className="mb-10 max-w-3xl">
-        <h1 className="text-3xl sm:text-4xl">Your enquiry</h1>
-        <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
-          Add products from any brand to a single enquiry. We return one consolidated,
-          itemised quotation covering all of them — which becomes one purchase order and one
-          GST invoice.
-        </p>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-600">
-          Not sure which products you need?{" "}
-          <Link href="/requirement" className="text-accent-700 underline underline-offset-2">
-            Describe the requirement instead
-          </Link>{" "}
-          — quantity, specification and timescale — and we will find them.
-        </p>
-      </header>
+        <header className="mb-10 max-w-3xl">
+          <h1 className="text-3xl sm:text-4xl">Your enquiry</h1>
+          <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
+            Add products from any brand to a single enquiry. We return one
+            consolidated, itemised quotation covering all of them — which
+            becomes one purchase order and one GST invoice.
+          </p>
+          <p className="mt-3 text-[15px] leading-relaxed text-ink-600">
+            Not sure which products you need?{" "}
+            <Link
+              href="/requirement"
+              className="text-accent-700 underline underline-offset-2"
+            >
+              Describe the requirement instead
+            </Link>{" "}
+            — quantity, specification and timescale — and we will find them.
+          </p>
+        </header>
 
-      <EnquiryBasket
-        prefill={{
-          contactName: user?.name ?? "",
-          contactEmail: user?.email ?? "",
-          companyName: company?.name ?? user?.companyName ?? "",
-          phone: profile?.phone ?? "",
-        }}
+        <EnquiryBasket
+          prefill={{
+            contactName: user?.name ?? "",
+            contactEmail: user?.email ?? "",
+            companyName: company?.name ?? user?.companyName ?? "",
+            phone: profile?.phone ?? "",
+          }}
+        />
+      </div>
+      <PartnerShowcase
+        heading="Who you will be buying through"
+        intro="Programme designations we hold, shown as each publisher issued them."
       />
-    </div>
+    </>
   );
 }

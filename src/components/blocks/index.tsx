@@ -78,6 +78,7 @@ export function BlockRenderer({
   resolved,
   afterHero,
   heroImage,
+  heroBadge,
 }: {
   blocks: ParsedBlock[];
   resolved: ResolvedBlockData;
@@ -90,39 +91,43 @@ export function BlockRenderer({
   afterHero?: React.ReactNode;
   /** A picture for the first hero's side panel, chosen by the page route. */
   heroImage?: SitePhoto;
+  /** The programme badge for the brand this page is about, when one may be shown. */
+  heroBadge?: { src: string; alt: string; href: string };
 }) {
   const firstHero = blocks.findIndex((block) => block.type === "HERO");
   // Worked out in one pass before rendering rather than while mapping: the
   // decision for a block depends on the block above it, and carrying that
   // state through the render callback would mean mutating a variable during
   // render.
-  const layout = blocks.reduce<Array<{ tone: "plain" | "muted"; continues: boolean }>>(
-    (accumulated, block, index) => {
-      const previous = blocks[index - 1];
-      const previousTone = accumulated[index - 1]?.tone ?? "plain";
-      const continues =
-        FLOWS.has(block.type) && previous !== undefined && FLOWS.has(previous.type);
+  const layout = blocks.reduce<
+    Array<{ tone: "plain" | "muted"; continues: boolean }>
+  >((accumulated, block, index) => {
+    const previous = blocks[index - 1];
+    const previousTone = accumulated[index - 1]?.tone ?? "plain";
+    const continues =
+      FLOWS.has(block.type) &&
+      previous !== undefined &&
+      FLOWS.has(previous.type);
 
-      // A continuing block keeps the band it is continuing, and does not
-      // advance the alternation — otherwise a run of prose becomes a zebra.
-      if (continues) {
-        accumulated.push({ tone: previousTone, continues });
-        return accumulated;
-      }
-
-      if (!BANDED.has(block.type)) {
-        accumulated.push({ tone: "plain", continues });
-        return accumulated;
-      }
-
-      const banded = accumulated.filter(
-        (entry, entryIndex) => !entry.continues && BANDED.has(blocks[entryIndex]!.type),
-      ).length;
-      accumulated.push({ tone: banded % 2 === 0 ? "plain" : "muted", continues });
+    // A continuing block keeps the band it is continuing, and does not
+    // advance the alternation — otherwise a run of prose becomes a zebra.
+    if (continues) {
+      accumulated.push({ tone: previousTone, continues });
       return accumulated;
-    },
-    [],
-  );
+    }
+
+    if (!BANDED.has(block.type)) {
+      accumulated.push({ tone: "plain", continues });
+      return accumulated;
+    }
+
+    const banded = accumulated.filter(
+      (entry, entryIndex) =>
+        !entry.continues && BANDED.has(blocks[entryIndex]!.type),
+    ).length;
+    accumulated.push({ tone: banded % 2 === 0 ? "plain" : "muted", continues });
+    return accumulated;
+  }, []);
 
   return (
     <>
@@ -139,34 +144,80 @@ export function BlockRenderer({
                   data={block.data}
                   counts={resolved.counts}
                   image={index === firstHero ? heroImage : undefined}
+                  badge={index === firstHero ? heroBadge : undefined}
                 />
                 {slot}
               </React.Fragment>
             );
           case "RICH_TEXT":
-            return <RichTextBlock key={block.id} data={block.data} tone={tone} continues={continues} />;
+            return (
+              <RichTextBlock
+                key={block.id}
+                data={block.data}
+                tone={tone}
+                continues={continues}
+              />
+            );
           case "BULLETS":
-            return <BulletsBlock key={block.id} data={block.data} tone={tone} continues={continues} />;
+            return (
+              <BulletsBlock
+                key={block.id}
+                data={block.data}
+                tone={tone}
+                continues={continues}
+              />
+            );
           case "CARDS":
-            return <CardsBlock key={block.id} data={block.data} tone={tone} continues={continues} />;
+            return (
+              <CardsBlock
+                key={block.id}
+                data={block.data}
+                tone={tone}
+                continues={continues}
+              />
+            );
           case "ICON_POINTS":
-            return <IconPointsBlock key={block.id} data={block.data} tone={tone} />;
+            return (
+              <IconPointsBlock key={block.id} data={block.data} tone={tone} />
+            );
           case "LINK_LIST":
-            return <LinkListBlock key={block.id} data={block.data} tone={tone} />;
+            return (
+              <LinkListBlock key={block.id} data={block.data} tone={tone} />
+            );
           case "KEY_VALUE_LIST":
-            return <KeyValueListBlock key={block.id} data={block.data} tone={tone} continues={continues} />;
+            return (
+              <KeyValueListBlock
+                key={block.id}
+                data={block.data}
+                tone={tone}
+                continues={continues}
+              />
+            );
           case "CHIP_LIST":
-            return <ChipListBlock key={block.id} data={block.data} tone={tone} />;
+            return (
+              <ChipListBlock key={block.id} data={block.data} tone={tone} />
+            );
           case "SPLIT_PANEL":
-            return <SplitPanelBlock key={block.id} data={block.data} tone={tone} />;
+            return (
+              <SplitPanelBlock key={block.id} data={block.data} tone={tone} />
+            );
           case "STAT_BAR":
-            return <StatBarBlock key={block.id} data={block.data} counts={resolved.counts} tone={tone} />;
+            return (
+              <StatBarBlock
+                key={block.id}
+                data={block.data}
+                counts={resolved.counts}
+                tone={tone}
+              />
+            );
           case "PRODUCT_GRID":
             return (
               <ProductGridBlock
                 key={block.id}
                 data={block.data}
-                products={(resolved.products.get(block.id) ?? []) as ProductListItem[]}
+                products={
+                  (resolved.products.get(block.id) ?? []) as ProductListItem[]
+                }
                 tone={tone}
               />
             );
@@ -175,7 +226,9 @@ export function BlockRenderer({
               <PriceComparisonBlock
                 key={block.id}
                 data={block.data}
-                products={(resolved.products.get(block.id) ?? []) as ProductListItem[]}
+                products={
+                  (resolved.products.get(block.id) ?? []) as ProductListItem[]
+                }
                 tone={tone}
               />
             );
@@ -202,7 +255,10 @@ export function BlockRenderer({
               <IndustryGridBlock
                 key={block.id}
                 data={block.data}
-                rows={(resolved.collections.get(block.id) ?? []) as IndustryCardRow[]}
+                rows={
+                  (resolved.collections.get(block.id) ??
+                    []) as IndustryCardRow[]
+                }
                 tone={tone}
               />
             );
@@ -218,18 +274,28 @@ export function BlockRenderer({
           case "CTA_BANNER":
             return <CtaBannerBlock key={block.id} data={block.data} />;
           case "COMPARISON_TABLE":
-            return <ComparisonTableBlock key={block.id} data={block.data} tone={tone} />;
+            return (
+              <ComparisonTableBlock
+                key={block.id}
+                data={block.data}
+                tone={tone}
+              />
+            );
           case "PLANS":
             return (
               <PlansBlock
                 key={block.id}
                 data={block.data}
-                products={(resolved.products.get(block.id) ?? []) as ProductListItem[]}
+                products={
+                  (resolved.products.get(block.id) ?? []) as ProductListItem[]
+                }
                 tone={tone}
               />
             );
           case "COMPANY_INFO":
-            return <CompanyInfoBlock key={block.id} data={block.data} tone={tone} />;
+            return (
+              <CompanyInfoBlock key={block.id} data={block.data} tone={tone} />
+            );
           case "NOTICE":
             return <NoticeBlock key={block.id} data={block.data} tone={tone} />;
           case "TESTIMONIALS":

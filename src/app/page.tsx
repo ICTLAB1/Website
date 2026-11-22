@@ -62,6 +62,8 @@ export default async function HomePageRoute() {
         primaryCta?: { href: string; label: string };
         secondaryCta?: { href: string; label: string };
         stats?: Array<{ label: string }>;
+        showSearch?: boolean;
+        searchTerms?: string[];
       }
     | undefined;
   const gemData = gem?.data as
@@ -94,6 +96,8 @@ export default async function HomePageRoute() {
       },
       secondaryCta: heroData?.secondaryCta,
       statLabels: (heroData?.stats ?? []).map((stat) => stat.label),
+      showSearch: heroData?.showSearch ?? false,
+      searchTerms: heroData?.searchTerms ?? [],
     },
     industries: {
       eyebrow: industriesData?.eyebrow,

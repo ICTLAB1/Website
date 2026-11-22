@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Badge, StatusBadge } from "@/components/ui/badge";
 import { Tabs } from "@/components/ui/tabs";
@@ -15,7 +16,11 @@ import { RepresentativeImageNotice } from "@/components/catalogue/representative
 import { SpecTable } from "@/components/catalogue/spec-table";
 import { ConfigurationTable } from "@/components/catalogue/configuration-table";
 import { HardwareQuotePanel } from "@/components/catalogue/hardware-quote-panel";
-import { hardwareClassLabel, hardwareTitle, isHardware } from "@/lib/catalogue/hardware";
+import {
+  hardwareClassLabel,
+  hardwareTitle,
+  isHardware,
+} from "@/lib/catalogue/hardware";
 import { isQuoteOnly } from "@/lib/catalogue/quote-only";
 import { resolveProductPhoto } from "@/lib/representative-image";
 import { getProductBySlug, getRelatedProducts } from "@/lib/queries/catalogue";
@@ -23,7 +28,11 @@ import { effectivePriceMinor } from "@/lib/money";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { metaDescription } from "@/lib/seo-description";
 import { productRating, productReviews } from "@/lib/queries/reviews";
-import { mayPublishAggregateRating, MAX_RATING, MIN_RATING } from "@/lib/reviews";
+import {
+  mayPublishAggregateRating,
+  MAX_RATING,
+  MIN_RATING,
+} from "@/lib/reviews";
 import { ReviewList } from "@/components/reviews/review-list";
 import { getSiteConfig } from "@/lib/site-config";
 import { QuickEnquiry } from "@/components/enquiry/quick-enquiry";
@@ -47,7 +56,9 @@ type PageProps = { params: Promise<{ slug: string }> };
  * a prerender that only refreshes on redeploy.
  */
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) {
@@ -102,16 +113,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: product.seoDescription?.trim()
       ? product.seoDescription.trim()
       : metaDescription(
-      product.shortDescription,
-      `Supplied by TechZoid on a single quotation with GST invoicing, alongside your other ${product.brand.name} purchasing.`,
-      "Supplied by TechZoid on a single quotation, with GST invoicing and one purchase order across brands.",
-      "Quoted by TechZoid with GST invoicing, on one purchase order with the rest of your software.",
-      // Short enough to fit behind a long description. Without it the three
-      // above are all too long for a base in the nineties, and the page keeps
-      // a stub — which is how `adobe-acrobat-standard-teams` sat at 68
-      // characters while a rule designed to lengthen it ran on every request.
-      `Quoted by TechZoid with GST invoicing on one purchase order.`,
-    ),
+          product.shortDescription,
+          `Supplied by TechZoid on a single quotation with GST invoicing, alongside your other ${product.brand.name} purchasing.`,
+          "Supplied by TechZoid on a single quotation, with GST invoicing and one purchase order across brands.",
+          "Quoted by TechZoid with GST invoicing, on one purchase order with the rest of your software.",
+          // Short enough to fit behind a long description. Without it the three
+          // above are all too long for a base in the nineties, and the page keeps
+          // a stub — which is how `adobe-acrobat-standard-teams` sat at 68
+          // characters while a rule designed to lengthen it ran on every request.
+          `Quoted by TechZoid with GST invoicing on one purchase order.`,
+        ),
     path: `/products/${product.slug}`,
     keywords: [...product.keywords, product.brand.name, product.name],
   });
@@ -129,15 +140,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
     4,
   );
   const config = await getSiteConfig();
+  // The publisher's programme badge, only while the brand record may state it.
+  const partnerBadge = (await currentPartnerBadges()).find(
+    (badge) => badge.slug === product.brand.slug,
+  );
   const [reviews, rating] = await Promise.all([
     productReviews(product.slug),
     productRating(product.slug),
   ]);
 
   const defaultVariant = product.variants[0];
-  const pricedVariants = product.variants.filter((variant) => variant.listPriceMinor > 0);
+  const pricedVariants = product.variants.filter(
+    (variant) => variant.listPriceMinor > 0,
+  );
   const variantPrices = product.variants
-    .map((variant) => effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor))
+    .map((variant) =>
+      effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor),
+    )
     .filter((price) => price > 0)
     .sort((a, b) => a - b);
   const lowestPrice = variantPrices[0];
@@ -170,7 +189,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
     termMonths: number | null;
   }) => ({
     "@type": "UnitPriceSpecification",
-    price: (effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) / 100).toFixed(2),
+    price: (
+      effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) / 100
+    ).toFixed(2),
     priceCurrency: variant.currency,
     // GST is added on the invoice, never included in a listed figure.
     valueAddedTaxIncluded: false,
@@ -181,7 +202,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
       unitCode: "C62",
       unitText: variant.seats === 1 ? "user" : "users",
     },
-    ...(variant.termMonths ? { billingDuration: `P${variant.termMonths}M` } : {}),
+    ...(variant.termMonths
+      ? { billingDuration: `P${variant.termMonths}M` }
+      : {}),
   });
 
   /*
@@ -260,7 +283,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
      * is shown to a reader, who can see what it is, and withheld from the
      * markup, which cannot.
      */
-    ...(photo.src && !photo.representative && hardware ? { image: absoluteUrl(photo.src) } : {}),
+    ...(photo.src && !photo.representative && hardware
+      ? { image: absoluteUrl(photo.src) }
+      : {}),
     /*
      * The manufacturer's own part number, where the catalogue holds one.
      *
@@ -286,7 +311,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
      * and asserting one would be stating something this catalogue does not
      * actually record.
      */
-    ...(hardware ? { manufacturer: { "@type": "Organization", name: product.brand.name } } : {}),
+    ...(hardware
+      ? { manufacturer: { "@type": "Organization", name: product.brand.name } }
+      : {}),
     /*
      * An offer wherever there is a price, and `isQuoteOnly` is the one question
      * asked.
@@ -351,7 +378,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
               sku: variant.sku,
               name: variant.name,
               price: (
-                effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) / 100
+                effectivePriceMinor(
+                  variant.listPriceMinor,
+                  variant.salePriceMinor,
+                ) / 100
               ).toFixed(2),
               priceCurrency: variant.currency,
               availability: schemaAvailability,
@@ -407,9 +437,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
           { label: "Home", href: "/" },
           { label: "Products", href: "/products" },
           ...(parentCategory
-            ? [{ label: parentCategory.name, href: `/products?category=${parentCategory.slug}` }]
+            ? [
+                {
+                  label: parentCategory.name,
+                  href: `/products?category=${parentCategory.slug}`,
+                },
+              ]
             : []),
-          { label: product.category.name, href: `/products?category=${product.category.slug}` },
+          {
+            label: product.category.name,
+            href: `/products?category=${product.category.slug}`,
+          },
           { label: product.name },
         ]}
       />
@@ -423,6 +461,20 @@ export default async function ProductDetailPage({ params }: PageProps) {
             >
               {product.brand.name}
             </Link>
+            {partnerBadge ? (
+              <Link
+                href={`/brands/${partnerBadge.slug}`}
+                className="inline-flex"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={partnerBadge.badge}
+                  alt={`${partnerBadge.name} ${partnerBadge.label}`}
+                  className="h-9 w-auto object-contain"
+                  loading="lazy"
+                />
+              </Link>
+            ) : null}
             {/*
               Stock language is for things that have stock.
 
@@ -464,7 +516,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 decoding="async"
               />
             ) : null}
-            <h1 className="text-3xl leading-tight sm:text-[2.35rem]">{product.name}</h1>
+            <h1 className="text-3xl leading-tight sm:text-[2.35rem]">
+              {product.name}
+            </h1>
           </div>
 
           {hardware ? (
@@ -489,8 +543,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
           {hardware ? (
             <p className="mt-4 max-w-2xl rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-meta leading-relaxed text-ink-600">
               A {hardwareClassLabel(product.formFactor!).toLowerCase()} from{" "}
-              <span className="font-medium text-graphite-900">{product.brand.name}</span>, supplied
-              by {config.entityName}.
+              <span className="font-medium text-graphite-900">
+                {product.brand.name}
+              </span>
+              , supplied by {config.entityName}.
             </p>
           ) : null}
 
@@ -531,8 +587,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 >
                   {product.brand.name.charAt(0)}
                 </span>
-                <p className="mt-4 text-[15px] font-semibold text-graphite-900">{product.name}</p>
-                <p className="mt-1 text-[13px] text-ink-500">{product.brand.name}</p>
+                <p className="mt-4 text-[15px] font-semibold text-graphite-900">
+                  {product.name}
+                </p>
+                <p className="mt-1 text-[13px] text-ink-500">
+                  {product.brand.name}
+                </p>
               </div>
             </div>
           )}
@@ -545,9 +605,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   label: "Overview",
                   content: (
                     <div className="prose-content max-w-3xl text-[15px]">
-                      {product.description.split("\n\n").map((paragraph, index) => (
-                        <p key={index}>{paragraph}</p>
-                      ))}
+                      {product.description
+                        .split("\n\n")
+                        .map((paragraph, index) => (
+                          <p key={index}>{paragraph}</p>
+                        ))}
                     </div>
                   ),
                 },
@@ -561,9 +623,20 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   content: (
                     <ul className="grid max-w-3xl gap-3 sm:grid-cols-2">
                       {product.features.map((feature) => (
-                        <li key={feature} className="flex gap-2.5 text-[14px] leading-relaxed text-ink-700">
-                          <span aria-hidden="true" className="mt-1.5 shrink-0 text-accent-700">
-                            <svg width="14" height="14" viewBox="0 0 12 12" fill="currentColor">
+                        <li
+                          key={feature}
+                          className="flex gap-2.5 text-[14px] leading-relaxed text-ink-700"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="mt-1.5 shrink-0 text-accent-700"
+                          >
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 12 12"
+                              fill="currentColor"
+                            >
                               <path d="M4.7 8.6 2.2 6.1l.9-.9 1.6 1.6 4-4 .9.9z" />
                             </svg>
                           </span>
@@ -600,57 +673,83 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       },
                     ]
                   : []),
-                ...(hardware ? [] : [{
-                  id: "licensing",
-                  label: "Licensing",
-                  content: (
-                    <div className="max-w-3xl space-y-6">
-                      {product.licensingNotes ? (
-                        <div className="prose-content text-[15px]">
-                          {product.licensingNotes.split("\n\n").map((paragraph, index) => (
-                            <p key={index}>{paragraph}</p>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-[15px] text-ink-600">
-                          Licensing terms for this product are confirmed in writing on the
-                          quotation.
-                        </p>
-                      )}
-                      <div className="rounded-(--radius-lg) border border-line bg-surface-muted p-5">
-                        <h3 className="text-[14px] font-semibold text-graphite-900">
-                          Available licence options
-                        </h3>
-                        <ul className="mt-3 space-y-2.5">
-                          {product.variants.map((variant) => (
-                            <li key={variant.sku} className="flex flex-wrap items-baseline gap-x-3 text-[13px]">
-                              <span className="font-mono text-[12px] text-ink-500">{variant.sku}</span>
-                              {/* The publisher's number, or nothing — see variant-selector.tsx. */}
-                              {variant.partNumber ? (
-                                <span className="font-mono text-[12px] text-ink-500">
-                                  {variant.partNumber}
-                                </span>
-                              ) : null}
-                              <span className="text-ink-700">{variant.name}</span>
-                              <span className="text-ink-500">
-                                {variant.seats > 1 ? `${variant.seats} seats per unit` : "1 seat per unit"}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  ),
-                }]),
+                ...(hardware
+                  ? []
+                  : [
+                      {
+                        id: "licensing",
+                        label: "Licensing",
+                        content: (
+                          <div className="max-w-3xl space-y-6">
+                            {product.licensingNotes ? (
+                              <div className="prose-content text-[15px]">
+                                {product.licensingNotes
+                                  .split("\n\n")
+                                  .map((paragraph, index) => (
+                                    <p key={index}>{paragraph}</p>
+                                  ))}
+                              </div>
+                            ) : (
+                              <p className="text-[15px] text-ink-600">
+                                Licensing terms for this product are confirmed
+                                in writing on the quotation.
+                              </p>
+                            )}
+                            <div className="rounded-(--radius-lg) border border-line bg-surface-muted p-5">
+                              <h3 className="text-[14px] font-semibold text-graphite-900">
+                                Available licence options
+                              </h3>
+                              <ul className="mt-3 space-y-2.5">
+                                {product.variants.map((variant) => (
+                                  <li
+                                    key={variant.sku}
+                                    className="flex flex-wrap items-baseline gap-x-3 text-[13px]"
+                                  >
+                                    <span className="font-mono text-[12px] text-ink-500">
+                                      {variant.sku}
+                                    </span>
+                                    {/* The publisher's number, or nothing — see variant-selector.tsx. */}
+                                    {variant.partNumber ? (
+                                      <span className="font-mono text-[12px] text-ink-500">
+                                        {variant.partNumber}
+                                      </span>
+                                    ) : null}
+                                    <span className="text-ink-700">
+                                      {variant.name}
+                                    </span>
+                                    <span className="text-ink-500">
+                                      {variant.seats > 1
+                                        ? `${variant.seats} seats per unit`
+                                        : "1 seat per unit"}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        ),
+                      },
+                    ]),
                 {
                   id: "compatibility",
                   label: "Compatibility",
                   content: (
                     <ul className="max-w-3xl space-y-2.5">
                       {product.compatibility.map((entry) => (
-                        <li key={entry} className="flex gap-2.5 text-[14px] leading-relaxed text-ink-700">
-                          <span aria-hidden="true" className="mt-1.5 shrink-0 text-ink-500">
-                            <svg width="6" height="6" viewBox="0 0 6 6" fill="currentColor">
+                        <li
+                          key={entry}
+                          className="flex gap-2.5 text-[14px] leading-relaxed text-ink-700"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="mt-1.5 shrink-0 text-ink-500"
+                          >
+                            <svg
+                              width="6"
+                              height="6"
+                              viewBox="0 0 6 6"
+                              fill="currentColor"
+                            >
                               <circle cx="3" cy="3" r="3" />
                             </svg>
                           </span>
@@ -675,7 +774,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
                         </p>
                       </div>
                       <div className="rounded-(--radius-lg) border border-line p-5">
-                        <h3 className="text-[14px] font-semibold text-graphite-900">Support</h3>
+                        <h3 className="text-[14px] font-semibold text-graphite-900">
+                          Support
+                        </h3>
                         <p className="mt-2 text-[14px] leading-relaxed text-ink-600">
                           {product.supportNotes ??
                             "Procurement support is included. Deployment and managed support are available separately."}
@@ -709,40 +810,44 @@ export default async function ProductDetailPage({ params }: PageProps) {
                * the heading "Part number", which is the site inventing a
                * manufacturer's identifier. The panel omits the row instead.
                */
-              partNumber={product.partNumber ?? defaultVariant?.partNumber ?? null}
+              partNumber={
+                product.partNumber ?? defaultVariant?.partNumber ?? null
+              }
               /*
                * The lowest recorded configuration price, or null. `lowestPrice`
                * is already computed above for the structured data, so the panel
                * and the markup cannot show different figures.
                */
-              fromPriceMinor={isQuoteOnly(product) ? null : (lowestPrice ?? null)}
+              fromPriceMinor={
+                isQuoteOnly(product) ? null : (lowestPrice ?? null)
+              }
               productName={product.name}
               productSlug={product.slug}
               brandName={product.brand.name}
               supplierName={config.entityName}
             />
           ) : (
-          <VariantSelector
-            display={await getDisplayCurrency()}
-            variants={product.variants.map((variant) => ({
-              id: variant.id,
-              sku: variant.sku,
-              name: variant.name,
-              licenceType: variant.licenceType,
-              termMonths: variant.termMonths,
-              seats: variant.seats,
-              currency: variant.currency,
-              listPriceMinor: variant.listPriceMinor,
-              salePriceMinor: variant.salePriceMinor,
-              gstRatePercent: variant.gstRatePercent,
-              audience: variant.audience,
-              partNumber: variant.partNumber,
-            }))}
-            productName={product.name}
-            productSlug={product.slug}
-            brandName={product.brand.name}
-            purchaseMode={product.purchaseMode}
-          />
+            <VariantSelector
+              display={await getDisplayCurrency()}
+              variants={product.variants.map((variant) => ({
+                id: variant.id,
+                sku: variant.sku,
+                name: variant.name,
+                licenceType: variant.licenceType,
+                termMonths: variant.termMonths,
+                seats: variant.seats,
+                currency: variant.currency,
+                listPriceMinor: variant.listPriceMinor,
+                salePriceMinor: variant.salePriceMinor,
+                gstRatePercent: variant.gstRatePercent,
+                audience: variant.audience,
+                partNumber: variant.partNumber,
+              }))}
+              productName={product.name}
+              productSlug={product.slug}
+              brandName={product.brand.name}
+              purchaseMode={product.purchaseMode}
+            />
           )}
         </aside>
       </div>
@@ -765,8 +870,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { href: "/brands/microsoft", label: "Microsoft 365 and Windows" },
-              { href: "/brands/adobe", label: "Adobe Acrobat and Creative Cloud" },
-              { href: "/solutions/security-compliance", label: "Endpoint security" },
+              {
+                href: "/brands/adobe",
+                label: "Adobe Acrobat and Creative Cloud",
+              },
+              {
+                href: "/solutions/security-compliance",
+                label: "Endpoint security",
+              },
               { href: "/services", label: "Deployment and support" },
             ].map((item) => (
               <li key={item.href}>
@@ -807,7 +918,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
             as="h2"
             className="mb-6"
           />
-          <FaqList items={faqs.map((faq) => ({ question: faq.question, answer: faq.answer }))} />
+          <FaqList
+            items={faqs.map((faq) => ({
+              question: faq.question,
+              answer: faq.answer,
+            }))}
+          />
         </section>
       ) : null}
 
@@ -841,7 +957,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
             }
             as="h2"
             action={
-              <ButtonLink href={`/products?category=${product.category.slug}`} variant="outline" size="sm">
+              <ButtonLink
+                href={`/products?category=${product.category.slug}`}
+                variant="outline"
+                size="sm"
+              >
                 View category
               </ButtonLink>
             }

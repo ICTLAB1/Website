@@ -1,3 +1,4 @@
+import { PartnerShowcase } from "@/components/marketing/partner-showcase";
 import { PhotoHeader } from "@/components/marketing/page-photo";
 import { photoForPath } from "@/lib/page-photos";
 import type { Metadata } from "next";
@@ -233,6 +234,7 @@ export default async function ContactPage() {
           </aside>
         </div>
       </div>
+      <PartnerShowcase />
     </>
   );
 }
