@@ -134,7 +134,7 @@ export default async function ServicePage({ params }: PageProps) {
             {service.benefits.map((benefit) => (
               <li
                 key={benefit}
-                className="flex gap-3 rounded-[--radius-lg] border border-line bg-white p-5 text-[14px] leading-relaxed text-ink-700"
+                className="flex gap-3 rounded-(--radius-lg) border border-line bg-white p-5 text-[14px] leading-relaxed text-ink-700"
               >
                 <span
                   aria-hidden="true"
@@ -167,11 +167,11 @@ export default async function ServicePage({ params }: PageProps) {
               {steps.map((step) => (
                 <li
                   key={step.step}
-                  className="rounded-[--radius-lg] border border-line bg-white p-5"
+                  className="rounded-(--radius-lg) border border-line bg-white p-5"
                 >
                   <span
                     aria-hidden="true"
-                    className="mb-3 inline-grid h-8 w-8 place-items-center rounded-[--radius-sm] bg-graphite-900 text-[13px] font-semibold text-white"
+                    className="mb-3 inline-grid h-8 w-8 place-items-center rounded-(--radius-sm) bg-graphite-900 text-[13px] font-semibold text-white"
                   >
                     {step.step}
                   </span>
@@ -199,7 +199,7 @@ export default async function ServicePage({ params }: PageProps) {
               {service.technologies.map((technology) => (
                 <li
                   key={technology}
-                  className="rounded-[--radius-md] border border-line bg-white px-3.5 py-2 text-[13px] font-medium text-ink-700"
+                  className="rounded-(--radius-md) border border-line bg-white px-3.5 py-2 text-[13px] font-medium text-ink-700"
                 >
                   {technology}
                 </li>
@@ -239,7 +239,7 @@ export default async function ServicePage({ params }: PageProps) {
         ) : null}
 
         {/* CTA */}
-        <section className="mt-14 rounded-[--radius-lg] bg-graphite-900 p-8 sm:p-10">
+        <section className="mt-14 rounded-(--radius-lg) bg-graphite-900 p-8 sm:p-10">
           <h2 className="text-[1.6rem] text-white">
             Talk to us about {service.name.toLowerCase()}
           </h2>
@@ -253,7 +253,7 @@ export default async function ServicePage({ params }: PageProps) {
             {config.phone.sales ? (
               <a
                 href={`tel:${config.phone.sales.replace(/\s/g, "")}`}
-                className="inline-flex h-11 items-center justify-center rounded-[--radius-md] border border-white/30 px-5 text-sm font-medium text-white hover:bg-white/10"
+                className="inline-flex h-11 items-center justify-center rounded-(--radius-md) border border-white/30 px-5 text-sm font-medium text-white hover:bg-white/10"
               >
                 {config.phone.sales}
               </a>

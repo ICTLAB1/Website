@@ -28,7 +28,7 @@ export function SkeletonText({ lines = 3, className }: { lines?: number; classNa
 /** Mirrors the product card's layout so the grid does not reflow on load. */
 export function ProductCardSkeleton() {
   return (
-    <div className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5">
+    <div className="flex flex-col rounded-(--radius-lg) border border-line bg-white p-5">
       <Skeleton className="h-3 w-16" />
       <Skeleton className="mt-3 h-4 w-4/5" />
       <SkeletonText lines={2} className="mt-3" />

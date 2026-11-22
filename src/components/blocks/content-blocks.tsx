@@ -164,7 +164,7 @@ export function HeroBlock({
             {data.eyebrow ? (
               <p
                 className={cn(
-                  "mb-4 inline-flex items-center gap-2 rounded-[--radius-sm] px-3 py-1 text-label font-medium",
+                  "mb-4 inline-flex items-center gap-2 rounded-(--radius-sm) px-3 py-1 text-label font-medium",
                   dark
                     ? "border border-graphite-700 bg-graphite-800 text-graphite-200"
                     : "bg-accent-50 text-accent-800",
@@ -404,7 +404,7 @@ export function CardsBlock({
         {data.items.map((item, index) => (
           <div
             key={index}
-            className="card-hover rounded-[--radius-lg] border border-line bg-white p-5"
+            className="card-hover rounded-(--radius-lg) border border-line bg-white p-5"
           >
             {data.numbered && data.numberLabel ? (
               <span className="block text-label font-semibold uppercase tracking-wide text-accent-700">
@@ -413,7 +413,7 @@ export function CardsBlock({
             ) : data.numbered ? (
               <span
                 aria-hidden="true"
-                className="mb-3 inline-grid h-7 w-7 place-items-center rounded-[--radius-sm] bg-graphite-900 text-label font-semibold text-white"
+                className="mb-3 inline-grid h-7 w-7 place-items-center rounded-(--radius-sm) bg-graphite-900 text-label font-semibold text-white"
               >
                 {index + 1}
               </span>
@@ -500,7 +500,7 @@ export function LinkListBlock({
             <li key={index}>
               <BlockLink
                 href={item.href}
-                className="lift inline-block rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-meta font-medium text-ink-700 hover:border-graphite-300"
+                className="lift inline-block rounded-(--radius-md) border border-line bg-white px-4 py-2.5 text-meta font-medium text-ink-700 hover:border-graphite-300"
               >
                 {item.label}
               </BlockLink>
@@ -526,7 +526,7 @@ export function LinkListBlock({
             <BlockLink
               key={index}
               href={item.href}
-              className="lift group flex items-start justify-between gap-4 rounded-[--radius-lg] border border-line bg-white p-5 hover:border-graphite-300"
+              className="lift group flex items-start justify-between gap-4 rounded-(--radius-lg) border border-line bg-white p-5 hover:border-graphite-300"
             >
               <span>
                 <span className="block text-body font-semibold text-graphite-900 group-hover:text-accent-700">
@@ -566,7 +566,7 @@ export function KeyValueListBlock({
         {data.items.map((item, index) => (
           <li
             key={index}
-            className="flex items-center justify-between gap-3 rounded-[--radius-md] border border-line bg-white px-4 py-3 text-meta"
+            className="flex items-center justify-between gap-3 rounded-(--radius-md) border border-line bg-white px-4 py-3 text-meta"
           >
             <span className="font-medium text-graphite-900">{item.key}</span>
             <span className="text-ink-500">{item.value}</span>
@@ -595,7 +595,7 @@ export function ChipListBlock({
         {data.items.map((item, index) => (
           <li
             key={index}
-            className="rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-meta font-medium text-ink-700"
+            className="rounded-(--radius-md) border border-line bg-white px-4 py-2.5 text-meta font-medium text-ink-700"
           >
             {item}
           </li>
@@ -681,7 +681,7 @@ export function SplitPanelBlock({
             {data.tiles.map((tile, index) => (
               <li
                 key={index}
-                className="flex min-h-[4.5rem] items-center justify-center rounded-[--radius-lg] border border-line bg-white px-4 py-4 text-center"
+                className="flex min-h-[4.5rem] items-center justify-center rounded-(--radius-lg) border border-line bg-white px-4 py-4 text-center"
               >
                 <span className="text-meta font-semibold leading-snug text-graphite-900">
                   {tile}
@@ -805,7 +805,7 @@ export async function CtaBannerBlock({
           className={cn(
             "flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between",
             dark &&
-              "relative isolate overflow-hidden rounded-[--radius-xl] bg-career-navy-dark px-6 py-12 sm:px-12 sm:py-14",
+              "relative isolate overflow-hidden rounded-(--radius-xl) bg-career-navy-dark px-6 py-12 sm:px-12 sm:py-14",
           )}
         >
           {dark ? (
@@ -851,7 +851,7 @@ export async function CtaBannerBlock({
                 <a
                   href={`mailto:${contactEmail}`}
                   className={cn(
-                    "inline-flex h-12 items-center justify-center rounded-[--radius-md] border px-6 text-body font-medium",
+                    "inline-flex h-12 items-center justify-center rounded-(--radius-md) border px-6 text-body font-medium",
                     dark
                       ? "border-white/30 text-white hover:bg-white/10"
                       : "border-line text-graphite-900 hover:bg-white",
@@ -961,7 +961,7 @@ export function PlansBlock({
           return (
             <div
               key={index}
-              className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5"
+              className="flex flex-col rounded-(--radius-lg) border border-line bg-white p-5"
             >
               <h3 className="text-body font-semibold text-graphite-900">
                 {plan.name}
@@ -1168,7 +1168,7 @@ export function NoticeBlock({
       <div className="py-6">
         <div
           className={cn(
-            "max-w-3xl rounded-[--radius-lg] border p-5",
+            "max-w-3xl rounded-(--radius-lg) border p-5",
             warning
               ? "border-warning-600/40 bg-warning-50"
               : "border-line bg-surface-muted",

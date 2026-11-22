@@ -148,7 +148,7 @@ export function SearchBox({
               }
             }}
             className={cn(
-              "w-full rounded-[--radius-md] border border-line-strong bg-white pl-10 pr-24 text-ink-900",
+              "w-full rounded-(--radius-md) border border-line-strong bg-white pl-10 pr-24 text-ink-900",
               "placeholder:text-ink-500 hover:border-ink-300 focus:border-accent-600",
               height,
             )}
@@ -156,7 +156,7 @@ export function SearchBox({
           <button
             type="submit"
             className={cn(
-              "absolute right-1.5 top-1/2 -translate-y-1/2 rounded-[--radius-sm] bg-accent-700 px-4 font-medium text-white hover:bg-accent-800",
+              "absolute right-1.5 top-1/2 -translate-y-1/2 rounded-(--radius-sm) bg-accent-700 px-4 font-medium text-white hover:bg-accent-800",
               size === "lg" ? "h-11 text-sm" : "h-8 text-meta",
             )}
           >
@@ -166,7 +166,7 @@ export function SearchBox({
       </form>
 
       {open && queryIsSearchable ? (
-        <div className="absolute left-0 right-0 top-[calc(100%+0.375rem)] z-50 overflow-hidden rounded-[--radius-lg] border border-line bg-white shadow-[--shadow-overlay]">
+        <div className="absolute left-0 right-0 top-[calc(100%+0.375rem)] z-50 overflow-hidden rounded-(--radius-lg) border border-line bg-white shadow-(--shadow-overlay)">
           {loading && visibleSuggestions.length === 0 ? (
             <p className="px-4 py-3 text-meta text-ink-500">Searching…</p>
           ) : visibleSuggestions.length === 0 ? (
@@ -198,7 +198,7 @@ export function SearchBox({
                       </span>
                     </span>
                     {suggestion.badge ? (
-                      <span className="mt-0.5 shrink-0 rounded-[--radius-xs] bg-ink-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-ink-600">
+                      <span className="mt-0.5 shrink-0 rounded-(--radius-xs) bg-ink-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-ink-600">
                         {suggestion.badge}
                       </span>
                     ) : null}

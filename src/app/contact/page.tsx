@@ -80,7 +80,7 @@ export default async function ContactPage() {
               ? channels.map((channel) => (
                   <div
                     key={channel.title}
-                    className="rounded-[--radius-lg] border border-line bg-white p-5"
+                    className="rounded-(--radius-lg) border border-line bg-white p-5"
                   >
                     <h2 className="text-[15px] font-semibold text-graphite-900">
                       {channel.title}
@@ -111,7 +111,7 @@ export default async function ContactPage() {
               : null}
 
             {config.formattedAddress ? (
-              <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <div className="rounded-(--radius-lg) border border-line bg-white p-5">
                 {/*
                 "India office" only once there is a second one to tell it apart
                 from. On a business trading from one place the heading stays
@@ -143,7 +143,7 @@ export default async function ContactPage() {
             ) : null}
 
             {config.secondaryEntity ? (
-              <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <div className="rounded-(--radius-lg) border border-line bg-white p-5">
                 <h2 className="text-[15px] font-semibold text-graphite-900">
                   {config.secondaryEntity.name}
                 </h2>
@@ -180,7 +180,7 @@ export default async function ContactPage() {
             ) : null}
 
             {social.length > 0 ? (
-              <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <div className="rounded-(--radius-lg) border border-line bg-white p-5">
                 <h2 className="text-[15px] font-semibold text-graphite-900">
                   Elsewhere
                 </h2>
@@ -194,7 +194,7 @@ export default async function ContactPage() {
                         href={link.href}
                         target="_blank"
                         rel="me noopener noreferrer"
-                        className="inline-flex h-8 items-center rounded-[--radius-md] border border-line px-3 text-[13px] text-ink-600 transition-colors hover:border-graphite-900 hover:text-graphite-900"
+                        className="inline-flex h-8 items-center rounded-(--radius-md) border border-line px-3 text-[13px] text-ink-600 transition-colors hover:border-graphite-900 hover:text-graphite-900"
                       >
                         {link.name}
                       </a>
@@ -209,7 +209,7 @@ export default async function ContactPage() {
             say where it went. Without it, a customer with a licence problem
             would find only a sales form.
           */}
-            <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+            <div className="rounded-(--radius-lg) border border-line bg-surface-muted p-5">
               <h2 className="text-[15px] font-semibold text-graphite-900">
                 Already a customer?
               </h2>

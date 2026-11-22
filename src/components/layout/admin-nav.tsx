@@ -4,7 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-const SECTIONS: Array<{ heading: string; links: Array<{ href: string; label: string; adminOnly?: boolean }> }> = [
+const SECTIONS: Array<{
+  heading: string;
+  links: Array<{ href: string; label: string; adminOnly?: boolean }>;
+}> = [
   {
     heading: "Overview",
     links: [{ href: "/admin", label: "Dashboard" }],
@@ -41,7 +44,11 @@ const SECTIONS: Array<{ heading: string; links: Array<{ href: string; label: str
        * typed these words expecting them to reach this business, not
        * everybody in it.
        */
-      { href: "/admin/conversations", label: "Chat conversations", adminOnly: true },
+      {
+        href: "/admin/conversations",
+        label: "Chat conversations",
+        adminOnly: true,
+      },
     ],
   },
   {
@@ -90,12 +97,14 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
       <div className="scroll-x lg:overflow-visible">
         <div className="flex min-w-max gap-6 lg:min-w-0 lg:flex-col lg:gap-6">
           {SECTIONS.map((section) => {
-            const links = section.links.filter((link) => !link.adminOnly || isAdmin);
+            const links = section.links.filter(
+              (link) => !link.adminOnly || isAdmin,
+            );
             if (links.length === 0) return null;
 
             return (
               <div key={section.heading}>
-                <p className="mb-2 hidden text-label font-semibold uppercase tracking-[0.1em] text-graphite-400 lg:block">
+                <p className="mb-2 hidden text-label font-semibold uppercase tracking-[0.1em] text-[#ffb27a] lg:block">
                   {section.heading}
                 </p>
                 <ul className="flex gap-1 lg:flex-col lg:gap-0.5">
@@ -110,10 +119,10 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
                           href={link.href}
                           aria-current={active ? "page" : undefined}
                           className={cn(
-                            "block whitespace-nowrap rounded-[--radius-md] px-3 py-2 text-meta transition-colors",
+                            "block whitespace-nowrap rounded-(--radius-md) border-l-[3px] px-3 py-2 text-meta transition-colors",
                             active
-                              ? "bg-accent-700 font-medium text-white"
-                              : "text-graphite-200 hover:bg-graphite-800 hover:text-white",
+                              ? "border-career-orange bg-white/15 font-medium text-white"
+                              : "border-transparent text-white/85 hover:bg-white/10 hover:text-white",
                           )}
                         >
                           {link.label}

@@ -36,11 +36,11 @@ export function IndustryCard({ industry }: { industry: IndustryCardRow }) {
   return (
     <Link
       href={`/industries/${industry.slug}`}
-      className="wash group flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5"
+      className="wash group flex h-full flex-col rounded-(--radius-lg) border border-line bg-white p-5"
     >
       <span
         aria-hidden="true"
-        className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-[--radius-md] bg-accent-50 text-accent-700 transition-colors group-hover:bg-white/15 group-hover:text-white"
+        className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-(--radius-md) bg-accent-50 text-accent-700 transition-colors group-hover:bg-white/15 group-hover:text-white"
       >
         <svg
           width="20"
@@ -68,7 +68,7 @@ export function IndustryCard({ industry }: { industry: IndustryCardRow }) {
           {shown.map((solution) => (
             <span
               key={solution}
-              className="rounded-[--radius-sm] border border-line bg-surface-muted px-2 py-1 text-label text-ink-600 transition-colors group-hover:border-white/30 group-hover:bg-white/10 group-hover:text-white"
+              className="rounded-(--radius-sm) border border-line bg-surface-muted px-2 py-1 text-label text-ink-600 transition-colors group-hover:border-white/30 group-hover:bg-white/10 group-hover:text-white"
             >
               {solution}
             </span>

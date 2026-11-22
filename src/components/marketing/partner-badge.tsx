@@ -31,7 +31,7 @@ export function PartnerBadge({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-[--radius-sm] border px-2.5 py-1 text-label font-medium ${
+      className={`inline-flex items-center gap-1.5 rounded-(--radius-sm) border px-2.5 py-1 text-label font-medium ${
         tone === "dark"
           ? "border-accent-400/40 bg-accent-400/10 text-accent-200"
           : "border-accent-600/30 bg-accent-50 text-accent-800"

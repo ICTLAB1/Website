@@ -92,7 +92,7 @@ export default async function AdminProductPhotosPage() {
           </ul>
         </section>
       ) : (
-        <p className="rounded-[--radius-lg] border border-line bg-surface-muted p-5 text-[14px] text-ink-600">
+        <p className="rounded-(--radius-lg) border border-line bg-surface-muted p-5 text-[14px] text-ink-600">
           Every hardware model has a photograph.
         </p>
       )}
@@ -122,7 +122,7 @@ type Row = {
 
 function PhotoRow({ product }: { product: Row }) {
   return (
-    <li className="rounded-[--radius-lg] border border-line bg-white p-5">
+    <li className="rounded-(--radius-lg) border border-line bg-white p-5">
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <div className="min-w-0">
           <p className="text-[14px] font-medium text-graphite-900">{product.name}</p>

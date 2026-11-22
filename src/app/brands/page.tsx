@@ -150,7 +150,7 @@ export default async function BrandsPage() {
                 <li key={brand.slug}>
                   <Link
                     href={`/brands/${brand.slug}`}
-                    className="block rounded-[--radius-md] border border-line bg-white px-3 py-1.5 text-meta text-ink-700 transition-colors hover:border-graphite-400 hover:text-graphite-900"
+                    className="block rounded-(--radius-md) border border-line bg-white px-3 py-1.5 text-meta text-ink-700 transition-colors hover:border-graphite-400 hover:text-graphite-900"
                   >
                     {brand.name}
                   </Link>
@@ -166,7 +166,7 @@ export default async function BrandsPage() {
           </section>
         ) : null}
 
-        <section className="mt-16 rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
+        <section className="mt-16 rounded-(--radius-lg) border border-line bg-surface-muted p-6 sm:p-8">
           <SectionHeader
             title="Working with several of these at once?"
             description="Most organisations do. Consolidating them onto one quotation and one purchase order removes a substantial amount of administrative work from your finance team."

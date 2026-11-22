@@ -69,7 +69,7 @@ export default async function AdminFollowUpSettingsPage() {
         </p>
       </header>
 
-      <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+      <section className="rounded-(--radius-lg) border border-line bg-white p-5">
         <h2 className="text-[1.05rem]">What is happening now</h2>
         <dl className="mt-3 grid gap-3 text-meta sm:grid-cols-3">
           <div>
@@ -103,7 +103,7 @@ export default async function AdminFollowUpSettingsPage() {
         ) : null}
       </section>
 
-      <section className="max-w-2xl rounded-[--radius-lg] border border-line bg-white p-5">
+      <section className="max-w-2xl rounded-(--radius-lg) border border-line bg-white p-5">
         <h2 className="text-[1.05rem]">The schedule</h2>
         <AdminForm action={saveFollowUpSettings} submitLabel="Save" pendingLabel="Saving…">
           <Checkbox

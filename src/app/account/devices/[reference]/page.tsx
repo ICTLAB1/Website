@@ -60,7 +60,7 @@ export default async function AccountDevicePage({ params }: PageProps) {
         <p className="mt-1.5 font-mono text-[13px] text-ink-500">{device.reference}</p>
       </div>
 
-      <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+      <section className="rounded-(--radius-lg) border border-line bg-white p-5">
         <h3 className="text-[15px] font-semibold text-graphite-900">Warranty</h3>
         <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{WARRANTY_HINTS[state]}</p>
         <dl className="mt-4 space-y-2 text-[13px]">
@@ -85,7 +85,7 @@ export default async function AccountDevicePage({ params }: PageProps) {
         </dl>
       </section>
 
-      <section className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+      <section className="rounded-(--radius-lg) border border-line bg-surface-muted p-5">
         <h3 className="text-[15px] font-semibold text-graphite-900">Details</h3>
         <dl className="mt-3 space-y-2 text-[13px]">
           {[
@@ -113,7 +113,7 @@ export default async function AccountDevicePage({ params }: PageProps) {
             {device.tickets.map((ticket) => (
               <li
                 key={ticket.reference}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-[--radius-md] border border-line bg-white px-4 py-3"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-(--radius-md) border border-line bg-white px-4 py-3"
               >
                 <div className="min-w-0">
                   <Link
@@ -135,7 +135,7 @@ export default async function AccountDevicePage({ params }: PageProps) {
 
       {mayWrite ? (
         <>
-          <section className="max-w-xl rounded-[--radius-lg] border border-accent-600/30 bg-accent-50/40 p-5">
+          <section className="max-w-xl rounded-(--radius-lg) border border-accent-600/30 bg-accent-50/40 p-5">
             <h3 className="text-[15px] font-semibold text-graphite-900">
               Raise a ticket about this device
             </h3>
@@ -159,7 +159,7 @@ export default async function AccountDevicePage({ params }: PageProps) {
             </div>
           </section>
 
-          <section className="max-w-2xl rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="max-w-2xl rounded-(--radius-lg) border border-line bg-white p-5">
             <h3 className="text-[15px] font-semibold text-graphite-900">Edit this device</h3>
             <div className="mt-5">
               <AccountForm
@@ -235,7 +235,7 @@ export default async function AccountDevicePage({ params }: PageProps) {
             </div>
           </section>
 
-          <section className="max-w-xl rounded-[--radius-lg] border border-danger-600/30 bg-danger-50/40 p-5">
+          <section className="max-w-xl rounded-(--radius-lg) border border-danger-600/30 bg-danger-50/40 p-5">
             <h3 className="text-[15px] font-semibold text-danger-700">
               Take this off the register
             </h3>

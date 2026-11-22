@@ -115,7 +115,7 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
       <DeletedNotice reference={params.deleted} noun="support ticket" />
 
       {!mailReady ? (
-        <div className="rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-5">
+        <div className="rounded-(--radius-lg) border border-warning-600/40 bg-warning-50 p-5">
           <h2 className="text-[15px] font-semibold text-warning-700">
             Outbound email is not configured
           </h2>
@@ -144,7 +144,7 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
         That is why the fix offered below names both places.
       */}
       {mailReady && !notifyTo ? (
-        <div className="rounded-[--radius-lg] border border-warning-600/40 bg-warning-50 p-5">
+        <div className="rounded-(--radius-lg) border border-warning-600/40 bg-warning-50 p-5">
           <h2 className="text-[15px] font-semibold text-warning-700">
             Nobody is being notified of new messages
           </h2>
@@ -170,7 +170,7 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
           <Link
             href={category ? `/admin/support?category=${category}` : "/admin/support"}
             className={cn(
-              "rounded-[--radius-md] px-3 py-2 text-[13px]",
+              "rounded-(--radius-md) px-3 py-2 text-[13px]",
               !status ? "bg-graphite-900 font-medium text-white" : "text-ink-600 hover:bg-white",
             )}
           >
@@ -181,7 +181,7 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
               key={entry}
               href={`/admin/support?status=${entry}${category ? `&category=${category}` : ""}`}
               className={cn(
-                "rounded-[--radius-md] px-3 py-2 text-[13px]",
+                "rounded-(--radius-md) px-3 py-2 text-[13px]",
                 status === entry ? "bg-graphite-900 font-medium text-white" : "text-ink-600 hover:bg-white",
               )}
             >
@@ -199,12 +199,12 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
         lead or a fault" — and a single row of chips mixing them would make
         the two look like alternatives when they are meant to combine.
       */}
-      <div className="flex flex-wrap items-center gap-1 rounded-[--radius-lg] bg-surface-muted p-1">
+      <div className="flex flex-wrap items-center gap-1 rounded-(--radius-lg) bg-surface-muted p-1">
         <span className="px-2 text-[12px] uppercase tracking-wide text-ink-500">Topic</span>
         <Link
           href={status ? `/admin/support?status=${status}` : "/admin/support"}
           className={cn(
-            "rounded-[--radius-md] px-3 py-2 text-[13px]",
+            "rounded-(--radius-md) px-3 py-2 text-[13px]",
             !category ? "bg-graphite-900 font-medium text-white" : "text-ink-600 hover:bg-white",
           )}
         >
@@ -215,7 +215,7 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
             key={entry}
             href={`/admin/support?category=${entry}${status ? `&status=${status}` : ""}`}
             className={cn(
-              "rounded-[--radius-md] px-3 py-2 text-[13px]",
+              "rounded-(--radius-md) px-3 py-2 text-[13px]",
               category === entry ? "bg-graphite-900 font-medium text-white" : "text-ink-600 hover:bg-white",
             )}
           >
@@ -286,12 +286,12 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
 
           <section className="grid gap-4 lg:grid-cols-2">
             {tickets.slice(0, 20).map((ticket) => (
-              <details key={ticket.id} className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <details key={ticket.id} className="rounded-(--radius-lg) border border-line bg-white p-5">
                 <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
                   {ticket.reference} — {ticket.subject}
                 </summary>
                 <div className="mt-4 space-y-5">
-                  <p className="whitespace-pre-wrap rounded-[--radius-md] bg-surface-muted p-4 text-[13px] leading-relaxed text-ink-700">
+                  <p className="whitespace-pre-wrap rounded-(--radius-md) bg-surface-muted p-4 text-[13px] leading-relaxed text-ink-700">
                     {ticket.message}
                   </p>
                   <AdminForm
@@ -327,7 +327,7 @@ export default async function AdminSupportPage({ searchParams }: PageProps) {
                       config={DELETABLE.tickets}
                       id={ticket.id}
                       reference={ticket.reference}
-                      className="rounded-[--radius-md] border border-danger-600/30 bg-danger-50/40 p-4"
+                      className="rounded-(--radius-md) border border-danger-600/30 bg-danger-50/40 p-4"
                     />
                   ) : null}
                 </div>

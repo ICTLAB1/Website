@@ -84,7 +84,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
           basePath="/products"
         />
 
-        <div className="mt-14 rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
+        <div className="mt-14 rounded-(--radius-lg) border border-line bg-surface-muted p-6 sm:p-8">
           <h2 className="text-[1.25rem]">Cannot find what you need?</h2>
           <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-600">
             This catalogue lists our most-requested licensing. We source

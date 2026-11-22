@@ -73,7 +73,7 @@ export default async function AdminAuditLogPage({ searchParams }: PageProps) {
             name="q"
             defaultValue={params.q}
             placeholder="Action or entity id"
-            className="h-10 min-w-[14rem] rounded-[--radius-md] border border-line-strong px-3 text-[14px]"
+            className="h-10 min-w-[14rem] rounded-(--radius-md) border border-line-strong px-3 text-[14px]"
           />
         </div>
         <div className="flex flex-col gap-1.5">
@@ -84,7 +84,7 @@ export default async function AdminAuditLogPage({ searchParams }: PageProps) {
             id="audit-actor"
             name="actor"
             defaultValue={params.actor ?? ""}
-            className="h-10 rounded-[--radius-md] border border-line-strong px-3 text-[14px]"
+            className="h-10 rounded-(--radius-md) border border-line-strong px-3 text-[14px]"
           >
             <option value="">Anyone</option>
             {actors.map((actor) => (
@@ -102,7 +102,7 @@ export default async function AdminAuditLogPage({ searchParams }: PageProps) {
             id="audit-entity"
             name="entity"
             defaultValue={params.entity ?? ""}
-            className="h-10 rounded-[--radius-md] border border-line-strong px-3 text-[14px]"
+            className="h-10 rounded-(--radius-md) border border-line-strong px-3 text-[14px]"
           >
             <option value="">Any type</option>
             {entityTypes.map((type) => (
@@ -114,7 +114,7 @@ export default async function AdminAuditLogPage({ searchParams }: PageProps) {
         </div>
         <button
           type="submit"
-          className="h-10 rounded-[--radius-md] border border-line-strong bg-white px-4 text-[14px] font-medium text-graphite-900 hover:border-graphite-400"
+          className="h-10 rounded-(--radius-md) border border-line-strong bg-white px-4 text-[14px] font-medium text-graphite-900 hover:border-graphite-400"
         >
           Filter
         </button>

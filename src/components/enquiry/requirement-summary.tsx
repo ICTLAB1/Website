@@ -44,7 +44,7 @@ export function RequirementSummary({ value }: { value: unknown }) {
           ].filter((entry): entry is Detail => entry !== null);
 
           return (
-            <li key={index} className="rounded-[--radius-md] border border-line bg-white p-4">
+            <li key={index} className="rounded-(--radius-md) border border-line bg-white p-4">
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <span className="text-body font-semibold text-graphite-900">
                   {line.quantity} × {line.description}

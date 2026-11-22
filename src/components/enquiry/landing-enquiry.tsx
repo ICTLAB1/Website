@@ -27,7 +27,7 @@ export async function LandingEnquiry({ slug }: { slug: string }) {
       aria-labelledby="quote-heading"
       className="container-page scroll-mt-32 py-8 lg:py-12"
     >
-      <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-5 sm:p-8">
+      <div className="rounded-(--radius-lg) border border-line bg-surface-muted p-5 sm:p-8">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:gap-12">
           <div>
             <h2 id="quote-heading" className="text-section">
@@ -49,7 +49,7 @@ export async function LandingEnquiry({ slug }: { slug: string }) {
               </p>
             ) : null}
           </div>
-          <div className="rounded-[--radius-md] border border-line bg-white p-5 sm:p-6">
+          <div className="rounded-(--radius-md) border border-line bg-white p-5 sm:p-6">
             <LandingEnquiryForm
               products={page.products}
               source={page.source}

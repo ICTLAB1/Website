@@ -5,7 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { requireStaff } from "@/lib/auth/guards";
 import { pipelineBoard, pipelineSummary } from "@/lib/queries/crm";
-import { DEAL_STAGE_HINTS, DEAL_STAGE_LABELS, daysInStage, isOverdue, isStale } from "@/lib/crm/pipeline";
+import {
+  DEAL_STAGE_HINTS,
+  DEAL_STAGE_LABELS,
+  daysInStage,
+  isOverdue,
+  isStale,
+} from "@/lib/crm/pipeline";
 import { formatMoney } from "@/lib/money";
 
 export const metadata: Metadata = { title: "Pipeline" };
@@ -34,7 +40,10 @@ export const metadata: Metadata = { title: "Pipeline" };
 export default async function AdminPipelinePage() {
   await requireStaff();
 
-  const [board, summary] = await Promise.all([pipelineBoard(), pipelineSummary()]);
+  const [board, summary] = await Promise.all([
+    pipelineBoard(),
+    pipelineSummary(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -64,21 +73,27 @@ export default async function AdminPipelinePage() {
             </Badge>
           ) : null}
           {summary.staleCount > 0 ? (
-            <Badge tone="warning">{summary.staleCount} untouched for a month</Badge>
+            <Badge tone="warning">
+              {summary.staleCount} untouched for a month
+            </Badge>
           ) : null}
           {summary.winRatePercent !== null ? (
             <span>
-              {summary.winRatePercent}% won of {summary.wonCount + summary.lostCount} closed.
+              {summary.winRatePercent}% won of{" "}
+              {summary.wonCount + summary.lostCount} closed.
             </span>
           ) : null}
         </p>
       ) : null}
 
-      <div className="scroll-x">
+      <div
+        tabIndex={0}
+        className="scroll-x focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-blue"
+      >
         <div className="flex min-w-max gap-4 pb-2">
           {board.columns.map((column) => (
             <section key={column.stage} className="w-[19rem] shrink-0">
-              <div className="rounded-t-[--radius-lg] border border-line bg-surface-muted px-4 py-3">
+              <div className="rounded-t-(--radius-lg) border border-line bg-surface-muted px-4 py-3">
                 <p className="flex items-baseline justify-between gap-2">
                   <span className="text-[14px] font-semibold text-graphite-900">
                     {DEAL_STAGE_LABELS[column.stage]}
@@ -86,13 +101,17 @@ export default async function AdminPipelinePage() {
                   <span className="text-meta text-ink-500">{column.count}</span>
                 </p>
                 <p className="mt-0.5 text-meta text-ink-500">
-                  {column.count === 0 ? DEAL_STAGE_HINTS[column.stage] : formatMoney(column.valueMinor, "INR")}
+                  {column.count === 0
+                    ? DEAL_STAGE_HINTS[column.stage]
+                    : formatMoney(column.valueMinor, "INR")}
                 </p>
               </div>
 
-              <ul className="space-y-2 rounded-b-[--radius-lg] border border-t-0 border-line bg-white p-2">
+              <ul className="space-y-2 rounded-b-(--radius-lg) border border-t-0 border-line bg-white p-2">
                 {column.deals.length === 0 ? (
-                  <li className="px-2 py-6 text-center text-meta text-ink-500">Nothing here.</li>
+                  <li className="px-2 py-6 text-center text-meta text-ink-500">
+                    Nothing here.
+                  </li>
                 ) : (
                   column.deals.map((deal) => {
                     const overdue = isOverdue(deal);
@@ -101,28 +120,39 @@ export default async function AdminPipelinePage() {
                       <li key={deal.id}>
                         <Link
                           href={`/admin/pipeline/${deal.reference}`}
-                          className="block rounded-[--radius-md] border border-line p-3 transition-colors hover:border-graphite-400"
+                          className="block rounded-(--radius-md) border border-line p-3 transition-colors hover:border-graphite-400"
                         >
                           <p className="text-[14px] font-medium leading-snug text-graphite-900">
                             {deal.title}
                           </p>
                           <p className="mt-1 text-meta text-ink-500">
-                            {deal.company?.name ?? deal.companyName ?? "No organisation"}
+                            {deal.company?.name ??
+                              deal.companyName ??
+                              "No organisation"}
                           </p>
                           <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-meta">
                             {deal.expectedValueMinor > 0 ? (
                               <span className="font-medium text-graphite-900">
-                                {formatMoney(deal.expectedValueMinor, deal.currency)}
+                                {formatMoney(
+                                  deal.expectedValueMinor,
+                                  deal.currency,
+                                )}
                               </span>
                             ) : (
                               <span className="text-ink-500">No value set</span>
                             )}
-                            <span className="text-ink-500">· {daysInStage(deal)}d here</span>
+                            <span className="text-ink-500">
+                              · {daysInStage(deal)}d here
+                            </span>
                           </p>
                           {overdue || stale ? (
                             <p className="mt-2 flex flex-wrap gap-1.5">
-                              {overdue ? <Badge tone="danger">Past close date</Badge> : null}
-                              {stale ? <Badge tone="warning">Untouched</Badge> : null}
+                              {overdue ? (
+                                <Badge tone="danger">Past close date</Badge>
+                              ) : null}
+                              {stale ? (
+                                <Badge tone="warning">Untouched</Badge>
+                              ) : null}
                             </p>
                           ) : null}
                           {deal.owner ? (
@@ -130,7 +160,9 @@ export default async function AdminPipelinePage() {
                               {deal.owner.name ?? deal.owner.email}
                             </p>
                           ) : (
-                            <p className="mt-2 text-meta text-warning-700">Unowned</p>
+                            <p className="mt-2 text-meta text-warning-700">
+                              Unowned
+                            </p>
                           )}
                         </Link>
                       </li>

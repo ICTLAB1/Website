@@ -5,6 +5,8 @@ import { AdminNav } from "@/components/layout/admin-nav";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { isAdmin, requireStaff } from "@/lib/auth/guards";
 import { Badge } from "@/components/ui/badge";
+import { Logo } from "@/components/layout/logo";
+import { getSiteIdentity } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: { default: "Admin", template: "%s | Admin" },
@@ -19,39 +21,55 @@ export const metadata: Metadata = {
  * admin data is fetched or rendered - navigation links are hidden as a matter
  * of tidiness, never as the access control itself.
  */
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const user = await requireStaff();
   const admin = isAdmin(user);
 
   return (
-    <div className="min-h-dvh bg-surface-muted">
+    <div className="min-h-dvh bg-career-mist">
       <div className="grid lg:grid-cols-[15rem_minmax(0,1fr)]">
         {/*
-          * A full-height sticky column on large screens, holding the menu and
-          * the sign-out button together. The menu scrolls inside it when the
-          * list outgrows the viewport, and sign-out stays at the bottom of the
-          * sidebar rather than at the bottom of a menu that moves independently
-          * of it.
-          */}
-        <aside className="bg-graphite-900 px-4 py-5 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:px-5 lg:py-7">
+         * A full-height sticky column on large screens, holding the menu and
+         * the sign-out button together. The menu scrolls inside it when the
+         * list outgrows the viewport, and sign-out stays at the bottom of the
+         * sidebar rather than at the bottom of a menu that moves independently
+         * of it.
+         */}
+        <aside className="relative isolate overflow-hidden bg-career-navy-dark px-4 py-5 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:px-5 lg:py-7">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-0 left-0 -z-10 hidden h-14 w-60 bg-career-orange/90 [clip-path:polygon(0_100%,100%_100%,0_30%)] lg:block"
+          />
           <div className="mb-6 flex items-center justify-between gap-3 lg:block">
             <div>
-              <Link href="/admin" className="text-[15px] font-semibold text-white">
+              <Logo
+                name={getSiteIdentity().tradingName}
+                onDark
+                className="block w-36"
+              />
+              <Link
+                href="/admin"
+                className="mt-3 block text-[15px] font-semibold text-white"
+              >
                 Administration
               </Link>
-              <p className="mt-1 text-[12px] text-graphite-400">
+              <p className="mt-1 text-[12px] text-white/70">
                 {user.name} · {admin ? "Administrator" : "Sales"}
               </p>
             </div>
             {/*
-              * Sign-out appears here on small screens and at the foot of the
-              * sidebar on large ones. It used to appear only in the sidebar
-              * foot, which left a phone with no way to sign out at all.
-              */}
+             * Sign-out appears here on small screens and at the foot of the
+             * sidebar on large ones. It used to appear only in the sidebar
+             * foot, which left a phone with no way to sign out at all.
+             */}
             <div className="flex items-center gap-3">
               <Link
                 href="/"
-                className="text-[12px] text-graphite-300 hover:text-white hover:underline lg:mt-3 lg:block"
+                className="text-[12px] text-white/80 hover:text-white hover:underline lg:mt-3 lg:block"
               >
                 View site &rarr;
               </Link>
@@ -66,7 +84,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <AdminNav isAdmin={admin} />
           </div>
 
-          <div className="mt-6 hidden shrink-0 border-t border-graphite-800 pt-5 lg:block">
+          <div className="mb-12 mt-6 hidden shrink-0 border-t border-white/15 pt-5 lg:block">
             <SignOutButton tone="onDark" className="w-full" />
           </div>
         </aside>
@@ -75,7 +93,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           {!admin ? (
             <p className="mb-5">
               <Badge tone="warning">
-                Sales role — staff user and settings management is restricted to administrators
+                Sales role — staff user and settings management is restricted to
+                administrators
               </Badge>
             </p>
           ) : null}

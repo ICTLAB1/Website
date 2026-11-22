@@ -46,7 +46,7 @@ export default async function AccountOverviewPage({
   return (
     <div className="space-y-10">
       {justVerified ? (
-        <p className="rounded-[--radius-md] border border-success-600/40 bg-success-50 px-4 py-3 text-[14px] text-ink-700">
+        <p className="rounded-(--radius-md) border border-success-600/40 bg-success-50 px-4 py-3 text-[14px] text-ink-700">
           <strong className="text-graphite-900">Your email address is confirmed.</strong> You can
           now request quotations, accept them and place orders.
         </p>
@@ -59,7 +59,7 @@ export default async function AccountOverviewPage({
             <Link
               key={tile.href}
               href={tile.href}
-              className="rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
+              className="rounded-(--radius-lg) border border-line bg-white p-5 transition-colors hover:border-graphite-300"
             >
               <p className="text-[13px] text-ink-500">{tile.label}</p>
               <p className="mt-1.5 text-[26px] font-semibold leading-none text-graphite-900 tabular-nums">
@@ -87,7 +87,7 @@ export default async function AccountOverviewPage({
             action={<ButtonLink href="/products">Browse catalogue</ButtonLink>}
           />
         ) : (
-          <ul className="divide-y divide-line rounded-[--radius-lg] border border-line bg-white">
+          <ul className="divide-y divide-line rounded-(--radius-lg) border border-line bg-white">
             {recent.map((enquiry) => (
               <li key={enquiry.reference}>
                 <Link
@@ -111,7 +111,7 @@ export default async function AccountOverviewPage({
         )}
       </section>
 
-      <section className="rounded-[--radius-lg] border border-line bg-surface-muted p-6">
+      <section className="rounded-(--radius-lg) border border-line bg-surface-muted p-6">
         <h2 className="text-[1.1rem]">Need something?</h2>
         <p className="mt-2 text-[14px] leading-relaxed text-ink-600">
           Add products to an enquiry for a consolidated quotation, or raise a support ticket if

@@ -40,7 +40,7 @@ export function SignOutButton({
         router.refresh();
       }}
       className={cn(
-        "inline-flex h-10 items-center justify-center rounded-[--radius-md] border px-4 text-[13px] font-medium disabled:opacity-60",
+        "inline-flex h-10 items-center justify-center rounded-(--radius-md) border px-4 text-[13px] font-medium disabled:opacity-60",
         tone === "onDark"
           ? "border-graphite-700 bg-graphite-800 text-graphite-100 hover:border-danger-600 hover:text-white"
           : "border-line-strong text-graphite-900 hover:border-danger-600 hover:text-danger-700",

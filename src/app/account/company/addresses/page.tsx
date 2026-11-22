@@ -116,7 +116,7 @@ export default async function CompanyAddressesPage() {
       <div className="max-w-3xl">
         <h2 className="text-[1.15rem]">Addresses</h2>
         <CompanyTabs />
-        <p className="mt-8 rounded-[--radius-lg] border border-line bg-surface-muted px-5 py-4 text-[14px] leading-relaxed text-ink-600">
+        <p className="mt-8 rounded-(--radius-lg) border border-line bg-surface-muted px-5 py-4 text-[14px] leading-relaxed text-ink-600">
           Add your company details first. Addresses belong to a company.
         </p>
       </div>
@@ -158,7 +158,7 @@ export default async function CompanyAddressesPage() {
       ) : (
         <ul className="mt-8 space-y-5">
           {addresses.map((address) => (
-            <li key={address.id} className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <li key={address.id} className="rounded-(--radius-lg) border border-line bg-white p-5">
               <div className="mb-4 flex flex-wrap items-center gap-3">
                 <span className="text-body font-semibold text-graphite-900">{address.label}</span>
                 <Badge tone="neutral">
@@ -196,7 +196,7 @@ export default async function CompanyAddressesPage() {
       )}
 
       {mayEdit ? (
-        <section className="mt-12 rounded-[--radius-lg] border border-line bg-white p-6">
+        <section className="mt-12 rounded-(--radius-lg) border border-line bg-white p-6">
           <h3 className="text-[1.05rem]">Add an address</h3>
           <div className="mt-6">
             <AccountForm action={saveAddress} submitLabel="Add address" pendingLabel="Adding…">
@@ -205,7 +205,7 @@ export default async function CompanyAddressesPage() {
           </div>
         </section>
       ) : (
-        <p className="mt-8 rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
+        <p className="mt-8 rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
           Only a company administrator can add or change addresses.
         </p>
       )}

@@ -75,7 +75,7 @@ export function FaqAccordion({ items }: { items: FaqEntry[] }) {
   return (
     <div
       ref={container}
-      className="faq-list divide-y divide-line overflow-hidden rounded-[--radius-lg] border border-line bg-white"
+      className="faq-list divide-y divide-line overflow-hidden rounded-(--radius-lg) border border-line bg-white"
     >
       {items.map((item, index) => {
         const expanded = open.has(index);

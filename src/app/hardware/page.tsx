@@ -172,7 +172,7 @@ export default async function HardwarePage({ searchParams }: PageProps) {
                   <li key={brand.slug}>
                     <Link
                       href={`/hardware?brand=${brand.slug}`}
-                      className="inline-flex items-center gap-3 rounded-[--radius-md] border border-line bg-white px-4 py-3 lift hover:border-graphite-300"
+                      className="inline-flex items-center gap-3 rounded-(--radius-md) border border-line bg-white px-4 py-3 lift hover:border-graphite-300"
                     >
                       {logo ? (
                         /* eslint-disable-next-line @next/next/no-img-element */
@@ -206,7 +206,7 @@ export default async function HardwarePage({ searchParams }: PageProps) {
                 <li key={formFactor.value}>
                   <Link
                     href={`/hardware?form=${formFactor.value}`}
-                    className="inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-4 py-2.5 text-meta font-medium text-graphite-900 lift hover:border-graphite-300"
+                    className="inline-flex items-center gap-2 rounded-(--radius-md) border border-line bg-white px-4 py-2.5 text-meta font-medium text-graphite-900 lift hover:border-graphite-300"
                   >
                     {formFactor.label}
                     <span className="text-label font-normal text-ink-500">
@@ -226,7 +226,7 @@ export default async function HardwarePage({ searchParams }: PageProps) {
           emptyDescription="No commercial models match these filters yet. Tell us the specification you need and we will source and quote it."
         />
 
-        <div className="mt-14 rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
+        <div className="mt-14 rounded-(--radius-lg) border border-line bg-surface-muted p-6 sm:p-8">
           <h2 className="text-[1.25rem]">Need bulk quantity?</h2>
           <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-600">
             Volume requirements, staged delivery, standard-build configurations

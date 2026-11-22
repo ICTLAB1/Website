@@ -155,7 +155,7 @@ export async function CatalogueListing({
                       { sort: option.value === "relevance" ? null : option.value },
                       basePath,
                     )}
-                    className={`whitespace-nowrap rounded-[--radius-sm] px-2.5 py-1.5 text-[13px] ${
+                    className={`whitespace-nowrap rounded-(--radius-sm) px-2.5 py-1.5 text-[13px] ${
                       active
                         ? "bg-graphite-900 font-medium text-white"
                         : "text-ink-600 hover:bg-surface-muted"
@@ -176,7 +176,7 @@ export async function CatalogueListing({
                 <Link
                   href={chip.removeHref}
                   rel="nofollow"
-                  className="inline-flex items-center gap-1.5 rounded-[--radius-sm] border border-line-strong bg-white py-1 pl-2.5 pr-2 text-[12px] text-ink-700 hover:border-danger-600 hover:text-danger-700"
+                  className="inline-flex items-center gap-1.5 rounded-(--radius-sm) border border-line-strong bg-white py-1 pl-2.5 pr-2 text-[12px] text-ink-700 hover:border-danger-600 hover:text-danger-700"
                 >
                   {chip.label}
                   <span aria-hidden="true" className="text-ink-500">

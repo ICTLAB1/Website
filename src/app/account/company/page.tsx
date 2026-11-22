@@ -74,7 +74,7 @@ export default async function AccountCompanyPage() {
       {company ? <CompanyTabs /> : null}
 
       {!mayEdit ? (
-        <p className="mt-6 rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
+        <p className="mt-6 rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-600">
           Your access is read-only. A company administrator can change these details.
         </p>
       ) : null}
@@ -91,7 +91,7 @@ export default async function AccountCompanyPage() {
         Offering a button that cannot work is worse than not offering one.
       */}
       {mayEdit && lookupAvailable ? (
-        <div className="mt-8 rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+        <div className="mt-8 rounded-(--radius-lg) border border-line bg-surface-muted p-5">
           <h2 className="text-[15px] font-semibold text-graphite-900">
             Fill this in from your GSTIN
           </h2>
@@ -261,7 +261,7 @@ export default async function AccountCompanyPage() {
               return (
                 <div
                   key={slot.kind}
-                  className="rounded-[--radius-lg] border border-line bg-white p-5"
+                  className="rounded-(--radius-lg) border border-line bg-white p-5"
                 >
                   <AccountForm
                     action={saveContact}

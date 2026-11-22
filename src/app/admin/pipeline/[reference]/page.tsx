@@ -108,7 +108,7 @@ export default async function AdminDealPage({ params }: PageProps) {
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="space-y-8">
           {/* ── move it ─────────────────────────────────────────────────── */}
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">Stage</h2>
             <p className="mt-1.5 text-meta leading-relaxed text-ink-600">
               {DEAL_STAGE_HINTS[deal.stage]}
@@ -149,14 +149,14 @@ export default async function AdminDealPage({ params }: PageProps) {
             </div>
 
             {deal.lostReason ? (
-              <p className="mt-4 rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-meta text-ink-700">
+              <p className="mt-4 rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-meta text-ink-700">
                 Lost: {deal.lostReason}
               </p>
             ) : null}
           </section>
 
           {/* ── log something ───────────────────────────────────────────── */}
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">Log an activity</h2>
             <div className="mt-4">
               <AdminForm
@@ -213,7 +213,7 @@ export default async function AdminDealPage({ params }: PageProps) {
 
         {/* ── the side column ───────────────────────────────────────────── */}
         <aside className="space-y-6">
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">Forecast</h2>
             <dl className="mt-3 space-y-2 text-[13px]">
               <div className="flex justify-between gap-3">
@@ -260,7 +260,7 @@ export default async function AdminDealPage({ params }: PageProps) {
           </section>
 
           {deal.quotes.length > 0 ? (
-            <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <section className="rounded-(--radius-lg) border border-line bg-white p-5">
               <h2 className="text-[15px] font-semibold text-graphite-900">Quotations</h2>
               <ul className="mt-3 space-y-2 text-[13px]">
                 {deal.quotes.map((quote) => (
@@ -280,7 +280,7 @@ export default async function AdminDealPage({ params }: PageProps) {
             </section>
           ) : null}
 
-          <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <section className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">Details</h2>
             <div className="mt-4">
               <AdminForm

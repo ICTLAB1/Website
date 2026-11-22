@@ -204,7 +204,7 @@ export function ChatWidget({
   return (
     <div className="fixed bottom-4 right-4 z-40 sm:bottom-6 sm:right-6">
       {open ? (
-        <div className="flex h-[32rem] max-h-[calc(100dvh-6rem)] w-[22rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[--radius-lg] border border-line bg-white shadow-[0_16px_40px_-16px_rgb(0_0_0/0.35)]">
+        <div className="flex h-[32rem] max-h-[calc(100dvh-6rem)] w-[22rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-(--radius-lg) border border-line bg-white shadow-[0_16px_40px_-16px_rgb(0_0_0/0.35)]">
           <div className="flex items-center justify-between border-b border-line bg-graphite-900 px-4 py-3">
             <div>
               <p className="text-body font-semibold text-white">{assistantName}</p>
@@ -231,7 +231,7 @@ export function ChatWidget({
             {messages.map((message, index) => (
               <div key={index} className={message.role === "user" ? "flex justify-end" : "flex justify-start"}>
                 <p
-                  className={`max-w-[85%] whitespace-pre-wrap rounded-[--radius-md] px-3 py-2 text-meta leading-relaxed ${
+                  className={`max-w-[85%] whitespace-pre-wrap rounded-(--radius-md) px-3 py-2 text-meta leading-relaxed ${
                     message.role === "user"
                       ? "bg-accent-700 text-white"
                       : "border border-line bg-surface-muted text-graphite-900"
@@ -244,7 +244,7 @@ export function ChatWidget({
 
             {pending ? (
               <div className="flex justify-start">
-                <p className="rounded-[--radius-md] border border-line bg-surface-muted px-3 py-2 text-meta text-ink-500">
+                <p className="rounded-(--radius-md) border border-line bg-surface-muted px-3 py-2 text-meta text-ink-500">
                   {assistantName} is typing…
                 </p>
               </div>
@@ -267,7 +267,7 @@ export function ChatWidget({
               rather than a second thing to go wrong.
             */}
             {error ? (
-              <div className="space-y-2 rounded-[--radius-md] bg-danger-50 px-3 py-2">
+              <div className="space-y-2 rounded-(--radius-md) bg-danger-50 px-3 py-2">
                 <p className="text-label text-danger-700">{error}</p>
                 <p className="text-label leading-relaxed text-ink-700">
                   In the meantime our team can pick this up directly:
@@ -303,7 +303,7 @@ export function ChatWidget({
             ) : null}
 
             {leadCaptured ? (
-              <p className="rounded-[--radius-md] border border-success-600/30 bg-success-50 px-3 py-2 text-label text-success-700">
+              <p className="rounded-(--radius-md) border border-success-600/30 bg-success-50 px-3 py-2 text-label text-success-700">
                 Thanks — your details are with our sales team.
               </p>
             ) : null}
@@ -317,12 +317,12 @@ export function ChatWidget({
               placeholder="Type a message…"
               maxLength={2000}
               disabled={pending}
-              className="h-10 flex-1 rounded-[--radius-md] border border-line-strong px-3 text-meta focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-700"
+              className="h-10 flex-1 rounded-(--radius-md) border border-line-strong px-3 text-meta focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-700"
             />
             <button
               type="submit"
               disabled={pending || input.trim().length === 0}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[--radius-md] bg-accent-700 text-white hover:bg-accent-800 active:bg-accent-900 disabled:opacity-40"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-(--radius-md) bg-accent-700 text-white hover:bg-accent-800 active:bg-accent-900 disabled:opacity-40"
               aria-label="Send message"
             >
               <SendIcon />
@@ -351,7 +351,7 @@ export function ChatWidget({
             <div
               role="status"
               aria-live="polite"
-              className="max-w-[17rem] rounded-[--radius-lg] border border-line bg-white p-4 shadow-[0_12px_32px_-12px_rgb(0_0_0/0.3)]"
+              className="max-w-[17rem] rounded-(--radius-lg) border border-line bg-white p-4 shadow-[0_12px_32px_-12px_rgb(0_0_0/0.3)]"
             >
               <div className="flex items-start justify-between gap-3">
                 <p className="text-meta leading-relaxed text-ink-700">
@@ -373,7 +373,7 @@ export function ChatWidget({
                   setGreeting(false);
                   setOpen(true);
                 }}
-                className="mt-3 w-full rounded-[--radius-md] bg-accent-700 px-3 py-2 text-label font-semibold text-white hover:bg-accent-800 active:bg-accent-900"
+                className="mt-3 w-full rounded-(--radius-md) bg-accent-700 px-3 py-2 text-label font-semibold text-white hover:bg-accent-800 active:bg-accent-900"
               >
                 Ask a question
               </button>

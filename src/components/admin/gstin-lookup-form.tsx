@@ -29,8 +29,8 @@ export function GstinLookupForm({ settings }: { settings: GstinLookupView }) {
       <div
         className={
           settings.connected
-            ? "rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-700"
-            : "rounded-[--radius-md] border border-warning-600/40 bg-warning-50 px-4 py-3 text-[13px] text-ink-700"
+            ? "rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-[13px] text-ink-700"
+            : "rounded-(--radius-md) border border-warning-600/40 bg-warning-50 px-4 py-3 text-[13px] text-ink-700"
         }
       >
         {settings.connected ? (
@@ -163,7 +163,7 @@ export function GstinLookupForm({ settings }: { settings: GstinLookupView }) {
         otherwise be discovered by a customer filling in their company profile,
         who has no way to tell a bad credential from their own typo.
       */}
-      <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+      <div className="rounded-(--radius-lg) border border-line bg-white p-5">
         <h3 className="text-[15px] font-semibold text-graphite-900">Try it</h3>
         <p className="mt-1 text-[13px] leading-relaxed text-ink-600">
           Enter any real GSTIN — your own will do. Nothing is saved; this only asks the provider

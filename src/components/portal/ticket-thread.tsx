@@ -38,7 +38,7 @@ export function TicketThread({
 }) {
   return (
     <ol className="space-y-4">
-      <li className="rounded-[--radius-md] border border-line bg-white p-4">
+      <li className="rounded-(--radius-md) border border-line bg-white p-4">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
           <span className="text-label font-semibold uppercase tracking-[0.08em] text-ink-500">
             Raised
@@ -55,7 +55,7 @@ export function TicketThread({
       {messages.map((message) => (
         <li
           key={message.id}
-          className={`rounded-[--radius-md] border p-4 ${
+          className={`rounded-(--radius-md) border p-4 ${
             message.fromStaff ? "border-accent-600/25 bg-accent-50/50" : "border-line bg-white"
           }`}
         >

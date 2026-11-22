@@ -58,7 +58,7 @@ export function Dialog({
       }}
       aria-labelledby="dialog-title"
       className={cn(
-        "w-[calc(100vw-2rem)] rounded-[--radius-lg] border border-line bg-white p-0 shadow-[--shadow-overlay]",
+        "w-[calc(100vw-2rem)] rounded-(--radius-lg) border border-line bg-white p-0 shadow-(--shadow-overlay)",
         "backdrop:bg-graphite-950/50 open:m-auto",
         width,
       )}
@@ -73,7 +73,7 @@ export function Dialog({
         <button
           type="button"
           onClick={onClose}
-          className="-mr-1 -mt-1 rounded-[--radius-sm] p-1.5 text-ink-500 hover:bg-surface-sunken hover:text-ink-800"
+          className="-mr-1 -mt-1 rounded-(--radius-sm) p-1.5 text-ink-500 hover:bg-surface-sunken hover:text-ink-800"
         >
           <span className="sr-only">Close dialog</span>
           <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

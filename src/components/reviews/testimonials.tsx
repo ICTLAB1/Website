@@ -49,7 +49,7 @@ export function Testimonials({
   if (items.length === 0) {
     if (!emptyText) return null;
     return (
-      <div className={cn("rounded-[--radius-lg] border border-line bg-surface-muted p-6", className)}>
+      <div className={cn("rounded-(--radius-lg) border border-line bg-surface-muted p-6", className)}>
         <p className="text-[15px] text-ink-600">{emptyText}</p>
       </div>
     );
@@ -75,7 +75,7 @@ export function Testimonials({
       >
         {items.map((item) => (
           <li key={item.id} className="h-full">
-            <figure className="flex h-full flex-col gap-4 rounded-[--radius-lg] border border-line bg-white p-5 sm:p-6">
+            <figure className="flex h-full flex-col gap-4 rounded-(--radius-lg) border border-line bg-white p-5 sm:p-6">
               <QuoteMark />
               <blockquote className="flex-1 text-[15px] leading-relaxed text-ink-700">
                 {item.quote}

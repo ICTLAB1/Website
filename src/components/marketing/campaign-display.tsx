@@ -234,7 +234,7 @@ function Modal({
         aria-modal="true"
         aria-labelledby={campaign.title ? headingId : undefined}
         aria-label={campaign.title ? undefined : "Announcement"}
-        className="relative max-h-[92dvh] w-full max-w-md animate-scale-in overflow-y-auto overscroll-contain rounded-[--radius-lg] bg-white p-6 shadow-[--shadow-overlay] sm:p-8"
+        className="relative max-h-[92dvh] w-full max-w-md animate-scale-in overflow-y-auto overscroll-contain rounded-(--radius-lg) bg-white p-6 shadow-(--shadow-overlay) sm:p-8"
       >
         <button
           type="button"
@@ -262,7 +262,7 @@ function Modal({
                 track("campaign_click", campaign);
                 close();
               }}
-              className="inline-flex min-h-11 items-center justify-center rounded-[--radius-md] bg-accent-700 px-5 text-sm font-semibold text-white hover:bg-accent-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="inline-flex min-h-11 items-center justify-center rounded-(--radius-md) bg-accent-700 px-5 text-sm font-semibold text-white hover:bg-accent-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               {campaign.linkLabel}
             </Link>

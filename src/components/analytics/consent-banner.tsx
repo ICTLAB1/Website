@@ -141,14 +141,14 @@ export function ConsentBanner({ mode = "banner" }: Props) {
       <button
         type="button"
         onClick={() => decide("granted")}
-        className="h-9 rounded-[--radius-md] bg-graphite-900 px-4 text-[13px] font-medium text-white hover:bg-graphite-800"
+        className="h-9 rounded-(--radius-md) bg-graphite-900 px-4 text-[13px] font-medium text-white hover:bg-graphite-800"
       >
         Accept analytics
       </button>
       <button
         type="button"
         onClick={() => decide("denied")}
-        className="h-9 rounded-[--radius-md] border border-graphite-400 bg-white px-4 text-[13px] font-medium text-graphite-900 hover:border-graphite-900"
+        className="h-9 rounded-(--radius-md) border border-graphite-400 bg-white px-4 text-[13px] font-medium text-graphite-900 hover:border-graphite-900"
       >
         Reject
       </button>
@@ -157,7 +157,7 @@ export function ConsentBanner({ mode = "banner" }: Props) {
 
   if (mode === "manage") {
     return (
-      <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+      <div className="rounded-(--radius-lg) border border-line bg-white p-5">
         <p className="text-meta text-ink-600">
           {choice === "granted"
             ? "You have accepted analytics on this browser."

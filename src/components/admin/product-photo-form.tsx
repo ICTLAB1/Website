@@ -52,7 +52,7 @@ export function ProductPhotoForm({
   const illustration = current ? null : representativeImageFor(formFactor);
 
   return (
-    <div className={compact ? "" : "rounded-[--radius-lg] border border-line bg-white p-5"}>
+    <div className={compact ? "" : "rounded-(--radius-lg) border border-line bg-white p-5"}>
       {compact ? null : (
         <>
           <h2 className="text-[15px] font-semibold text-graphite-900">Photograph</h2>
@@ -67,7 +67,7 @@ export function ProductPhotoForm({
       <div className={compact ? "flex items-start gap-4" : "mt-4 flex items-start gap-4"}>
         <div className="shrink-0">
           {current ? (
-            <div className="flex h-24 w-24 items-center justify-center rounded-[--radius-md] border border-line bg-white p-2">
+            <div className="flex h-24 w-24 items-center justify-center rounded-(--radius-md) border border-line bg-white p-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={current}
@@ -76,15 +76,15 @@ export function ProductPhotoForm({
               />
             </div>
           ) : illustration ? (
-            <div className="relative flex h-24 w-24 items-center justify-center rounded-[--radius-md] border border-line bg-white p-2">
+            <div className="relative flex h-24 w-24 items-center justify-center rounded-(--radius-md) border border-line bg-white p-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={illustration} alt="" className="max-h-full max-w-full object-contain" />
-              <span className="absolute bottom-1 right-1 rounded-[--radius-sm] bg-graphite-900/75 px-1 py-0.5 text-[9px] font-medium leading-none text-white">
+              <span className="absolute bottom-1 right-1 rounded-(--radius-sm) bg-graphite-900/75 px-1 py-0.5 text-[9px] font-medium leading-none text-white">
                 Illustration
               </span>
             </div>
           ) : (
-            <div className="flex h-24 w-24 items-center justify-center rounded-[--radius-md] border border-dashed border-line-strong bg-surface-muted px-2 text-center text-[10px] leading-tight text-ink-500">
+            <div className="flex h-24 w-24 items-center justify-center rounded-(--radius-md) border border-dashed border-line-strong bg-surface-muted px-2 text-center text-[10px] leading-tight text-ink-500">
               Photograph to follow
             </div>
           )}

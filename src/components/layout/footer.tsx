@@ -139,7 +139,7 @@ export async function Footer() {
                           visitor came from is nobody else's business.
                         */
                         rel="me noopener noreferrer"
-                        className="inline-flex h-8 items-center rounded-[--radius-md] border border-graphite-700 px-3 text-meta text-graphite-200 transition-colors hover:border-graphite-400 hover:text-white"
+                        className="inline-flex h-8 items-center rounded-(--radius-md) border border-graphite-700 px-3 text-meta text-graphite-200 transition-colors hover:border-graphite-400 hover:text-white"
                       >
                         {link.name}
                       </a>

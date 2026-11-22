@@ -104,7 +104,7 @@ function PhotoTile({
     <Link
       href={href}
       className={cn(
-        "group relative block overflow-hidden rounded-[--radius-lg] bg-graphite-900",
+        "group relative block overflow-hidden rounded-(--radius-lg) bg-graphite-900",
         wide ? "aspect-[4/3]" : "aspect-[4/5] sm:aspect-[3/4]",
       )}
     >
@@ -270,7 +270,7 @@ export async function HomePage({
         <div className="container-page relative py-12 lg:py-16">
           <div className="max-w-2xl">
             <h1>
-              <span className="inline-flex items-center gap-2 rounded-[--radius-md] border border-white/20 bg-white/10 px-3 py-1.5 text-[0.8125rem] font-medium text-white">
+              <span className="inline-flex items-center gap-2 rounded-(--radius-md) border border-white/20 bg-white/10 px-3 py-1.5 text-[0.8125rem] font-medium text-white">
                 <span
                   aria-hidden="true"
                   className="h-1.5 w-1.5 rounded-full bg-career-orange"
@@ -291,14 +291,14 @@ export async function HomePage({
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
                 href={hero.primaryCta.href}
-                className="inline-flex min-h-11 items-center gap-2 rounded-[--radius-md] bg-[#c2530a] px-5 font-semibold text-white hover:bg-[#a64608] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="inline-flex min-h-11 items-center gap-2 rounded-(--radius-md) bg-[#c2530a] px-5 font-semibold text-white hover:bg-[#a64608] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 {hero.primaryCta.label} {arrow}
               </Link>
               {hero.secondaryCta ? (
                 <Link
                   href={hero.secondaryCta.href}
-                  className="inline-flex min-h-11 items-center rounded-[--radius-md] border border-white/70 px-5 font-semibold text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-white/70 px-5 font-semibold text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   {hero.secondaryCta.label}
                 </Link>
@@ -346,7 +346,7 @@ export async function HomePage({
                 <li key={brand.slug}>
                   <Link
                     href={`/brands/${brand.slug}`}
-                    className="flex h-14 min-w-24 items-center justify-center rounded-[--radius-md] bg-white px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    className="flex h-14 min-w-24 items-center justify-center rounded-(--radius-md) bg-white px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -398,7 +398,7 @@ export async function HomePage({
               <li key={partner.slug}>
                 <Link
                   href={`/brands/${partner.slug}`}
-                  className="flex flex-col items-start gap-2 rounded-[--radius-md] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-career-navy"
+                  className="flex flex-col items-start gap-2 rounded-(--radius-md) focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-career-navy"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -450,7 +450,7 @@ export async function HomePage({
             <li key={label}>
               <Link
                 href={href}
-                className="flex h-full min-h-36 flex-col justify-between rounded-[--radius-lg] border border-line bg-white p-4 hover:border-career-orange focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
+                className="flex h-full min-h-36 flex-col justify-between rounded-(--radius-lg) border border-line bg-white p-4 hover:border-career-orange focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
               >
                 <span>
                   <span className="text-label font-semibold uppercase tracking-wide text-[#b8480a]">
@@ -503,7 +503,7 @@ export async function HomePage({
           <li>
             <Link
               href="/industries"
-              className="flex aspect-[4/3] items-center justify-between gap-3 rounded-[--radius-lg] border border-dashed border-career-orange p-4 font-semibold text-[#b8480a] hover:bg-career-mist focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
+              className="flex aspect-[4/3] items-center justify-between gap-3 rounded-(--radius-lg) border border-dashed border-career-orange p-4 font-semibold text-[#b8480a] hover:bg-career-mist focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
             >
               All industries {arrow}
             </Link>
@@ -514,7 +514,7 @@ export async function HomePage({
 
       <section aria-labelledby="home-gem" className="py-8 lg:py-10">
         <div className="container-page">
-          <div className="grid items-stretch overflow-hidden rounded-[--radius-lg] border border-line bg-career-mist lg:grid-cols-[22rem_minmax(0,1fr)_17rem]">
+          <div className="grid items-stretch overflow-hidden rounded-(--radius-lg) border border-line bg-career-mist lg:grid-cols-[22rem_minmax(0,1fr)_17rem]">
             <div className="relative min-h-48">
               <Image
                 src={PHOTOS.government.src}

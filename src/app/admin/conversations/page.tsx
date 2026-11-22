@@ -84,7 +84,7 @@ export default async function AdminConversationsPage({ searchParams }: PageProps
               : [];
 
             return (
-              <article key={row.id} className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <article key={row.id} className="rounded-(--radius-lg) border border-line bg-white p-5">
                 <header className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                   <h2 className="text-body font-semibold text-graphite-900">
                     {row.startedOn ?? "Unknown page"}
@@ -133,7 +133,7 @@ export default async function AdminConversationsPage({ searchParams }: PageProps
             {page > 1 ? (
               <Link
                 href={`/admin/conversations?page=${page - 1}`}
-                className="rounded-[--radius-md] border border-line px-3 py-2 text-label font-semibold text-graphite-900 hover:bg-surface-muted"
+                className="rounded-(--radius-md) border border-line px-3 py-2 text-label font-semibold text-graphite-900 hover:bg-surface-muted"
               >
                 Previous
               </Link>
@@ -141,7 +141,7 @@ export default async function AdminConversationsPage({ searchParams }: PageProps
             {page < totalPages ? (
               <Link
                 href={`/admin/conversations?page=${page + 1}`}
-                className="rounded-[--radius-md] border border-line px-3 py-2 text-label font-semibold text-graphite-900 hover:bg-surface-muted"
+                className="rounded-(--radius-md) border border-line px-3 py-2 text-label font-semibold text-graphite-900 hover:bg-surface-muted"
               >
                 Next
               </Link>

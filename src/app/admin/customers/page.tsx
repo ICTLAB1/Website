@@ -45,11 +45,11 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
           name="q"
           defaultValue={params.q ?? ""}
           placeholder="Search by name, email or company"
-          className="h-11 flex-1 rounded-[--radius-md] border border-line-strong bg-white px-3 text-sm"
+          className="h-11 flex-1 rounded-(--radius-md) border border-line-strong bg-white px-3 text-sm"
         />
         <button
           type="submit"
-          className="h-11 rounded-[--radius-md] bg-graphite-900 px-4 text-sm font-medium text-white hover:bg-graphite-800"
+          className="h-11 rounded-(--radius-md) bg-graphite-900 px-4 text-sm font-medium text-white hover:bg-graphite-800"
         >
           Search
         </button>
@@ -102,7 +102,7 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
                 {items.map((customer) => (
                   <details
                     key={customer.id}
-                    className="rounded-[--radius-lg] border border-line bg-white p-5"
+                    className="rounded-(--radius-lg) border border-line bg-white p-5"
                   >
                     <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
                       {customer.name} — {customer.email}
@@ -111,7 +111,7 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
                       config={DELETABLE.customers}
                       id={customer.id}
                       reference={customer.email}
-                      className="mt-4 rounded-[--radius-md] border border-danger-600/30 bg-danger-50/40 p-4"
+                      className="mt-4 rounded-(--radius-md) border border-danger-600/30 bg-danger-50/40 p-4"
                     />
                   </details>
                 ))}

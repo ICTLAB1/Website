@@ -49,7 +49,7 @@ export default async function SupportPage() {
       ) : null}
       <div className="container-page pb-16 pt-10">
         <div className="mb-14 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <div className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">
               Raise a ticket
             </h2>
@@ -67,7 +67,7 @@ export default async function SupportPage() {
             </ButtonLink>
           </div>
 
-          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <div className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">
               Track an order
             </h2>
@@ -86,7 +86,7 @@ export default async function SupportPage() {
             </ButtonLink>
           </div>
 
-          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <div className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h2 className="text-[15px] font-semibold text-graphite-900">
               Contact the team
             </h2>
@@ -128,7 +128,7 @@ export default async function SupportPage() {
           />
 
           <div className="grid gap-4 lg:grid-cols-2">
-            <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <div className="rounded-(--radius-lg) border border-line bg-white p-5">
               <h3 className="text-[14px] font-semibold text-graphite-900">
                 What you can raise
               </h3>
@@ -145,7 +145,7 @@ export default async function SupportPage() {
               </ul>
             </div>
 
-            <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <div className="rounded-(--radius-lg) border border-line bg-white p-5">
               <h3 className="text-[14px] font-semibold text-graphite-900">
                 The states a ticket moves through
               </h3>

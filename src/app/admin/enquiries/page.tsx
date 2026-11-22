@@ -45,7 +45,7 @@ export default async function AdminEnquiriesPage({ searchParams }: PageProps) {
           <Link
             href="/admin/enquiries"
             className={cn(
-              "rounded-[--radius-md] px-3 py-2 text-[13px]",
+              "rounded-(--radius-md) px-3 py-2 text-[13px]",
               !params.status ? "bg-graphite-900 font-medium text-white" : "text-ink-600 hover:bg-white",
             )}
           >
@@ -56,7 +56,7 @@ export default async function AdminEnquiriesPage({ searchParams }: PageProps) {
               key={status}
               href={`/admin/enquiries?status=${status}`}
               className={cn(
-                "rounded-[--radius-md] px-3 py-2 text-[13px]",
+                "rounded-(--radius-md) px-3 py-2 text-[13px]",
                 params.status === status
                   ? "bg-graphite-900 font-medium text-white"
                   : "text-ink-600 hover:bg-white",

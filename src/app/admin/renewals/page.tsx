@@ -103,7 +103,7 @@ export default async function AdminRenewalsPage() {
         </p>
       </header>
 
-      <section className="rounded-[--radius-lg] border border-line bg-white p-5">
+      <section className="rounded-(--radius-lg) border border-line bg-white p-5">
         <h2 className="mb-4 text-[1.05rem]">The year ahead</h2>
         <RenewalCalendar renewals={renewals} />
       </section>

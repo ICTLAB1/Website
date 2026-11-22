@@ -143,7 +143,7 @@ export function VariantForm({
           open by default only when the variant already has hardware data.
         */}
         <details
-          className="mt-6 rounded-[--radius-md] border border-line bg-surface-muted p-4"
+          className="mt-6 rounded-(--radius-md) border border-line bg-surface-muted p-4"
           open={Boolean(variant?.processor || variant?.memory || variant?.storage || variant?.partNumber)}
         >
           <summary className="cursor-pointer text-[13px] font-medium text-graphite-900">

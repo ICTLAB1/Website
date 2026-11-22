@@ -110,11 +110,11 @@ export default async function ResourceListPage({ params, searchParams }: PagePro
             defaultValue={query.q ?? ""}
             placeholder={`Search ${config.label.plural.toLowerCase()}`}
             aria-label={`Search ${config.label.plural.toLowerCase()}`}
-            className="h-10 w-64 rounded-[--radius-md] border border-line-strong px-3 text-sm"
+            className="h-10 w-64 rounded-(--radius-md) border border-line-strong px-3 text-sm"
           />
           <button
             type="submit"
-            className="h-10 rounded-[--radius-md] border border-line-strong px-4 text-[13px] font-medium hover:bg-white"
+            className="h-10 rounded-(--radius-md) border border-line-strong px-4 text-[13px] font-medium hover:bg-white"
           >
             Search
           </button>

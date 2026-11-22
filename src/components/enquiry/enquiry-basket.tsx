@@ -187,7 +187,7 @@ export function EnquiryBasket({
             </button>
           </div>
 
-          <ul className="divide-y divide-line rounded-[--radius-lg] border border-line bg-white">
+          <ul className="divide-y divide-line rounded-(--radius-lg) border border-line bg-white">
             {lines.map((line) => (
               <li key={line.sku} className="p-4 sm:p-5">
                 <div className="flex flex-wrap items-start justify-between gap-4">
@@ -223,7 +223,7 @@ export function EnquiryBasket({
                           const parsed = Number.parseInt(event.target.value, 10);
                           setQuantity(line.sku, Number.isFinite(parsed) ? parsed : 1);
                         }}
-                        className="h-10 w-24 rounded-[--radius-md] border border-line-strong px-2.5 text-sm tabular-nums"
+                        className="h-10 w-24 rounded-(--radius-md) border border-line-strong px-2.5 text-sm tabular-nums"
                       />
                     </div>
 
@@ -239,7 +239,7 @@ export function EnquiryBasket({
                     <button
                       type="button"
                       onClick={() => remove(line.sku)}
-                      className="rounded-[--radius-sm] p-2 text-ink-500 hover:bg-danger-50 hover:text-danger-700"
+                      className="rounded-(--radius-sm) p-2 text-ink-500 hover:bg-danger-50 hover:text-danger-700"
                     >
                       <span className="sr-only">Remove {line.productName}</span>
                       <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -259,7 +259,7 @@ export function EnquiryBasket({
                     rows={2}
                     maxLength={500}
                     placeholder="Existing entitlements, required start date, edition preference…"
-                    className="mt-2 w-full rounded-[--radius-md] border border-line-strong px-3 py-2 text-[13px]"
+                    className="mt-2 w-full rounded-(--radius-md) border border-line-strong px-3 py-2 text-[13px]"
                   />
                 </details>
               </li>
@@ -416,7 +416,7 @@ export function EnquiryBasket({
 
       {/* ---------------------------------------------------------- summary */}
       <aside className="min-w-0 lg:sticky lg:top-32 lg:self-start">
-        <div className="rounded-[--radius-lg] border border-line bg-white">
+        <div className="rounded-(--radius-lg) border border-line bg-white">
           <div className="border-b border-line px-5 py-4">
             <h2 className="text-[15px] font-semibold text-graphite-900">Enquiry summary</h2>
           </div>
@@ -446,14 +446,14 @@ export function EnquiryBasket({
           </div>
         </div>
 
-        <div className="mt-4 rounded-[--radius-lg] border border-line bg-graphite-900 p-5 text-white">
+        <div className="mt-4 rounded-(--radius-lg) border border-line bg-graphite-900 p-5 text-white">
           <p className="text-[14px] font-semibold">Prefer to talk it through?</p>
           <p className="mt-1.5 text-[13px] leading-relaxed text-graphite-200">
             Complex or multi-brand requirements are often faster to scope in a conversation.
           </p>
           <Link
             href="/contact"
-            className="mt-3 inline-flex h-10 items-center justify-center rounded-[--radius-md] border border-white/30 px-4 text-[13px] font-medium text-white hover:bg-white/10"
+            className="mt-3 inline-flex h-10 items-center justify-center rounded-(--radius-md) border border-white/30 px-4 text-[13px] font-medium text-white hover:bg-white/10"
           >
             Contact enterprise sales
           </Link>

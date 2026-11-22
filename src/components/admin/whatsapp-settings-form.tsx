@@ -73,7 +73,7 @@ export function WhatsAppSettingsForm({ settings }: { settings: WhatsAppSettingsV
         ) : null}
 
         {settings.brokenConfiguration ? (
-          <p className="rounded-[--radius-md] border border-amber-300 bg-amber-50 p-3 text-[12px] leading-relaxed text-amber-800">
+          <p className="rounded-(--radius-md) border border-amber-300 bg-amber-50 p-3 text-[12px] leading-relaxed text-amber-800">
             Switched on, but the phone number ID, business account ID, or access token is missing —
             customers are only getting the email confirmation until all three are set.
           </p>

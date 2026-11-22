@@ -185,7 +185,7 @@ export default async function IndustryPage({
           <header className="flex max-w-3xl flex-col gap-4 lg:max-w-2xl">
             <span
               aria-hidden="true"
-              className={`inline-flex h-12 w-12 items-center justify-center rounded-[--radius-md] ${
+              className={`inline-flex h-12 w-12 items-center justify-center rounded-(--radius-md) ${
                 photo
                   ? "bg-white/10 text-white"
                   : "bg-accent-50 text-accent-700"
@@ -249,7 +249,7 @@ export default async function IndustryPage({
             {industry.solutions.map((solution) => (
               <li
                 key={solution}
-                className="rounded-[--radius-md] border border-line bg-white px-3.5 py-2 text-meta font-medium text-ink-700"
+                className="rounded-(--radius-md) border border-line bg-white px-3.5 py-2 text-meta font-medium text-ink-700"
               >
                 {solution}
               </li>
@@ -317,7 +317,7 @@ export default async function IndustryPage({
               <Reveal key={service.slug} delay={Math.min(index * 45, 180)}>
                 <Link
                   href={`/services/${service.slug}`}
-                  className="lift flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-5 hover:border-graphite-300"
+                  className="lift flex h-full flex-col rounded-(--radius-lg) border border-line bg-white p-5 hover:border-graphite-300"
                 >
                   <span className="text-label font-semibold uppercase tracking-wide text-accent-700">
                     {service.category}
@@ -336,7 +336,7 @@ export default async function IndustryPage({
       ) : null}
 
       <section className="container-page pt-14">
-        <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
+        <div className="rounded-(--radius-lg) border border-line bg-surface-muted p-6 sm:p-8">
           <h2 className="text-section">How the purchase runs</h2>
           <p className="mt-3 max-w-3xl text-body leading-relaxed text-ink-600">
             Tell us the requirement and we quote it — licensing, hardware and
@@ -363,7 +363,7 @@ export default async function IndustryPage({
               <li key={other.slug}>
                 <Link
                   href={`/industries/${other.slug}`}
-                  className="block rounded-[--radius-md] border border-line bg-white px-3 py-1.5 text-meta text-ink-700 transition-colors hover:border-graphite-400 hover:text-graphite-900"
+                  className="block rounded-(--radius-md) border border-line bg-white px-3 py-1.5 text-meta text-ink-700 transition-colors hover:border-graphite-400 hover:text-graphite-900"
                 >
                   {other.name}
                 </Link>

@@ -80,7 +80,7 @@ export default async function AdminOrganisationDetailPage({ params }: PageProps)
             {company.users.map((person) => (
               <li
                 key={person.id}
-                className="rounded-[--radius-md] border border-line bg-white px-3 py-1.5 text-[13px]"
+                className="rounded-(--radius-md) border border-line bg-white px-3 py-1.5 text-[13px]"
               >
                 <span className="text-graphite-900">{person.name}</span>{" "}
                 <span className="text-ink-500">{person.email}</span>{" "}
@@ -106,7 +106,7 @@ export default async function AdminOrganisationDetailPage({ params }: PageProps)
         <h2 className="mb-5 text-[1.15rem]">Addresses</h2>
 
         {company.addresses.length === 0 ? (
-          <p className="mb-6 rounded-[--radius-lg] border border-dashed border-line-strong bg-white px-5 py-6 text-[13px] text-ink-500">
+          <p className="mb-6 rounded-(--radius-lg) border border-dashed border-line-strong bg-white px-5 py-6 text-[13px] text-ink-500">
             No addresses on file beyond the registered one above.
           </p>
         ) : (
@@ -141,7 +141,7 @@ export default async function AdminOrganisationDetailPage({ params }: PageProps)
         {mayWrite ? (
           <div className="grid gap-6 lg:grid-cols-2">
             {company.addresses.map((address) => (
-              <details key={address.id} className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <details key={address.id} className="rounded-(--radius-lg) border border-line bg-white p-5">
                 <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
                   Edit {address.label}
                 </summary>
@@ -158,7 +158,7 @@ export default async function AdminOrganisationDetailPage({ params }: PageProps)
               </details>
             ))}
 
-            <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <div className="rounded-(--radius-lg) border border-line bg-white p-5">
               <h3 className="mb-5 text-[14px] font-medium text-graphite-900">Add an address</h3>
               <CompanyAddressForm companyId={company.id} />
             </div>
@@ -170,7 +170,7 @@ export default async function AdminOrganisationDetailPage({ params }: PageProps)
         <h2 className="mb-5 text-[1.15rem]">Named contacts</h2>
 
         {company.contacts.length === 0 ? (
-          <p className="mb-6 rounded-[--radius-lg] border border-dashed border-line-strong bg-white px-5 py-6 text-[13px] text-ink-500">
+          <p className="mb-6 rounded-(--radius-lg) border border-dashed border-line-strong bg-white px-5 py-6 text-[13px] text-ink-500">
             No named contacts on file.
           </p>
         ) : (
@@ -201,7 +201,7 @@ export default async function AdminOrganisationDetailPage({ params }: PageProps)
         {mayWrite ? (
           <div className="grid gap-6 lg:grid-cols-2">
             {company.contacts.map((contact) => (
-              <details key={contact.id} className="rounded-[--radius-lg] border border-line bg-white p-5">
+              <details key={contact.id} className="rounded-(--radius-lg) border border-line bg-white p-5">
                 <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
                   Edit {contact.name}
                 </summary>
@@ -218,7 +218,7 @@ export default async function AdminOrganisationDetailPage({ params }: PageProps)
               </details>
             ))}
 
-            <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <div className="rounded-(--radius-lg) border border-line bg-white p-5">
               <h3 className="mb-5 text-[14px] font-medium text-graphite-900">Add a contact</h3>
               <CompanyContactForm companyId={company.id} />
             </div>

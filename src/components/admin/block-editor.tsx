@@ -94,7 +94,7 @@ export function BlockEditor({ pageId, blocks }: { pageId: string; blocks: Block[
       </div>
 
       {blocks.length === 0 ? (
-        <p className="rounded-[--radius-lg] border border-dashed border-line-strong px-5 py-8 text-center text-[14px] text-ink-500">
+        <p className="rounded-(--radius-lg) border border-dashed border-line-strong px-5 py-8 text-center text-[14px] text-ink-500">
           This page has no blocks yet. Add one above to start building it.
         </p>
       ) : (
@@ -102,7 +102,7 @@ export function BlockEditor({ pageId, blocks }: { pageId: string; blocks: Block[
           {blocks.map((block, index) => {
             const type = block.type as BlockType;
             return (
-              <li key={block.id} className="rounded-[--radius-lg] border border-line bg-white">
+              <li key={block.id} className="rounded-(--radius-lg) border border-line bg-white">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3">
                   <div className="flex items-center gap-3">
                     <span className="font-mono text-[11px] text-ink-400">{index + 1}</span>
@@ -110,7 +110,7 @@ export function BlockEditor({ pageId, blocks }: { pageId: string; blocks: Block[
                       {BLOCK_LABELS[type] ?? block.type}
                     </span>
                     {!block.visible ? (
-                      <span className="rounded-[--radius-sm] bg-surface-sunken px-2 py-0.5 text-[11px] uppercase tracking-wide text-ink-500">
+                      <span className="rounded-(--radius-sm) bg-surface-sunken px-2 py-0.5 text-[11px] uppercase tracking-wide text-ink-500">
                         Hidden
                       </span>
                     ) : null}

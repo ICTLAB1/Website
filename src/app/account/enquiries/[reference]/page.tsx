@@ -90,7 +90,7 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
       </section>
 
       <section className="grid gap-6 sm:grid-cols-2">
-        <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+        <div className="rounded-(--radius-lg) border border-line bg-white p-5">
           <h3 className="text-[15px] font-semibold text-graphite-900">Contact provided</h3>
           <dl className="mt-4 space-y-2.5 text-[13px]">
             {[
@@ -110,7 +110,7 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
           </dl>
         </div>
 
-        <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+        <div className="rounded-(--radius-lg) border border-line bg-white p-5">
           <h3 className="text-[15px] font-semibold text-graphite-900">Requirements</h3>
           <p className="mt-3 whitespace-pre-wrap text-[13px] leading-relaxed text-ink-600">
             {enquiry.requirements || "No additional requirements were provided."}
@@ -154,7 +154,7 @@ export default async function AccountEnquiryDetailPage({ params }: PageProps) {
           </TableWrap>
         </section>
       ) : (
-        <section className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+        <section className="rounded-(--radius-lg) border border-line bg-surface-muted p-5">
           <h3 className="text-[15px] font-semibold text-graphite-900">Quotation pending</h3>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
             Our team is preparing your quotation. It will appear here and be sent to the email

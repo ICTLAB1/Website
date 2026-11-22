@@ -51,7 +51,7 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
             <Link
               href="/blog"
               className={cn(
-                "rounded-[--radius-md] px-3 py-2 text-[13px]",
+                "rounded-(--radius-md) px-3 py-2 text-[13px]",
                 !params.category
                   ? "bg-graphite-900 font-medium text-white"
                   : "text-ink-600 hover:bg-surface-muted",
@@ -64,7 +64,7 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
                 key={category.name}
                 href={`/blog?category=${encodeURIComponent(category.name)}`}
                 className={cn(
-                  "whitespace-nowrap rounded-[--radius-md] px-3 py-2 text-[13px]",
+                  "whitespace-nowrap rounded-(--radius-md) px-3 py-2 text-[13px]",
                   params.category === category.name
                     ? "bg-graphite-900 font-medium text-white"
                     : "text-ink-600 hover:bg-surface-muted",
@@ -87,7 +87,7 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
             {posts.map((post) => (
               <article
                 key={post.slug}
-                className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5 transition-colors hover:border-graphite-300"
+                className="flex flex-col rounded-(--radius-lg) border border-line bg-white p-5 transition-colors hover:border-graphite-300"
               >
                 <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-accent-700">
                   {post.category}

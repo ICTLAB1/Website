@@ -132,13 +132,13 @@ function FacetLink({
         // this every facet value on every listing is a followable link, and the
         // combinations multiply into the hundreds of thousands (see crawl-rules).
         rel="nofollow"
-        className={`flex items-center gap-2.5 rounded-[--radius-sm] px-2 py-1.5 text-meta transition-colors ${
+        className={`flex items-center gap-2.5 rounded-(--radius-sm) px-2 py-1.5 text-meta transition-colors ${
           active ? "bg-accent-50 text-accent-800" : "text-ink-700 hover:bg-surface-muted"
         } ${indented ? "ml-3" : ""}`}
       >
         <span
           aria-hidden="true"
-          className={`grid h-4 w-4 shrink-0 place-items-center rounded-[--radius-xs] border ${
+          className={`grid h-4 w-4 shrink-0 place-items-center rounded-(--radius-xs) border ${
             active ? "border-accent-700 bg-accent-700 text-white" : "border-line-strong bg-white"
           }`}
         >
@@ -195,7 +195,7 @@ export async function FilterPanel({
   if (!hasAnyFacet(facets)) return null;
 
   return (
-    <div className="rounded-[--radius-lg] border border-line bg-white px-5 py-5">
+    <div className="rounded-(--radius-lg) border border-line bg-white px-5 py-5">
       <div className="mb-1 flex items-center justify-between gap-3">
         <h2 className="text-body font-semibold text-graphite-900">Filters</h2>
         {hasFilters ? (
@@ -370,7 +370,7 @@ export async function FilterPanel({
 export async function MobileFilterPanel(props: Parameters<typeof FilterPanel>[0]) {
   return (
     <details className="lg:hidden">
-      <summary className="flex h-11 cursor-pointer items-center justify-between rounded-[--radius-md] border border-line-strong bg-white px-4 text-sm font-medium text-graphite-900">
+      <summary className="flex h-11 cursor-pointer items-center justify-between rounded-(--radius-md) border border-line-strong bg-white px-4 text-sm font-medium text-graphite-900">
         Filters
         <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="text-ink-500">
           <path d="M3 5h14v2H3zM5 9h10v2H5zM8 13h4v2H8z" />

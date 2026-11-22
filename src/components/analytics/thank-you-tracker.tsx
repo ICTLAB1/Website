@@ -27,7 +27,7 @@ export function ThankYouTracker() {
 
   if (!reference) return null;
   return (
-    <div className="mt-6 inline-block rounded-[--radius-lg] border border-line bg-surface-muted px-6 py-4">
+    <div className="mt-6 inline-block rounded-(--radius-lg) border border-line bg-surface-muted px-6 py-4">
       <p className="text-[12px] uppercase tracking-wide text-ink-500">Your reference</p>
       <p className="mt-1 font-mono text-[20px] font-semibold text-graphite-900">{reference}</p>
     </div>

@@ -127,7 +127,7 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
         <h2 className="mb-5 text-[1.15rem]">Licence options and pricing</h2>
 
         {product.variants.length === 0 ? (
-          <p className="mb-6 rounded-[--radius-lg] border border-dashed border-line-strong bg-white px-5 py-6 text-[13px] text-ink-500">
+          <p className="mb-6 rounded-(--radius-lg) border border-dashed border-line-strong bg-white px-5 py-6 text-[13px] text-ink-500">
             No licence options yet. A product without at least one SKU cannot be added to an
             enquiry.
           </p>
@@ -177,7 +177,7 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
 
         <div className="grid gap-6 lg:grid-cols-2">
           {product.variants.map((variant) => (
-            <details key={variant.id} className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <details key={variant.id} className="rounded-(--radius-lg) border border-line bg-white p-5">
               <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
                 Edit {variant.sku}
               </summary>
@@ -215,14 +215,14 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
                     config={DELETABLE.variants}
                     id={variant.id}
                     reference={variant.sku}
-                    className="mt-6 rounded-[--radius-md] border border-danger-600/30 bg-danger-50/40 p-4"
+                    className="mt-6 rounded-(--radius-md) border border-danger-600/30 bg-danger-50/40 p-4"
                   />
                 ) : null}
               </div>
             </details>
           ))}
 
-          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <div className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h3 className="mb-5 text-[14px] font-medium text-graphite-900">Add a licence option</h3>
             <VariantForm productId={product.id} />
           </div>
@@ -238,7 +238,7 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
         </p>
 
         {product.specs.length === 0 ? (
-          <p className="mb-6 rounded-[--radius-lg] border border-dashed border-line-strong bg-white px-5 py-6 text-[13px] text-ink-500">
+          <p className="mb-6 rounded-(--radius-lg) border border-dashed border-line-strong bg-white px-5 py-6 text-[13px] text-ink-500">
             No specification rows yet.
           </p>
         ) : (
@@ -266,7 +266,7 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
 
         <div className="grid gap-6 lg:grid-cols-2">
           {product.specs.map((spec) => (
-            <details key={spec.id} className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <details key={spec.id} className="rounded-(--radius-lg) border border-line bg-white p-5">
               <summary className="cursor-pointer text-[14px] font-medium text-graphite-900">
                 Edit {spec.label}
               </summary>
@@ -283,7 +283,7 @@ export default async function AdminProductDetailPage({ params }: PageProps) {
             </details>
           ))}
 
-          <div className="rounded-[--radius-lg] border border-line bg-white p-5">
+          <div className="rounded-(--radius-lg) border border-line bg-white p-5">
             <h3 className="mb-5 text-[14px] font-medium text-graphite-900">Add a specification row</h3>
             <SpecForm productId={product.id} />
           </div>

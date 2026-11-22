@@ -61,11 +61,11 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
           name="q"
           defaultValue={params.q ?? ""}
           placeholder="Search by name, SKU or keyword"
-          className="h-11 flex-1 rounded-[--radius-md] border border-line-strong bg-white px-3 text-sm"
+          className="h-11 flex-1 rounded-(--radius-md) border border-line-strong bg-white px-3 text-sm"
         />
         <button
           type="submit"
-          className="h-11 rounded-[--radius-md] bg-graphite-900 px-4 text-sm font-medium text-white hover:bg-graphite-800"
+          className="h-11 rounded-(--radius-md) bg-graphite-900 px-4 text-sm font-medium text-white hover:bg-graphite-800"
         >
           Search
         </button>

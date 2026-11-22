@@ -487,7 +487,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             specifications start.
           */}
           {hardware ? (
-            <p className="mt-4 max-w-2xl rounded-[--radius-md] border border-line bg-surface-muted px-4 py-3 text-meta leading-relaxed text-ink-600">
+            <p className="mt-4 max-w-2xl rounded-(--radius-md) border border-line bg-surface-muted px-4 py-3 text-meta leading-relaxed text-ink-600">
               A {hardwareClassLabel(product.formFactor!).toLowerCase()} from{" "}
               <span className="font-medium text-graphite-900">{product.brand.name}</span>, supplied
               by {config.entityName}.
@@ -495,7 +495,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           ) : null}
 
           {hardware ? (
-            <div className="mt-8 rounded-[--radius-lg] border border-line p-6">
+            <div className="mt-8 rounded-(--radius-lg) border border-line p-6">
               <ProductPhoto
                 src={product.imageUrl}
                 formFactor={product.formFactor}
@@ -518,7 +518,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             /* Visual identity without reproducing brand artwork: the product's
                own initial on the brand's accent colour. */
             <div
-              className="mt-8 flex aspect-[16/7] items-center justify-center rounded-[--radius-lg] border border-line"
+              className="mt-8 flex aspect-[16/7] items-center justify-center rounded-(--radius-lg) border border-line"
               style={{ backgroundColor: `${product.brand.accentColor}0d` }}
               role="img"
               aria-label={`${product.brand.name} ${product.name}`}
@@ -526,7 +526,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               <div className="text-center">
                 <span
                   aria-hidden="true"
-                  className="mx-auto grid h-16 w-16 place-items-center rounded-[--radius-md] text-2xl font-bold text-white"
+                  className="mx-auto grid h-16 w-16 place-items-center rounded-(--radius-md) text-2xl font-bold text-white"
                   style={{ backgroundColor: product.brand.accentColor }}
                 >
                   {product.brand.name.charAt(0)}
@@ -617,7 +617,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           quotation.
                         </p>
                       )}
-                      <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-5">
+                      <div className="rounded-(--radius-lg) border border-line bg-surface-muted p-5">
                         <h3 className="text-[14px] font-semibold text-graphite-900">
                           Available licence options
                         </h3>
@@ -665,7 +665,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   label: "Delivery & support",
                   content: (
                     <div className="grid max-w-3xl gap-5 sm:grid-cols-2">
-                      <div className="rounded-[--radius-lg] border border-line p-5">
+                      <div className="rounded-(--radius-lg) border border-line p-5">
                         <h3 className="text-[14px] font-semibold text-graphite-900">
                           Delivery &amp; provisioning
                         </h3>
@@ -674,7 +674,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                             "Delivery timelines are confirmed on the quotation."}
                         </p>
                       </div>
-                      <div className="rounded-[--radius-lg] border border-line p-5">
+                      <div className="rounded-(--radius-lg) border border-line p-5">
                         <h3 className="text-[14px] font-semibold text-graphite-900">Support</h3>
                         <p className="mt-2 text-[14px] leading-relaxed text-ink-600">
                           {product.supportNotes ??
@@ -755,7 +755,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         stops being a slogan on the homepage and becomes a link.
       */}
       {hardware ? (
-        <section className="mt-16 rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
+        <section className="mt-16 rounded-(--radius-lg) border border-line bg-surface-muted p-6 sm:p-8">
           <SectionHeader
             title="Complete the deployment"
             description="Devices rarely arrive alone. Licensing, security and deployment can go on the same quotation as the hardware, which means one purchase order and one invoice rather than four."
@@ -772,7 +772,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="flex h-full items-center rounded-[--radius-md] border border-line bg-white px-4 py-3 text-meta font-medium text-graphite-900 lift hover:border-graphite-300 hover:text-accent-700"
+                  className="flex h-full items-center rounded-(--radius-md) border border-line bg-white px-4 py-3 text-meta font-medium text-graphite-900 lift hover:border-graphite-300 hover:text-accent-700"
                 >
                   {item.label}
                 </Link>

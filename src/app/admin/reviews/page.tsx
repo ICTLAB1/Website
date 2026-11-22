@@ -98,8 +98,8 @@ export default async function AdminReviewsPage({
                 aria-current={filter.key === active.key ? "page" : undefined}
                 className={
                   filter.key === active.key
-                    ? "block rounded-[--radius-md] bg-graphite-900 px-3 py-2 text-meta font-medium text-white"
-                    : "block rounded-[--radius-md] px-3 py-2 text-meta text-ink-600 hover:bg-surface-muted"
+                    ? "block rounded-(--radius-md) bg-graphite-900 px-3 py-2 text-meta font-medium text-white"
+                    : "block rounded-(--radius-md) px-3 py-2 text-meta text-ink-600 hover:bg-surface-muted"
                 }
               >
                 {filter.label}
@@ -122,7 +122,7 @@ export default async function AdminReviewsPage({
       ) : (
         <ul className="flex flex-col gap-5">
           {reviews.map((review) => (
-            <li key={review.id} className="rounded-[--radius-lg] border border-line bg-white p-5">
+            <li key={review.id} className="rounded-(--radius-lg) border border-line bg-white p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <h2 className="text-[15px] font-semibold text-graphite-900">
