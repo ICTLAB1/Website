@@ -1,3 +1,4 @@
+import { safeBrandLogo } from "@/lib/brand-logo";
 import { isWideLogo } from "@/lib/product-logos";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -553,6 +554,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
           {hardware ? (
             <div className="mt-8 rounded-(--radius-lg) border border-line p-6">
+              {safeBrandLogo(product.brand.logoUrl) ? (
+                <div className="mb-4 flex h-14 items-center justify-center rounded-(--radius-md) border border-line bg-white">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={safeBrandLogo(product.brand.logoUrl) ?? ""}
+                    alt={product.brand.name}
+                    className="h-9 w-auto max-w-[60%] object-contain"
+                    decoding="async"
+                  />
+                </div>
+              ) : null}
               <ProductPhoto
                 src={product.imageUrl}
                 formFactor={product.formFactor}

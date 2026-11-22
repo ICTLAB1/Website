@@ -1,3 +1,4 @@
+import { safeBrandLogo } from "@/lib/brand-logo";
 import { isWideLogo } from "@/lib/product-logos";
 import Link from "next/link";
 import { RevealGroup } from "@/components/motion/reveal";
@@ -58,6 +59,7 @@ export function ProductCard({
     ? discountPercent(variant.listPriceMinor, variant.salePriceMinor)
     : null;
   const hardware = isHardware(product);
+  const hardwareLogo = hardware ? safeBrandLogo(product.brand.logoUrl) : null;
 
   /*
    * The catalogue quotes rather than prices, and the decision is not this
@@ -73,7 +75,7 @@ export function ProductCard({
    * (show a price / accept a card for it) cannot be conflated by a future
    * edit that only looks at `quoteOnly`.
    */
-  const canBuyDirect = DIRECT_PURCHASE_ENABLED && !quoteOnly && variant != null;
+  const canBuyDirect = DIRECT_PURCHASE_ENABLED && !hardware && !quoteOnly && variant != null;
 
   /*
    * Hardware and licensing on one card.
@@ -94,6 +96,18 @@ export function ProductCard({
             src={product.imageUrl ?? ""}
             alt=""
             className="h-14 w-auto max-w-full object-contain"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      ) : null}
+      {hardware && hardwareLogo ? (
+        <div className="flex h-12 items-center justify-center border-b border-line px-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={hardwareLogo}
+            alt={product.brand.name}
+            className="h-7 w-auto max-w-[70%] object-contain"
             loading="lazy"
             decoding="async"
           />
