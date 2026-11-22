@@ -65,7 +65,7 @@ export const metadata: Metadata = {
      * the content migration that corrected it. This value is the safety net for
      * a route that has neither.
      */
-    default: `${getSiteIdentity().tradingName} | Enterprise Software Licensing & IT Solutions`,
+    default: `${getSiteIdentity().tradingName} | Software Licensing, IT Hardware & Solutions`,
     /*
      * The suffix is the trading name, not a description of the business.
      *

@@ -184,7 +184,7 @@ const ORGANISATION_LOGO = "/logo.png";
  * import.
  */
 export const COMPANY_DESCRIPTION =
-  "Enterprise software licensing, cloud and IT solutions across Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure manufacturers.";
+  "Enterprise software licensing, IT hardware, cloud and IT solutions across Microsoft, Adobe, Autodesk, Zoho and enterprise infrastructure manufacturers.";
 
 export async function organizationSchema() {
   const config = await getSiteConfig();

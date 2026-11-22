@@ -144,6 +144,39 @@ const INDUSTRIES: Array<[string, string]> = [
   ["government-psu", "Government & PSU"],
 ];
 
+const SOFTWARE_AND_HARDWARE: Array<[string, string, string, string]> = [
+  [
+    "Software",
+    "Business applications",
+    "Microsoft 365, Windows, Office and server licensing",
+    "/products?category=productivity-collaboration",
+  ],
+  [
+    "Software",
+    "Creative and design",
+    "Adobe, Autodesk, CAD and BIM subscriptions",
+    "/products?category=design-creative",
+  ],
+  [
+    "Hardware",
+    "Laptops and desktops",
+    "Business-class computers from HP, Lenovo and Acer",
+    "/hardware",
+  ],
+  [
+    "Hardware",
+    "Servers and storage",
+    "Rack servers, storage arrays and backup",
+    "/products?category=servers",
+  ],
+  [
+    "Hardware",
+    "Networking and workstations",
+    "Switching, wireless and CAD workstations",
+    "/enterprise-it-hardware",
+  ],
+];
+
 export type HomeCopy = {
   hero: {
     eyebrow: string;
@@ -303,6 +336,44 @@ export async function HomePage({
             ) : null;
           })}
         </ul>
+      </Band>
+      <Band
+        id="home-software-hardware"
+        title="Software and hardware, sourced together."
+        intro="Licensing and the machines it runs on, quoted together, ordered on one purchase order and invoiced once."
+        className="bg-career-mist"
+      >
+        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+          {SOFTWARE_AND_HARDWARE.map(([kind, label, detail, href]) => (
+            <li key={label}>
+              <Link
+                href={href}
+                className="flex h-full min-h-36 flex-col justify-between rounded-[--radius-lg] border border-line bg-white p-4 hover:border-career-orange focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
+              >
+                <span>
+                  <span className="text-label font-semibold uppercase tracking-wide text-[#b8480a]">
+                    {kind}
+                  </span>
+                  <span className="mt-1 block font-semibold text-graphite-900">
+                    {label}
+                  </span>
+                </span>
+                <span className="mt-3 flex items-end justify-between gap-2 text-label text-ink-600">
+                  {detail}
+                  <span className="text-career-orange">{arrow}</span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4">
+          <Link
+            href="/hardware"
+            className="inline-flex min-h-11 items-center gap-2 font-semibold text-career-navy hover:underline"
+          >
+            Browse IT hardware {arrow}
+          </Link>
+        </p>
       </Band>
       {slots.afterSolutions}
       {slots.afterCatalogue}

@@ -18,8 +18,8 @@ export async function Footer() {
           <div className="max-w-sm">
             <Logo name={config.tradingName} onDark withStrapline className="h-auto" />
             <p className="mt-5 text-meta leading-relaxed text-graphite-300">
-              Enterprise software licensing, cloud and IT solutions. Software publishers and
-              hardware manufacturers consolidated into a single procurement relationship.
+              Enterprise software licensing, IT hardware, cloud and IT solutions. Software
+              publishers and hardware manufacturers consolidated into a single procurement relationship.
             </p>
 
             <dl className="mt-6 space-y-2 text-meta">
