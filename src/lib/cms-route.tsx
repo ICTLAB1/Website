@@ -8,6 +8,8 @@ import { QuickEnquiry } from "@/components/enquiry/quick-enquiry";
 import { photoForPath } from "@/lib/page-photos";
 import { LandingEnquiry } from "@/components/enquiry/landing-enquiry";
 import { leadPageFor } from "@/lib/lead-pages";
+import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
+import { PartnerShowcase } from "@/components/marketing/partner-showcase";
 import { DocumentDates } from "@/components/marketing/document-dates";
 import { getPage } from "@/lib/queries/pages";
 import { resolveBlocks } from "@/lib/blocks/resolve";
@@ -31,7 +33,10 @@ import { buildMetadata } from "@/lib/seo";
  * descriptions come from the record, which is what makes editing a page in the
  * admin panel update its SEO without a deploy.
  */
-export async function cmsMetadata(slug: string, path: string): Promise<Metadata> {
+export async function cmsMetadata(
+  slug: string,
+  path: string,
+): Promise<Metadata> {
   const page = await getPage(slug);
 
   if (!page) {
@@ -59,10 +64,25 @@ export async function cmsMetadata(slug: string, path: string): Promise<Metadata>
  * licensing guides. Not the policies, the about page or the resource centre —
  * a quotation form under the refund policy is noise.
  */
-const QUOTE_PAGE = /^(get-a-quote\/|software-licensing-company-|gem-software-supplier$|microsoft-csp$|microsoft-licensing$|enterprise$|solutions(\/|$))/;
+const QUOTE_PAGE =
+  /^(get-a-quote\/|software-licensing-company-|gem-software-supplier$|microsoft-csp$|microsoft-licensing$|enterprise$|solutions(\/|$))/;
 
-function endsWithQuoteForm(page: { slug: string; brandSlug: string | null }): boolean {
+function endsWithQuoteForm(page: {
+  slug: string;
+  brandSlug: string | null;
+}): boolean {
   return page.brandSlug !== null || QUOTE_PAGE.test(page.slug);
+}
+
+/**
+ * The brand a page is about when the page record does not say: the publisher
+ * hubs and licensing guides are named for the publisher, not attached to it.
+ */
+function brandOfSlug(slug: string): string | null {
+  if (/^(microsoft|windows-server|sql-server)(-|\/|$)/.test(slug))
+    return "microsoft";
+  if (/^adobe(-|\/|$)/.test(slug)) return "adobe";
+  return null;
 }
 
 export async function CmsPage({ slug }: { slug: string }) {
@@ -76,6 +96,12 @@ export async function CmsPage({ slug }: { slug: string }) {
     brandSlug: page.brandSlug,
     faqTopic: page.faqTopic,
   });
+
+  // A page about a brand that holds a current, published programme designation shows its badge.
+  const badgeBrand = page.brandSlug ?? brandOfSlug(slug);
+  const partnerBadge = badgeBrand
+    ? (await currentPartnerBadges()).find((badge) => badge.slug === badgeBrand)
+    : undefined;
 
   // These pages open with the enquiry form instead of ending with it.
   const opensWithForm = leadPageFor(slug) !== null;
@@ -91,6 +117,15 @@ export async function CmsPage({ slug }: { slug: string }) {
         blocks={page.blocks}
         resolved={resolved}
         heroImage={photoForPath(`/${slug}`) ?? undefined}
+        heroBadge={
+          partnerBadge
+            ? {
+                src: partnerBadge.badge,
+                alt: `${partnerBadge.name} ${partnerBadge.label}`,
+                href: `/brands/${partnerBadge.slug}`,
+              }
+            : undefined
+        }
         afterHero={
           <>
             <DocumentDates page={page} />
@@ -98,6 +133,9 @@ export async function CmsPage({ slug }: { slug: string }) {
           </>
         }
       />
+
+      {/* The company pages that say who the business is and what it is accredited for. */}
+      {slug === "about" || slug === "enterprise" ? <PartnerShowcase /> : null}
 
       {/*
         The consent control belongs on the cookie policy and nowhere else.
@@ -112,7 +150,9 @@ export async function CmsPage({ slug }: { slug: string }) {
         the pair of buttons that copy refers to.
       */}
       {/* Not on a page that already opened with the form: two copies would share an id and a purpose. */}
-      {endsWithQuoteForm(page) && !opensWithForm ? <QuickEnquiry source="landing_page" /> : null}
+      {endsWithQuoteForm(page) && !opensWithForm ? (
+        <QuickEnquiry source="landing_page" />
+      ) : null}
 
       {slug === "cookie-policy" ? (
         <section className="container-page pb-14 lg:pb-18">

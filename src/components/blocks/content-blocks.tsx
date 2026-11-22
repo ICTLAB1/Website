@@ -114,6 +114,7 @@ export function HeroBlock({
   data,
   counts,
   image,
+  badge,
 }: {
   data: BlockData<"HERO">;
   counts?: ResolvedBlockData["counts"];
@@ -123,6 +124,12 @@ export function HeroBlock({
    * edits, so it must not be stored with the block or offered in its form.
    */
   image?: SitePhoto;
+  /**
+   * The publisher's programme badge for the brand this page is about, chosen by the
+   * route from the confirmed designations on file. Shown on a white plate under the
+   * buttons so the artwork keeps the ground it was drawn for.
+   */
+  badge?: { src: string; alt: string; href: string };
 }) {
   // A photograph behind the text is always a dark opening, whatever tone the block was authored with.
   const dark = data.tone === "dark" || Boolean(image);
@@ -221,6 +228,21 @@ export function HeroBlock({
                   </ButtonLink>
                 ) : null}
               </div>
+            ) : null}
+
+            {badge ? (
+              <Link
+                href={badge.href}
+                className="mt-8 inline-flex animate-rise rounded-(--radius-lg) bg-white px-4 py-3 shadow-[0_10px_30px_-18px_rgba(7,27,61,0.8)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                style={{ animationDelay: "200ms" }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={badge.src}
+                  alt={badge.alt}
+                  className="h-12 w-auto object-contain"
+                />
+              </Link>
             ) : null}
 
             {data.showSearch ? (
