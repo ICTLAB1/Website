@@ -201,5 +201,10 @@ jobs:
              rc=0
              # Read as root: the file is in the azureuser home directory, which this user cannot open.
              sudo cat /home/azureuser/app/deploy/check-meta.mjs | $compose exec -T app node - || rc=$?
+             # Exit 4 means the token is in the container but Meta did not accept the
+             # check call (for example a missing permission on a read that sending events
+             # does not need). That is worth a warning, not a failed release. Any other
+             # failure, including a token that never reached the container, still fails.
+             if [ "$expect_meta" = 1 ] && [ "$rc" -eq 4 ]; then echo "::warning::META_CAPI_TOKEN is present in the container but Meta did not confirm it (exit 4); send a test event from Events Manager to verify"; rc=0; fi
              if [ "$expect_meta" = 1 ] && [ "$rc" -ne 0 ]; then echo "::error::could not confirm the app container has a working META_CAPI_TOKEN (exit $rc)"; exit 1; fi
              if [ "$rc" -eq 3 ]; then echo "META_CAPI_TOKEN is not configured (no secret supplied)"; fi'
