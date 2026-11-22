@@ -10,32 +10,51 @@ const html = renderToStaticMarkup(CareersPage());
 describe("the careers page", () => {
   it("has one H1 and a proper H2 for each section", () => {
     expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
-    const h2 = [...html.matchAll(/<h2[^>]*>(.*?)<\/h2>/g)].map((m) => m[1]);
+    const h2 = [...html.matchAll(/<h2[^>]*>(.*?)<\/h2>/g)].map((m) => m[1]!.replace(/<[^>]+>/g, ""));
     expect(h2).toEqual([
-      "Open positions",
-      "Why work with us",
-      "How hiring works",
-      "Don’t see a role that fits?",
+      "Find your place at TechZoid",
+      "Wherever you are in your career",
+      "Good work starts with good people",
+      "More than a job",
+      "Find your next opportunity",
+      "Your next chapter starts here",
     ]);
   });
 
   it("says what it was asked to say", () => {
-    expect(html).toContain("Careers at TechZoid");
+    // The H1 keeps "Careers at TechZoid" for search and screen readers; sighted visitors see the three words.
+    const h1 = html.match(/<h1[\s\S]*?<\/h1>/)?.[0] ?? "";
+    expect(h1).toContain("Careers at TechZoid");
+    for (const word of ["Belong.", "Build.", "Become."]) expect(h1).toContain(word);
+    expect(html).toContain("Build your skills. Solve real business challenges. Grow with TechZoid.");
     expect(html).toContain("Build India’s digital backbone with people who care.");
     for (const title of [
-      "Fast growth &amp; incentives",
-      "Product certifications",
-      "Supportive leaders",
-      "Great location",
+      "Sales &amp; Business Development",
+      "Technology &amp; Solutions",
+      "Operations",
+      "Corporate Functions",
+      "Early careers",
+      "Experienced professionals",
+      "Team leaders",
+      "Learning &amp; Development",
+      "Career Growth",
+      "Collaboration",
+      "Recognition",
     ]) {
       expect(html).toContain(title);
     }
   });
 
-  it("has a banner button that scrolls to the jobs list, which is where it lands", () => {
+  it("names no vacancy: the example roles are what the team hires for, and the list says only published roles appear", () => {
+    expect(html).toContain("Only roles our HR team has published appear here");
+    expect(html).not.toMatch(/now hiring|vacancies? (is|are) open/i);
+  });
+
+  it("has a hero button that scrolls to the jobs list, which is where it lands", () => {
     expect(html).toContain('href="#jobs"');
-    expect(html).toContain("See open positions");
+    expect(html).toContain("Explore open roles");
     expect(html).toContain('id="jobs"');
+    expect(html).toContain('href="#life"');
   });
 
   it("reserves space for the jobs while they load, so the page below does not move", () => {
@@ -54,7 +73,7 @@ describe("the careers page", () => {
   });
 
   it("ends with the portal button and the HR mailto, in the same tab", () => {
-    const closing = html.match(/Don’t see a role that fits\?[\s\S]*$/)?.[0] ?? "";
+    const closing = html.match(/Your next chapter starts here[\s\S]*$/)?.[0] ?? "";
     expect(closing).toContain(`href="${PORTAL}"`);
     expect(closing).toContain("Open careers portal");
     expect(closing).toContain('href="mailto:hr.preeti@techzoidtechnologies.com"');

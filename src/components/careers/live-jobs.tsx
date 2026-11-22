@@ -1,4 +1,4 @@
-import { ButtonLink } from "@/components/ui/button";
+import { CareerLink } from "@/components/careers/career-button";
 import { JobsList } from "@/components/careers/jobs-list";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getCareers, type Careers } from "@/lib/queries/hr-feed";
@@ -19,12 +19,12 @@ export function JobsSection({ careers }: { careers: Careers }) {
 
   if (careers.state === "empty") {
     return (
-      <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
-        <p className="text-[16px] leading-relaxed text-graphite-900">
+      <div className="rounded-[1rem] border border-dashed border-career-navy/25 bg-career-mist p-6 sm:p-8">
+        <p className="text-[16px] leading-relaxed text-career-navy">
           No openings right now. Send your resume to{" "}
           <a
             href={`mailto:${HR_EMAIL}`}
-            className="font-medium text-accent-700 underline underline-offset-2 hover:text-accent-800"
+            className="font-medium text-career-blue underline underline-offset-4 hover:text-career-navy"
           >
             {HR_EMAIL}
           </a>{" "}
@@ -37,14 +37,14 @@ export function JobsSection({ careers }: { careers: Careers }) {
   // The feed could not be reached. Never a technical message: the visitor wanted
   // jobs, and the portal has them.
   return (
-    <div className="rounded-[--radius-lg] border border-line bg-surface-muted p-6 sm:p-8">
-      <p className="max-w-2xl text-[16px] leading-relaxed text-graphite-900">
+    <div className="rounded-[1rem] border border-career-navy/15 bg-career-mist p-6 sm:p-8">
+      <p className="max-w-2xl text-[16px] leading-relaxed text-career-navy">
         See current openings on our careers portal.
       </p>
       <div className="mt-5">
-        <ButtonLink href={PORTAL_URL} className="w-full sm:w-auto">
+        <CareerLink href={PORTAL_URL} arrow className="w-full sm:w-auto">
           Open careers portal
-        </ButtonLink>
+        </CareerLink>
       </div>
     </div>
   );
@@ -66,7 +66,7 @@ export function JobsSkeleton() {
       </p>
       <div className="space-y-4">
         {[0, 1].map((key) => (
-          <div key={key} className="rounded-[--radius-lg] border border-line bg-white p-5 sm:p-6">
+          <div key={key} className="rounded-[1rem] border border-line bg-white p-5 sm:p-7">
             <Skeleton className="h-3 w-24" />
             <Skeleton className="mt-3 h-6 w-2/3" />
             <div className="mt-4 flex flex-wrap gap-2">

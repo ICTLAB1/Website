@@ -55,7 +55,7 @@ describe("with jobs", () => {
   });
 
   it("hides salary, experience and apply-by when the feed has none", () => {
-    const card = html.split("<li class=\"rounded-[--radius-lg]")[2] ?? "";
+    const card = html.split("<li class=\"group rounded-[1rem]")[2] ?? "";
     expect(card).toContain("Role presales");
     expect(card).not.toContain("0–2 years");
     expect(card).not.toContain("LPA");
@@ -67,16 +67,18 @@ describe("with jobs", () => {
     expect(html).toContain("Apply by 15 Dec 2026");
   });
 
-  it("has filter chips because there is more than one department", () => {
-    expect(html).toContain('aria-label="Filter by department"');
-    for (const chip of ["All", "Sales", "Pre-sales"]) expect(html).toContain(`>${chip}</button>`);
+  it("has a search box, and a department filter because there is more than one department", () => {
+    expect(html).toContain('type="search"');
+    expect(html).toContain("Search positions");
+    expect(html).toContain(">Department</label>");
+    for (const option of ["All departments", "Sales", "Pre-sales"]) expect(html).toContain(`>${option}</option>`);
   });
 
-  it("has no filter chips with a single department", () => {
+  it("has no department filter with a single department", () => {
     const one = renderToStaticMarkup(
       <JobsSection careers={{ state: "jobs", jobs: [job("a"), job("b")], departments: ["Sales"] }} />,
     );
-    expect(one).not.toContain("Filter by department");
+    expect(one).not.toContain(">Department</label>");
   });
 
   it("keeps each job's details in the page but hidden until asked for", () => {
