@@ -74,22 +74,25 @@
 export const CATALOGUE_IS_QUOTE_ONLY = false;
 
 /**
- * Whether a priced software product may be bought by card without a
- * quotation first.
+ * Whether a priced software product may be bought online without a quotation
+ * first.
  *
- * Separate from `CATALOGUE_IS_QUOTE_ONLY` on purpose: showing a price and
- * accepting a card for it are two different decisions, and the business asked
- * for the first without the second. Every eligible SKU still routes to
- * "Request Enterprise Pricing"; `/buy` remains reachable directly and Stripe
- * still settles quotation-raised orders on `/account/orders` — this constant
- * only controls whether a catalogue surface links to it.
+ * `true`: the business asked for customers to buy directly from the site and
+ * pay there. A priced, eligible software SKU shows "Buy now" on its card and
+ * product page, which opens `/buy`, where the customer chooses a quantity and
+ * pays by card (Stripe or CCAvenue, whichever is configured in the admin
+ * payment settings) or raises the order against a purchase order. Hardware is
+ * never offered this way: its price depends on a configuration, so it stays on
+ * the quotation route. "Request Enterprise Pricing" remains beside "Buy now"
+ * for volume and discounted quotations.
  *
- * `false` today. Setting it `true` restores the "Buy now" button on the
- * product page and the card exactly as they rendered before direct purchase
- * was retired, with no other change needed: the eligibility rules
- * (`purchaseMode`, `isDirectlyPurchasable`, a real price) were never removed.
+ * Card payment still needs a gateway that is switched on and fully configured
+ * (`lib/payments/config`). Without one, `/buy` offers the purchase-order route
+ * only, so turning this on can never present a payment button that cannot work.
+ * The eligibility rules (`purchaseMode`, `isDirectlyPurchasable`, a real price)
+ * are re-checked on the server by the page and by the orders API.
  */
-export const DIRECT_PURCHASE_ENABLED = false;
+export const DIRECT_PURCHASE_ENABLED = true;
 
 /** What a card, a listing and a product page say in place of a price. */
 export const QUOTE_ONLY_NOTE =

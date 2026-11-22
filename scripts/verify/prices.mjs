@@ -13,9 +13,8 @@ import { suppressFestiveGreeting } from "./lib/festive.mjs";
  * price recorded says so instead, rather than leaving a blank where a figure
  * goes. Hardware is no longer excluded: it was, as a standing rule of the
  * business, until the business asked for a price on every listing — see
- * `lib/catalogue/quote-only` for what that gave up. And nowhere does a price
- * come with a "Buy now": direct card purchase from the catalogue stays off
- * even though the figure that would justify one is back on the page.
+ * `lib/catalogue/quote-only` for what that gave up. Priced software
+ * also carries a "Buy now"; hardware never does.
  *
  * A rule stated once in `lib/catalogue/quote-only` is only as good as the
  * last component that remembered to call it, so this reads the rendered
@@ -152,15 +151,19 @@ for (const [name, path] of HARDWARE_SURFACES) {
 }
 
 /*
- * No "Buy now" reaches the catalogue while direct purchase is off.
+ * "Buy now" is offered on priced software and never on hardware.
  *
- * Showing a price and accepting a card for it are different decisions —
- * `DIRECT_PURCHASE_ENABLED` in `lib/catalogue/quote-only` — and this is the
- * check that the second one actually stayed off when the first came back on.
- * `/buy` itself is untouched and still serves an eligible SKU directly; the
- * point here is that nothing in the catalogue links to it.
+ * Direct purchase is on (`DIRECT_PURCHASE_ENABLED` in `lib/catalogue/quote-only`),
+ * but a hardware price depends on a configuration, so hardware stays on the
+ * quotation route.
  */
-for (const [name, path] of [...SOFTWARE_SURFACES, ...HARDWARE_SURFACES]) {
+let softwareBuyLinks = 0;
+for (const [, path] of SOFTWARE_SURFACES) {
+  await page.goto(`${BASE}${path}`, { waitUntil: "load" });
+  softwareBuyLinks += await page.locator('a[href^="/buy?"]').count();
+}
+check('"Buy now" is offered on priced software', softwareBuyLinks > 0, `${softwareBuyLinks} found`);
+for (const [name, path] of HARDWARE_SURFACES) {
   await page.goto(`${BASE}${path}`, { waitUntil: "load" });
   const buyLinks = await page.locator('a[href^="/buy?"]').count();
   check(`no "Buy now" link on ${name}`, buyLinks === 0, `${buyLinks} found`);

@@ -124,7 +124,7 @@ export const productListSelect = {
    */
   partNumber: true,
   imageUrl: true,
-  brand: { select: { slug: true, name: true, accentColor: true } },
+  brand: { select: { slug: true, name: true, accentColor: true, logoUrl: true } },
   category: { select: { slug: true, name: true } },
   variants: {
     where: publicVariantWhere,
