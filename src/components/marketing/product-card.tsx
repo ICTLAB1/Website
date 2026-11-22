@@ -101,16 +101,20 @@ export function ProductCard({
           />
         </div>
       ) : null}
-      {hardware && hardwareLogo ? (
-        <div className="flex h-12 items-center justify-center border-b border-line px-4">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={hardwareLogo}
-            alt={product.brand.name}
-            className="h-7 w-auto max-w-[70%] object-contain"
-            loading="lazy"
-            decoding="async"
-          />
+      {hardware ? (
+        <div className="flex h-16 items-center justify-center border-b border-line px-4">
+          {hardwareLogo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={hardwareLogo}
+              alt={product.brand.name}
+              className="h-10 w-auto max-w-[70%] object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <span className="text-lg font-bold tracking-wide text-graphite-900">{product.brand.name}</span>
+          )}
         </div>
       ) : null}
       {hardware ? (
