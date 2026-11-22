@@ -67,7 +67,7 @@ export async function Header() {
       {/* Main bar */}
       <div className="container-page">
         <div className="flex h-16 items-center gap-3 lg:h-[4.5rem] lg:gap-4">
-          <Logo name={config.tradingName} className="min-w-0 shrink" />
+          <Logo name={config.tradingName} className="-ml-[11px] min-w-0 shrink" />
 
           <div className="ml-auto hidden max-w-md flex-1 lg:block xl:max-w-lg">
             <SearchBox
