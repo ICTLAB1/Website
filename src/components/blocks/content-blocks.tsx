@@ -4,6 +4,8 @@ import { Markdown } from "@/components/markdown";
 import { Reveal } from "@/components/motion/reveal";
 import { CountUp } from "@/components/motion/count-up";
 import { FaqList } from "@/components/ui/accordion";
+import { PagePhoto } from "@/components/marketing/page-photo";
+import type { SitePhoto } from "@/lib/page-photos";
 import { ButtonLink } from "@/components/ui/button";
 import { SearchBox } from "@/components/layout/search-box";
 import { AccreditationMark } from "@/components/marketing/accreditation-mark";
@@ -104,9 +106,16 @@ function HeroPattern() {
 export function HeroBlock({
   data,
   counts,
+  image,
 }: {
   data: BlockData<"HERO">;
   counts?: ResolvedBlockData["counts"];
+  /**
+   * A picture for the side panel, chosen by the page route from `lib/page-photos`.
+   * A prop rather than a field of `data`: it is not content an administrator
+   * edits, so it must not be stored with the block or offered in its form.
+   */
+  image?: SitePhoto;
 }) {
   const dark = data.tone === "dark";
   return (
@@ -133,6 +142,11 @@ export function HeroBlock({
       {dark ? <HeroPattern /> : null}
 
       <div className="container-page relative py-14 lg:py-20">
+        <div
+          className={cn(
+            image && "lg:grid lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-center lg:gap-12",
+          )}
+        >
         <div className="max-w-3xl">
           {data.eyebrow ? (
             <p
@@ -218,6 +232,10 @@ export function HeroBlock({
               ) : null}
             </div>
           ) : null}
+        </div>
+        {image ? (
+          <PagePhoto photo={image} onDark={dark} className="mt-8 lg:mt-0 lg:justify-self-end" />
+        ) : null}
         </div>
 
         {data.stats.length > 0 ? (

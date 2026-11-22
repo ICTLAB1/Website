@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { BlockRenderer } from "@/components/blocks";
 import { QuickEnquiry } from "@/components/enquiry/quick-enquiry";
+import { photoForPath } from "@/lib/page-photos";
 import { LandingEnquiry } from "@/components/enquiry/landing-enquiry";
 import { leadPageFor } from "@/lib/lead-pages";
 import { DocumentDates } from "@/components/marketing/document-dates";
@@ -89,6 +90,7 @@ export async function CmsPage({ slug }: { slug: string }) {
       <BlockRenderer
         blocks={page.blocks}
         resolved={resolved}
+        heroImage={photoForPath(`/${slug}`) ?? undefined}
         afterHero={
           <>
             <DocumentDates page={page} />

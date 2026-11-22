@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { PagePhoto } from "@/components/marketing/page-photo";
+import { photoForPath } from "@/lib/page-photos";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -139,6 +141,8 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
   const categoryRows = inOrder(industry.categorySlugs, categories);
   const others = siblings.filter((row) => row.slug !== industry.slug).slice(0, 6);
 
+  const photo = photoForPath(`/industries/${industry.slug}`);
+
   return (
     <>
       <div className="container-page">
@@ -150,6 +154,9 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
           ]}
         />
 
+        <div
+          className={photo ? "lg:grid lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-center lg:gap-12" : undefined}
+        >
         <header className="flex max-w-3xl flex-col gap-4">
           <span
             aria-hidden="true"
@@ -177,6 +184,8 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
             </ButtonLink>
           </div>
         </header>
+        {photo ? <PagePhoto photo={photo} className="mt-8 lg:mt-0 lg:justify-self-end" /> : null}
+        </div>
       </div>
 
       {industry.description ? (

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { PagePhoto } from "@/components/marketing/page-photo";
+import { photoForPath } from "@/lib/page-photos";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Testimonials } from "@/components/reviews/testimonials";
@@ -62,6 +64,8 @@ export default async function ServicePage({ params }: PageProps) {
     testimonialsForService(service.slug),
   ]);
 
+  const photo = photoForPath(`/services/${service.slug}`);
+
   return (
     <div className="pb-16">
       <div className="container-page">
@@ -77,6 +81,9 @@ export default async function ServicePage({ params }: PageProps) {
       {/* Hero */}
       <section className="border-y border-line bg-graphite-900">
         <div className="container-page py-14 lg:py-16">
+          <div
+            className={photo ? "lg:grid lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-center lg:gap-12" : undefined}
+          >
           <div className="max-w-3xl">
             <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-300">
               {service.category}
@@ -91,6 +98,8 @@ export default async function ServicePage({ params }: PageProps) {
                 Request a quotation
               </ButtonLink>
             </div>
+          </div>
+          {photo ? <PagePhoto photo={photo} onDark className="mt-8 lg:mt-0 lg:justify-self-end" /> : null}
           </div>
         </div>
       </section>
