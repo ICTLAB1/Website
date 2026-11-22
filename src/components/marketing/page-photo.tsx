@@ -29,6 +29,9 @@ export function PagePhoto({
         width={photo.width}
         height={photo.height}
         sizes="(min-width: 1024px) 26rem, 92vw"
+        // Always at the top of the page, beside the opening, so it must not be
+        // lazy-loaded: a deferred picture there is a late largest-contentful-paint.
+        priority
         className={cn(
           "h-auto w-full rounded-[--radius-lg] border",
           onDark ? "border-white/15" : "border-line",

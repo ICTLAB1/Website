@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -29,6 +29,16 @@ describe("the photographs on the solution, industry and service pages", () => {
       "/solutions/design-engineering",
       "/solutions/architecture-construction",
       "/solutions/manufacturing",
+      "/solutions/education",
+      "/solutions/financial-services",
+      "/solutions/technology",
+      "/",
+      "/enterprise",
+      "/microsoft-365",
+      "/autodesk-licensing",
+      "/enterprise-it-hardware",
+      "/managed-it-services",
+      "/gem-software-supplier",
     ]);
     for (const path of Object.keys(PAGE_PHOTOS)) expect(known.has(path), path).toBe(true);
   });
@@ -39,10 +49,18 @@ describe("the photographs on the solution, industry and service pages", () => {
     }
   });
 
+  it("has no file in the folder that no page uses, and a descriptive name for each", () => {
+    const used = new Set(Object.values(PAGE_PHOTOS).map((p) => p.src.split("/").pop()));
+    const onDisk = readdirSync(join(process.cwd(), "public/images/site"));
+    expect(onDisk.filter((f) => !used.has(f))).toEqual([]);
+    for (const file of onDisk) expect(file, file).toMatch(/^[a-z]+(-[a-z0-9]+)+\.webp$/);
+  });
+
   it("finds a page's photo with or without a trailing slash, and not by accident", () => {
     expect(photoForPath("/industries/healthcare")).not.toBeNull();
     expect(photoForPath("/industries/healthcare/")).not.toBeNull();
-    for (const bad of ["/", "/about", "/industries", "constructor", "__proto__", "/toString"]) {
+    expect(photoForPath("/")).not.toBeNull();
+    for (const bad of ["/about", "/industries", "constructor", "__proto__", "/toString"]) {
       expect(photoForPath(bad), bad).toBeNull();
     }
   });
