@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PHOTOS, photoForPath, type SitePhoto } from "@/lib/page-photos";
 import { getHomeData } from "@/lib/queries/home";
 import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
+import { SearchBox } from "@/components/layout/search-box";
 import { PhotoBackdrop } from "@/components/marketing/page-photo";
 import { Reveal } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
@@ -211,6 +212,8 @@ export type HomeCopy = {
     primaryCta: { href: string; label: string };
     secondaryCta?: { href: string; label: string };
     statLabels: string[];
+    showSearch: boolean;
+    searchTerms: string[];
   };
   industries: { eyebrow?: string; heading: string; description?: string };
   gem: {
@@ -305,6 +308,34 @@ export async function HomePage({
               ) : null}
             </div>
           </div>
+
+          {hero.showSearch ? (
+            <div className="mt-8 max-w-2xl">
+              <SearchBox
+                size="lg"
+                label="Search products and solutions"
+                placeholder="What software or solution are you looking for?"
+              />
+              {hero.searchTerms.length > 0 ? (
+                <p className="mt-3 text-meta text-white/85">
+                  Popular:{" "}
+                  {hero.searchTerms.map((term, index) => (
+                    <span key={term}>
+                      {index > 0 ? (
+                        <span className="text-white/50"> · </span>
+                      ) : null}
+                      <Link
+                        href={`/search?q=${encodeURIComponent(term)}`}
+                        className="text-white underline-offset-2 hover:underline"
+                      >
+                        {term}
+                      </Link>
+                    </span>
+                  ))}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
 
           <ul className="mt-10 grid grid-cols-2 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">
             {HERO_POINTS.map(([label, href, path], index) => (
