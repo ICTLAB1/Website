@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { PagePhoto } from "@/components/marketing/page-photo";
+import { PhotoBackdrop } from "@/components/marketing/page-photo";
 import { photoForPath } from "@/lib/page-photos";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -30,7 +30,9 @@ type PageProps = { params: Promise<{ slug: string }> };
  * a prerender that only refreshes on redeploy.
  */
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const service = await getServiceBySlug(slug);
   if (!service) {
@@ -79,27 +81,27 @@ export default async function ServicePage({ params }: PageProps) {
       </div>
 
       {/* Hero */}
-      <section className="border-y border-line bg-graphite-900">
-        <div className="container-page py-14 lg:py-16">
-          <div
-            className={photo ? "lg:grid lg:grid-cols-[minmax(0,1fr)_34rem] lg:items-stretch lg:gap-12" : undefined}
-          >
-          <div className="max-w-3xl">
-            <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-300">
-              {service.category}
-            </p>
-            <h1 className="text-3xl leading-tight text-white sm:text-[2.5rem]">
-              {service.heroHeadline}
-            </h1>
-            <p className="mt-5 text-[16px] leading-relaxed text-graphite-200">{service.summary}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/contact">Discuss this service</ButtonLink>
-              <ButtonLink href="/enquiry" variant="onDark">
-                Request a quotation
-              </ButtonLink>
+      <section className="relative isolate overflow-hidden border-y border-line bg-graphite-900">
+        {photo ? <PhotoBackdrop photo={photo} /> : null}
+        <div className="container-page relative py-14 lg:py-16">
+          <div>
+            <div className="max-w-3xl lg:max-w-2xl">
+              <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-300">
+                {service.category}
+              </p>
+              <h1 className="text-3xl leading-tight text-white sm:text-[2.5rem]">
+                {service.heroHeadline}
+              </h1>
+              <p className="mt-5 text-[16px] leading-relaxed text-graphite-200">
+                {service.summary}
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <ButtonLink href="/contact">Discuss this service</ButtonLink>
+                <ButtonLink href="/enquiry" variant="onDark">
+                  Request a quotation
+                </ButtonLink>
+              </div>
             </div>
-          </div>
-          {photo ? <PagePhoto photo={photo} onDark className="mt-8 lg:mt-0" /> : null}
           </div>
         </div>
       </section>
@@ -134,8 +136,16 @@ export default async function ServicePage({ params }: PageProps) {
                 key={benefit}
                 className="flex gap-3 rounded-[--radius-lg] border border-line bg-white p-5 text-[14px] leading-relaxed text-ink-700"
               >
-                <span aria-hidden="true" className="mt-1 shrink-0 text-accent-700">
-                  <svg width="16" height="16" viewBox="0 0 12 12" fill="currentColor">
+                <span
+                  aria-hidden="true"
+                  className="mt-1 shrink-0 text-accent-700"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 12 12"
+                    fill="currentColor"
+                  >
                     <path d="M4.7 8.6 2.2 6.1l.9-.9 1.6 1.6 4-4 .9.9z" />
                   </svg>
                 </span>
@@ -155,14 +165,19 @@ export default async function ServicePage({ params }: PageProps) {
             />
             <ol className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {steps.map((step) => (
-                <li key={step.step} className="rounded-[--radius-lg] border border-line bg-white p-5">
+                <li
+                  key={step.step}
+                  className="rounded-[--radius-lg] border border-line bg-white p-5"
+                >
                   <span
                     aria-hidden="true"
                     className="mb-3 inline-grid h-8 w-8 place-items-center rounded-[--radius-sm] bg-graphite-900 text-[13px] font-semibold text-white"
                   >
                     {step.step}
                   </span>
-                  <h3 className="text-[15px] font-semibold text-graphite-900">{step.title}</h3>
+                  <h3 className="text-[15px] font-semibold text-graphite-900">
+                    {step.title}
+                  </h3>
                   <p className="mt-2 text-[13px] leading-relaxed text-ink-600">
                     {step.description}
                   </p>
@@ -205,18 +220,33 @@ export default async function ServicePage({ params }: PageProps) {
         ) : null}
 
         {service.faqs.length > 0 ? (
-          <section id="faq" className="max-w-3xl scroll-mt-32 border-b border-line py-14">
-            <SectionHeader title="Frequently asked questions" as="h2" className="mb-6" />
-            <FaqList items={service.faqs.map((faq) => ({ question: faq.question, answer: faq.answer }))} />
+          <section
+            id="faq"
+            className="max-w-3xl scroll-mt-32 border-b border-line py-14"
+          >
+            <SectionHeader
+              title="Frequently asked questions"
+              as="h2"
+              className="mb-6"
+            />
+            <FaqList
+              items={service.faqs.map((faq) => ({
+                question: faq.question,
+                answer: faq.answer,
+              }))}
+            />
           </section>
         ) : null}
 
         {/* CTA */}
         <section className="mt-14 rounded-[--radius-lg] bg-graphite-900 p-8 sm:p-10">
-          <h2 className="text-[1.6rem] text-white">Talk to us about {service.name.toLowerCase()}</h2>
+          <h2 className="text-[1.6rem] text-white">
+            Talk to us about {service.name.toLowerCase()}
+          </h2>
           <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-graphite-200">
-            Tell us where you are now and what you are trying to reach. We will scope it
-            honestly, including whether this is the engagement you actually need.
+            Tell us where you are now and what you are trying to reach. We will
+            scope it honestly, including whether this is the engagement you
+            actually need.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <ButtonLink href="/contact">Start a conversation</ButtonLink>
@@ -244,7 +274,11 @@ export default async function ServicePage({ params }: PageProps) {
           serviceType: service.category,
           description: service.summary,
           url: absoluteUrl(`/services/${service.slug}`),
-          provider: { "@type": "Organization", name: config.entityName, url: config.url },
+          provider: {
+            "@type": "Organization",
+            name: config.entityName,
+            url: config.url,
+          },
           areaServed: config.address.country,
         }}
       />

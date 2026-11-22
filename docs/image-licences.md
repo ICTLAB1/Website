@@ -1,7 +1,7 @@
 # Image licences
 
 Photographs on the home, solution, industry and service pages (`src/lib/page-photos.ts`,
-files in `public/images/site/`) are licensed from Adobe Stock, 22 November 2026, one
+files in `public/images/site/`, 1600 pixels wide, laid behind each page opening) are licensed from Adobe Stock, 22 November 2026, one
 standard licence each. Keep this table current when a picture is replaced.
 
 | File | Adobe Stock id | Subject |

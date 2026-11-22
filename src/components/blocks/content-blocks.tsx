@@ -4,12 +4,16 @@ import { Markdown } from "@/components/markdown";
 import { Reveal } from "@/components/motion/reveal";
 import { CountUp } from "@/components/motion/count-up";
 import { FaqList } from "@/components/ui/accordion";
-import { PagePhoto } from "@/components/marketing/page-photo";
+import { PhotoBackdrop } from "@/components/marketing/page-photo";
 import type { SitePhoto } from "@/lib/page-photos";
 import { ButtonLink } from "@/components/ui/button";
 import { SearchBox } from "@/components/layout/search-box";
 import { AccreditationMark } from "@/components/marketing/accreditation-mark";
-import { BlockHeading, BlockLink, BlockSection } from "@/components/blocks/primitives";
+import {
+  BlockHeading,
+  BlockLink,
+  BlockSection,
+} from "@/components/blocks/primitives";
 import type { BlockData } from "@/lib/blocks/schemas";
 import type { ResolvedBlockData } from "@/lib/blocks/resolve";
 import {
@@ -38,7 +42,10 @@ import { cn } from "@/lib/utils";
  */
 function HeroPattern() {
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 -z-10"
+    >
       {/* The grid. 56px cells, one-pixel lines at 5% white. */}
       <div
         className="absolute inset-0"
@@ -111,20 +118,24 @@ export function HeroBlock({
   data: BlockData<"HERO">;
   counts?: ResolvedBlockData["counts"];
   /**
-   * A picture for the side panel, chosen by the page route from `lib/page-photos`.
+   * A picture for behind the opening, chosen by the page route from `lib/page-photos`.
    * A prop rather than a field of `data`: it is not content an administrator
    * edits, so it must not be stored with the block or offered in its form.
    */
   image?: SitePhoto;
 }) {
-  const dark = data.tone === "dark";
+  // A photograph behind the text is always a dark opening, whatever tone the block was authored with.
+  const dark = data.tone === "dark" || Boolean(image);
   return (
     <section
       className={cn(
         "relative isolate overflow-hidden",
-        dark ? "border-b border-graphite-800 bg-graphite-900" : "border-b border-line",
+        dark
+          ? "border-b border-graphite-800 bg-graphite-900"
+          : "border-b border-line",
       )}
     >
+      {image ? <PhotoBackdrop photo={image} /> : null}
       {/*
         The hero was a flat charcoal slab with the right-hand half empty, which
         read as an unfinished page rather than a restrained one. This fills it
@@ -139,8 +150,8 @@ export function HeroBlock({
 
         `aria-hidden` and `pointer-events-none`: it is texture, not content.
       */}
-      {dark ? <HeroPattern /> : null}
-      {dark ? (
+      {dark && !image ? <HeroPattern /> : null}
+      {dark && !image ? (
         <span
           aria-hidden="true"
           className="pointer-events-none absolute bottom-0 left-0 hidden h-20 w-72 bg-career-orange [clip-path:polygon(0_100%,100%_100%,0_30%)] lg:block"
@@ -148,100 +159,118 @@ export function HeroBlock({
       ) : null}
 
       <div className="container-page relative py-14 lg:py-20">
-        <div
-          className={cn(
-            image && "lg:grid lg:grid-cols-[minmax(0,1fr)_34rem] lg:items-stretch lg:gap-12",
-          )}
-        >
-        <div className="max-w-3xl">
-          {data.eyebrow ? (
-            <p
+        <div>
+          <div className={cn("max-w-3xl", image && "lg:max-w-2xl")}>
+            {data.eyebrow ? (
+              <p
+                className={cn(
+                  "mb-4 inline-flex items-center gap-2 rounded-[--radius-sm] px-3 py-1 text-label font-medium",
+                  dark
+                    ? "border border-graphite-700 bg-graphite-800 text-graphite-200"
+                    : "bg-accent-50 text-accent-800",
+                )}
+              >
+                {dark ? (
+                  <span
+                    className="h-1.5 w-1.5 rounded-full bg-accent-400"
+                    aria-hidden="true"
+                  />
+                ) : null}
+                {data.eyebrow}
+              </p>
+            ) : null}
+
+            <h1
               className={cn(
-                "mb-4 inline-flex items-center gap-2 rounded-[--radius-sm] px-3 py-1 text-label font-medium",
-                dark
-                  ? "border border-graphite-700 bg-graphite-800 text-graphite-200"
-                  : "bg-accent-50 text-accent-800",
+                "animate-rise-solid text-display",
+                dark ? "text-white" : "text-graphite-900",
               )}
             >
-              {dark ? <span className="h-1.5 w-1.5 rounded-full bg-accent-400" aria-hidden="true" /> : null}
-              {data.eyebrow}
-            </p>
-          ) : null}
+              {data.headline}
+            </h1>
 
-          <h1
-            className={cn(
-              "animate-rise-solid text-display",
-              dark ? "text-white" : "text-graphite-900",
-            )}
-          >
-            {data.headline}
-          </h1>
+            {data.subheadline ? (
+              <p
+                className={cn(
+                  "mt-5 max-w-2xl animate-rise-solid text-lead",
+                  dark ? "text-graphite-200" : "text-ink-600",
+                )}
+                style={{ animationDelay: "80ms" }}
+              >
+                {data.subheadline}
+              </p>
+            ) : null}
 
-          {data.subheadline ? (
-            <p
-              className={cn(
-                "mt-5 max-w-2xl animate-rise-solid text-lead",
-                dark ? "text-graphite-200" : "text-ink-600",
-              )}
-              style={{ animationDelay: "80ms" }}
-            >
-              {data.subheadline}
-            </p>
-          ) : null}
+            {data.primaryCta || data.secondaryCta ? (
+              <div
+                className="mt-8 flex animate-rise flex-wrap gap-3"
+                style={{ animationDelay: "160ms" }}
+              >
+                {data.primaryCta ? (
+                  <ButtonLink href={data.primaryCta.href} size="lg">
+                    {data.primaryCta.label}
+                  </ButtonLink>
+                ) : null}
+                {data.secondaryCta ? (
+                  <ButtonLink
+                    href={data.secondaryCta.href}
+                    size="lg"
+                    variant={dark ? "onDark" : "outline"}
+                  >
+                    {data.secondaryCta.label}
+                  </ButtonLink>
+                ) : null}
+              </div>
+            ) : null}
 
-          {data.primaryCta || data.secondaryCta ? (
-            <div className="mt-8 flex animate-rise flex-wrap gap-3" style={{ animationDelay: "160ms" }}>
-              {data.primaryCta ? (
-                <ButtonLink href={data.primaryCta.href} size="lg">
-                  {data.primaryCta.label}
-                </ButtonLink>
-              ) : null}
-              {data.secondaryCta ? (
-                <ButtonLink
-                  href={data.secondaryCta.href}
+            {data.showSearch ? (
+              <div
+                className="mt-10 max-w-2xl animate-rise"
+                style={{ animationDelay: "240ms" }}
+              >
+                <SearchBox
                   size="lg"
-                  variant={dark ? "onDark" : "outline"}
-                >
-                  {data.secondaryCta.label}
-                </ButtonLink>
-              ) : null}
-            </div>
-          ) : null}
-
-          {data.showSearch ? (
-            <div className="mt-10 max-w-2xl animate-rise" style={{ animationDelay: "240ms" }}>
-              <SearchBox
-                size="lg"
-                label="Search products and solutions"
-                placeholder="What software or solution are you looking for?"
-              />
-              {data.searchTerms.length > 0 ? (
-                <p className={cn("mt-3 text-meta", dark ? "text-graphite-300" : "text-ink-500")}>
-                  Popular:{" "}
-                  {data.searchTerms.map((term, index) => (
-                    <span key={term}>
-                      {index > 0 ? (
-                        <span className={dark ? "text-graphite-600" : "text-ink-300"}> · </span>
-                      ) : null}
-                      <Link
-                        href={`/search?q=${encodeURIComponent(term)}`}
-                        className={cn(
-                          "underline-offset-2 hover:underline",
-                          dark ? "text-graphite-200 hover:text-white" : "text-accent-700",
-                        )}
-                      >
-                        {term}
-                      </Link>
-                    </span>
-                  ))}
-                </p>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
-        {image ? (
-          <PagePhoto photo={image} onDark={dark} className="mt-8 lg:mt-0" />
-        ) : null}
+                  label="Search products and solutions"
+                  placeholder="What software or solution are you looking for?"
+                />
+                {data.searchTerms.length > 0 ? (
+                  <p
+                    className={cn(
+                      "mt-3 text-meta",
+                      dark ? "text-graphite-300" : "text-ink-500",
+                    )}
+                  >
+                    Popular:{" "}
+                    {data.searchTerms.map((term, index) => (
+                      <span key={term}>
+                        {index > 0 ? (
+                          <span
+                            className={
+                              dark ? "text-graphite-600" : "text-ink-300"
+                            }
+                          >
+                            {" "}
+                            ·{" "}
+                          </span>
+                        ) : null}
+                        <Link
+                          href={`/search?q=${encodeURIComponent(term)}`}
+                          className={cn(
+                            "underline-offset-2 hover:underline",
+                            dark
+                              ? "text-graphite-200 hover:text-white"
+                              : "text-accent-700",
+                          )}
+                        >
+                          {term}
+                        </Link>
+                      </span>
+                    ))}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
         </div>
 
         {data.stats.length > 0 ? (
@@ -252,7 +281,10 @@ export function HeroBlock({
             )}
           >
             {data.stats.map((item, index) => {
-              const numeric = item.source !== "literal" ? (counts?.[item.source] ?? null) : null;
+              const numeric =
+                item.source !== "literal"
+                  ? (counts?.[item.source] ?? null)
+                  : null;
               return (
                 <div key={index}>
                   <dt
@@ -274,7 +306,11 @@ export function HeroBlock({
                       dark ? "text-white" : "text-graphite-900",
                     )}
                   >
-                    {numeric !== null ? <CountUp value={numeric} /> : (item.value ?? "—")}
+                    {numeric !== null ? (
+                      <CountUp value={numeric} />
+                    ) : (
+                      (item.value ?? "—")
+                    )}
                   </dd>
                 </div>
               );
@@ -298,7 +334,9 @@ export function RichTextBlock({
   return (
     <BlockSection tone={tone} continues={continues}>
       <Reveal className="max-w-3xl">
-        {data.heading ? <h2 className="mb-4 text-section">{data.heading}</h2> : null}
+        {data.heading ? (
+          <h2 className="mb-4 text-section">{data.heading}</h2>
+        ) : null}
         <Markdown body={data.markdown} className="prose-content text-body" />
       </Reveal>
     </BlockSection>
@@ -317,11 +355,19 @@ export function BulletsBlock({
   return (
     <BlockSection tone={tone} continues={continues}>
       <Reveal className="max-w-3xl">
-        {data.heading ? <h2 className="mb-4 text-section">{data.heading}</h2> : null}
+        {data.heading ? (
+          <h2 className="mb-4 text-section">{data.heading}</h2>
+        ) : null}
         <ul className="space-y-2.5">
           {data.items.map((item, index) => (
-            <li key={index} className="flex gap-3 text-body leading-relaxed text-ink-700">
-              <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-600" />
+            <li
+              key={index}
+              className="flex gap-3 text-body leading-relaxed text-ink-700"
+            >
+              <span
+                aria-hidden="true"
+                className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-600"
+              />
               {item}
             </li>
           ))}
@@ -349,10 +395,17 @@ export function CardsBlock({
 
   return (
     <BlockSection tone={tone} continues={continues}>
-      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
+      <BlockHeading
+        eyebrow={data.eyebrow}
+        heading={data.heading}
+        description={data.description}
+      />
       <Reveal className={cn("grid gap-4", columns)}>
         {data.items.map((item, index) => (
-          <div key={index} className="card-hover rounded-[--radius-lg] border border-line bg-white p-5">
+          <div
+            key={index}
+            className="card-hover rounded-[--radius-lg] border border-line bg-white p-5"
+          >
             {data.numbered && data.numberLabel ? (
               <span className="block text-label font-semibold uppercase tracking-wide text-accent-700">
                 {data.numberLabel} {index + 1}
@@ -365,8 +418,12 @@ export function CardsBlock({
                 {index + 1}
               </span>
             ) : null}
-            <h3 className="mt-2 text-body font-semibold text-graphite-900">{item.title}</h3>
-            <p className="mt-2 text-body leading-relaxed text-ink-600">{item.body}</p>
+            <h3 className="mt-2 text-body font-semibold text-graphite-900">
+              {item.title}
+            </h3>
+            <p className="mt-2 text-body leading-relaxed text-ink-600">
+              {item.body}
+            </p>
           </div>
         ))}
       </Reveal>
@@ -374,25 +431,45 @@ export function CardsBlock({
   );
 }
 
-export function IconPointsBlock({ data, tone }: { data: BlockData<"ICON_POINTS">; tone?: "plain" | "muted" }) {
+export function IconPointsBlock({
+  data,
+  tone,
+}: {
+  data: BlockData<"ICON_POINTS">;
+  tone?: "plain" | "muted";
+}) {
   return (
     <BlockSection tone={tone} className="!py-0">
       <div className="py-8">
         <BlockHeading eyebrow={data.eyebrow} heading={data.heading} />
-        <Reveal as="ul" className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-6">
+        <Reveal
+          as="ul"
+          className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-6"
+        >
           {data.items.map((item, index) => (
             <li key={index} className="flex items-start gap-2.5">
               <span
                 aria-hidden="true"
                 className="mt-0.5 inline-grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent-50 text-accent-700"
               >
-                <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor">
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
                   <path d="M8.2 13.6 4.6 10l1.3-1.3 2.3 2.3 5.9-5.9L15.4 6z" />
                 </svg>
               </span>
               <span>
-                <span className="block text-meta font-semibold text-graphite-900">{item.label}</span>
-                {item.detail ? <span className="block text-label text-ink-500">{item.detail}</span> : null}
+                <span className="block text-meta font-semibold text-graphite-900">
+                  {item.label}
+                </span>
+                {item.detail ? (
+                  <span className="block text-label text-ink-500">
+                    {item.detail}
+                  </span>
+                ) : null}
               </span>
             </li>
           ))}
@@ -402,10 +479,20 @@ export function IconPointsBlock({ data, tone }: { data: BlockData<"ICON_POINTS">
   );
 }
 
-export function LinkListBlock({ data, tone }: { data: BlockData<"LINK_LIST">; tone?: "plain" | "muted" }) {
+export function LinkListBlock({
+  data,
+  tone,
+}: {
+  data: BlockData<"LINK_LIST">;
+  tone?: "plain" | "muted";
+}) {
   return (
     <BlockSection tone={tone}>
-      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
+      <BlockHeading
+        eyebrow={data.eyebrow}
+        heading={data.heading}
+        description={data.description}
+      />
 
       {data.layout === "chips" ? (
         <Reveal as="ul" className="flex flex-wrap gap-x-3 gap-y-3">
@@ -446,7 +533,9 @@ export function LinkListBlock({ data, tone }: { data: BlockData<"LINK_LIST">; to
                   {item.label}
                 </span>
                 {item.description ? (
-                  <span className="mt-1 block text-meta text-ink-600">{item.description}</span>
+                  <span className="mt-1 block text-meta text-ink-600">
+                    {item.description}
+                  </span>
                 ) : null}
               </span>
               <span className="mt-1 shrink-0 text-meta font-medium text-ink-300 group-hover:text-accent-700">
@@ -488,10 +577,20 @@ export function KeyValueListBlock({
   );
 }
 
-export function ChipListBlock({ data, tone }: { data: BlockData<"CHIP_LIST">; tone?: "plain" | "muted" }) {
+export function ChipListBlock({
+  data,
+  tone,
+}: {
+  data: BlockData<"CHIP_LIST">;
+  tone?: "plain" | "muted";
+}) {
   return (
     <BlockSection tone={tone}>
-      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
+      <BlockHeading
+        eyebrow={data.eyebrow}
+        heading={data.heading}
+        description={data.description}
+      />
       <Reveal as="ul" className="flex flex-wrap gap-x-3 gap-y-3">
         {data.items.map((item, index) => (
           <li
@@ -502,12 +601,20 @@ export function ChipListBlock({ data, tone }: { data: BlockData<"CHIP_LIST">; to
           </li>
         ))}
       </Reveal>
-      {data.footnote ? <p className="mt-6 text-meta text-ink-500">{data.footnote}</p> : null}
+      {data.footnote ? (
+        <p className="mt-6 text-meta text-ink-500">{data.footnote}</p>
+      ) : null}
     </BlockSection>
   );
 }
 
-export function SplitPanelBlock({ data, tone }: { data: BlockData<"SPLIT_PANEL">; tone?: "plain" | "muted" }) {
+export function SplitPanelBlock({
+  data,
+  tone,
+}: {
+  data: BlockData<"SPLIT_PANEL">;
+  tone?: "plain" | "muted";
+}) {
   return (
     <BlockSection tone={tone ?? "muted"}>
       <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
@@ -518,7 +625,11 @@ export function SplitPanelBlock({ data, tone }: { data: BlockData<"SPLIT_PANEL">
             rather than as an illustration of the sentence.
           */}
           {data.logo ? (
-            <AccreditationMark src={data.logo.src} alt={data.logo.alt} className="mb-6 h-16" />
+            <AccreditationMark
+              src={data.logo.src}
+              alt={data.logo.alt}
+              className="mb-6 h-16"
+            />
           ) : null}
           {data.eyebrow ? (
             <p className="mb-3 text-label font-semibold uppercase tracking-[0.12em] text-accent-700">
@@ -527,16 +638,23 @@ export function SplitPanelBlock({ data, tone }: { data: BlockData<"SPLIT_PANEL">
           ) : null}
           <h2 className="text-section">{data.heading}</h2>
           {data.description ? (
-            <p className="mt-4 text-body leading-relaxed text-ink-600">{data.description}</p>
+            <p className="mt-4 text-body leading-relaxed text-ink-600">
+              {data.description}
+            </p>
           ) : null}
           {data.bulletsIntro ? (
-            <p className="mt-5 text-body leading-relaxed text-ink-600">{data.bulletsIntro}</p>
+            <p className="mt-5 text-body leading-relaxed text-ink-600">
+              {data.bulletsIntro}
+            </p>
           ) : null}
           {data.bullets.length > 0 ? (
             <ul className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2 text-body text-ink-700 sm:grid-cols-2">
               {data.bullets.map((bullet, index) => (
                 <li key={index} className="flex items-center gap-2">
-                  <span aria-hidden="true" className="h-1 w-1 shrink-0 rounded-full bg-accent-600" />
+                  <span
+                    aria-hidden="true"
+                    className="h-1 w-1 shrink-0 rounded-full bg-accent-600"
+                  />
                   {bullet}
                 </li>
               ))}
@@ -555,7 +673,11 @@ export function SplitPanelBlock({ data, tone }: { data: BlockData<"SPLIT_PANEL">
            * the top and nothing underneath. It read as content that had failed
            * to load.
            */
-          <Reveal as="ul" className="grid grid-cols-2 gap-3 self-start" delay={80}>
+          <Reveal
+            as="ul"
+            className="grid grid-cols-2 gap-3 self-start"
+            delay={80}
+          >
             {data.tiles.map((tile, index) => (
               <li
                 key={index}
@@ -585,17 +707,39 @@ export function StatBarBlock({
   const dark = tone === "dark";
   return (
     <BlockSection tone={tone}>
-      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} onDark={dark} />
-      <Reveal as="dl" className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
+      <BlockHeading
+        eyebrow={data.eyebrow}
+        heading={data.heading}
+        onDark={dark}
+      />
+      <Reveal
+        as="dl"
+        className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4"
+      >
         {data.items.map((item, index) => {
-          const numeric = item.source !== "literal" ? counts[item.source] : null;
+          const numeric =
+            item.source !== "literal" ? counts[item.source] : null;
           return (
             <div key={index}>
-              <dt className={cn("text-label uppercase tracking-wide", dark ? "text-graphite-400" : "text-ink-500")}>
+              <dt
+                className={cn(
+                  "text-label uppercase tracking-wide",
+                  dark ? "text-graphite-400" : "text-ink-500",
+                )}
+              >
                 {item.label}
               </dt>
-              <dd className={cn("mt-1 text-2xl font-semibold", dark ? "text-white" : "text-graphite-900")}>
-                {numeric !== null ? <CountUp value={numeric} /> : (item.value ?? "—")}
+              <dd
+                className={cn(
+                  "mt-1 text-2xl font-semibold",
+                  dark ? "text-white" : "text-graphite-900",
+                )}
+              >
+                {numeric !== null ? (
+                  <CountUp value={numeric} />
+                ) : (
+                  (item.value ?? "—")
+                )}
               </dd>
             </div>
           );
@@ -618,7 +762,9 @@ export function FaqBlock({
   return (
     <BlockSection tone={tone ?? "muted"}>
       <div className="mx-auto max-w-3xl">
-        <h2 className="mb-6 text-section">{data.heading ?? "Frequently asked questions"}</h2>
+        <h2 className="mb-6 text-section">
+          {data.heading ?? "Frequently asked questions"}
+        </h2>
         {/* FaqList also emits the FAQPage structured data. */}
         <FaqList items={items} />
       </div>
@@ -626,7 +772,11 @@ export function FaqBlock({
   );
 }
 
-export async function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }) {
+export async function CtaBannerBlock({
+  data,
+}: {
+  data: BlockData<"CTA_BANNER">;
+}) {
   const dark = data.tone === "dark";
   const config = await getSiteConfig();
   // Business identity lives in configuration, so the block records only that an
@@ -636,8 +786,21 @@ export async function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }
     ? (config.email.enterprise ?? config.email.sales ?? null)
     : null;
   return (
-    <section className={dark ? "" : data.tone === "accent" ? "bg-accent-50" : "border-y border-line bg-surface-muted"}>
-      <div className={cn("container-page", dark ? "py-10 lg:py-14" : "py-14 lg:py-18")}>
+    <section
+      className={
+        dark
+          ? ""
+          : data.tone === "accent"
+            ? "bg-accent-50"
+            : "border-y border-line bg-surface-muted"
+      }
+    >
+      <div
+        className={cn(
+          "container-page",
+          dark ? "py-10 lg:py-14" : "py-14 lg:py-18",
+        )}
+      >
         <Reveal
           className={cn(
             "flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between",
@@ -658,11 +821,21 @@ export async function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }
             </>
           ) : null}
           <div className="max-w-2xl">
-            <h2 className={cn("text-section", dark ? "text-white" : "text-graphite-900")}>
+            <h2
+              className={cn(
+                "text-section",
+                dark ? "text-white" : "text-graphite-900",
+              )}
+            >
               {data.heading}
             </h2>
             {data.body ? (
-              <p className={cn("mt-4 text-body leading-relaxed", dark ? "text-graphite-200" : "text-ink-600")}>
+              <p
+                className={cn(
+                  "mt-4 text-body leading-relaxed",
+                  dark ? "text-graphite-200" : "text-ink-600",
+                )}
+              >
                 {data.body}
               </p>
             ) : null}
@@ -688,7 +861,11 @@ export async function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }
                 </a>
               ) : null}
               {data.secondaryCta ? (
-                <ButtonLink href={data.secondaryCta.href} size="lg" variant={dark ? "onDark" : "outline"}>
+                <ButtonLink
+                  href={data.secondaryCta.href}
+                  size="lg"
+                  variant={dark ? "onDark" : "outline"}
+                >
                   {data.secondaryCta.label}
                 </ButtonLink>
               ) : null}
@@ -752,10 +929,16 @@ export function PlansBlock({
 
   return (
     <BlockSection tone={tone}>
-      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
+      <BlockHeading
+        eyebrow={data.eyebrow}
+        heading={data.heading}
+        description={data.description}
+      />
       <Reveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {data.items.map((plan, index) => {
-          const product = plan.productSlug ? bySlug.get(plan.productSlug) : undefined;
+          const product = plan.productSlug
+            ? bySlug.get(plan.productSlug)
+            : undefined;
 
           /*
            * The variant the product page leads with, which is `isDefault`
@@ -764,56 +947,78 @@ export function PlansBlock({
            * page a reader clicks through to cannot show different figures.
            */
           const variant = product?.variants.find(
-            (candidate) => (candidate.salePriceMinor ?? candidate.listPriceMinor) > 0,
+            (candidate) =>
+              (candidate.salePriceMinor ?? candidate.listPriceMinor) > 0,
           );
           const priced = product && variant && !isQuoteOnly(product);
           const amount = variant
-            ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor)
+            ? effectivePriceMinor(
+                variant.listPriceMinor,
+                variant.salePriceMinor,
+              )
             : 0;
 
           return (
-          <div key={index} className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5">
-            <h3 className="text-body font-semibold text-graphite-900">{plan.name}</h3>
+            <div
+              key={index}
+              className="flex flex-col rounded-[--radius-lg] border border-line bg-white p-5"
+            >
+              <h3 className="text-body font-semibold text-graphite-900">
+                {plan.name}
+              </h3>
 
-            {product ? (
-              <div className="mt-3">
-                {priced ? (
-                  <>
-                    <p className="text-[1.5rem] font-semibold leading-none text-graphite-900">
-                      {formatMoney(amount, variant.currency)}
+              {product ? (
+                <div className="mt-3">
+                  {priced ? (
+                    <>
+                      <p className="text-[1.5rem] font-semibold leading-none text-graphite-900">
+                        {formatMoney(amount, variant.currency)}
+                      </p>
+                      <p className="mt-1.5 text-label leading-snug text-ink-500">
+                        {variant.seats > 1
+                          ? `${variant.seats} seats`
+                          : "per user"}{" "}
+                        · {variant.name}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-meta font-medium text-ink-600">
+                      {QUOTE_ONLY_LABEL}
                     </p>
-                    <p className="mt-1.5 text-label leading-snug text-ink-500">
-                      {variant.seats > 1 ? `${variant.seats} seats` : "per user"} · {variant.name}
-                    </p>
-                  </>
-                ) : (
-                  <p className="text-meta font-medium text-ink-600">{QUOTE_ONLY_LABEL}</p>
-                )}
-              </div>
-            ) : null}
+                  )}
+                </div>
+              ) : null}
 
-            <p className="mt-2 text-meta leading-relaxed text-ink-600">{plan.summary}</p>
-            {plan.points.length > 0 ? (
-              <ul className="mt-4 space-y-1.5">
-                {plan.points.map((point, pointIndex) => (
-                  <li key={pointIndex} className="flex gap-2 text-meta text-ink-600">
-                    <span aria-hidden="true" className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent-600" />
-                    {point}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-            {plan.productSlug ? (
-              <BlockLink
-                href={`/products/${plan.productSlug}`}
-                className="underline-grow mt-auto pt-4 text-meta font-medium text-accent-700"
-              >
-                {/* The figure is on this card now, so the link offers the detail
+              <p className="mt-2 text-meta leading-relaxed text-ink-600">
+                {plan.summary}
+              </p>
+              {plan.points.length > 0 ? (
+                <ul className="mt-4 space-y-1.5">
+                  {plan.points.map((point, pointIndex) => (
+                    <li
+                      key={pointIndex}
+                      className="flex gap-2 text-meta text-ink-600"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent-600"
+                      />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              {plan.productSlug ? (
+                <BlockLink
+                  href={`/products/${plan.productSlug}`}
+                  className="underline-grow mt-auto pt-4 text-meta font-medium text-accent-700"
+                >
+                  {/* The figure is on this card now, so the link offers the detail
                     behind it rather than promising the price itself. */}
-                {priced ? "All terms and options" : "View pricing"}
-              </BlockLink>
-            ) : null}
-          </div>
+                  {priced ? "All terms and options" : "View pricing"}
+                </BlockLink>
+              ) : null}
+            </div>
           );
         })}
       </Reveal>
@@ -904,7 +1109,11 @@ export async function CompanyInfoBlock({
 
   return (
     <BlockSection tone={tone}>
-      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
+      <BlockHeading
+        eyebrow={data.eyebrow}
+        heading={data.heading}
+        description={data.description}
+      />
 
       {/*
         No launch-readiness notice here. A visitor reading the grievance section
@@ -913,20 +1122,26 @@ export async function CompanyInfoBlock({
         admin dashboard reports what is still missing.
       */}
       {!configured ? null : (
-      <dl className="grid max-w-3xl gap-x-8 gap-y-4 sm:grid-cols-2">
-        {rows
-          .filter(([, value]) => Boolean(value))
-          .map(([label, value]) => (
-            <div key={label}>
-              <dt className="text-label uppercase tracking-wide text-ink-500">{label}</dt>
-              <dd className="mt-1 break-words text-body text-ink-800">{value}</dd>
-            </div>
-          ))}
-      </dl>
+        <dl className="grid max-w-3xl gap-x-8 gap-y-4 sm:grid-cols-2">
+          {rows
+            .filter(([, value]) => Boolean(value))
+            .map(([label, value]) => (
+              <div key={label}>
+                <dt className="text-label uppercase tracking-wide text-ink-500">
+                  {label}
+                </dt>
+                <dd className="mt-1 break-words text-body text-ink-800">
+                  {value}
+                </dd>
+              </div>
+            ))}
+        </dl>
       )}
 
       {data.footnote ? (
-        <p className="mt-8 max-w-3xl text-meta leading-relaxed text-ink-500">{data.footnote}</p>
+        <p className="mt-8 max-w-3xl text-meta leading-relaxed text-ink-500">
+          {data.footnote}
+        </p>
       ) : null}
     </BlockSection>
   );
@@ -940,7 +1155,13 @@ export async function CompanyInfoBlock({
  * `info` is for context. Both render the same Markdown subset as every other
  * block, so a notice can carry a link without carrying markup.
  */
-export function NoticeBlock({ data, tone }: { data: BlockData<"NOTICE">; tone?: "plain" | "muted" }) {
+export function NoticeBlock({
+  data,
+  tone,
+}: {
+  data: BlockData<"NOTICE">;
+  tone?: "plain" | "muted";
+}) {
   const warning = data.tone === "warning";
   return (
     <BlockSection tone={tone} className="!py-0">
@@ -948,7 +1169,9 @@ export function NoticeBlock({ data, tone }: { data: BlockData<"NOTICE">; tone?: 
         <div
           className={cn(
             "max-w-3xl rounded-[--radius-lg] border p-5",
-            warning ? "border-warning-600/40 bg-warning-50" : "border-line bg-surface-muted",
+            warning
+              ? "border-warning-600/40 bg-warning-50"
+              : "border-line bg-surface-muted",
           )}
         >
           {data.heading ? (
@@ -961,7 +1184,10 @@ export function NoticeBlock({ data, tone }: { data: BlockData<"NOTICE">; tone?: 
               {data.heading}
             </h2>
           ) : null}
-          <Markdown body={data.markdown} className="prose-content text-meta leading-relaxed" />
+          <Markdown
+            body={data.markdown}
+            className="prose-content text-meta leading-relaxed"
+          />
         </div>
       </div>
     </BlockSection>
@@ -1003,14 +1229,19 @@ export function ComparisonTableBlock({
   data: BlockData<"COMPARISON_TABLE">;
   tone?: "plain" | "muted";
 }) {
-  const cell = (value: BlockData<"COMPARISON_TABLE">["groups"][number]["rows"][number]["cells"][number]) => {
+  const cell = (
+    value: BlockData<"COMPARISON_TABLE">["groups"][number]["rows"][number]["cells"][number],
+  ) => {
     if (typeof value === "object") {
       return <span className="text-label text-ink-600">{value.note}</span>;
     }
     if (value === "yes") {
       return (
         <>
-          <span aria-hidden="true" className="text-[1.05rem] font-semibold text-accent-700">
+          <span
+            aria-hidden="true"
+            className="text-[1.05rem] font-semibold text-accent-700"
+          >
             ✓
           </span>
           <span className="sr-only">Included</span>
@@ -1020,7 +1251,10 @@ export function ComparisonTableBlock({
     if (value === "addon") {
       return (
         <>
-          <span aria-hidden="true" className="text-label font-medium text-ink-600">
+          <span
+            aria-hidden="true"
+            className="text-label font-medium text-ink-600"
+          >
             Add-on
           </span>
           <span className="sr-only">Available as an add-on</span>
@@ -1039,7 +1273,11 @@ export function ComparisonTableBlock({
 
   return (
     <BlockSection tone={tone}>
-      <BlockHeading eyebrow={data.eyebrow} heading={data.heading} description={data.description} />
+      <BlockHeading
+        eyebrow={data.eyebrow}
+        heading={data.heading}
+        description={data.description}
+      />
 
       {/*
         `tabIndex` and a role, because the container scrolls.
@@ -1086,7 +1324,10 @@ export function ComparisonTableBlock({
         <table className="w-full min-w-[34rem] border-collapse text-left">
           <thead>
             <tr className="border-b border-line">
-              <th scope="col" className="sticky left-0 z-10 bg-white py-3 pr-4 text-label font-semibold uppercase tracking-wide text-ink-500">
+              <th
+                scope="col"
+                className="sticky left-0 z-10 bg-white py-3 pr-4 text-label font-semibold uppercase tracking-wide text-ink-500"
+              >
                 Feature
               </th>
               {data.columns.map((column) => (
@@ -1126,7 +1367,10 @@ export function ComparisonTableBlock({
                     {row.label}
                   </th>
                   {row.cells.map((value, index) => (
-                    <td key={index} className="px-3 py-3 text-center align-middle">
+                    <td
+                      key={index}
+                      className="px-3 py-3 text-center align-middle"
+                    >
                       {cell(value)}
                     </td>
                   ))}
@@ -1138,7 +1382,9 @@ export function ComparisonTableBlock({
       </div>
 
       {data.source ? (
-        <p className="mt-4 text-label leading-relaxed text-ink-500">{data.source}</p>
+        <p className="mt-4 text-label leading-relaxed text-ink-500">
+          {data.source}
+        </p>
       ) : null}
     </BlockSection>
   );

@@ -8,7 +8,7 @@
  * current when one is replaced. An earlier set of supplied illustrations was
  * removed because the business judged it not good enough.
  *
- * Each was cropped to one shape (3:2) and saved at 832 pixels wide, twice the
+ * Each was cropped to one shape (3:2) and saved at 1600 pixels wide, laid behind the page opening and sharp at full width; the
  * 416 it is shown at, so it stays sharp on a phone or any high-density screen.
  * `next/image` serves it as AVIF or WebP at the width the screen needs.
  *
@@ -23,8 +23,8 @@ export type SitePhoto = { src: string; width: number; height: number; alt: strin
 
 const photo = (name: string, alt: string): SitePhoto => ({
   src: `/images/site/${name}.webp`,
-  width: 832,
-  height: 555,
+  width: 1600,
+  height: 1067,
   alt,
 });
 

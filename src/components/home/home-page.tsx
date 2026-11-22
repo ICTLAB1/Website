@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PHOTOS, photoForPath, type SitePhoto } from "@/lib/page-photos";
 import { getHomeData } from "@/lib/queries/home";
 import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
+import { PhotoBackdrop } from "@/components/marketing/page-photo";
 import { Reveal } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
 
@@ -128,6 +129,30 @@ function PhotoTile({
   );
 }
 
+const HERO_POINTS: Array<[string, string, string]> = [
+  [
+    "Software Licensing",
+    "/products",
+    "M7 3h8l4 4v14H7zM15 3v4h4M10 12h6M10 16h6",
+  ],
+  [
+    "Cloud & Productivity",
+    "/services/cloud",
+    "M7 18a4 4 0 0 1-.6-7.96A6 6 0 0 1 18 9.5 4.3 4.3 0 0 1 17.5 18z",
+  ],
+  ["IT Hardware & Accessories", "/hardware", "M5 6h14v9H5zM3 18h18M9 21h6"],
+  [
+    "Deployment & Support",
+    "/services/microsoft-365",
+    "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8",
+  ],
+  [
+    "Renewal Management",
+    "/services/software-asset-management",
+    "M4 12a8 8 0 0 1 13.7-5.6L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.7 5.6L4 15.5M4 20v-4.5h4.5",
+  ],
+];
+
 const SOLUTIONS: Array<[string, string]> = [
   ["modern-workplace", "Modern Workplace"],
   ["cloud-transformation", "Cloud Transformation"],
@@ -239,58 +264,102 @@ export async function HomePage({
 
   return (
     <>
-      {/* Opening */}
-      <section className="bg-career-mist">
-        <div className="container-page grid items-center gap-8 py-10 lg:grid-cols-[minmax(0,1fr)_34rem] lg:py-14">
-          <div>
+      {/* Opening: the photograph sits behind the text */}
+      <section className="relative isolate overflow-hidden bg-career-navy-dark text-white">
+        <PhotoBackdrop photo={team} />
+        <div className="container-page relative py-12 lg:py-16">
+          <div className="max-w-2xl">
             <h1>
-              <span className="inline-flex items-center gap-2 rounded-[--radius-md] border border-line bg-white px-3 py-1.5 text-[0.8125rem] font-medium text-ink-600">
+              <span className="inline-flex items-center gap-2 rounded-[--radius-md] border border-white/20 bg-white/10 px-3 py-1.5 text-[0.8125rem] font-medium text-white">
                 <span
                   aria-hidden="true"
                   className="h-1.5 w-1.5 rounded-full bg-career-orange"
                 />
                 {hero.headline}
               </span>
-              <span className="mt-5 block text-[2.5rem] font-extrabold leading-[1.05] tracking-tight text-graphite-900 sm:text-[3.25rem]">
-                Technology. Simplified.
-                <span className="block text-career-orange">
-                  Business. Empowered.
-                </span>
+              <span className="mt-5 block text-[2.5rem] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[3.5rem]">
+                Enterprise IT Solutions.
+                <span className="block text-[#ff9a52]">Simplified.</span>
               </span>
             </h1>
-            <p className="mt-4 text-label font-semibold uppercase tracking-[0.12em] text-[#b8480a]">
+            <p className="mt-4 text-label font-semibold uppercase tracking-[0.12em] text-[#ffb27a]">
               {hero.eyebrow}
             </p>
-            <p className="mt-4 max-w-xl text-[1.0625rem] leading-relaxed text-ink-600">
+            <p className="mt-4 max-w-xl text-[1.0625rem] leading-relaxed text-white/90">
               {hero.subheadline}
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
                 href={hero.primaryCta.href}
-                className="inline-flex min-h-11 items-center gap-2 rounded-[--radius-md] bg-[#c2530a] px-5 font-semibold text-white hover:bg-[#a64608] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
+                className="inline-flex min-h-11 items-center gap-2 rounded-[--radius-md] bg-[#c2530a] px-5 font-semibold text-white hover:bg-[#a64608] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 {hero.primaryCta.label} {arrow}
               </Link>
               {hero.secondaryCta ? (
                 <Link
                   href={hero.secondaryCta.href}
-                  className="inline-flex min-h-11 items-center rounded-[--radius-md] border border-graphite-900 bg-white px-5 font-semibold text-graphite-900 hover:bg-career-mist focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
+                  className="inline-flex min-h-11 items-center rounded-[--radius-md] border border-white/70 px-5 font-semibold text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   {hero.secondaryCta.label}
                 </Link>
               ) : null}
             </div>
           </div>
-          <figure className="relative aspect-[3/2] overflow-hidden rounded-[--radius-lg] border border-line lg:aspect-auto lg:h-[24rem]">
-            <Image
-              src={team.src}
-              alt={team.alt}
-              fill
-              priority
-              sizes="(min-width: 1024px) 34rem, 92vw"
-              className="object-cover"
-            />
-          </figure>
+
+          <ul className="mt-10 grid grid-cols-2 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">
+            {HERO_POINTS.map(([label, href, path], index) => (
+              <li
+                key={label}
+                className={cn(
+                  "px-3",
+                  index > 0 && "lg:border-l lg:border-white/25",
+                )}
+              >
+                <Link
+                  href={href}
+                  className="flex flex-col items-center gap-2 text-center text-meta font-medium text-white hover:text-[#ffb27a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                >
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    className="h-8 w-8"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d={path} />
+                  </svg>
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {data.brands.length > 0 ? (
+            <ul
+              aria-label="Technology brands we supply"
+              className="mt-8 flex flex-wrap items-center gap-3"
+            >
+              {data.brands.map((brand) => (
+                <li key={brand.slug}>
+                  <Link
+                    href={`/brands/${brand.slug}`}
+                    className="flex h-14 min-w-24 items-center justify-center rounded-[--radius-md] bg-white px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={brand.logoUrl ?? ""}
+                      alt={brand.name}
+                      loading="eager"
+                      className="h-7 w-auto max-w-[7rem] object-contain"
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
       </section>
 
