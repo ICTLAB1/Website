@@ -158,7 +158,7 @@ for (const [name, path] of HARDWARE_SURFACES) {
  * quotation route.
  */
 let softwareBuyLinks = 0;
-for (const [name, path] of SOFTWARE_SURFACES) {
+for (const [, path] of SOFTWARE_SURFACES) {
   await page.goto(`${BASE}${path}`, { waitUntil: "load" });
   softwareBuyLinks += await page.locator('a[href^="/buy?"]').count();
 }
