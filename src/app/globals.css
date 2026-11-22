@@ -14,28 +14,28 @@
    every text usage and were verified individually.
 --------------------------------------------------------------------------- */
 @theme {
-  --color-graphite-50: #f7f6f6;
-  --color-graphite-100: #edeceb;
-  --color-graphite-200: #dbd8d4;
-  --color-graphite-300: #bfb8b0;
-  --color-graphite-400: #9b8d7d;
-  --color-graphite-500: #746758;
-  --color-graphite-600: #554b3f;
-  --color-graphite-700: #413930;
-  --color-graphite-800: #2d2822;
-  --color-graphite-900: #201c18;
-  --color-graphite-950: #141210;
+  --color-graphite-50: #f3f6fb;
+  --color-graphite-100: #e6ecf5;
+  --color-graphite-200: #d3dbe8;
+  --color-graphite-300: #b0bdd0;
+  --color-graphite-400: #7f90ab;
+  --color-graphite-500: #5a6c89;
+  --color-graphite-600: #3f5170;
+  --color-graphite-700: #2a3f66;
+  --color-graphite-800: #14336a;
+  --color-graphite-900: #0b2147;
+  --color-graphite-950: #071634;
 
-  --color-accent-50: #f8f7f4;
-  --color-accent-100: #f1eee7;
-  --color-accent-200: #e9dfc6;
-  --color-accent-300: #e2cc9a;
-  --color-accent-400: #deb554;
-  --color-accent-500: #d39b17;
-  --color-accent-600: #9e720d;
-  --color-accent-700: #76550a;
-  --color-accent-800: #5a4005;
-  --color-accent-900: #443104;
+  --color-accent-50: #fff8f2;
+  --color-accent-100: #feeee0;
+  --color-accent-200: #fdd9bd;
+  --color-accent-300: #fbb67f;
+  --color-accent-400: #f58a3d;
+  --color-accent-500: #e8650a;
+  --color-accent-600: #c2530a;
+  --color-accent-700: #a64608;
+  --color-accent-800: #86380a;
+  --color-accent-900: #5f2a08;
 
   /* Tertiary accent, used sparingly (a few icons and small highlights) -
      the logo's sky blue, never a section background or a button fill. */
@@ -66,10 +66,10 @@
   --color-ink-900: #171b22;
 
   --color-surface: #ffffff;
-  --color-surface-muted: #f9f9f8;
-  --color-surface-sunken: #f4f4f3;
-  --color-line: #e3e1de;
-  --color-line-strong: #d1ccc7;
+  --color-surface-muted: #f6f8fc;
+  --color-surface-sunken: #f0f4fa;
+  --color-line: #dde4ee;
+  --color-line-strong: #c3cddc;
 
   --color-success-50: #ecfdf5;
   --color-success-600: #059669;

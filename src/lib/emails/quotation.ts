@@ -94,7 +94,7 @@ export type QuotationEmailInput = {
 const INK = "#3f3a33";
 const MUTED = "#6b6259";
 const RULE = "#e3ded6";
-const DARK = "#201c18";
+const DARK = "#0b2147";
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat("en-IN", {
