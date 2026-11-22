@@ -1,4 +1,5 @@
-import { safeBrandLogo } from "@/lib/brand-logo";
+import { BrandLogoFrame } from "@/components/catalogue/brand-logo-frame";
+import { resolveProductPhoto } from "@/lib/representative-image";
 import { isWideLogo } from "@/lib/product-logos";
 import Link from "next/link";
 import { RevealGroup } from "@/components/motion/reveal";
@@ -59,7 +60,7 @@ export function ProductCard({
     ? discountPercent(variant.listPriceMinor, variant.salePriceMinor)
     : null;
   const hardware = isHardware(product);
-  const hardwareLogo = hardware ? safeBrandLogo(product.brand.logoUrl) : null;
+  const hardwarePhoto = resolveProductPhoto(product);
 
   /*
    * The catalogue quotes rather than prices, and the decision is not this
@@ -101,23 +102,12 @@ export function ProductCard({
           />
         </div>
       ) : null}
-      {hardware ? (
-        <div className="flex h-16 items-center justify-center border-b border-line px-4">
-          {hardwareLogo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={hardwareLogo}
-              alt={product.brand.name}
-              className="h-10 w-auto max-w-[70%] object-contain"
-              loading="lazy"
-              decoding="async"
-            />
-          ) : (
-            <span className="text-lg font-bold tracking-wide text-graphite-900">{product.brand.name}</span>
-          )}
+      {hardware && !hardwarePhoto.src ? (
+        <div className="border-b border-line p-4">
+          <BrandLogoFrame brandName={product.brand.name} logoUrl={product.brand.logoUrl} />
         </div>
       ) : null}
-      {hardware ? (
+      {hardware && hardwarePhoto.src ? (
         <div className="border-b border-line p-4 pb-0">
           <ProductPhoto
             src={product.imageUrl}
