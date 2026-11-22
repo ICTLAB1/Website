@@ -61,7 +61,13 @@ export type PartnerStatusSeed = {
  * on the strength of these two would be inventing a tier.
  */
 export const partnerStatus: PartnerStatusSeed[] = [
-  { slug: "hp", label: "Partner", confirmedAt: "2026-08-23", isPublic: true },
+  {
+    slug: "hp",
+    label: "Business Partner",
+    confirmedAt: "2026-11-22",
+    isPublic: true,
+    badgeUrl: "/badges/hp-business-partner.png",
+  },
   { slug: "cisco", label: "Partner", confirmedAt: "2026-08-23", isPublic: true },
   {
     slug: "microsoft",

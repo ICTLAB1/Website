@@ -12,6 +12,7 @@ import { homepageAndCertifications } from "./2026-08-homepage-and-certifications
 import { suppliedBrandArtwork } from "./2026-08-supplied-brand-artwork";
 import { brandSegmentsMigration } from "./2026-08-brand-segments";
 import { homepageTitle } from "./2026-08-homepage-title";
+import { hpBusinessPartner } from "./2026-11-hp-business-partner";
 import { homepageNamesHardware } from "./2026-11-homepage-names-hardware";
 import { careersLink } from "./2026-08-careers-link";
 import { profileUrls } from "./2026-08-profile-urls";
@@ -204,6 +205,8 @@ export const contentMigrations: ContentMigration[] = [
   linkManagedItServices,
   /* After the earlier title migrations, whose exact old text it matches. */
   homepageNamesHardware,
+  /* After the brand rows exist. */
+  hpBusinessPartner,
 ];
 
 export type { ContentMigration };

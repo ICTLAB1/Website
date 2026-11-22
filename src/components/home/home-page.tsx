@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { PHOTOS, photoForPath, type SitePhoto } from "@/lib/page-photos";
 import { getHomeData } from "@/lib/queries/home";
+import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
 import { Reveal } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
 
@@ -221,6 +222,7 @@ export async function HomePage({
   slots: HomeSlots;
 }) {
   const data = await getHomeData();
+  const partners = await currentPartnerBadges();
   const team = PHOTOS.team;
   const { hero } = copy;
 
@@ -314,6 +316,37 @@ export async function HomePage({
           ))}
         </dl>
       </section>
+
+      {/* Partnerships: only designations the brand record may state, with the artwork the publisher issued. */}
+      {partners.length > 0 ? (
+        <Band
+          id="home-partnerships"
+          title="Our partnerships"
+          intro="Programme designations we hold, shown as each publisher issued them."
+        >
+          <ul className="flex flex-wrap items-center gap-x-10 gap-y-6">
+            {partners.map((partner) => (
+              <li key={partner.slug}>
+                <Link
+                  href={`/brands/${partner.slug}`}
+                  className="flex flex-col items-start gap-2 rounded-[--radius-md] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-career-navy"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={partner.badge}
+                    alt=""
+                    loading="lazy"
+                    className="h-16 w-auto object-contain"
+                  />
+                  <span className="text-meta font-medium text-ink-600">
+                    {partner.name} {partner.label}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Band>
+      ) : null}
 
       {slots.afterBrands}
 
