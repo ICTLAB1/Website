@@ -1,4 +1,4 @@
-import { safeBrandLogo } from "@/lib/brand-logo";
+import { BrandLogoFrame } from "@/components/catalogue/brand-logo-frame";
 import { isWideLogo } from "@/lib/product-logos";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -554,27 +554,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
           {hardware ? (
             <div className="mt-8 rounded-(--radius-lg) border border-line p-6">
-              <div className="mb-4 flex h-16 items-center justify-center rounded-(--radius-md) border border-line bg-white">
-                {safeBrandLogo(product.brand.logoUrl) ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={safeBrandLogo(product.brand.logoUrl) ?? ""}
-                    alt={product.brand.name}
-                    className="h-11 w-auto max-w-[60%] object-contain"
-                    decoding="async"
-                  />
-                ) : (
-                  <span className="text-xl font-bold tracking-wide text-graphite-900">{product.brand.name}</span>
-                )}
-              </div>
-              <ProductPhoto
-                src={product.imageUrl}
-                formFactor={product.formFactor}
-                alt={product.name}
-                ratio="16/10"
-                sizes="(min-width: 1024px) 46rem, 92vw"
-                priority
-              />
+              {photo.src ? (
+                <ProductPhoto
+                  src={product.imageUrl}
+                  formFactor={product.formFactor}
+                  alt={product.name}
+                  ratio="16/10"
+                  sizes="(min-width: 1024px) 46rem, 92vw"
+                  priority
+                />
+              ) : (
+                <BrandLogoFrame brandName={product.brand.name} logoUrl={product.brand.logoUrl} ratio="16/10" />
+              )}
               {/*
                 Directly under the picture it qualifies, not at the foot of the
                 page. This is the surface a buyer builds their expectation of
