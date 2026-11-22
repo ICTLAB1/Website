@@ -28,7 +28,7 @@ const photo = (name: string, alt: string): SitePhoto => ({
   alt,
 });
 
-const PHOTOS = {
+export const PHOTOS = {
   team: photo("indian-business-team-meeting", "A team of Indian business professionals gathered around a laptop in a meeting room"),
   boardroom: photo("executive-boardroom-meeting", "A manager standing to address colleagues seated at a boardroom table in a bright office"),
   workplace: photo("professional-laptop-workplace", "A professional working on a laptop at a desk in a modern, bright workplace"),
