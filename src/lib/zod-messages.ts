@@ -52,7 +52,9 @@ import { z } from "zod";
  * sentence was refused.
  */
 function stringTooSmall(minimum: number): string {
-  return minimum <= 3 ? "This cannot be left blank." : `Use at least ${minimum} characters.`;
+  return minimum <= 3
+    ? "This cannot be left blank."
+    : `Use at least ${minimum} characters.`;
 }
 
 /**
@@ -61,56 +63,69 @@ function stringTooSmall(minimum: number): string {
  * it; "leave this blank" is at least true.
  */
 function stringTooBig(maximum: number): string {
-  return maximum === 0 ? "This must be left blank." : `Use ${maximum} characters or fewer.`;
+  return maximum === 0
+    ? "This must be left blank."
+    : `Use ${maximum} characters or fewer.`;
 }
 
-const friendly: z.ZodErrorMap = (issue, context) => {
+/**
+ * Zod 4's global message hook. Return a string to replace the library's text,
+ * or nothing to keep it. A message written on a validator still wins over this.
+ */
+function friendly(issue: z.core.$ZodRawIssue): string | undefined {
   switch (issue.code) {
-    case z.ZodIssueCode.too_small:
-      if (issue.type === "string") return { message: stringTooSmall(Number(issue.minimum)) };
-      if (issue.type === "number") return { message: `Enter ${issue.minimum} or more.` };
-      if (issue.type === "array") return { message: "Add at least one item." };
+    case "too_small":
+      if (issue.origin === "string")
+        return stringTooSmall(Number(issue.minimum));
+      if (issue.origin === "number" || issue.origin === "int")
+        return `Enter ${issue.minimum} or more.`;
+      if (issue.origin === "array") return "Add at least one item.";
       break;
 
-    case z.ZodIssueCode.too_big:
-      if (issue.type === "string") return { message: stringTooBig(Number(issue.maximum)) };
-      if (issue.type === "number") return { message: `Enter ${issue.maximum} or less.` };
-      if (issue.type === "array") return { message: `Remove some — ${issue.maximum} at most.` };
+    case "too_big":
+      if (issue.origin === "string") return stringTooBig(Number(issue.maximum));
+      if (issue.origin === "number" || issue.origin === "int")
+        return `Enter ${issue.maximum} or less.`;
+      if (issue.origin === "array")
+        return `Remove some — ${issue.maximum} at most.`;
       break;
 
-    // Deliberately does not list the options: they are internal identifiers,
-    // and a reader choosing from a dropdown does not need their spelling.
-    case z.ZodIssueCode.invalid_enum_value:
-      return { message: "Choose one of the options." };
+    /*
+     * An enum and a literal are both `invalid_value` in Zod 4. A literal has
+     * exactly one allowed value; an enum, in this codebase, always has several.
+     * The options are deliberately not listed: they are internal identifiers,
+     * and a reader choosing from a dropdown does not need their spelling.
+     */
+    case "invalid_value":
+      return issue.values.length > 1
+        ? "Choose one of the options."
+        : "That value is not allowed here.";
 
-    case z.ZodIssueCode.invalid_type:
-      if (issue.received === "undefined" || issue.received === "null") {
-        return { message: "This is required." };
-      }
-      if (issue.received === "nan") return { message: "Enter a number." };
-      return { message: "That is not the kind of value this field takes." };
-
-    case z.ZodIssueCode.invalid_literal:
-      return { message: "That value is not allowed here." };
+    case "invalid_type":
+      if (issue.input === undefined || issue.input === null)
+        return "This is required.";
+      if (typeof issue.input === "number" && Number.isNaN(issue.input))
+        return "Enter a number.";
+      return "That is not the kind of value this field takes.";
 
     default:
       break;
   }
 
   /*
-   * Everything else keeps Zod's text. `invalid_string` covers email, url and
+   * Everything else keeps Zod's text. `invalid_format` covers email, url and
    * regex, and every one of those in this codebase already carries a written
    * message — so overriding the default here would replace a specific sentence
    * with a vaguer one.
    */
-  return { message: context.defaultError };
-};
+  return undefined;
+}
 
-z.setErrorMap(friendly);
+z.config({ customError: friendly });
 
 /**
  * Exported so a module can state the dependency rather than rely on having
- * been imported first. The map is global to the `zod` module, so one import
+ * been imported first. The configuration is global to the `zod` module, so one import
  * anywhere in the process is enough — but "enough in practice" is how an
  * ordering bug waits for the one route that imports no schema but its own.
  */

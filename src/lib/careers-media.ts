@@ -28,7 +28,7 @@ export const CAREERS_PHOTOS = {
     src: "/images/careers/hero.jpg",
     width: 1600,
     height: 900,
-    alt: "A team of businesspeople gathered around a meeting-room table with laptops",
+    alt: "Four smiling colleagues standing together in a bright office",
     placeholder: true,
   },
   sales: {
@@ -56,7 +56,7 @@ export const CAREERS_PHOTOS = {
     src: "/images/careers/cat-corp.jpg",
     width: 1000,
     height: 647,
-    alt: "Colleagues meeting around a table in a bright, glass-walled office",
+    alt: "Four colleagues in business dress smiling at the camera",
     placeholder: true,
   },
   life: {

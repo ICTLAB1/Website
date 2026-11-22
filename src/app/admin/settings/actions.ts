@@ -31,10 +31,17 @@ import type { AdminActionState } from "@/lib/admin/types";
 const rateField = z
   .string()
   .trim()
-  .transform((value) => (value.length > 0 ? Math.round(Number(value) * 100) : null))
+  .transform((value) =>
+    value.length > 0 ? Math.round(Number(value) * 100) : null,
+  )
   .refine(
-    (value) => value === null || (Number.isInteger(value) && value >= 100 && value <= 100_000),
-    { message: "Enter the rate in rupees, for example 83.50. Values between ₹1 and ₹1,000 are accepted." },
+    (value) =>
+      value === null ||
+      (Number.isInteger(value) && value >= 100 && value <= 100_000),
+    {
+      message:
+        "Enter the rate in rupees, for example 83.50. Values between ₹1 and ₹1,000 are accepted.",
+    },
   );
 
 const optionalText = (max: number) =>
@@ -58,9 +65,12 @@ const optionalEmail = z
   .max(180)
   .transform((value) => (value.length > 0 ? value : null))
   .nullable()
-  .refine((value) => value === null || z.string().email().safeParse(value).success, {
-    message: "Enter a valid email address, or leave it blank.",
-  });
+  .refine(
+    (value) => value === null || z.string().email().safeParse(value).success,
+    {
+      message: "Enter a valid email address, or leave it blank.",
+    },
+  );
 
 /**
  * Deliberately permissive: +91 11 4567 8900, 011-45678900 and 9876543210 are
@@ -90,7 +100,8 @@ const optionalGstin = z
   .transform((value) => (value.length > 0 ? value : null))
   .nullable()
   .refine(
-    (value) => value === null || /^\d{2}[A-Z]{5}\d{4}[A-Z]\d[A-Z][\dA-Z]$/.test(value),
+    (value) =>
+      value === null || /^\d{2}[A-Z]{5}\d{4}[A-Z]\d[A-Z][\dA-Z]$/.test(value),
     { message: "A GSTIN is 15 characters, such as 07AABCU9603R1ZP." },
   );
 
@@ -102,9 +113,13 @@ const optionalCin = z
   .max(21)
   .transform((value) => (value.length > 0 ? value : null))
   .nullable()
-  .refine((value) => value === null || /^[LU]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/.test(value), {
-    message: "A CIN is 21 characters, such as U72900DL2019PTC123456.",
-  });
+  .refine(
+    (value) =>
+      value === null || /^[LU]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/.test(value),
+    {
+      message: "A CIN is 21 characters, such as U72900DL2019PTC123456.",
+    },
+  );
 
 const settingsSchema = z.object({
   emailSales: optionalEmail,
@@ -134,7 +149,12 @@ const settingsSchema = z.object({
    */
   quoteNumberFormat: optionalText(60).refine(
     (value) => value === null || templateProblem(value) === null,
-    (value) => ({ message: TEMPLATE_PROBLEMS[templateProblem(value) ?? "bad_characters"] }),
+    {
+      error: (issue) =>
+        TEMPLATE_PROBLEMS[
+          templateProblem(String(issue.input ?? "")) ?? "bad_characters"
+        ],
+    },
   ),
   secondaryEntityName: optionalText(120),
   secondaryEntityAddress: optionalText(300),
@@ -174,7 +194,10 @@ const settingsSchema = z.object({
    */
   profileUrls: optionalText(1200).refine(
     (value) => value === null || badProfileUrl(value) === null,
-    (value) => ({ message: `"${badProfileUrl(value ?? "")}" is not an https:// URL.` }),
+    {
+      error: (issue) =>
+        `"${badProfileUrl(String(issue.input ?? ""))}" is not an https:// URL.`,
+    },
   ),
 
   grievanceName: optionalText(120),
@@ -217,16 +240,26 @@ function badProfileUrl(value: string): string | null {
  * point somebody can fix it.
  */
 const settingsSchemaChecked = settingsSchema.superRefine((value, context) => {
-  if (Boolean(value.secondaryEntityName) === Boolean(value.secondaryEntityAddress)) return;
+  if (
+    Boolean(value.secondaryEntityName) === Boolean(value.secondaryEntityAddress)
+  )
+    return;
 
   context.addIssue({
     code: "custom",
-    path: [value.secondaryEntityName ? "secondaryEntityAddress" : "secondaryEntityName"],
-    message: "Give the second entity both a name and an address, or leave both blank.",
+    path: [
+      value.secondaryEntityName
+        ? "secondaryEntityAddress"
+        : "secondaryEntityName",
+    ],
+    message:
+      "Give the second entity both a name and an address, or leave both blank.",
   });
 });
 
-const FIELDS = Object.keys(settingsSchema.shape) as Array<keyof typeof settingsSchema.shape>;
+const FIELDS = Object.keys(settingsSchema.shape) as Array<
+  keyof typeof settingsSchema.shape
+>;
 
 export async function saveSiteSettings(
   _previous: AdminActionState,
@@ -234,16 +267,25 @@ export async function saveSiteSettings(
 ): Promise<AdminActionState> {
   const admin = await requireAdmin();
 
-  const limit = hit(`settings:${admin.id}`, LIMITS.adminWrite.limit, LIMITS.adminWrite.windowSeconds);
+  const limit = hit(
+    `settings:${admin.id}`,
+    LIMITS.adminWrite.limit,
+    LIMITS.adminWrite.windowSeconds,
+  );
   if (!limit.allowed) {
-    return { status: "error", message: "Too many changes in a short period. Please slow down." };
+    return {
+      status: "error",
+      message: "Too many changes in a short period. Please slow down.",
+    };
   }
 
   // Read only the fields the schema declares. A form field this action does not
   // know about is ignored rather than written, so a crafted request cannot set
   // a column simply by naming it.
   const parsed = settingsSchemaChecked.safeParse(
-    Object.fromEntries(FIELDS.map((field) => [field, formData.get(field) ?? ""])),
+    Object.fromEntries(
+      FIELDS.map((field) => [field, formData.get(field) ?? ""]),
+    ),
   );
 
   if (!parsed.success) {
@@ -285,5 +327,8 @@ export async function saveSiteSettings(
   // The header and the footer read this, so it is on every page.
   invalidate(tags.settings);
 
-  return { status: "success", message: "Saved. The public site is showing these details now." };
+  return {
+    status: "success",
+    message: "Saved. The public site is showing these details now.",
+  };
 }
