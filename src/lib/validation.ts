@@ -5,7 +5,10 @@ import { z } from "zod";
 import "@/lib/zod-messages";
 import { attributionSchema } from "@/lib/attribution";
 import { isValidGstin } from "@/lib/gstin";
-import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/password-policy";
+import {
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+} from "@/lib/password-policy";
 
 /**
  * Every request body is parsed through one of these schemas before it reaches
@@ -55,7 +58,10 @@ export const gstinSchema = trimmed(15)
     /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/,
     "Enter a valid 15-character GSTIN.",
   )
-  .refine(isValidGstin, "That GSTIN fails its own check digit — please check it for a typo.");
+  .refine(
+    isValidGstin,
+    "That GSTIN fails its own check digit — please check it for a typo.",
+  );
 
 export const passwordSchema = z
   .string()
@@ -95,7 +101,7 @@ export const timelineSchema = z.enum([
 
 /** Quantity guard shared by every basket / enquiry path. */
 export const quantitySchema = z
-  .number({ invalid_type_error: "Quantity must be a number." })
+  .number({ error: "Quantity must be a number." })
   .int("Quantity must be a whole number.")
   .min(1, "Quantity must be at least 1.")
   .max(100_000, "For volumes above 100,000 seats, contact enterprise sales.");
@@ -134,7 +140,12 @@ export const enquirySchema = z.object({
  * A fifth topic added to one copy and not the others is a message that
  * validates and then cannot be filtered, or a lead that stops being counted.
  */
-export const CONTACT_TOPICS = ["SALES", "ENTERPRISE", "SUPPORT", "GENERAL"] as const;
+export const CONTACT_TOPICS = [
+  "SALES",
+  "ENTERPRISE",
+  "SUPPORT",
+  "GENERAL",
+] as const;
 export type ContactTopic = (typeof CONTACT_TOPICS)[number];
 
 /**
@@ -157,7 +168,10 @@ export const contactSchema = z.object({
   phone: phoneSchema.optional().or(z.literal("")),
   companyName: trimmed(160).optional().or(z.literal("")),
   topic: z.enum(CONTACT_TOPICS).default("GENERAL"),
-  message: trimmed(4000).min(10, "Tell us a little more (at least 10 characters)."),
+  message: trimmed(4000).min(
+    10,
+    "Tell us a little more (at least 10 characters).",
+  ),
   website: z.string().max(0).optional(),
   attribution: attributionSchema.optional(),
 });
@@ -177,7 +191,10 @@ export const companySchema = z.object({
    * worse than accepting a typo.
    */
   pan: trimmed(10)
-    .regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "A PAN is ten characters, e.g. AAAPA1234A.")
+    .regex(
+      /^[A-Z]{5}[0-9]{4}[A-Z]$/,
+      "A PAN is ten characters, e.g. AAAPA1234A.",
+    )
     .optional()
     .or(z.literal("")),
   phone: trimmed(24).optional().or(z.literal("")),
@@ -192,18 +209,32 @@ export const companySchema = z.object({
 
 export const supportTicketSchema = z.object({
   subject: trimmed(160).min(4, "Enter a subject."),
-  category: z.enum(["LICENSING", "BILLING", "TECHNICAL", "HARDWARE", "RENEWAL", "OTHER"]),
+  category: z.enum([
+    "LICENSING",
+    "BILLING",
+    "TECHNICAL",
+    "HARDWARE",
+    "RENEWAL",
+    "OTHER",
+  ]),
   message: trimmed(4000).min(10, "Describe the issue in a little more detail."),
 });
 
 /** Flattens a Zod error into the shape the API contract expects. */
 export function fieldErrorsOf(error: z.ZodError): Record<string, string[]> {
-  const flattened = error.flatten();
+  // Grouped as Zod 3's `flatten()` did: an issue on a field goes under that field's
+  // first path segment, and an issue with no path is a form-level message.
   const output: Record<string, string[]> = {};
-  for (const [key, messages] of Object.entries(flattened.fieldErrors)) {
-    if (messages && messages.length > 0) output[key] = messages;
+  const formErrors: string[] = [];
+  for (const issue of error.issues) {
+    if (issue.path.length > 0) {
+      const key = String(issue.path[0]);
+      (output[key] ??= []).push(issue.message);
+    } else {
+      formErrors.push(issue.message);
+    }
   }
-  if (flattened.formErrors.length > 0) output._form = flattened.formErrors;
+  if (formErrors.length > 0) output._form = formErrors;
   return output;
 }
 

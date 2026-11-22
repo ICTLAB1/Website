@@ -1087,7 +1087,6 @@ export async function CompanyInfoBlock({
     ["CIN", config.cin],
     ["Sales", config.email.sales],
     ["Support", config.email.support],
-    ["Telephone", config.phone.sales],
     ["Support hours", config.supportHours],
   ];
 

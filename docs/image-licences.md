@@ -33,8 +33,9 @@ small to display sharply.
 
 | File | Adobe Stock id |
 |---|---|
-| hero.jpg | 607796653 |
-| life.jpg, cat-corp.jpg | 480395302 |
+| hero.jpg | 670097276 |
+| life.jpg | 480395302 |
+| cat-corp.jpg | 580299661 |
 | cat-sales.jpg | 321799860 |
 | cat-tech.jpg | 487552894 |
 | cat-ops.jpg | 322557278 |

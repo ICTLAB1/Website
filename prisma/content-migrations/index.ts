@@ -12,6 +12,7 @@ import { homepageAndCertifications } from "./2026-08-homepage-and-certifications
 import { suppliedBrandArtwork } from "./2026-08-supplied-brand-artwork";
 import { brandSegmentsMigration } from "./2026-08-brand-segments";
 import { homepageTitle } from "./2026-08-homepage-title";
+import { supportEmail } from "./2026-11-support-email";
 import { hpBusinessPartner } from "./2026-11-hp-business-partner";
 import { homepageNamesHardware } from "./2026-11-homepage-names-hardware";
 import { careersLink } from "./2026-08-careers-link";
@@ -207,6 +208,7 @@ export const contentMigrations: ContentMigration[] = [
   homepageNamesHardware,
   /* After the brand rows exist. */
   hpBusinessPartner,
+  supportEmail,
 ];
 
 export type { ContentMigration };
