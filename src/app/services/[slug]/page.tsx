@@ -82,7 +82,7 @@ export default async function ServicePage({ params }: PageProps) {
       <section className="border-y border-line bg-graphite-900">
         <div className="container-page py-14 lg:py-16">
           <div
-            className={photo ? "lg:grid lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-center lg:gap-12" : undefined}
+            className={photo ? "lg:grid lg:grid-cols-[minmax(0,1fr)_34rem] lg:items-stretch lg:gap-12" : undefined}
           >
           <div className="max-w-3xl">
             <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-accent-300">
@@ -99,7 +99,7 @@ export default async function ServicePage({ params }: PageProps) {
               </ButtonLink>
             </div>
           </div>
-          {photo ? <PagePhoto photo={photo} onDark className="mt-8 lg:mt-0 lg:justify-self-end" /> : null}
+          {photo ? <PagePhoto photo={photo} onDark className="mt-8 lg:mt-0" /> : null}
           </div>
         </div>
       </section>

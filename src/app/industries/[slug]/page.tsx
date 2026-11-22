@@ -155,7 +155,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
         />
 
         <div
-          className={photo ? "lg:grid lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-center lg:gap-12" : undefined}
+          className={photo ? "lg:grid lg:grid-cols-[minmax(0,1fr)_34rem] lg:items-stretch lg:gap-12" : undefined}
         >
         <header className="flex max-w-3xl flex-col gap-4">
           <span
@@ -184,7 +184,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
             </ButtonLink>
           </div>
         </header>
-        {photo ? <PagePhoto photo={photo} className="mt-8 lg:mt-0 lg:justify-self-end" /> : null}
+        {photo ? <PagePhoto photo={photo} className="mt-8 lg:mt-0" /> : null}
         </div>
       </div>
 

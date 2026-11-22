@@ -4,12 +4,13 @@ import type { SitePhoto } from "@/lib/page-photos";
 import { cn } from "@/lib/utils";
 
 /**
- * One picture beside a page's opening, at the width it is sharp at.
+ * One picture beside a page's opening, sized to fill the space beside the text.
  *
- * Deliberately small and unframed apart from a hairline border: the page it sits
- * on is unchanged, and the picture illustrates it rather than leading it. Below
- * the large breakpoint it drops under the text at full width of the column, never
- * wider than the file is.
+ * On a wide screen it takes the whole height of the opening and about a third of
+ * its width, cropped (never stretched out of shape) to fit; on a phone it sits
+ * under the text at full width in a 3:2 frame. The files are 832 pixels wide, so
+ * at the 544 it is shown at on a desktop it is sharp, and twice that on a
+ * high-density screen.
  */
 export function PagePhoto({
   photo,
@@ -22,20 +23,22 @@ export function PagePhoto({
   onDark?: boolean;
 }) {
   return (
-    <figure className={cn("w-full max-w-[26rem]", className)}>
+    <figure
+      className={cn(
+        "relative aspect-[3/2] w-full overflow-hidden rounded-[--radius-lg] border lg:aspect-auto lg:h-full lg:min-h-[19rem]",
+        onDark ? "border-white/15" : "border-line",
+        className,
+      )}
+    >
       <Image
         src={photo.src}
         alt={photo.alt}
-        width={photo.width}
-        height={photo.height}
-        sizes="(min-width: 1024px) 26rem, 92vw"
+        fill
         // Always at the top of the page, beside the opening, so it must not be
         // lazy-loaded: a deferred picture there is a late largest-contentful-paint.
         priority
-        className={cn(
-          "h-auto w-full rounded-[--radius-lg] border",
-          onDark ? "border-white/15" : "border-line",
-        )}
+        sizes="(min-width: 1024px) 34rem, 92vw"
+        className="object-cover"
       />
     </figure>
   );

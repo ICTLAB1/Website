@@ -144,7 +144,7 @@ export function HeroBlock({
       <div className="container-page relative py-14 lg:py-20">
         <div
           className={cn(
-            image && "lg:grid lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-center lg:gap-12",
+            image && "lg:grid lg:grid-cols-[minmax(0,1fr)_34rem] lg:items-stretch lg:gap-12",
           )}
         >
         <div className="max-w-3xl">
@@ -234,7 +234,7 @@ export function HeroBlock({
           ) : null}
         </div>
         {image ? (
-          <PagePhoto photo={image} onDark={dark} className="mt-8 lg:mt-0 lg:justify-self-end" />
+          <PagePhoto photo={image} onDark={dark} className="mt-8 lg:mt-0" />
         ) : null}
         </div>
 
