@@ -134,45 +134,6 @@ const SOLUTIONS: Array<[string, string]> = [
   ["security-compliance", "Security & Compliance"],
 ];
 
-const CATEGORIES: Array<[string, string, string]> = [
-  [
-    "productivity-collaboration",
-    "Business Applications",
-    "Microsoft 365, Windows and Office licensing",
-  ],
-  ["design-creative", "Creative Software", "Adobe and creative suites"],
-  ["engineering-cad", "Design & Engineering", "Autodesk, CAD and BIM"],
-  [
-    "infrastructure-hardware",
-    "IT Hardware & Devices",
-    "Laptops, desktops, workstations",
-  ],
-  [
-    "cloud-platforms",
-    "Cloud & Infrastructure",
-    "Servers, storage and cloud platforms",
-  ],
-];
-
-const PROCUREMENT: Array<[string, string]> = [
-  [
-    "Multi-brand sourcing",
-    "Access leading software and hardware brands through a single partner.",
-  ],
-  [
-    "Consolidated quotation",
-    "A unified, competitive proposal for all your technology needs.",
-  ],
-  [
-    "One purchase order",
-    "Simplified procurement with a single PO for multiple products and brands.",
-  ],
-  [
-    "Renewal management",
-    "Timely licence renewals, compliance and cost optimisation.",
-  ],
-];
-
 const INDUSTRIES: Array<[string, string]> = [
   ["corporate-enterprise", "Corporate & Enterprise"],
   ["manufacturing", "Manufacturing"],
@@ -183,27 +144,63 @@ const INDUSTRIES: Array<[string, string]> = [
   ["government-psu", "Government & PSU"],
 ];
 
-const GEM = [
-  "Software licensing on GeM",
-  "Commercial IT hardware",
-  "CRAC support",
-  "GST-compliant invoicing",
-];
+export type HomeCopy = {
+  hero: {
+    eyebrow: string;
+    headline: string;
+    subheadline: string;
+    primaryCta: { href: string; label: string };
+    secondaryCta?: { href: string; label: string };
+    statLabels: string[];
+  };
+  industries: { eyebrow?: string; heading: string; description?: string };
+  gem: {
+    eyebrow?: string;
+    heading: string;
+    description?: string;
+    tiles: string[];
+    bullets: string[];
+    bulletsIntro?: string;
+  };
+  certifications: { eyebrow?: string; heading: string; description?: string };
+};
+
+/** The page's own blocks, rendered in their original order around the designed bands. */
+export type HomeSlots = Partial<
+  Record<
+    | "afterBrands"
+    | "afterSolutions"
+    | "afterCatalogue"
+    | "afterProcurement"
+    | "afterIndustries"
+    | "afterGem"
+    | "afterCertifications"
+    | "beforeClose",
+    React.ReactNode
+  >
+>;
 
 export async function HomePage({
-  clientBelt,
+  copy,
+  slots,
 }: {
-  clientBelt?: React.ReactNode;
+  copy: HomeCopy;
+  slots: HomeSlots;
 }) {
   const data = await getHomeData();
   const team = PHOTOS.team;
+  const { hero } = copy;
 
-  const stats: Array<[string, string]> = [
-    [data.productCount.toLocaleString("en-IN"), "Products"],
-    [data.skuCount.toLocaleString("en-IN"), "Licensable SKUs"],
-    [data.brandCount.toLocaleString("en-IN"), "Technology brands"],
-    ["One", "Consolidated purchase order"],
+  const values = [
+    data.productCount.toLocaleString("en-IN"),
+    data.skuCount.toLocaleString("en-IN"),
+    data.brandCount.toLocaleString("en-IN"),
+    "One",
   ];
+  const stats: Array<[string, string]> = values.map((value, index) => [
+    value,
+    hero.statLabels[index] ?? "",
+  ]);
 
   return (
     <>
@@ -217,7 +214,7 @@ export async function HomePage({
                   aria-hidden="true"
                   className="h-1.5 w-1.5 rounded-full bg-career-orange"
                 />
-                Trusted IT Hardware &amp; Software Solutions Partner
+                {hero.headline}
               </span>
               <span className="mt-5 block text-[2.5rem] font-extrabold leading-[1.05] tracking-tight text-graphite-900 sm:text-[3.25rem]">
                 Technology. Simplified.
@@ -226,25 +223,27 @@ export async function HomePage({
                 </span>
               </span>
             </h1>
-            <p className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-ink-600">
-              Enterprise software, cloud and IT hardware, brought together
-              through one trusted procurement partner — with the licensing
-              advice, deployment support and renewal management that make them
-              worth owning.
+            <p className="mt-4 text-label font-semibold uppercase tracking-[0.12em] text-[#b8480a]">
+              {hero.eyebrow}
+            </p>
+            <p className="mt-4 max-w-xl text-[1.0625rem] leading-relaxed text-ink-600">
+              {hero.subheadline}
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
-                href="/enquiry"
+                href={hero.primaryCta.href}
                 className="inline-flex min-h-11 items-center gap-2 rounded-[--radius-md] bg-[#c2530a] px-5 font-semibold text-white hover:bg-[#a64608] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
               >
-                Get Enterprise Quote {arrow}
+                {hero.primaryCta.label} {arrow}
               </Link>
-              <Link
-                href="/products"
-                className="inline-flex min-h-11 items-center rounded-[--radius-md] border border-graphite-900 bg-white px-5 font-semibold text-graphite-900 hover:bg-career-mist focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
-              >
-                Browse Software
-              </Link>
+              {hero.secondaryCta ? (
+                <Link
+                  href={hero.secondaryCta.href}
+                  className="inline-flex min-h-11 items-center rounded-[--radius-md] border border-graphite-900 bg-white px-5 font-semibold text-graphite-900 hover:bg-career-mist focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
+                >
+                  {hero.secondaryCta.label}
+                </Link>
+              ) : null}
             </div>
           </div>
           <figure className="relative aspect-[3/2] overflow-hidden rounded-[--radius-lg] border border-line lg:aspect-auto lg:h-[24rem]">
@@ -268,7 +267,7 @@ export async function HomePage({
         <dl className="container-page grid grid-cols-2 gap-y-5 py-6 lg:grid-cols-4">
           {stats.map(([value, label], index) => (
             <div
-              key={label}
+              key={label + index}
               className={cn(
                 "px-4 lg:px-8",
                 index > 0 && "lg:border-l lg:border-line",
@@ -283,42 +282,7 @@ export async function HomePage({
         </dl>
       </section>
 
-      {/* Brands */}
-      {data.brands.length > 0 ? (
-        <section
-          aria-label="Technology brands we supply"
-          className="border-b border-line bg-white"
-        >
-          <div className="container-page flex flex-wrap items-center gap-x-8 gap-y-4 py-5">
-            <p className="w-24 text-[0.9rem] font-semibold leading-tight text-graphite-900">
-              Our technology brands
-            </p>
-            <ul className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-x-8 gap-y-4">
-              {data.brands.map((brand) => (
-                <li key={brand.slug}>
-                  <Link href={`/brands/${brand.slug}`} className="block">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={brand.logoUrl ?? ""}
-                      alt={brand.name}
-                      loading="lazy"
-                      className="h-7 w-auto max-w-[7.5rem] object-contain"
-                    />
-                  </Link>
-                </li>
-              ))}
-              <li>
-                <Link
-                  href="/brands"
-                  className="text-meta font-medium text-ink-600 hover:text-graphite-900"
-                >
-                  &amp; more
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </section>
-      ) : null}
+      {slots.afterBrands}
 
       <Band
         id="home-solutions"
@@ -340,82 +304,14 @@ export async function HomePage({
           })}
         </ul>
       </Band>
-
-      <Band
-        id="home-catalogue"
-        title="Software and hardware, sourced together."
-        intro="A comprehensive catalogue of enterprise software and IT hardware from leading global brands."
-        className="bg-career-mist"
-      >
-        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-          {CATEGORIES.map(([slug, label, detail]) => (
-            <li key={slug}>
-              <Link
-                href={`/products?category=${slug}`}
-                className="flex h-full min-h-32 flex-col justify-between rounded-[--radius-lg] border border-line bg-white p-4 hover:border-career-orange focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
-              >
-                <span className="font-semibold text-graphite-900">{label}</span>
-                <span className="mt-2 flex items-end justify-between gap-2 text-label text-ink-600">
-                  {detail}
-                  <span className="text-career-orange">{arrow}</span>
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </Band>
-
-      <Band
-        id="home-procurement"
-        title="One procurement partner for your technology stack"
-      >
-        <ul className="grid gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
-          {PROCUREMENT.map(([title, body]) => (
-            <li key={title} className="border-l-2 border-career-orange pl-4">
-              <h3 className="font-semibold text-graphite-900">{title}</h3>
-              <p className="mt-1 text-meta leading-relaxed text-ink-600">
-                {body}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </Band>
-
-      {data.services.length > 0 ? (
-        <Band
-          id="home-services"
-          title="Our Services"
-          intro="End-to-end services to plan, deploy, manage and optimise your technology investments."
-          className="bg-career-mist"
-        >
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {data.services.map((service) => (
-              <li key={service.slug}>
-                <Link
-                  href={`/services/${service.slug}`}
-                  className="flex h-full min-h-20 items-center justify-between gap-3 rounded-[--radius-lg] border border-line bg-white p-4 font-semibold text-graphite-900 hover:border-career-orange focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
-                >
-                  {service.name}
-                  <span className="text-career-orange">{arrow}</span>
-                </Link>
-              </li>
-            ))}
-            <li>
-              <Link
-                href="/services"
-                className="flex h-full min-h-20 items-center justify-between gap-3 rounded-[--radius-lg] border border-dashed border-career-orange p-4 font-semibold text-[#b8480a] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
-              >
-                All services {arrow}
-              </Link>
-            </li>
-          </ul>
-        </Band>
-      ) : null}
+      {slots.afterSolutions}
+      {slots.afterCatalogue}
+      {slots.afterProcurement}
 
       <Band
         id="home-industries"
-        title="Industries We Serve"
-        intro="Technology solutions for diverse business needs and industry requirements."
+        title={copy.industries.heading}
+        intro={copy.industries.description}
       >
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {INDUSTRIES.map(([slug, label]) => {
@@ -441,6 +337,7 @@ export async function HomePage({
           </li>
         </ul>
       </Band>
+      {slots.afterIndustries}
 
       <section aria-labelledby="home-gem" className="py-8 lg:py-10">
         <div className="container-page">
@@ -455,18 +352,39 @@ export async function HomePage({
               />
             </div>
             <div className="p-6 lg:p-8">
+              {copy.gem.eyebrow ? (
+                <p className="mb-2 text-label font-semibold uppercase tracking-[0.12em] text-[#b8480a]">
+                  {copy.gem.eyebrow}
+                </p>
+              ) : null}
               <h2
                 id="home-gem"
                 className="text-[1.5rem] font-bold text-graphite-900"
               >
-                Registered <span className="text-career-orange">GeM</span>{" "}
-                seller
+                {copy.gem.heading}
               </h2>
-              <p className="mt-3 text-body leading-relaxed text-ink-600">
-                Procure enterprise software licensing, commercial hardware and
-                IT solutions through TechZoid on the Government e-Marketplace
-                (GeM), with complete support for CRAC and GST invoicing.
-              </p>
+              {copy.gem.description ? (
+                <p className="mt-3 text-body leading-relaxed text-ink-600">
+                  {copy.gem.description}
+                </p>
+              ) : null}
+              {copy.gem.bullets.length > 0 ? (
+                <>
+                  {copy.gem.bulletsIntro ? (
+                    <p className="mt-4 text-meta font-semibold text-graphite-900">
+                      {copy.gem.bulletsIntro}
+                    </p>
+                  ) : null}
+                  <ul className="mt-2 grid gap-1.5 text-meta text-ink-600 sm:grid-cols-2">
+                    {copy.gem.bullets.map((item) => (
+                      <li key={item} className="flex gap-2">
+                        <Tick />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
               <Link
                 href="/gem-software-supplier"
                 className="mt-4 inline-flex min-h-11 items-center gap-2 font-semibold text-career-navy hover:underline"
@@ -475,7 +393,7 @@ export async function HomePage({
               </Link>
             </div>
             <ul className="flex flex-col justify-center gap-2.5 border-t border-line p-6 lg:border-l lg:border-t-0">
-              {GEM.map((item) => (
+              {copy.gem.tiles.map((item) => (
                 <li
                   key={item}
                   className="flex gap-2 text-meta text-graphite-900"
@@ -488,12 +406,13 @@ export async function HomePage({
           </div>
         </div>
       </section>
+      {slots.afterGem}
 
       {data.certifications.length > 0 ? (
         <Band
           id="home-certs"
-          title="Certifications & Registrations"
-          intro="A commitment to quality, security and trusted business practices."
+          title={copy.certifications.heading}
+          intro={copy.certifications.description}
         >
           <ul className="grid grid-cols-2 gap-y-5 lg:grid-cols-4">
             {data.certifications.map((cert, index) => (
@@ -513,63 +432,8 @@ export async function HomePage({
           </ul>
         </Band>
       ) : null}
-
-      {clientBelt}
-
-      {data.posts.length > 0 ? (
-        <Band
-          id="home-insights"
-          title="Insights & Resources"
-          intro="Stay informed with the latest updates, licensing insights and technology trends."
-          className="bg-career-mist"
-        >
-          <ul className="grid gap-3 lg:grid-cols-3">
-            {data.posts.map((post) => (
-              <li key={post.slug}>
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="flex h-full flex-col rounded-[--radius-lg] border border-line bg-white p-4 hover:border-career-orange focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-career-navy"
-                >
-                  <span className="text-label font-semibold uppercase tracking-wide text-[#b8480a]">
-                    {post.category}
-                  </span>
-                  <span className="mt-2 font-semibold leading-snug text-graphite-900">
-                    {post.title}
-                  </span>
-                  <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-meta font-medium text-career-navy">
-                    Read more {arrow}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Band>
-      ) : null}
-
-      <section aria-labelledby="home-cta" className="bg-career-navy text-white">
-        <div className="container-page flex flex-col gap-6 py-10 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h2
-              id="home-cta"
-              className="text-[1.75rem] font-bold leading-tight text-white"
-            >
-              Ready to consolidate your technology{" "}
-              <span className="text-[#ff9a52]">procurement?</span>
-            </h2>
-            <p className="mt-2 max-w-xl text-white/80">
-              Send us the requirement — a product list, a seat count, or just
-              the problem you are solving. We will come back with a consolidated
-              quotation.
-            </p>
-          </div>
-          <Link
-            href="/enquiry"
-            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-[--radius-md] bg-[#c2530a] px-6 font-semibold text-white hover:bg-[#a64608] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-          >
-            Get Enterprise Quote {arrow}
-          </Link>
-        </div>
-      </section>
+      {slots.afterCertifications}
+      {slots.beforeClose}
     </>
   );
 }
