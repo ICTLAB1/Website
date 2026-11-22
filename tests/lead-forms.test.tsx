@@ -13,8 +13,8 @@ import { describeRequirement } from "@/lib/requirement-service";
 const SLUGS = ["microsoft-365", "adobe-licensing", "autodesk-licensing", "enterprise-it-hardware", "corporate-it-solutions"];
 
 describe("which pages open with the form", () => {
-  it("is exactly the five that were asked for", () => {
-    expect(Object.keys(LEAD_PAGES).sort()).toEqual([...SLUGS].sort());
+  it("is the five that were asked for, and the managed IT services page", () => {
+    expect(Object.keys(LEAD_PAGES).sort()).toEqual([...SLUGS, "managed-it-services"].sort());
   });
 
   it("knows nothing about any other page", () => {
