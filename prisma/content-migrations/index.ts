@@ -12,6 +12,7 @@ import { homepageAndCertifications } from "./2026-08-homepage-and-certifications
 import { suppliedBrandArtwork } from "./2026-08-supplied-brand-artwork";
 import { brandSegmentsMigration } from "./2026-08-brand-segments";
 import { homepageTitle } from "./2026-08-homepage-title";
+import { microsoftChannelPricelist } from "./2026-11-microsoft-channel-pricelist";
 import { microsoft365Logo } from "./2026-11-microsoft-365-logo";
 import { supportEmail } from "./2026-11-support-email";
 import { hpBusinessPartner } from "./2026-11-hp-business-partner";
@@ -212,6 +213,8 @@ export const contentMigrations: ContentMigration[] = [
   supportEmail,
   /* After the generic Microsoft mark has been set, which it replaces on these products. */
   microsoft365Logo,
+  /* After the earlier Microsoft price migrations, whose results it replaces. */
+  microsoftChannelPricelist,
 ];
 
 export type { ContentMigration };
