@@ -1,3 +1,4 @@
+import { isWideLogo } from "@/lib/product-logos";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -506,7 +507,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             announced twice.
           */}
           <div className="mt-3 flex items-start gap-3">
-            {!hardware && product.imageUrl ? (
+            {!hardware && product.imageUrl && !isWideLogo(product.imageUrl) ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={product.imageUrl}
@@ -580,13 +581,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
               aria-label={`${product.brand.name} ${product.name}`}
             >
               <div className="text-center">
-                <span
-                  aria-hidden="true"
-                  className="mx-auto grid h-16 w-16 place-items-center rounded-(--radius-md) text-2xl font-bold text-white"
-                  style={{ backgroundColor: product.brand.accentColor }}
-                >
-                  {product.brand.name.charAt(0)}
-                </span>
+                {isWideLogo(product.imageUrl) ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={product.imageUrl ?? ""}
+                    alt=""
+                    className="mx-auto h-32 w-auto max-w-[18rem] object-contain"
+                    decoding="async"
+                  />
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    className="mx-auto grid h-16 w-16 place-items-center rounded-(--radius-md) text-2xl font-bold text-white"
+                    style={{ backgroundColor: product.brand.accentColor }}
+                  >
+                    {product.brand.name.charAt(0)}
+                  </span>
+                )}
                 <p className="mt-4 text-[15px] font-semibold text-graphite-900">
                   {product.name}
                 </p>

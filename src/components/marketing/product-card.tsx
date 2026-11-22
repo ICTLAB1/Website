@@ -1,9 +1,14 @@
+import { isWideLogo } from "@/lib/product-logos";
 import Link from "next/link";
 import { RevealGroup } from "@/components/motion/reveal";
 import { Badge } from "@/components/ui/badge";
 import { AddToEnquiryButton } from "@/components/enquiry/add-to-enquiry-button";
 import { discountPercent, effectivePriceMinor, formatTerm } from "@/lib/money";
-import { showPrice, statesTaxSeparately, type PriceDisplay } from "@/lib/price-display";
+import {
+  showPrice,
+  statesTaxSeparately,
+  type PriceDisplay,
+} from "@/lib/price-display";
 import { getDisplayCurrency } from "@/lib/display-currency";
 import { humanise } from "@/lib/utils";
 import { hardwareClassLabel, isHardware } from "@/lib/catalogue/hardware";
@@ -46,8 +51,12 @@ export function ProductCard({
   const variant = product.variants[0];
   /* The product's number, or this build's, or none. Never the SKU — see below. */
   const partNumber = product.partNumber ?? variant?.partNumber ?? null;
-  const price = variant ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) : 0;
-  const saving = variant ? discountPercent(variant.listPriceMinor, variant.salePriceMinor) : null;
+  const price = variant
+    ? effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor)
+    : 0;
+  const saving = variant
+    ? discountPercent(variant.listPriceMinor, variant.salePriceMinor)
+    : null;
   const hardware = isHardware(product);
 
   /*
@@ -78,6 +87,18 @@ export function ProductCard({
    */
   return (
     <article className="card-hover group flex h-full flex-col rounded-(--radius-lg) border border-line bg-white">
+      {!hardware && isWideLogo(product.imageUrl) ? (
+        <div className="flex h-20 items-center justify-center border-b border-line px-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={product.imageUrl ?? ""}
+            alt=""
+            className="h-14 w-auto max-w-full object-contain"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      ) : null}
       {hardware ? (
         <div className="border-b border-line p-4 pb-0">
           <ProductPhoto
@@ -105,7 +126,9 @@ export function ProductCard({
             enquiry-only row never shows a saving even though the underlying
             list and sale prices exist on every row regardless.
           */}
-          {!quoteOnly && saving ? <Badge tone="success">{saving}% off</Badge> : null}
+          {!quoteOnly && saving ? (
+            <Badge tone="success">{saving}% off</Badge>
+          ) : null}
         </div>
 
         <h3 className="mt-2 flex items-start gap-2 text-body font-semibold leading-snug text-graphite-900">
@@ -128,7 +151,7 @@ export function ProductCard({
             screen reader announcing "Photoshop, Adobe Photoshop for Teams"
             reads the mark twice and tells nobody anything.
           */}
-          {!hardware && product.imageUrl ? (
+          {!hardware && product.imageUrl && !isWideLogo(product.imageUrl) ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={product.imageUrl}
@@ -138,7 +161,10 @@ export function ProductCard({
               decoding="async"
             />
           ) : null}
-          <Link href={`/products/${product.slug}`} className="hover:text-accent-700">
+          <Link
+            href={`/products/${product.slug}`}
+            className="hover:text-accent-700"
+          >
             {/* Stretching the link would swallow the buttons below, so the
                 anchor stays on the title only. */}
             {product.name}
@@ -151,7 +177,13 @@ export function ProductCard({
           for an unreviewed product rather than an empty row of stars, which
           would read as a bad product rather than an unrated one.
         */}
-        {rating ? <RatingSummary average={rating.average} count={rating.count} className="mt-2" /> : null}
+        {rating ? (
+          <RatingSummary
+            average={rating.average}
+            count={rating.count}
+            className="mt-2"
+          />
+        ) : null}
 
         <p className="clamp-2 mt-2 text-meta leading-relaxed text-ink-600">
           {product.shortDescription}
@@ -167,7 +199,9 @@ export function ProductCard({
             ) : null}
             <div className="flex gap-2">
               <dt className="w-20 shrink-0 text-ink-500">Type</dt>
-              <dd className="text-ink-600">{hardwareClassLabel(product.formFactor!)}</dd>
+              <dd className="text-ink-600">
+                {hardwareClassLabel(product.formFactor!)}
+              </dd>
             </div>
             {/*
               The manufacturer's number, or no row at all — never the SKU.
@@ -194,7 +228,9 @@ export function ProductCard({
                   however much overflow is hidden. Two pixels of sideways scroll
                   on a phone, from one card in a grid of six.
                 */}
-                <dd className="min-w-0 truncate font-mono text-ink-600">{partNumber}</dd>
+                <dd className="min-w-0 truncate font-mono text-ink-600">
+                  {partNumber}
+                </dd>
               </div>
             ) : null}
           </dl>
@@ -202,7 +238,9 @@ export function ProductCard({
           <dl className="mt-4 space-y-1 text-label">
             <div className="flex gap-2">
               <dt className="w-20 shrink-0 text-ink-500">SKU</dt>
-              <dd className="min-w-0 truncate font-mono text-ink-600">{variant.sku}</dd>
+              <dd className="min-w-0 truncate font-mono text-ink-600">
+                {variant.sku}
+              </dd>
             </div>
             <div className="flex gap-2">
               <dt className="w-20 shrink-0 text-ink-500">Licence</dt>
@@ -232,7 +270,11 @@ export function ProductCard({
               </span>
               {saving ? (
                 <span className="text-meta text-ink-500 line-through">
-                  {showPrice(variant!.listPriceMinor, variant!.gstRatePercent, display)}
+                  {showPrice(
+                    variant!.listPriceMinor,
+                    variant!.gstRatePercent,
+                    display,
+                  )}
                 </span>
               ) : null}
               {/*
@@ -251,8 +293,11 @@ export function ProductCard({
                   claim about tax in either direction.
                 */}
                 Tentative price
-                {statesTaxSeparately(display) ? `, excl. GST (${variant!.gstRatePercent}%)` : ""}{" "}
-                &middot; {variant!.seats > 1 ? `${variant!.seats} seats` : "per seat"}
+                {statesTaxSeparately(display)
+                  ? `, excl. GST (${variant!.gstRatePercent}%)`
+                  : ""}{" "}
+                &middot;{" "}
+                {variant!.seats > 1 ? `${variant!.seats} seats` : "per seat"}
                 {/*
                   The short form of the shared note. A card in a grid of
                   twenty-four has no room for the full sentence, and the full
@@ -332,7 +377,11 @@ export function ProductCard({
  * makes that unrepresentable, and costs nothing: `getDisplayCurrency` is
  * request-cached, so a page with three grids on it still reads the cookie once.
  */
-export async function ProductGrid({ products }: { products: ProductListItem[] }) {
+export async function ProductGrid({
+  products,
+}: {
+  products: ProductListItem[];
+}) {
   const [display, ratings] = await Promise.all([
     getDisplayCurrency(),
     // One grouped query for the whole grid rather than one per card.
@@ -351,7 +400,11 @@ export async function ProductGrid({ products }: { products: ProductListItem[] })
      * cards, which carry a photograph, did not, and the page scrolled two
      * pixels sideways on a phone.
      */
-    <RevealGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" step={50} max={200}>
+    <RevealGroup
+      className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      step={50}
+      max={200}
+    >
       {products.map((product) => (
         <ProductCard
           key={product.id}
