@@ -554,17 +554,19 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
           {hardware ? (
             <div className="mt-8 rounded-(--radius-lg) border border-line p-6">
-              {safeBrandLogo(product.brand.logoUrl) ? (
-                <div className="mb-4 flex h-14 items-center justify-center rounded-(--radius-md) border border-line bg-white">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+              <div className="mb-4 flex h-16 items-center justify-center rounded-(--radius-md) border border-line bg-white">
+                {safeBrandLogo(product.brand.logoUrl) ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={safeBrandLogo(product.brand.logoUrl) ?? ""}
                     alt={product.brand.name}
-                    className="h-9 w-auto max-w-[60%] object-contain"
+                    className="h-11 w-auto max-w-[60%] object-contain"
                     decoding="async"
                   />
-                </div>
-              ) : null}
+                ) : (
+                  <span className="text-xl font-bold tracking-wide text-graphite-900">{product.brand.name}</span>
+                )}
+              </div>
               <ProductPhoto
                 src={product.imageUrl}
                 formFactor={product.formFactor}
