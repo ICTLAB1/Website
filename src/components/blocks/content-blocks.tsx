@@ -4,6 +4,8 @@ import { Markdown } from "@/components/markdown";
 import { Reveal } from "@/components/motion/reveal";
 import { CountUp } from "@/components/motion/count-up";
 import { FaqList } from "@/components/ui/accordion";
+import { PagePhoto } from "@/components/marketing/page-photo";
+import type { SitePhoto } from "@/lib/page-photos";
 import { ButtonLink } from "@/components/ui/button";
 import { SearchBox } from "@/components/layout/search-box";
 import { AccreditationMark } from "@/components/marketing/accreditation-mark";
@@ -104,9 +106,16 @@ function HeroPattern() {
 export function HeroBlock({
   data,
   counts,
+  image,
 }: {
   data: BlockData<"HERO">;
   counts?: ResolvedBlockData["counts"];
+  /**
+   * A picture for the side panel, chosen by the page route from `lib/page-photos`.
+   * A prop rather than a field of `data`: it is not content an administrator
+   * edits, so it must not be stored with the block or offered in its form.
+   */
+  image?: SitePhoto;
 }) {
   const dark = data.tone === "dark";
   return (
@@ -131,8 +140,19 @@ export function HeroBlock({
         `aria-hidden` and `pointer-events-none`: it is texture, not content.
       */}
       {dark ? <HeroPattern /> : null}
+      {dark ? (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-0 hidden h-20 w-72 bg-career-orange [clip-path:polygon(0_100%,100%_100%,0_30%)] lg:block"
+        />
+      ) : null}
 
       <div className="container-page relative py-14 lg:py-20">
+        <div
+          className={cn(
+            image && "lg:grid lg:grid-cols-[minmax(0,1fr)_34rem] lg:items-stretch lg:gap-12",
+          )}
+        >
         <div className="max-w-3xl">
           {data.eyebrow ? (
             <p
@@ -218,6 +238,10 @@ export function HeroBlock({
               ) : null}
             </div>
           ) : null}
+        </div>
+        {image ? (
+          <PagePhoto photo={image} onDark={dark} className="mt-8 lg:mt-0" />
+        ) : null}
         </div>
 
         {data.stats.length > 0 ? (
@@ -612,9 +636,27 @@ export async function CtaBannerBlock({ data }: { data: BlockData<"CTA_BANNER"> }
     ? (config.email.enterprise ?? config.email.sales ?? null)
     : null;
   return (
-    <section className={dark ? "bg-graphite-900" : data.tone === "accent" ? "bg-accent-50" : "border-y border-line bg-surface-muted"}>
-      <div className="container-page py-14 lg:py-18">
-        <Reveal className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
+    <section className={dark ? "" : data.tone === "accent" ? "bg-accent-50" : "border-y border-line bg-surface-muted"}>
+      <div className={cn("container-page", dark ? "py-10 lg:py-14" : "py-14 lg:py-18")}>
+        <Reveal
+          className={cn(
+            "flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between",
+            dark &&
+              "relative isolate overflow-hidden rounded-[--radius-xl] bg-career-navy-dark px-6 py-12 sm:px-12 sm:py-14",
+          )}
+        >
+          {dark ? (
+            <>
+              <span
+                aria-hidden="true"
+                className="absolute -right-10 -top-10 -z-10 h-56 w-56 rotate-12 bg-career-blue/30 [clip-path:polygon(0_0,100%_0,100%_100%)]"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute bottom-0 left-0 -z-10 h-16 w-64 bg-career-orange [clip-path:polygon(0_100%,100%_100%,0_25%)]"
+              />
+            </>
+          ) : null}
           <div className="max-w-2xl">
             <h2 className={cn("text-section", dark ? "text-white" : "text-graphite-900")}>
               {data.heading}

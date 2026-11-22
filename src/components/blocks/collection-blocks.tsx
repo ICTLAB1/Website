@@ -377,7 +377,7 @@ export function LogoMarqueeBlock({
             // the relationship, not an advertisement for the customer, and an
             // off-site link out of a marquee is a strange thing to offer.
             href: null,
-            accentColor: "#201c18",
+            accentColor: "#0b2147",
           }))
           .filter((item) => item.logo !== null)
       : (rows as BeltBrandRow[]).map((brand) => ({

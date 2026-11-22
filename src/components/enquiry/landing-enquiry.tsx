@@ -34,8 +34,8 @@ export async function LandingEnquiry({ slug }: { slug: string }) {
               {page.heading}
             </h2>
             <p className="mt-3 text-[15px] leading-relaxed text-ink-600">
-              Tell us who you are and what you need. We reply with an itemised quotation, and a
-              GST invoice follows the order. Nothing is ordered or charged by sending this.
+              {page.intro ??
+                "Tell us who you are and what you need. We reply with an itemised quotation, and a GST invoice follows the order. Nothing is ordered or charged by sending this."}
             </p>
             {phone ? (
               <p className="mt-5 text-[15px] leading-relaxed text-ink-600">
@@ -50,7 +50,13 @@ export async function LandingEnquiry({ slug }: { slug: string }) {
             ) : null}
           </div>
           <div className="rounded-[--radius-md] border border-line bg-white p-5 sm:p-6">
-            <LandingEnquiryForm products={page.products} source={page.source} />
+            <LandingEnquiryForm
+              products={page.products}
+              source={page.source}
+              quantityLabel={page.quantityLabel}
+              quantityHint={page.quantityHint}
+              submitLabel={page.submitLabel}
+            />
           </div>
         </div>
       </div>

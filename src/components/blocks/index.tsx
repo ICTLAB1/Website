@@ -29,6 +29,7 @@ import { IndustryGridBlock } from "@/components/blocks/industry-grid";
 import type { IndustryCardRow } from "@/components/marketing/industry-card";
 import { Testimonials } from "@/components/reviews/testimonials";
 import type { ParsedBlock } from "@/lib/blocks/schemas";
+import type { SitePhoto } from "@/lib/page-photos";
 import type { ResolvedBlockData } from "@/lib/blocks/resolve";
 import type { ProductListItem } from "@/lib/queries/catalogue";
 
@@ -76,6 +77,7 @@ export function BlockRenderer({
   blocks,
   resolved,
   afterHero,
+  heroImage,
 }: {
   blocks: ParsedBlock[];
   resolved: ResolvedBlockData;
@@ -86,6 +88,8 @@ export function BlockRenderer({
    * are not editable content — they are read from the page record.
    */
   afterHero?: React.ReactNode;
+  /** A picture for the first hero's side panel, chosen by the page route. */
+  heroImage?: SitePhoto;
 }) {
   const firstHero = blocks.findIndex((block) => block.type === "HERO");
   // Worked out in one pass before rendering rather than while mapping: the
@@ -131,7 +135,11 @@ export function BlockRenderer({
           case "HERO":
             return (
               <React.Fragment key={block.id}>
-                <HeroBlock data={block.data} counts={resolved.counts} />
+                <HeroBlock
+                  data={block.data}
+                  counts={resolved.counts}
+                  image={index === firstHero ? heroImage : undefined}
+                />
                 {slot}
               </React.Fragment>
             );

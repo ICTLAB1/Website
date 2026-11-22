@@ -16,6 +16,13 @@ export type LeadPage = {
   heading: string;
   /** What the visitor is choosing between in "Product interested in". */
   products: readonly string[];
+  /** Replaces the sentence under the heading, for a page that quotes a service rather than products. */
+  intro?: string;
+  /** Replaces "Estimated quantity or number of licences" where the count is users or devices, not licences. */
+  quantityLabel?: string;
+  quantityHint?: string;
+  /** Replaces "Request a quotation" on the submit button. */
+  submitLabel?: string;
 };
 
 export const LEAD_PAGES: Record<string, LeadPage> = {
@@ -97,6 +104,26 @@ export const LEAD_PAGES: Record<string, LeadPage> = {
       NOT_SURE,
     ],
   },
+};
+
+LEAD_PAGES["managed-it-services"] = {
+  source: "landing_managed_it_services",
+  heading: "Get a managed IT services proposal",
+  intro:
+    "Tell us who you are and roughly how big your estate is. We reply with a written proposal that states the scope, the response commitments and the price. Nothing is agreed or charged by sending this.",
+  quantityLabel: "Number of users or devices to support",
+  quantityHint: "A rough number is fine.",
+  submitLabel: "Request a proposal",
+  products: [
+    "IT helpdesk and managed support",
+    "Endpoint management",
+    "Backup and disaster recovery",
+    "Cybersecurity",
+    "Cloud operations (Azure, AWS or Google Cloud)",
+    "Microsoft 365 support",
+    "Software asset and licence management",
+    NOT_SURE,
+  ],
 };
 
 export function leadPageFor(slug: string): LeadPage | null {

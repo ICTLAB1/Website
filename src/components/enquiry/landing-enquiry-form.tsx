@@ -36,11 +36,11 @@ import { useRequirementConversion } from "@/components/enquiry/use-requirement-c
  * this is the strict form.
  */
 
-function SubmitButton() {
+function SubmitButton({ label }: { label: string }) {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" size="lg" disabled={pending} className="w-full sm:w-auto">
-      {pending ? "Sending…" : "Request a quotation"}
+      {pending ? "Sending…" : label}
     </Button>
   );
 }
@@ -48,9 +48,15 @@ function SubmitButton() {
 export function LandingEnquiryForm({
   products,
   source,
+  quantityLabel = "Estimated quantity or number of licences",
+  quantityHint = "A rough number is fine.",
+  submitLabel = "Request a quotation",
 }: {
   products: readonly string[];
   source: string;
+  quantityLabel?: string;
+  quantityHint?: string;
+  submitLabel?: string;
 }) {
   const [state, formAction] = useActionState<RequirementState, FormData>(submitRequirement, {
     status: "idle",
@@ -122,10 +128,10 @@ export function LandingEnquiryForm({
             </Select>
           </Field>
           <Field
-            label="Estimated quantity or number of licences"
+            label={quantityLabel}
             name="lines.0.quantity"
             required
-            hint="A rough number is fine."
+            hint={quantityHint}
           >
             <Input
               {...bind("lines.0.quantity")}
@@ -141,7 +147,7 @@ export function LandingEnquiryForm({
       </FormStateProvider>
 
       <div className="border-t border-line pt-5">
-        <SubmitButton />
+        <SubmitButton label={submitLabel} />
         <p className="mt-3 text-label text-ink-500">
           Sending this places no order and commits you to nothing.
         </p>

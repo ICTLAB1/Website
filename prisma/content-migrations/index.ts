@@ -84,6 +84,8 @@ import { hubTitlesSayReseller } from "./2026-11-hub-titles-say-reseller";
 import { careersMenuItem } from "./2026-11-careers-menu-item";
 import { leadLandingPages } from "./2026-11-lead-landing-pages";
 import { linkTheLeadPages } from "./2026-11-link-the-lead-pages";
+import { managedItServicesPage } from "./2026-11-managed-it-services-page";
+import { linkManagedItServices } from "./2026-11-link-managed-it-services";
 
 /**
  * Every content migration, in the order they are applied.
@@ -196,6 +198,9 @@ export const contentMigrations: ContentMigration[] = [
   leadLandingPages,
   /* After the pages exist, so a link is never added to a 404. */
   linkTheLeadPages,
+  /* One more page, then the link to it. */
+  managedItServicesPage,
+  linkManagedItServices,
 ];
 
 export type { ContentMigration };

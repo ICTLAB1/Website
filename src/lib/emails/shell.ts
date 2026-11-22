@@ -22,8 +22,8 @@ import type { SiteConfig } from "@/lib/site-config";
 const INK = "#3f3a33";
 const MUTED = "#6b6259";
 const RULE = "#e3ded6";
-const DARK = "#201c18";
-const ACCENT = "#76550a";
+const DARK = "#0b2147";
+const ACCENT = "#a64608";
 const TINT = "#faf9f7";
 
 export type EmailAction = { label: string; url: string };

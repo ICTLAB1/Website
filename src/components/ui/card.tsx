@@ -13,7 +13,7 @@ export function Card({
   return (
     <Component
       className={cn(
-        "rounded-[--radius-lg] border border-line bg-white shadow-[--shadow-card]",
+        "rounded-[--radius-lg] border border-line bg-white shadow-[0_8px_24px_-18px_rgba(11,42,91,0.35)]",
         className,
       )}
     >
