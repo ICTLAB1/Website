@@ -1,0 +1,83 @@
+{
+ "slug": "lenovo",
+ "displayName": "Lenovo",
+ "description": "Lenovo ThinkPad, ThinkCentre and ThinkStation for Indian offices from a Lenovo reseller. Quoted to configuration, GST invoice on every order. Request a quote.",
+ "intro": "Lenovo is one of the largest PC makers in the world, and in business IT it is best known for the ThinkPad notebook, the ThinkCentre desktop and the ThinkStation workstation. Those three names are what most Indian IT heads mean when they say \"Lenovo\" in a purchase discussion: machines that are specified for a fleet, imaged once and expected to run for several years without much attention.\n\nThe buyers we see asking for Lenovo in India are fairly consistent. Banks, insurers and professional-services firms standardise on ThinkPad for staff who travel. Government departments and public-sector units buy ThinkCentre desktops by the hundred for offices and labs. Engineering colleges and design studios ask for ThinkStation when a workstation has to run CAD, simulation or rendering. Smaller companies usually start with one or two ThinkPad models and grow the fleet from there.\n\nTechZoid is a Lenovo reseller, and we supply it the way we supply the rest of our hardware: by quotation. We do not hold Lenovo machines in the catalogue on this website, so there is no stock to promise and no price to show. You send us the quantity and the configuration you want, we obtain a written quotation, and the price on that document is the price. Every order carries a GST invoice, which GST-registered buyers can usually claim as input credit.\n\nBecause we also supply Microsoft licensing, the operating system, Microsoft 365 and any backup software can sit on the same quotation as the hardware. That is useful when a purchase order has to be raised once, and when the person receiving the machines wants one supplier to ask about activation. If you are comparing brands for the same tender, our [business laptops](/business-laptops) page and the [HP](/brands/hp) and [Acer](/brands/acer) hubs cover the alternatives.",
+ "lines": [
+  {
+   "name": "ThinkPad",
+   "use": "The business notebook family, sold across entry, mainstream and premium tiers. It is the usual choice for travelling staff, field teams and managers who need a keyboard they will type on all day."
+  },
+  {
+   "name": "ThinkCentre",
+   "use": "Business desktops in tower, small form factor and compact all-in-one designs. They suit offices, branches, labs and government counters where the machine sits on a desk for years."
+  },
+  {
+   "name": "ThinkStation",
+   "use": "Workstations for CAD, 3D, simulation and data work, with workstation-class processors and graphics options. Quote these when the application publisher's certified hardware list matters, for example for engineering applications."
+  },
+  {
+   "name": "ThinkBook",
+   "use": "A lighter business notebook range aimed at smaller and growing organisations that want a professional machine without the full ThinkPad specification."
+  },
+  {
+   "name": "ThinkVision monitors",
+   "use": "Business displays that can be added to a desktop order so screens, stands and cables arrive on one invoice."
+  }
+ ],
+ "choose": "Start from the person, not the model name. A manager who travels weekly needs weight, battery and a good screen, which points to a ThinkPad. A clerk at a fixed desk is better served by a ThinkCentre, which costs less and is simpler to replace or repair. Engineers and designers should be matched to the application first, then to a ThinkStation that meets its processor and graphics guidance.\n\nWhatever the range, specify the same few things in the request so that quotations are comparable:\n\n- **Processor class.** Say whether you need an entry, mid-range or high-performance processor rather than naming a chip that may change by the time the order is placed.\n- **Memory and storage.** Office work is comfortable with 16 GB of memory today; note any need for more, and ask for solid-state storage at a size that leaves room for the profile data you keep locally.\n- **Warranty.** State the warranty period you want and whether onsite service is required at every location, not only the head office.\n- **Operating system.** Decide between Windows 11 Pro pre-installed and a FreeDOS machine that your own team images. FreeDOS is cheaper on the invoice but means you supply the licence, so check that you hold enough Windows licences first.\n\nFor mixed fleets, describe each role as its own line with its own quantity. It keeps the quotation readable and makes a staged rollout easier to plan.",
+ "buying": "Lenovo hardware is not listed with prices on this site. It is quoted to configuration and quantity, and the written quotation is what fixes the price. That also means website figures never need to be reconciled with an invoice.\n\n### The configuration-to-quote process\n\n1. Send us the roles, the quantities and the specification points above through the [enquiry form](/enquiry). A short spreadsheet is fine.\n2. We confirm any gaps, such as the warranty term or whether you want a bag, dock or monitor included, and come back with a written quotation.\n3. You review it, ask for changes if needed, and raise a purchase order against the quotation.\n4. We invoice with GST and arrange delivery.\n\n### Warranty and service\n\nWarranty terms and onsite service coverage depend on the model and on any service upgrade added at the time of purchase. Tell us the cities where the machines will sit, because onsite coverage can differ by location, and we will state the service terms in the quotation so they are on record before you order.\n\n### Bulk orders, tenders and staged delivery\n\nLarge purchases rarely arrive on one day. If you are rolling machines out over weeks, say so up front; we can discuss splitting deliveries across locations or invoicing in stages, subject to what the quotation records. For tenders and government purchase orders, send us the tender specification and the clauses on warranty and delivery. We can quote against a stated specification, and the quotation can be attached to your bid or PO file.\n\n### One quotation for hardware and software\n\nBecause TechZoid also supplies Microsoft licensing, you can ask for Windows 11 Pro, Microsoft 365 and endpoint backup on the same document. Our [IT procurement service](/services/it-procurement) covers this kind of multi-line purchase, and [Microsoft 365](/microsoft-365) plans can be quoted alongside the machines.\n\n### What to send us\n\n- Quantity for each role, and any spare units.\n- Processor class, memory and storage per role.\n- Operating system choice: Windows 11 Pro or FreeDOS.\n- Warranty period and onsite service needs.\n- Delivery locations and whether delivery will be staged.\n- Your GST number, so the invoice is raised correctly.",
+ "faqs": [
+  {
+   "question": "Do you keep Lenovo laptops and desktops in stock?",
+   "answer": "We do not list Lenovo products in the catalogue on this website and we do not promise stock. Lenovo hardware is quoted on request to the configuration and quantity you specify. Send an enquiry and we will respond with a written quotation."
+  },
+  {
+   "question": "Is the price on the quotation final?",
+   "answer": "Yes, the written quotation is what fixes the price for that configuration and quantity. Nothing on the website should be read as a price for Lenovo hardware."
+  },
+  {
+   "question": "Will I get a GST invoice?",
+   "answer": "Every TechZoid order carries a GST invoice. GST-registered buyers can usually claim the input credit, though you should confirm treatment with your own accountant."
+  },
+  {
+   "question": "Should I buy ThinkPad or ThinkCentre?",
+   "answer": "Choose by how the person works. ThinkPad suits people who move between locations; ThinkCentre suits fixed desks and is usually simpler to maintain across a branch network. Many offices buy both and keep one standard for each role."
+  },
+  {
+   "question": "Can Windows 11 Pro and Microsoft 365 be on the same quotation?",
+   "answer": "Yes. TechZoid supplies Microsoft licensing, so the operating system and Microsoft 365 plans can be quoted alongside the hardware, which keeps the purchase order to one supplier."
+  },
+  {
+   "question": "Can you quote for a government or education tender?",
+   "answer": "We can quote against a stated specification and supply a GST invoice. Send the tender document or the specification clauses with the quantities and delivery locations, and we will respond in writing."
+  }
+ ],
+ "related": [
+  {
+   "href": "/business-laptops",
+   "label": "Business laptops"
+  },
+  {
+   "href": "/brands/hp",
+   "label": "HP hardware"
+  },
+  {
+   "href": "/brands/acer",
+   "label": "Acer hardware"
+  },
+  {
+   "href": "/microsoft-365",
+   "label": "Microsoft 365"
+  },
+  {
+   "href": "/services/it-procurement",
+   "label": "IT procurement service"
+  }
+ ],
+ "needsVerification": [
+  "Confirm TechZoid quotes each listed product line",
+  "ThinkBook, ThinkVision and ThinkStation naming and tiering are current",
+  "Confirm onsite warranty coverage and staged invoicing are offered by TechZoid for Lenovo"
+ ]
+}

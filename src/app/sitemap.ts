@@ -1,8 +1,10 @@
-import { GUIDES_UPDATED, GUIDE_ROUTES, PRODUCT_GUIDES } from "@/lib/content/guides";
+import { BRAND_GUIDES, GUIDES_UPDATED, GUIDE_ROUTES, PRODUCT_GUIDES } from "@/lib/content/guides";
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db";
 import { appUrl } from "@/lib/env";
 import { tags } from "@/lib/cache";
+import { publishedClientLogos } from "@/lib/queries/client-logos";
+import { safeClientLogo } from "@/lib/client-logo";
 import { cached } from "@/lib/queries/cached";
 import { getNavigationPaths } from "@/lib/queries/navigation";
 import { getPublishedPageSlugs, getUnservedPageSlugs } from "@/lib/queries/pages";
@@ -57,7 +59,11 @@ const getSitemapRows = cached(
       prisma.brand.findMany({
         where: {
           deletedAt: null,
-          products: { some: { status: "ACTIVE", deletedAt: null } },
+          // A brand with a written hub page is indexable even before it has a catalogue.
+          OR: [
+            { products: { some: { status: "ACTIVE", deletedAt: null } } },
+            { slug: { in: Object.keys(BRAND_GUIDES) } },
+          ],
         },
         select: { slug: true, updatedAt: true },
       }),
@@ -151,6 +157,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
+  // /clients exists only while at least one customer logo is published.
+  if ((await publishedClientLogos()).some((logo) => safeClientLogo(logo.logoUrl))) {
+    add({ url: canonical("/clients"), lastModified: new Date(GUIDES_UPDATED), changeFrequency: "monthly", priority: 0.6 });
+  }
+
   for (const product of products) {
     add({
       url: `${base}/products/${product.slug}`,
@@ -166,7 +177,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const brand of brands) {
     add({
       url: `${base}/brands/${brand.slug}`,
-      lastModified: brand.updatedAt,
+      lastModified: BRAND_GUIDES[brand.slug]
+        ? new Date(Math.max(brand.updatedAt.getTime(), new Date(GUIDES_UPDATED).getTime()))
+        : brand.updatedAt,
       changeFrequency: "monthly",
       priority: 0.8,
     });

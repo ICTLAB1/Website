@@ -1,3 +1,4 @@
+import { hreflangFor } from "@/lib/hreflang";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -54,6 +55,7 @@ export async function cmsMetadata(
     description: page.description,
     path,
     keywords: page.keywords,
+    languages: hreflangFor(path),
   });
 }
 

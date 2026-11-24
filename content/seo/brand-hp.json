@@ -1,0 +1,88 @@
+{
+ "slug": "hp",
+ "displayName": "HP",
+ "description": "HP business desktops, workstations and notebooks for Indian offices from an HP reseller. Quoted to configuration, GST invoice on every order. Get a quote.",
+ "intro": "HP is the brand most Indian offices already have somewhere in the building. Its business range covers entry notebooks for everyday staff, compact and tower desktops for fixed desks, all-in-one machines for reception and counters, and Z-series workstations for design and engineering. Few other manufacturers let you cover that many roles with one family of machines, one set of drivers and one support relationship.\n\nUnlike some of the brands on this site, HP has real listings in the TechZoid catalogue. You can browse the Pro and Elite desktops, the ProOne all-in-one, the Z workstations and the HP 240, 245, 250 and 255 business notebooks, and read the specification on each page. What you will not find is a price. All HP hardware is quoted to configuration and quantity, because memory, storage, operating system and warranty change the figure and because a fleet order is priced differently from a single unit.\n\nIn practice that means the catalogue pages work as a shortlist. Pick the models that fit, note the variations you want, and send them to us. We come back with a written quotation, and that document fixes the price. Every order carries a GST invoice, which GST-registered buyers can usually claim as input credit.\n\nTechZoid is an HP reseller, nothing grander than that, and we are straightforward about what it means: we quote and supply, we help you put the specification together, and we can include Microsoft licensing on the same document. Offices in government and education tend to use the desktops and the 250 and 255 notebooks; design studios and engineering teams look at the Z range. If you are weighing HP against another make for a tender, see our [business laptops](/business-laptops) page and the [Lenovo](/brands/lenovo) and [Acer](/brands/acer) hubs.",
+ "lines": [
+  {
+   "name": "HP Pro Tower 280 G9 and Pro SFF 280 G9",
+   "use": "Entry business desktops in tower and small form factor for general office work. See the [Pro Tower 280 G9](/products/hp-pro-tower-280-g9) listing for the specification."
+  },
+  {
+   "name": "HP Pro and ProDesk 2 desktops",
+   "use": "Step-up desktops for offices that want a more durable fleet machine, such as the [ProDesk 2 Tower G1a](/products/hp-prodesk-2-tower-g1a)."
+  },
+  {
+   "name": "HP Elite desktops",
+   "use": "Higher-specification tower and small form factor machines for power users, finance teams and anyone running heavier multitasking, for example the [Elite Tower 800 G9](/products/hp-elite-tower-800-g9)."
+  },
+  {
+   "name": "HP ProOne all-in-one",
+   "use": "A single-unit desktop for reception, counters and hot-desk areas where cable clutter matters. See the [ProOne 440 G9](/products/hp-proone-440-g9-all-in-one)."
+  },
+  {
+   "name": "HP Z workstations",
+   "use": "Z1, Z2, Z4 and Z8 class machines for CAD, rendering and simulation, for example the [Z4 G5 tower](/products/hp-z4-g5-tower-workstation)."
+  },
+  {
+   "name": "HP business notebooks (240, 245, 250, 255)",
+   "use": "Everyday business laptops for staff who need a portable machine without a premium price. See the [HP 250R G10](/products/hp-250r-g10-notebook) and [HP 255 G10](/products/hp-255-g10-notebook)."
+  }
+ ],
+ "choose": "Match the machine to the job, then use the catalogue pages to confirm the exact model.\n\nFor general office work such as email, documents, spreadsheets and browser-based tools, the Pro and ProDesk desktops or the 250 and 255 notebooks are the sensible range. Move to Elite when a team runs heavier multitasking or keeps many applications open together. Choose the ProOne all-in-one where space is the constraint rather than performance. Workstations are for applications that name a graphics or processor requirement, so check the software publisher's guidance before choosing a Z model.\n\nWhen you write to us, give the following so every quotation is comparable:\n\n- **Processor class and generation preference**, described in terms such as entry, mid-range or high-performance.\n- **Memory and storage**, including whether you need solid-state storage and how much headroom for local files.\n- **Form factor.** Tower, small form factor, all-in-one or notebook.\n- **Warranty.** The period you want and whether onsite service is needed at each location.\n- **Operating system.** Windows 11 Pro installed, or FreeDOS so your own team can image machines from a licensed build. FreeDOS lowers the line cost but you must hold the Windows licences.\n\nSeveral listed models are offered in more than one variant, so mention the variant you saw on the page.",
+ "buying": "HP hardware on TechZoid is quoted, never priced on the page. The listings tell you what the machine is; the quotation tells you what it costs for your configuration and quantity.\n\n### From catalogue page to quotation\n\n1. Open the listings you are considering, for instance the [Pro Tower 280 G9](/products/hp-pro-tower-280-g9) or the [HP 255 G10 notebook](/products/hp-255-g10-notebook).\n2. Send us the model names, quantities and any changes you want to memory, storage, operating system or warranty through the [enquiry form](/enquiry).\n3. We reply with a written quotation. That is the price; nothing on the website is.\n4. You raise a purchase order against the quotation and we invoice with GST.\n\n### Warranty and onsite service\n\nWarranty length and onsite coverage depend on the model and on any upgrade chosen when the order is placed. If your machines will be spread across several cities, tell us where, because service terms can differ by location. We will put the warranty terms in the quotation so you can see them before committing.\n\n### Bulk, staged and tender purchases\n\nFleet orders are normal for HP desktops, and they rarely land in a single delivery. If you want stock released in stages for different branches or classrooms, say so in the enquiry and we will discuss what is possible. For government, university and public-sector tenders, send the specification and the delivery clauses. We quote against a written specification and issue a GST invoice, so the quotation and invoice can go into your PO file.\n\n### Software on the same quotation\n\nTechZoid supplies Microsoft licensing, so Windows 11 Pro, [Microsoft 365](/microsoft-365) plans and backup software can be added to the hardware quotation. That keeps procurement to a single purchase order. Our [IT procurement service](/services/it-procurement) explains how multi-line purchases are handled.\n\n### Information that speeds up the quote\n\n- Models and variants from the catalogue, with quantities.\n- Processor class, memory and storage per role.\n- Windows 11 Pro or FreeDOS.\n- Warranty and onsite service needs.\n- Delivery locations and whether delivery is staged.\n- GST number for the invoice.",
+ "faqs": [
+  {
+   "question": "Are the HP products listed on the website in stock?",
+   "answer": "The listings show the HP models we quote, but we do not state stock levels and no price is shown. Every HP order is quoted to configuration and quantity, and the written quotation fixes price and terms."
+  },
+  {
+   "question": "Why is there no price on the HP product pages?",
+   "answer": "Hardware price depends on memory, storage, operating system, warranty and quantity, so a single displayed figure would mislead. Send an enquiry and the quotation gives the actual price."
+  },
+  {
+   "question": "Does the invoice include GST?",
+   "answer": "Yes. Every TechZoid order carries a GST invoice. GST-registered buyers can usually claim input credit; check your own treatment with your accountant."
+  },
+  {
+   "question": "Can I order HP desktops with FreeDOS?",
+   "answer": "You can ask for FreeDOS in the enquiry, which suits teams that image machines from a licensed Windows build. Make sure you hold enough Windows licences, or ask us to quote them with the hardware."
+  },
+  {
+   "question": "What is the difference between the Pro and Elite desktops?",
+   "answer": "Pro machines cover everyday office work, while Elite machines are specified for heavier workloads and more demanding users. Look at the individual listing for the details, then tell us the workload so we can quote the right model."
+  },
+  {
+   "question": "Can you quote HP for a tender or institutional purchase?",
+   "answer": "Yes, we quote against a stated specification and issue a GST invoice. Send the specification, quantities and delivery locations with your enquiry."
+  }
+ ],
+ "related": [
+  {
+   "href": "/business-laptops",
+   "label": "Business laptops"
+  },
+  {
+   "href": "/products/hp-pro-tower-280-g9",
+   "label": "HP Pro Tower 280 G9"
+  },
+  {
+   "href": "/products/hp-250r-g10-notebook",
+   "label": "HP 250R G10 notebook"
+  },
+  {
+   "href": "/brands/lenovo",
+   "label": "Lenovo hardware"
+  },
+  {
+   "href": "/services/it-procurement",
+   "label": "IT procurement service"
+  }
+ ],
+ "needsVerification": [
+  "Confirm TechZoid quotes each listed product line",
+  "Confirm the Pro SFF 280 G9 slug and listing exist if it is linked later; only existing slugs are linked now",
+  "Confirm onsite warranty coverage and staged delivery are offered by TechZoid for HP",
+  "Confirm the Elite and ProDesk 2 positioning descriptions match the listings"
+ ]
+}

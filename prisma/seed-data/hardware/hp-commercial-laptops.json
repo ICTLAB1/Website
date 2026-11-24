@@ -1,0 +1,304 @@
+{
+ "brand": "hp",
+ "category": "infrastructure-hardware",
+ "source": "HP business notebook part numbers supplied by TechZoid Technologies Private Limited",
+ "checkedOn": "2026-11-24",
+ "models": [
+  {
+   "name": "HP 250R G10 Notebook",
+   "series": "HP 250R",
+   "formFactor": "LAPTOP",
+   "shortDescription": "The HP 250R G10 is a 15.6-inch business notebook from HP's commercial range, supplied for office and procurement use in several memory and storage builds.",
+   "description": "The HP 250R G10 Notebook is part of HP's business notebook range, supplied for office, government and education procurement. Builds listed differ by processor, memory, storage and warranty, and the notes against each say what is in the box.\n\nAll builds here are supplied without Windows, for organisations that image their own machines. Part numbers are listed against each build so a quotation can be raised against the exact one you need.",
+   "businessFeatures": [
+    "Commercial range, eligible for standard-build and lifecycle terms",
+    "FreeDOS or DOS specified at order, for organisations that image their own machines",
+    "Warranty and carry-bag inclusion vary by build and are listed against each one"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Laptop"
+    },
+    {
+     "label": "Display",
+     "value": "15.6 inch (HD or FHD, by build)"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "D2HA9AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core 3 100U",
+     "memory": "8GB",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "DOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": "No bag"
+    },
+    {
+     "partNumber": "D4CK5AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core 3 100U",
+     "memory": "24GB",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "DOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": "Fingerprint reader. No bag"
+    },
+    {
+     "partNumber": "D49D4AT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core 5 120U",
+     "memory": "24GB DDR5",
+     "storage": "1TB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": "FHD display. Spill-resistant backlit keyboard with numeric keypad"
+    },
+    {
+     "partNumber": "C8HV5PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core 7 150U",
+     "memory": "8GB DDR4-3200",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "DOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": "FHD display. Bag included"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP 255 G10 Notebook",
+   "series": "HP 255",
+   "formFactor": "LAPTOP",
+   "shortDescription": "The HP 255 G10 is a 15.6-inch business notebook with an AMD Ryzen processor, supplied from HP's commercial range for office and procurement use.",
+   "description": "The HP 255 G10 Notebook is part of HP's business notebook range, supplied for office, government and education procurement. Builds listed differ by processor, memory, storage and warranty, and the notes against each say what is in the box.\n\nAll builds here are supplied without Windows, for organisations that image their own machines. Part numbers are listed against each build so a quotation can be raised against the exact one you need.",
+   "businessFeatures": [
+    "Commercial range, eligible for standard-build and lifecycle terms",
+    "FreeDOS or DOS specified at order, for organisations that image their own machines",
+    "Warranty and carry-bag inclusion vary by build and are listed against each one"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Laptop"
+    },
+    {
+     "label": "Display",
+     "value": "15.6 inch HD"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "C8HS5AT",
+     "alsoOrderedAs": [],
+     "processor": "AMD Ryzen 3 7335U",
+     "memory": "8GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS 3.0",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": "15.6 inch HD, silver. No bag"
+    },
+    {
+     "partNumber": "D4WX6AT",
+     "alsoOrderedAs": [],
+     "processor": "AMD Ryzen 3 7335U",
+     "memory": "8GB + 8GB DDR5",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS 3.0",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": "15.6 inch HD, silver. No bag"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP 240R G10 Notebook",
+   "series": "HP 240R",
+   "formFactor": "LAPTOP",
+   "shortDescription": "The HP 240R G10 is a business notebook in a Turbo Silver aluminium finish, supplied from HP's commercial range for office and procurement use.",
+   "description": "The HP 240R G10 Notebook is part of HP's business notebook range, supplied for office, government and education procurement. Builds listed differ by processor, memory, storage and warranty, and the notes against each say what is in the box.\n\nAll builds here are supplied without Windows, for organisations that image their own machines. Part numbers are listed against each build so a quotation can be raised against the exact one you need.",
+   "businessFeatures": [
+    "Commercial range, eligible for standard-build and lifecycle terms",
+    "FreeDOS or DOS specified at order, for organisations that image their own machines",
+    "Warranty and carry-bag inclusion vary by build and are listed against each one"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Laptop"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "C8HT9PT",
+     "alsoOrderedAs": [],
+     "processor": "Intel Core 7 150U",
+     "memory": "8GB",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "DOS",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": "FHD display, fingerprint reader, black keyboard, Turbo Silver aluminium. 1 year onsite. Backpack included"
+    }
+   ],
+   "status": "ACTIVE"
+  },
+  {
+   "name": "HP 245 G10 Notebook",
+   "series": "HP 245",
+   "formFactor": "LAPTOP",
+   "shortDescription": "The HP 245 G10 is a 14-inch business notebook with an AMD Ryzen 5 processor, supplied from HP's commercial range for office and procurement use.",
+   "description": "The HP 245 G10 Notebook is part of HP's business notebook range, supplied for office, government and education procurement. Builds listed differ by processor, memory, storage and warranty, and the notes against each say what is in the box.\n\nAll builds here are supplied without Windows, for organisations that image their own machines. Part numbers are listed against each build so a quotation can be raised against the exact one you need.",
+   "businessFeatures": [
+    "Commercial range, eligible for standard-build and lifecycle terms",
+    "FreeDOS or DOS specified at order, for organisations that image their own machines",
+    "Warranty and carry-bag inclusion vary by build and are listed against each one"
+   ],
+   "specifications": [
+    {
+     "label": "Form factor",
+     "value": "Laptop"
+    },
+    {
+     "label": "Display",
+     "value": "14 inch HD"
+    },
+    {
+     "label": "Processor",
+     "value": "processor"
+    },
+    {
+     "label": "Memory",
+     "value": "memory"
+    },
+    {
+     "label": "Storage",
+     "value": "storage"
+    },
+    {
+     "label": "Operating system",
+     "value": "operatingSystem"
+    },
+    {
+     "label": "Warranty",
+     "value": "warranty"
+    }
+   ],
+   "configurations": [
+    {
+     "partNumber": "D3NU4AT",
+     "alsoOrderedAs": [],
+     "processor": "AMD Ryzen 5 7530U",
+     "memory": "16GB DDR4-3200",
+     "storage": "512GB SSD",
+     "graphics": null,
+     "raidController": null,
+     "operatingSystem": "FreeDOS 3.0",
+     "systemManagement": null,
+     "opticalDrive": null,
+     "powerSupply": null,
+     "warranty": "1 year",
+     "note": "14 inch HD. No bag"
+    }
+   ],
+   "status": "ACTIVE"
+  }
+ ]
+}

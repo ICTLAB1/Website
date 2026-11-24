@@ -1,0 +1,90 @@
+{
+ "slug": "firewall-security",
+ "h1": "Firewall Security in India: Fortinet, Sophos, SonicWall & Cisco",
+ "intro": "A firewall is the one device every office network passes through. It decides what reaches your servers, what your staff can reach on the internet, how branch offices and remote users connect back, and what you can prove afterwards if something goes wrong. Buying the wrong size, or buying the box without the subscriptions that make it useful, is the most common way a firewall project disappoints.\n\nThis guide explains what a business firewall does, how to choose between Fortinet, Sophos, SonicWall and Cisco, how the appliance, security subscriptions and support contract fit together, and what to check when buying in India. It is written for the IT head or office manager who has been asked to replace an ageing router-firewall and wants a sensible specification before asking for prices.\n\nA plain note on availability: TechZoid has no catalogue products or website prices for these four brands. We quote Fortinet, Sophos, SonicWall and Cisco firewalls on request, to your configuration, and the price is fixed only by a written quotation. Send the details through the [enquiry form](/enquiry) and read the brand pages for [Fortinet](/brands/fortinet), [Sophos](/brands/sophos), [SonicWall](/brands/sonicwall) and [Cisco](/brands/cisco). For a wider comparison, see our article on [top firewall brands in India](/blog/top-firewall-brands-india-fortinet-sophos-sonicwall-cisco).",
+ "sections": [
+  {
+   "heading": "What a business firewall actually does",
+   "markdown": "A home router blocks unsolicited inbound traffic and little else. A business firewall inspects traffic in both directions and enforces your policy. The jobs people buy it for are:\n\n- **Perimeter control.** Allowing only the services you publish, such as a web server or remote desktop gateway, and blocking the rest.\n- **Web and application control.** Filtering categories of websites and controlling applications, so that policy is written in terms of what staff are doing rather than port numbers.\n- **Threat prevention.** Intrusion prevention, anti-malware scanning of downloads and blocking of known malicious destinations.\n- **VPN.** Site-to-site tunnels between offices, and remote-access VPN for staff working from home or travelling.\n- **Link management.** Using two internet connections for failover or load sharing, which matters when one leased line or broadband link is your only dependency.\n- **Visibility and logs.** Knowing who accessed what and when, which is what you need for an incident review or an audit.\n\nA firewall is not a substitute for protecting the devices behind it. Laptops leave the office, and email attacks arrive over allowed ports. Think of the firewall and your [endpoint security](/antivirus-endpoint-security) as two layers that cover different gaps."
+  },
+  {
+   "heading": "How to choose: a practical decision rule",
+   "markdown": "Brand comparisons are less useful than answering five sizing questions first. Write the answers down before you ask anyone for a quotation.\n\n1. **How many users and devices?** Count staff, plus phones, printers, CCTV and guest devices. Concurrent sessions matter more than headcount.\n2. **What internet bandwidth do you have now, and in two years?** Throughput is the figure most buyers look at, but the figure that matters is throughput with the security features switched on, not the headline firewall number. Ask for that figure in the quotation.\n3. **How many sites?** One office is a simple purchase. Several branches need a firewall at each site and a decision about how they connect and who manages them.\n4. **What VPN do you need?** Count the site-to-site tunnels and the number of remote users who will connect at the same time. Check whether the VPN client for remote users is included or licensed separately.\n5. **Who will run it?** A firewall with a clear web console suits a small team without a network specialist. A team with trained engineers may prefer a platform they already know.\n\n**The rule of thumb:** size for the busiest realistic day with inspection enabled, add headroom for growth, and choose the brand your people can actually administer. A smaller unit that is configured properly is safer than a larger one that nobody dares to touch.\n\nThe brands differ in emphasis. Fortinet is widely used where price-to-throughput and a broad product range matter. Sophos is often chosen by small and mid-sized organisations that want a simple console and a link to its endpoint products. SonicWall has a long history in small-business and branch deployments. Cisco suits organisations already standardised on Cisco networking. Treat these as starting points to test in a conversation, not conclusions."
+  },
+  {
+   "heading": "How licensing, subscriptions and support work",
+   "markdown": "A firewall purchase has up to three parts, and the quotation should show each one separately.\n\n- **The appliance.** The hardware, bought once. Some brands also offer virtual appliances for private cloud or public cloud use.\n- **Security subscriptions.** Features such as intrusion prevention, anti-malware, web filtering and application control are usually sold as subscriptions, often grouped into bundles. Without a current subscription the box still routes traffic, but the signatures and category databases stop updating, so the protection decays.\n- **Support and hardware replacement.** A support contract covers technical help, software updates and a replacement process if the unit fails. The terms differ between brands and tiers.\n\nSubscriptions and support normally run for fixed terms, commonly one or more years, and need renewing on time. Ask for the term and the renewal approach to be written in the quotation, and diarise the expiry date. Letting a subscription lapse is a quiet way to end up with an unprotected perimeter that still looks fine on the rack.\n\nBecause bundle names and what each includes change between brands and over time, we do not list them here. Tell us the features you need and we will set out the options on the quotation. Our guide on [what to check before a software renewal](/blog/what-to-check-before-a-software-renewal) applies equally to security subscriptions."
+  },
+  {
+   "heading": "Common mistakes when buying a firewall",
+   "markdown": "- **Sizing on the headline throughput number.** That figure is measured with features off. Size on the figure with inspection turned on.\n- **Buying the box without subscriptions.** The appliance alone does not give you current threat protection.\n- **Forgetting VPN capacity.** Remote working pushes concurrent VPN users well above what a small office expected, and a unit sized for the office may struggle with them.\n- **No plan for failure.** A single firewall is a single point of failure. For offices where downtime is costly, ask about a pair in high availability or at least a cold spare, and a second internet link.\n- **Letting support lapse.** Track the support and subscription end dates, and renew before they pass.\n- **Leaving default settings and a flat network.** A firewall that allows everything between internal segments gives little protection once one laptop is compromised. Plan segments for servers, staff, guests and cameras.\n- **No one owns it.** Decide who reads the logs, who approves rule changes and who talks to the supplier. If that is nobody, consider our [managed IT services](/managed-it-services) or the [cybersecurity service](/services/cybersecurity)."
+  },
+  {
+   "heading": "Buying notes for India",
+   "markdown": "- **Quotation first.** Because we quote these brands on request, your quotation is the only price document. Send users, sites, link speeds, VPN needs and the feature list, and the quotation will state the appliance, each subscription, the support term and the quantity. Website prices elsewhere on this site are tentative and exclude GST.\n- **GST invoice.** Every TechZoid order is invoiced with GST, and the buyer's registered entity name and GSTIN should be given before the invoice is raised. GST-registered buyers can usually claim input credit on business purchases; confirm eligibility with your accountant. See [GST input credit on software purchases](/blog/gst-input-credit-on-software-purchases).\n- **Purchase order.** We accept orders against your purchase order, and we can put firewalls, laptops, backup and endpoint security on one quotation and one PO across brands. See [IT procurement](/services/it-procurement).\n- **Installation and migration.** Check whether you need configuration and rule migration from the old firewall. Ask for it to be listed as a separate line, not assumed.\n- **Public bodies and tenders.** If the purchase follows a tender or a government procurement process, tell us the specification and the evaluation requirements early. Our note on [how government departments procure genuine software](/blog/how-government-departments-procure-genuine-software) covers the documentation side.\n\nIf you also need laptops and endpoint security in the same project, look at our [business laptops](/business-laptops) and [backup software](/backup-software) guides."
+  }
+ ],
+ "products": [],
+ "faqs": [
+  {
+   "question": "Do you list Fortinet, Sophos, SonicWall or Cisco firewalls with prices?",
+   "answer": "No. TechZoid has no catalogue products or website prices for these brands. We quote them on request, to your configuration, and a written quotation fixes the price. Send your requirement through the enquiry page."
+  },
+  {
+   "question": "Which firewall brand is best for a small office?",
+   "answer": "There is no single best brand. For a small office, the better question is who will manage it. Choose the console and support model your team can handle, then size the unit for your users, bandwidth and VPN needs with inspection enabled. We can compare options on a quotation."
+  },
+  {
+   "question": "What details do you need to quote a firewall?",
+   "answer": "The number of users and devices, internet bandwidth at each site, the number of sites, site-to-site and remote VPN needs, the features you want such as intrusion prevention and web filtering, whether you need high availability, and the term for subscriptions and support."
+  },
+  {
+   "question": "Is the firewall price a one-time cost?",
+   "answer": "Not entirely. The appliance is bought once, but security subscriptions and support are normally for a fixed term and must be renewed. Ask for each part to be shown separately so you can plan the renewal cost."
+  },
+  {
+   "question": "What happens if a subscription expires?",
+   "answer": "The unit generally keeps routing traffic, but updates to threat signatures and web categories can stop, so protection weakens over time. Track the end dates and renew before they pass."
+  },
+  {
+   "question": "Do we need a firewall if we use Microsoft 365 and cloud services?",
+   "answer": "Usually yes. Cloud services reduce what you host, but your offices still need controlled internet access, VPN, link failover and logging. The firewall also protects the devices and servers that remain on your network."
+  },
+  {
+   "question": "Can you supply firewalls together with laptops and backup on one purchase order?",
+   "answer": "Yes. TechZoid can quote across brands on one purchase order. Tell us the full list and we will set it out on one written quotation, with a GST invoice."
+  },
+  {
+   "question": "Can you help with installation and configuration?",
+   "answer": "We offer managed IT and cybersecurity services. Tell us what you need configured or migrated, and we will state what is included, and what is separate, on the quotation."
+  }
+ ],
+ "related": [
+  {
+   "href": "/blog/top-firewall-brands-india-fortinet-sophos-sonicwall-cisco",
+   "label": "Top firewall brands in India: Fortinet, Sophos, SonicWall and Cisco"
+  },
+  {
+   "href": "/antivirus-endpoint-security",
+   "label": "Antivirus and endpoint security in India"
+  },
+  {
+   "href": "/backup-software",
+   "label": "Backup software in India"
+  },
+  {
+   "href": "/services/cybersecurity",
+   "label": "Cybersecurity services"
+  },
+  {
+   "href": "/blog/what-to-check-before-a-software-renewal",
+   "label": "What to check before a software renewal"
+  }
+ ],
+ "needsVerification": [
+  "Brand positioning sentences (Fortinet price-to-throughput and product range; Sophos simple console and endpoint link; SonicWall small-business/branch history; Cisco for Cisco shops) are general market impressions; owner to confirm tone.",
+  "General claim that security subscriptions are sold per term and signatures stop updating when they lapse; exact behaviour and bundle contents differ by brand and model.",
+  "Claim that remote-access VPN client may be licensed separately depends on brand; stated only as something to check.",
+  "TechZoid installation and configuration availability for firewalls is not confirmed; FAQ only refers to managed IT/cybersecurity services existing on the site."
+ ]
+}

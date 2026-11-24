@@ -1,0 +1,87 @@
+{
+ "slug": "sophos",
+ "displayName": "Sophos",
+ "description": "Sophos reseller in India for firewalls, Intercept X endpoint protection and managed detection, with a GST invoice. Tell us your users and sites for a quote.",
+ "intro": "Sophos is a security brand with two strong halves that are designed to work together: network firewalls and endpoint protection, both managed from a cloud console called Sophos Central. That pairing is the main reason Indian buyers shortlist it. A school, a clinic group, a mid-sized manufacturer or a professional-services firm often has one or two IT staff, and a single web console for the firewall, laptops and servers saves real time compared with running separate tools.\n\nThe kind of organisation that buys Sophos tends to be a small or mid-sized business that wants strong protection without building a security operations team. Some add a managed detection and response service so that Sophos analysts watch alerts around the clock, which helps firms with no night-shift IT cover. Larger organisations use it too, but the sweet spot is the lean IT department.\n\nTechZoid is a Sophos reseller. Sophos products are not in our online catalogue and we do not show prices for them; each requirement is quoted on request. We ask how many users, devices and sites you have, then send a written quotation that fixes the price, with a GST invoice on order. Sophos firewalls sit in our [firewall and network security](/firewall-security) range and Sophos endpoint products in [antivirus and endpoint security](/antivirus-endpoint-security). To start, use the [enquiry form](/enquiry).",
+ "lines": [
+  {
+   "name": "Sophos Firewall",
+   "use": "A next-generation firewall sold as hardware appliances or virtual software, covering web filtering, VPN and threat protection, with the option to link its status to Sophos endpoint agents."
+  },
+  {
+   "name": "Intercept X endpoint protection",
+   "use": "Protection for Windows and Mac laptops and servers that blocks malware and ransomware, managed from Sophos Central."
+  },
+  {
+   "name": "Sophos MDR (managed detection and response)",
+   "use": "A service in which Sophos analysts monitor and respond to threats on your behalf, aimed at organisations without round-the-clock security staff."
+  },
+  {
+   "name": "Sophos Email",
+   "use": "Cloud email security that filters phishing, spam and unsafe attachments before they reach staff mailboxes."
+  },
+  {
+   "name": "Sophos ZTNA",
+   "use": "Zero trust network access, an alternative to a classic VPN that gives users access to specific applications rather than the whole network."
+  },
+  {
+   "name": "Sophos wireless access points",
+   "use": "Access points that are managed from Sophos Central and tie into the firewall, handy for branch offices and campuses."
+  }
+ ],
+ "choose": "Choose by the problem you are solving, not by the product list. If your main worry is laptops and ransomware, begin with endpoint protection and ask for a quote on the level that includes the features you will use, such as device control or detection and response. If your office link and branch connectivity are the weak point, start with the firewall and size it for your internet speeds with the security features switched on, not for the raw figure on the datasheet.\n\nFor a small organisation with one or two IT staff, the useful question is who will read the alerts. If the honest answer is nobody, price in MDR alongside the software. For larger or regulated organisations, ask about log retention and reporting. Count laptops, desktops and servers separately, because server licences are usually quoted differently from user devices. Our [cybersecurity team](/services/cybersecurity) can walk through these questions with you, and if you are deciding between firewalls, read the [brand comparison](/blog/top-firewall-brands-india-fortinet-sophos-sonicwall-cisco) and the [Fortinet hub](/brands/fortinet).",
+ "buying": "Sophos is sold on subscription. Endpoint, email, MDR and the firewall's security services are licensed for a term, normally one to three years, and renewed afterwards. Firewall hardware, where bought, is a one-time purchase and the firewall's security features are licensed on top. Sophos has offered these as packaged bundles for firewalls as well as individual modules, so ask us to quote both a bundle and a-la-carte version if you are unsure which fits.\n\nEndpoint licences are counted per user or per device, and servers are counted separately. Check how your quotation counts each so that adding a new joiner does not become a surprise. A Sophos Central account holds your licences, so we will help you set up the account against your organisation and activate the seats you have bought. If your licences expire, protection updates stop, so keep a renewal date on file; our [licence management](/services/licence-management) service can track it.\n\nSend us the following for a quotation:\n\n1. Number of users and devices, split between laptops, desktops and servers\n2. Operating systems in use, Windows, macOS or Linux\n3. Number of offices and internet speeds, if a firewall is included\n4. Existing security software you plan to replace\n5. Whether you want MDR, email security or ZTNA\n6. Term required, one year or longer\n\nA written quotation fixes the price, and we invoice with GST. GST-registered buyers can usually claim input credit. We work to purchase orders and can combine Sophos with other brands on one order. If you need help rolling agents out to devices, our [endpoint management](/services/endpoint-management) service can be scoped separately.",
+ "faqs": [
+  {
+   "question": "What is the price of Sophos in India?",
+   "answer": "It depends on the product, the number of users or devices and the term. We do not publish Sophos prices and do not carry them in our online catalogue. Share your headcount, device mix and any firewall needs through the enquiry form and we will send a written quotation, which is the price that applies."
+  },
+  {
+   "question": "Are Sophos licences yearly, and what happens on renewal?",
+   "answer": "Sophos security services are licensed for a fixed term, commonly one to three years. Before expiry you renew to keep protection and updates active. We can send a renewal quotation in good time and, if you wish, keep a renewal calendar for you through our licence management service."
+  },
+  {
+   "question": "Does TechZoid install and support Sophos?",
+   "answer": "We can help with activation, assigning seats and the rollout plan, and our cybersecurity and endpoint management teams can be engaged for deployment as a scoped service. Product support itself comes through the Sophos support entitlement included with your subscription. The quotation will say what is covered."
+  },
+  {
+   "question": "What information do you need for a Sophos quotation?",
+   "answer": "Tell us how many users, laptops, desktops and servers you have, the operating systems, how many offices you run and their internet speeds, what you use today, and whether you want extras such as MDR or email protection. Add the term you prefer, and we will do the rest."
+  },
+  {
+   "question": "Can we switch to Sophos from our current antivirus or firewall?",
+   "answer": "Yes. For endpoints, the old agent normally needs to be removed before the new one is installed, and this is easier when done in groups. For firewalls, rules must be rebuilt or converted and tested before cutover. Tell us your current product so the quotation and plan reflect it."
+  },
+  {
+   "question": "Will you issue a GST invoice and accept our purchase order?",
+   "answer": "Yes. Every order is invoiced with GST, and we work to your purchase order, including one order that covers Sophos and other brands. GST-registered buyers can usually claim input credit. Please share your GSTIN and billing address when you ask for the quotation."
+  }
+ ],
+ "related": [
+  {
+   "href": "/antivirus-endpoint-security",
+   "label": "Antivirus and endpoint security"
+  },
+  {
+   "href": "/firewall-security",
+   "label": "Firewall and network security"
+  },
+  {
+   "href": "/brands/fortinet",
+   "label": "Fortinet reseller hub"
+  },
+  {
+   "href": "/blog/top-firewall-brands-india-fortinet-sophos-sonicwall-cisco",
+   "label": "Firewall brands compared for India"
+  },
+  {
+   "href": "/services/endpoint-management",
+   "label": "Endpoint management services"
+  }
+ ],
+ "needsVerification": [
+  "Confirm TechZoid quotes each listed product line",
+  "Confirm Sophos Central is the single console for firewall and endpoint, and MDR availability in India",
+  "Confirm licence terms of 1 to 3 years and bundle availability for firewalls"
+ ]
+}

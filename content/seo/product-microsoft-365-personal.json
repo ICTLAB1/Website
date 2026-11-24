@@ -1,0 +1,87 @@
+{
+ "slug": "microsoft-365-personal",
+ "displayName": "Microsoft 365 Personal",
+ "intro": "Microsoft 365 Personal is Microsoft's consumer subscription for one individual. It bundles the desktop Office apps with cloud storage and some extra services, and it is meant for home and personal use. It is a different product line from the Microsoft 365 Business plans that organisations buy.\n\nThat distinction matters more than it looks. Personal is a home plan for one person. It is not licensed for organisational use, so a company, firm, school or government office should not be buying it for staff. If you are buying for a business, go straight to [Microsoft 365 Business Basic](/products/microsoft-365-business-basic), [Business Standard](/products/microsoft-365-business-standard) or [Business Premium](/products/microsoft-365-business-premium).\n\nWe list Personal in our catalogue for the individual buyer, such as a freelancer's own home PC or a student's family laptop. The price is not shown on the site; it is confirmed on a written quotation, which you can request through the [enquiry form](/enquiry).",
+ "included": "Microsoft 365 Personal is a subscription, so the apps stay current for as long as it is active. In practical terms it gives one person:\n\n- The desktop versions of the core Office apps such as Word, Excel and PowerPoint\n- Outlook, for mail and calendar\n- Cloud storage through OneDrive, with an allowance set by Microsoft\n- Installation on the person's own devices, signed in with their Microsoft account\n- Ongoing updates while the subscription is active\n\nWhat it does not give you is anything an organisation depends on: no business-grade email on your own domain, no central user management, no admin console for staff, and no Microsoft Teams as a managed business service. Those come with the Business plans.\n\nExact app lists, storage allowances and bundled extras change from time to time, so ask us for the current Microsoft description before you rely on a specific item.",
+ "whoFor": "**A good fit:**\n\n- One person who wants current Word, Excel and PowerPoint for personal use at home\n- A student or job-seeker working on personal documents and CVs\n- A household member who wants their own cloud storage separate from others\n- Someone who prefers subscription updates over a one-time purchase\n\n**Probably not:**\n\n- Any company, partnership, school, trust or government office buying for staff\n- A freelancer or consultant using the software to earn income, until the licence terms are checked against that use\n- Two or more people who want to share one subscription, where the family plan is the nearer product\n- Anyone who wants to pay once and stop, where a perpetual Office 2024 edition suits better\n\nA simple test: if the person using it is doing the organisation's work, the organisation needs a business licence, not a personal one.",
+ "vs": {
+  "alternative": "Microsoft 365 Family",
+  "alternativeSlug": "microsoft-365-family",
+  "intro": "Personal and Family are sister consumer plans. The difference is who may use the subscription: Personal is for one individual, while Family is for a household group. Both are home plans and neither is a substitute for a business licence.\n\nThe choice is usually arithmetic. If only one person needs the apps, Personal is the plain fit. If several people in the same home need them, one Family subscription is normally tidier than several separate Personal ones. We confirm current terms before quoting.",
+  "rows": [
+   {
+    "label": "Intended users",
+    "thisProduct": "One individual",
+    "alternative": "A household group, up to the limit Microsoft sets"
+   },
+   {
+    "label": "Intended setting",
+    "thisProduct": "Home and personal use",
+    "alternative": "Home and personal use"
+   },
+   {
+    "label": "Organisational use",
+    "thisProduct": "Not licensed for it",
+    "alternative": "Not licensed for it"
+   },
+   {
+    "label": "Desktop Office apps",
+    "thisProduct": "Included while active",
+    "alternative": "Included while active"
+   },
+   {
+    "label": "Admin console for staff",
+    "thisProduct": "No",
+    "alternative": "No"
+   },
+   {
+    "label": "Price",
+    "thisProduct": "Confirmed on a written quotation",
+    "alternative": "Confirmed on a written quotation"
+   }
+  ],
+  "verdict": "Choose Personal when one person is the user and the use is personal. Choose [Microsoft 365 Family](/products/microsoft-365-family) when several people in one household each need the apps. Choose neither when the work belongs to an organisation: use a Business plan, or a perpetual edition such as [Office Home & Business 2024](/products/microsoft-office-home-and-business-2024) if you want to pay once and the use qualifies."
+ },
+ "licensing": "Microsoft 365 Personal is a subscription tied to one person's Microsoft account. It is a consumer licence, written for personal, non-business use by that individual.\n\nBusiness plans are different. They are assigned to named users inside an organisation's tenant and managed by an administrator, who can add and remove people, apply security settings and control data. Personal has none of that, which is why it should not be used to cover staff.\n\nIf you are unsure which side of the line your use falls on, do not guess. Describe the situation through the [enquiry form](/enquiry) and we will point you to the right plan before you pay. For an overview of how the business plans differ, read [Microsoft 365 plans, apps and price in India](/blog/what-is-microsoft-365-plans-apps-price-india), and see the wider [Microsoft 365 range](/microsoft-365).",
+ "licensingHeading": "How the licence works",
+ "sysreq": "- A supported version of Windows or macOS for the desktop apps; check Microsoft's current list before buying\n- An internet connection to sign in, activate and keep the subscription valid\n- Enough free disk space for the apps, which is modest on any current business or home PC\n- A Microsoft account for the person who will own the subscription\n- Mobile and web access depends on the device and browser; confirm on Microsoft's published requirements page",
+ "faqs": [
+  {
+   "question": "Can my company buy Microsoft 365 Personal for employees?",
+   "answer": "No. Personal is a home plan for one individual and is not licensed for organisational use. A company should use Microsoft 365 Business Basic, Standard or Premium, which are managed by an administrator and designed for staff. If you are not sure, ask us before buying."
+  },
+  {
+   "question": "I am a freelancer working from home. Is Personal acceptable?",
+   "answer": "That depends on the terms Microsoft applies to commercial use of the consumer plan, and we do not want to guess. Treat income-earning work as a business case and check the current licence wording, or choose a Business plan, which is built for it."
+  },
+  {
+   "question": "Do I get a GST invoice for Personal?",
+   "answer": "TechZoid issues a GST invoice on every order. Software is charged at 18% GST, and input credit is usually claimable by GST-registered buyers. Credit still depends on the purchase being a legitimate business expense, which brings back the question of whether Personal is the right licence."
+  },
+  {
+   "question": "What is the difference between Personal and Business Standard?",
+   "answer": "Personal is for one person at home. Business Standard is assigned to named users in an organisation, comes with administration and business email and collaboration services, and is the plan most small offices start with. See the [Business Standard page](/products/microsoft-365-business-standard) for the current details."
+  },
+  {
+   "question": "Is a perpetual Office edition cheaper than a subscription?",
+   "answer": "Not automatically. A one-time edition avoids renewals but gets no new features, and it covers one device. Over a few years the comparison depends on how long you keep the device. Compare against [Office Home 2024](/products/microsoft-office-home-2024) and ask for quotations for both."
+  },
+  {
+   "question": "How do I get a price for Personal?",
+   "answer": "The site shows no figure for this product. The price is confirmed on a written quotation, which fixes it. Send the request through the [enquiry form](/enquiry) and say who will use it and where."
+  }
+ ],
+ "related": [
+  "microsoft-365-family",
+  "microsoft-office-home-2024",
+  "microsoft-365-business-standard",
+  "microsoft-365-business-basic"
+ ],
+ "needsVerification": [
+  "Exact Office app list included in Personal and OneDrive storage allowance; text kept generic.",
+  "Whether Microsoft's consumer terms allow any commercial/freelance use; text says not licensed for organisational use and defers on freelancers.",
+  "Whether Teams is bundled with Personal; text avoids a firm claim.",
+  "Whether Personal can be bought through TechZoid with a GST invoice in the form a buyer expects; site lists it as quote-only.",
+  "Current system requirements (Windows/macOS versions)."
+ ]
+}

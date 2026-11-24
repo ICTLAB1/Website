@@ -1,0 +1,88 @@
+{
+ "slug": "microsoft-office-ltsc-standard-2024",
+ "displayName": "Microsoft Office LTSC Standard 2024",
+ "intro": "Office LTSC Standard 2024 is Microsoft's long-term servicing channel edition of Office for organisations. It is a perpetual, volume-licensed product: you buy the licences once, install the version you bought, and keep it stable without a subscription. It is aimed at businesses, government bodies and institutions rather than individuals, and it is sold under volume licensing instead of as a boxed home edition.\n\nThe usual buyers are offices that must hold a fixed version for years: air-gapped or restricted networks, regulated environments, shared kiosks, laboratories and desktop fleets where change control is slow. If you want hosted services and continuous updates, a Microsoft 365 plan is the more natural route.\n\nThe price for LTSC Standard 2024 is not shown on our site. It is confirmed on a written quotation; use the [enquiry form](/enquiry) to ask.",
+ "included": "LTSC Standard 2024 is a suite of desktop apps for an organisation. In practical terms it gives you:\n\n- The core desktop apps Word, Excel and PowerPoint, plus Outlook for email and calendar\n- A perpetual licence for the version you buy, with no subscription\n- A stable feature set that does not change between updates\n- Security and quality updates for that version\n- Deployment suited to managed fleets, as volume-licensed Office usually is\n\nWhat the Standard edition leaves out is covered by the larger edition. [Office LTSC Professional Plus 2024](/products/microsoft-office-ltsc-professional-plus-2024) adds further applications; Microsoft publishes the current list of what is in each edition, so please ask us for it before deciding.\n\nLTSC is not a hosted service either. It does not supply mailboxes, cloud storage plans or an admin console, and it does not receive new features after release.",
+ "whoFor": "**A good fit:**\n\n- A government office, laboratory, factory or institution that needs a version frozen for years\n- Organisations with networks that have limited or no internet access\n- Teams that need Word, Excel, PowerPoint and Outlook but not the extra applications in the larger edition\n- IT departments that run change control and want predictable software\n- Buyers who prefer a capital purchase to a recurring cost\n\n**Probably not:**\n\n- A small office with a handful of PCs, where Home & Business 2024 may be simpler\n- Teams that want Teams, hosted mail, shared storage and ongoing features, where a Microsoft 365 plan fits better\n- Users who must have new Office features as soon as Microsoft releases them\n- People whose roles depend on applications that only the larger edition includes\n\nThe test is whether your organisation values a fixed version more than new features. If it does, LTSC is worth quoting.",
+ "vs": {
+  "alternative": "Office LTSC Professional Plus 2024",
+  "alternativeSlug": "microsoft-office-ltsc-professional-plus-2024",
+  "intro": "The two editions share the same model: volume-licensed, perpetual, a fixed feature set. The difference is the application list. Standard is the core suite for most office users, while Professional Plus adds further applications for roles that need them.\n\nThe practical question is whether anyone in your organisation opens those extra applications. If few people do, buying Standard widely and Professional Plus for the few can be cheaper than standardising on the larger edition. We confirm the current contents of both with you before quoting.",
+  "rows": [
+   {
+    "label": "Licence model",
+    "thisProduct": "Perpetual, volume-licensed",
+    "alternative": "Perpetual, volume-licensed"
+   },
+   {
+    "label": "Core apps (Word, Excel, PowerPoint, Outlook)",
+    "thisProduct": "Included",
+    "alternative": "Included"
+   },
+   {
+    "label": "Additional applications",
+    "thisProduct": "Fewer",
+    "alternative": "More, per Microsoft's current edition list"
+   },
+   {
+    "label": "New features after release",
+    "thisProduct": "None",
+    "alternative": "None"
+   },
+   {
+    "label": "Typical buyer",
+    "thisProduct": "Organisations with general office users",
+    "alternative": "Organisations with roles needing the extra applications"
+   },
+   {
+    "label": "Price",
+    "thisProduct": "Confirmed on a written quotation",
+    "alternative": "{{price:microsoft-office-ltsc-professional-plus-2024}} ex GST, tentative"
+   }
+  ],
+  "verdict": "Buy Standard for the many users whose work is documents, spreadsheets, presentations and mail. Buy [Professional Plus](/products/microsoft-office-ltsc-professional-plus-2024) for the people who actually need what it adds. Mixing the two is allowed in principle and often sensible, but confirm how your agreement treats mixed editions. If you would rather have continuing updates and hosted services, read [Office LTSC 2024 versus Microsoft 365](/blog/microsoft-office-ltsc-2024-vs-microsoft-365) first."
+ },
+ "licensing": "Office LTSC Standard 2024 is sold under volume licensing for organisations. It is a perpetual licence, so there is no subscription to renew, and the version you buy is the version you keep.\n\nVolume licensing has its own rules about how licences are counted, activated and deployed, and those rules differ from a boxed edition for one PC. Licences are typically activated through the organisation's own activation arrangements rather than a personal Microsoft account. Whether a minimum quantity applies, and how licences may move between devices, depends on the agreement you buy under and on Microsoft's current terms. We confirm both with you in the quotation rather than assuming.\n\nBecause an LTSC edition does not auto-update to new releases, upgrading later means a fresh purchase. If you also run Microsoft 365 services alongside, check how the two interact before you deploy, since not every combination is supported. Our blog sets out [how Microsoft licensing models differ](/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model), and our [licence management service](/services/licence-management) helps with tracking what you own. Request a quotation through the [enquiry form](/enquiry).",
+ "licensingHeading": "Volume licensing and how it works",
+ "sysreq": "- A supported Windows version; LTSC 2024 editions follow Microsoft's published requirements, which should be checked before you plan hardware, as older Windows releases may not be supported\n- Volume-licence activation arrangements suited to your network, including options for restricted environments\n- Free disk space and memory typical of a current business desktop\n- Deployment tooling if you roll out to many machines\n- Check Microsoft's current requirements page, as they change between releases",
+ "faqs": [
+  {
+   "question": "What does LTSC mean?",
+   "answer": "It stands for long-term servicing channel. The edition is fixed at release and receives security and quality updates, not new features. That predictability is the reason organisations choose it over a subscription that keeps changing."
+  },
+  {
+   "question": "Is LTSC Standard sold to individuals?",
+   "answer": "It is a volume-licensed product designed for organisations, so it is not the right fit for a home user. A person at home should look at Office Home 2024 or Microsoft 365 Personal, noting that those are for personal use."
+  },
+  {
+   "question": "Is there a minimum order quantity?",
+   "answer": "Volume licensing may carry a minimum, and the figure depends on the agreement and Microsoft's current terms. We do not state one here; we confirm it on the written quotation once we know how many seats you need."
+  },
+  {
+   "question": "How is it different from Home & Business 2024?",
+   "answer": "Home & Business is a one-device retail-style edition for a small office. LTSC is volume-licensed for managed fleets with deployment and activation suited to organisations. See [Home & Business 2024](/products/microsoft-office-home-and-business-2024) if your office is very small."
+  },
+  {
+   "question": "Can we mix Standard and Professional Plus?",
+   "answer": "In principle yes, and many organisations do, giving the larger edition to the few users who need it. Confirm how your licensing agreement treats mixed editions. We check this when we prepare the quotation."
+  },
+  {
+   "question": "Do we get a GST invoice and help with activation?",
+   "answer": "TechZoid issues a GST invoice on every order, with 18% GST on software, and input credit is usually claimable by GST-registered buyers. We also help with activation and with assigning licences."
+  }
+ ],
+ "related": [
+  "microsoft-office-ltsc-professional-plus-2024",
+  "microsoft-office-home-and-business-2024",
+  "microsoft-365-business-standard",
+  "microsoft-365-business-premium"
+ ],
+ "needsVerification": [
+  "Exact application list in LTSC Standard 2024 versus Professional Plus 2024 (Standard stated as Word, Excel, PowerPoint, Outlook; Microsoft's edition list should be checked).",
+  "Whether a minimum purchase quantity applies; text does not state one.",
+  "How volume-licence activation works and whether licences can move between devices.",
+  "Supported Windows versions and any restriction on running alongside Microsoft 365 apps.",
+  "No support end date is stated; confirm against Microsoft's lifecycle page.",
+  "Whether LTSC 2024 is available in a Mac edition."
+ ]
+}

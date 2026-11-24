@@ -1,0 +1,88 @@
+{
+ "slug": "power-bi-premium-per-user",
+ "displayName": "Power BI Premium Per User",
+ "licensingHeading": "How the subscription works",
+ "intro": "Power BI Premium Per User, usually shortened to PPU, gives each licensed person the premium Power BI features without buying dedicated capacity for the whole organisation. It sits above Power BI Pro: everything Pro does, plus larger models, more frequent refresh, paginated reports and other advanced capabilities.\n\nIt suits a small group of analysts whose work has outgrown Pro, for example a finance data team whose model no longer fits, or a reporting unit that must produce fixed-layout paginated statements. It is not a company-wide dashboard licence.\n\nThe price is per user and is confirmed on a written quotation rather than on this page. [Ask for one](/enquiry) with the number of premium authors and the audience that will open their content. We can quote it on one purchase order with your other Microsoft products.",
+ "included": "Power BI Premium Per User gives each licensed user access to premium capabilities in the Power BI service. In outline:\n\n- Everything in [Power BI Pro](/products/power-bi-pro), including publishing, shared workspaces and apps\n- Higher limits on data model size and on how often data can refresh\n- Paginated reports, the fixed-layout format used for invoices, statements and regulatory outputs\n- Deployment pipelines for moving a report through development, test and production\n- Advanced data preparation and AI-assisted features that are restricted on Pro\n\nThe rule that surprises buyers is about the audience. Content in a Premium Per User workspace can only be opened by people who also hold a Premium Per User licence, or by users of Premium capacity. Giving a Pro user a link is not enough.\n\nMicrosoft revises the feature list, so we check it against your report before quoting.",
+ "whoFor": "**A good fit:**\n\n- A central finance or business-intelligence team of a handful of authors working with large datasets\n- A reporting unit that must publish paginated statements, schedules or compliance outputs\n- A group that wants controlled development-to-production release of reports\n\n**Probably not the right buy:**\n\n- A department with ordinary dashboards that fit within Pro limits\n- An organisation where hundreds of staff must view the output; per-user premium for every reader is rarely sensible, and dedicated capacity should be evaluated instead\n- Individual users who will not use any premium feature, since they pay more for headroom they never touch",
+ "vs": {
+  "alternative": "Power BI Pro",
+  "alternativeSlug": "power-bi-pro",
+  "intro": "This is a step-up decision, not a rival-product decision. Both licences use the same service and the same Desktop tool, so you can begin on Pro and move particular people to Premium Per User later.\n\nThe table lists the stable differences. Specific limits are Microsoft's to set and change.",
+  "rows": [
+   {
+    "label": "Core idea",
+    "thisProduct": "Pro features plus premium features per user",
+    "alternative": "Publish and share reports per user"
+   },
+   {
+    "label": "Model size and refresh",
+    "thisProduct": "Higher limits",
+    "alternative": "Standard limits"
+   },
+   {
+    "label": "Paginated reports",
+    "thisProduct": "Available",
+    "alternative": "Not part of Pro"
+   },
+   {
+    "label": "Deployment pipelines",
+    "thisProduct": "Available",
+    "alternative": "Not part of Pro"
+   },
+   {
+    "label": "Audience for shared content",
+    "thisProduct": "Other Premium Per User users, or Premium capacity users",
+    "alternative": "Other licensed Pro users"
+   },
+   {
+    "label": "Licence model",
+    "thisProduct": "Per user",
+    "alternative": "Per user"
+   },
+   {
+    "label": "Price",
+    "thisProduct": "Confirmed on quotation",
+    "alternative": "Confirmed on quotation"
+   }
+  ],
+  "verdict": "Choose Premium Per User for the small set of people who build large or specialised reports and can name the feature they need. Keep everyone else on [Pro](/products/power-bi-pro).\n\nIf the real need is for many people to read premium content, price dedicated capacity or Microsoft's current capacity-based options rather than licensing every reader per user. We can walk through both routes before you commit."
+ },
+ "licensing": "Premium Per User is licensed **per user**. Each author and each reader of premium-workspace content needs an assigned licence in your Microsoft Entra tenant, and licences are assigned and reclaimed through the Microsoft 365 admin centre.\n\nIt is bought as a subscription through Microsoft's cloud licensing programme, normally on an annual commitment. We confirm the term in writing on the quotation.\n\nThe features sit at user level, not tenant level. A workspace set to Premium Per User behaves differently from a standard workspace, and moving content between the two has consequences for who can open it. Plan the workspace layout and the licence list together.\n\nSee the [Microsoft licensing guide](/blog/microsoft-365-licensing-guide-for-indian-businesses) and [CSP versus Enterprise Agreement](/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model) for how the buying route affects renewals.",
+ "sysreq": "- The Power BI service runs in a modern browser; Premium Per User needs no extra client software for consumers\n- Authors build in Power BI Desktop, which runs on Windows. Large models are memory-hungry, so choose workstations with generous RAM, typically more than a standard office laptop\n- Scheduled refresh from on-premises sources typically needs a gateway on a server that is always on\n- Confirm the latest requirements on Microsoft's published pages before you order hardware",
+ "faqs": [
+  {
+   "question": "Can a Pro user open reports that sit in a Premium Per User workspace?",
+   "answer": "No, not on Pro alone. Content in a Premium Per User workspace is for people who hold the same licence, or who use dedicated Premium capacity. This single rule often decides whether PPU is practical, so count your readers before you buy."
+  },
+  {
+   "question": "What is the Power BI Premium Per User price in India?",
+   "answer": "The price is per user and is confirmed on a written quotation, because it depends on term and purchase route. Give us the number of authors and readers, and we will quote it with a GST invoice and, if you wish, on one purchase order with your other Microsoft items."
+  },
+  {
+   "question": "Is Premium Per User a replacement for dedicated capacity?",
+   "answer": "Not always. It suits small teams who need premium features. If many people must read premium content, per-user licensing for all of them may cost more than capacity, and Microsoft's capacity options have been changing. We compare both before recommending one."
+  },
+  {
+   "question": "Do we need Pro as well as Premium Per User?",
+   "answer": "No. Premium Per User includes the Pro capabilities for the licensed person, so you would not buy both for the same user. Other people in your team can stay on Pro as long as they do not need to open premium-workspace content."
+  },
+  {
+   "question": "What are paginated reports used for?",
+   "answer": "They produce fixed-layout, print-style output such as invoices, statements, schedules and compliance returns, where every page must look the same regardless of the data. Standard dashboards are better for exploring data. If you do not need print-style output, you may not need this tier."
+  }
+ ],
+ "related": [
+  "power-bi-pro",
+  "microsoft-365-e5",
+  "microsoft-365-business-premium",
+  "azure-consumption-commitment"
+ ],
+ "needsVerification": [
+  "Exact feature list of PPU (paginated reports, deployment pipelines, AI features) and the rule that PPU workspace content needs PPU or capacity users",
+  "Microsoft's capacity product changes (Premium per capacity vs Fabric capacity); text kept deliberately general",
+  "Availability and length of PPU trials",
+  "Paginated report authoring tool is Windows-only (Report Builder)",
+  "Whether PPU is sold in India through CSP on annual or monthly terms"
+ ]
+}

@@ -1,0 +1,91 @@
+{
+ "slug": "backup-software",
+ "h1": "Backup Software in India: Acronis and Business Backup Planning",
+ "intro": "Most businesses find out whether their backup works on the worst day of the year. A server fails, ransomware encrypts a file share, or someone deletes a shared mailbox, and the question becomes how much data is gone and how long the office is down. Backup software is the tool that answers both questions, but only if it was chosen and tested against the right targets.\n\nThis guide explains what backup software does, how to choose using recovery point and recovery time objectives, how licensing is usually structured, what to check about Microsoft 365 data, and what to look at when buying in India. It is written for the IT head or owner who has a backup of some kind and is not sure it would survive a real failure.\n\nOn availability: TechZoid has no catalogue products or website prices for Acronis. We quote Acronis on request, to your configuration, and the price is confirmed by a written quotation. Read the [Acronis brand page](/brands/acronis) and send your requirement through the [enquiry form](/enquiry). TechZoid also provides a [backup and disaster recovery service](/services/backup-disaster-recovery) if you want help planning instead of just buying software.",
+ "sections": [
+  {
+   "heading": "What backup software does",
+   "markdown": "Backup software copies your data to somewhere else on a schedule, keeps several versions, and lets you restore what you need. The jobs it covers differ, so list yours:\n\n- **File and folder backup.** Copying documents and shared drives so a deleted or corrupted file can be recovered from an earlier version.\n- **Server and image backup.** Capturing a whole server or virtual machine, including the operating system and applications, so you can rebuild it quickly.\n- **Database and application backup.** Capturing databases consistently, so the copy is usable rather than half-written.\n- **Workstation and laptop backup.** Protecting data on devices that leave the office.\n- **Cloud workload and Microsoft 365 backup.** Copying cloud servers and tenant data such as mail, files and Teams content.\n- **Replication and disaster recovery.** Keeping a recoverable copy at a second location so you can restart elsewhere if your office or server room is lost.\n\nBackup is also different from sync and from high availability. A synced folder copies a deletion or an encrypted file instantly. A clustered server survives a hardware failure but not a corrupted database. Backup keeps older, separate copies you can go back to."
+  },
+  {
+   "heading": "How to choose: RPO, RTO and the 3-2-1 rule",
+   "markdown": "Start from two business numbers, not from product names.\n\n- **RPO (recovery point objective):** how much data you can afford to lose, measured in time. If you can accept losing a day of work, nightly backups meet it. If losing an hour of invoices is unacceptable, you need backups or replication every hour or more often.\n- **RTO (recovery time objective):** how long you can be without the system. If a server must be back in an hour, a restore from slow storage across the internet may not meet it. If you can wait a day, a cheaper design is fine.\n\nSet different targets per system. The accounting server, the file share and a rarely used test machine do not need the same treatment, and tiering them is how you control cost.\n\nThen apply the **3-2-1 rule** as a baseline: keep three copies of your data, on two different types of storage, with one copy offsite. Many teams now add that at least one copy should be immutable or offline, so ransomware that reaches your network cannot delete the backups. Check that the product and design you are quoted can actually deliver that.\n\n**The decision rule:** list your systems, give each an RPO and RTO, then choose the software and storage that meet the tightest targets, and test a restore before you rely on it. If a quotation does not say where the copies will live and how long a full restore takes, ask."
+  },
+  {
+   "heading": "Acronis, and how licensing is usually structured",
+   "markdown": "Acronis is a backup and cyber protection publisher that sells to businesses and service providers. We quote it on request. It is not in our catalogue, so we cannot show a price or stock here, and we do not list individual editions. Tell us your servers, workstations, cloud workloads and storage preference, and we will quote against them. See the [Acronis page](/brands/acronis) for more.\n\nBackup licensing varies between products, so ask which model applies to the quotation. The common patterns are:\n\n- **Per device or workload.** A licence for each server, virtual host, workstation or database, sometimes with different prices per type.\n- **Per user.** Common for Microsoft 365 and similar cloud services, often counted per mailbox or user.\n- **Per capacity.** Charged by the amount of data stored, which grows as your data does.\n- **Subscription or perpetual.** Many backup products are now sold as subscriptions with a fixed term, often with cloud storage included or sold separately. Our article on [perpetual versus subscription licensing](/blog/perpetual-versus-subscription-software-licensing) covers how to weigh the two.\n\nThe things to ask on any quotation: what is counted, what happens when the data grows, where backups are stored and who pays for that storage, the term and renewal method, and what support level is included. Keep the renewal date visible, as a lapsed backup subscription can leave you with no way to restore new data."
+  },
+  {
+   "heading": "Microsoft 365 and cloud data need their own backup",
+   "markdown": "A frequent assumption is that Microsoft 365 backs everything up. Microsoft keeps the service running and offers retention and recovery features, but the responsibility for your data, including protection against deletion, ransomware, a departing employee wiping their mailbox or an administrator error, sits with you. Retention policies and recycle bins help for a limited time and are not the same as an independent backup.\n\nIf your business runs on Exchange Online, SharePoint, OneDrive and Teams, ask whether the backup product covers those, how often it runs, and how granular a restore can be, for example one mailbox, one folder or one site. The same question applies to cloud servers on [Azure](/services/azure), [AWS](/services/aws) or [Google Cloud](/services/google-cloud): native snapshots are useful but may not meet your retention or separation needs.\n\nIf you are planning a move to the cloud, build backup into the plan from the start. Our article on [planning a cloud migration that does not cost more](/blog/planning-a-cloud-migration-that-does-not-cost-more) covers the costs people forget, and our [Microsoft 365 services](/services/microsoft-365) can help with the tenant side."
+  },
+  {
+   "heading": "Common mistakes when buying backup",
+   "markdown": "- **Never testing a restore.** A backup that has never been restored is a hope, not a plan. Schedule a test and record how long it took.\n- **Keeping backups on the same network share.** Ransomware that reaches the server often reaches the backup folder too. Keep an offsite and an immutable or offline copy.\n- **Choosing on capacity and forgetting growth.** Data and retention grow every year. Ask how pricing changes.\n- **One policy for everything.** Give critical systems tighter targets and low-value ones looser targets.\n- **Ignoring Microsoft 365.** See the section above.\n- **No owner and no alerts.** Someone must read failure reports. A backup that failed quietly for two months is common.\n- **Confusing backup with security.** Backup helps you recover after an attack. It does not stop one. Pair it with a [firewall](/firewall-security) and [endpoint security](/antivirus-endpoint-security)."
+  },
+  {
+   "heading": "Buying notes for India",
+   "markdown": "- **Written quotation.** Since we quote Acronis on request, the quotation is your price document. Send the number and type of workloads, the data volume, retention needs and whether you want cloud or on-premises storage. Ask for each component, licences, storage and support, on its own line.\n- **GST invoice.** Every TechZoid order is invoiced with GST; give us your registered entity name and GSTIN before the invoice is raised. GST-registered buyers can usually claim input credit; read [GST input credit on software purchases](/blog/gst-input-credit-on-software-purchases) and confirm with your accountant.\n- **Purchase order.** We accept orders against your purchase order, and can quote backup together with servers, storage and software on one PO across brands. See [IT procurement](/services/it-procurement).\n- **Data location.** If you have regulatory or contractual limits on where data is stored, say so before choosing a cloud storage target, and ask for the storage region in writing.\n- **Help with planning.** We provide a [backup and disaster recovery service](/services/backup-disaster-recovery) and [managed IT services](/managed-it-services) if you would rather have the design and monitoring handled for you."
+  }
+ ],
+ "products": [],
+ "faqs": [
+  {
+   "question": "Do you sell Acronis products?",
+   "answer": "We quote Acronis on request. There are no Acronis products or prices in our website catalogue, so send your requirement through the enquiry page and we will respond with a written quotation."
+  },
+  {
+   "question": "What are RPO and RTO in simple terms?",
+   "answer": "RPO is how much data you can afford to lose, expressed as time. RTO is how long you can be without a system before it must be running again. Setting both per system tells you how often to back up and how fast a restore must be."
+  },
+  {
+   "question": "What is the 3-2-1 backup rule?",
+   "answer": "Keep three copies of your data on two different types of storage, with one copy offsite. Many organisations add an immutable or offline copy so that ransomware cannot delete the backups."
+  },
+  {
+   "question": "Does Microsoft 365 already back up our email and files?",
+   "answer": "Microsoft runs the service and provides retention and recovery features, but those are not the same as an independent backup. Responsibility for your data stays with you, so consider a separate Microsoft 365 backup."
+  },
+  {
+   "question": "What should we send to get a backup quotation?",
+   "answer": "The number of servers, virtual machines and workstations, whether you use Microsoft 365 and how many users, total data size and expected growth, retention period, preferred storage location and your recovery targets."
+  },
+  {
+   "question": "Is backup a one-time purchase or a subscription?",
+   "answer": "It depends on the product. Many backup products are sold as term subscriptions and cloud storage may be priced separately. Ask the quotation to state the term, what is counted and how the price changes as data grows."
+  },
+  {
+   "question": "Can you help us design the backup and not just supply software?",
+   "answer": "TechZoid offers a backup and disaster recovery service and managed IT services. Tell us your systems and targets and we will explain what we can take on."
+  }
+ ],
+ "related": [
+  {
+   "href": "/services/backup-disaster-recovery",
+   "label": "Backup and disaster recovery service"
+  },
+  {
+   "href": "/firewall-security",
+   "label": "Firewall security in India"
+  },
+  {
+   "href": "/antivirus-endpoint-security",
+   "label": "Antivirus and endpoint security in India"
+  },
+  {
+   "href": "/blog/planning-a-cloud-migration-that-does-not-cost-more",
+   "label": "Planning a cloud migration that does not cost more"
+  },
+  {
+   "href": "/blog/perpetual-versus-subscription-software-licensing",
+   "label": "Perpetual versus subscription software licensing"
+  }
+ ],
+ "needsVerification": [
+  "Description of Acronis as a backup and cyber protection publisher selling to businesses and service providers is general knowledge; confirm wording.",
+  "Microsoft 365 shared-responsibility claim is general; owner may want to confirm against Microsoft's current wording.",
+  "Generic licensing models (per device, per user, per capacity) are patterns across the market; Acronis's exact models and editions not stated.",
+  "Statement that ransomware often reaches backup shares and that immutable copies are recommended is general guidance, not a product claim.",
+  "Data-location advice is generic; TechZoid cannot confirm storage regions for any specific product."
+ ]
+}

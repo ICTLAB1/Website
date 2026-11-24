@@ -1,0 +1,88 @@
+{
+ "slug": "adobe-acrobat-pro-teams",
+ "displayName": "Adobe Acrobat Pro for Teams",
+ "seoName": "Adobe Acrobat Pro",
+ "licensingHeading": "How the subscription works",
+ "intro": "Acrobat Pro is the PDF tool for people whose documents carry consequences: contracts that must be compared, tender files with names that must be removed, forms that must be collected and archives that must be kept in a stable format. The annual named-user Teams subscription is {{price:adobe-acrobat-pro-teams}} excluding GST, or {{gst:adobe-acrobat-pro-teams}} with 18% GST. A written quotation fixes the price.\n\nOur [PDF software guide](/pdf-software) explains the editions and how to choose between them. This page goes further into what Pro does in day-to-day work, so you can judge whether one particular team needs it.",
+ "included": "The capabilities that justify Pro over a basic editor, by task:\n\n- **Redaction.** Mark text, images or whole areas, then apply the redaction so content is removed from the file, not hidden under a box. Pro can also remove hidden data such as metadata, comments and embedded attachments before a file leaves your office.\n- **Comparison.** Open two versions of a contract or tender and see the differences listed, which is quicker and safer than reading both.\n- **Forms.** Turn a scanned or Word form into a fillable PDF, distribute it and gather responses.\n- **Archive and accessibility.** Save in archival PDF/A format and run an accessibility check for documents that must be readable with assistive tools.\n- **Batch work.** Run a repeatable sequence, for example OCR, rename and compress, across a folder of scans.\n- **Protection and signature.** Password and permission control, plus electronic signature requests and tracking.\n- **Platforms.** Windows, macOS, iOS and Android, with Microsoft 365 integration.\n\nThe included signature allowance is a fair-use one. High-volume or regulated signing is served by a separate Adobe product, which we can quote.",
+ "whoFor": "**A good fit:**\n\n- Legal, company-secretary and compliance teams reviewing and redacting documents\n- Procurement and tender desks that issue and receive bid documents\n- HR and finance teams sharing records that contain personal data\n- Records and archive teams converting scans into searchable, long-term files\n- Any user on a Mac who needs more than reading\n\n**Probably not the right buy:**\n\n- Staff who only merge, sign or fill documents on Windows; [Standard](/products/adobe-acrobat-standard-teams) covers that\n- People already holding Creative Cloud All Apps, which includes Acrobat Pro\n- Occasional readers, for whom a free reader suffices\n\nA practical check: ask whether anyone has sent a document outside the company that they would not want to see changed or exposed. If yes, Pro's redaction and sanitising are the reason to buy.",
+ "vs": {
+  "alternative": "Acrobat Standard",
+  "alternativeSlug": "adobe-acrobat-standard-teams",
+  "intro": "Standard and Pro share the everyday core of creating, editing, merging and signing. The question is whether anyone needs the extras that Pro adds, and whether everyone is on Windows.",
+  "rows": [
+   {
+    "label": "Create, edit, merge, fill and sign",
+    "thisProduct": "Yes",
+    "alternative": "Yes"
+   },
+   {
+    "label": "Redaction",
+    "thisProduct": "Included",
+    "alternative": "Not included"
+   },
+   {
+    "label": "Document comparison",
+    "thisProduct": "Included",
+    "alternative": "Not included"
+   },
+   {
+    "label": "PDF/A and accessibility checking",
+    "thisProduct": "Included",
+    "alternative": "Not included"
+   },
+   {
+    "label": "Operating systems",
+    "thisProduct": "Windows and macOS, plus mobile apps",
+    "alternative": "Windows only"
+   },
+   {
+    "label": "Annual price (ex GST)",
+    "thisProduct": "{{price:adobe-acrobat-pro-teams}}",
+    "alternative": "{{price:adobe-acrobat-standard-teams}}"
+   }
+  ],
+  "verdict": "If the work is internal and on Windows, choose Standard and save the difference. If any seat touches redaction, comparison, regulated archiving or a Mac, choose Pro for that seat.\n\nIt is normal to mix them. Assign seats by role, and revisit at renewal using the Admin Console, as our note on [unused licences](/blog/hidden-cost-of-unused-software-licences) suggests."
+ },
+ "licensing": "Acrobat Pro for Teams is licensed to a **named user** through the Adobe Admin Console. The administrator assigns a seat by email address and can reassign it when a person leaves, which keeps the entitlement with the company.\n\nBusiness plans carry an annual commitment, with seats added during the term prorated to the common renewal date. Monthly billing and other terms can be quoted on request.\n\nAcrobat Pro is also included in [Creative Cloud All Apps](/products/adobe-creative-cloud-all-apps-teams), so do not buy it twice for the same person. Larger organisations that need federated sign-in should read about [Creative Cloud for Enterprise](/blog/adobe-creative-cloud-for-enterprise). We help with seat assignment after purchase.",
+ "sysreq": "- Windows 11 and Windows 10, and currently supported macOS versions\n- iOS and Android apps for reading, commenting and signing on the move\n- A modest business PC is enough for everyday work; OCR and batch processing of large scans benefit from more memory and an SSD\n- Adobe publishes exact requirements for each release, so confirm them before buying hardware\n- An internet connection is needed for sign-in, licence checks and signature services",
+ "faqs": [
+  {
+   "question": "Is covering text with a black box the same as redaction?",
+   "answer": "No. A box drawn over text leaves the text underneath, which can often be copied. Proper redaction removes the content from the file. That is the reason legal and HR teams buy Pro. Always check the saved file before sending it outside."
+  },
+  {
+   "question": "What is the Adobe Acrobat Pro price in India?",
+   "answer": "The annual named-user subscription is {{price:adobe-acrobat-pro-teams}} excluding GST, or {{gst:adobe-acrobat-pro-teams}} with 18% GST. The website price is tentative, and a written quotation fixes it."
+  },
+  {
+   "question": "Can Pro compare two versions of a contract?",
+   "answer": "Yes. Document comparison lists text and layout differences between two PDFs, which helps with contract and tender revisions. It works best when both files have real text; scans need OCR first."
+  },
+  {
+   "question": "Does Pro include unlimited e-signatures?",
+   "answer": "It includes signature requests with a fair-use allowance. Regulated or high-volume workflows are served by Adobe Acrobat Sign, which is licensed separately. Tell us your monthly volume and we will say which fits."
+  },
+  {
+   "question": "Can Pro turn scans into searchable PDFs?",
+   "answer": "Yes, optical character recognition converts scans into searchable, editable text, and batch actions can process many files. Accuracy depends on scan quality and language, so test a sample of your own documents before a wide roll-out."
+  },
+  {
+   "question": "Should we pair Pro with the AI Assistant add-on?",
+   "answer": "Only if staff read long documents routinely. It is a separate purchase, bought on top of a seat; see [AI Assistant for Acrobat](/products/adobe-ai-assistant-for-acrobat). Pilot it with a few users first."
+  }
+ ],
+ "related": [
+  "adobe-acrobat-standard-teams",
+  "adobe-acrobat-studio",
+  "adobe-ai-assistant-for-acrobat",
+  "adobe-creative-cloud-all-apps-teams"
+ ],
+ "needsVerification": [
+  "Batch (Action Wizard) and sanitising of hidden data are described from general Acrobat Pro knowledge; confirm they are in the current Teams edition",
+  "PDF/A, accessibility check and comparison are Pro-only per house notes",
+  "Adobe Acrobat Sign as separate product for high-volume signing (house notes)",
+  "Internet requirement for licence checks",
+  "Acrobat Standard Windows-only per house notes"
+ ]
+}

@@ -1,0 +1,38 @@
+{
+  "_readme": "Customer reviews shown in the 'What customers say' block on the homepage and on product pages. Nothing here is published until you set \"approved\" to true AND fill in quote and author. Paste the review text exactly as the customer wrote it on Google, with their permission to quote it. Leave \"products\" empty to show a review on the homepage and every product page, or list product slugs (e.g. [\"autocad\"]) to show it only on those product pages. Do not edit, shorten or invent review text. While every entry is unapproved the block does not appear at all.",
+  "reviews": [
+    {
+      "id": "google-1",
+      "approved": false,
+      "quote": "",
+      "author": "",
+      "role": "",
+      "organisation": "",
+      "source": "Google",
+      "sourceUrl": "",
+      "products": []
+    },
+    {
+      "id": "google-2",
+      "approved": false,
+      "quote": "",
+      "author": "",
+      "role": "",
+      "organisation": "",
+      "source": "Google",
+      "sourceUrl": "",
+      "products": []
+    },
+    {
+      "id": "google-3",
+      "approved": false,
+      "quote": "",
+      "author": "",
+      "role": "",
+      "organisation": "",
+      "source": "Google",
+      "sourceUrl": "",
+      "products": []
+    }
+  ]
+}

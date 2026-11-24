@@ -1,0 +1,87 @@
+{
+ "slug": "fortinet",
+ "displayName": "Fortinet",
+ "description": "Fortinet reseller in India: FortiGate firewalls, switches, Wi-Fi and logging, quoted with a GST invoice. Share your sites and users for a written quote.",
+ "intro": "Fortinet is best known in business IT for the FortiGate firewall, a single appliance that combines routing, firewalling, VPN, web filtering and intrusion prevention, and for a wider family of products that are meant to be managed together under what Fortinet calls the Security Fabric. Because the same operating system runs across the range, a small branch box and a data-centre firewall are configured in a recognisably similar way, which is why the brand appeals to organisations with many sites.\n\nIn India the typical Fortinet buyer is a multi-branch business: a manufacturer with a head office and several plants, a hospital group, a school or college chain, a logistics company, a bank branch network or a government office that must connect many small locations securely. It is also common with managed service providers who want one platform across customers. Smaller firms with a single office buy it too, usually when they have outgrown the router-plus-antivirus setup.\n\nTechZoid is a Fortinet reseller. We do not publish Fortinet prices or hold a Fortinet catalogue on this site; every requirement is quoted on request. You tell us your sites, users and internet links, we prepare a written quotation covering hardware, subscriptions and support, and that quotation fixes the price. Orders are invoiced with GST, and we can put Fortinet on the same purchase order as your other [firewall and network security](/firewall-security) items. If you are still comparing brands, read our [firewall brand comparison](/blog/top-firewall-brands-india-fortinet-sophos-sonicwall-cisco) first, then [request a quotation](/enquiry).",
+ "lines": [
+  {
+   "name": "FortiGate next-generation firewalls",
+   "use": "The core product: a firewall and VPN gateway with web filtering, application control and intrusion prevention, sold as desktop units for small offices up to rack-mounted models for data centres."
+  },
+  {
+   "name": "FortiSwitch",
+   "use": "Access and distribution switches that can be managed from a FortiGate, so wired ports and security policy are handled from one screen at branch sites."
+  },
+  {
+   "name": "FortiAP wireless access points",
+   "use": "Wi-Fi access points that are controlled through the FortiGate, useful when you want guest and staff networks to follow the same security rules as the wired network."
+  },
+  {
+   "name": "FortiAnalyzer",
+   "use": "Central log collection and reporting for FortiGate and other Fortinet devices, used where audit trails, compliance reports or incident investigation matter."
+  },
+  {
+   "name": "FortiManager",
+   "use": "Central management for many FortiGate devices, so policies and firmware can be rolled out to dozens of branches without logging in to each one."
+  },
+  {
+   "name": "FortiMail",
+   "use": "Email security for filtering spam, phishing and malicious attachments, for organisations that run their own mail server or want an extra layer in front of cloud mail."
+  }
+ ],
+ "choose": "Start with the FortiGate, because the other lines are optional add-ons built around it. Sizing a FortiGate is not about user count alone. Ask your network team four questions: how fast are the internet links at each site, how much of that traffic will be inspected for threats (not merely forwarded), how many VPN tunnels or remote users must the box carry, and do you plan to inspect encrypted traffic. Inspection is far more demanding than plain routing, so the throughput figure that matters is the one with your intended security features switched on. We will help you read the datasheet for that, and it is better to ask than to pick on headline numbers.\n\nAn SME with one or two offices usually needs one FortiGate per site, possibly a pair for failover if the office cannot tolerate downtime. A multi-site business should think about FortiManager and FortiAnalyzer early, because retrofitting central management across twenty branches is harder than planning it. If you are choosing between subscription bundles, compare what each includes, such as intrusion prevention, web filtering and sandboxing, against what your staff will really use. Our [cybersecurity service](/services/cybersecurity) team can review your design before you commit, and the [Sophos hub](/brands/sophos) is worth a look if you also want endpoint protection tied to the firewall.",
+ "buying": "Fortinet is bought as hardware plus subscriptions. The appliance is a one-time purchase, and the security features and support run on time-bound contracts, typically for one, three or five years. FortiGuard subscriptions supply threat updates for functions such as intrusion prevention and web filtering, and FortiCare is the support and hardware-replacement entitlement. When a subscription lapses the box continues to route traffic, but the security feeds stop updating, so renewal dates need to be tracked. We can keep that renewal calendar for you through our [licence management](/services/licence-management) service.\n\nFortinet offers its subscriptions both individually and as bundles. A bundle is simpler to buy and renew, while a-la-carte selection can suit a site that needs only a few functions. Longer terms are usually quoted as a single upfront payment, which helps when the budget is approved once. Ask us to quote more than one term so you can compare the options side by side.\n\nTo prepare a quotation we need:\n\n- The number of sites and the number of users or devices at each\n- Internet link speeds, and whether you have more than one provider\n- Whether you need high availability (two units) at any site\n- Existing firewall make and model, if you are replacing one\n- Features you want switched on: VPN, web filtering, sandboxing, email security\n- Whether switches, access points or central logging are also required\n- Preferred subscription term\n\nWe issue a written quotation, and its figures, not any website number, fix the price. On order we raise a GST invoice and can work to your purchase order, including one order that covers Fortinet and other brands. GST-registered buyers can usually claim input credit. For installation and migration, [endpoint management](/services/endpoint-management) and cybersecurity teams at TechZoid can be engaged separately, and the scope would be agreed in writing. Start from the [enquiry form](/enquiry).",
+ "faqs": [
+  {
+   "question": "How much does a Fortinet firewall cost in India?",
+   "answer": "There is no single figure because the cost depends on the model, the subscription bundle and the term you choose. TechZoid does not list Fortinet prices on this site. Send us your site count, users and link speeds and we will prepare a written quotation for hardware and subscriptions. That quotation fixes the price."
+  },
+  {
+   "question": "How do Fortinet subscriptions and renewals work?",
+   "answer": "The firewall hardware is bought once. Threat-update subscriptions and support are sold for fixed terms and must be renewed to keep signatures and hardware replacement current. The device keeps forwarding traffic after expiry but stops receiving updates. We can quote renewals ahead of the date so there is no gap in protection."
+  },
+  {
+   "question": "Can TechZoid help with deployment and support?",
+   "answer": "Yes, as a separately scoped service. Our cybersecurity team can review your design, help with rollout and migration, and advise on policies. Hardware replacement and product support come through the Fortinet support contract you buy with the unit. We will set out what is included in the quotation."
+  },
+  {
+   "question": "What should I send to get a Fortinet quotation?",
+   "answer": "Send the number of sites, users and devices per site, internet link speeds, whether you need a failover pair, your current firewall, and any extras such as switches, Wi-Fi or central logging. Mention the subscription term you prefer. The more precise the throughput and feature list, the more accurate the quotation."
+  },
+  {
+   "question": "Can I move from another firewall brand to Fortinet?",
+   "answer": "Yes, many organisations do. Rules and addresses usually need to be rebuilt or converted rather than copied, so plan a review of old rules first. Run the old and new firewalls side by side if you can, then cut over at a quiet time. Tell us what you run today and we will quote accordingly."
+  },
+  {
+   "question": "Will I get a GST invoice and can you work to our purchase order?",
+   "answer": "Yes. Every TechZoid order carries a GST invoice, and we can work to your purchase order, including a single order that combines Fortinet with other brands. GST-registered buyers can usually claim input credit on the invoice. Share your billing details when you request the quotation."
+  }
+ ],
+ "related": [
+  {
+   "href": "/firewall-security",
+   "label": "Firewall and network security"
+  },
+  {
+   "href": "/brands/sophos",
+   "label": "Sophos reseller hub"
+  },
+  {
+   "href": "/brands/sonicwall",
+   "label": "SonicWall reseller hub"
+  },
+  {
+   "href": "/blog/top-firewall-brands-india-fortinet-sophos-sonicwall-cisco",
+   "label": "Firewall brands compared for India"
+  },
+  {
+   "href": "/services/cybersecurity",
+   "label": "Cybersecurity services"
+  }
+ ],
+ "needsVerification": [
+  "Confirm TechZoid quotes each listed product line",
+  "Confirm the FortiGuard (threat updates) and FortiCare (support) naming and the 1/3/5-year term options",
+  "Confirm subscription bundles are offered alongside a-la-carte, and expiry behaviour of the device"
+ ]
+}

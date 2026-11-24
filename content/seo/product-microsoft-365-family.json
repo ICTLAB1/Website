@@ -1,0 +1,87 @@
+{
+ "slug": "microsoft-365-family",
+ "displayName": "Microsoft 365 Family",
+ "intro": "Microsoft 365 Family is the consumer subscription for a household. One subscription can be shared with other people in the same home, up to a limit set by Microsoft, each using their own sign-in and their own storage. It carries the desktop Office apps and cloud storage, in the same way Microsoft 365 Personal does for a single person.\n\nIt is a home plan. It is not licensed for organisational use, so it is not a way to cover the staff of an office, shop, clinic or school. A business should look at [Microsoft 365 Business Basic](/products/microsoft-365-business-basic), [Business Standard](/products/microsoft-365-business-standard) or [Business Premium](/products/microsoft-365-business-premium), which are built for organisations and managed by an administrator.\n\nOur catalogue lists Family for the household buyer. The price is not shown on the site and is confirmed on a written quotation; use the [enquiry form](/enquiry) to ask.",
+ "included": "Microsoft 365 Family is a subscription, so apps and updates continue while it is active. In practical terms it gives a household:\n\n- Desktop versions of the core Office apps such as Word, Excel and PowerPoint for the people sharing it\n- Outlook for mail and calendar\n- OneDrive cloud storage, with an allowance for each person set by Microsoft\n- Sharing with other people in the household, up to Microsoft's limit\n- Updates for as long as the subscription runs\n\nIt does not give you business email on your own domain, a staff admin console, centrally enforced security policies or the controls an organisation needs to manage company data. Those belong to the Business plans.\n\nApp lists, storage amounts and the exact household limit are set by Microsoft and change, so ask us for the current description before you rely on a specific number.",
+ "whoFor": "**A good fit:**\n\n- A family where parents and children each need Word, Excel and PowerPoint for school and home use\n- A household that wants separate cloud storage for each member under one subscription\n- People who would otherwise buy several individual subscriptions for the same home\n- A family that prefers continuous updates over buying a one-time edition per computer\n\n**Probably not:**\n\n- An office, shop, clinic, firm or school, even a very small one, buying for staff\n- A group of unrelated people sharing a subscription to save money\n- A business owner who intends to cover employees under a family plan\n- One person living alone, where Personal is the plain fit\n\nIf the people using the software are doing an organisation's work, that organisation needs its own business licences, whatever the head count.",
+ "vs": {
+  "alternative": "Microsoft 365 Personal",
+  "alternativeSlug": "microsoft-365-personal",
+  "intro": "Family and Personal are consumer plans from the same product line. The difference is the number of people covered, not the capability of the apps. Neither is a business plan.\n\nIf only one person will use it, Personal is simpler and avoids paying for sharing nobody uses. If several people in the same household each need the apps, a single Family subscription normally works out tidier than several separate ones, though we confirm current terms before quoting.",
+  "rows": [
+   {
+    "label": "Intended users",
+    "thisProduct": "A household group, up to Microsoft's limit",
+    "alternative": "One individual"
+   },
+   {
+    "label": "Intended setting",
+    "thisProduct": "Home and personal use",
+    "alternative": "Home and personal use"
+   },
+   {
+    "label": "Organisational use",
+    "thisProduct": "Not licensed for it",
+    "alternative": "Not licensed for it"
+   },
+   {
+    "label": "Separate sign-ins and storage",
+    "thisProduct": "Each person has their own",
+    "alternative": "One person"
+   },
+   {
+    "label": "Admin console for staff",
+    "thisProduct": "No",
+    "alternative": "No"
+   },
+   {
+    "label": "Price",
+    "thisProduct": "Confirmed on a written quotation",
+    "alternative": "Confirmed on a written quotation"
+   }
+  ],
+  "verdict": "Choose Family when two or more people in one home need the apps, and [Microsoft 365 Personal](/products/microsoft-365-personal) when it is only one. If the use is a business's, skip both and choose a Business plan, or a perpetual edition like [Office Home & Business 2024](/products/microsoft-office-home-and-business-2024) if a one-time purchase suits and the licence terms fit your use."
+ },
+ "licensing": "Microsoft 365 Family is a consumer subscription owned by one person, who can invite other members of their household to share it. It is written for personal, non-business use in the home.\n\nA Business plan works differently. It is assigned to named users in an organisation's tenant, an administrator adds and removes people, and data stays under company control. A family subscription has no such structure, and an employer cannot treat it as a substitute.\n\nTwo cautions follow. First, sharing is meant for people in one household, not for colleagues or friends. Second, ownership belongs to a person; if that person leaves the arrangement, members lose access. For an overview of how the business range differs, read [Microsoft 365 plans, apps and price in India](/blog/what-is-microsoft-365-plans-apps-price-india) or browse the [Microsoft 365 range](/microsoft-365). If you are unsure which licence your situation needs, ask through the [enquiry form](/enquiry) before buying.",
+ "licensingHeading": "How the licence works",
+ "sysreq": "- A supported version of Windows or macOS for the desktop apps; check Microsoft's current list before buying\n- An internet connection for sign-in, activation and periodic licence checks\n- A Microsoft account for the subscription owner, and one for each person invited\n- Free disk space for the apps on each device, which is modest on current PCs\n- Mobile and web use depends on the device and browser; confirm on Microsoft's published requirements page",
+ "faqs": [
+  {
+   "question": "Can a small business use Microsoft 365 Family for its staff?",
+   "answer": "No. Family is a home plan and is not licensed for organisational use, however small the business. A business should use Microsoft 365 Business Basic, Standard or Premium, which an administrator manages. Ask us if you are unsure which fits."
+  },
+  {
+   "question": "Who counts as a household member?",
+   "answer": "Microsoft's terms define how sharing works and how many people can be added, and those details can change. In general it is meant for the people who live together. We would rather confirm the current wording with you than state a number here."
+  },
+  {
+   "question": "Is Family cheaper than buying Personal for each person?",
+   "answer": "Usually Family suits a household of several people better than separate subscriptions, but we do not publish a figure for either. Ask for a written quotation for both and compare for your actual head count."
+  },
+  {
+   "question": "Can the family plan be claimed as a business expense?",
+   "answer": "TechZoid issues a GST invoice on every order, and software carries 18% GST. Input credit is usually claimable by GST-registered buyers, but only where the purchase is a genuine business expense. A home plan used for family purposes is unlikely to qualify, so check with your accountant."
+  },
+  {
+   "question": "What if I want one-time pricing instead of a subscription?",
+   "answer": "Look at a perpetual edition. [Office Home 2024](/products/microsoft-office-home-2024) is a one-time purchase for a single PC or Mac, with no new features after purchase. It suits a single device better than a household sharing across many."
+  },
+  {
+   "question": "How do I get a price for Family?",
+   "answer": "The site shows no figure for this product. The price is fixed by a written quotation. Send your request through the [enquiry form](/enquiry) with the number of people and devices."
+  }
+ ],
+ "related": [
+  "microsoft-365-personal",
+  "microsoft-office-home-2024",
+  "microsoft-office-home-and-business-2024",
+  "microsoft-365-business-standard"
+ ],
+ "needsVerification": [
+  "Maximum number of people on a Family plan (described by the brief as up to six); text avoids stating a number.",
+  "Exact per-person storage allowance and app list; text kept generic.",
+  "Whether members must live in the same household under current Microsoft terms.",
+  "Whether the plan is purchasable through TechZoid with a GST invoice; site lists it as quote-only.",
+  "Current system requirements (Windows/macOS versions)."
+ ]
+}

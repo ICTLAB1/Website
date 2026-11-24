@@ -1,0 +1,80 @@
+{
+ "slug": "acer",
+ "displayName": "Acer",
+ "description": "Acer TravelMate notebooks and Veriton desktops for Indian offices and schools from an Acer reseller. Quoted on request, GST invoice. Request a quote.",
+ "intro": "Acer is a household name in India for consumer laptops, but its business ranges are a separate matter and are what we quote. TravelMate is the notebook family aimed at offices and institutions, and Veriton is the desktop family built for fixed desks, labs and counters. They sit at the value end of commercial hardware: sensible specifications, familiar components, and a price position that suits organisations buying in volume with a fixed budget.\n\nThat is why Acer shows up so often in education and in cost-conscious departments. A school computer lab, a college library, a municipal office or a growing company with forty new joiners all have the same problem: they need reliable machines in quantity, and the budget does not stretch to a premium tier. Acer's commercial lines are designed for that brief.\n\nTechZoid acts as an Acer reseller on a quotation basis. Acer products are not listed in our online catalogue, so there are no stock claims and no prices on this site. You send the quantity and the configuration you want, we obtain a written quotation, and the quotation is the price. Each order carries a GST invoice, which GST-registered buyers can usually claim as input credit.\n\nThe practical advantage of buying through us is consolidation. If the same order needs Windows 11 Pro, Microsoft 365 for staff, or backup software for the new machines, we can place them on one quotation and one purchase order. If you are comparing Acer with other makes, our [business laptops](/business-laptops) overview and the [HP](/brands/hp) and [Lenovo](/brands/lenovo) hubs lay out the alternatives for the same job.",
+ "lines": [
+  {
+   "name": "TravelMate",
+   "use": "Acer's business notebook family for offices, institutions and field staff, built around sensible specifications and practical ports rather than thin-and-light styling."
+  },
+  {
+   "name": "Veriton",
+   "use": "Business desktops in compact and tower formats for offices, labs and government counters. A common choice when many identical machines are being deployed."
+  },
+  {
+   "name": "Aspire (for light office use)",
+   "use": "A mainstream notebook line sometimes requested where the budget is tight and the work is basic documents and browsing. Quote it only for low-demand roles and compare it with TravelMate on warranty."
+  },
+  {
+   "name": "Acer monitors",
+   "use": "Displays that can be added to a Veriton desktop order so screens and cables come on the same invoice and delivery."
+  }
+ ],
+ "choose": "For Acer the first decision is between a TravelMate notebook and a Veriton desktop, and it depends on whether the user moves. Teachers, field officers and travelling staff need a notebook; students in a lab, clerks at counters and back-office users are better served by a desktop that is cheaper per seat and easier to service.\n\nWhen preparing an enquiry, state the points below so the quotation lines up with your budget:\n\n- **Processor class.** Entry-level processors are adequate for documents, email and web applications. Choose a mid-range processor if users keep many applications open or run accounting software with large data files.\n- **Memory and storage.** Ask for solid-state storage in every machine. Memory is the cheapest upgrade that improves the day-to-day feel of a fleet, so do not under-specify it to save a small amount.\n- **Warranty.** Check the warranty length and whether service is onsite. For schools and branch offices with no IT staff, onsite matters more than a long carry-in term.\n- **Operating system.** Decide between Windows 11 Pro installed and FreeDOS. FreeDOS works well when you image machines yourself, but you must already hold the Windows licences.\n\nFor a lab, ask for identical specifications across every unit; it makes imaging, spares and support far simpler.",
+ "buying": "Acer is bought from TechZoid by quotation. We do not hold Acer hardware in the online catalogue, so the first step is always a request.\n\n### How an Acer order works\n\n1. Send your requirement through the [enquiry form](/enquiry): model family, quantity, processor class, memory, storage, operating system and warranty.\n2. We obtain pricing and return a written quotation. The price is fixed by that document.\n3. You review it, adjust if needed and issue a purchase order against it.\n4. We deliver and invoice with GST.\n\n### Warranty and onsite service\n\nAcer warranty terms vary with the model and any extension bought with the order. Because school and government sites are often outside metro cities, tell us every delivery location. We state the warranty and any onsite coverage in the quotation, so you know the terms before you commit.\n\n### Bulk and staged delivery\n\nLabs and rollouts seldom need every unit on the same day. If you want deliveries staged by site or by term, put that in the enquiry and we will discuss what can be arranged. Larger quantities are quoted as a whole, so tell us the full count even if you will receive units in phases.\n\n### Tenders and purchase orders\n\nFor education and public-sector buying, send the specification, quantities and delivery clauses. We quote against a written specification and supply a GST invoice that fits into your PO and audit file. If you are running a formal tender, our [IT procurement service](/services/it-procurement) page explains how we handle multi-line orders.\n\n### Software on the same quotation\n\nWindows 11 Pro, [Microsoft 365](/microsoft-365) plans and endpoint backup can be quoted together with the machines. That avoids raising separate purchase orders for hardware and licences.\n\n### What to send\n\n- Model family and quantity for each role.\n- Processor class, memory and storage.\n- Operating system choice.\n- Warranty and onsite needs.\n- Delivery sites and any staging.\n- GST number for the invoice.",
+ "faqs": [
+  {
+   "question": "Does TechZoid keep Acer laptops in stock?",
+   "answer": "No Acer products are listed in the catalogue and we make no stock claims. Acer hardware is quoted on request; send the configuration and quantity and we respond with a written quotation."
+  },
+  {
+   "question": "Is Acer suitable for business use or only for home users?",
+   "answer": "Acer sells commercial ranges, TravelMate for notebooks and Veriton for desktops, aimed at offices and institutions. Those are the lines we quote, rather than consumer models."
+  },
+  {
+   "question": "Will the quotation include GST?",
+   "answer": "Every TechZoid order is supported by a GST invoice. GST-registered buyers can usually claim input credit; confirm with your accountant how it applies to you."
+  },
+  {
+   "question": "Can I buy Acer machines with FreeDOS?",
+   "answer": "You can request FreeDOS in the enquiry. It suits organisations that image machines from a licensed Windows build, but you must hold the Windows licences, or we can quote them alongside."
+  },
+  {
+   "question": "Can you supply a computer lab of identical machines?",
+   "answer": "Yes, we can quote an identical specification across a lab and discuss staged delivery by site. Send the quantity, specification and delivery locations."
+  },
+  {
+   "question": "Can Microsoft 365 or backup software be bought together with the hardware?",
+   "answer": "Yes. TechZoid supplies Microsoft licensing and backup software, so these can be placed on the same quotation and purchase order as the machines."
+  }
+ ],
+ "related": [
+  {
+   "href": "/business-laptops",
+   "label": "Business laptops"
+  },
+  {
+   "href": "/brands/hp",
+   "label": "HP hardware"
+  },
+  {
+   "href": "/brands/lenovo",
+   "label": "Lenovo hardware"
+  },
+  {
+   "href": "/microsoft-365",
+   "label": "Microsoft 365"
+  },
+  {
+   "href": "/services/it-procurement",
+   "label": "IT procurement service"
+  }
+ ],
+ "needsVerification": [
+  "Confirm TechZoid quotes each listed product line",
+  "Confirm Acer business monitors and the Aspire line are supplied and currently sold in India",
+  "Confirm onsite warranty coverage and staged delivery are offered by TechZoid for Acer",
+  "Confirm TravelMate and Veriton are the current commercial range names in India"
+ ]
+}

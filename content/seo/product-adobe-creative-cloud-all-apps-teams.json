@@ -1,0 +1,90 @@
+{
+ "slug": "adobe-creative-cloud-all-apps-teams",
+ "displayName": "Adobe Creative Cloud All Apps for Teams",
+ "seoName": "Adobe Creative Cloud for Teams",
+ "licensingHeading": "How the subscription works",
+ "intro": "Creative Cloud All Apps gives each named user the full Adobe application set: Photoshop, Illustrator, InDesign, Premiere Pro, After Effects, Lightroom, Acrobat Pro and the rest. The Teams edition adds an admin console, reassignable seats and one renewal date, which is why agencies, studios and marketing departments buy it instead of individual subscriptions.\n\nThe annual commitment, billed yearly, is {{price:adobe-creative-cloud-all-apps-teams}} per user excluding GST, or {{gst:adobe-creative-cloud-all-apps-teams}} with 18% GST. The website price is tentative; a written quotation fixes it. For the wider picture see our [Creative Cloud price guide](/blog/adobe-creative-cloud-price-in-india).",
+ "included": "According to our catalogue, each seat includes:\n\n- Over twenty Adobe desktop and mobile applications\n- Acrobat Pro, so a designer does not need a separate PDF seat\n- 100 GB of cloud storage per user\n- Creative Cloud Libraries for shared brand assets\n- Adobe Fonts, and Adobe Stock integration (Stock assets are licensed separately)\n- Adobe Admin Console for assigning and reclaiming seats\n- Consolidated billing on a single renewal date\n\nThe benefit is breadth without tracking. A motion designer who also retouches stills, a layout artist who occasionally edits video and a manager who needs Acrobat all use one entitlement, and the administrator does not need to remember who holds which tool.\n\nSome generative features use credits whose allowance Adobe sets and changes, so we confirm them in writing at quotation if that matters to you.",
+ "whoFor": "**A good fit:**\n\n- An agency or studio where designers move between print, motion and photography\n- A marketing department producing brochures, social video and reports in-house\n- A training or media unit whose staff each need three or four applications\n- Teams that want a single renewal date and a single admin console\n\n**Probably not the right buy:**\n\n- A retoucher who only opens Photoshop, or a vector artist who only opens Illustrator\n- Staff who need only PDF handling, for whom [Acrobat Pro](/products/adobe-acrobat-pro-teams) is cheaper\n- Fleets of fifty or more seats needing federated sign-in, which [Enterprise](/products/adobe-creative-cloud-enterprise) fits better\n\nCount applications per person, not per team. One heavy user can justify All Apps while the rest of the team stays on single-app seats.",
+ "vs": {
+  "alternative": "Creative Cloud Single App",
+  "alternativeSlug": "adobe-creative-cloud-single-app-teams",
+  "intro": "Both plans are named-user Teams subscriptions with the same Admin Console. A single team agreement can hold both kinds of seat, so the decision is per person.",
+  "rows": [
+   {
+    "label": "Applications per seat",
+    "thisProduct": "The full Adobe set",
+    "alternative": "One application of your choice"
+   },
+   {
+    "label": "Acrobat Pro",
+    "thisProduct": "Included",
+    "alternative": "Not included"
+   },
+   {
+    "label": "Cloud storage",
+    "thisProduct": "100 GB per user",
+    "alternative": "100 GB per user"
+   },
+   {
+    "label": "Mixing within one agreement",
+    "thisProduct": "Yes",
+    "alternative": "Yes"
+   },
+   {
+    "label": "Annual price (ex GST)",
+    "thisProduct": "{{price:adobe-creative-cloud-all-apps-teams}}",
+    "alternative": "{{price:adobe-creative-cloud-single-app-teams}}"
+   },
+   {
+    "label": "Best for",
+    "thisProduct": "People using four or more applications",
+    "alternative": "Specialists using one application"
+   }
+  ],
+  "verdict": "Per our catalogue, All Apps costs less per user at around four single applications, and it removes the tracking. Below that, single-app seats cost less.\n\nA photo retoucher or video editor can sit on [Single App](/products/adobe-creative-cloud-single-app-teams) while the multi-skilled designer takes All Apps. Our advice is to list each person's applications first."
+ },
+ "licensing": "Creative Cloud All Apps for Teams is licensed to a **named user** through the Adobe Admin Console. A seat is assigned by email address and can be reassigned when a person leaves or changes role, which is the main reason organisations choose Teams over individual accounts.\n\nBusiness plans carry an annual commitment, billed yearly or monthly depending on the variant; seats added mid-term are prorated to the renewal date. Other terms can be quoted on request.\n\nThe Teams edition suits most studios and companies. Organisations that need federated sign-in, or are at about fifty seats or above, should read [Creative Cloud for Enterprise](/blog/adobe-creative-cloud-for-enterprise), and [VIP versus VIP Marketplace](/blog/adobe-vip-versus-vip-marketplace) explains how the buying programme affects billing. We help with seat assignment after purchase.",
+ "sysreq": "- Windows 11 and Windows 10 (64-bit), and macOS versions supported by the current Adobe release\n- 16 GB of RAM recommended, and 32 GB for video and 3D work\n- A GPU with 4 GB of video memory or more for accelerated features\n- Video editing and motion work are the heaviest demands; see our [video editing guide](/video-editing-software)\n- Adobe publishes exact requirements per application and release, so confirm them before ordering hardware",
+ "faqs": [
+  {
+   "question": "What is the Adobe Creative Cloud for Teams price in India?",
+   "answer": "The annual All Apps subscription, billed yearly, is {{price:adobe-creative-cloud-all-apps-teams}} per user excluding GST, or {{gst:adobe-creative-cloud-all-apps-teams}} with 18% GST. Billing monthly under an annual commitment is also available. A written quotation fixes the price."
+  },
+  {
+   "question": "Does All Apps include Acrobat Pro?",
+   "answer": "Yes. Do not buy a separate Acrobat seat for a person who holds All Apps. Check each user before ordering, because paying for both is a frequent double purchase."
+  },
+  {
+   "question": "Can we mix All Apps and single-app seats?",
+   "answer": "Yes. A team agreement can hold both, and the choice is made per seat. Heavy multi-application users can take All Apps while specialists stay on a single application."
+  },
+  {
+   "question": "Can a seat move to a new employee?",
+   "answer": "Yes. Seats are assigned in the Admin Console and can be unassigned and reassigned when someone leaves, which is the main operational reason for choosing Teams."
+  },
+  {
+   "question": "Do the plans include Adobe Stock images?",
+   "answer": "Stock integrates with the applications, but stock assets themselves are licensed separately; see [Adobe Stock](/products/adobe-stock-10-assets). Tell us the volume of assets you use when you enquire."
+  },
+  {
+   "question": "When should we move to Enterprise?",
+   "answer": "Consider it when you need federated single sign-on, enterprise-owned storage or governance controls, typically at around fifty seats or more. Below that, Teams is generally the simpler choice."
+  }
+ ],
+ "related": [
+  "adobe-creative-cloud-single-app-teams",
+  "adobe-acrobat-pro-teams",
+  "adobe-photoshop-teams",
+  "adobe-premiere-pro-teams",
+  "adobe-creative-cloud-enterprise"
+ ],
+ "needsVerification": [
+  "Generative credit allowance for All Apps seats (changes over time)",
+  "Adobe Stock being licensed separately",
+  "Monthly billing under annual commitment is a catalogue variant; confirm availability",
+  "Enterprise threshold of about fifty seats is from house guide",
+  "100 GB storage per user for both plans per house catalogue"
+ ],
+ "seoTitle": "Adobe Creative Cloud for Teams Price in India | TechZoid"
+}

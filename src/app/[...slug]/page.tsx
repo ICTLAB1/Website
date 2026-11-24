@@ -1,3 +1,4 @@
+import { hreflangFor } from "@/lib/hreflang";
 import type { Metadata } from "next";
 
 import { CmsPage } from "@/lib/cms-route";
@@ -58,6 +59,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: page.description,
     path: `/${page.slug}`,
     keywords: page.keywords,
+    languages: hreflangFor(`/${page.slug}`),
   });
 }
 

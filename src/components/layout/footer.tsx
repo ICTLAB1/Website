@@ -190,9 +190,21 @@ export async function Footer() {
 
       <div className="border-t border-graphite-800">
         <div className="container-page flex flex-col gap-3 py-5 text-label text-graphite-400 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            &copy; {year} {config.entityName}. All rights reserved.
-          </p>
+          <div>
+            <p>
+              &copy; {year} {config.entityName}. All rights reserved.
+            </p>
+            <p className="mt-2 flex items-center gap-1 text-graphite-300">
+              <span>Region:</span>
+              <Link href="/" hrefLang="en-IN" lang="en-IN" className="inline-flex min-h-11 items-center px-2 underline underline-offset-2 hover:text-white">
+                India
+              </Link>
+              <span aria-hidden="true">|</span>
+              <Link href="/ae" hrefLang="en-AE" lang="en-AE" className="inline-flex min-h-11 items-center px-2 underline underline-offset-2 hover:text-white">
+                UAE
+              </Link>
+            </p>
+          </div>
           {/*
             One trademark notice, in the footer, on every page.
 
