@@ -128,3 +128,25 @@ now end with an index of every product under them and the related articles
 The product card showed "Buy now" for quote-only products, whose `/buy` page
 answers 404. It now checks the product's purchase mode and that the variant is one
 a customer may buy directly. All 75 "Buy now" links on the site were opened.
+
+## Pages added after a review of a reference site (24 November 2026)
+
+Migration `2026-11-adobe-apps-faq-and-guides`. The reference site's pages were
+read for structure only; nothing was copied, and no price, response time,
+certification or discount figure of theirs is claimed.
+
+- **New:** `/adobe-indesign`, `/adobe-after-effects`, `/adobe-lightroom`,
+  `/adobe-firefly`, `/adobe-express` (each from the catalogue's own description
+  and what the site already says about Adobe Teams licences), and `/faq` (sixteen
+  answers already written for other pages, looked up by question so they cannot
+  drift). `/faq` is linked from the footer.
+- **Updated:** `/adobe` gains "Buying Adobe in India" and an index of the app
+  pages; `/managed-it-services` gains "Common ways to start" (service desk, plus
+  endpoints, plus resilience and security), labelled as starting points rather
+  than packages.
+- **Deliberately not made:** priced Silver/Gold/Diamond tiers (no tiers, prices or
+  response times have been set); pages for structured cabling, database
+  administration and remote support (not offered as such, or already covered by
+  `/services/it-helpdesk` and `/sql-server`); a second Microsoft 365 Business page
+  (`/microsoft-365` and its plan pages already answer that search); pages for
+  Audition, Animate, Stock and Frame.io (reached from `/adobe`).
