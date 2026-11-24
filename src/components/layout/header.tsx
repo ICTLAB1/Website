@@ -40,8 +40,7 @@ export async function Header() {
     <header className="sticky top-0 z-50 border-b border-line bg-white">
       {/* Utility bar */}
       <div className="hidden border-b border-graphite-800 bg-graphite-900 text-graphite-100 lg:block">
-        <div className="container-page flex h-9 items-center justify-between text-label">
-          <p className="text-graphite-200">{config.tagline}</p>
+        <div className="container-page flex h-9 items-center justify-end text-label">
           <nav aria-label="Utility">
             <ul className="flex items-center gap-5">
               {navigation.utility.map((link) => (
@@ -67,7 +66,20 @@ export async function Header() {
       {/* Main bar */}
       <div className="container-page">
         <div className="flex h-16 items-center gap-3 lg:h-[4.5rem] lg:gap-4">
-          <Logo name={config.tradingName} className="-ml-[11px] min-w-0 shrink" />
+          {/*
+            The tagline sits directly under the logo, on its left edge. The logo
+            file carries about 11px of empty space on its left, which the
+            negative margin takes back; the tagline has none, so the two start
+            on the same line.
+          */}
+          <div className="flex min-w-0 shrink flex-col items-start">
+            <Logo name={config.tradingName} className="-ml-[11px] min-w-0 shrink" />
+            {config.tagline ? (
+              <p className="mt-0.5 hidden text-[12px] font-medium leading-none tracking-wide text-ink-600 sm:block">
+                {config.tagline}
+              </p>
+            ) : null}
+          </div>
 
           <div className="ml-auto hidden max-w-md flex-1 lg:block xl:max-w-lg">
             <SearchBox

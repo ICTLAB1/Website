@@ -9,6 +9,8 @@ import { getFacets, listProducts, PAGE_SIZE, type CatalogueFilters } from "@/lib
 import {
   activeFilterChips,
   buildCatalogueHref,
+  paramsFromHref,
+  parseCatalogueParams,
   SORT_OPTIONS,
   type RawSearchParams,
 } from "@/lib/catalogue-params";
@@ -56,6 +58,29 @@ export async function CatalogueListing({
     categories: categoryLabels,
     basePath,
   });
+
+  /*
+   * An empty result with several filters on is usually two filters that cannot
+   * both be true — a category and a product type that do not overlap — and "no
+   * products match" leaves the visitor to find out which. So when it is empty,
+   * each active filter is tried on its own removal and the ones that bring
+   * results back are offered, with how many. Only on the empty page, so the
+   * extra counts cost nothing on a normal one.
+   */
+  const rescues =
+    total === 0 && chips.length > 1
+      ? (
+          await Promise.all(
+            chips.map(async (chip) => {
+              const relaxed = parseCatalogueParams(paramsFromHref(chip.removeHref));
+              const result = await listProducts({ ...relaxed, kind: filters.kind, page: 1 });
+              return { label: chip.label, href: chip.removeHref, count: result.total };
+            }),
+          )
+        )
+          .filter((entry) => entry.count > 0)
+          .sort((a, b) => b.count - a.count)
+      : [];
 
   const first = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const last = Math.min(page * PAGE_SIZE, total);
@@ -187,6 +212,24 @@ export async function CatalogueListing({
               </li>
             ))}
           </ul>
+        ) : null}
+
+        {items.length === 0 && rescues.length > 0 ? (
+          <div className="mb-5 rounded-(--radius-md) border border-line bg-surface-muted p-4 text-[14px] text-ink-700">
+            <p className="font-medium text-graphite-900">These filters cannot all be true together.</p>
+            <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
+              {rescues.map((entry) => (
+                <li key={entry.label}>
+                  <Link href={entry.href} rel="nofollow" className="text-accent-700 underline underline-offset-2">
+                    Remove &ldquo;{entry.label}&rdquo;
+                  </Link>{" "}
+                  <span className="text-ink-500">
+                    ({entry.count} product{entry.count === 1 ? "" : "s"})
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : null}
 
         {items.length === 0 ? (
