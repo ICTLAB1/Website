@@ -37,6 +37,12 @@ describe("the photographs on the solution, industry and service pages", () => {
       // CMS pages created by content migrations rather than the seed
       "/corporate-it-solutions",
       "/adobe-licensing",
+      "/adobe-indesign",
+      "/adobe-after-effects",
+      "/adobe-lightroom",
+      "/adobe-firefly",
+      "/adobe-express",
+      "/faq",
       "/get-a-quote/microsoft",
       "/get-a-quote/adobe",
       "/get-a-quote/autodesk",

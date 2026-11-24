@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { safeHref } from "@/lib/blocks/schemas";
+import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 
 /**
  * Minimal, deliberately restrictive Markdown rendering.
@@ -111,6 +112,47 @@ export function renderMarkdown(body: string): ReactNode[] {
     }
 
     const lines = trimmed.split("\n");
+
+    // A pipe table: a header row, a `---` separator row, then body rows. Cells
+    // are rendered as React text like everything else here, never as HTML.
+    if (
+      lines.length >= 3 &&
+      lines.every((line) => line.trim().startsWith("|")) &&
+      /^\|?[\s:|-]+\|?$/.test(lines[1]!.trim()) &&
+      lines[1]!.includes("-")
+    ) {
+      const cells = (line: string) =>
+        line
+          .trim()
+          .replace(/^\|/, "")
+          .replace(/\|$/, "")
+          .split("|")
+          .map((cell) => cell.trim());
+      const head = cells(lines[0]!);
+      const rows = lines.slice(2).map(cells);
+      return (
+        <TableWrap key={index} className="my-6">
+          <Table>
+            <thead>
+              <tr>
+                {head.map((cell, cellIndex) => (
+                  <Th key={cellIndex}>{renderInline(cell)}</Th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, rowIndex) => (
+                <Tr key={rowIndex}>
+                  {head.map((_, cellIndex) => (
+                    <Td key={cellIndex}>{renderInline(row[cellIndex] ?? "")}</Td>
+                  ))}
+                </Tr>
+              ))}
+            </tbody>
+          </Table>
+        </TableWrap>
+      );
+    }
 
     if (lines.every((line) => /^-\s/.test(line))) {
       return (

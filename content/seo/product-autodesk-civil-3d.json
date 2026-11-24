@@ -1,0 +1,89 @@
+{
+ "slug": "autodesk-civil-3d",
+ "displayName": "Civil 3D",
+ "intro": "Civil 3D is Autodesk's application for model-based civil engineering design. Surfaces, alignments, profiles and corridors are intelligent objects, so when a road centreline or a ground level changes, the dependent sections, quantities and sheets follow. That is the practical difference from drafting each plan and profile by hand.\n\nBuyers in India are typically highway and road consultants, irrigation and drainage designers, land development and township planners, survey firms, and the infrastructure arms of larger contractors. The annual subscription is priced at {{price:autodesk-civil-3d}} excluding GST, or {{gst:autodesk-civil-3d}} including 18% GST, per named user. Website prices are tentative; a written quotation fixes the price.\n\nIf you want the Civil 3D price in India confirmed against your actual team, [request a quotation](/enquiry) and we will check whether a standalone seat or a collection fits better.",
+ "included": "The catalogue describes the following capabilities in the Civil 3D subscription:\n\n- Surface, alignment, profile and corridor modelling for roads and linear infrastructure\n- Pipe network and drainage design\n- Earthwork volume calculation and grading for sites and platforms\n- Survey data import and point cloud support\n- Automated plan and profile sheet production\n\nThe practical value is in the dynamic link between these pieces. A changed alignment updates the profile, the corridor, the earthwork volumes and the production sheets, so revisions that used to take days of redrawing become a rebuild of the model.\n\nCivil 3D is also one of the products inside the [AEC Collection](/products/aec-collection), which matters if your team touches more than one Autodesk product.",
+ "whoFor": "**A good fit:**\n\n- Road and highway design consultants producing alignments, profiles and cross-sections for tender and execution drawings\n- Drainage and stormwater designers who need pipe networks tied to a ground surface\n- Layout and township designers who calculate cut and fill for large sites\n- Survey and mapping teams importing field data and point clouds into a design model\n\n**Probably not the right buy:**\n\n- A small architectural office that only needs site plans and boundaries; AutoCAD usually covers that\n- A building designer who needs BIM for architecture and structure; look at [Revit](/products/revit) instead\n- A person who opens civil drawings only to review them; consider whether a viewer or Flex access is enough\n\nA common mistake is to buy a Civil 3D seat for every draughtsman on a project. Count who actually builds corridors and surfaces, and who only edits linework.",
+ "vs": {
+  "alternative": "AutoCAD",
+  "alternativeSlug": "autocad",
+  "intro": "AutoCAD is the general drafting tool and Civil 3D is the civil engineering design tool. Many Indian civil teams own AutoCAD already for drawing exchange with clients, so the question is usually whether the engineering workload justifies the step up.\n\nThe table below compares them on the points that decide a purchase. The AEC Collection, which includes Civil 3D, is discussed in the verdict.",
+  "rows": [
+   {
+    "label": "Core idea",
+    "thisProduct": "Intelligent civil objects that update dependent drawings",
+    "alternative": "General 2D drafting and 3D design with toolsets"
+   },
+   {
+    "label": "Best for",
+    "thisProduct": "Roads, drainage, grading and site engineering",
+    "alternative": "Drawings, details, layouts and general drafting"
+   },
+   {
+    "label": "Surfaces and corridors",
+    "thisProduct": "Built-in modelling objects",
+    "alternative": "Not the main purpose; drawn or exchanged as geometry"
+   },
+   {
+    "label": "Quantities",
+    "thisProduct": "Earthwork volumes calculated from the model",
+    "alternative": "Manual or add-on workflows"
+   },
+   {
+    "label": "Sheet production",
+    "thisProduct": "Automated plan and profile sheets",
+    "alternative": "Sheet sets and layouts, drawn by the user"
+   },
+   {
+    "label": "Platform",
+    "thisProduct": "Windows only",
+    "alternative": "Windows, plus a Mac release with a different feature set"
+   },
+   {
+    "label": "Annual price",
+    "thisProduct": "{{price:autodesk-civil-3d}} excl. GST",
+    "alternative": "{{price:autocad}} excl. GST"
+   }
+  ],
+  "verdict": "Choose Civil 3D if someone on the team designs corridors, grading or drainage, because that is work AutoCAD was not built to do dynamically. Choose AutoCAD if your output is mainly drawings and details.\n\nBefore buying either, look at the [AEC Collection](/products/aec-collection). It includes Civil 3D, AutoCAD and Revit, among other products. If one person needs two or more of those, or if your civil team coordinates with building designers, price the collection side by side with the individual seats. Count the products each person genuinely opens in a year, not the ones installed."
+ },
+ "licensing": "Civil 3D is licensed per named user. Named-user subscriptions are assigned to one person and cannot be pooled or shared, which is the main change from the old network-licence model; see [what changed with named-user licensing](/blog/autodesk-named-user-licensing-what-changed). A seat can be reassigned when someone leaves, so build that step into your offboarding checklist.\n\nEach named user may install on multiple machines and sign in on one at a time, so a design engineer can have an office workstation and a laptop for site work, though only one is active at once.\n\nAutodesk Flex is a pay-for-use alternative for occasional access. It suits a person who needs Civil 3D for a few weeks in a year, such as a Revit-based engineer who needs it twice a quarter, but it costs more than a subscription for daily users. Read [Flex versus named-user subscriptions](/blog/autodesk-flex-versus-named-user-subscriptions) and count days of use before deciding.\n\nMulti-year terms are available; ask for a quotation to see them against the annual price.",
+ "sysreq": "- Operating system: Windows 11 or Windows 10, 64-bit only. There is no Mac version.\n- Memory: 32 GB RAM is recommended for large corridors\n- Graphics: a DirectX 12 capable GPU\n- Large survey, point cloud and corridor models reward fast storage and a strong processor, though we do not quote specific figures here\n- Autodesk publishes its current system requirements per release. Confirm them on Autodesk's published page before you order hardware, because a subscription is only useful on a machine that runs it well.",
+ "faqs": [
+  {
+   "question": "What is the Civil 3D price in India for one user?",
+   "answer": "The annual single-user subscription is {{price:autodesk-civil-3d}} excluding GST, or {{gst:autodesk-civil-3d}} with 18% GST. The website figure is tentative, and the written quotation fixes the price. Ask for a quotation if you also want multi-year terms or a comparison with the AEC Collection."
+  },
+  {
+   "question": "Can Civil 3D run on a Mac?",
+   "answer": "No. The catalogue lists Civil 3D as Windows 11 and Windows 10, 64-bit only. A team with Mac laptops would need a Windows workstation, a virtual desktop or a separate Windows machine for civil design. Plan this before ordering seats so engineers are not left with a licence they cannot install."
+  },
+  {
+   "question": "Is Civil 3D included in the AEC Collection?",
+   "answer": "Yes, Civil 3D is part of the AEC Collection alongside Revit, AutoCAD and other tools. If one person needs Civil 3D plus another product, the collection often deserves a side-by-side comparison. If the person only ever opens Civil 3D, the standalone seat is the cleaner purchase."
+  },
+  {
+   "question": "Do I need Civil 3D if I already have AutoCAD?",
+   "answer": "Only if you do model-based civil design. AutoCAD handles drawings well, but corridors, surface-linked profiles, pipe networks and earthwork volumes are Civil 3D features. If your civil work is basic drafting, AutoCAD may be enough. If you build roads or grading models, the upgrade pays for itself in saved revisions."
+  },
+  {
+   "question": "Can two engineers share one Civil 3D subscription?",
+   "answer": "No. A named-user subscription is assigned to one person. It can be reassigned when someone leaves, but it cannot be used by two people at the same time or pooled. A team with occasional users should look at Autodesk Flex or a collection rather than informal sharing."
+  },
+  {
+   "question": "Which survey and point cloud inputs does Civil 3D accept?",
+   "answer": "The catalogue lists survey data import and point cloud support among the features. The exact file formats supported change between releases, so share the formats your survey provider delivers with us and check them against Autodesk's current documentation before you commit."
+  }
+ ],
+ "related": [
+  "autocad",
+  "revit",
+  "aec-collection"
+ ],
+ "needsVerification": [
+  "Statement that corridors/surfaces are not AutoCAD's main purpose and quantities are 'manual or add-on workflows' in plain AutoCAD (general knowledge)",
+  "Statement that AutoCAD has a Mac release with a different feature set (from catalogue AutoCAD compatibility, so low risk)",
+  "Claim that Civil 3D is used by Indian highway/irrigation/township/survey firms (general market description)",
+  "Claim that file formats supported for survey and point clouds vary by release (general)"
+ ]
+}

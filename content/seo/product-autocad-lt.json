@@ -1,0 +1,89 @@
+{
+ "slug": "autocad-lt",
+ "displayName": "AutoCAD LT",
+ "intro": "AutoCAD LT is Autodesk's 2D drafting and documentation tool. It produces the same kind of DWG drawings as full AutoCAD, but it is aimed at people whose work is plans, sections, details, layouts and annotation rather than 3D modelling or specialist add-ons. Our catalogue lists it as its own annual product, separate from AutoCAD.\n\nIn India the typical LT buyer is a small architecture or interior-design studio, a civil or MEP consultant's drawing office, a fabrication or fit-out contractor, or a government-contract drafting bureau. These buyers redraw, mark up and plot all day, and they do not need to pay for capability that nobody on the team opens.\n\nThe annual subscription is currently {{price:autocad-lt}} per user per year excluding GST, or {{gst:autocad-lt}} including 18% GST. Website prices are tentative; a written quotation fixes the figure.",
+ "included": "Our catalogue describes AutoCAD LT as cost-effective 2D CAD software for drafting, drawing and documentation. In practical terms a subscription gives one named person:\n\n- 2D drafting, dimensioning and annotation in the familiar AutoCAD environment\n- Drawing and documentation output for plans, details and layouts\n- DWG-based work, so files can be exchanged with consultants who use AutoCAD\n- A one-year annual commitment, billed yearly, assigned to a named user\n\nWe do not list a feature-by-feature sheet for LT in our catalogue, so ask us for the current Autodesk feature comparison if a specific command or file format matters to you.",
+ "whoFor": "**A good fit:**\n\n- A two-to-ten person architectural or interior studio that issues drawings but models in another tool\n- A structural detailing or MEP drawing office producing 2D shop and installation drawings\n- A site engineer or planner who needs to open, edit and plot drawings without a full design licence\n- An institution or training centre teaching 2D drafting fundamentals\n\n**Probably not:**\n\n- Anyone who builds 3D solid or surface models inside the drawing\n- Teams that rely on the industry toolsets (Architecture, Mechanical, Electrical, MEP, Map 3D, Plant 3D, Raster Design)\n- Offices that automate drawing production through customisation and scripting\n\nA useful test: list what each person did in the software last month. If it was all 2D, LT is a serious candidate.",
+ "vs": {
+  "alternative": "AutoCAD",
+  "alternativeSlug": "autocad",
+  "intro": "The honest question is not which product is better, but whether anyone on the team uses what full AutoCAD adds. The established difference is simple: LT covers 2D drafting and documentation, while full AutoCAD adds 3D modelling, the seven industry toolsets and automation or customisation.\n\nBoth are named-user annual subscriptions and both read and write DWG files, so mixed teams are common: LT for the drafters, full AutoCAD for the one or two people who need more.",
+  "rows": [
+   {
+    "label": "Core job",
+    "thisProduct": "2D drafting and documentation",
+    "alternative": "2D drafting plus 3D design"
+   },
+   {
+    "label": "3D modelling",
+    "thisProduct": "Not its purpose",
+    "alternative": "Included"
+   },
+   {
+    "label": "Industry toolsets",
+    "thisProduct": "Not part of the offer",
+    "alternative": "Seven toolsets included"
+   },
+   {
+    "label": "Automation and customisation",
+    "thisProduct": "Not the focus",
+    "alternative": "Included for production workflows"
+   },
+   {
+    "label": "Annual price (ex GST)",
+    "thisProduct": "{{price:autocad-lt}}",
+    "alternative": "{{price:autocad}}"
+   },
+   {
+    "label": "Typical buyer",
+    "thisProduct": "Drafting offices, small studios",
+    "alternative": "Multi-discipline design teams"
+   },
+   {
+    "label": "Licence type",
+    "thisProduct": "Named user, annual",
+    "alternative": "Named user, annual"
+   }
+  ],
+  "verdict": "Buy LT when every seat's real work is 2D and none needs toolsets, 3D or automation. Buy full [AutoCAD](/products/autocad) for any seat that touches those. If you are unsure, license LT broadly and put full AutoCAD only on the people who can name a specific command they need; moving a seat up at renewal is easier than carrying unused capability for years."
+ },
+ "licensing": "AutoCAD LT is licensed per **named user**. The subscription is assigned to one person, cannot be shared or pooled, and can be reassigned when somebody leaves. That is the main change from the old network-licence habit of buying fewer seats than people, described in [what changed with named-user licensing](/blog/autodesk-named-user-licensing-what-changed).\n\nThe catalogue lists LT as an annual commitment, billed yearly. If you want a monthly or multi-year term quoted, [ask for a quotation](/enquiry).\n\nAutodesk Flex, the pay-per-day-of-use token model, exists for occasional users; see [Flex versus named-user subscriptions](/blog/autodesk-flex-versus-named-user-subscriptions). Whether LT is covered by Flex changes over time, so we check the current eligible list before suggesting it. For anyone opening drawings weekly, a named seat is the sensible default.",
+ "sysreq": "- Windows is the usual platform for an office drafting seat; confirm macOS availability for LT before planning Mac hardware\n- A modern business-class PC with an SSD is comfortable for 2D work, since LT is lighter than 3D or BIM products\n- A single named user may install on several machines but sign in on one at a time\n- Confirm current system requirements on Autodesk's published page before buying hardware, as they change between releases",
+ "faqs": [
+  {
+   "question": "Is AutoCAD LT enough for architectural working drawings?",
+   "answer": "Yes, if the drawings are produced in 2D: plans, sections, elevations, door and window schedules drawn as tables, and details. It does not include the Architecture toolset or 3D modelling that full AutoCAD has, so a team that wants wall and door objects or 3D massing inside the drawing should look at AutoCAD or a BIM tool."
+  },
+  {
+   "question": "Can LT users and AutoCAD users exchange drawings?",
+   "answer": "Both work with DWG, so a consultant on full AutoCAD can send you drawings and you can return yours. The practical care is around content that exists only in full AutoCAD, such as 3D objects or toolset objects. Agree a file standard with your consultants and test with one live project before standardising."
+  },
+  {
+   "question": "We have old AutoCAD LT licences. Does our renewal change?",
+   "answer": "Do not assume a like-for-like renewal. Autodesk has changed its product lines more than once, and older entitlements sometimes map differently from what buyers expect. Send us your serial or contract details and we will confirm what the current LT subscription is and how it compares before you pay."
+  },
+  {
+   "question": "Can two draftsmen share one LT subscription on alternate shifts?",
+   "answer": "No. Named-user means one person per subscription, and sharing breaches Autodesk's terms. A subscription can be reassigned when someone genuinely leaves, but not rotated through a team. Shift working needs a seat per person, or Flex if the use is occasional and the product is eligible."
+  },
+  {
+   "question": "Should a studio start with LT and upgrade later?",
+   "answer": "It is a sound approach for a small practice. Start with LT for drafting seats, watch for recurring requests such as 3D views or toolset objects, and move only those people to full AutoCAD at renewal. Seats follow people, so the upgrade can be targeted instead of applied to the whole office."
+  },
+  {
+   "question": "Is LT the right choice if we plan to move to BIM?",
+   "answer": "LT keeps 2D documentation running while you build BIM skills. When the move comes, a bundle of Autodesk's LT drafting and BIM tools may suit a small studio better; see the [AutoCAD Revit LT Suite](/products/autocad-revit-lt-suite). Plan template and training time, not just licences."
+  }
+ ],
+ "related": [
+  "autocad",
+  "autocad-revit-lt-suite",
+  "autodesk-revit-lt"
+ ],
+ "needsVerification": [
+  "Characterisation of LT as 2D-only with no 3D modelling/toolsets/automation (given by task brief as well-established); confirm no wording overstates it.",
+  "macOS availability of AutoCAD LT is not in site facts; page tells reader to confirm.",
+  "Whether AutoCAD LT is eligible for Autodesk Flex is not in site facts; text says it is checked case by case.",
+  "Statement that LT reads and writes DWG files (general knowledge)."
+ ]
+}

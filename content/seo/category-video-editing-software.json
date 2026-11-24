@@ -1,0 +1,138 @@
+{
+ "slug": "video-editing-software",
+ "h1": "Video Editing Software in India: Premiere Pro, After Effects & Creative Cloud",
+ "intro": "Video work is rarely one application. A typical corporate or agency job moves from editing to motion graphics to sound cleanup to client review, and each stage may sit with a different person. Buying the right mix of licences matters more than picking a single \"best\" editor.\n\nThis guide covers the Adobe video and post-production tools TechZoid sells: Premiere Pro, After Effects, Audition, Frame.io and the Creative Cloud plans that bundle them. It explains what each does, how to choose between All Apps and single apps, how named-user licensing and Teams versus Enterprise work, and what to check when buying in India. It also covers the hardware point that catches many buyers out, because editing is more demanding on the machine than most office software.\n\nCurrent annual prices are on each product page. Website prices are tentative and exclude GST; a written quotation fixes the price.",
+ "sections": [
+  {
+   "heading": "What video editing and post-production software covers",
+   "markdown": "\"Video editing software\" usually means several jobs that are often bundled under one name:\n\n- **Editing.** Assembling footage on a timeline, trimming, multi-camera work, colour correction, captions and delivery to broadcast or web formats.\n- **Motion graphics and effects.** Animated titles, lower thirds, logo animation, compositing and visual effects.\n- **Audio.** Recording, cleaning, mixing and repairing sound. Poor audio ruins more videos than poor picture.\n- **Review and approval.** Sharing cuts with clients and stakeholders, collecting comments and tracking sign-off.\n\nA small business making product videos and social clips may need only an editor. A production house delivering ads needs all four stages, ideally connected so that work moves between them without repeated exports."
+  },
+  {
+   "heading": "The tools on this page",
+   "markdown": "- **[Premiere Pro for Teams](/products/adobe-premiere-pro-teams)** is the editing application. It offers multi-track and multi-camera timelines, Lumetri colour grading, Essential Graphics and motion templates, speech-to-text captioning, Dynamic Link with After Effects, and broadcast and web delivery presets. It runs on Windows 10 and 11 and on macOS.\n- **[After Effects for Teams](/products/adobe-after-effects-teams)** is for motion graphics and visual effects: video intros, transitions, animated graphics, and removing or extracting objects with AI-assisted tools.\n- **[Audition for Teams](/products/adobe-audition-teams)** handles audio recording, mixing and restoration for video, podcasts and social content.\n- **[Frame.io for Teams](/products/adobe-frame-io-for-teams)** is for review and approval. It gives you one place to share, review and organise creative work, with unlimited projects, sharing and access controls, and a cloud storage allowance per licence.\n- **[Creative Cloud All Apps for Teams](/products/adobe-creative-cloud-all-apps-teams)** gives each named user the whole Adobe set, which includes Premiere Pro, After Effects and Audition along with Photoshop, Illustrator and Acrobat Pro.\n- **[Creative Cloud Single App for Teams](/products/adobe-creative-cloud-single-app-teams)** gives each named user one application of your choice, so seats can be mixed under one team agreement.\n- **[Creative Cloud for Enterprise](/products/adobe-creative-cloud-enterprise)** is the same applications under an enterprise identity and governance model, quoted individually.\n\nOn today's catalogue, Premiere Pro costs {{price:adobe-premiere-pro-teams}} a year per named user, After Effects {{price:adobe-after-effects-teams}}, Audition {{price:adobe-audition-teams}} and Frame.io {{price:adobe-frame-io-for-teams}}, all excluding GST. All Apps is {{price:adobe-creative-cloud-all-apps-teams}} and a single-app seat is {{price:adobe-creative-cloud-single-app-teams}}. These figures are tentative until quoted."
+  },
+  {
+   "heading": "How to choose between the applications",
+   "markdown": "Work backwards from what the team actually delivers.\n\n**Interviews, explainers and corporate video.** Premiere Pro alone is usually enough. Add Audition if you record voice-overs or fix noisy location sound often.\n\n**Ads, brand films and social content with animated graphics.** Premiere Pro plus After Effects, with Dynamic Link so graphics update inside the edit without a rendered export in between. Whoever builds titles and animation may need After Effects but never open Premiere.\n\n**Client-heavy work.** If feedback is currently collected through email threads and messaging apps, Frame.io is worth a trial. It matters most when several stakeholders must approve a cut and versions are getting mixed up."
+  },
+  {
+   "heading": "All Apps or Single App: where the line falls",
+   "markdown": "This is the decision that changes your annual bill the most.\n\nAccording to our Creative Cloud facts, All Apps costs less per user at around four single applications, and it also removes the work of tracking who has which tool. Below that, single-app subscriptions cost less. A team agreement can hold a mix, so you decide per seat, not per team.\n\n- **Editor who only edits:** Single App (Premiere Pro).\n- **Motion designer who also edits and retouches stills:** worth comparing the total of the single apps against All Apps.\n- **Producer or creative lead who moves between video, design and documents:** All Apps.\n- **Voice or sound specialist:** Single App (Audition).\n\nTwo cautions. First, do not buy All Apps for everyone because it is simpler: the usual finding in any studio is that two or three people need it and the rest need one or two applications each. Second, remember that Premiere Pro, After Effects and Audition all arrive with All Apps, so a video team that needs all three is usually better off there than on three separate seats. Our article on [what Creative Cloud costs a business in India](/blog/adobe-creative-cloud-price-in-india) walks through the audit."
+  },
+  {
+   "heading": "Licensing: named users, Teams and Enterprise",
+   "markdown": "Adobe's business plans are licensed to a **named user** through the Adobe Admin Console. Seats are assigned by email address and can be reassigned when someone leaves or changes role, which is the main reason organisations move off individual subscriptions. Business plans carry an annual commitment; seats added during the term are prorated to the common renewal date, and other terms can be quoted on request.\n\n**Teams** suits most studios and companies. It has Adobe-managed identities, an admin console, reassignable seats and one renewal date.\n\n**Enterprise** changes who controls identity and assets. Users sign in through your directory using single sign-on, work is held in enterprise-owned storage that stays when a seat is reclaimed, and deployment can be packaged and version-pinned. That last point matters on video projects, where opening a project in a newer version can stop it going back. Enterprise tends to be worth considering at about fifty creative seats or where asset ownership is a compliance requirement. See our article on [Creative Cloud for Enterprise](/blog/adobe-creative-cloud-for-enterprise) for the decision questions, and [VIP versus VIP Marketplace](/blog/adobe-vip-versus-vip-marketplace) for how the buying route affects billing.\n\n**Individual** plans are for one person buying for themselves and are not meant for a company to buy on an employee's behalf."
+  },
+  {
+   "heading": "Hardware and common mistakes",
+   "markdown": "Editing is hardware-sensitive in a way most business software is not. Before ordering seats, decide what footage you work with:\n\n- **Interviews and corporate video:** around 16 to 32 GB of RAM, a mid-range GPU and fast local storage are usually enough.\n- **4K multi-camera and colour work:** 32 to 64 GB of RAM, a GPU with 8 GB of video memory or more, and NVMe media storage. Our Premiere Pro notes recommend 32 GB of RAM for 4K workflows and a dedicated GPU with 6 GB or more.\n\nCommon mistakes:\n\n- **Licences without a workstation plan.** Software bought for machines that cannot play back the footage wastes editor hours every day.\n- **Buying All Apps for everyone.** See the audit above.\n- **Separate seats that Creative Cloud already covers.** Check before adding After Effects or Audition to someone with All Apps.\n- **Leaving seats on leavers.** Unassign promptly, or you pay for them until renewal. The [hidden cost of unused licences](/blog/hidden-cost-of-unused-software-licences) explains why this adds up.\n"
+  },
+  {
+   "heading": "Buying notes for India",
+   "markdown": "- **GST invoice.** Every order is invoiced with 18% GST. Send your registered entity name and GSTIN before the invoice is raised. Registered businesses can generally claim input credit; see [GST input credit on software purchases](/blog/gst-input-credit-on-software-purchases).\n- **Purchase order.** Orders are accepted against your purchase order.\n- **Written quotation.** Website prices are tentative and exclude GST. A written quotation fixes the price, so request one before raising the PO. [Ask for a quotation](/enquiry) with the names of the people and the application each needs.\n- **Seat assignment.** We help with activation and assigning seats to the email addresses you give us. Use company-controlled accounts.\n\nFor documents and contracts around your productions, see [PDF software in India](/pdf-software). The [Adobe hub](/adobe) lists the full range."
+  }
+ ],
+ "products": [
+  {
+   "slug": "adobe-premiere-pro-teams",
+   "use": "Professional video editing, colour, captions and delivery.",
+   "whoFor": "Editors and in-house video teams."
+  },
+  {
+   "slug": "adobe-after-effects-teams",
+   "use": "Motion graphics, titles and visual effects for video.",
+   "whoFor": "Motion designers and ad or social content teams."
+  },
+  {
+   "slug": "adobe-audition-teams",
+   "use": "Audio recording, mixing and restoration for video and podcasts.",
+   "whoFor": "Sound editors, podcasters and video teams with audio needs."
+  },
+  {
+   "slug": "adobe-frame-io-for-teams",
+   "use": "Share cuts, collect feedback and track approvals in one place.",
+   "whoFor": "Teams working with clients or many stakeholders."
+  },
+  {
+   "slug": "adobe-creative-cloud-all-apps-teams",
+   "use": "Whole Adobe set including Premiere Pro, After Effects and Audition.",
+   "whoFor": "Producers using four or more applications regularly."
+  },
+  {
+   "slug": "adobe-creative-cloud-single-app-teams",
+   "use": "One Adobe application per named user, mixable within a team.",
+   "whoFor": "Specialists such as editors who need only one tool."
+  },
+  {
+   "slug": "adobe-creative-cloud-enterprise",
+   "use": "Creative Cloud with federated sign-in and enterprise-owned storage.",
+   "whoFor": "Large teams needing identity control and asset ownership."
+  }
+ ],
+ "faqs": [
+  {
+   "question": "Which Adobe plan is right for a video editor?",
+   "answer": "If the person only edits, a Premiere Pro single-app seat is usually enough. If they also build motion graphics, record audio and work with images, compare the total of those single apps against All Apps. At around four applications, All Apps generally costs less."
+  },
+  {
+   "question": "Do Premiere Pro, After Effects and Audition come with Creative Cloud All Apps?",
+   "answer": "Yes. All Apps gives each named user the full Adobe application set, including all three. Do not add separate After Effects or Audition seats for someone who already has All Apps; check each user before finalising the order."
+  },
+  {
+   "question": "Can we mix All Apps and single-app seats?",
+   "answer": "Yes. A team agreement can hold both, and each seat can be set per person. That is usually the right setup: a few creative leads on All Apps and specialists on the single application they actually use."
+  },
+  {
+   "question": "What hardware do I need for Premiere Pro?",
+   "answer": "It depends on your footage. Interviews and corporate video run well on 16 to 32 GB RAM and a mid-range GPU. For 4K multi-camera and colour work, plan for 32 GB or more, a GPU with 8 GB of video memory or more, and NVMe storage. Check Adobe's published requirements before buying machines."
+  },
+  {
+   "question": "Is Frame.io necessary if we already edit in Premiere Pro?",
+   "answer": "No. It solves a different problem: collecting client feedback and approvals in one place. It is useful when many reviewers comment on cuts and versions get confused. A small team with one approver may manage without it."
+  },
+  {
+   "question": "What is the difference between Teams and Enterprise?",
+   "answer": "Teams uses Adobe-managed identities and suits most organisations. Enterprise adds single sign-on against your directory, enterprise-owned storage that stays when a seat is reclaimed, and managed deployment. It is usually worth considering at around fifty creative seats or for compliance needs. Enterprise pricing is quoted individually."
+  },
+  {
+   "question": "Can a leaver's licence be given to a new editor?",
+   "answer": "Yes. Adobe business licences are per named user, and the administrator can unassign a seat in the Admin Console and assign it to someone else. This keeps the entitlement with the company rather than with an individual."
+  },
+  {
+   "question": "How do I get a quotation and GST invoice for Adobe video tools?",
+   "answer": "Send us the names, the application each person needs and your preferred term through the enquiry page. We issue a written quotation that fixes the price, accept your purchase order, and invoice with 18% GST to your registered entity. Registered businesses can generally claim input credit."
+  }
+ ],
+ "related": [
+  {
+   "href": "/pdf-software",
+   "label": "PDF software in India: Acrobat Pro, Standard and Teams"
+  },
+  {
+   "href": "/blog/adobe-creative-cloud-price-in-india",
+   "label": "What Adobe Creative Cloud costs a business in India"
+  },
+  {
+   "href": "/blog/adobe-creative-cloud-for-enterprise",
+   "label": "Creative Cloud for Enterprise: what changes above a handful of seats"
+  },
+  {
+   "href": "/blog/adobe-vip-versus-vip-marketplace",
+   "label": "Adobe VIP and VIP Marketplace compared"
+  },
+  {
+   "href": "/blog/hidden-cost-of-unused-software-licences",
+   "label": "The hidden cost of unused software licences"
+  }
+ ],
+ "needsVerification": [
+  "Frame.io described from catalogue only (share, review, organise; unlimited projects; sharing and access controls); I mention 'collecting comments and tracking sign-off' as general purpose of review tools, check wording.",
+  "After Effects 'removing or extracting objects with AI-assisted tools' taken from catalogue feature list; 'compositing' and 'visual effects' are general knowledge.",
+  "Audition 'restoration' and 'recording' from catalogue; 'noisy location sound' example is general.",
+  "Premiere Pro platform line (Windows 10/11 and macOS) is from catalogue compatibility; the sentence on Dynamic Link updating graphics without a rendered export is from site page-adobe-premiere-pro.md.",
+  "Claim that opening a project in a newer version can stop it going back is from site blog-adobe-creative-cloud-for-enterprise.md (applied here to video projects); confirm for Premiere Pro specifically.",
+  "Enterprise 'about fifty seats' threshold is from site facts; Enterprise has no placeholder price because the catalogue note says pricing is quoted individually.",
+  "Individual-plan statement comes from site blog-adobe-creative-cloud-price-in-india.md.",
+  "Input-credit statement is general GST guidance; accountant to confirm eligibility."
+ ]
+}

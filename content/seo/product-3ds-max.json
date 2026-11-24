@@ -1,0 +1,89 @@
+{
+ "slug": "3ds-max",
+ "displayName": "3ds Max",
+ "intro": "3ds Max is Autodesk's 3D modelling, rendering and animation application. In practice it is the tool behind much architectural visualisation, game asset work, product design imagery and motion graphics. Its particular strength for building-related work is that it reads Revit and AutoCAD files, so a practice can take a design that already exists and turn it into walkthroughs and still images.\n\nIndian buyers are mostly architectural visualisation studios, interior design firms with an in-house render team, game and animation outsourcing houses, and product-design groups. Many already pay for Revit or AutoCAD and add 3ds Max alongside, not instead of them.\n\nA named-user subscription is currently {{price:3ds-max}} per year excluding GST, or {{gst:3ds-max}} including 18% GST. Your written quotation fixes the final price.",
+ "included": "The 3ds Max subscription in our catalogue includes:\n\n- Polygon, spline and parametric modelling\n- The Arnold renderer, included with the subscription\n- Character animation and rigging\n- Interoperability with Revit, AutoCAD and Inventor files\n- Scripting and access to a large third-party plug-in ecosystem\n\nArnold covers interactive rendering on the artist's own machine. A studio planning heavy batch rendering across many machines should raise render capacity with us at the quotation stage rather than at the first deadline.",
+ "whoFor": "**Where 3ds Max earns its seat:**\n\n- An architectural visualisation studio turning Revit or AutoCAD models into photoreal stills, flythroughs and presentation animation\n- An interior design firm that sells concepts on the strength of its renders\n- A game or asset-production house working on environments and props\n- A product-design team producing marketing imagery from CAD data\n\n**Where it does not fit:**\n\n- Architects who only need a quick massing view; their BIM tool may already do it\n- Studios whose work is character-heavy animation or visual effects, where [Maya](/products/maya) is usually the first thing to evaluate\n- Teams on Mac, because the product is Windows only\n\nFor a visualisation studio the bigger investment is often in GPUs and artist time, not the licence.",
+ "vs": {
+  "alternative": "Maya",
+  "alternativeSlug": "maya",
+  "intro": "Both are Autodesk 3D applications and both include Arnold, so the difference is mostly about the type of work. 3ds Max leans toward architectural visualisation, product and environment work. Maya leans toward character animation, simulation and film-style pipelines.\n\nThey are not mutually exclusive: studios doing both kinds of work license both, and a media collection may cost less than two standalone subscriptions, which we compare on request.",
+  "rows": [
+   {
+    "label": "Typical use",
+    "thisProduct": "Visualisation, games, product design",
+    "alternative": "Character animation, VFX, film pipelines"
+   },
+   {
+    "label": "Strong point",
+    "thisProduct": "Reads Revit and AutoCAD files",
+    "alternative": "Rigging, simulation, USD pipeline support"
+   },
+   {
+    "label": "Renderer",
+    "thisProduct": "Arnold included",
+    "alternative": "Arnold included"
+   },
+   {
+    "label": "Platform",
+    "thisProduct": "Windows only",
+    "alternative": "Windows, macOS and supported Linux"
+   },
+   {
+    "label": "Scripting",
+    "thisProduct": "Scripting and third-party plug-ins",
+    "alternative": "Python and MEL"
+   },
+   {
+    "label": "Annual price (ex GST)",
+    "thisProduct": "{{price:3ds-max}}",
+    "alternative": "{{price:maya}}"
+   },
+   {
+    "label": "Buyer",
+    "thisProduct": "Architecture and visualisation studios",
+    "alternative": "Animation and VFX studios"
+   }
+  ],
+  "verdict": "If the source material is Revit or AutoCAD and the output is architectural imagery, start with 3ds Max. If the output is characters, creature work or simulation-heavy effects, start with [Maya](/products/maya). If your studio does both, ask us to quote the [Media & Entertainment Collection](/products/autodesk-media-entertainment-collection) next to the two standalone subscriptions."
+ },
+ "licensing": "3ds Max is licensed per **named user**. A subscription belongs to one person, cannot be shared, and can be reassigned when someone leaves. Each named user can install on several machines and sign in on one at a time, which suits an artist who works on a laptop in the evening and a workstation by day.\n\nThe shift away from pooled network licences is the reason a render team now counts seats by person; see [what changed with named-user licensing](/blog/autodesk-named-user-licensing-what-changed). Autodesk Flex is a daily-use token model for occasional users, covered in [Flex versus named-user subscriptions](/blog/autodesk-flex-versus-named-user-subscriptions); it rarely suits full-time artists. Multi-year terms are available and usually cost less per year than annual renewal, so ask for a quotation.",
+ "sysreq": "- Windows 11 and Windows 10, 64-bit only\n- A GPU with 4 GB VRAM or more is recommended\n- 32 GB RAM is recommended for large scenes\n- Fast SSD storage and a strong processor help with scene loading and simulation, though rendering performance depends on the renderer you use\n- Confirm current requirements on Autodesk's published page before buying hardware",
+ "faqs": [
+  {
+   "question": "Can 3ds Max open our Revit files directly?",
+   "answer": "The catalogue lists interoperability with Revit, AutoCAD and Inventor files, which is why architectural practices license it alongside those tools. Expect some clean-up of materials and geometry after import. Ask your visualisation lead to test a typical project file before you commit to a workflow."
+  },
+  {
+   "question": "Is Arnold included, or do we pay extra for the renderer?",
+   "answer": "Arnold is included with the 3ds Max subscription for work on the artist's machine. If you plan to render large batches across many machines, discuss render capacity with us at quotation stage, since that is a separate sizing question from the number of artist seats."
+  },
+  {
+   "question": "Does 3ds Max run on a Mac?",
+   "answer": "No. The catalogue lists Windows 11 and Windows 10, 64-bit only. A Mac-based studio would need Windows workstations for its 3ds Max artists, or should evaluate Maya, which supports macOS. Decide your hardware plan before choosing the software, since the machine is often the bigger cost."
+  },
+  {
+   "question": "What GPU and RAM should we buy for visualisation work?",
+   "answer": "The catalogue recommends a GPU with 4 GB VRAM or more and 32 GB RAM for large scenes. Those are starting points. A studio with heavy city-scale scenes or high-resolution animation should test its own heaviest file on a candidate machine before ordering a batch of workstations."
+  },
+  {
+   "question": "Can a freelance visualiser share one subscription with a colleague?",
+   "answer": "No. A named-user subscription belongs to one person. The same user may sign in on one machine at a time but may not share the account. Two freelancers working in 3ds Max need two subscriptions, even if they work on alternate days."
+  },
+  {
+   "question": "Is it better to buy 3ds Max alone or inside a collection?",
+   "answer": "Standalone is right when 3ds Max is the only Autodesk tool a person uses. Where one person also uses Maya or other tools, or a studio uses several Autodesk applications, a collection usually costs less and we quote both. The AEC Collection also includes 3ds Max alongside Revit and AutoCAD."
+  }
+ ],
+ "related": [
+  "maya",
+  "autodesk-media-entertainment-collection",
+  "revit"
+ ],
+ "needsVerification": [
+  "Application areas (architectural visualisation, games, product design, motion graphics) come from the catalogue; 'Indian buyer types' are general market characterisation.",
+  "Statement that import from Revit needs some clean-up of materials/geometry (general knowledge).",
+  "Existence and contents of the Media & Entertainment Collection beyond its catalogue slug; page only says to ask for a quotation.",
+  "Maya leaning toward characters/VFX and 3ds Max toward visualisation (general positioning plus site facts)."
+ ]
+}

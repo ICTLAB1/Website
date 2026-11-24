@@ -1,0 +1,89 @@
+{
+ "slug": "revit",
+ "displayName": "Revit",
+ "intro": "Revit is Autodesk's building information modelling (BIM) application. Instead of drawing lines that represent a building, you build a model of walls, floors, columns, ducts and doors as objects with real properties. Plans, sections, elevations, schedules and quantities are all views of that one model, so a change made once updates everywhere it appears.\n\nIn India the buyers are architecture firms, structural and MEP consultants, project management consultancies and larger contractors, especially on public-sector and large private projects where BIM deliverables are specified. It is also where the swing from drawing to modelling is hardest, because the benefit arrives only after your templates and component library are ready.\n\nOne named-user Revit subscription is currently {{price:revit}} per year excluding GST, or {{gst:revit}} including 18% GST. Your written quotation fixes the final price.",
+ "included": "The Revit subscription in our catalogue covers these capabilities:\n\n- Parametric architectural, structural and MEP modelling\n- Automatic generation of drawings, schedules and quantities from the model\n- Worksharing, so several people can work on one model\n- Clash coordination with Navisworks\n- A family editor for building custom components\n- IFC import and export for open BIM exchange\n- Autodesk Docs integration for shared project files\n\nIt is a single named-user entitlement, billed annually. Ask us for quotations if you want a different term.",
+ "whoFor": "**Where Revit pays back:**\n\n- An architectural practice that issues full coordinated drawing sets and wants plans, sections and schedules to stay in step\n- A structural or building-services consultancy that must coordinate with an architect's model\n- A developer or contractor's technical office taking quantities straight from the model\n- Firms bidding for projects that ask for a BIM execution plan or IFC deliverables\n\n**Where it is the wrong purchase:**\n\n- A drawing office whose output is 2D detail sheets and plot files only\n- A small team with no time to build templates and families before the first live project\n- Anyone who expects to run it on a Mac, because there is no macOS release\n\nThe cost that surprises people is rarely the licence. It is the weeks of setup and training before a model is as fast to produce as the drawings it replaces.",
+ "vs": {
+  "alternative": "AutoCAD",
+  "alternativeSlug": "autocad",
+  "intro": "This is the real buying question: do you need a model or a set of drawings? AutoCAD is the drafting baseline and is strongest when the deliverable is the drawing itself. Revit is strongest when the building is the deliverable and drawings are generated from it.\n\nMany practices end up with both: Revit for design and documentation, AutoCAD for consultants' files, site drawings and legacy details.",
+  "rows": [
+   {
+    "label": "Core idea",
+    "thisProduct": "Object-based building model",
+    "alternative": "Drawing-based CAD with 2D and 3D"
+   },
+   {
+    "label": "Best for",
+    "thisProduct": "Coordinated BIM projects",
+    "alternative": "Drafting, detailing, mixed trades"
+   },
+   {
+    "label": "Drawings from model",
+    "thisProduct": "Plans, sections, schedules generated automatically",
+    "alternative": "Drawn and annotated by the user"
+   },
+   {
+    "label": "Platform",
+    "thisProduct": "Windows only",
+    "alternative": "Windows; macOS with a different feature set"
+   },
+   {
+    "label": "Learning curve",
+    "thisProduct": "Steeper; template and family work first",
+    "alternative": "Gentler for experienced drafters"
+   },
+   {
+    "label": "Annual price (ex GST)",
+    "thisProduct": "{{price:revit}}",
+    "alternative": "{{price:autocad}}"
+   },
+   {
+    "label": "Lighter option",
+    "thisProduct": "Revit LT",
+    "alternative": "AutoCAD LT"
+   }
+  ],
+  "verdict": "Choose Revit if your clients or consultants expect a coordinated model, or if schedules and quantities matter to your margins. Choose [AutoCAD](/products/autocad) if the work is drafting, details and site drawings. If your team uses both, price the [AEC Collection](/products/aec-collection) side by side, because it bundles them and is worth comparing. A smaller practice taking its first BIM step can also look at [Revit LT](/products/autodesk-revit-lt)."
+ },
+ "licensing": "Revit is licensed per **named user**: the subscription belongs to one person, cannot be shared, and can be reassigned when they leave. Each named user may install on several machines and sign in on one at a time. The practical effect of the move away from pooled network licences is covered in [what changed with named-user licensing](/blog/autodesk-named-user-licensing-what-changed).\n\nFor occasional users such as a project director who opens the model to check something, **Autodesk Flex** can beat a full subscription. It is token-based, charged per day of use, and the break-even is a count of days per person per year; read [Flex versus named-user subscriptions](/blog/autodesk-flex-versus-named-user-subscriptions) before deciding. Confirm Revit's current Flex eligibility with us.\n\nIf a person also needs AutoCAD, Navisworks or Civil 3D, compare the [AEC Collection](/blog/autodesk-aec-collection-explained). Multi-year and monthly terms can be quoted on request.",
+ "sysreq": "- Windows 11 or Windows 10, 64-bit only; there is no macOS release\n- 16 GB RAM is the minimum; 32 GB or more for large models, which is the single biggest performance factor\n- A DirectX 11 capable GPU with 4 GB VRAM or more; a top-tier card is rarely where the budget should go\n- SSD storage strongly recommended for local models and caches\n- Single-thread processor speed matters more than core count for most work\n- Confirm current requirements on Autodesk's published page before buying hardware",
+ "faqs": [
+  {
+   "question": "Can we run Revit on a MacBook?",
+   "answer": "Not natively. There is no macOS release, so Mac users normally run Windows on a separate partition or a dedicated Windows machine. Check how your team's hardware is configured before you order licences, because model performance depends on RAM and SSD speed and a thin laptop will struggle on a large project."
+  },
+  {
+   "question": "Is Revit worth it for a five-person architecture firm?",
+   "answer": "It is if your clients or consultants ask for models, or you lose time keeping drawings consistent by hand. It is not if your output is mainly 2D sets and nobody has weeks to prepare templates. Many small firms start with one Revit seat for a pilot project and keep the others on drafting tools."
+  },
+  {
+   "question": "What is the difference between Revit and Revit LT?",
+   "answer": "Revit LT is the simplified 3D BIM tool for architectural design and documentation, while Revit is the full application with multi-discipline modelling and features such as worksharing. For a small architectural office the LT route can be enough. Ask us for the current Autodesk feature comparison before committing to the larger subscription."
+  },
+  {
+   "question": "Do consultants need Revit if the architect uses it?",
+   "answer": "Not necessarily, but structural and building-services consultants who coordinate against the architect's model usually benefit from working in it directly. IFC import and export allow some exchange between tools, though round-tripping loses information. Agree a BIM exchange method early and test it on a small package."
+  },
+  {
+   "question": "How many Revit seats does a project need?",
+   "answer": "Licence people, not projects. Count those who model or edit daily, and consider whether reviewers and managers could use Flex instead. Because worksharing allows several people on one model, you do not need a seat per drawing sheet. A short usage review before purchase typically trims the quantity."
+  },
+  {
+   "question": "Can we buy Revit with an AutoCAD subscription in one go?",
+   "answer": "Yes. You can buy both individually, or compare the AEC Collection, which includes Revit and AutoCAD plus Civil 3D, Navisworks and more. It usually wins for people who use two or more of the tools. We will quote both options so you can see the gap on your own numbers."
+  }
+ ],
+ "related": [
+  "autodesk-revit-lt",
+  "aec-collection",
+  "autocad"
+ ],
+ "needsVerification": [
+  "Revit LT described as 'simplified 3D BIM tool' (catalogue); no specific LT-vs-Revit feature differences claimed beyond that.",
+  "Claim that round-tripping via IFC loses information (general knowledge).",
+  "Whether Revit is eligible for Autodesk Flex is not in site facts; text says to confirm.",
+  "Mac users running Windows on a partition or separate machine (general practice)."
+ ]
+}

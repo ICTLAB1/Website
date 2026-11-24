@@ -1,0 +1,152 @@
+{
+ "slug": "bim-software",
+ "h1": "BIM Software in India: Revit, Revit LT, AEC Collection & Navisworks",
+ "intro": "BIM, or building information modelling, replaces a set of separate drawings with one coordinated model. Walls, slabs, ducts and pipes exist as objects with real properties, and every plan, section and schedule is a view onto that model. For Indian practices bidding on public and large private projects, BIM has moved from optional to expected.\n\nThis guide explains what BIM software does, how to choose between Revit, Revit LT and the AEC Collection, where Navisworks, Civil 3D and the cloud tools fit, and how licensing works. The comparison table lists the BIM-related products we supply. Prices shown there are annual, exclude 18% GST and are tentative until confirmed in a written quotation. A few products are priced on request.\n\nWe would rather set expectations honestly: BIM brings benefits only after the team has invested in templates, families and process.",
+ "sections": [
+  {
+   "heading": "What is BIM software?",
+   "markdown": "A traditional CAD drawing is a set of lines. A BIM model is a database with geometry attached. Change a wall type once and every drawing that shows it updates, along with the schedules and quantities derived from it.\n\nRevit is the main authoring tool for architecture, structure and building services. Around it sit tools for coordination (Navisworks), infrastructure and site work (Civil 3D, Infraworks), reality capture (ReCap Pro), early-stage design (Forma) and project delivery in the cloud (Autodesk Construction Cloud).\n\nThe reason Revit is specified on public and large private projects is that coordination and clash detection happen before construction rather than during it. The same property is why adoption takes real effort. A practice moving from 2D drafting needs template and family library work before the benefit arrives."
+  },
+  {
+   "heading": "Revit, Revit LT or the AEC Collection?",
+   "markdown": "**Revit** is the full BIM application, covering parametric architectural, structural and MEP modelling, worksharing for multi-user models, automatic drawing and schedule generation, and IFC import and export for open BIM exchange. It is Windows-only.\n\n**Revit LT** is a simplified 3D BIM tool for architectural designs and documentation. It is priced on enquiry in our catalogue, so ask for a quotation. It suits smaller practices that want BIM documentation without the full multi-discipline toolset. Check the current feature differences on Autodesk's published page before you commit, particularly if you expect to collaborate with teams using full Revit.\n\n**AutoCAD Revit LT Suite** combines Revit LT and AutoCAD LT for architectural design alongside 2D drafting.\n\n**AEC Collection** bundles Revit, AutoCAD with its toolsets, Civil 3D, Navisworks Manage, Infraworks, 3ds Max, structural analysis tools and Autodesk Docs. Past two products per user it usually costs less than buying them separately.\n\nA practical rule: one product per person, buy that product. Two products is roughly break-even. Three or more, or occasional need for specialist tools, favours the collection. Price them side by side before choosing."
+  },
+  {
+   "heading": "Where Navisworks and the other BIM tools fit",
+   "markdown": "**Navisworks** aggregates models from different disciplines and runs clash detection. We supply **Navisworks Simulate**, which covers coordination, 5D analysis and simulation. Navisworks Manage is included in the AEC Collection but is not sold by us as a standalone product, so if clash detection is central to your workflow and you want Manage, the collection is the route to ask about.\n\n**Civil 3D** handles model-based roads, drainage, earthworks and site grading, with surfaces, alignments and corridors that update their documentation when the design changes. It is Windows-only, and the catalogue recommends 32 GB RAM for large corridors.\n\n**Infraworks** is a geospatial platform for early planning of infrastructure in real-world context.\n\n**ReCap Pro** turns scans and photographs into point clouds, useful for surveying existing buildings before renovation.\n\n**Forma for Buildings and Forma Site Design** are cloud tools for early building and site design, including analysis and review before detailed modelling starts in Revit.\n\n**Autodesk Construction Cloud** gives the whole project team a common data environment, issue and RFI tracking, and model coordination against the current model. Its value depends on how many of the project team actually use it, including the contractor. It is licensed per user across modules and quoted rather than listed."
+  },
+  {
+   "heading": "BIM licensing: named user, Flex and subscriptions",
+   "markdown": "**Named-user subscription.** Autodesk's current model assigns each subscription to one person. It cannot be shared or pooled, but it can be reassigned when someone leaves, and a named user can install on multiple machines and sign in on one at a time. Our catalogue prices are for one-year terms. Monthly and multi-year terms can be quoted on request, and multi-year terms are usually cheaper per year.\n\n**Flex.** Pre-purchased tokens are drawn down on days of actual use. For BIM this suits the structural engineer who needs Revit for three weeks a year, the project manager who opens models to check something, or the engineer on Revit who needs Civil 3D twice a quarter. Daily users should be on subscriptions. Check which products are currently eligible.\n\n**Perpetual.** Perpetual licences are not sold for current Autodesk products. Existing ones continue within their terms.\n\nThe configuration that usually holds up is collections for people who genuinely work across disciplines, individual subscriptions for specialists, and Flex for reviewers. Autodesk's usage reporting shows who belongs in which group. Read [named-user licensing: what changed](/blog/autodesk-named-user-licensing-what-changed) for the background."
+  },
+  {
+   "heading": "Common BIM buying mistakes",
+   "markdown": "- **Buying seats before the process is ready.** Licences do not create a BIM workflow. Templates, families and naming standards do.\n- **Underspecifying hardware.** Revit model size is the main performance factor. The catalogue recommends 32 GB RAM or more for large models, strong single-thread processor performance, a DirectX 11 capable GPU with 4 GB VRAM and SSD storage. A top-tier graphics card is rarely the right place to spend the budget.\n- **Planning for macOS.** There is no macOS release of Revit.\n- **Assuming Navisworks Manage can be bought alone from us.** We list Simulate. Manage comes inside the AEC Collection.\n- **Collection for one-product users.** A person who only opens Revit does not need the bundle.\n- **Cloud platform without the contractor.** A common data environment used by the design team alone recreates the coordination problem it was bought to solve.\n- **Ignoring the usage report.** Review actual use per seat before every renewal, because reassigning seats often beats buying more."
+  },
+  {
+   "heading": "Buying BIM software in India",
+   "markdown": "- **Written quotation.** Website prices are tentative and exclude GST. A written quotation fixes the price, and products priced on request need one in any case. Use the [enquiry page](/enquiry).\n- **GST invoice.** Every order carries a GST invoice, with 18% GST on software.\n- **Purchase order.** We accept orders against a purchase order, which suits larger firms and departments.\n- **Activation and seat assignment.** We help with activation and with assigning named users.\n- **Comparison before purchase.** If you use two or more Autodesk tools, ask for the [AEC Collection](/aec-collection) to be compared with standalone [Revit](/revit) and [AutoCAD](/autocad).\n\nPrices for the full range are on our [price list](/price-list)."
+  }
+ ],
+ "products": [
+  {
+   "slug": "revit",
+   "use": "Full BIM modelling for architecture, structure and building services",
+   "whoFor": "Multi-discipline design practices working on BIM-led projects"
+  },
+  {
+   "slug": "autodesk-revit-lt",
+   "use": "Simplified 3D BIM for architectural design and documentation",
+   "whoFor": "Small architecture practices starting with BIM"
+  },
+  {
+   "slug": "autocad-revit-lt-suite",
+   "use": "Revit LT and AutoCAD LT together",
+   "whoFor": "Small firms mixing BIM with 2D drafting"
+  },
+  {
+   "slug": "aec-collection",
+   "use": "Revit, AutoCAD, Civil 3D, Navisworks Manage, Infraworks and more",
+   "whoFor": "Practices where people use two or more Autodesk tools"
+  },
+  {
+   "slug": "autodesk-navisworks-simulate",
+   "use": "Model coordination, clash detection and 5D simulation",
+   "whoFor": "BIM coordinators and contractors reviewing multi-discipline models"
+  },
+  {
+   "slug": "autodesk-civil-3d",
+   "use": "Roads, drainage, earthworks and site design",
+   "whoFor": "Civil and infrastructure engineers"
+  },
+  {
+   "slug": "autodesk-infraworks",
+   "use": "Geospatial planning and conceptual infrastructure design",
+   "whoFor": "Infrastructure planners and early-stage design teams"
+  },
+  {
+   "slug": "autodesk-recap-pro",
+   "use": "Reality capture from scans and photos",
+   "whoFor": "Surveyors and teams working on existing buildings"
+  },
+  {
+   "slug": "autodesk-forma-for-buildings",
+   "use": "Cloud tools for early building design and analysis",
+   "whoFor": "Architects exploring massing and options before Revit"
+  },
+  {
+   "slug": "autodesk-forma-site-design",
+   "use": "Site planning and analysis with contextual data",
+   "whoFor": "Planners and developers assessing sites early"
+  },
+  {
+   "slug": "autodesk-construction-cloud",
+   "use": "Common data environment, issues, RFIs and model coordination",
+   "whoFor": "Contractors and project teams running site delivery"
+  }
+ ],
+ "faqs": [
+  {
+   "question": "Is Revit worth it for a small architecture firm in India?",
+   "answer": "It can be, if clients or consultants ask for models, or if you want drawings, schedules and quantities generated from one source. It is not worth buying for a team that only draws 2D and has no time to build templates. Plan for setup and training before expecting savings."
+  },
+  {
+   "question": "What is the difference between Revit and Revit LT?",
+   "answer": "Revit is the full multi-discipline BIM application with worksharing and open BIM exchange. Revit LT is a simplified 3D BIM tool for architectural design and documentation. Check Autodesk's current comparison before buying, especially if you must exchange models with teams on full Revit. Revit LT is priced on enquiry with us."
+  },
+  {
+   "question": "Do you sell Navisworks Manage?",
+   "answer": "Not as a standalone product. Our catalogue lists Navisworks Simulate. Navisworks Manage is included in the AEC Collection, so if you need Manage, ask us to compare the collection with your current tools. We will tell you honestly when the collection is not worth it."
+  },
+  {
+   "question": "When is the AEC Collection cheaper than buying products separately?",
+   "answer": "Usually once a person uses two or more of its products. Two is roughly break-even and three or more favours the collection clearly. A person who uses only Revit should buy Revit alone. Count products opened per person per year, not products installed."
+  },
+  {
+   "question": "Does Revit run on a Mac?",
+   "answer": "No. Revit is Windows-only, with no macOS release. Our catalogue lists 16 GB RAM minimum and 32 GB or more for large models, plus a DirectX 11 capable GPU with 4 GB VRAM and SSD storage. Confirm current requirements on Autodesk's published page before buying hardware."
+  },
+  {
+   "question": "Can I use Autodesk Flex for BIM software?",
+   "answer": "Yes, for occasional users. Flex draws tokens on days someone actually opens a covered product, which suits reviewers and specialists. Daily users are better on a named-user subscription. Tokens expire, and not every product is eligible, so check the current list before buying."
+  },
+  {
+   "question": "Is Autodesk Construction Cloud included with the AEC Collection?",
+   "answer": "The collection includes cloud capability and Autodesk Docs, but the construction management platform is a separate line with its own licensing by module. It is quoted rather than listed, because pricing depends on the module mix and the number of external collaborators."
+  },
+  {
+   "question": "What documents do I need to buy BIM software for my company?",
+   "answer": "Ask for a written quotation, which fixes the price. You can order against a purchase order and we issue a GST invoice at 18% GST. We help with activation and with assigning each seat to a named user. Priced-on-request products always need a quotation first."
+  }
+ ],
+ "related": [
+  {
+   "href": "/blog/autodesk-aec-collection-explained",
+   "label": "The Autodesk AEC Collection explained"
+  },
+  {
+   "href": "/blog/autodesk-flex-versus-named-user-subscriptions",
+   "label": "Autodesk Flex versus named-user subscriptions"
+  },
+  {
+   "href": "/blog/autodesk-named-user-licensing-what-changed",
+   "label": "Autodesk named-user licensing: what changed"
+  },
+  {
+   "href": "/blog/autocad-subscription-versus-the-alternatives",
+   "label": "AutoCAD subscription versus the alternatives"
+  },
+  {
+   "href": "/cad-software",
+   "label": "CAD software in India"
+  }
+ ],
+ "needsVerification": [
+  "Revit LT described as a simplified 3D BIM tool for architecture (catalogue) and the suggestion that full Revit has features LT lacks (general knowledge; reader told to check Autodesk's comparison).",
+  "Navisworks Simulate described as covering coordination, 5D analysis and simulation (catalogue); Manage inclusion in AEC Collection per site pages.",
+  "ReCap Pro use for surveying existing buildings (general knowledge, consistent with catalogue 'reality capture').",
+  "Forma for Buildings / Site Design described as cloud tools for early design and analysis (catalogue descriptions).",
+  "Infraworks Windows/platform not stated; none claimed.",
+  "Flex product eligibility: reader told to check Autodesk's current list."
+ ]
+}

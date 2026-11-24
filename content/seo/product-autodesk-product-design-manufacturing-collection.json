@@ -1,0 +1,89 @@
+{
+ "slug": "autodesk-product-design-manufacturing-collection",
+ "displayName": "Product Design & Manufacturing Collection",
+ "intro": "The Product Design & Manufacturing Collection is Autodesk's bundle for manufacturing engineering teams, and the counterpart to the AEC Collection. One named-user subscription gives a person Inventor Professional for mechanical design, AutoCAD with toolsets, Fusion, simulation, data management and plant layout tools.\n\nTypical buyers are machine builders, fabrication and tooling companies, auto-component suppliers and product engineering houses whose people use one product heavily and several others occasionally. The annual single-user subscription is {{price:autodesk-product-design-manufacturing-collection}} excluding GST, or {{gst:autodesk-product-design-manufacturing-collection}} with 18% GST.\n\nThe collection's price in India only makes sense when compared against the products your team really opens, which this page helps you work out.",
+ "included": "The catalogue lists these contents:\n\n- Inventor Professional for mechanical design\n- AutoCAD with all industry toolsets\n- Fusion with generative design\n- Inventor Nastran for finite element analysis\n- Vault Basic for engineering data management\n- Factory Design Utilities for layout planning\n- Navisworks Manage\n\nIn practice, the pieces cover the path from design to analysis to plant layout. An engineer designs a part in Inventor, checks it with Nastran, manages revisions in Vault Basic, and a planner lays out the production line with Factory Design Utilities.\n\nCollection contents change between releases, so confirm the list against the edition on your quotation. If you need a specific capability, name it in your [enquiry](/enquiry).",
+ "whoFor": "**A good fit:**\n\n- Design engineers who use Inventor daily and need Fusion or AutoCAD occasionally\n- Product engineering teams that analyse designs with finite element tools\n- Companies that must control drawing revisions and need engineering data management\n- Plant and layout planners working on production line design\n- Teams where several people each use two or three of the listed tools\n\n**Probably not the right buy:**\n\n- A person who only uses Inventor; consider [Inventor](/products/autodesk-inventor) on its own\n- A team that only needs CAD, CAM and electronics in a small studio; [Fusion](/products/fusion-360) alone may fit\n- A building or infrastructure practice; the [AEC Collection](/products/aec-collection) is the right bundle there\n\nA common mistake is buying collection seats for every engineer, including those who never open the second product.",
+ "vs": {
+  "alternative": "Inventor",
+  "alternativeSlug": "autodesk-inventor",
+  "intro": "The natural comparison is the collection against Inventor on its own. Inventor is inside the collection, so the decision is whether you value what surrounds it.\n\nThis table compares them using our catalogue and site content only.",
+  "rows": [
+   {
+    "label": "What you get",
+    "thisProduct": "Inventor Professional, AutoCAD, Fusion, Nastran, Vault Basic and more",
+    "alternative": "Inventor on its own"
+   },
+   {
+    "label": "Best for",
+    "thisProduct": "People who use several of the tools or need occasional access",
+    "alternative": "People who spend the day in mechanical design"
+   },
+   {
+    "label": "Simulation",
+    "thisProduct": "Inventor Nastran for finite element analysis",
+    "alternative": "Described only as simulation in our catalogue"
+   },
+   {
+    "label": "Data management",
+    "thisProduct": "Vault Basic included",
+    "alternative": "Not listed"
+   },
+   {
+    "label": "Plant layout",
+    "thisProduct": "Factory Design Utilities included",
+    "alternative": "Not listed"
+   },
+   {
+    "label": "Platform",
+    "thisProduct": "Windows; most products are Windows-only",
+    "alternative": "Windows desktop application"
+   },
+   {
+    "label": "Annual price",
+    "thisProduct": "{{price:autodesk-product-design-manufacturing-collection}} excl. GST",
+    "alternative": "{{price:autodesk-inventor}} excl. GST"
+   }
+  ],
+  "verdict": "Choose Inventor alone if an engineer does mechanical design and nothing else. A single seat is simple to administer and easy to reassign.\n\nChoose the collection if a person needs Inventor with another tool in the list, whether that is Fusion for generative work, Nastran for analysis, or Vault Basic and Factory Design Utilities for data and layout. Count the products opened per person during the year, not the ones installed.\n\nA sensible mixed estate gives collection seats to senior engineers who span tools, standalone seats to specialists, and Flex to reviewers."
+ },
+ "licensing": "The collection is licensed per named user. Named-user subscriptions are assigned to one person and cannot be pooled or shared, which is the main change from the old network-licence model; see [what changed with named-user licensing](/blog/autodesk-named-user-licensing-what-changed). A seat can be reassigned when someone leaves, so build that step into your offboarding checklist.\n\nOne seat covers one person, who may use any product inside the collection. It cannot be shared by two people, and the people who each need one tool still need their own subscriptions.\n\nEach named user may install on multiple machines and sign in on one at a time.\n\nAutodesk Flex is the pay-for-use alternative for occasional access; it costs more than a subscription for daily users, so count real days before choosing. See [Flex versus named-user subscriptions](/blog/autodesk-flex-versus-named-user-subscriptions). Multi-year terms are available; ask for a quotation.\n\nFusion appears inside the collection with generative design, but other advanced Fusion capabilities may be sold as separate extensions, so confirm if you depend on them.",
+ "sysreq": "- Operating system: Windows 11 and Windows 10 (64-bit); most products in the collection are Windows-only\n- Memory: 32 GB RAM is recommended\n- Graphics: a professional-grade GPU is recommended for large assemblies\n- Fusion also runs on macOS and needs a persistent internet connection for cloud data; the rest of the collection should be planned on Windows\n- Autodesk publishes its current system requirements per release. Confirm them on Autodesk's published page before you order hardware, because a subscription is only useful on a machine that runs it well.",
+ "faqs": [
+  {
+   "question": "What is the Product Design & Manufacturing Collection price in India?",
+   "answer": "The annual single-user subscription is {{price:autodesk-product-design-manufacturing-collection}} excluding GST, or {{gst:autodesk-product-design-manufacturing-collection}} with 18% GST. The website figure is tentative; a written quotation fixes the price. Tell us which tools each engineer uses and we will compare it with individual seats. Ask us if you want it checked against your own team before you order."
+  },
+  {
+   "question": "Which products does the collection include?",
+   "answer": "Our catalogue lists Inventor Professional, AutoCAD with industry toolsets, Fusion with generative design, Inventor Nastran, Vault Basic, Factory Design Utilities and Navisworks Manage. Autodesk can change collection contents between releases, so we confirm the current list against your quotation. Ask us if you want it checked against your own team before you order."
+  },
+  {
+   "question": "Is this the right collection for a building design firm?",
+   "answer": "No. This is the manufacturing counterpart to the AEC Collection. A practice doing architecture, structure or infrastructure should look at the AEC Collection, which includes Revit and Civil 3D. Choosing the wrong bundle is an easy mistake. Ask us if you want it checked against your own team before you order."
+  },
+  {
+   "question": "Does Fusion in the collection cover every extension?",
+   "answer": "Not necessarily. The collection lists Fusion with generative design, but Autodesk licenses certain advanced manufacturing, simulation and generative design capabilities as extensions on top of a base Fusion subscription. If your workflow depends on those, ask us to confirm what is and is not included."
+  },
+  {
+   "question": "Can a small workshop justify a collection seat?",
+   "answer": "Usually only if the same person uses at least two of the listed tools. A workshop that models in Inventor and occasionally needs Fusion CAM or AutoCAD drawings could, but one using a single tool should buy that tool alone. We will run the comparison with your usage."
+  },
+  {
+   "question": "Can Vault Basic be used by the whole team?",
+   "answer": "Vault Basic is included in the collection, but each person who needs to use the collection still needs a named-user seat. The licensing is per person, not per project. Ask us how many seats an engineering data management workflow will really need before ordering."
+  }
+ ],
+ "related": [
+  "autodesk-inventor",
+  "fusion-360",
+  "aec-collection"
+ ],
+ "needsVerification": [
+  "Narrative example of design flow (Inventor to Nastran to Vault to Factory Design Utilities) is general product knowledge",
+  "Statement that Autodesk changes collection contents between releases (from the AEC blog; assumed applicable)",
+  "Typical buyers (machine builders, auto-component suppliers) are general market description",
+  "Vault Basic per-user seat requirement for team use is inferred from named-user licensing; verify actual Vault Basic client rules"
+ ]
+}

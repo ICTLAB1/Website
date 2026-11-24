@@ -25,10 +25,13 @@ import {
 } from "@/lib/catalogue/hardware";
 import { isQuoteOnly } from "@/lib/catalogue/quote-only";
 import { resolveProductPhoto } from "@/lib/representative-image";
-import { getProductBySlug, getRelatedProducts } from "@/lib/queries/catalogue";
+import { getProductBySlug, getProductsBySlugs, getRelatedProducts } from "@/lib/queries/catalogue";
 import { effectivePriceMinor } from "@/lib/money";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { productDescription, productTitle } from "@/lib/seo-copy";
+import { categoryPageFor, PRODUCT_GUIDES } from "@/lib/content/guides";
+import { GuidePriceBlock, ProductGuideIntro, ProductGuideSections, resolveProductGuide } from "@/components/catalogue/product-guide";
+import { currentCertifications } from "@/lib/queries/certifications";
 import { safeProductImage } from "@/lib/product-image";
 import { productRating, productReviews } from "@/lib/queries/reviews";
 import {
@@ -88,7 +91,9 @@ export async function generateMetadata({
      * was one pattern for the catalogue.
      */
     absoluteTitle: true,
-    title: productTitle(name, kind),
+    title: PRODUCT_GUIDES[product.slug]
+      ? productTitle(PRODUCT_GUIDES[product.slug]!.displayName, "software", { year: 2026 })
+      : productTitle(name, kind),
     /*
      * An authored `seoDescription` stays (and `buildMetadata` makes sure it says
      * India, GST invoice and the call to action). Without one the description is
@@ -97,7 +102,11 @@ export async function generateMetadata({
      */
     description: product.seoDescription?.trim()
       ? product.seoDescription.trim()
-      : productDescription({ name: product.name, shortDescription: product.shortDescription, kind }),
+      : productDescription({
+          name: PRODUCT_GUIDES[product.slug]?.displayName ?? product.name,
+          shortDescription: product.shortDescription,
+          kind,
+        }),
     path: `/products/${product.slug}`,
     keywords: [...product.keywords, product.brand.name, product.name],
   });
@@ -123,6 +132,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
     productReviews(product.slug),
     productRating(product.slug),
   ]);
+
+  const rawGuide = PRODUCT_GUIDES[product.slug];
+  const guide = rawGuide ? await resolveProductGuide(rawGuide) : null;
+  const guideRelated = guide ? await getProductsBySlugs(guide.related) : [];
+  const categoryLink = categoryPageFor(product.slug);
+  const certifications = guide ? (await currentCertifications()).map((row) => row.standard) : [];
+  const offices = [
+    config.address.city,
+    config.secondaryEntity && /ajman/i.test(config.secondaryEntity.address) ? "Ajman" : null,
+  ].filter((office): office is string => Boolean(office));
 
   const defaultVariant = product.variants[0];
   const pricedVariants = product.variants.filter(
@@ -207,7 +226,20 @@ export default async function ProductDetailPage({ params }: PageProps) {
    * this model under one heading, and a reader cannot tell which is which. The
    * heading below names the brand when these are the brand's.
    */
-  const faqs = product.faqs.length > 0 ? product.faqs : product.brand.faqs;
+  /*
+   * The long-form buying guide, where one has been written for this product. Its
+   * six questions come first and the product's own follow, de-duplicated by
+   * question, so there is one FAQ list and one FAQPage block.
+   */
+  const baseFaqs = product.faqs.length > 0 ? product.faqs : product.brand.faqs;
+  const faqs = guide
+    ? [
+        ...guide.faqs,
+        ...baseFaqs.filter(
+          (faq) => !guide.faqs.some((own) => own.question.trim().toLowerCase() === faq.question.trim().toLowerCase()),
+        ),
+      ]
+    : baseFaqs;
 
   /*
    * Asked of the same resolver the picture uses, so the notice appears exactly
@@ -506,7 +538,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               />
             ) : null}
             <h1 className="text-3xl leading-tight sm:text-[2.35rem]">
-              {product.name}
+              {guide ? `${guide.displayName} Price in India` : product.name}
             </h1>
           </div>
 
@@ -520,6 +552,23 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-ink-600">
             {product.shortDescription}
           </p>
+
+          {guide && !hardware ? (
+            <>
+              <GuidePriceBlock variants={product.variants} productName={guide.displayName} />
+              <ProductGuideIntro guide={guide} />
+            </>
+          ) : null}
+
+          {categoryLink ? (
+            <p className="mt-4 text-meta text-ink-600">
+              Comparing options?{" "}
+              <Link href={categoryLink.href} className="font-medium text-accent-700 underline underline-offset-2">
+                See the {categoryLink.label} buying guide
+              </Link>
+              .
+            </p>
+          ) : null}
 
           {/*
             Who sells what to whom, in one sentence, on every hardware page.
@@ -910,6 +959,20 @@ export default async function ProductDetailPage({ params }: PageProps) {
         answers belong to the brand the heading names the brand, and the
         product's own answers are never mixed in with them.
       */}
+      {guide && !hardware ? (
+        <ProductGuideSections
+          guide={guide}
+          productName={guide.displayName}
+          resellerLine={
+            partnerBadge ? `${partnerBadge.name} ${partnerBadge.label}` : `${product.brand.name} reseller`
+          }
+          certifications={certifications}
+          offices={offices}
+          categoryLink={categoryLink}
+          related={guideRelated.map((item) => ({ slug: item.slug, name: item.name }))}
+        />
+      ) : null}
+
       {faqs.length > 0 ? (
         <section id="faq" className="mt-16 max-w-3xl scroll-mt-32">
           <SectionHeader
@@ -922,6 +985,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             className="mb-6"
           />
           <FaqList
+            url={absoluteUrl(`/products/${product.slug}`)}
             items={faqs.map((faq) => ({
               question: faq.question,
               answer: faq.answer,

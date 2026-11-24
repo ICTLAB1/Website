@@ -6,6 +6,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ButtonLink } from "@/components/ui/button";
 import { getFaqsByTopic, getPostBySlug, getRelatedPosts } from "@/lib/queries/content";
 import { FaqList } from "@/components/ui/accordion";
+import { resolvePriceTokens } from "@/lib/price-tokens";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
 import { Markdown } from "@/components/markdown";
@@ -58,7 +59,10 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const related = await getRelatedPosts(post.slug, post.category, 3);
   // Questions written for this article, stored under the topic `blog:<slug>`.
-  const faqs = await getFaqsByTopic(`blog:${post.slug}`);
+  const rawFaqs = await getFaqsByTopic(`blog:${post.slug}`);
+  // Prices in the article and its answers are tokens, resolved from the catalogue now.
+  const [body, ...answers] = await resolvePriceTokens([post.body, ...rawFaqs.map((faq) => faq.answer)]);
+  const faqs = rawFaqs.map((faq, index) => ({ ...faq, answer: answers[index]! }));
   const config = await getSiteConfig();
 
   return (
@@ -89,7 +93,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </p>
         </header>
 
-        <Markdown body={post.body} />
+        <Markdown body={body!} />
 
         {faqs.length > 0 ? (
           <section aria-labelledby="blog-faq" className="mt-12 border-t border-line pt-8">
