@@ -1,0 +1,157 @@
+{
+ "slug": "cad-software",
+ "h1": "CAD Software in India: AutoCAD, Revit, Fusion & More",
+ "intro": "CAD software is what engineers, architects, designers and manufacturers use to draw, model and document things before they are built. In India the choice usually starts with AutoCAD, but the right tool depends on whether you produce drawings, building models, road corridors or machined parts. Picking the wrong category costs more than picking the wrong edition.\n\nThis guide explains the main types of CAD, how to choose between them, how Autodesk licensing works for an Indian business, and the mistakes we see most often. The comparison table below lists the CAD products we supply, with today's price pulled from our catalogue. Prices are annual, exclude 18% GST and are tentative until confirmed in a written quotation.\n\nIt is written for office managers, IT heads and design leads who have to sign off a purchase, not only for the person who will use the software.",
+ "sections": [
+  {
+   "heading": "What is CAD software?",
+   "markdown": "CAD stands for computer-aided design. At its simplest it replaces the drawing board: lines, dimensions, annotations and sheets, saved as a file that can be revised, shared and printed. At its most advanced it is a full digital model of a product or structure that drives manufacturing, analysis and documentation.\n\nMost design firms in India work with DWG files, the format AutoCAD made standard, so compatibility with clients, consultants and contractors is a practical reason many teams default to AutoCAD. Mechanical and product teams more often work in 3D parts and assemblies, and building teams increasingly work in BIM.\n\nCAD is not one product category. A drafting tool, a building information modelling tool and a product-design tool solve different problems, and a firm often needs more than one of them for different people."
+  },
+  {
+   "heading": "2D, 3D and BIM: which type do you need?",
+   "markdown": "**2D drafting** produces plans, sections, schematics and detail drawings. It is quick to learn, widely understood and still the working language of many consultants. AutoCAD and AutoCAD LT are the usual choices.\n\n**3D modelling** builds solid or surface geometry you can rotate, measure and analyse. For mechanical parts and assemblies that means tools such as Inventor and Fusion; for early industrial design concepts it can mean Alias Concept.\n\n**BIM (building information modelling)** goes a step further for buildings. The model holds walls, floors and services as objects with real properties, and plans, sections and schedules are views of the same model. Revit is the main example, and our [BIM software guide](/bim-software) covers that route in detail.\n\n**Civil and infrastructure design** is a specialist branch. Roads, drainage, earthworks and site grading are modelled with surfaces, alignments and corridors, which is what Civil 3D is built for.\n\nA useful rule: if your deliverable is a set of drawings, start with 2D. If it is a physical product, start with 3D parametric modelling. If it is a building that several disciplines must coordinate, look at BIM."
+  },
+  {
+   "heading": "How to choose CAD software",
+   "markdown": "Work through these questions in order:\n\n- **What do you hand over?** Drawings in DWG, machine-ready toolpaths, or a coordinated building model.\n- **What do your clients and consultants require?** Some public and large private projects specify BIM. Some supply chains expect DWG.\n- **How many people, and how often?** A daily user and a person who opens a drawing twice a month should not necessarily hold the same licence.\n- **Which operating system?** Revit, Civil 3D and Inventor are Windows-only. Fusion runs on Windows and macOS. AutoCAD on macOS has a feature set that differs from the Windows release.\n- **What hardware do you have?** Our catalogue notes for AutoCAD suggest 16 GB RAM minimum and 32 GB for large drawings and 3D work, with a DirectX 12 capable GPU with 4 GB VRAM or more. Heavier tools such as Revit and Civil 3D ask for more memory.\n- **Do you need a bundle?** If one person genuinely uses two or three Autodesk products, a collection may cost less than separate subscriptions.\n\nIf you are still unsure, ask for a comparison before buying. We would rather size the licence to the work than sell a larger one."
+  },
+  {
+   "heading": "CAD licensing types explained",
+   "markdown": "**Named-user subscription.** This is the standard model for current Autodesk products. One subscription is assigned to one person. It cannot be shared or pooled, but it can be reassigned when someone leaves. A named user can install on multiple machines and sign in on one at a time. Our catalogue prices are for one-year terms; monthly and multi-year terms can be quoted on request, and multi-year terms are usually cheaper per year.\n\n**Autodesk Flex.** Flex is a token model for occasional use. You buy tokens in advance and they are drawn down on the days someone actually opens a covered product. It suits project managers, reviewers and engineers who need a specialist tool for a few weeks a year, and it is poor value for anyone using the software weekly. Tokens expire, so buy against measured use. Not every product is eligible, so check the current list.\n\n**Collections.** The AEC Collection and the Product Design & Manufacturing Collection bundle several products under one named-user subscription. They pay off when a person uses two or more of the products inside.\n\n**Subscription versus perpetual.** Perpetual AutoCAD licences are no longer sold. Existing ones continue to work within their terms, but there is no upgrade path back to perpetual, and a maintenance plan is not the same as a subscription. Our [article on perpetual versus subscription licensing](/blog/perpetual-versus-subscription-software-licensing) explains the trade-off more generally.\n\nFor the detail, read [AutoCAD subscription versus the alternatives](/blog/autocad-subscription-versus-the-alternatives) and [Autodesk Flex versus named-user subscriptions](/blog/autodesk-flex-versus-named-user-subscriptions)."
+  },
+  {
+   "heading": "Common CAD buying mistakes",
+   "markdown": "- **Buying by habit, not by use.** Under the old network model, twelve licences could serve twenty designers. Named-user licensing ended that, and many firms still allocate seats as if pooling were possible.\n- **Paying separately for toolsets.** Current AutoCAD subscriptions include the Architecture, Mechanical, Electrical, MEP, Map 3D, Plant 3D and Raster Design toolsets. If a renewal still lists one separately, ask why.\n- **Assuming LT renewals are like-for-like.** AutoCAD LT was consolidated into the main AutoCAD line, so older LT entitlements need a check on the current equivalent before renewing.\n- **Overlooking Fusion extensions.** Certain advanced manufacturing, simulation and generative design capabilities are licensed as extensions on top of the base subscription. Decide which workflows you need before choosing a Fusion edition.\n- **Buying a collection for a one-product user.** A person who only opens AutoCAD does not need a bundle.\n- **Sharing a seat.** Named-user means one person. Flex exists for the legitimate version of that need.\n- **Skipping the usage report.** Autodesk admin reporting shows actual use per seat. Pull twelve months before every renewal."
+  },
+  {
+   "heading": "Buying CAD software in India: GST, purchase orders and quotations",
+   "markdown": "A few practical points for Indian buyers:\n\n- **GST invoice.** Software is charged at 18% GST. Every TechZoid order comes with a GST invoice, which matters for input credit. Website prices exclude GST.\n- **Written quotation.** Website prices are tentative. A written quotation fixes the price, so request one through the [enquiry page](/enquiry) before you commit budget.\n- **Purchase order.** We accept orders against a purchase order, which suits companies and departments with an approval process.\n- **Activation and seat assignment.** We help with activation and with assigning seats to named users, which is where many first-time buyers get stuck.\n- **Price list.** The current catalogue is on our [price list](/price-list), and the wider range sits on the [Autodesk page](/autodesk).\n\nTechZoid Technologies is an Autodesk reseller based in New Delhi, with a second office in Ajman, UAE."
+  }
+ ],
+ "products": [
+  {
+   "slug": "autocad",
+   "use": "2D drafting and 3D design with industry toolsets included",
+   "whoFor": "Architects, engineers and drafters who work in DWG daily"
+  },
+  {
+   "slug": "autocad-lt",
+   "use": "2D drafting, drawing and documentation",
+   "whoFor": "Teams that only need 2D; confirm LT renewals first"
+  },
+  {
+   "slug": "autocad-web",
+   "use": "Viewing, annotating and editing DWG files in a browser or on mobile",
+   "whoFor": "Site staff and reviewers who need light access"
+  },
+  {
+   "slug": "autocad-revit-lt-suite",
+   "use": "Revit LT and AutoCAD LT together",
+   "whoFor": "Small architectural practices doing BIM and 2D drafting"
+  },
+  {
+   "slug": "autodesk-civil-3d",
+   "use": "Roads, drainage, grading and infrastructure design",
+   "whoFor": "Civil engineers and survey and infrastructure consultants"
+  },
+  {
+   "slug": "autodesk-inventor",
+   "use": "3D mechanical design, simulation and documentation",
+   "whoFor": "Mechanical engineers and product design teams"
+  },
+  {
+   "slug": "fusion-360",
+   "use": "Cloud-connected CAD, CAM, simulation and PCB design",
+   "whoFor": "Product designers and small-batch manufacturers"
+  },
+  {
+   "slug": "autodesk-fusion-for-design",
+   "use": "Fusion with Design, Simulation and Manage extensions",
+   "whoFor": "Teams needing advanced design and simulation"
+  },
+  {
+   "slug": "autodesk-fusion-for-manufacturing",
+   "use": "Fusion with the Manufacturing Extension",
+   "whoFor": "Machine shops needing advanced CAM"
+  },
+  {
+   "slug": "autodesk-fusion-contributor",
+   "use": "Contributor access to Fusion and Fusion Manage workflows",
+   "whoFor": "Reviewers who take part without a full seat"
+  },
+  {
+   "slug": "autodesk-alias-concept",
+   "use": "Sketching, concept modelling and surfacing for industrial design",
+   "whoFor": "Industrial and automotive style designers"
+  },
+  {
+   "slug": "autodesk-product-design-manufacturing-collection",
+   "use": "Inventor, AutoCAD, Fusion, Nastran and Vault in one subscription",
+   "whoFor": "Manufacturing engineers using several of these tools"
+  }
+ ],
+ "faqs": [
+  {
+   "question": "Which CAD software should a small architecture or engineering firm buy first?",
+   "answer": "For most firms producing drawings, AutoCAD is the safe starting point because DWG is the common exchange format and the subscription includes seven industry toolsets. If your clients require building models, consider Revit instead or alongside. Count how many people will use each product weekly before deciding."
+  },
+  {
+   "question": "What is the difference between CAD and BIM?",
+   "answer": "CAD produces drawings or geometry. BIM produces a model of a building in which every element carries data, and plans, sections and schedules are views of that single model. Change a wall type once and every drawing updates. BIM takes more setup but reduces coordination errors."
+  },
+  {
+   "question": "Is AutoCAD LT the same as AutoCAD?",
+   "answer": "No. LT was the 2D-focused edition. Autodesk has consolidated the AutoCAD line, so if you hold an older LT entitlement we confirm the current equivalent before renewal rather than assuming a like-for-like swap. Our catalogue lists AutoCAD LT separately for new purchases."
+  },
+  {
+   "question": "Can two people share one AutoCAD subscription?",
+   "answer": "No. Current Autodesk subscriptions are named-user: one person per seat. A seat can be reassigned when someone leaves, but not rotated through a team. If several people need occasional access, Autodesk Flex tokens are the permitted way to cover it."
+  },
+  {
+   "question": "Is Autodesk Flex cheaper than a subscription?",
+   "answer": "Only for occasional use. Flex is billed per day of actual use, so it favours people who open a product a few days a year. For daily or weekly users a subscription is the better deal. Work from usage reports, not estimates, and remember tokens expire."
+  },
+  {
+   "question": "Can I buy a perpetual AutoCAD licence in India?",
+   "answer": "Perpetual AutoCAD licences are no longer sold. Existing perpetual licences keep working within their terms, but there is no upgrade path that restores perpetual licensing. New purchases are subscriptions. See our article on perpetual versus subscription licensing for the wider picture."
+  },
+  {
+   "question": "Does Fusion run on a Mac?",
+   "answer": "Yes. Fusion supports Windows and macOS, unlike Revit, Civil 3D and Inventor, which are Windows-only. It also needs a persistent internet connection for cloud data. Confirm the currently supported operating system versions on Autodesk's published requirements before buying."
+  },
+  {
+   "question": "What do I need to place an Autodesk order with TechZoid?",
+   "answer": "Request a written quotation through the enquiry page, which fixes the price. You can then order against a purchase order, and we issue a GST invoice. We also help with activation and with assigning each seat to a named user."
+  }
+ ],
+ "related": [
+  {
+   "href": "/blog/autocad-subscription-versus-the-alternatives",
+   "label": "AutoCAD subscription versus the alternatives"
+  },
+  {
+   "href": "/blog/autodesk-flex-versus-named-user-subscriptions",
+   "label": "Autodesk Flex versus named-user subscriptions"
+  },
+  {
+   "href": "/blog/autodesk-named-user-licensing-what-changed",
+   "label": "Autodesk named-user licensing: what changed"
+  },
+  {
+   "href": "/blog/autodesk-aec-collection-explained",
+   "label": "The AEC Collection explained"
+  },
+  {
+   "href": "/bim-software",
+   "label": "BIM software in India"
+  }
+ ],
+ "needsVerification": [
+  "Revit, Civil 3D and Inventor described as Windows-only (Revit and Civil 3D are in catalogue; Inventor Windows-only is general knowledge).",
+  "Alias Concept described as industrial/automotive style concept and surfacing tool (from catalogue description plus general knowledge of automotive use).",
+  "Statement that AutoCAD DWG is the common exchange format in Indian practice (general knowledge).",
+  "Heavier requirements for Revit/Civil 3D than AutoCAD (from catalogue: 32 GB recommended).",
+  "Fusion extension detail for Fusion for Design / Manufacturing edition descriptions taken from catalogue short descriptions only.",
+  "Whether Flex eligibility covers each listed product; text tells reader to check Autodesk's current eligible list."
+ ]
+}

@@ -1,0 +1,89 @@
+{
+ "slug": "fusion-360",
+ "displayName": "Fusion",
+ "intro": "Autodesk Fusion, formerly known as Fusion 360, is a cloud-connected design environment that brings mechanical CAD, CAM toolpaths, simulation and electronics into one product. The usual alternative is three separate applications with a translation step between each, so the integration is the reason people buy it.\n\nIt is popular with product design studios, start-ups, tool rooms, small-batch manufacturers, makers and engineering colleges moving toward real manufacturing workflows. The annual single-user subscription is {{price:fusion-360}} excluding GST, or {{gst:fusion-360}} with 18% GST.\n\nThat base price is only part of the picture, because some advanced capabilities are sold as extensions. This page explains where the base subscription ends so the Fusion price in India does not surprise you after purchase.",
+ "included": "The base subscription covers, according to our catalogue:\n\n- Parametric and direct modelling in one environment\n- Integrated 2.5 to 5-axis CAM toolpaths\n- Simulation for static stress, modal and thermal analysis\n- Generative design\n- PCB and electronics design\n- Cloud data management with version history\n- Windows and macOS support\n\nThe point of this list is the connection between its parts. A design change propagates to the CAM toolpath without re-importing geometry, and the cloud data layer keeps a version history so a team can see what changed.\n\n**Extensions are separate.** Certain advanced manufacturing, simulation and generative design capabilities are licensed as extensions on top of the base subscription. Our catalogue lists generative design as a feature, yet the more advanced capabilities in these three areas may need extension licences. Tell us your actual workflow when you [ask for a quotation](/enquiry) and we will identify which extensions it needs before quoting.",
+ "whoFor": "**A good fit:**\n\n- Product design studios and start-ups moving from concept to prototype to small production runs\n- Tool rooms and job shops that want CAM in the same file as the model\n- Teams designing electronics together with the enclosure they sit in\n- Engineering institutes teaching a complete design-to-manufacture workflow\n- Distributed teams that need cloud-hosted design data\n\n**Probably not the right buy:**\n\n- A large manufacturer with an established CATIA or NX pipeline; they usually adopt Fusion alongside those tools rather than instead of them\n- A firm whose daily work is large engineered assemblies and shop drawings; look at [Inventor](/products/autodesk-inventor)\n- An office with unreliable internet, since cloud data needs a persistent connection\n\nA common mistake is to choose Fusion only for its low base price, then discover that the CAM strategy or simulation study you need is an extension.",
+ "vs": {
+  "alternative": "Inventor",
+  "alternativeSlug": "autodesk-inventor",
+  "intro": "Fusion and Inventor both produce 3D mechanical designs, so they are often shortlisted together. Inventor is the engineering workhorse for assemblies and documentation; Fusion is the integrated environment for design plus manufacturing.\n\nHere is how they differ on the points that usually decide a purchase.",
+  "rows": [
+   {
+    "label": "Core idea",
+    "thisProduct": "CAD, CAM, simulation and PCB in one cloud-connected product",
+    "alternative": "Desktop mechanical design and documentation"
+   },
+   {
+    "label": "Best for",
+    "thisProduct": "Product design and small-batch manufacturing",
+    "alternative": "Engineered assemblies and shop drawings"
+   },
+   {
+    "label": "CAM",
+    "thisProduct": "Integrated 2.5 to 5-axis toolpaths",
+    "alternative": "Not described in our catalogue entry"
+   },
+   {
+    "label": "Electronics",
+    "thisProduct": "PCB and electronics design included",
+    "alternative": "Not described in our catalogue entry"
+   },
+   {
+    "label": "Add-ons",
+    "thisProduct": "Advanced capabilities licensed as extensions",
+    "alternative": "Confirm per quotation"
+   },
+   {
+    "label": "Platforms",
+    "thisProduct": "Windows and macOS",
+    "alternative": "Windows desktop application"
+   },
+   {
+    "label": "Annual price",
+    "thisProduct": "{{price:fusion-360}} excl. GST",
+    "alternative": "{{price:autodesk-inventor}} excl. GST"
+   }
+  ],
+  "verdict": "Choose Fusion if your team designs and makes: someone models, someone programmes toolpaths, and electronics sit nearby. The integration saves re-importing geometry between systems.\n\nChoose Inventor if you mainly produce assemblies and drawings for suppliers and need a conventional desktop engineering workflow.\n\nIf you need both, along with AutoCAD, the [Product Design & Manufacturing Collection](/products/autodesk-product-design-manufacturing-collection) lists Inventor Professional and Fusion with generative design among its contents, so it is worth pricing against separate seats."
+ },
+ "licensing": "Fusion is licensed per named user. Named-user subscriptions are assigned to one person and cannot be pooled or shared, which is the main change from the old network-licence model; see [what changed with named-user licensing](/blog/autodesk-named-user-licensing-what-changed). A seat can be reassigned when someone leaves, so build that step into your offboarding checklist.\n\nEach named user may install on multiple machines and sign in on one at a time, which suits an engineer who works on a workstation in the office and a laptop elsewhere.\n\nThe base subscription does not include every advanced capability. Certain advanced manufacturing, simulation and generative design capabilities are licensed as separate extensions, and those are an extra cost on top of the base price. List the cutting strategies, analysis types and design studies you actually need, and we will check what is covered.\n\nAutodesk Flex is designed for occasional users and suits reviewers and seasonal projects; read [Flex versus named-user subscriptions](/blog/autodesk-flex-versus-named-user-subscriptions) to count the days of use. Monthly and multi-year terms can be quoted on request.",
+ "sysreq": "- Operating systems: Windows 11 and Windows 10 (64-bit), and currently supported macOS versions\n- Memory: 8 GB RAM minimum, 16 GB recommended\n- Connectivity: a persistent internet connection is required for cloud data; plan for this at workshops and campuses with patchy broadband\n- Complex CAM and simulation work benefits from a faster processor and a capable graphics card, although we do not quote exact figures\n- Autodesk publishes its current system requirements per release. Confirm them on Autodesk's published page before you order hardware, because a subscription is only useful on a machine that runs it well.",
+ "faqs": [
+  {
+   "question": "Is Fusion the same as Fusion 360?",
+   "answer": "Yes. Autodesk Fusion is the current name of the product formerly sold as Fusion 360. Searches, older tutorials and purchase orders may still use the Fusion 360 name, and our product page does too. When you request a quotation, either name will find the same product."
+  },
+  {
+   "question": "What is the Fusion price in India for one user?",
+   "answer": "The annual single-user subscription is {{price:fusion-360}} excluding GST, or {{gst:fusion-360}} including 18% GST. The website figure is tentative, and a written quotation fixes the price. Extensions are separate, so mention any advanced manufacturing, simulation or generative work in your enquiry. Ask us if you want it checked against your own team before you order."
+  },
+  {
+   "question": "Which Fusion capabilities need extensions?",
+   "answer": "Certain advanced manufacturing, simulation and generative design capabilities are licensed separately from the base subscription. Exactly which cutting strategies or analysis types fall into extensions can change with releases, so we ask for your intended workflow first and then confirm the extension list before quoting."
+  },
+  {
+   "question": "Can Fusion work without an internet connection?",
+   "answer": "Our catalogue says a persistent internet connection is required for cloud data. That matters for shop-floor machines and campuses with unstable broadband. If your machines are isolated, test your workflow on a trial or ask us before ordering, because file access and version history rely on the cloud layer."
+  },
+  {
+   "question": "Does Fusion run on a Mac?",
+   "answer": "Yes. The catalogue lists Windows 11, Windows 10 and currently supported macOS versions. That makes Fusion one of the few Autodesk design tools that suits a mixed Windows and Mac studio. Confirm your macOS version against Autodesk's current requirements page before buying."
+  },
+  {
+   "question": "Can Fusion replace our existing CATIA or NX setup?",
+   "answer": "Large organisations with established CATIA or NX pipelines usually adopt Fusion alongside them rather than instead. It works well for prototyping, fixtures and small-batch work, while the larger system continues for programme-scale product data. Decide the role of each tool before buying seats."
+  }
+ ],
+ "related": [
+  "autodesk-inventor",
+  "autodesk-product-design-manufacturing-collection",
+  "autocad"
+ ],
+ "needsVerification": [
+  "Statement that Fusion 360 was renamed Autodesk Fusion (general knowledge; also consistent with catalogue name)",
+  "Statement that Inventor is a Windows desktop application (general knowledge)",
+  "Claim about Indian user types (design studios, tool rooms, colleges) is a general market description",
+  "Claim that cloud data layer requires persistent connection and that offline use is limited comes from catalogue 'persistent internet connection required'; offline-mode details not stated"
+ ]
+}

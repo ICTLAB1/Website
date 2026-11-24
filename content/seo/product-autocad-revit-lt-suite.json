@@ -1,0 +1,85 @@
+{
+ "slug": "autocad-revit-lt-suite",
+ "displayName": "AutoCAD Revit LT Suite",
+ "intro": "The AutoCAD Revit LT Suite puts two lighter Autodesk tools under one subscription: Revit LT for 3D architectural design and documentation, and AutoCAD LT for 2D drafting. It is built for small studios that model buildings but still draw details, reuse older DWG files and exchange 2D sheets with consultants.\n\nTypical buyers in India are small architecture and interior practices, design-build contractors with an in-house drawing cell, and firms halfway through a move from 2D drafting to BIM, where people need both ways of working during the transition.\n\nThe annual subscription is currently {{price:autocad-revit-lt-suite}} per user per year excluding GST, or {{gst:autocad-revit-lt-suite}} including 18% GST, subject to written quotation.",
+ "included": "Our catalogue describes the suite as Revit LT and AutoCAD LT together, for architectural design and documentation alongside 2D drafting. Under one named-user annual commitment, billed yearly, that means:\n\n- Revit LT, the simplified 3D BIM tool for architectural design and documentation\n- AutoCAD LT, the 2D drafting, drawing and documentation tool\n- One assignment per person, instead of two separate sign-ins to administer\n\nThe suite does not include full AutoCAD, its seven industry toolsets, or full Revit. Those are separate products, covered in the comparison below.",
+ "whoFor": "**A good match:**\n\n- A studio that models in Revit LT but still produces 2D details, site plans and consultant drawings in AutoCAD LT\n- A practice training its drafters on BIM while client work continues in 2D\n- A small contractor's design office that receives DWG files and issues modelled drawings\n- A person who is the only drafting resource and has to switch between both modes\n\n**Not a match:**\n\n- A team that works only in 2D (buy AutoCAD LT alone)\n- A team that only models (check Revit LT alone)\n- Structural or MEP consultancies, or teams needing 3D tools and toolsets that full AutoCAD or Revit provide\n\nCount who really opens each application. If half the team never touches one of the two, one product may do.",
+ "vs": {
+  "alternative": "AutoCAD LT and Revit LT bought separately",
+  "alternativeSlug": "autocad-lt",
+  "intro": "The practical comparison is between this suite and licensing each tool on its own. Revit LT is priced on request, so we quote the separate route for you rather than printing a figure.\n\nThe suite is simpler to administer; separate purchases suit teams whose people really use only one tool. Full AutoCAD and full Revit are the step up when LT scope runs out.",
+  "rows": [
+   {
+    "label": "What you get",
+    "thisProduct": "Revit LT and AutoCAD LT together",
+    "alternative": "Each product bought individually"
+   },
+   {
+    "label": "Annual price (ex GST)",
+    "thisProduct": "{{price:autocad-revit-lt-suite}}",
+    "alternative": "AutoCAD LT {{price:autocad-lt}}; Revit LT on request"
+   },
+   {
+    "label": "Best for",
+    "thisProduct": "People using both 2D and 3D daily",
+    "alternative": "People needing only one tool"
+   },
+   {
+    "label": "Administration",
+    "thisProduct": "One assignment per person",
+    "alternative": "Two assignments per person"
+   },
+   {
+    "label": "Flexibility",
+    "thisProduct": "Both tools tied to one seat",
+    "alternative": "Mix of seats per tool"
+   },
+   {
+    "label": "Step up",
+    "thisProduct": "Full AutoCAD or Revit later",
+    "alternative": "Same step-up route"
+   }
+  ],
+  "verdict": "If most of your team uses both tools, quote the suite. If one tool dominates, buy that one, and add the second only for people who need it. Ask us for the suite alongside separate [AutoCAD LT](/products/autocad-lt) and [Revit LT](/products/autodesk-revit-lt) quotations; we compare them on your headcount. When 3D, toolsets or multi-discipline work enter the picture, move those seats to [AutoCAD](/products/autocad) or [Revit](/products/revit)."
+ },
+ "licensing": "The suite is licensed per **named user**: one person per subscription, not shareable, and reassignable when someone leaves. Our catalogue lists an annual commitment billed yearly; monthly and multi-year terms can be quoted on request.\n\nAs with other Autodesk products, the move from pooled network licences to named seats means every person who opens the software needs one; [what changed with named-user licensing](/blog/autodesk-named-user-licensing-what-changed) explains how this affects practices. Autodesk Flex is a token model for occasional use; see [Flex versus named-user subscriptions](/blog/autodesk-flex-versus-named-user-subscriptions). Flex eligibility for suite-class products is something we check at the time of quoting rather than assume.",
+ "sysreq": "- Revit LT is a 3D BIM application, so size the workstation for modelling rather than for 2D drawing alone: more RAM and an SSD matter\n- Confirm which operating systems each application supports on Autodesk's published page; do not assume macOS for the BIM component\n- A named user may install on several machines and sign in on one at a time\n- Confirm current system requirements on Autodesk's published page before buying hardware",
+ "faqs": [
+  {
+   "question": "Is the suite for people who do 2D and 3D in the same week?",
+   "answer": "Yes, that is the design. A studio architect who models a building in Revit LT and then cleans up a site plan or detail in AutoCAD LT uses both tools regularly. If a person only ever does one, a single product is a better match, so check last month's actual use."
+  },
+  {
+   "question": "What do we do if we outgrow the LT tools?",
+   "answer": "Move the specific people who need more, not the whole team. Full AutoCAD adds 3D modelling, the industry toolsets and automation; full Revit adds the complete multi-discipline BIM scope. Because licences follow people, a few seats can be upgraded at renewal while the rest stay on LT."
+  },
+  {
+   "question": "Why is the suite price listed when Revit LT has none?",
+   "answer": "The suite has a catalogue price, whereas Revit LT standalone is priced on request. That does not mean one costs less than the other; the two are different products. We will quote the suite and the individual products on request so you can compare them for your actual headcount."
+  },
+  {
+   "question": "Can we use the suite for a government tender requiring BIM?",
+   "answer": "Check the tender's specification first. Some require full multi-discipline coordination, specific file formats or shared models, which may call for full Revit. Send us the relevant clause and we will look at it against Autodesk's current product comparison before you commit."
+  },
+  {
+   "question": "Does a suite subscription cover two users?",
+   "answer": "No. It covers one named person who may use both tools. Two people each using one tool need two subscriptions. Seats can be reassigned if staff change, but cannot be shared, so count the people who will open the software rather than the number of drawing workstations."
+  },
+  {
+   "question": "Will our consultants' AutoCAD DWG files open in the suite?",
+   "answer": "DWG is the format AutoCAD LT works with, so files exchanged with consultants in DWG are the expected workflow. Content that exists only in full AutoCAD, such as 3D objects or industry toolset objects, may not behave the same way. Test a real file before you roll out."
+  }
+ ],
+ "related": [
+  "autocad-lt",
+  "autodesk-revit-lt",
+  "aec-collection"
+ ],
+ "needsVerification": [
+  "Suite contents are only as described in the catalogue (Revit LT and AutoCAD LT together); no further feature claims.",
+  "Statement that suite excludes full AutoCAD, toolsets and full Revit (follows from the product name/description).",
+  "OS support for Revit LT and AutoCAD LT not stated; text asks reader to confirm.",
+  "DWG object-compatibility caution between LT and full AutoCAD (general knowledge).",
+  "Flex eligibility not verified."
+ ]
+}

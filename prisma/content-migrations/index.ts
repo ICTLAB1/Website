@@ -16,6 +16,7 @@ import { microsoftChannelPricelist } from "./2026-11-microsoft-channel-pricelist
 import { landingTitlesSayIndia } from "./2026-11-landing-titles-say-india";
 import { blogPriceFaqs } from "./2026-11-blog-price-faqs";
 import { adobeAppsFaqAndGuides } from "./2026-11-adobe-apps-faq-and-guides";
+import { seoPostsAndLinks } from "./2026-11-seo-posts-and-links";
 import { microsoft365Logo } from "./2026-11-microsoft-365-logo";
 import { supportEmail } from "./2026-11-support-email";
 import { hpBusinessPartner } from "./2026-11-hp-business-partner";
@@ -224,6 +225,8 @@ export const contentMigrations: ContentMigration[] = [
   blogPriceFaqs,
   /* Creates pages and adds sections to /adobe and /managed-it-services, which must exist; links to /faq last. */
   adobeAppsFaqAndGuides,
+  /* Articles, one correction and the guide links; after the AutoCAD FAQ and /autocad link it corrects. */
+  seoPostsAndLinks,
 ];
 
 export type { ContentMigration };

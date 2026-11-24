@@ -1,0 +1,116 @@
+{
+ "slug": "pdf-software",
+ "h1": "PDF Software in India: Adobe Acrobat Pro, Standard & Teams",
+ "intro": "Almost every office produces PDFs: contracts, tenders, invoices, compliance filings, board packs. Reading them is free. The decisions that cost money start when someone has to edit a scanned page, remove a client name before sharing, compare two contract drafts or collect signatures from five people.\n\nThis guide explains what PDF software is, how to choose between the Acrobat editions TechZoid sells, how Adobe's named-user licensing works for a business, and what to check when buying in India. It is written for the office manager or IT head who has been asked to \"get everyone a PDF editor\" and wants to avoid paying for more than the team needs.\n\nFor the current annual price of each edition, open the product pages linked below or [request a written quotation](/enquiry). Website prices are tentative, exclude GST, and are fixed only by a quotation.",
+ "sections": [
+  {
+   "heading": "What PDF software actually does",
+   "markdown": "A PDF reader opens and prints files. PDF software, in the business sense, lets you change and control them. The jobs people actually buy it for fall into a few groups:\n\n- **Creating and exporting.** Turning Office files, scans or images into PDFs, and exporting PDFs back to editable formats.\n- **Editing and organising.** Fixing text, replacing images, and combining, splitting, reordering or deleting pages.\n- **Forms and signatures.** Filling forms, building forms that collect data, and requesting and tracking electronic signatures.\n- **Protection.** Password protection, permission control and redaction.\n- **Review.** Comparing two versions of a document and checking accessibility.\n\nThe two features that most often decide the purchase are redaction and comparison. Covering text with a black box is not redaction, because the text underneath can often be copied out. Proper redaction permanently removes the content. Anyone who shares legal, HR, financial or tender documents outside the organisation needs the real thing."
+  },
+  {
+   "heading": "The Acrobat editions on this page",
+   "markdown": "TechZoid sells Adobe's business editions of Acrobat. They differ in a few clear ways.\n\n- **[Acrobat Standard for Teams](/products/adobe-acrobat-standard-teams)** covers everyday work: create and edit PDFs, combine and reorganise pages, fill and sign, request basic signatures and apply a password. It runs on Windows 10 and 11 only, and it leaves out redaction, document comparison and accessibility checking.\n- **[Acrobat Pro for Teams](/products/adobe-acrobat-pro-teams)** adds redaction that permanently removes content, comparison, advanced forms with data collection, permission control, electronic signature tracking and macOS support, alongside Windows and the iOS and Android apps.\n- **[Acrobat Studio](/products/adobe-acrobat-studio)** is Acrobat Pro together with Adobe's AI-assisted creative and document tools, for teams that produce documents and design work side by side.\n- **[AI Assistant for Acrobat](/products/adobe-ai-assistant-for-acrobat)** is an add-on that answers questions about a document and summarises it, including contracts. It works with Acrobat Pro, Standard and Reader, so it is bought on top of a PDF seat, not instead of one.\n\nThe annual price excluding GST today is {{price:adobe-acrobat-standard-teams}} for Standard and {{price:adobe-acrobat-pro-teams}} for Pro, per named user. Studio is {{price:adobe-acrobat-studio}} and the AI Assistant add-on is {{price:adobe-ai-assistant-for-acrobat}}. Treat all four as tentative until a quotation confirms them."
+  },
+  {
+   "heading": "How to choose: a practical decision rule",
+   "markdown": "Start from the documents your people handle, not from the feature list.\n\n**Choose Standard** if the users work only on Windows, their documents stay inside the company, and they need to merge, edit, fill and sign. Typical examples are an accounts team preparing payment packs or an admin desk assembling travel documents.\n\n**Choose Pro** if any one of these is true: the user is on a Mac, they send documents to clients, regulators or courts, they review contract drafts, they publish forms, or they handle personal data that must be removed before sharing. Legal, HR, finance, procurement and tendering teams almost always land here.\n\n**Consider Studio** where the same people also produce creative work and want document and design tools under one named-user seat.\n\n**Add the AI Assistant** only where staff read long documents routinely and summarising saves real time. It is a convenience layer, so test it with a few users before buying it for everyone.\n\nA mixed purchase is normal. Matching seats to roles by name is where most of the saving comes from. Our guide on [the hidden cost of unused licences](/blog/hidden-cost-of-unused-software-licences) shows how quickly unused seats add up."
+  },
+  {
+   "heading": "Licensing: named users, Teams and Enterprise",
+   "markdown": "Adobe's business subscriptions are licensed per **named user** through the Adobe Admin Console. A seat is assigned to a person, usually by email address, and the administrator can reassign it when that person changes role or leaves. That is the main practical advantage over a licence tied to one computer: the entitlement stays with the company, not with a machine or an individual.\n\nA few points to know before you buy:\n\n- Business plans carry an **annual commitment**. Seats added mid-term are prorated to the common renewal date, so you keep one renewal date rather than many. Monthly and multi-year terms can be quoted on request.\n- **Teams** is the default edition for most organisations: Adobe-managed identities, a straightforward admin console and reassignable seats. It suits small and mid-sized businesses well.\n- **Enterprise** changes the identity and governance model rather than the applications: federated single sign-on against your directory, enterprise-owned storage and managed deployment. It becomes worth considering at roughly fifty or more seats, or where asset ownership is a compliance matter. Our article on [Creative Cloud for Enterprise](/blog/adobe-creative-cloud-for-enterprise) explains the trade-offs. For plain PDF work, most buyers never need it.\n\nIf you already run Adobe Creative Cloud, check first: [Creative Cloud All Apps](/products/adobe-creative-cloud-all-apps-teams) includes Acrobat Pro, so designers on All Apps do not need a separate Acrobat seat. Buying both for the same person is a common double payment. See also [VIP versus VIP Marketplace](/blog/adobe-vip-versus-vip-marketplace) for how the buying programme affects billing and administration."
+  },
+  {
+   "heading": "Common mistakes when buying PDF software",
+   "markdown": "- **Buying Pro for everyone.** Most staff only need to read, sign or merge. Audit by role and name before choosing a single edition for the whole company.\n- **Buying Standard for a mixed fleet.** Standard is Windows only. If one finance head uses a MacBook, that seat needs Pro.\n- **Confusing a black box with redaction.** If your process relies on hiding sensitive text, confirm the edition removes it permanently.\n- **Paying twice for Acrobat.** Creative Cloud All Apps already includes Acrobat Pro.\n- **Treating the seat as personal.** Without a plan to unassign seats when people leave, you carry the cost until renewal. Add the admin console to your leaver checklist.\n- **Using unlicensed or cracked editors.** Beyond the legal exposure in an audit, they cannot be updated or supported, and a PDF tool that handles confidential documents is the worst place to take that risk. See [preparing for a software licence audit](/blog/preparing-for-a-software-licence-audit)."
+  },
+  {
+   "heading": "Buying notes for India",
+   "markdown": "Buying business software in India has a few practical points that apply to every product on this page.\n\n- **GST invoice.** Every TechZoid order is invoiced with 18% GST. Give us your registered entity name and GSTIN before the invoice is raised, because a wrongly addressed invoice is hard to correct later. If you are GST-registered, the tax can usually be claimed as input credit; our article on [GST input credit on software purchases](/blog/gst-input-credit-on-software-purchases) explains the conditions.\n- **Purchase order.** We accept orders against your purchase order, which fits how finance teams and public bodies normally approve spend.\n- **Written quotation.** Prices on the website are tentative and exclude GST. A written quotation fixes the price, so ask for one before you raise the PO and keep it with the file.\n- **Activation and seat assignment.** Seats are assigned to the email addresses you provide, and we help with activation and with assigning seats in the admin console. Send the list of names and the edition for each when you request the quotation.\n\nIf you are comparing the whole Adobe range, the [Adobe hub](/adobe) lists all the business subscriptions, and the [price list](/price-list) shows what is currently catalogued. For video and motion work, read our companion guide to [video editing software](/video-editing-software)."
+  }
+ ],
+ "products": [
+  {
+   "slug": "adobe-acrobat-pro-teams",
+   "use": "Create, edit, redact, compare, sign and protect PDFs on Windows or Mac.",
+   "whoFor": "Legal, finance, HR and anyone sharing documents externally."
+  },
+  {
+   "slug": "adobe-acrobat-standard-teams",
+   "use": "Everyday PDF creation, editing, merging, filling and signing on Windows.",
+   "whoFor": "Windows-only teams working on internal documents."
+  },
+  {
+   "slug": "adobe-acrobat-studio",
+   "use": "Acrobat Pro bundled with AI-assisted creative and document tools.",
+   "whoFor": "Teams producing documents and creative work side by side."
+  },
+  {
+   "slug": "adobe-ai-assistant-for-acrobat",
+   "use": "Add-on that summarises documents and answers questions about them.",
+   "whoFor": "Staff who read long contracts and reports daily."
+  }
+ ],
+ "faqs": [
+  {
+   "question": "What is the difference between Acrobat Standard and Acrobat Pro?",
+   "answer": "Standard covers creating, editing, combining, filling and signing PDFs, and runs only on Windows. Pro adds permanent redaction, document comparison, accessibility checking, advanced forms and macOS support. If your documents leave the company or contain personal data, Pro is the safer choice."
+  },
+  {
+   "question": "Do we need Acrobat if we already have Creative Cloud All Apps?",
+   "answer": "Usually not for those users. All Apps includes Acrobat Pro, so a separate seat would be a double payment. Staff outside the creative team who only need PDF tools can be given Acrobat seats on their own."
+  },
+  {
+   "question": "Can one Acrobat licence be moved to another employee?",
+   "answer": "Yes. Business plans are licensed per named user through the Adobe Admin Console, and the administrator can unassign a seat and give it to someone else. This is why company-controlled accounts and a leaver checklist matter."
+  },
+  {
+   "question": "Is the price per user per year?",
+   "answer": "Yes. Prices on this site are annual, per named user, and exclude GST. They are tentative until a written quotation confirms them. If you want a different term or a larger quantity, ask for a quotation and we will tell you what is possible."
+  },
+  {
+   "question": "Can we claim GST input credit on Acrobat?",
+   "answer": "If your business is GST-registered and the software is used for taxable business supplies, input credit can generally be claimed against a proper tax invoice. Make sure the invoice carries your GSTIN and entity name, and confirm your own eligibility with your accountant."
+  },
+  {
+   "question": "Does a Mac user need Acrobat Pro?",
+   "answer": "Yes. Acrobat Standard for Teams is Windows only, so any Mac user needs Pro. Check the operating system of each person before you finalise the quantities, or you may end up with seats that cannot be installed."
+  },
+  {
+   "question": "Can I buy against a purchase order?",
+   "answer": "Yes. TechZoid accepts orders against your purchase order. Request a written quotation first, raise the PO against that quotation, and send us the GST details of the entity that should appear on the invoice."
+  },
+  {
+   "question": "Do we need Enterprise licensing for PDF work?",
+   "answer": "Rarely. Teams handles most organisations well. Enterprise adds federated sign-in, enterprise-owned storage and managed deployment, and is worth considering at around fifty or more seats or where compliance requires it. Tell us your team size and identity setup and we will advise."
+  }
+ ],
+ "related": [
+  {
+   "href": "/video-editing-software",
+   "label": "Video editing software in India"
+  },
+  {
+   "href": "/blog/adobe-creative-cloud-for-enterprise",
+   "label": "Creative Cloud for Enterprise: what changes above a handful of seats"
+  },
+  {
+   "href": "/blog/adobe-vip-versus-vip-marketplace",
+   "label": "Adobe VIP and VIP Marketplace compared"
+  },
+  {
+   "href": "/blog/gst-input-credit-on-software-purchases",
+   "label": "GST input credit on software purchases"
+  },
+  {
+   "href": "/blog/what-to-check-before-a-software-renewal",
+   "label": "What to check before a software renewal"
+  }
+ ],
+ "needsVerification": [
+  "General claim: a plain black box drawn over text is not true redaction and the underlying text can often be copied out.",
+  "General claim: Acrobat Reader is a free viewer and AI Assistant works with Reader (catalogue says Pro, Standard and Reader).",
+  "Acrobat Studio described only from catalogue (Acrobat Pro plus AI creative tools); 'AI-assisted document tools' wording should be checked against current Adobe packaging.",
+  "Claim that seats are registered to emails supplied by customer and TechZoid helps with activation/seat assignment is from RULES allowed trust facts; confirm exact process.",
+  "Input-credit statement is general GST guidance; accountant to confirm eligibility (Section 16 conditions)."
+ ]
+}

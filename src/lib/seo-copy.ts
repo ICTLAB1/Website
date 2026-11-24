@@ -54,12 +54,17 @@ const clean = (text: string) => text.replace(/\s+/g, " ").trim();
  * Hardware is not bought by licence, so it never says "Buy Licence": it gets
  * "<Name> Price in India" and, where there is room, "– Get Quote".
  */
-export function productTitle(name: string, kind: "software" | "hardware" = "software"): string {
+export function productTitle(
+  name: string,
+  kind: "software" | "hardware" = "software",
+  options: { year?: number } = {},
+): string {
   const base = clean(name);
+  const year = options.year ? ` ${options.year}` : "";
   const patterns =
     kind === "hardware"
       ? [(n: string) => `${n} Price in India – Get Quote ${SUFFIX}`, (n: string) => `${n} Price in India ${SUFFIX}`]
-      : [(n: string) => `${n} Price in India – Buy Licence ${SUFFIX}`, (n: string) => `${n} Price in India ${SUFFIX}`];
+      : [(n: string) => `${n} Price in India${year} – Buy Licence ${SUFFIX}`, (n: string) => `${n} Price in India${year} ${SUFFIX}`];
 
   for (const pattern of patterns) {
     const title = pattern(base);

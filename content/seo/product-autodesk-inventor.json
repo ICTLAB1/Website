@@ -1,0 +1,90 @@
+{
+ "slug": "autodesk-inventor",
+ "displayName": "Inventor",
+ "intro": "Inventor is Autodesk's professional tool for 3D mechanical design. Engineers model parts, assemble them, check how they behave and produce the drawings a workshop needs. The catalogue describes it as product design and engineering tools for 3D mechanical design, simulation, visualisation and documentation.\n\nIn India it is bought by machine builders, special-purpose machine and tooling makers, sheet-metal and fabrication shops, engineering consultancies and the design departments of manufacturers. The annual commitment is priced at {{price:autodesk-inventor}} excluding GST, or {{gst:autodesk-inventor}} with 18% GST, per named user, billed yearly.\n\nThis page explains what you are buying, how it compares with Fusion, and how licensing works, so the Inventor price in India makes sense against your actual workflow.",
+ "included": "Our catalogue entry for Inventor is brief, so here is what we can say with confidence, and where we will confirm details for you:\n\n- 3D mechanical design for parts and assemblies\n- Simulation to test designs before they are built\n- Visualisation for presenting designs\n- Documentation, meaning the drawings and manufacturing information that go to the shop floor\n\nThe exact module list varies by release and by how Autodesk packages the product. If you need a specific capability, such as sheet metal, frame design, or a particular simulation type, tell us when you [request a quotation](/enquiry) and we will confirm that it is part of the subscription rather than an assumption.\n\nInventor is also one of the products inside the [Product Design & Manufacturing Collection](/products/autodesk-product-design-manufacturing-collection), which adds other tools for teams that use more than one.",
+ "whoFor": "**A good fit:**\n\n- Machine and equipment builders designing assemblies with many moving and bought-out parts\n- Fabrication and sheet-metal firms that need accurate drawings for the shop\n- Product engineering teams that must hand drawings to suppliers and customers\n- Companies that already work in DWG and want a drawing-led path into 3D\n\n**Probably not the right buy:**\n\n- A start-up designing a consumer product that needs CAD, CAM and electronics in one place; look at [Fusion](/products/fusion-360)\n- A one-person workshop that only needs occasional 3D models\n- A team that only draws in 2D; [AutoCAD](/products/autocad) is a simpler purchase\n\nA frequent mistake is to buy the heaviest tool because it sounds serious. Match the tool to the output you hand to the shop floor.",
+ "vs": {
+  "alternative": "Fusion",
+  "alternativeSlug": "fusion-360",
+  "intro": "Inventor and Fusion both do 3D mechanical design, which is why buyers compare them. They are built on different ideas. Inventor is a desktop engineering application focused on parts, assemblies and drawings. Fusion combines design, manufacturing, simulation and electronics in a cloud-connected environment.\n\nThe rows below use only what our catalogue and site pages say.",
+  "rows": [
+   {
+    "label": "Core idea",
+    "thisProduct": "Desktop mechanical design and documentation",
+    "alternative": "CAD, CAM, simulation and PCB design in one cloud-connected product"
+   },
+   {
+    "label": "Best for",
+    "thisProduct": "Engineered assemblies and shop drawings",
+    "alternative": "Product design and small-batch manufacturing"
+   },
+   {
+    "label": "CAM toolpaths",
+    "thisProduct": "Not described in our catalogue entry",
+    "alternative": "Integrated 2.5 to 5-axis CAM"
+   },
+   {
+    "label": "Electronics",
+    "thisProduct": "Not described in our catalogue entry",
+    "alternative": "PCB and electronics design included"
+   },
+   {
+    "label": "Platform",
+    "thisProduct": "Windows in the collection; confirm for standalone",
+    "alternative": "Windows and macOS"
+   },
+   {
+    "label": "Data handling",
+    "thisProduct": "Typically file-based; confirm your workflow",
+    "alternative": "Cloud data management with version history"
+   },
+   {
+    "label": "Annual price",
+    "thisProduct": "{{price:autodesk-inventor}} excl. GST",
+    "alternative": "{{price:fusion-360}} excl. GST"
+   }
+  ],
+  "verdict": "Choose Inventor when your main output is engineered assemblies and drawings that suppliers and the shop will follow, and when your team is comfortable with a conventional desktop engineering workflow.\n\nChoose Fusion when design, CAM and electronics sit in the same small team and you want a design change to flow through to toolpaths. Remember that Fusion has separate extensions for some advanced capabilities.\n\nIf your people need Inventor plus Fusion plus AutoCAD, price the [Product Design & Manufacturing Collection](/products/autodesk-product-design-manufacturing-collection) before buying individual seats."
+ },
+ "licensing": "Inventor is sold as a named-user subscription. Named-user subscriptions are assigned to one person and cannot be pooled or shared, which is the main change from the old network-licence model; see [what changed with named-user licensing](/blog/autodesk-named-user-licensing-what-changed). A seat can be reassigned when someone leaves, so build that step into your offboarding checklist.\n\nThe catalogue entry for Inventor does not state device or sign-in rules in detail. For Autodesk subscriptions in general, a named user may install on more than one machine and sign in on one at a time; we will confirm that for your specific Inventor order.\n\nAutodesk Flex offers pay-for-use access and suits occasional users, such as a reviewer or a seasonal project, but daily users usually pay more under Flex than under a subscription. The comparison is explained in [Flex versus named-user subscriptions](/blog/autodesk-flex-versus-named-user-subscriptions).\n\nThe catalogue shows an annual commitment billed yearly. Monthly or multi-year terms can be quoted on request.",
+ "sysreq": "- Platform: Inventor is a Windows desktop application. Confirm the supported Windows versions for the release you are buying.\n- Memory and graphics: the catalogue does not list figures for Inventor. For comparison, the Product Design & Manufacturing Collection recommends 32 GB RAM and a professional-grade GPU for large assemblies.\n- Large assemblies, simulation and visualisation all benefit from a fast processor and plenty of memory.\n- Autodesk publishes its current system requirements per release. Confirm them on Autodesk's published page before you order hardware, because a subscription is only useful on a machine that runs it well.",
+ "faqs": [
+  {
+   "question": "What is the Inventor price in India for a single user?",
+   "answer": "The annual single-user commitment, billed yearly, is {{price:autodesk-inventor}} excluding GST, or {{gst:autodesk-inventor}} with 18% GST. The website figure is tentative and a written quotation fixes the price. Ask us if you want multi-year terms quoted. Ask us if you want it checked against your own team before you order."
+  },
+  {
+   "question": "Is Inventor better than Fusion for machine design?",
+   "answer": "It depends on the output. Inventor suits engineered assemblies and drawings handed to suppliers and the shop. Fusion suits teams that want CAD, CAM and simulation together. Many Indian machine builders pick Inventor for design and use a separate CAM route, but check your own workflow before deciding."
+  },
+  {
+   "question": "Does Inventor include simulation?",
+   "answer": "Autodesk describes Inventor as covering 3D mechanical design, simulation, visualisation and documentation. The depth of simulation depends on the release and on whether you need advanced analysis. For nonlinear or finite element work, the Product Design & Manufacturing Collection lists Inventor Nastran separately."
+  },
+  {
+   "question": "Can I open DWG files in Inventor?",
+   "answer": "Inventor is built to work alongside AutoCAD, and many teams move between 2D DWG drawings and 3D models. How well a particular legacy drawing converts depends on how it was drawn. Send us a sample workflow and we can help you assess it before purchase."
+  },
+  {
+   "question": "Is the Product Design & Manufacturing Collection worth it over Inventor alone?",
+   "answer": "If an engineer uses Inventor plus AutoCAD, Fusion or Navisworks, the collection deserves a comparison because those are listed in it. If the person opens only Inventor, the single subscription is simpler. Count products used per person, not installed. Ask us if you want it checked against your own team before you order."
+  },
+  {
+   "question": "What happens when an Inventor user leaves the company?",
+   "answer": "The subscription is assigned to a named user, but it can be unassigned and given to another person. It is not a perpetual licence for a machine. Add seat reclamation to your exit checklist, and ask us if you need help reassigning."
+  }
+ ],
+ "related": [
+  "fusion-360",
+  "autodesk-product-design-manufacturing-collection",
+  "autocad"
+ ],
+ "needsVerification": [
+  "Inventor feature list is generic: catalogue entry lists no features, so only the one-line catalogue description (design, simulation, visualisation, documentation) is used",
+  "Statement that Inventor is a Windows desktop application and file-based data (general knowledge)",
+  "Statement that Inventor works alongside AutoCAD/DWG (general knowledge)",
+  "Claim that Indian machine builders commonly use Inventor with a separate CAM route (general market description)",
+  "Sign-in/device rules for Inventor are inferred from the general Autodesk named-user statement; the Inventor catalogue licensingNotes is null"
+ ]
+}

@@ -641,3 +641,14 @@ export const getAllProductSlugs = cache(async () => {
     orderBy: { name: "asc" },
   });
 });
+
+/** Products by slug, in the order given; a slug that is not on sale is skipped. */
+export async function getProductsBySlugs(slugs: string[]): Promise<ProductListItem[]> {
+  if (slugs.length === 0) return [];
+  const rows = await prisma.product.findMany({
+    where: { slug: { in: slugs }, status: "ACTIVE", deletedAt: null },
+    select: productListSelect,
+  });
+  const bySlug = new Map(rows.map((row) => [row.slug, row]));
+  return slugs.map((slug) => bySlug.get(slug)).filter((row) => row !== undefined);
+}

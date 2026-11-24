@@ -1,0 +1,90 @@
+{
+ "slug": "maya",
+ "displayName": "Maya",
+ "intro": "Maya is Autodesk's 3D animation, modelling, simulation and rendering application, regarded as a standard for animation and visual effects in film, television and games. Character rigging, keyframe and procedural animation, cloth, hair and particle simulation, and rendering through Arnold all sit in one package.\n\nIn India the buyers are animation and VFX studios, game developers, post-production houses and training institutes teaching 3D. Maya's depth is also its cost: studios build pipelines and in-house tools around it, so a decision to adopt is a long one.\n\nA named-user subscription is currently {{price:maya}} per year excluding GST, or {{gst:maya}} including 18% GST. A written quotation fixes the final price.",
+ "included": "The Maya subscription in our catalogue includes:\n\n- A character rigging and animation toolset\n- Bifrost for procedural effects and simulation\n- nCloth, nHair and nParticles simulation\n- The Arnold renderer, included with the subscription\n- USD support for pipeline interchange\n- Python and MEL scripting for pipeline tooling\n\nArnold is included for interactive work on each artist's machine. Rendering at scale needs separate render node licensing, which is a purchase sized against your farm; we quote it alongside the seats instead of leaving it to be found at the first deadline.",
+ "whoFor": "**Where Maya is the sensible choice:**\n\n- A character animation studio producing series, features or advertising work\n- A VFX or post-production house that needs simulation and procedural effects\n- A game developer with a rigging and animation pipeline, and technical artists writing tools in Python\n- A training institute preparing students for studio jobs, where the tool they learn should be the tool studios use\n\n**Where it is not:**\n\n- Architecture and product-visualisation teams whose source data is Revit or AutoCAD, who often start with [3ds Max](/products/3ds-max)\n- Very small teams with no technical director and no time to build a pipeline\n- Hobbyists who only need a few modelling and render tools\n\nBudget for pipeline development, plug-in management and artist training next to the licence cost.",
+ "vs": {
+  "alternative": "3ds Max",
+  "alternativeSlug": "3ds-max",
+  "intro": "Maya and 3ds Max overlap in modelling and both ship with Arnold, so the choice depends on what you make. Maya's emphasis is character work, simulation and pipelines built on scripting and USD. 3ds Max's emphasis is visualisation and design-data workflows.\n\nSome studios carry both; ask us about a media collection when two or more Autodesk creative tools are in play.",
+  "rows": [
+   {
+    "label": "Typical use",
+    "thisProduct": "Character animation, VFX, simulation",
+    "alternative": "Visualisation, games, product design"
+   },
+   {
+    "label": "Strong point",
+    "thisProduct": "Rigging, Bifrost, nCloth, nHair",
+    "alternative": "Reads Revit and AutoCAD files"
+   },
+   {
+    "label": "Renderer",
+    "thisProduct": "Arnold included",
+    "alternative": "Arnold included"
+   },
+   {
+    "label": "Platforms",
+    "thisProduct": "Windows, macOS, supported Linux",
+    "alternative": "Windows only"
+   },
+   {
+    "label": "Scripting",
+    "thisProduct": "Python and MEL",
+    "alternative": "Scripting and third-party plug-ins"
+   },
+   {
+    "label": "Annual price (ex GST)",
+    "thisProduct": "{{price:maya}}",
+    "alternative": "{{price:3ds-max}}"
+   },
+   {
+    "label": "Pipeline fit",
+    "thisProduct": "Common in film and series pipelines",
+    "alternative": "Common in architectural studios"
+   }
+  ],
+  "verdict": "Choose Maya if your deliverable is performance, rigged characters or simulation, or you work on macOS or Linux. Choose [3ds Max](/products/3ds-max) if you start from Revit or AutoCAD data and deliver renders. If you need both, compare a collection against two standalone subscriptions through an [enquiry](/enquiry)."
+ },
+ "licensing": "Maya is licensed per **named user**. One subscription, one person, no sharing; it can be reassigned when someone leaves. A named user may install on several machines and sign in on one at a time, handy for artists who work in office and at home.\n\nStudios used to floating licences should recheck seat counts, because pooled network licences are no longer how Autodesk sells; see [what changed with named-user licensing](/blog/autodesk-named-user-licensing-what-changed). Autodesk Flex pays per day of use and is aimed at occasional users, as explained in [Flex versus named-user subscriptions](/blog/autodesk-flex-versus-named-user-subscriptions). Regular artists are normally better on a subscription. Multi-year terms are available and usually cost less per year, so ask for a quotation.",
+ "sysreq": "- Windows 11 and Windows 10, 64-bit; macOS; and supported Linux distributions\n- 32 GB RAM is recommended\n- A professional GPU with 8 GB VRAM or more\n- Simulation and rendering are demanding, so storage and processor performance matter alongside the GPU\n- Confirm current requirements, including supported Linux distributions, on Autodesk's published page before buying hardware",
+ "faqs": [
+  {
+   "question": "Does the Maya subscription include a renderer?",
+   "answer": "Yes. Arnold is included with the subscription and covers interactive rendering on the artist's machine. Large batch rendering across a farm needs render node licensing, which is a separate purchase. We quote it together with the seats so your budget includes both."
+  },
+  {
+   "question": "Can Maya run on Linux or macOS?",
+   "answer": "Yes. The catalogue lists Windows 11 and Windows 10, macOS and supported Linux distributions. Studios with Linux render or workstation fleets can use it, but check which distribution versions are currently supported before you standardise your machines on one. Mac-based teams should also test their plug-ins."
+  },
+  {
+   "question": "What do we budget besides the licence?",
+   "answer": "Budget for pipeline work: scripts, tools, asset management and naming conventions, usually built in Python or MEL. Artists also need training time, and workstations need strong GPUs. For a small team, the licence can be the smaller part of the first-year spend."
+  },
+  {
+   "question": "Is Maya suitable for a small Indian animation startup?",
+   "answer": "It can be, especially if you aim at studios that expect Maya skills or deliver rigged characters. The risk is in underestimating pipeline effort. Start with a small number of seats, a clear file and naming convention, and expand when your first project proves the workflow."
+  },
+  {
+   "question": "Should a training institute buy Maya or 3ds Max?",
+   "answer": "Pick by the careers you are training for. Maya is the usual reference for character animation and VFX studios, 3ds Max for visualisation and design studios. Institutes teaching both disciplines may need both. We can quote separate subscriptions and discuss what suits a class setup."
+  },
+  {
+   "question": "Can one subscription be used on a home PC and an office PC?",
+   "answer": "A named user may install on several machines and sign in on one at a time, so one artist can use an office workstation and a home machine. Two artists cannot share the subscription, and the same person cannot be signed in on two machines simultaneously."
+  }
+ ],
+ "related": [
+  "3ds-max",
+  "autodesk-arnold",
+  "autodesk-media-entertainment-collection"
+ ],
+ "needsVerification": [
+  "Maya's position as film/TV/games standard is from the site page; Indian buyer types are general market characterisation.",
+  "Statement that macOS/Linux support depends on the current release and distributions (catalogue says 'supported Linux distributions').",
+  "Maya's focus on character work vs 3ds Max focus on visualisation (general positioning).",
+  "Render-node licensing being a separate purchase comes from the site's Maya page.",
+  "Media & Entertainment Collection mentioned only as an option to quote."
+ ]
+}

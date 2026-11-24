@@ -1,3 +1,4 @@
+import { GUIDES_UPDATED, GUIDE_ROUTES, PRODUCT_GUIDES } from "@/lib/content/guides";
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db";
 import { appUrl } from "@/lib/env";
@@ -140,10 +141,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
+  // The buying guides: category pages and the price list, with the date they were last revised.
+  for (const route of GUIDE_ROUTES) {
+    add({
+      url: canonical(route),
+      lastModified: new Date(GUIDES_UPDATED),
+      changeFrequency: "weekly",
+      priority: route === "/price-list" ? 0.7 : 0.8,
+    });
+  }
+
   for (const product of products) {
     add({
       url: `${base}/products/${product.slug}`,
-      lastModified: product.updatedAt,
+      // A product with a written guide was revised on the guide's date at the earliest.
+      lastModified: PRODUCT_GUIDES[product.slug]
+        ? new Date(Math.max(product.updatedAt.getTime(), new Date(GUIDES_UPDATED).getTime()))
+        : product.updatedAt,
       changeFrequency: "weekly",
       priority: product.featured ? 0.8 : 0.7,
     });

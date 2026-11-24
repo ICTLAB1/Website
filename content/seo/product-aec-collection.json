@@ -1,0 +1,89 @@
+{
+ "slug": "aec-collection",
+ "displayName": "AEC Collection",
+ "intro": "The Autodesk AEC Collection is one subscription that bundles the design and coordination tools used on building and infrastructure projects. Instead of buying Revit, AutoCAD, Civil 3D and Navisworks separately, a named user gets the set under a single seat.\n\nIt is aimed at architecture and engineering practices, infrastructure consultants, MEP and structural firms, and contractors with in-house BIM teams. The annual single-user subscription is {{price:aec-collection}} excluding GST, or {{gst:aec-collection}} including 18% GST. Website prices are tentative; a written quotation fixes the price.\n\nThe real question is not the AEC Collection price in India on its own, but whether the people on your team use enough of its tools to justify a collection seat.",
+ "included": "Our catalogue lists the following in the collection:\n\n- Revit for building information modelling\n- AutoCAD with all industry toolsets\n- Civil 3D for infrastructure and site design\n- Navisworks Manage for clash detection and coordination\n- Infraworks for conceptual infrastructure design\n- 3ds Max for visualisation\n- Structural Bridge Design and Robot Structural Analysis\n- Autodesk Docs for a common data environment\n\nAutodesk changes collection contents between releases, so confirm the current list against the edition on your quotation. We list only what our catalogue states.\n\nThe collection also makes occasional-use tools available to everyone holding a seat. A designer who needs Navisworks for one coordination review does not need a separate purchase.",
+ "whoFor": "**A good fit:**\n\n- Multi-discipline practices that do architecture, structure and services together\n- BIM coordinators and senior designers who move between Revit, Navisworks and AutoCAD\n- Infrastructure teams that use Civil 3D for site work and Revit for associated buildings\n- Firms where most people live in Revit but a few need Civil 3D, and someone runs clash detection\n\n**Probably not the right buy:**\n\n- A person who only ever opens one product; a standalone seat is simpler, for instance [Revit](/products/revit) or [AutoCAD](/products/autocad)\n- A manufacturing or machine-design team; look at the [Product Design & Manufacturing Collection](/products/autodesk-product-design-manufacturing-collection)\n- Occasional users, for whom Autodesk Flex may be better\n\nA frequent mistake is licensing every seat as a collection because it feels safer. Review who actually uses what first.",
+ "vs": {
+  "alternative": "Revit",
+  "alternativeSlug": "revit",
+  "intro": "For many Indian BIM teams, the real choice is between the collection and Revit alone. Revit is the building information modelling tool, and it is included in the collection, so you are comparing one product with a set that contains it.\n\nThe table shows how the decision usually breaks down.",
+  "rows": [
+   {
+    "label": "What you get",
+    "thisProduct": "Revit, AutoCAD, Civil 3D, Navisworks Manage and more",
+    "alternative": "Revit only"
+   },
+   {
+    "label": "Best for",
+    "thisProduct": "People who use several tools or need occasional access",
+    "alternative": "People who live in BIM modelling all day"
+   },
+   {
+    "label": "Clash detection",
+    "thisProduct": "Navisworks Manage included",
+    "alternative": "Needs a separate Navisworks purchase"
+   },
+   {
+    "label": "Civil and site design",
+    "thisProduct": "Civil 3D and Infraworks included",
+    "alternative": "Not part of Revit"
+   },
+   {
+    "label": "Platform",
+    "thisProduct": "Windows; several products are Windows-only",
+    "alternative": "Windows only"
+   },
+   {
+    "label": "Memory",
+    "thisProduct": "32 GB RAM recommended across the collection",
+    "alternative": "16 GB minimum, 32 GB or more for large models"
+   },
+   {
+    "label": "Annual price",
+    "thisProduct": "{{price:aec-collection}} excl. GST",
+    "alternative": "{{price:revit}} excl. GST"
+   }
+  ],
+  "verdict": "Choose Revit alone if a person does BIM modelling and nothing else. The standalone subscription is the cleaner purchase.\n\nChoose the AEC Collection when a person regularly needs two or more of its products, or when occasional access to other tools has been a recurring problem. Count products opened per person per year, not installed.\n\nA practical mixed estate: collection seats for BIM coordinators and senior designers, individual seats for specialists, and Flex for occasional reviewers. See [the AEC Collection explained](/blog/autodesk-aec-collection-explained) for the longer argument."
+ },
+ "licensing": "The AEC Collection is licensed per named user. Named-user subscriptions are assigned to one person and cannot be pooled or shared, which is the main change from the old network-licence model; see [what changed with named-user licensing](/blog/autodesk-named-user-licensing-what-changed). A seat can be reassigned when someone leaves, so build that step into your offboarding checklist.\n\nOne collection seat belongs to one person, who may use any product inside it. It cannot be split between two people, and two people who each use one product need two subscriptions. This is usually the point at which buyers ask whether individual products would be a better fit; do that sum.\n\nEach named user may install on multiple machines and sign in on one at a time.\n\nAutodesk Flex is a different model, in which you buy tokens and consume them on days of use. It suits reviewers, project managers and seasonal peaks, and is covered in [Flex versus named-user subscriptions](/blog/autodesk-flex-versus-named-user-subscriptions). Multi-year terms are available; ask for a quotation to see them.",
+ "sysreq": "- Operating system: Windows 11 and Windows 10 (64-bit); several products in the collection are Windows-only\n- Memory: 32 GB RAM is recommended across the collection\n- Graphics: a professional GPU with 8 GB VRAM for visualisation workloads\n- Different products stress hardware differently, so size the workstation for the heaviest tool each person uses, usually Revit models or visualisation\n- Autodesk publishes its current system requirements per release. Confirm them on Autodesk's published page before you order hardware, because a subscription is only useful on a machine that runs it well.",
+ "faqs": [
+  {
+   "question": "What is the AEC Collection price in India?",
+   "answer": "The annual single-user subscription is {{price:aec-collection}} excluding GST, or {{gst:aec-collection}} with 18% GST. The website figure is tentative, and a written quotation fixes the price. Send us who uses which product and we will compare the collection against individual subscriptions. Ask us if you want it checked against your own team before you order."
+  },
+  {
+   "question": "At what point does the collection make sense over single products?",
+   "answer": "Our site's rule of thumb: at two products per user it is roughly break-even, and at three or more, or where occasional access to extra tools is needed, the collection tends to win. One product per user usually favours standalone subscriptions. We run the comparison on your actual usage."
+  },
+  {
+   "question": "Does the AEC Collection include Navisworks?",
+   "answer": "Yes. Navisworks Manage is listed in the collection for clash detection and coordination, and for many firms this is the single product that justifies it. Coordination problems found in the model are easier to resolve than those found on site. Ask us if you want it checked against your own team before you order."
+  },
+  {
+   "question": "Can I use every product on one Mac?",
+   "answer": "No. The catalogue notes that several products in the collection are Windows-only, and the collection lists Windows 11 and Windows 10 as supported systems. A team on Macs would need Windows workstations or virtual desktops. Check this before assigning seats. Ask us if you want it checked against your own team before you order."
+  },
+  {
+   "question": "Can the collection seat be moved to another employee?",
+   "answer": "Yes. As with other named-user subscriptions, a seat can be reassigned when someone leaves, but it cannot be shared or pooled. Build seat reclamation into your joiner and leaver process so collection seats do not sit idle with former staff. Ask us if you want it checked against your own team before you order."
+  },
+  {
+   "question": "Does it include Autodesk Construction Cloud?",
+   "answer": "The collection lists Autodesk Docs for a common data environment. Autodesk Construction Cloud is a separate line of construction management products with its own licensing, so ask us if you need field issue tracking or wider project management. Ask us if you want it checked against your own team before you order."
+  }
+ ],
+ "related": [
+  "revit",
+  "autodesk-civil-3d",
+  "autocad"
+ ],
+ "needsVerification": [
+  "Revit 'needs a separate Navisworks purchase' and 'not part of Revit' for civil tools (general knowledge; consistent with catalogue)",
+  "Statement that Autodesk changes collection contents between releases (from blog-autodesk-aec-collection-explained.md; general)",
+  "Blog lists additional products (Advance Steel, Forma, ReCap Pro) not in the catalogue; deliberately omitted, flag for human reconciliation",
+  "Roughly-break-even-at-two-products rule from page-aec-collection.md"
+ ]
+}

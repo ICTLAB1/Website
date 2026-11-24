@@ -1,0 +1,90 @@
+{
+ "slug": "autodesk-revit-lt",
+ "displayName": "Revit LT",
+ "intro": "Revit LT is Autodesk's simplified 3D building information modelling tool, intended for producing 3D architectural designs and documentation. It brings the model-first way of working, where plans, sections and elevations come from a single building model, to smaller teams that do not need the full multi-discipline Revit.\n\nThe usual buyers in India are small and mid-sized architecture studios, interior designers moving beyond 2D, and in-house design teams at developers who want modelled drawings without a heavy BIM rollout.\n\nRevit LT is priced on request in our catalogue rather than listed with a fixed figure. Use the quotation form and choose Get today's price; we will confirm the rupee amount, with 18% GST shown separately, in writing.",
+ "included": "Our catalogue describes Revit LT as a simplified 3D BIM tool for architectural design and documentation. A named-user annual subscription is intended for:\n\n- Building a 3D architectural model\n- Producing drawings and documentation from that model\n- Working in the BIM method without the full multi-discipline scope of Revit\n\nWe do not hold a detailed LT feature list in our catalogue, so we avoid listing individual commands. If you need to know whether a specific capability, such as shared models or a particular exchange format, is included, we will check Autodesk's current comparison and answer in writing before you order.",
+ "whoFor": "**Likely fit:**\n\n- A studio of three to ten architects and interior designers who want modelled drawings and consistent schedules without full-scale BIM management\n- A practice currently on 2D tools that wants a lower-risk first step into modelling\n- A developer's design cell that produces its own architectural packages in-house\n- A freelancer or small consultancy delivering to clients who do not demand a coordinated multi-discipline model\n\n**Likely not a fit:**\n\n- Structural or MEP consultancies that need to model their own disciplines\n- Teams that must collaborate on one shared model across many people\n- Projects whose contract specifies BIM deliverables that need the full application\n\nIf any contract or consultant requirement mentions model coordination or specific exchange formats, check it against LT before buying.",
+ "vs": {
+  "alternative": "Revit",
+  "alternativeSlug": "revit",
+  "intro": "Revit LT and Revit share the model-based approach, but Revit is the full application used for coordinated, multi-discipline projects. LT is the lighter, architecture-focused option for smaller scopes.\n\nThe decision usually hinges on who else has to work in or receive the model, not on how complicated your own building is.",
+  "rows": [
+   {
+    "label": "Positioning",
+    "thisProduct": "Simplified 3D BIM for architecture",
+    "alternative": "Full BIM for architecture, structure and MEP"
+   },
+   {
+    "label": "Best for",
+    "thisProduct": "Small studios starting with BIM",
+    "alternative": "Coordinated, multi-discipline projects"
+   },
+   {
+    "label": "Annual price (ex GST)",
+    "thisProduct": "Get today's price",
+    "alternative": "{{price:revit}}"
+   },
+   {
+    "label": "Platform",
+    "thisProduct": "Confirm on Autodesk's page",
+    "alternative": "Windows only"
+   },
+   {
+    "label": "Learning load",
+    "thisProduct": "Lighter scope to learn",
+    "alternative": "Template and family library work needed"
+   },
+   {
+    "label": "Licence type",
+    "thisProduct": "Named user, annual",
+    "alternative": "Named user, annual"
+   },
+   {
+    "label": "Upgrade path",
+    "thisProduct": "Move people to Revit later",
+    "alternative": "Already the full tool"
+   }
+  ],
+  "verdict": "If you are a small architectural team producing your own model and drawings, quote Revit LT first. If you must coordinate with structural and MEP models, share a worksharing model across a large team or meet a contract's BIM specification, go straight to [Revit](/products/revit). When unsure, ask us for both quotations and the written feature comparison."
+ },
+ "licensing": "Revit LT is licensed per **named user**: one subscription, one person, no sharing or pooling, with reassignment possible when somebody leaves. Our catalogue lists it on an annual term, and the rupee amount is quoted on request.\n\nThat per-person rule changed how many practices count seats compared with the old pooled network licences; [what changed with named-user licensing](/blog/autodesk-named-user-licensing-what-changed) explains the effect. Autodesk Flex, which is pay-per-day token access, suits people who only occasionally open a product, see [Flex versus named-user subscriptions](/blog/autodesk-flex-versus-named-user-subscriptions). We check current eligibility before suggesting Flex for an LT-class product. Other terms can be quoted on request through an [enquiry](/enquiry).",
+ "sysreq": "- Revit LT is a Windows-oriented BIM application; confirm the supported operating systems on Autodesk's published page\n- Modelling is more memory-hungry than 2D drafting, so prefer a business workstation with an SSD and generous RAM over an entry-level laptop\n- A single named user can install on several machines and sign in on one at a time\n- Check current requirements on Autodesk's published page before buying hardware, as they change between releases",
+ "faqs": [
+  {
+   "question": "Why is there no price on the Revit LT page?",
+   "answer": "Revit LT is priced on request in our catalogue, so we do not publish a figure that could be out of date. Send an enquiry and ask for today's price. You will receive a written quotation with GST shown separately, which is what fixes the amount you pay."
+  },
+  {
+   "question": "Can Revit LT replace AutoCAD LT in a drafting office?",
+   "answer": "Only if the office wants to work from a model. Revit LT builds a 3D building and generates views from it, while AutoCAD LT is for 2D drawing. Offices that still hand-draft details or work from consultants' DWG files often keep both, which is why Autodesk and we offer them together as a suite."
+  },
+  {
+   "question": "Will our structural engineer be able to open our Revit LT model?",
+   "answer": "This depends on the exchange method you agree, so confirm it before project start. Open exchange formats such as IFC are commonly used between different BIM tools. If your consultants need to work directly in your model, ask us to check the current Autodesk comparison and consider full Revit."
+  },
+  {
+   "question": "Is Revit LT a good first step into BIM for an Indian studio?",
+   "answer": "For a small architectural practice it often is. The scope is narrower, so training and template work are lighter than a full multi-discipline rollout. Run one real project end to end before moving the whole office. Doing so also shows whether you later need the full Revit subscription."
+  },
+  {
+   "question": "Does Revit LT work on a Mac?",
+   "answer": "Full Revit has no macOS release, and we have no verified statement that LT differs. Assume a Windows machine unless Autodesk's current requirements page says otherwise. Confirm this before buying hardware for the team; a wrong guess here costs far more than the licence, and we can check the page with you."
+  },
+  {
+   "question": "Can we buy Revit LT together with AutoCAD LT?",
+   "answer": "Yes. Autodesk offers the two as the AutoCAD Revit LT Suite, which suits a studio that models in Revit LT but still produces 2D drawings. We can quote the suite and the two products separately so you can compare them for your headcount."
+  }
+ ],
+ "related": [
+  "revit",
+  "autocad-revit-lt-suite",
+  "autocad-lt"
+ ],
+ "needsVerification": [
+  "Revit LT platform support (Windows/macOS) is not in site facts; text tells reader to confirm.",
+  "Statement that Revit LT is 'architecture-focused' and lighter than full Revit (consistent with catalogue wording 'simplified 3D BIM ... architectural design').",
+  "Whether Revit LT is eligible for Autodesk Flex.",
+  "Claim that contracts needing BIM deliverables/worksharing require full Revit; kept as 'check against LT'.",
+  "IFC usable between different BIM tools (general knowledge)."
+ ]
+}
