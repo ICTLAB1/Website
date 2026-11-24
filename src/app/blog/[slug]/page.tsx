@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ButtonLink } from "@/components/ui/button";
-import { getPostBySlug, getRelatedPosts } from "@/lib/queries/content";
+import { getFaqsByTopic, getPostBySlug, getRelatedPosts } from "@/lib/queries/content";
+import { FaqList } from "@/components/ui/accordion";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
 import { Markdown } from "@/components/markdown";
@@ -56,6 +57,8 @@ export default async function BlogPostPage({ params }: PageProps) {
   if (!post) notFound();
 
   const related = await getRelatedPosts(post.slug, post.category, 3);
+  // Questions written for this article, stored under the topic `blog:<slug>`.
+  const faqs = await getFaqsByTopic(`blog:${post.slug}`);
   const config = await getSiteConfig();
 
   return (
@@ -79,12 +82,25 @@ export default async function BlogPostPage({ params }: PageProps) {
           <p className="mt-5 text-[13px] text-ink-500">
             <time dateTime={post.publishedAt?.toISOString()}>{formatDate(post.publishedAt)}</time>
             {" · "}
+            Last updated <time dateTime={post.updatedAt.toISOString()}>{formatDate(post.updatedAt)}</time>
+            {" · "}
             {post.readMinutes} min read
             {post.author?.name ? ` · ${post.author.name}` : ""}
           </p>
         </header>
 
         <Markdown body={post.body} />
+
+        {faqs.length > 0 ? (
+          <section aria-labelledby="blog-faq" className="mt-12 border-t border-line pt-8">
+            <h2 id="blog-faq" className="text-[1.5rem]">
+              Frequently asked questions
+            </h2>
+            <div className="mt-5">
+              <FaqList items={faqs} url={absoluteUrl(`/blog/${post.slug}`)} />
+            </div>
+          </section>
+        ) : null}
 
         {post.tags.length > 0 ? (
           <ul className="mt-10 flex flex-wrap gap-2 border-t border-line pt-6">
@@ -152,7 +168,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           url: absoluteUrl(`/blog/${post.slug}`),
           datePublished: post.publishedAt?.toISOString(),
           dateModified: post.updatedAt.toISOString(),
-          author: { "@type": "Organization", name: config.entityName },
+          author: { "@type": "Organization", name: "TechZoid Technologies" },
           publisher: {
             "@type": "Organization",
             name: config.entityName,

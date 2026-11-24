@@ -4,7 +4,7 @@ import "server-only";
 
 import Link from "next/link";
 
-import { certificationLogo } from "@/lib/certification-logo";
+import { certificationLogo, certificationSealAlt } from "@/lib/certification-logo";
 import { currentCertifications } from "@/lib/queries/certifications";
 import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
 import { getSiteConfig } from "@/lib/site-config";
@@ -196,8 +196,7 @@ export async function TrustBar() {
                     */
                     <Image
                       src={seal}
-                      alt=""
-                      aria-hidden="true"
+                      alt={certificationSealAlt(certification.standard)}
                       className="h-9 w-9 object-contain sm:h-10 sm:w-10"
                       width={420}
                       height={420}

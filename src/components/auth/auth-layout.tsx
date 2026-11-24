@@ -51,7 +51,7 @@ export function AuthLayout({
             <aside className="relative isolate overflow-hidden bg-career-navy-dark p-6 text-white sm:p-10">
               <Image
                 src={photo.src}
-                alt=""
+                alt={photo.alt}
                 fill
                 sizes="(min-width: 1024px) 32rem, 100vw"
                 className="-z-20 object-cover"

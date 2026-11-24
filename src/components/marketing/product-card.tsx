@@ -1,6 +1,7 @@
 import { BrandLogoFrame } from "@/components/catalogue/brand-logo-frame";
 import { resolveProductPhoto } from "@/lib/representative-image";
 import { isWideLogo } from "@/lib/product-logos";
+import { isDirectlyPurchasable } from "@/lib/catalogue/audience";
 import Link from "next/link";
 import { RevealGroup } from "@/components/motion/reveal";
 import { Badge } from "@/components/ui/badge";
@@ -76,7 +77,19 @@ export function ProductCard({
    * (show a price / accept a card for it) cannot be conflated by a future
    * edit that only looks at `quoteOnly`.
    */
-  const canBuyDirect = DIRECT_PURCHASE_ENABLED && !hardware && !quoteOnly && variant != null;
+  /*
+   * Only where /buy would actually take the order: the product's mode permits it
+   * (an ENQUIRY product 404s there) and the variant is one a customer may buy
+   * directly. `/buy` and the orders API re-check both on the server; this keeps a
+   * card from linking to a page that would refuse.
+   */
+  const canBuyDirect =
+    DIRECT_PURCHASE_ENABLED &&
+    !hardware &&
+    !quoteOnly &&
+    variant != null &&
+    product.purchaseMode !== "ENQUIRY" &&
+    isDirectlyPurchasable(variant.audience);
 
   /*
    * Hardware and licensing on one card.
@@ -95,7 +108,7 @@ export function ProductCard({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={product.imageUrl ?? ""}
-            alt=""
+            alt={`${product.name} logo`}
             className="h-14 w-auto max-w-full object-contain"
             loading="lazy"
             decoding="async"
@@ -155,15 +168,14 @@ export function ProductCard({
             is where the publisher's own catalogue puts it, which is where a
             buyer who has seen that catalogue will look.
 
-            `alt=""` because the name is the next thing in the same heading: a
-            screen reader announcing "Photoshop, Adobe Photoshop for Teams"
-            reads the mark twice and tells nobody anything.
+            The alt is "<product> logo", not the bare name: the name is the next
+            thing in the same heading, and the bare name would be read twice.
           */}
           {!hardware && product.imageUrl && !isWideLogo(product.imageUrl) ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={product.imageUrl}
-              alt=""
+              alt={`${product.name} logo`}
               className="mt-0.5 h-5 w-5 shrink-0 rounded-[4px] object-contain"
               loading="lazy"
               decoding="async"

@@ -93,19 +93,17 @@ export function BrandLogo({
       : WORDMARK_LIGHT;
   return (
     /*
-     * `alt=""` and `aria-hidden`: the accessible name is supplied by the link
-     * that wraps this (`components/layout/logo.tsx`), which says "TechZoid —
-     * home". An alt here as well would make a screen reader announce the
-     * company name twice for one control.
+     * The alt is "TechZoid Technologies logo". Where the lockup is inside the
+     * home link (`components/layout/logo.tsx`), that link's own `aria-label`
+     * ("TechZoid — home") is what a screen reader announces, so the alt is read
+     * by search engines and by anything that shows the image on its own.
      *
      * The tagline is part of the artwork rather than separate text, which is
-     * how the master was supplied. It is decorative either way — the words are
-     * on the about page, in prose, where they can be read.
+     * how the master was supplied.
      */
     <Image
       src={src}
-      alt=""
-      aria-hidden="true"
+      alt="TechZoid Technologies logo"
       /*
        * The header's wordmark is the largest contentful paint candidate on
        * most pages and is above the fold on every one, so it is fetched with

@@ -66,6 +66,16 @@ export const PRODUCT_PAGE_REDIRECTS: Record<string, string> = {
   "microsoft-sharepoint-online-plan-1": "/microsoft-365",
   "microsoft-sharepoint-online-plan-2": "/microsoft-365",
 
+  // Found in Search Console on 24 November 2026 with no redirect, so each answered
+  // 410. Every one goes to the product that replaces it, never to a hub.
+  "coreldraw-graphics-suite-2021-annual-license": "/products/coreldraw-graphics-suite",
+  "microsoft-wimdows-10-pro-key": "/products/windows-11-pro-upgrade",
+  "windows-10-pro-activation-key": "/products/windows-11-pro-upgrade",
+  "windows-10-11-pro-oem-keys-only": "/products/windows-11-pro-upgrade",
+  "server-2022-standard-oem-english-dvd-64-bit-16-core": "/products/windows-server-2025-standard",
+  "microsoft-office-professional-2019-one-time-purchase-lifetime-validity-1-per":
+    "/products/microsoft-office-ltsc-professional-plus-2024",
+
   // The publisher's hub: sold here as a publisher, not as this product.
   "autodesk-alias-business-license": AUTODESK_HUB,
   "microsoft-project-plan-1": MICROSOFT_HUB,
@@ -89,6 +99,9 @@ export const POST_REDIRECTS: Record<string, string> = {
     "/blog/microsoft-office-ltsc-2024-vs-microsoft-365",
   "windows-11-pro-vs-home-what-s-the-difference": "/products/windows-11-pro-upgrade",
   "why-civil-engineering-firms-need-autodesk-civil-3d-in-2026": "/solutions/architecture-construction",
+  // Also from Search Console, 24 November 2026.
+  "what-is-a-digital-license--how-does-it-work": "/blog/how-to-buy-genuine-microsoft-licences-in-india",
+  "microsoft-365-business-premium": "/products/microsoft-365-business-premium",
   // A listicle with no article or page that answers it. The blog index is the
   // honest remainder, and was asked for by name.
   "top-productivity-software-by-leading-tech-companies": "/blog",

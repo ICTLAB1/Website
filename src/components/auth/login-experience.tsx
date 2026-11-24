@@ -138,7 +138,7 @@ export async function LoginExperience({
         {/* Photograph and the white wash over its left side, wide screens only. */}
         <Image
           src={photo.src}
-          alt=""
+          alt={photo.alt}
           fill
           priority
           sizes="100vw"
@@ -180,7 +180,7 @@ export async function LoginExperience({
             <div className="relative mt-6 aspect-[16/8] overflow-hidden rounded-(--radius-lg) lg:hidden">
               <Image
                 src={photo.src}
-                alt=""
+                alt={photo.alt}
                 fill
                 sizes="100vw"
                 className="object-cover"

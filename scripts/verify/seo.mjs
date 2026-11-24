@@ -498,7 +498,7 @@ for (const path of productPaths) {
   if (!node?.name) continue;
 
   const figure = [...html.matchAll(/<img\b[^>]*\salt="([^"]*)"[^>]*>/g)]
-    .map((match) => match[1])
+    .map((match) => match[1].replace(/&amp;/g, "&"))
     .find((alt) => alt.startsWith(node.name));
 
   // The suffix `ProductPhoto` adds is the page's own statement that what it is

@@ -68,6 +68,15 @@ const LOGOS: Record<string, string> = {
   "ISO/IEC 20000-1:2018": "/certifications/ISO-IEC-20000-1-2018.png",
 };
 
+/**
+ * What the seal says to a person who cannot see it: "ISO 9001:2015 certified".
+ * ISO 27001 is written the way the certificate prints it, ISO/IEC 27001:2022.
+ */
+export function certificationSealAlt(standard: string): string {
+  const name = standard.trim().replace(/^ISO\s+(27001)/, "ISO/IEC $1");
+  return `${name} certified`;
+}
+
 /** The artwork for a standard, or null where none has been supplied. */
 export function certificationLogo(standard: string): string | null {
   return LOGOS[standard.trim()] ?? null;

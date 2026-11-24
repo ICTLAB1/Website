@@ -272,19 +272,16 @@ export async function HomePage({
         <PhotoBackdrop photo={team} />
         <div className="container-page relative py-12 lg:py-16">
           <div className="max-w-2xl">
-            <h1>
-              <span className="inline-flex items-center gap-2 rounded-(--radius-md) border border-white/20 bg-white/10 px-3 py-1.5 text-[0.8125rem] font-medium text-white">
-                <span
-                  aria-hidden="true"
-                  className="h-1.5 w-1.5 rounded-full bg-career-orange"
-                />
-                {hero.headline}
-              </span>
-              <span className="mt-5 block text-[2.5rem] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[3.5rem]">
-                Enterprise IT Solutions.
-                <span className="block text-[#ff9a52]">Simplified.</span>
-              </span>
+            <h1 className="text-[2.25rem] font-extrabold leading-[1.08] tracking-tight text-white sm:text-[3.25rem]">
+              Microsoft, Adobe &amp; Autodesk Licensing Partner in India
             </h1>
+            <p className="mt-5 inline-flex items-center gap-2 rounded-(--radius-md) border border-white/20 bg-white/10 px-3 py-1.5 text-[0.9375rem] font-medium text-white">
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-career-orange" />
+              {hero.headline}
+            </p>
+            <p className="mt-4 text-[1.5rem] font-extrabold leading-tight text-white sm:text-[1.75rem]">
+              Enterprise IT Solutions. <span className="text-[#ff9a52]">Simplified.</span>
+            </p>
             <p className="mt-4 text-label font-semibold uppercase tracking-[0.12em] text-[#ffb27a]">
               {hero.eyebrow}
             </p>
@@ -434,7 +431,7 @@ export async function HomePage({
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={partner.badge}
-                    alt=""
+                    alt={`${partner.name} ${partner.label} badge`}
                     loading="lazy"
                     className="h-16 w-auto object-contain"
                   />

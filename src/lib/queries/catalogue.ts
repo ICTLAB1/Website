@@ -142,6 +142,7 @@ export const productListSelect = {
       gstRatePercent: true,
       isDefault: true,
       partNumber: true,
+      audience: true,
     },
   },
 } satisfies Prisma.ProductSelect;

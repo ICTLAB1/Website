@@ -17,7 +17,7 @@ import {
 } from "@/components/analytics/google-tag";
 import { MetaPixel } from "@/components/analytics/meta-pixel";
 import { ChatWidgetGate } from "@/components/chat/chat-widget-gate";
-import { JsonLd, organizationSchema, websiteSchema } from "@/lib/seo";
+import { JsonLd, localBusinessSchema, organizationSchema, websiteSchema } from "@/lib/seo";
 import { appUrl } from "@/lib/env";
 import { getSiteIdentity } from "@/lib/site-config";
 
@@ -189,6 +189,8 @@ export default async function RootLayout({
         <ChatWidgetGate />
 
         <JsonLd data={await organizationSchema()} />
+        {/* The registered office as a LocalBusiness, on every page (it used to be the contact page only). */}
+        {await localBusinessSchema().then((data) => (data ? <JsonLd data={data} /> : null))}
         <JsonLd data={await websiteSchema()} />
 
         {/*
