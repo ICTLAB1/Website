@@ -1,0 +1,89 @@
+{
+ "slug": "power-bi-pro",
+ "displayName": "Microsoft Power BI Pro",
+ "licensingHeading": "How the subscription works",
+ "intro": "Power BI Pro is Microsoft's per-user licence for building, publishing and sharing business dashboards and reports. The authoring tool, Power BI Desktop, is free to download, so the Pro licence is not what lets you draw a chart. It is what lets you publish a report to the Power BI service, collaborate in shared workspaces and share the result with colleagues.\n\nIn India the typical buyer is a finance, sales-operations or MIS team with numbers in Excel, SQL Server or a CRM. Power BI Pro is quoted per user; the price is confirmed on a written quotation, not on this page, and we can include it on one purchase order with your other Microsoft items. [Ask for a quotation](/enquiry).",
+ "included": "Power BI Pro is a per-user subscription for the Power BI service. In practical terms a licensed user can:\n\n- Publish reports and datasets from Power BI Desktop to the cloud service\n- Work in shared workspaces with colleagues, rather than emailing files around\n- Schedule data refresh so a dashboard reflects current figures\n- Share dashboards and reports with other licensed users, and view content others have shared\n\nTwo points are worth understanding before you count seats. First, the person who consumes shared content normally needs a licence of their own, unless the content sits in a workspace backed by dedicated capacity at a suitable level. Second, the amount of data a model can hold and the number of refreshes per day have limits that are lower than on the premium tier. Microsoft changes those limits, so we confirm them when we quote.\n\nPower BI Pro is also bundled into some Microsoft 365 enterprise plans. If your organisation is on one of those, check before buying separately; see the [Microsoft 365 licensing guide](/blog/microsoft-365-licensing-guide-for-indian-businesses).",
+ "whoFor": "**A good fit:**\n\n- A finance or MIS team publishing monthly management reports from Excel, SQL or an accounting export\n- Sales-operations staff who build pipeline and target-versus-actual dashboards from a CRM\n- A company with a small number of analysts and a larger number of viewers, where the analysts hold Pro and the viewing arrangement is planned deliberately\n\n**Probably not the right buy:**\n\n- Someone who only needs a chart inside Excel; Excel already does that\n- A team that needs large models, very frequent refresh or paginated pixel-perfect reports; compare [Power BI Premium Per User](/products/power-bi-premium-per-user)",
+ "vs": {
+  "alternative": "Power BI Premium Per User",
+  "alternativeSlug": "power-bi-premium-per-user",
+  "intro": "Pro and Premium Per User use the same service and the same Desktop tool. Premium Per User raises limits and adds advanced features for each licensed person. Exact limits are Microsoft's, so we quote no numbers.",
+  "rows": [
+   {
+    "label": "Core idea",
+    "thisProduct": "Publish and share reports per user",
+    "alternative": "Pro, plus premium features per user"
+   },
+   {
+    "label": "Authoring tool",
+    "thisProduct": "Power BI Desktop, free",
+    "alternative": "Power BI Desktop, free"
+   },
+   {
+    "label": "Data model size and refresh",
+    "thisProduct": "Standard limits",
+    "alternative": "Higher limits"
+   },
+   {
+    "label": "Advanced features",
+    "thisProduct": "Not the focus",
+    "alternative": "Paginated reports, deployment pipelines and similar premium capabilities"
+   },
+   {
+    "label": "Who can open shared content",
+    "thisProduct": "Other licensed users",
+    "alternative": "Other Premium Per User users for content in a Premium Per User workspace"
+   },
+   {
+    "label": "Licence model",
+    "thisProduct": "Per user",
+    "alternative": "Per user"
+   },
+   {
+    "label": "Price",
+    "thisProduct": "Confirmed on quotation",
+    "alternative": "Confirmed on quotation"
+   }
+  ],
+  "verdict": "Start with Pro unless you can name a feature or limit that Pro does not cover. Most departmental reporting, including monthly MIS packs and sales dashboards, runs comfortably on it.\n\nMove the specific people who hit a limit to [Premium Per User](/products/power-bi-premium-per-user). Mixing is possible, but the audience for premium-workspace content must be licensed to match, so decide that before building the report."
+ },
+ "licensing": "Power BI Pro is licensed **per user**. Each person who publishes, shares or collaborates in the service needs an assigned licence, which is tied to their Microsoft Entra ID work account in your tenant. Licences are assigned and removed in the Microsoft 365 admin centre, so a leaver's seat can be reclaimed and reissued.\n\nIt is bought as a subscription through the cloud licensing programme, normally with an annual commitment, although monthly billing options exist for some purchase routes. We confirm the term in writing on the quotation.\n\nIf you already hold Microsoft 365 E5, Power BI Pro is part of that plan, and a second purchase would be a duplicate. See [CSP versus Enterprise Agreement](/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model) for how the route affects billing. We help assign seats after purchase.",
+ "sysreq": "- The Power BI service runs in a modern browser; there is nothing to install for consumption\n- Power BI Desktop is a Windows application, so analysts building reports need a Windows PC. Mac users usually work through a virtual machine or the browser for editing\n- Refreshing from on-premises sources such as SQL Server normally needs a data gateway installed on a server that stays on\n- Microsoft publishes current requirements per release; confirm them before you order hardware",
+ "faqs": [
+  {
+   "question": "Do I need Power BI Pro to use Power BI Desktop?",
+   "answer": "No. Power BI Desktop is free to download and build reports in. The Pro licence is needed when you publish to the Power BI service and share with other people. Many teams pilot in Desktop first and buy Pro seats once a report is worth sharing."
+  },
+  {
+   "question": "Do the people who only view reports need Pro as well?",
+   "answer": "Usually yes, when the report is shared through a standard workspace. The exception is content hosted on dedicated capacity at a suitable level, where viewers can sometimes use a free account. Because this changes the total licence count considerably, tell us how many viewers you expect when you ask for a quotation."
+  },
+  {
+   "question": "What is the Power BI Pro price in India?",
+   "answer": "It is per user and is confirmed on a written quotation, because the figure depends on term, billing option and the purchase route. Ask us with the number of authors and viewers, and we will quote against a GST invoice on one purchase order alongside your other Microsoft items."
+  },
+  {
+   "question": "Is Power BI Pro included in Microsoft 365?",
+   "answer": "It is included in some enterprise plans, such as Microsoft 365 E5, and not in Business Basic, Standard or Premium. Check your plan before buying a duplicate seat."
+  },
+  {
+   "question": "Does Pro let us keep data on-premises?",
+   "answer": "Power BI Pro publishes to Microsoft's cloud service. Data can be refreshed from on-premises sources through a gateway, but the published dataset is held in the service. If your policy forbids that, discuss it with us before purchase."
+  }
+ ],
+ "related": [
+  "power-bi-premium-per-user",
+  "microsoft-365-e5",
+  "microsoft-365-business-premium",
+  "onedrive-for-business-plan-1"
+ ],
+ "needsVerification": [
+  "Whether Power BI Pro is bundled in Microsoft 365 E5 (believed true; confirm current bundle list)",
+  "Whether viewers of content in dedicated capacity can use free licences depends on capacity size and Microsoft's Fabric/Premium changes",
+  "Availability of monthly billing for Power BI Pro through Indian CSP",
+  "Power BI Desktop is Windows-only (general knowledge)",
+  "Gateway requirement for on-premises refresh",
+  "Tally connectivity description is general; no connector is claimed"
+ ]
+}

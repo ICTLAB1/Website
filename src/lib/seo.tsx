@@ -70,6 +70,11 @@ export function buildMetadata(input: {
    * name the author already placed.
    */
   absoluteTitle?: boolean;
+  /**
+   * hreflang alternates, language tag to path, for a page that has a counterpart
+   * in another market (India and the UAE). Each page must list itself too.
+   */
+  languages?: Record<string, string>;
   description: string;
   path: string;
   type?: "website" | "article";
@@ -111,7 +116,12 @@ export function buildMetadata(input: {
     title: input.absoluteTitle ? { absolute: input.title } : input.title,
     description,
     ...(input.keywords?.length ? { keywords: input.keywords } : {}),
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      ...(input.languages
+        ? { languages: Object.fromEntries(Object.entries(input.languages).map(([tag, path]) => [tag, absoluteUrl(path)])) }
+        : {}),
+    },
     // See `noIndex` above: `true` is a private page and takes nofollow with it;
     // "thin" is a public page that simply should not be in the index, and keeps
     // follow so its outbound links still count.

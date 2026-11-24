@@ -1,0 +1,87 @@
+{
+ "slug": "antivirus-endpoint-security",
+ "h1": "Antivirus and Endpoint Security in India: Kaspersky and Sophos",
+ "intro": "Every laptop, desktop and server in your business is a way in. Email attachments, fake invoices, infected USB drives and compromised websites all end at an endpoint, and a single unprotected machine can become the route to your file server. Choosing endpoint security means deciding how much protection and visibility you need, how many devices you have, and who will watch the console.\n\nThis guide explains the difference between antivirus and endpoint detection and response, how to choose using a decision rule, how licensing is usually structured by device count and term, and what to check when buying in India. It is written for the IT head or admin manager who has to protect a mixed fleet of Windows PCs, laptops and a few servers without a dedicated security team.\n\nOn availability: TechZoid has no catalogue products or website prices for Kaspersky or Sophos. We quote both on request, to your device counts and feature needs, and the price is fixed only by a written quotation. Read the [Kaspersky](/brands/kaspersky) and [Sophos](/brands/sophos) pages and send your requirement through the [enquiry form](/enquiry).",
+ "sections": [
+  {
+   "heading": "Antivirus, endpoint protection and EDR: what each one means",
+   "markdown": "The terms overlap in marketing, so use these working definitions.\n\n- **Antivirus.** Traditional protection that scans files and blocks known malware, usually with some behaviour-based detection. It is the baseline.\n- **Endpoint protection.** A broader product that adds a firewall, web and device control, exploit protection, patch or vulnerability features and often a central console. Most business suites sit here.\n- **EDR (endpoint detection and response).** Records what happens on each device, so that your team or a service can investigate, see how an attack unfolded, and isolate a machine or roll back changes. It generates more data and alerts, and it needs people to look at them.\n- **Managed detection and response (MDR).** A service in which the publisher's or a partner's analysts monitor alerts for you. It is for organisations without a security team.\n\nAntivirus tells you a file was blocked. EDR helps you answer what else the attacker touched. For a small office with no one to read alerts, a good endpoint suite with a central console is usually the sensible starting point. For a business that handles sensitive data, or has already had an incident, EDR or a managed service is worth discussing."
+  },
+  {
+   "heading": "How to choose: a practical decision rule",
+   "markdown": "Answer these questions before comparing brands.\n\n1. **How many devices, and which types?** Count Windows PCs, laptops, servers, Macs and mobile phones separately, because the product and the licence may differ for each.\n2. **Who watches the console?** If the answer is nobody full-time, favour simple, well-tuned prevention and a clear weekly report. If you have a trained engineer, EDR becomes useful. If you want monitoring without hiring, ask about managed services.\n3. **How exposed are you?** Remote staff, client data, regulated information and recent incidents all justify a step up in protection.\n4. **What else do you run?** If you already have a [firewall](/firewall-security) from the same brand, check whether the two products share intelligence or a console. Do not choose a brand for that reason alone.\n5. **Do you already own protection?** Microsoft 365 Business Premium includes Microsoft Defender for Business, so check what you have before paying twice. Our article on [the security you already own in Business Premium](/blog/microsoft-365-business-premium-security-you-already-own) explains it.\n\n**The decision rule:** for fewer than about fifty devices with no security staff, a central-console endpoint suite on every device is the minimum. Add EDR for roles and servers that matter most, rather than for everyone, if budget is tight. Add managed detection where nobody can respond out of hours.\n\nOn brands: Kaspersky and Sophos are both established business security publishers, and the right choice depends on the console your team prefers, support and the features you want. Ask us for a side-by-side on one quotation. We do not recommend one over the other without knowing your fleet. Some government and public-sector buyers have policies on particular security brands; check your own procurement rules before shortlisting."
+  },
+  {
+   "heading": "How licensing, terms and consoles work",
+   "markdown": "Business endpoint products are normally sold as **subscriptions per device**, for a fixed term such as one, two or three years. A few points apply across brands:\n\n- **Count by device.** Servers are often priced or packaged differently from workstations, and mobile devices may be a separate item. List each type in your enquiry.\n- **Tiers and bundles.** Publishers sell tiers, from basic protection to fuller suites with EDR and additional modules. Tier names and contents change, so we ask you for the features you need and set out the matching options on the quotation.\n- **Central console.** Most business products are managed from a cloud console or an on-premises server. Cloud consoles are quicker to start and need no server. Check where the console data is stored and who can access it.\n- **Minimum quantities.** Business licences may have a minimum device count. Ask on the quotation.\n- **Term and renewal.** Protection stops updating when the subscription ends. Put the expiry date in your calendar, and review the count at renewal so you do not pay for retired laptops. See [what to check before a software renewal](/blog/what-to-check-before-a-software-renewal) and [the hidden cost of unused software licences](/blog/hidden-cost-of-unused-software-licences).\n- **Consumer products are not business products.** A retail licence has no central management and may not permit commercial use. Buy a business licence."
+  },
+  {
+   "heading": "Common mistakes when buying endpoint security",
+   "markdown": "- **Installing it without a console.** Without central management you do not know which devices are protected, out of date or switched off.\n- **Buying EDR with no one to read it.** Alerts nobody reviews add cost without adding protection. Pair it with a monitoring service or a trained person.\n- **Counting devices wrongly.** Forgetting servers, spare laptops and remote staff leaves gaps, and counting retired devices wastes money. Reconcile against your asset list.\n- **Running two security products at once.** Two active real-time scanners on one device often conflict and slow it down. Plan the changeover and remove the old product properly.\n- **Letting the subscription lapse.** An expired licence stops updates and may disable protection.\n- **Treating endpoint security as the whole answer.** It does not replace patching, multi-factor sign-in, a firewall or tested [backups](/backup-software). A proper layered plan is described in our [cybersecurity service](/services/cybersecurity).\n- **Using unlicensed copies.** They cannot be updated reliably and create audit exposure; read [preparing for a software licence audit](/blog/preparing-for-a-software-licence-audit)."
+  },
+  {
+   "heading": "Buying notes for India",
+   "markdown": "- **Written quotation.** We quote Kaspersky and Sophos on request, so the quotation is your price document. Send device counts by type, the term you want, whether you need EDR or managed detection, and the console type you prefer. Ask for each tier and quantity on its own line.\n- **GST invoice.** Every TechZoid order is invoiced with GST. Give us your registered entity name and GSTIN before the invoice is raised. GST-registered buyers can usually claim input credit; see [GST input credit on software purchases](/blog/gst-input-credit-on-software-purchases) and confirm with your accountant.\n- **Purchase order.** We accept orders against your purchase order and can quote security together with laptops, servers, networking and other software on one PO across brands. See [IT procurement](/services/it-procurement).\n- **Activation and setup.** We help with activation and with assigning seats. Tell us if you also want help deploying agents across devices; our [endpoint management](/services/endpoint-management) service is relevant.\n- **Procurement policies.** Government departments and some regulated sectors may have rules on which security products can be bought. Check these first and tell us when you request the quotation. See [how government departments procure genuine software](/blog/how-government-departments-procure-genuine-software).\n\nIf you also need new devices, read our [business laptops](/business-laptops) guide."
+  }
+ ],
+ "products": [],
+ "faqs": [
+  {
+   "question": "Do you list Kaspersky and Sophos products with prices?",
+   "answer": "No. TechZoid has no catalogue products or website prices for these brands. We quote them on request, to your device counts and feature needs, and a written quotation fixes the price."
+  },
+  {
+   "question": "What is the difference between antivirus and EDR?",
+   "answer": "Antivirus blocks known malware and suspicious behaviour. EDR also records what happens on devices so that someone can investigate an attack, see what it touched and isolate machines. EDR is more capable, but it needs people or a service to act on its alerts."
+  },
+  {
+   "question": "Do we need a central console?",
+   "answer": "For a business, yes. A console shows which devices are protected, which are out of date, and which have threats, and lets you set policy for everyone. Without it, each laptop is managed by whoever uses it."
+  },
+  {
+   "question": "How do we count devices for a quotation?",
+   "answer": "List Windows PCs and laptops, servers, Macs and any mobile devices separately, plus the term you want. Servers and mobile devices are often licensed differently from workstations. Include spares that will actually be used."
+  },
+  {
+   "question": "Can we use a retail antivirus licence in the office?",
+   "answer": "It is not advisable. Retail licences usually lack central management and may not permit business use. Buy a business licence so that you can manage and renew devices as a group."
+  },
+  {
+   "question": "We have Microsoft 365 Business Premium. Do we still need endpoint security?",
+   "answer": "Business Premium includes Microsoft Defender for Business, so you may already own endpoint protection. Check what is deployed first, then decide whether you need an additional product, for example for servers or a different console."
+  },
+  {
+   "question": "Can you quote Kaspersky and Sophos together for comparison?",
+   "answer": "Yes. Send your device counts and feature needs through the enquiry page and we will set out both on written quotations, with a GST invoice and acceptance of your purchase order."
+  }
+ ],
+ "related": [
+  {
+   "href": "/firewall-security",
+   "label": "Firewall security in India"
+  },
+  {
+   "href": "/backup-software",
+   "label": "Backup software in India"
+  },
+  {
+   "href": "/services/cybersecurity",
+   "label": "Cybersecurity services"
+  },
+  {
+   "href": "/blog/microsoft-365-business-premium-security-you-already-own",
+   "label": "The security you already own in Microsoft 365 Business Premium"
+  },
+  {
+   "href": "/blog/hidden-cost-of-unused-software-licences",
+   "label": "The hidden cost of unused software licences"
+  }
+ ],
+ "needsVerification": [
+  "Statement that Microsoft 365 Business Premium includes Microsoft Defender for Business is general Microsoft packaging knowledge; confirm current wording.",
+  "Kaspersky and Sophos described only as established business security publishers; no product names, tiers or features are asserted.",
+  "General licensing pattern (per device subscriptions, minimum quantities, servers priced differently) varies by publisher and is stated as something to ask.",
+  "Remark that some government and regulated buyers have rules on particular security brands is general; owner to confirm it is appropriate to include.",
+  "The fifty-device guidance is a rule of thumb, not a publisher figure."
+ ]
+}

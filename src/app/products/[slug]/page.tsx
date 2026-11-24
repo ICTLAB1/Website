@@ -40,6 +40,7 @@ import {
   MIN_RATING,
 } from "@/lib/reviews";
 import { ReviewList } from "@/components/reviews/review-list";
+import { CustomerSay } from "@/components/reviews/customer-say";
 import { getSiteConfig } from "@/lib/site-config";
 import { QuickEnquiry } from "@/components/enquiry/quick-enquiry";
 import { getDisplayCurrency } from "@/lib/display-currency";
@@ -91,8 +92,10 @@ export async function generateMetadata({
      * was one pattern for the catalogue.
      */
     absoluteTitle: true,
-    title: PRODUCT_GUIDES[product.slug]
-      ? productTitle(PRODUCT_GUIDES[product.slug]!.displayName, "software", { year: 2026 })
+    title: PRODUCT_GUIDES[product.slug]?.seoTitle
+      ? PRODUCT_GUIDES[product.slug]!.seoTitle!
+      : PRODUCT_GUIDES[product.slug]
+      ? productTitle(PRODUCT_GUIDES[product.slug]!.seoName ?? PRODUCT_GUIDES[product.slug]!.displayName, "software", { year: 2026 })
       : productTitle(name, kind),
     /*
      * An authored `seoDescription` stays (and `buildMetadata` makes sure it says
@@ -103,7 +106,7 @@ export async function generateMetadata({
     description: product.seoDescription?.trim()
       ? product.seoDescription.trim()
       : productDescription({
-          name: PRODUCT_GUIDES[product.slug]?.displayName ?? product.name,
+          name: PRODUCT_GUIDES[product.slug]?.seoName ?? PRODUCT_GUIDES[product.slug]?.displayName ?? product.name,
           shortDescription: product.shortDescription,
           kind,
         }),
@@ -538,7 +541,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               />
             ) : null}
             <h1 className="text-3xl leading-tight sm:text-[2.35rem]">
-              {guide ? `${guide.displayName} Price in India` : product.name}
+              {guide ? `${guide.seoName ?? guide.displayName} – Price in India` : product.name}
             </h1>
           </div>
 
@@ -969,6 +972,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           certifications={certifications}
           offices={offices}
           categoryLink={categoryLink}
+          brandLink={{ href: `/brands/${product.brand.slug}`, label: `${product.brand.name} reseller in India` }}
           related={guideRelated.map((item) => ({ slug: item.slug, name: item.name }))}
         />
       ) : null}
@@ -1000,6 +1004,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         than after the invitation to go and look at something else.
       */}
       <ReviewList reviews={reviews} summary={rating} />
+      <CustomerSay productSlug={product.slug} className="container-page py-10" />
 
       {/*
         The same short form the landing pages end with, naming this product.

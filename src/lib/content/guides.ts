@@ -1,3 +1,4 @@
+import { BRAND_GUIDE_DATA } from "./brand-guides.generated";
 import { CATEGORY_GUIDE_DATA } from "./category-guides.generated";
 import { PRODUCT_GUIDE_DATA } from "./product-guides.generated";
 
@@ -25,6 +26,12 @@ export type ProductGuide = {
     rows: Array<{ label: string; thisProduct: string; alternative: string }>;
     verdict: string;
   };
+  /** The H2 above `licensing`; the Autodesk wording is the default. */
+  licensingHeading?: string;
+  /** The name used in the page title and H1 where it differs from `displayName`. */
+  seoName?: string;
+  /** A complete page title, used as written where the standard pattern would not give the title wanted. */
+  seoTitle?: string;
   licensing: string;
   sysreq: string;
   faqs: Faq[];
@@ -41,9 +48,24 @@ export type CategoryGuide = {
   products: Array<{ slug: string; use: string; whoFor: string }>;
   faqs: Faq[];
   related: Array<{ href: string; label: string }>;
+  /** Brand hubs the page links to, for categories where TechZoid quotes rather than lists. */
+  brands?: string[];
+};
+
+export type BrandGuide = {
+  slug: string;
+  displayName: string;
+  description: string;
+  intro: string;
+  lines: Array<{ name: string; use: string }>;
+  choose: string;
+  buying: string;
+  faqs: Faq[];
+  related: Array<{ href: string; label: string }>;
 };
 
 export const PRODUCT_GUIDES: Record<string, ProductGuide> = PRODUCT_GUIDE_DATA;
+export const BRAND_GUIDES: Record<string, BrandGuide> = BRAND_GUIDE_DATA;
 export const CATEGORY_GUIDES: Record<string, CategoryGuide> = CATEGORY_GUIDE_DATA;
 
 /** The date the guides were last revised, shown on them and used as their sitemap lastmod. */
@@ -60,4 +82,4 @@ export function categoryPageFor(productSlug: string): { href: string; label: str
 }
 
 /** Every route the guides add, for the sitemap. */
-export const GUIDE_ROUTES = [...Object.keys(CATEGORY_GUIDES).map((slug) => `/${slug}`), "/price-list"];
+export const GUIDE_ROUTES = [...Object.keys(CATEGORY_GUIDES).map((slug) => `/${slug}`), "/price-list", "/ae", "/ae/microsoft-365", "/ae/autodesk", "/ae/adobe"];

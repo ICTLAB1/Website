@@ -1,0 +1,89 @@
+{
+ "slug": "adobe-illustrator-teams",
+ "displayName": "Adobe Illustrator for Teams",
+ "seoName": "Adobe Illustrator",
+ "licensingHeading": "How the subscription works",
+ "intro": "Illustrator is Adobe's vector drawing application: the tool for logos, icons, packaging dielines, signage, technical illustration and anything that must stay sharp at any size. Unlike Photoshop, which edits pixels, Illustrator works with paths, so artwork can be scaled from a visiting card to a hoarding without loss.\n\nIn India the buyers are design studios, in-house marketing teams, printers and packaging houses, signage and apparel businesses and agencies. The Teams subscription is per named user at {{price:adobe-illustrator-teams}} per year excluding GST, or {{gst:adobe-illustrator-teams}} with 18% GST. The website price is tentative; a written quotation fixes it.",
+ "included": "The single-app Teams subscription gives one named person:\n\n- Vector drawing and precision path editing\n- Type on a path, variable fonts and access to Adobe Fonts\n- Artboards, so one file can hold several sizes or formats\n- Colour separation preview for print production\n- Illustrator on iPad\n- Shared Creative Cloud Libraries for colours, logos and styles\n- Admin Console seat management, with seats that can be reassigned\n\nThe libraries matter at team level: a brand's colours, character styles and logos can be shared so everyone draws from the same source. Cloud storage and technical support terms are set by Adobe and confirmed on the quotation.\n\nIt does not include Photoshop, InDesign or Premiere Pro. If a person needs several applications, compare the [All Apps plan](/products/adobe-creative-cloud-all-apps-teams) before you buy.",
+ "whoFor": "**A good fit:**\n\n- A branding or packaging designer who spends most of the day drawing logos and dielines\n- A printer or signage business preparing artwork for output\n- A marketing team that needs consistent icons and brand assets across formats\n- An apparel or textile unit preparing repeat patterns and technical flats\n\n**Probably not the right buy:**\n\n- Someone who edits photographs mainly; see [Photoshop](/products/adobe-photoshop-teams)\n- A layout designer producing multi-page documents, who is better served by InDesign\n- Anyone who only needs occasional light edits, since a seat costs the same whether it is opened daily or monthly\n\nThe test is simple: ask each person which applications they opened last month. One answer suggests a single-app seat; three or four suggests All Apps.",
+ "vs": {
+  "alternative": "Creative Cloud All Apps",
+  "alternativeSlug": "adobe-creative-cloud-all-apps-teams",
+  "intro": "The practical question is not whether Illustrator is good, but whether the same person also uses other Adobe applications. Both plans are named-user subscriptions managed through the same Admin Console.",
+  "rows": [
+   {
+    "label": "Applications",
+    "thisProduct": "Illustrator",
+    "alternative": "The full Adobe application set, including Illustrator"
+   },
+   {
+    "label": "Best for",
+    "thisProduct": "Vector-focused specialists",
+    "alternative": "Designers who use four or more applications"
+   },
+   {
+    "label": "Acrobat Pro",
+    "thisProduct": "Not included",
+    "alternative": "Included"
+   },
+   {
+    "label": "Cloud storage",
+    "thisProduct": "Confirmed on quotation",
+    "alternative": "Confirmed on quotation"
+   },
+   {
+    "label": "Admin Console and reassignable seats",
+    "thisProduct": "Yes",
+    "alternative": "Yes"
+   },
+   {
+    "label": "Annual price (ex GST)",
+    "thisProduct": "{{price:adobe-illustrator-teams}}",
+    "alternative": "{{price:adobe-creative-cloud-all-apps-teams}}"
+   }
+  ],
+  "verdict": "Buy Illustrator on its own when vector work is the person's job. Buy All Apps for the designer who moves between drawing, photo editing, layout and video, because around four applications the combined plan generally costs less than the separate ones.\n\nA mixed team is normal. Our guide to [Creative Cloud pricing in India](/blog/adobe-creative-cloud-price-in-india) shows how to count."
+ },
+ "licensing": "Adobe's business plans are licensed to a **named user** through the Adobe Admin Console. A seat is assigned to a person by email address and can be reassigned when they leave, so the entitlement stays with the company. That is the main reason organisations move from individual subscriptions to Teams.\n\nThe plan carries an annual commitment, with seats added mid-term prorated to a common renewal date. Monthly billing and multi-year terms can be quoted on request. A person may install on more than one computer, but sign-in is limited, so a shared workstation needs one seat per user.\n\nFor 50 or more seats or federated sign-in, see [Creative Cloud for Enterprise](/blog/adobe-creative-cloud-for-enterprise), and [VIP versus VIP Marketplace](/blog/adobe-vip-versus-vip-marketplace) for how the buying programme changes billing. We help with seat assignment after purchase.",
+ "sysreq": "- Windows 11 and Windows 10 (64-bit), and currently supported macOS versions\n- 16 GB of RAM is recommended; complex artwork with many effects and large artboards benefits from more\n- An SSD and a calibrated display help for print-critical colour work\n- Adobe publishes exact system requirements for each release; confirm them before ordering hardware\n- Our [business laptops](/business-laptops) range can be quoted on the same purchase order",
+ "faqs": [
+  {
+   "question": "What is the Adobe Illustrator price in India for a business?",
+   "answer": "The annual single-user Teams subscription is {{price:adobe-illustrator-teams}} excluding GST, or {{gst:adobe-illustrator-teams}} with 18% GST. A written quotation fixes the price, and the website figure is tentative."
+  },
+  {
+   "question": "Is Illustrator included in Creative Cloud All Apps?",
+   "answer": "Yes. All Apps includes Illustrator among its applications, so someone with an All Apps seat does not need a separate Illustrator seat. Check each user before ordering to avoid paying twice for the same application."
+  },
+  {
+   "question": "Can we move a seat to a new designer?",
+   "answer": "Yes. Seats are assigned in the Admin Console and can be unassigned and reassigned when someone leaves. Put the step in your leaver checklist so a seat is not left idle until renewal."
+  },
+  {
+   "question": "Does Illustrator replace CorelDRAW?",
+   "answer": "They do similar work, and many Indian print and signage houses use one or the other. We also quote [CorelDRAW Graphics Suite](/products/coreldraw-graphics-suite). Choose by what your clients and printers send you, and by the formats you must exchange."
+  },
+  {
+   "question": "Does the subscription include Adobe Fonts?",
+   "answer": "Yes, Adobe Fonts is part of the subscription. Font licensing for commercial use should still be checked for each typeface, so ask us when a project has specific rules."
+  },
+  {
+   "question": "Is Illustrator suitable for CAD or technical drawings?",
+   "answer": "It handles technical illustration and exploded views well, but it is not a CAD tool and does not hold dimensions parametrically. For engineering drawings look at [AutoCAD](/products/autocad)."
+  }
+ ],
+ "related": [
+  "adobe-creative-cloud-all-apps-teams",
+  "adobe-creative-cloud-single-app-teams",
+  "adobe-photoshop-teams",
+  "adobe-indesign-teams",
+  "coreldraw-graphics-suite"
+ ],
+ "needsVerification": [
+  "Illustrator on iPad and Adobe Fonts inclusion are from the house catalogue",
+  "The 'around four applications' All Apps break-even is from the house Creative Cloud notes",
+  "Cloud storage amount for the single-app plan (catalogue single-app lists 100 GB; confirm for Illustrator specifically)",
+  "Install and sign-in limits per named user (general Adobe terms)",
+  "CorelDRAW is described as comparable; no performance claims made"
+ ]
+}

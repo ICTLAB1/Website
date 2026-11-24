@@ -1,0 +1,89 @@
+{
+ "slug": "onedrive-for-business-plan-1",
+ "displayName": "Microsoft OneDrive for Business (Plan 1)",
+ "seoName": "OneDrive for Business Plan 1",
+ "licensingHeading": "How the licence works",
+ "intro": "OneDrive for Business Plan 1 is Microsoft's standalone cloud file storage for work, licensed per user. Each person gets a private work library that syncs to their PC or Mac, opens in a browser and on a phone, and can be shared with colleagues or external contacts with controls over who can edit and for how long.\n\nIt is aimed at organisations that want proper managed file storage and sharing but do not need the full Microsoft 365 suite for those users, for example a business moving off shared folders and USB drives, or a company whose email lives elsewhere.\n\nThis is a quote-only product. The price is confirmed on a written quotation; [ask for one](/enquiry). Check first whether you already own it: OneDrive is included in the Microsoft 365 business and enterprise plans.",
+ "included": "Plan 1 provides the core of managed work storage. Typically that means:\n\n- A personal cloud library for each licensed user, synchronised to their devices\n- Access from a browser, Windows, macOS and mobile apps\n- File sharing with internal and external people, with permission and link settings\n- Version history and a recycle bin for recovering earlier or deleted files\n- The ability to redirect Desktop, Documents and Pictures folders into the cloud so a laptop failure does not lose work\n\nWhat it does not include is the compliance layer. Data loss prevention policies, eDiscovery and in-place legal hold are features of [Plan 2](/products/onedrive-for-business-plan-2). The size of the storage allowance for each plan is set by Microsoft and changes from time to time, so we state the current figure in writing on the quotation, not on this page.\n\nEmail, Teams and desktop Office apps come with [Microsoft 365](/microsoft-365) plans.",
+ "whoFor": "**A good fit:**\n\n- A professional-services or trading firm replacing a file server or shared drives with per-person cloud storage\n- An organisation with email on another platform that wants Microsoft storage for selected staff\n- A team that wants folder redirection so laptop data is held in the cloud\n\n**Probably not the right buy:**\n\n- Anyone already on Microsoft 365 Business Basic, Standard or Premium, or an Office 365 or Microsoft 365 enterprise plan, which already include OneDrive\n- A regulated firm that needs legal hold, DLP or eDiscovery on stored files; look at Plan 2\n- A team that mainly needs shared department libraries, which are better served by SharePoint or Teams than by personal libraries",
+ "vs": {
+  "alternative": "OneDrive for Business Plan 2",
+  "alternativeSlug": "onedrive-for-business-plan-2",
+  "intro": "The two plans use the same OneDrive client and the same storage service. The difference is the compliance and governance layer, which matters to some organisations and is irrelevant to others.",
+  "rows": [
+   {
+    "label": "Core job",
+    "thisProduct": "Managed cloud storage and sharing",
+    "alternative": "Storage and sharing plus compliance controls"
+   },
+   {
+    "label": "Sync and web access",
+    "thisProduct": "Yes",
+    "alternative": "Yes"
+   },
+   {
+    "label": "Version history and recycle bin",
+    "thisProduct": "Yes",
+    "alternative": "Yes"
+   },
+   {
+    "label": "Data loss prevention",
+    "thisProduct": "Not in the plan",
+    "alternative": "Included"
+   },
+   {
+    "label": "eDiscovery and legal hold",
+    "thisProduct": "Not in the plan",
+    "alternative": "Included"
+   },
+   {
+    "label": "Storage allowance",
+    "thisProduct": "Confirmed on quotation",
+    "alternative": "Confirmed on quotation"
+   },
+   {
+    "label": "Price",
+    "thisProduct": "Confirmed on quotation",
+    "alternative": "{{price:onedrive-for-business-plan-2}} excl. GST"
+   }
+  ],
+  "verdict": "Choose Plan 1 where the goal is reliable storage, sync and sharing and no policy requires legal hold or data loss prevention. It is the cheaper standard choice for most small and mid-sized offices.\n\nChoose [Plan 2](/products/onedrive-for-business-plan-2) where your legal, risk or audit team needs to preserve, search or protect files in place. If your users will also need email and Office apps, compare a [Microsoft 365 plan](/blog/microsoft-365-business-basic-vs-standard-vs-premium) first, since OneDrive is already inside it."
+ },
+ "licensing": "OneDrive for Business Plan 1 is licensed **per user**. Each person who stores files needs an assigned licence, which is linked to their Microsoft Entra work account and managed in the Microsoft 365 admin centre. A seat can be removed from a leaver and reassigned.\n\nIt is bought as a subscription through Microsoft's cloud licensing programme. We confirm the term and billing option in writing on the quotation.\n\nDecide who takes ownership of a leaver's files before you remove their seat, as content is kept only for a limited period. Our article on [how to buy genuine Microsoft licences in India](/blog/how-to-buy-genuine-microsoft-licences-in-india) explains the purchase route, and a [licence-management service](/services/licence-management) can keep track of seats across products.",
+ "sysreq": "- Windows and macOS sync clients are available; confirm the currently supported versions on Microsoft's published page before rollout\n- iOS and Android apps are available, and any modern browser can use the web interface\n- Sync speed depends on your broadband, so plan the first sync of a large Documents folder out of office hours\n- Folder redirection is configured by an administrator and works best with a short pilot group first",
+ "faqs": [
+  {
+   "question": "Do we need to buy it separately if we have Microsoft 365 Business Standard?",
+   "answer": "No. OneDrive is included in the Microsoft 365 business and enterprise plans. Buy the standalone plan only for users who need storage and nothing else, or whose other tools are on a different platform."
+  },
+  {
+   "question": "What is the OneDrive for Business Plan 1 price in India?",
+   "answer": "It is per user and is confirmed on a written quotation. Tell us the number of users and the term, and we will quote it with a GST invoice, and with your other Microsoft items on one purchase order if you wish."
+  },
+  {
+   "question": "How much storage does each user get?",
+   "answer": "The allowance is set by Microsoft and changes from time to time, including the process for requesting more. We state the current figure in writing on the quotation, so you are not relying on an older number from a web page."
+  },
+  {
+   "question": "Can we move our file server into OneDrive?",
+   "answer": "Personal files can be moved, and folder redirection helps. Shared department folders usually fit SharePoint or Teams better than personal libraries. A migration plan should cover permissions, long file paths and what to do with leaver content; our [Microsoft 365 services](/services/microsoft-365) team can help plan it."
+  },
+  {
+   "question": "Does Plan 1 protect against accidental deletion?",
+   "answer": "It includes version history and a recycle bin, so many accidental changes and deletions can be reversed within the retention period. It is not a full backup in the sense of an independent copy. Organisations with strict recovery requirements should add a separate backup."
+  }
+ ],
+ "related": [
+  "onedrive-for-business-plan-2",
+  "microsoft-365-business-basic",
+  "microsoft-365-business-standard",
+  "microsoft-365-business-premium"
+ ],
+ "needsVerification": [
+  "OneDrive inclusion in Microsoft 365 Business Basic/Standard/Premium and enterprise plans (general knowledge)",
+  "Plan 1 lacks DLP and eDiscovery (matches the site description of Plan 2 as the compliance plan)",
+  "Storage allowance per plan intentionally not stated",
+  "Retention period after licence removal and recycle-bin behaviour are described generally",
+  "Whether Plan 1 is sold through CSP on annual terms in India"
+ ]
+}

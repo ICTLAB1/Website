@@ -1,0 +1,87 @@
+{
+ "slug": "cisco",
+ "displayName": "Cisco",
+ "description": "Cisco reseller in India for Meraki, Secure Firewall, Catalyst switching and Duo, with a GST invoice. Send your network details for a written quotation.",
+ "intro": "Cisco is the name most people associate with enterprise networking: routers, switches, wireless, and a security portfolio that now covers firewalls, identity and cloud security. Its range is wide, so the first job when buying is to be clear which part of it you are actually after. Many Indian buyers fall into two camps. One wants simple, cloud-managed networking, usually through Meraki, where switches, Wi-Fi and security appliances are administered from a web dashboard. The other runs a larger campus or data centre and wants Catalyst switching and Secure Firewall with traditional management.\n\nTypical buyers include banks and NBFCs, hospitals, universities, large manufacturers, IT and BPO companies, and government departments, all of which already have Cisco skills in their teams or among their network partners. Retail and hospitality chains also value Meraki for managing many small sites without sending engineers to each one.\n\nTechZoid is a Cisco reseller. We do not hold a Cisco catalogue on this site or publish Cisco prices, and nothing here implies stock. Every requirement is quoted on request, because Cisco purchases depend on exact part numbers, licence terms and support level. We prepare a written quotation that fixes the price, invoiced with GST. Browse our [firewall and network security](/firewall-security) range, or go straight to the [enquiry form](/enquiry).",
+ "lines": [
+  {
+   "name": "Cisco Meraki (MX, MR and MS)",
+   "use": "Cloud-managed security appliances, wireless access points and switches administered from one dashboard, suited to multi-site organisations with small IT teams."
+  },
+  {
+   "name": "Cisco Secure Firewall",
+   "use": "Cisco's next-generation firewall line, for organisations that want traditional firewall management with deep traffic inspection."
+  },
+  {
+   "name": "Catalyst switches",
+   "use": "Enterprise access and core switches for offices, campuses and server rooms where reliability and scale matter."
+  },
+  {
+   "name": "Cisco Duo",
+   "use": "Multi-factor authentication and device checks that protect logins to email, VPN and business applications."
+  },
+  {
+   "name": "Cisco Secure Endpoint",
+   "use": "Endpoint protection and detection for laptops and servers, designed to work with other Cisco security tools."
+  },
+  {
+   "name": "Cisco Umbrella",
+   "use": "DNS-layer and web security that blocks malicious destinations for staff, including those working off the office network."
+  }
+ ],
+ "choose": "The main fork is between Meraki and the traditional Cisco range. Meraki is the shorter path if you have many small sites and few network engineers: devices are claimed into a dashboard, configured remotely and kept current by the cloud service. The trade-off is that the service is licence-dependent, so devices stop working when the licence ends. The traditional Catalyst and Secure Firewall route gives deeper control and suits teams that already know the platform and want to run it themselves.\n\nFor either route, list what you need to connect: number of users, access ports per floor, Wi-Fi coverage areas, uplink speeds and which links must be redundant. For firewalls, ask for sizing against throughput with inspection enabled. Do not buy switches without checking the power budget for any access points or phones they will feed. Also decide whether identity protection through Duo is a priority, as it is often the cheapest security improvement an organisation can make. Compare firewall options with the [SonicWall](/brands/sonicwall) and [Fortinet](/brands/fortinet) hubs or the [India firewall guide](/blog/top-firewall-brands-india-fortinet-sophos-sonicwall-cisco).",
+ "buying": "Cisco purchases combine hardware, software licences and support, and the combination differs by product family. Meraki is licensed per device for a term, and the licence is required for the hardware to operate, so renewals must be tracked carefully. Catalyst and Secure Firewall hardware is a one-time purchase, with software subscriptions and support contracts added on top for terms that Cisco offers in several lengths. Cisco has moved many products to subscription and smart licensing, with licences held in a customer account, so the account must be set up against your organisation.\n\nBecause part numbers matter, a Cisco quotation is built from a bill of materials, and a small error in a part number can mean a missing licence or a wrong transceiver. This is why we ask you to share as much as possible and why we confirm the bill of materials with you before ordering.\n\nPlease send:\n\n- A network diagram or at least the number of sites, floors and closets\n- User and device counts, and wired port requirements\n- Wi-Fi coverage areas and expected user density\n- Internet speeds and redundancy needs\n- Existing Cisco hardware, with model numbers, and any support contract\n- Whether you want Meraki or traditional management\n- Licence and support term required\n\nWe give a written quotation, and it fixes the price. Every order carries a GST invoice, GST-registered buyers can usually claim input credit, and we can work to your purchase order. Cabling and configuration are not part of a quotation unless stated. For design and deployment support, talk to our [cybersecurity](/services/cybersecurity) and [managed IT services](/managed-it-services) teams.",
+ "faqs": [
+  {
+   "question": "What is the price of Cisco networking equipment in India?",
+   "answer": "Cisco pricing depends on the part numbers, licences and support level, so TechZoid does not show Cisco prices on this site. Send your requirement or bill of materials, and we will send a written quotation. That quotation fixes the price, and we invoice with GST."
+  },
+  {
+   "question": "How do Cisco and Meraki licences work?",
+   "answer": "Meraki devices need a licence for a set term, and they stop working when it ends, so renewals must be on time. Other Cisco products are generally hardware plus software subscriptions and support contracts, with licences linked to your Cisco account. We can set out the renewal dates in your quotation."
+  },
+  {
+   "question": "Can TechZoid provide support and deployment?",
+   "answer": "We can help with licence activation and account setup, and our cybersecurity and managed IT teams can be engaged for design and rollout under a scoped agreement. Hardware replacement and product support come from the Cisco support contract chosen at purchase. The quotation will state what is included."
+  },
+  {
+   "question": "What do you need to prepare a Cisco quotation?",
+   "answer": "A network diagram helps most. Otherwise send the number of sites, users, access ports, Wi-Fi areas, link speeds, redundancy requirements, existing Cisco models and support contracts, and the term you want. If you already have a bill of materials from a consultant, send that and we will price it."
+  },
+  {
+   "question": "Can we migrate from another brand to Cisco, or Meraki?",
+   "answer": "Yes, but plan it as a project. Switch ports, VLANs and firewall rules need to be mapped to the new platform and tested, ideally in a quiet window with rollback ready. Meraki's dashboard simplifies setup but does not import old configurations. Give us your current gear and we will quote accordingly."
+  },
+  {
+   "question": "Do you give a GST invoice and accept purchase orders?",
+   "answer": "Yes. All TechZoid orders carry a GST invoice, and we work to purchase orders, including one order covering Cisco and other brands. GST-registered buyers can usually claim input credit. Send your GSTIN and billing address with the request so the documents match your records."
+  }
+ ],
+ "related": [
+  {
+   "href": "/firewall-security",
+   "label": "Firewall and network security"
+  },
+  {
+   "href": "/brands/fortinet",
+   "label": "Fortinet reseller hub"
+  },
+  {
+   "href": "/brands/sonicwall",
+   "label": "SonicWall reseller hub"
+  },
+  {
+   "href": "/blog/top-firewall-brands-india-fortinet-sophos-sonicwall-cisco",
+   "label": "Firewall brands compared for India"
+  },
+  {
+   "href": "/services/cybersecurity",
+   "label": "Cybersecurity services"
+  }
+ ],
+ "needsVerification": [
+  "Confirm TechZoid quotes each listed product line",
+  "Confirm Meraki devices stop functioning when the licence expires and the current Cisco licensing model (smart licensing)",
+  "Confirm current product names (Secure Firewall, Secure Endpoint, Umbrella) and that Cisco Umbrella is still sold under that name"
+ ]
+}

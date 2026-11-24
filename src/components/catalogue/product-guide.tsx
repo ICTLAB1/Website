@@ -130,6 +130,7 @@ export function ProductGuideSections({
   offices,
   categoryLink,
   related,
+  brandLink,
 }: {
   guide: ProductGuide;
   productName: string;
@@ -139,6 +140,7 @@ export function ProductGuideSections({
   offices: string[];
   categoryLink: { href: string; label: string } | null;
   related: Array<{ slug: string; name: string }>;
+  brandLink?: { href: string; label: string } | null;
 }) {
   return (
     <div className="mt-4 max-w-3xl">
@@ -174,7 +176,7 @@ export function ProductGuideSections({
       </TableWrap>
       <Markdown body={guide.vs.verdict} className="prose-content mt-5 text-[16px]" />
 
-      <h2 className={H2}>Single-user, multi-user and Flex</h2>
+      <h2 className={H2}>{guide.licensingHeading ?? "Single-user, multi-user and Flex"}</h2>
       <Markdown body={guide.licensing} className="prose-content mt-4 text-[16px]" />
 
       <h2 className={H2}>System requirements</h2>
@@ -192,12 +194,13 @@ export function ProductGuideSections({
 
       <h2 className={H2}>Keep reading</h2>
       <ul className="prose-content mt-4 text-[16px]">
+        {brandLink ? (
+          <li>
+            <Link href={brandLink.href}>{brandLink.label}</Link>
+          </li>
+        ) : null}
         <li>
-          <Link href="/blog/autocad-subscription-price-in-india">AutoCAD price in India</Link>, and how the annual term is
-          priced
-        </li>
-        <li>
-          <Link href="/autodesk">All Autodesk licensing</Link>
+          <Link href="/price-list">Price list</Link>
         </li>
         {categoryLink ? (
           <li>

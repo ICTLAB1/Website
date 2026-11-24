@@ -1,0 +1,88 @@
+{
+ "slug": "microsoft-office-home-2024",
+ "displayName": "Microsoft Office Home 2024",
+ "intro": "Office Home 2024 is a one-time purchase of Microsoft's core Office apps for a single PC or Mac. You pay once, install the apps on that one computer, and keep using that version. There is no monthly or yearly fee, and also no stream of new features: the version you buy is the version you keep, apart from security and quality updates.\n\nIt is a home edition. The Home licence is for non-commercial use, so it is not the right product for a company, shop, clinic or any office doing paid work. A business that wants a one-time purchase should look at [Office Home & Business 2024](/products/microsoft-office-home-and-business-2024), or at a [Microsoft 365 Business](/products/microsoft-365-business-standard) plan if it wants subscription services and central administration.\n\nThe price for Office Home 2024 is not shown on our site. It is fixed on a written quotation; use the [enquiry form](/enquiry) to ask.",
+ "included": "Office Home 2024 is a perpetual edition aimed at personal use. In practical terms it gives you:\n\n- The core desktop apps Word, Excel and PowerPoint\n- Installation on one PC or Mac\n- A one-time purchase with no recurring subscription\n- Security and quality updates for the version you own, without new feature releases\n\nWhat it leaves out matters. It is not a subscription, so it does not include cloud services such as large OneDrive storage as part of a plan, and it does not carry business email, Teams administration or any central control. Outlook is not something we promise here; mail and calendar are listed under Office Home & Business 2024, so check the current edition sheet if Outlook matters.\n\nBecause apps and bundled extras differ between editions, ask us for the current Microsoft description before relying on any particular item.",
+ "whoFor": "**A good fit:**\n\n- One person who wants Word, Excel and PowerPoint on a single home computer and no ongoing fee\n- A student or family member using documents and spreadsheets for study and household tasks\n- Someone with an older PC that is unlikely to be replaced for several years\n- Anyone who dislikes subscriptions and does not need new features\n\n**Probably not:**\n\n- Any organisation, or anyone using Office to earn income, because the Home licence is for non-commercial use\n- People who need Outlook and want a one-time edition, where Home & Business is the nearer fit\n- Households that want several people covered, where [Microsoft 365 Family](/products/microsoft-365-family) may be tidier\n- Users who move between several devices and want to install on all of them\n\nThe licence is attached to a single device. If the computer is replaced, check the current terms on transferring the licence before you plan on it.",
+ "vs": {
+  "alternative": "Microsoft 365 Personal",
+  "alternativeSlug": "microsoft-365-personal",
+  "intro": "The choice is subscription against one-time purchase. Microsoft 365 Personal is a recurring subscription for one individual, with ongoing updates and cloud storage. Office Home 2024 is paid once for one device, with no new features after purchase.\n\nNeither is for business use. Both are home products. If you are buying for an organisation, the comparison to make is between Home & Business 2024 and a Microsoft 365 Business plan instead.",
+  "rows": [
+   {
+    "label": "Payment model",
+    "thisProduct": "One-time purchase",
+    "alternative": "Recurring subscription"
+   },
+   {
+    "label": "Core apps",
+    "thisProduct": "Word, Excel, PowerPoint",
+    "alternative": "Desktop Office apps while active"
+   },
+   {
+    "label": "Devices",
+    "thisProduct": "One PC or Mac",
+    "alternative": "The person's own devices, within Microsoft's limits"
+   },
+   {
+    "label": "New features",
+    "thisProduct": "None after purchase",
+    "alternative": "Continuing updates while active"
+   },
+   {
+    "label": "Commercial use",
+    "thisProduct": "Not licensed (non-commercial)",
+    "alternative": "Not licensed for organisational use"
+   },
+   {
+    "label": "Price",
+    "thisProduct": "Confirmed on a written quotation",
+    "alternative": "Confirmed on a written quotation"
+   }
+  ],
+  "verdict": "Choose Home 2024 if one device, one person and no recurring fee suit you. Choose [Microsoft 365 Personal](/products/microsoft-365-personal) if you want continuing updates, cloud storage and use across your own devices. For any business purpose, move up: [Home & Business 2024](/products/microsoft-office-home-and-business-2024) for a one-time edition, or a Business plan for subscription and administration."
+ },
+ "licensing": "Office Home 2024 is a perpetual licence for a single PC or Mac. Once activated, it stays with that device, and there is no subscription to renew.\n\nThe Home edition is licensed for non-commercial use. In plain terms, it is for personal and household tasks, not for work done for an employer, a client or a business. A business that needs Office should buy the right commercial licence: Home & Business 2024 if it wants a perpetual edition for a single device, or a Business plan if it wants subscription services and central administration.\n\nBecause the licence is bound to a device, plan for what happens when the computer is replaced. Terms on moving a licence differ by edition and change, so we confirm them before you buy. If you are comparing subscription and perpetual routes for a larger office, our post on [Office LTSC 2024 versus Microsoft 365](/blog/microsoft-office-ltsc-2024-vs-microsoft-365) sets out the trade-offs, and the [Microsoft 365 range](/microsoft-365) shows the subscription side. For a quotation, use the [enquiry form](/enquiry).",
+ "licensingHeading": "How the licence works",
+ "sysreq": "- A supported version of Windows or macOS for the 2024 edition; check Microsoft's current requirements before buying, since an older operating system may not be supported\n- A single PC or Mac to hold the licence\n- Free disk space and memory typical of a current home computer\n- An internet connection for installation and activation\n- No subscription sign-in is needed to keep using the installed apps",
+ "faqs": [
+  {
+   "question": "Can I use Office Home 2024 for my business?",
+   "answer": "No. The Home licence is for non-commercial use, so a business or anyone using it for paid work should choose a commercial licence instead. That means Office Home & Business 2024 for a one-time edition, or a Microsoft 365 Business plan for subscription and administration."
+  },
+  {
+   "question": "Does it include Outlook?",
+   "answer": "We treat Outlook as belonging to the Home & Business edition and do not promise it here. If email and calendar matter, the safer route is [Home & Business 2024](/products/microsoft-office-home-and-business-2024), whose catalogue entry includes it."
+  },
+  {
+   "question": "Can I install it on two computers?",
+   "answer": "The edition is for a single PC or Mac, so install it on one device. If you need the apps on more than one machine, a subscription such as [Microsoft 365 Family](/products/microsoft-365-family) or Personal is usually a better fit than buying the edition twice."
+  },
+  {
+   "question": "Will it get new features later?",
+   "answer": "No. A perpetual edition gets security and quality updates, not new features. That is the trade you make for paying once. If you want features as Microsoft adds them, a subscription is the product built for that."
+  },
+  {
+   "question": "Do I get a GST invoice?",
+   "answer": "TechZoid issues a GST invoice on every order, with 18% GST on software. Input credit is usually claimable by GST-registered buyers, though a home edition bought for a business purpose would raise the licensing problem above."
+  },
+  {
+   "question": "What does it cost?",
+   "answer": "The site shows no figure for this product. The price is confirmed on a written quotation. Send the request through the [enquiry form](/enquiry), saying whether you use Windows or Mac."
+  }
+ ],
+ "related": [
+  "microsoft-365-personal",
+  "microsoft-365-family",
+  "microsoft-office-home-and-business-2024",
+  "microsoft-365-business-standard"
+ ],
+ "needsVerification": [
+  "Exact wording of the Home licence on non-commercial use (Office Home 2024 licence terms).",
+  "Whether Office Home 2024 includes Outlook, OneNote or other apps; text names only Word, Excel, PowerPoint and says Outlook is a point to confirm.",
+  "Whether the licence can be transferred to a new device under the 2024 terms.",
+  "Supported Windows/macOS versions for the 2024 edition.",
+  "Whether updates after purchase are limited to security and quality fixes under Microsoft's current policy.",
+  "No support end date is stated; confirm against Microsoft's lifecycle page if wanted."
+ ]
+}

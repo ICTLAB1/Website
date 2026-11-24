@@ -1,3 +1,4 @@
+import { CustomerSay } from "@/components/reviews/customer-say";
 import type { Metadata } from "next";
 import { cmsMetadata } from "@/lib/cms-route";
 import { BlockRenderer } from "@/components/blocks";
@@ -149,6 +150,7 @@ export default async function HomePageRoute() {
   return (
     <>
       <HomePage copy={copy} slots={slots} />
+      <CustomerSay />
       {/* Only when HR has open jobs; renders nothing otherwise. */}
       <HiringStrip />
     </>

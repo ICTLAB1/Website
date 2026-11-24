@@ -1,0 +1,94 @@
+{
+ "slug": "microsoft-office-home-and-business-2024",
+ "displayName": "Microsoft Office Home & Business 2024",
+ "intro": "Office Home & Business 2024 is a one-time purchase of Microsoft's core Office apps, plus Outlook, for a single PC or Mac. You pay once, install on that one computer and keep using that version. It is the commercial edition in the 2024 home-and-small-office line, which is why small firms and professionals choose it over the plain Home edition.\n\nIt suits a person or a very small office with a handful of computers that each need their own installed copy, no central administration and no wish to pay a monthly fee. It is not a multi-user product: each licence covers one device. The catalogue price is currently {{price:microsoft-office-home-and-business-2024}} excluding GST, or {{gst:microsoft-office-home-and-business-2024}} including 18% GST. Website prices are tentative; a written quotation fixes the figure.",
+ "included": "Our catalogue lists Office Home & Business 2024 as a perpetual edition. In practical terms it gives you:\n\n- The core desktop apps Word, Excel and PowerPoint\n- Outlook for email, calendar and contacts\n- Installation on one PC or Mac per licence\n- A one-time purchase with no recurring fee\n- Security and quality updates for the version you own, without new feature releases\n\nWhat it does not include is as important. There is no subscription cloud storage plan built in, no business email hosting on your own domain, no user management console and no Teams administration. Mail still needs a mailbox from somewhere, such as an existing hosted service.\n\nWe do not publish a feature-by-feature sheet for the 2024 edition, so ask us for Microsoft's current description if a particular app or capability decides the purchase.",
+ "whoFor": "**A good fit:**\n\n- A sole proprietor, consultant or professional who wants Word, Excel, PowerPoint and Outlook on one computer without a subscription\n- A very small office where each person's PC is bought once and not expected to change soon\n- A business with an existing mail service that only needs the desktop apps and Outlook as a client\n- Offices that have to avoid recurring fees on a fixed budget\n\n**Probably not:**\n\n- A team that wants central user management, shared mailboxes and Teams, where Business Standard suits better\n- Anyone who needs the apps on several devices per person\n- Organisations buying many seats at a time, where volume licensing may be the better route\n- People who want new features as Microsoft adds them\n\nA useful test: count how many people need mail and files shared in one place. If the answer is more than a few, a subscription tenant is usually easier to run than separate installed copies.",
+ "vs": {
+  "alternative": "Microsoft 365 Business Standard",
+  "alternativeSlug": "microsoft-365-business-standard",
+  "intro": "This is the standard perpetual-versus-subscription question, in a business setting. Home & Business 2024 is paid once and sits on one device. Microsoft 365 Business Standard is a per-user subscription that adds hosted business email, cloud storage, collaboration and an administration console.\n\nCost over time depends on how many people you have and how long you keep the computers. Ask for quotations on both; we can show them side by side on one purchase order.",
+  "rows": [
+   {
+    "label": "Payment model",
+    "thisProduct": "One-time purchase",
+    "alternative": "Per-user subscription"
+   },
+   {
+    "label": "Desktop apps",
+    "thisProduct": "Word, Excel, PowerPoint, Outlook",
+    "alternative": "Desktop Office apps while subscribed"
+   },
+   {
+    "label": "Devices",
+    "thisProduct": "One PC or Mac per licence",
+    "alternative": "Per user, across their devices within Microsoft's limits"
+   },
+   {
+    "label": "Hosted business email",
+    "thisProduct": "Not included",
+    "alternative": "Included"
+   },
+   {
+    "label": "Admin console and user management",
+    "thisProduct": "No",
+    "alternative": "Yes"
+   },
+   {
+    "label": "New features",
+    "thisProduct": "None after purchase",
+    "alternative": "Continuing updates"
+   },
+   {
+    "label": "Price (ex GST)",
+    "thisProduct": "{{price:microsoft-office-home-and-business-2024}}",
+    "alternative": "{{price:microsoft-365-business-standard}}"
+   }
+  ],
+  "verdict": "Choose Home & Business 2024 for one person or a very small office that wants installed apps and Outlook with no recurring fee. Choose [Microsoft 365 Business Standard](/products/microsoft-365-business-standard) when you want hosted email, shared storage, central administration and ongoing updates for a team. The subscription costs more over time per head, but it replaces several things the one-time edition leaves for you to arrange."
+ },
+ "licensing": "Office Home & Business 2024 is a perpetual licence for one PC or Mac. After activation it stays with that device, and there is no subscription to renew.\n\nIt is the edition intended for commercial use at small scale, in contrast with Office Home 2024, whose licence is for non-commercial use. Even so, it is a per-device licence with no central management, so a growing team can end up tracking installs by hand. Past a small number of computers, a subscription tenant or a volume agreement is easier to administer.\n\nBecause the licence is tied to a device, ask us about moving it when a computer is replaced; the rules differ by edition and we confirm them before you buy. Organisations comparing a perpetual route with subscription should read [Office LTSC 2024 versus Microsoft 365](/blog/microsoft-office-ltsc-2024-vs-microsoft-365). For a quotation, including a mixed order across brands on one purchase order, use the [enquiry form](/enquiry) or see the [Microsoft 365 range](/microsoft-365).",
+ "licensingHeading": "How the licence works",
+ "sysreq": "- A supported version of Windows or macOS for the 2024 edition; confirm against Microsoft's current requirements before buying, because older operating systems may not be supported\n- One PC or Mac per licence\n- Free disk space and memory typical of a current business desktop or laptop\n- An internet connection for installation and activation\n- An email account or mail service to connect Outlook to; the edition does not supply mailboxes",
+ "faqs": [
+  {
+   "question": "Is Home & Business 2024 allowed for commercial use?",
+   "answer": "Yes. It is the business-capable edition in the home-and-small-office line, unlike Office Home 2024, which is for non-commercial use. Check the current licence wording on Microsoft's site if your case is unusual, and we will help confirm it."
+  },
+  {
+   "question": "Does it come with an email address?",
+   "answer": "No. Outlook is the mail client, but the mailbox comes from another service. If you want hosted business email on your own domain, you need a subscription such as Microsoft 365 Business Basic or Standard, or another mail provider."
+  },
+  {
+   "question": "Can one licence cover two computers?",
+   "answer": "No. The licence is for a single PC or Mac. Plan one licence per computer, and ask about how a licence moves if the machine is replaced."
+  },
+  {
+   "question": "Can I buy a few copies for a ten-person office?",
+   "answer": "Yes, if each person needs an installed copy and you accept managing them individually. At that size compare against Business Standard, which adds shared mail, storage and administration. Ask us for both quotations side by side."
+  },
+  {
+   "question": "Will it get new features?",
+   "answer": "No. A perpetual edition receives security and quality updates, not new features. That is the trade for paying once. If new features matter, a subscription is the product designed for it."
+  },
+  {
+   "question": "Can I claim GST on it?",
+   "answer": "TechZoid issues a GST invoice on every order, with 18% GST on software. Input credit is usually claimable by GST-registered buyers for a genuine business purchase. Your accountant confirms your own position."
+  }
+ ],
+ "related": [
+  "microsoft-365-business-standard",
+  "microsoft-office-home-2024",
+  "microsoft-office-ltsc-standard-2024",
+  "microsoft-365-business-basic"
+ ],
+ "needsVerification": [
+  "That Home & Business 2024 includes Word, Excel, PowerPoint and Outlook only; OneNote or other apps not confirmed so not listed.",
+  "Commercial-use wording of the Home & Business licence.",
+  "Whether the licence can be transferred to another device under the 2024 terms.",
+  "Whether Mac and Windows editions differ in contents or are sold separately.",
+  "Supported Windows/macOS versions for the 2024 edition.",
+  "That updates after purchase are limited to security and quality fixes.",
+  "No minimum purchase quantity or support end date is stated."
+ ]
+}

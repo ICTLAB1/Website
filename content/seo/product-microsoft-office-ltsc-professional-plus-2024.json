@@ -1,0 +1,88 @@
+{
+ "slug": "microsoft-office-ltsc-professional-plus-2024",
+ "displayName": "Microsoft Office LTSC Professional Plus 2024",
+ "intro": "Office LTSC Professional Plus 2024 is the larger of Microsoft's two long-term servicing channel editions of Office. Like the Standard edition, it is perpetual and volume-licensed: you buy once, run a fixed version without a subscription, and keep a stable feature set for years. It adds further applications beyond the core suite for the roles that use them.\n\nThe buyers are organisations that value a frozen version: government departments, laboratories, regulated businesses, networks with restricted internet access and desktop fleets under strict change control. The catalogue price is currently {{price:microsoft-office-ltsc-professional-plus-2024}} excluding GST, or {{gst:microsoft-office-ltsc-professional-plus-2024}} including 18% GST. Website prices are tentative; a written quotation fixes the figure and we confirm quantity-related terms there.",
+ "included": "Professional Plus 2024 is a suite of desktop apps for an organisation. In practical terms it gives you:\n\n- The core desktop apps Word, Excel, PowerPoint and Outlook\n- Further applications beyond those in the Standard edition, as listed in Microsoft's current edition description\n- A perpetual licence for the version you buy, with no subscription\n- A feature set that stays fixed between updates\n- Security and quality updates for that version\n\nWe deliberately do not list the extra applications here, because the list is Microsoft's to publish and it is the detail that should decide the purchase. Ask us for the current edition sheet and check it against what your teams actually open.\n\nLike all LTSC editions it is not a hosted service. It does not supply mailboxes, cloud storage plans, an admin console for users or new features after release.",
+ "whoFor": "**A good fit:**\n\n- An organisation that needs the extra applications in the larger edition for some roles\n- Regulated or restricted environments that must hold one version for years\n- IT teams that deploy and patch on their own schedule and want no feature churn\n- Offices on networks with limited internet access\n- Buyers who prefer a one-time purchase to a recurring subscription\n\n**Probably not:**\n\n- Offices whose users only need the core apps, where [Office LTSC Standard 2024](/products/microsoft-office-ltsc-standard-2024) may be enough\n- Teams that want hosted email, Teams, shared storage and continuing features, where Microsoft 365 is built for the job\n- A very small office, where a single-device edition may be simpler\n- Organisations that need new Office features as soon as Microsoft ships them\n\nBefore standardising on this edition, list who really needs the extra applications. The answer is often a minority of staff.",
+ "vs": {
+  "alternative": "Microsoft 365 Business Premium",
+  "alternativeSlug": "microsoft-365-business-premium",
+  "intro": "This is the perpetual-versus-subscription choice at the larger end. LTSC Professional Plus gives you a fixed set of installed apps for a one-time purchase. Microsoft 365 Business Premium is a per-user subscription that includes desktop Office apps plus hosted email, collaboration, device management and security tooling.\n\nThey solve different problems. One is a stable installed suite; the other is a managed service that keeps changing. Our post on [Office LTSC 2024 versus Microsoft 365](/blog/microsoft-office-ltsc-2024-vs-microsoft-365) covers the decision in more depth.",
+  "rows": [
+   {
+    "label": "Payment model",
+    "thisProduct": "One-time, volume-licensed",
+    "alternative": "Per-user subscription"
+   },
+   {
+    "label": "Desktop Office apps",
+    "thisProduct": "Included, fixed version",
+    "alternative": "Included while subscribed, kept current"
+   },
+   {
+    "label": "Hosted business email",
+    "thisProduct": "Not included",
+    "alternative": "Included"
+   },
+   {
+    "label": "Device and security management",
+    "thisProduct": "Not included",
+    "alternative": "Included in the plan"
+   },
+   {
+    "label": "New features",
+    "thisProduct": "None after release",
+    "alternative": "Continuing updates"
+   },
+   {
+    "label": "Price (ex GST)",
+    "thisProduct": "{{price:microsoft-office-ltsc-professional-plus-2024}}",
+    "alternative": "{{price:microsoft-365-business-premium}}"
+   }
+  ],
+  "verdict": "Buy Professional Plus when the need is a stable installed suite, including its extra applications, and you can run the surrounding services yourself. Buy [Microsoft 365 Business Premium](/products/microsoft-365-business-premium) when you want email, collaboration, device management and security in one managed plan. Many organisations compare the two on a per-head, multi-year basis; we can quote both on one purchase order."
+ },
+ "licensing": "Office LTSC Professional Plus 2024 is sold under volume licensing for organisations. It is a perpetual licence, so there is no subscription to renew, and the version you buy is the one you keep.\n\nVolume licences follow their own rules for counting, activation and deployment, which differ from a one-PC retail edition. They are normally activated through the organisation's arrangements rather than a personal Microsoft account. How many licences you must buy, and how licences may move when a computer is retired, depends on the agreement and Microsoft's current terms. We confirm those on the written quotation instead of assuming them here.\n\nAn LTSC edition does not update itself to new releases, so moving to a future version later means buying again. If you run Microsoft 365 services alongside, check support for that combination before deploying. For the licensing routes themselves, read [CSP versus Enterprise Agreement](/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model), and see our [software asset management service](/services/software-asset-management) for keeping track of what you own. Request a quotation through the [enquiry form](/enquiry).",
+ "licensingHeading": "Volume licensing and how it works",
+ "sysreq": "- A supported Windows version; check Microsoft's published requirements for LTSC 2024 before planning hardware, since older Windows releases may not be supported\n- Volume-licence activation arrangements suited to your network, including options for restricted environments\n- Free disk space and memory typical of a current business desktop\n- Deployment tooling if you roll out to many machines\n- Check Microsoft's current requirements page, as they change between releases",
+ "faqs": [
+  {
+   "question": "What does Professional Plus add over Standard?",
+   "answer": "It adds further applications beyond the core suite. Microsoft publishes the current list, and it can change between editions, so we do not recite it here. Ask us for the edition sheet and compare it with what your users open."
+  },
+  {
+   "question": "Is it a subscription?",
+   "answer": "No. It is a perpetual, volume-licensed edition. You pay for the version you buy and keep using it. The trade-off is no new features after release."
+  },
+  {
+   "question": "Can we run it alongside Microsoft 365?",
+   "answer": "It is possible to use Microsoft 365 services such as email or Teams with a fixed Office version, but not every combination is supported or fully featured. Check the current Microsoft guidance before deploying, or ask us to review your plan."
+  },
+  {
+   "question": "Is there a minimum order quantity?",
+   "answer": "Volume licensing may carry a minimum, depending on the agreement and Microsoft's current terms. We state none here and confirm it on the written quotation once we know your seat count."
+  },
+  {
+   "question": "Who is it not for?",
+   "answer": "It is not meant for individuals at home, and not for teams that want hosted services and continuous updates. Those buyers should look at [Microsoft 365 Business Standard](/products/microsoft-365-business-standard) or a consumer plan, as appropriate."
+  },
+  {
+   "question": "Do you help with activation and invoicing?",
+   "answer": "TechZoid issues a GST invoice on every order, with 18% GST on software, and input credit is usually claimable by GST-registered buyers. We also help with activation and with assigning licences to users and machines."
+  }
+ ],
+ "related": [
+  "microsoft-office-ltsc-standard-2024",
+  "microsoft-365-business-premium",
+  "microsoft-365-business-standard",
+  "microsoft-office-home-and-business-2024"
+ ],
+ "needsVerification": [
+  "Exact application list in Professional Plus 2024 versus Standard 2024; the text lists only Word, Excel, PowerPoint and Outlook as core and defers the rest to Microsoft.",
+  "Whether a minimum purchase quantity applies; none is stated.",
+  "How volume-licence activation works and whether licences can move between devices.",
+  "Supported Windows versions and support for running alongside Microsoft 365 services.",
+  "No support end date is stated; confirm against Microsoft's lifecycle page.",
+  "That Business Premium includes hosted email, device management and security tooling (general knowledge, widely documented)."
+ ]
+}

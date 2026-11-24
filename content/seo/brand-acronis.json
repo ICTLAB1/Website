@@ -1,0 +1,86 @@
+{
+ "slug": "acronis",
+ "displayName": "Acronis",
+ "description": "Acronis backup and cyber protection software for Indian businesses from an Acronis reseller. Quoted by workload, GST invoice on every order. Request a quote.",
+ "intro": "Acronis makes backup and cyber-protection software. Its products copy servers, virtual machines, workstations and cloud data to a second location, let you restore them after a failure or an attack, and in the Cyber Protect range add security features such as malware protection to the same console. For an Indian business, the question it answers is simple: if the file server, the accounts machine or the mail data is lost tomorrow, how long does it take to get back, and how much is lost?\n\nThe buyers who ask us about Acronis tend to be small and mid-sized companies with a handful of servers, firms that run on a single accounting or ERP database, and IT teams that want one tool covering physical machines and virtual ones. It also appears in tenders where an organisation has been told to show a backup and recovery arrangement.\n\nTechZoid is an Acronis reseller. We do not list Acronis products in the online catalogue, so nothing here is stock and no price is displayed. Licences are quoted on request, sized to what you need to protect: how many servers, how many workstations, how much data and where the backups should be kept. The written quotation fixes the price, and every order carries a GST invoice, which GST-registered buyers can usually claim as input credit. Software is charged GST at 18%.\n\nBackup software is only one half of a recovery plan. Our [backup software](/backup-software) page compares the main tools, and the [backup and disaster recovery service](/services/backup-disaster-recovery) covers the design, testing and operation around it.",
+ "lines": [
+  {
+   "name": "Acronis Cyber Protect (server and workstation licences)",
+   "use": "Backup for physical and virtual servers and for workstations, with security features available in the Cyber Protect editions. Used where the organisation manages its own backup infrastructure."
+  },
+  {
+   "name": "Acronis Cyber Protect Cloud",
+   "use": "A cloud-delivered platform usually consumed through a managed provider, with storage in a cloud location. Considered when no one in the office wants to maintain a backup server."
+  },
+  {
+   "name": "Acronis Cyber Protect Home Office",
+   "use": "Backup and protection for individual computers and very small offices, sold by the number of devices."
+  },
+  {
+   "name": "Acronis Snap Deploy",
+   "use": "Disk imaging for rolling out an identical build to many machines, handy when a lab or branch fleet is set up together."
+  },
+  {
+   "name": "Acronis Disk Director",
+   "use": "A disk management utility for partitioning and volume work on Windows machines."
+  }
+ ],
+ "choose": "Choose Acronis by what must be recovered and how quickly, not by edition names.\n\nStart by listing the workloads: physical servers, virtual machines, workstations, databases, mail data, and files in cloud services. The number and type of each decide how the licences are counted. Server workloads are usually licensed differently from workstations, so a mixed environment needs a line for each.\n\nThen decide where backups live. Options include a local disk or NAS for fast restores, a second site, and cloud storage for protection against fire, theft or ransomware reaching local copies. A sound arrangement keeps more than one copy and at least one off the main network.\n\nQuestions to settle before requesting a quote:\n\n- **Sizing.** How many servers, virtual hosts and workstations, and roughly how much data in total.\n- **Edition.** Whether you want backup alone or backup together with security features.\n- **Retention.** How long old copies must be kept for compliance or audit.\n- **Recovery target.** How much downtime and data loss the business can tolerate.\n- **Licence term.** Annual, multi-year or perpetual options where offered; confirm what each option includes.\n\nIf you cannot answer these, tell us what you run and we will help narrow the editions before quoting.",
+ "buying": "Acronis is bought through TechZoid by written quotation. There is no catalogue listing or fixed price, because the correct licence set depends on your environment.\n\n### From inventory to quotation\n\n1. Send us the inventory: the number of physical servers, virtual hosts and virtual machines, workstations, and approximate data volume. The [enquiry form](/enquiry) is the easiest route.\n2. Tell us where backups should be stored and the retention you need.\n3. We prepare a written quotation naming the editions, the counts and the term. That quotation fixes the price.\n4. You raise a purchase order and we invoice with GST at 18%.\n\n### Activation and onboarding\n\nTechZoid helps with activation and with assigning licences to the right machines. Deployment design, storage sizing and recovery testing are separate work; our [backup and disaster recovery service](/services/backup-disaster-recovery) is where that is handled.\n\n### Subscription terms and renewals\n\nAcronis licences are commonly sold as subscriptions, and some products offer other models. Say in your enquiry which term you prefer and whether you want renewal reminders. The quotation will state the term and what it covers, so you can budget for renewal.\n\n### Tenders and purchase orders\n\nIf you are responding to a tender or buying against a purchase order, share the specification clauses on backup, retention and recovery. We quote against what is written, and the GST invoice can go into your records.\n\n### Pairing with other purchases\n\nBackup is often bought alongside new servers, Microsoft licences or Microsoft 365. Because TechZoid supplies those too, they can sit on one quotation. For hosted mail and files, check how [Microsoft 365](/microsoft-365) data is protected before deciding what Acronis should cover.\n\n### What to send us\n\n- Count of servers, virtual machines and workstations.\n- Total data size and growth expectation.\n- Storage location and retention needs.\n- Preferred term and edition.\n- GST number and delivery contact for licence details.",
+ "faqs": [
+  {
+   "question": "Does TechZoid stock Acronis products?",
+   "answer": "Acronis is not listed in our catalogue and we make no stock claim. Licences are quoted on request, sized to your servers, workstations and data, and the written quotation fixes the price."
+  },
+  {
+   "question": "What does Acronis actually do?",
+   "answer": "It backs up servers, virtual machines, workstations and cloud data, and restores them after failure, deletion or attack. The Cyber Protect range also adds security features to the same console."
+  },
+  {
+   "question": "Is GST charged on Acronis licences?",
+   "answer": "Yes, GST at 18% applies to software and is shown on the invoice. GST-registered buyers can usually claim input credit."
+  },
+  {
+   "question": "How do I know how many licences I need?",
+   "answer": "Count your physical servers, virtual hosts and machines, and workstations, and estimate the total data. Send the counts and we will work out the editions and quantities for the quotation."
+  },
+  {
+   "question": "Does Acronis protect Microsoft 365 data?",
+   "answer": "Some Acronis offerings can back up cloud mailboxes and files, but support depends on the edition. Ask us to confirm the edition that covers Microsoft 365 before you commit."
+  },
+  {
+   "question": "Can you help us install and set it up?",
+   "answer": "We help with activation and assigning licences. Designing the backup, sizing storage and testing recovery are covered by our backup and disaster recovery service, which can be quoted separately."
+  }
+ ],
+ "related": [
+  {
+   "href": "/backup-software",
+   "label": "Backup software"
+  },
+  {
+   "href": "/services/backup-disaster-recovery",
+   "label": "Backup and disaster recovery service"
+  },
+  {
+   "href": "/brands/veeam",
+   "label": "Veeam backup"
+  },
+  {
+   "href": "/microsoft-365",
+   "label": "Microsoft 365"
+  },
+  {
+   "href": "/enquiry",
+   "label": "Request a quotation"
+  }
+ ],
+ "needsVerification": [
+  "Confirm TechZoid quotes each listed product line",
+  "Confirm current Acronis product names: Cyber Protect, Cyber Protect Cloud, Cyber Protect Home Office, Snap Deploy, Disk Director",
+  "Confirm whether Cyber Protect Cloud is available to direct customers or only via managed providers",
+  "Confirm which editions back up Microsoft 365 mailboxes and files",
+  "Confirm available licence terms (subscription versus perpetual) for each product",
+  "Confirm TechZoid can help with activation for Acronis licences"
+ ]
+}

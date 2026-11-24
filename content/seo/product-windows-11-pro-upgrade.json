@@ -1,0 +1,86 @@
+{
+ "slug": "windows-11-pro-upgrade",
+ "displayName": "Windows 11 Pro",
+ "seoName": "Windows 11 Pro",
+ "licensingHeading": "Upgrade, full, OEM and volume licences",
+ "intro": "Windows 11 Pro is the business edition of Windows: it can join a company domain or Microsoft Entra ID, be managed with Group Policy or Intune, encrypt drives with BitLocker and accept Remote Desktop connections. New PCs often arrive with Home, which lacks those functions.\n\nWe list two ways to buy it. The **Upgrade** takes a device already running a qualifying Windows edition up to Pro, and the website price is {{price:windows-11-pro-upgrade}} excluding GST, or {{gst:windows-11-pro-upgrade}} with 18% GST. The **Full licence** is for a machine with no qualifying Windows licence and is quoted on request; [ask for a quotation](/enquiry). A written quotation fixes either price.",
+ "included": "Windows 11 Pro adds to Home the capabilities a managed office relies on:\n\n- Domain join and Microsoft Entra ID join\n- Group Policy and Windows Update for Business\n- BitLocker drive encryption with recovery keys held centrally\n- Remote Desktop host, so a PC can be reached from another\n- Hyper-V virtual machines and Windows Sandbox\n- Enrolment into Intune and similar device-management platforms\n\nIt is a perpetual, per-device licence rather than a subscription. Windows 11 Pro does not include Microsoft 365 apps, which are licensed separately; see [Microsoft 365 plans](/microsoft-365).\n\nBoth variants give the same Pro edition. For the cost view, read [Windows 11 Pro upgrade licence price in India](/blog/windows-11-pro-upgrade-licence-price-in-india).",
+ "whoFor": "**A good fit:**\n\n- A company whose new laptops shipped with Home and which now needs domain join, Intune or BitLocker\n- A small office building PCs from components that has no operating system licence\n\n**Probably not the right buy:**\n\n- Organisations already on Microsoft 365 Business Premium or an enterprise plan, which include Windows business rights through the subscription; check before paying twice\n- Fleets of several hundred seats with centralised policy needs, where Enterprise through a volume programme may fit better",
+ "vs": {
+  "alternative": "Windows 11 Enterprise and Home",
+  "alternativeSlug": "microsoft-365-e3",
+  "intro": "Home, Pro and Enterprise are three tiers of one operating system. Home is for individuals, Pro is the normal business edition, and Enterprise adds advanced security and management for large organisations. Enterprise is generally obtained through volume or subscription programmes, not bought as a single box.",
+  "rows": [
+   {
+    "label": "Intended user",
+    "thisProduct": "Small and mid-sized business",
+    "alternative": "Home: individuals. Enterprise: large organisations"
+   },
+   {
+    "label": "Domain or Entra ID join",
+    "thisProduct": "Yes",
+    "alternative": "Home: no. Enterprise: yes"
+   },
+   {
+    "label": "BitLocker and Group Policy",
+    "thisProduct": "Yes",
+    "alternative": "Home: not with these management features. Enterprise: yes"
+   },
+   {
+    "label": "Advanced enterprise security",
+    "thisProduct": "Not at Enterprise level",
+    "alternative": "Enterprise: additional security and management features"
+   },
+   {
+    "label": "How it is bought",
+    "thisProduct": "Upgrade or full licence",
+    "alternative": "Enterprise: via subscription or volume programme"
+   },
+   {
+    "label": "Upgrade price (ex GST)",
+    "thisProduct": "{{price:windows-11-pro-upgrade}}",
+    "alternative": "Confirmed on quotation"
+   }
+  ],
+  "verdict": "Pro is the right edition for most Indian offices. Choose Home only for personal machines. Look at Enterprise when you want its advanced features across hundreds of devices, usually through a Microsoft 365 enterprise plan.\n\nOur article on [Windows 11 Pro versus Enterprise for business](/blog/windows-11-pro-versus-enterprise-for-business) sets out when the larger edition earns its cost. If you also need [Microsoft 365 Business Premium](/products/microsoft-365-business-premium), it covers Windows business rights for eligible devices, so confirm before buying separately."
+ },
+ "licensing": "**Upgrade versus full.** The Upgrade licence requires an existing, genuine and qualifying Windows licence on the device, such as Windows 11 Home or Windows 10 Home. It is not a licence for a machine with no operating system. The Full licence stands on its own and suits a new build or a machine without Windows. If you are unsure which applies, send us the device list and we will say.\n\n**OEM, retail and volume, in general terms.** An OEM licence comes preinstalled by the hardware maker and is tied to that device. A retail licence is bought separately and is normally transferable between devices under Microsoft's terms. Volume licensing is a programme for organisations and often provides upgrade rights for devices that already have a qualifying edition. We confirm the terms of your channel in writing.\n\nThe product is per device and perpetual. See [how to buy genuine Microsoft licences in India](/blog/how-to-buy-genuine-microsoft-licences-in-india). Every order carries a GST invoice, and we help with activation.",
+ "sysreq": "- Processor: 1 GHz or faster with at least two cores, 64-bit, on Microsoft's list of supported processors\n- Memory and storage: at least 4 GB of RAM and 64 GB of storage\n- Firmware: UEFI with Secure Boot capability\n- Security chip: Trusted Platform Module (TPM) 2.0 is required, and many older PCs lack it or have it switched off in firmware\n- Graphics: DirectX 12 compatible\n- Run Microsoft's PC Health Check before ordering, and confirm current requirements on Microsoft's published page",
+ "faqs": [
+  {
+   "question": "Can I upgrade a Windows 10 Home machine to Windows 11 Pro?",
+   "answer": "If the hardware meets the Windows 11 requirements, including TPM 2.0 and Secure Boot, the machine can move to Windows 11 and then to Pro. Windows 10 reached end of support in October 2025, so unsupported machines are a security concern. Check each model with the PC Health Check tool."
+  },
+  {
+   "question": "What is the Windows 11 Pro upgrade price in India?",
+   "answer": "The website price of the Upgrade is {{price:windows-11-pro-upgrade}} excluding GST, or {{gst:windows-11-pro-upgrade}} with 18% GST, per device. A written quotation fixes it. The Full licence is quoted separately, because it depends on the channel and quantity."
+  },
+  {
+   "question": "Which one do I need, Upgrade or Full licence?",
+   "answer": "Buy the Upgrade if every device already runs a genuine qualifying Windows edition. Buy the Full licence if a device has no Windows, for example a self-assembled PC. Mixed estates are common, so send us the device list and we will quote each group accordingly."
+  },
+  {
+   "question": "Will TPM 2.0 be a problem on our older PCs?",
+   "answer": "It can be. Many machines from the last several years have TPM 2.0 but have it disabled, which can be switched on in firmware. Others lack it and cannot officially run Windows 11. Test a sample of each model before ordering licences for a whole fleet."
+  },
+  {
+   "question": "Do we need Enterprise instead of Pro?",
+   "answer": "Most small and mid-sized organisations do not. Enterprise suits large estates that want its additional security and management features, usually through a Microsoft 365 enterprise plan. Read the Pro versus Enterprise article linked above and ask us if you are close to the line."
+  }
+ ],
+ "related": [
+  "microsoft-365-business-premium",
+  "microsoft-365-business-standard",
+  "microsoft-365-e3",
+  "windows-server-2025-standard"
+ ],
+ "needsVerification": [
+  "Upgrade licence precondition: qualifying existing Windows licence; exact terms by channel (retail/OEM/volume) vary and should be checked against current Microsoft product terms",
+  "Whether a Pro Upgrade licence can legally be applied to Windows 10 Home devices that meet requirements, and key behaviour at activation",
+  "Retail licences being transferable and OEM tied to device (general; confirm current Microsoft terms)",
+  "Windows 10 end of support date, October 2025",
+  "Microsoft 365 Business Premium including Windows business rights (general knowledge; confirm eligibility conditions)",
+  "Hardware requirements (4 GB RAM, 64 GB storage, TPM 2.0, Secure Boot, DirectX 12) as of the last confirmed Microsoft list",
+  "The comparison alternative slug points at Microsoft 365 E3 (which carries Windows Enterprise rights) as there is no Windows 11 Enterprise product page; confirm alternative linking"
+ ]
+}

@@ -85,6 +85,252 @@ export const PRODUCT_GUIDE_DATA: Record<string, ProductGuide> = {
       "revit"
     ]
   },
+  "adobe-acrobat-pro-teams": {
+    "slug": "adobe-acrobat-pro-teams",
+    "displayName": "Adobe Acrobat Pro for Teams",
+    "seoName": "Adobe Acrobat Pro",
+    "licensingHeading": "How the subscription works",
+    "intro": "Acrobat Pro is the PDF tool for people whose documents carry consequences: contracts that must be compared, tender files with names that must be removed, forms that must be collected and archives that must be kept in a stable format. The annual named-user Teams subscription is {{price:adobe-acrobat-pro-teams}} excluding GST, or {{gst:adobe-acrobat-pro-teams}} with 18% GST. A written quotation fixes the price.\n\nOur [PDF software guide](/pdf-software) explains the editions and how to choose between them. This page goes further into what Pro does in day-to-day work, so you can judge whether one particular team needs it.",
+    "included": "The capabilities that justify Pro over a basic editor, by task:\n\n- **Redaction.** Mark text, images or whole areas, then apply the redaction so content is removed from the file, not hidden under a box. Pro can also remove hidden data such as metadata, comments and embedded attachments before a file leaves your office.\n- **Comparison.** Open two versions of a contract or tender and see the differences listed, which is quicker and safer than reading both.\n- **Forms.** Turn a scanned or Word form into a fillable PDF, distribute it and gather responses.\n- **Archive and accessibility.** Save in archival PDF/A format and run an accessibility check for documents that must be readable with assistive tools.\n- **Batch work.** Run a repeatable sequence, for example OCR, rename and compress, across a folder of scans.\n- **Protection and signature.** Password and permission control, plus electronic signature requests and tracking.\n- **Platforms.** Windows, macOS, iOS and Android, with Microsoft 365 integration.\n\nThe included signature allowance is a fair-use one. High-volume or regulated signing is served by a separate Adobe product, which we can quote.",
+    "whoFor": "**A good fit:**\n\n- Legal, company-secretary and compliance teams reviewing and redacting documents\n- Procurement and tender desks that issue and receive bid documents\n- HR and finance teams sharing records that contain personal data\n- Records and archive teams converting scans into searchable, long-term files\n- Any user on a Mac who needs more than reading\n\n**Probably not the right buy:**\n\n- Staff who only merge, sign or fill documents on Windows; [Standard](/products/adobe-acrobat-standard-teams) covers that\n- People already holding Creative Cloud All Apps, which includes Acrobat Pro\n- Occasional readers, for whom a free reader suffices\n\nA practical check: ask whether anyone has sent a document outside the company that they would not want to see changed or exposed. If yes, Pro's redaction and sanitising are the reason to buy.",
+    "vs": {
+      "alternative": "Acrobat Standard",
+      "alternativeSlug": "adobe-acrobat-standard-teams",
+      "intro": "Standard and Pro share the everyday core of creating, editing, merging and signing. The question is whether anyone needs the extras that Pro adds, and whether everyone is on Windows.",
+      "rows": [
+        {
+          "label": "Create, edit, merge, fill and sign",
+          "thisProduct": "Yes",
+          "alternative": "Yes"
+        },
+        {
+          "label": "Redaction",
+          "thisProduct": "Included",
+          "alternative": "Not included"
+        },
+        {
+          "label": "Document comparison",
+          "thisProduct": "Included",
+          "alternative": "Not included"
+        },
+        {
+          "label": "PDF/A and accessibility checking",
+          "thisProduct": "Included",
+          "alternative": "Not included"
+        },
+        {
+          "label": "Operating systems",
+          "thisProduct": "Windows and macOS, plus mobile apps",
+          "alternative": "Windows only"
+        },
+        {
+          "label": "Annual price (ex GST)",
+          "thisProduct": "{{price:adobe-acrobat-pro-teams}}",
+          "alternative": "{{price:adobe-acrobat-standard-teams}}"
+        }
+      ],
+      "verdict": "If the work is internal and on Windows, choose Standard and save the difference. If any seat touches redaction, comparison, regulated archiving or a Mac, choose Pro for that seat.\n\nIt is normal to mix them. Assign seats by role, and revisit at renewal using the Admin Console, as our note on [unused licences](/blog/hidden-cost-of-unused-software-licences) suggests."
+    },
+    "licensing": "Acrobat Pro for Teams is licensed to a **named user** through the Adobe Admin Console. The administrator assigns a seat by email address and can reassign it when a person leaves, which keeps the entitlement with the company.\n\nBusiness plans carry an annual commitment, with seats added during the term prorated to the common renewal date. Monthly billing and other terms can be quoted on request.\n\nAcrobat Pro is also included in [Creative Cloud All Apps](/products/adobe-creative-cloud-all-apps-teams), so do not buy it twice for the same person. Larger organisations that need federated sign-in should read about [Creative Cloud for Enterprise](/blog/adobe-creative-cloud-for-enterprise). We help with seat assignment after purchase.",
+    "sysreq": "- Windows 11 and Windows 10, and currently supported macOS versions\n- iOS and Android apps for reading, commenting and signing on the move\n- A modest business PC is enough for everyday work; OCR and batch processing of large scans benefit from more memory and an SSD\n- Adobe publishes exact requirements for each release, so confirm them before buying hardware\n- An internet connection is needed for sign-in, licence checks and signature services",
+    "faqs": [
+      {
+        "question": "Is covering text with a black box the same as redaction?",
+        "answer": "No. A box drawn over text leaves the text underneath, which can often be copied. Proper redaction removes the content from the file. That is the reason legal and HR teams buy Pro. Always check the saved file before sending it outside."
+      },
+      {
+        "question": "What is the Adobe Acrobat Pro price in India?",
+        "answer": "The annual named-user subscription is {{price:adobe-acrobat-pro-teams}} excluding GST, or {{gst:adobe-acrobat-pro-teams}} with 18% GST. The website price is tentative, and a written quotation fixes it."
+      },
+      {
+        "question": "Can Pro compare two versions of a contract?",
+        "answer": "Yes. Document comparison lists text and layout differences between two PDFs, which helps with contract and tender revisions. It works best when both files have real text; scans need OCR first."
+      },
+      {
+        "question": "Does Pro include unlimited e-signatures?",
+        "answer": "It includes signature requests with a fair-use allowance. Regulated or high-volume workflows are served by Adobe Acrobat Sign, which is licensed separately. Tell us your monthly volume and we will say which fits."
+      },
+      {
+        "question": "Can Pro turn scans into searchable PDFs?",
+        "answer": "Yes, optical character recognition converts scans into searchable, editable text, and batch actions can process many files. Accuracy depends on scan quality and language, so test a sample of your own documents before a wide roll-out."
+      },
+      {
+        "question": "Should we pair Pro with the AI Assistant add-on?",
+        "answer": "Only if staff read long documents routinely. It is a separate purchase, bought on top of a seat; see [AI Assistant for Acrobat](/products/adobe-ai-assistant-for-acrobat). Pilot it with a few users first."
+      }
+    ],
+    "related": [
+      "adobe-acrobat-standard-teams",
+      "adobe-acrobat-studio",
+      "adobe-ai-assistant-for-acrobat",
+      "adobe-creative-cloud-all-apps-teams"
+    ]
+  },
+  "adobe-creative-cloud-all-apps-teams": {
+    "slug": "adobe-creative-cloud-all-apps-teams",
+    "displayName": "Adobe Creative Cloud All Apps for Teams",
+    "seoName": "Adobe Creative Cloud for Teams",
+    "licensingHeading": "How the subscription works",
+    "intro": "Creative Cloud All Apps gives each named user the full Adobe application set: Photoshop, Illustrator, InDesign, Premiere Pro, After Effects, Lightroom, Acrobat Pro and the rest. The Teams edition adds an admin console, reassignable seats and one renewal date, which is why agencies, studios and marketing departments buy it instead of individual subscriptions.\n\nThe annual commitment, billed yearly, is {{price:adobe-creative-cloud-all-apps-teams}} per user excluding GST, or {{gst:adobe-creative-cloud-all-apps-teams}} with 18% GST. The website price is tentative; a written quotation fixes it. For the wider picture see our [Creative Cloud price guide](/blog/adobe-creative-cloud-price-in-india).",
+    "included": "According to our catalogue, each seat includes:\n\n- Over twenty Adobe desktop and mobile applications\n- Acrobat Pro, so a designer does not need a separate PDF seat\n- 100 GB of cloud storage per user\n- Creative Cloud Libraries for shared brand assets\n- Adobe Fonts, and Adobe Stock integration (Stock assets are licensed separately)\n- Adobe Admin Console for assigning and reclaiming seats\n- Consolidated billing on a single renewal date\n\nThe benefit is breadth without tracking. A motion designer who also retouches stills, a layout artist who occasionally edits video and a manager who needs Acrobat all use one entitlement, and the administrator does not need to remember who holds which tool.\n\nSome generative features use credits whose allowance Adobe sets and changes, so we confirm them in writing at quotation if that matters to you.",
+    "whoFor": "**A good fit:**\n\n- An agency or studio where designers move between print, motion and photography\n- A marketing department producing brochures, social video and reports in-house\n- A training or media unit whose staff each need three or four applications\n- Teams that want a single renewal date and a single admin console\n\n**Probably not the right buy:**\n\n- A retoucher who only opens Photoshop, or a vector artist who only opens Illustrator\n- Staff who need only PDF handling, for whom [Acrobat Pro](/products/adobe-acrobat-pro-teams) is cheaper\n- Fleets of fifty or more seats needing federated sign-in, which [Enterprise](/products/adobe-creative-cloud-enterprise) fits better\n\nCount applications per person, not per team. One heavy user can justify All Apps while the rest of the team stays on single-app seats.",
+    "vs": {
+      "alternative": "Creative Cloud Single App",
+      "alternativeSlug": "adobe-creative-cloud-single-app-teams",
+      "intro": "Both plans are named-user Teams subscriptions with the same Admin Console. A single team agreement can hold both kinds of seat, so the decision is per person.",
+      "rows": [
+        {
+          "label": "Applications per seat",
+          "thisProduct": "The full Adobe set",
+          "alternative": "One application of your choice"
+        },
+        {
+          "label": "Acrobat Pro",
+          "thisProduct": "Included",
+          "alternative": "Not included"
+        },
+        {
+          "label": "Cloud storage",
+          "thisProduct": "100 GB per user",
+          "alternative": "100 GB per user"
+        },
+        {
+          "label": "Mixing within one agreement",
+          "thisProduct": "Yes",
+          "alternative": "Yes"
+        },
+        {
+          "label": "Annual price (ex GST)",
+          "thisProduct": "{{price:adobe-creative-cloud-all-apps-teams}}",
+          "alternative": "{{price:adobe-creative-cloud-single-app-teams}}"
+        },
+        {
+          "label": "Best for",
+          "thisProduct": "People using four or more applications",
+          "alternative": "Specialists using one application"
+        }
+      ],
+      "verdict": "Per our catalogue, All Apps costs less per user at around four single applications, and it removes the tracking. Below that, single-app seats cost less.\n\nA photo retoucher or video editor can sit on [Single App](/products/adobe-creative-cloud-single-app-teams) while the multi-skilled designer takes All Apps. Our advice is to list each person's applications first."
+    },
+    "licensing": "Creative Cloud All Apps for Teams is licensed to a **named user** through the Adobe Admin Console. A seat is assigned by email address and can be reassigned when a person leaves or changes role, which is the main reason organisations choose Teams over individual accounts.\n\nBusiness plans carry an annual commitment, billed yearly or monthly depending on the variant; seats added mid-term are prorated to the renewal date. Other terms can be quoted on request.\n\nThe Teams edition suits most studios and companies. Organisations that need federated sign-in, or are at about fifty seats or above, should read [Creative Cloud for Enterprise](/blog/adobe-creative-cloud-for-enterprise), and [VIP versus VIP Marketplace](/blog/adobe-vip-versus-vip-marketplace) explains how the buying programme affects billing. We help with seat assignment after purchase.",
+    "sysreq": "- Windows 11 and Windows 10 (64-bit), and macOS versions supported by the current Adobe release\n- 16 GB of RAM recommended, and 32 GB for video and 3D work\n- A GPU with 4 GB of video memory or more for accelerated features\n- Video editing and motion work are the heaviest demands; see our [video editing guide](/video-editing-software)\n- Adobe publishes exact requirements per application and release, so confirm them before ordering hardware",
+    "faqs": [
+      {
+        "question": "What is the Adobe Creative Cloud for Teams price in India?",
+        "answer": "The annual All Apps subscription, billed yearly, is {{price:adobe-creative-cloud-all-apps-teams}} per user excluding GST, or {{gst:adobe-creative-cloud-all-apps-teams}} with 18% GST. Billing monthly under an annual commitment is also available. A written quotation fixes the price."
+      },
+      {
+        "question": "Does All Apps include Acrobat Pro?",
+        "answer": "Yes. Do not buy a separate Acrobat seat for a person who holds All Apps. Check each user before ordering, because paying for both is a frequent double purchase."
+      },
+      {
+        "question": "Can we mix All Apps and single-app seats?",
+        "answer": "Yes. A team agreement can hold both, and the choice is made per seat. Heavy multi-application users can take All Apps while specialists stay on a single application."
+      },
+      {
+        "question": "Can a seat move to a new employee?",
+        "answer": "Yes. Seats are assigned in the Admin Console and can be unassigned and reassigned when someone leaves, which is the main operational reason for choosing Teams."
+      },
+      {
+        "question": "Do the plans include Adobe Stock images?",
+        "answer": "Stock integrates with the applications, but stock assets themselves are licensed separately; see [Adobe Stock](/products/adobe-stock-10-assets). Tell us the volume of assets you use when you enquire."
+      },
+      {
+        "question": "When should we move to Enterprise?",
+        "answer": "Consider it when you need federated single sign-on, enterprise-owned storage or governance controls, typically at around fifty seats or more. Below that, Teams is generally the simpler choice."
+      }
+    ],
+    "related": [
+      "adobe-creative-cloud-single-app-teams",
+      "adobe-acrobat-pro-teams",
+      "adobe-photoshop-teams",
+      "adobe-premiere-pro-teams",
+      "adobe-creative-cloud-enterprise"
+    ],
+    "seoTitle": "Adobe Creative Cloud for Teams Price in India | TechZoid"
+  },
+  "adobe-illustrator-teams": {
+    "slug": "adobe-illustrator-teams",
+    "displayName": "Adobe Illustrator for Teams",
+    "seoName": "Adobe Illustrator",
+    "licensingHeading": "How the subscription works",
+    "intro": "Illustrator is Adobe's vector drawing application: the tool for logos, icons, packaging dielines, signage, technical illustration and anything that must stay sharp at any size. Unlike Photoshop, which edits pixels, Illustrator works with paths, so artwork can be scaled from a visiting card to a hoarding without loss.\n\nIn India the buyers are design studios, in-house marketing teams, printers and packaging houses, signage and apparel businesses and agencies. The Teams subscription is per named user at {{price:adobe-illustrator-teams}} per year excluding GST, or {{gst:adobe-illustrator-teams}} with 18% GST. The website price is tentative; a written quotation fixes it.",
+    "included": "The single-app Teams subscription gives one named person:\n\n- Vector drawing and precision path editing\n- Type on a path, variable fonts and access to Adobe Fonts\n- Artboards, so one file can hold several sizes or formats\n- Colour separation preview for print production\n- Illustrator on iPad\n- Shared Creative Cloud Libraries for colours, logos and styles\n- Admin Console seat management, with seats that can be reassigned\n\nThe libraries matter at team level: a brand's colours, character styles and logos can be shared so everyone draws from the same source. Cloud storage and technical support terms are set by Adobe and confirmed on the quotation.\n\nIt does not include Photoshop, InDesign or Premiere Pro. If a person needs several applications, compare the [All Apps plan](/products/adobe-creative-cloud-all-apps-teams) before you buy.",
+    "whoFor": "**A good fit:**\n\n- A branding or packaging designer who spends most of the day drawing logos and dielines\n- A printer or signage business preparing artwork for output\n- A marketing team that needs consistent icons and brand assets across formats\n- An apparel or textile unit preparing repeat patterns and technical flats\n\n**Probably not the right buy:**\n\n- Someone who edits photographs mainly; see [Photoshop](/products/adobe-photoshop-teams)\n- A layout designer producing multi-page documents, who is better served by InDesign\n- Anyone who only needs occasional light edits, since a seat costs the same whether it is opened daily or monthly\n\nThe test is simple: ask each person which applications they opened last month. One answer suggests a single-app seat; three or four suggests All Apps.",
+    "vs": {
+      "alternative": "Creative Cloud All Apps",
+      "alternativeSlug": "adobe-creative-cloud-all-apps-teams",
+      "intro": "The practical question is not whether Illustrator is good, but whether the same person also uses other Adobe applications. Both plans are named-user subscriptions managed through the same Admin Console.",
+      "rows": [
+        {
+          "label": "Applications",
+          "thisProduct": "Illustrator",
+          "alternative": "The full Adobe application set, including Illustrator"
+        },
+        {
+          "label": "Best for",
+          "thisProduct": "Vector-focused specialists",
+          "alternative": "Designers who use four or more applications"
+        },
+        {
+          "label": "Acrobat Pro",
+          "thisProduct": "Not included",
+          "alternative": "Included"
+        },
+        {
+          "label": "Cloud storage",
+          "thisProduct": "Confirmed on quotation",
+          "alternative": "Confirmed on quotation"
+        },
+        {
+          "label": "Admin Console and reassignable seats",
+          "thisProduct": "Yes",
+          "alternative": "Yes"
+        },
+        {
+          "label": "Annual price (ex GST)",
+          "thisProduct": "{{price:adobe-illustrator-teams}}",
+          "alternative": "{{price:adobe-creative-cloud-all-apps-teams}}"
+        }
+      ],
+      "verdict": "Buy Illustrator on its own when vector work is the person's job. Buy All Apps for the designer who moves between drawing, photo editing, layout and video, because around four applications the combined plan generally costs less than the separate ones.\n\nA mixed team is normal. Our guide to [Creative Cloud pricing in India](/blog/adobe-creative-cloud-price-in-india) shows how to count."
+    },
+    "licensing": "Adobe's business plans are licensed to a **named user** through the Adobe Admin Console. A seat is assigned to a person by email address and can be reassigned when they leave, so the entitlement stays with the company. That is the main reason organisations move from individual subscriptions to Teams.\n\nThe plan carries an annual commitment, with seats added mid-term prorated to a common renewal date. Monthly billing and multi-year terms can be quoted on request. A person may install on more than one computer, but sign-in is limited, so a shared workstation needs one seat per user.\n\nFor 50 or more seats or federated sign-in, see [Creative Cloud for Enterprise](/blog/adobe-creative-cloud-for-enterprise), and [VIP versus VIP Marketplace](/blog/adobe-vip-versus-vip-marketplace) for how the buying programme changes billing. We help with seat assignment after purchase.",
+    "sysreq": "- Windows 11 and Windows 10 (64-bit), and currently supported macOS versions\n- 16 GB of RAM is recommended; complex artwork with many effects and large artboards benefits from more\n- An SSD and a calibrated display help for print-critical colour work\n- Adobe publishes exact system requirements for each release; confirm them before ordering hardware\n- Our [business laptops](/business-laptops) range can be quoted on the same purchase order",
+    "faqs": [
+      {
+        "question": "What is the Adobe Illustrator price in India for a business?",
+        "answer": "The annual single-user Teams subscription is {{price:adobe-illustrator-teams}} excluding GST, or {{gst:adobe-illustrator-teams}} with 18% GST. A written quotation fixes the price, and the website figure is tentative."
+      },
+      {
+        "question": "Is Illustrator included in Creative Cloud All Apps?",
+        "answer": "Yes. All Apps includes Illustrator among its applications, so someone with an All Apps seat does not need a separate Illustrator seat. Check each user before ordering to avoid paying twice for the same application."
+      },
+      {
+        "question": "Can we move a seat to a new designer?",
+        "answer": "Yes. Seats are assigned in the Admin Console and can be unassigned and reassigned when someone leaves. Put the step in your leaver checklist so a seat is not left idle until renewal."
+      },
+      {
+        "question": "Does Illustrator replace CorelDRAW?",
+        "answer": "They do similar work, and many Indian print and signage houses use one or the other. We also quote [CorelDRAW Graphics Suite](/products/coreldraw-graphics-suite). Choose by what your clients and printers send you, and by the formats you must exchange."
+      },
+      {
+        "question": "Does the subscription include Adobe Fonts?",
+        "answer": "Yes, Adobe Fonts is part of the subscription. Font licensing for commercial use should still be checked for each typeface, so ask us when a project has specific rules."
+      },
+      {
+        "question": "Is Illustrator suitable for CAD or technical drawings?",
+        "answer": "It handles technical illustration and exploded views well, but it is not a CAD tool and does not hold dimensions parametrically. For engineering drawings look at [AutoCAD](/products/autocad)."
+      }
+    ],
+    "related": [
+      "adobe-creative-cloud-all-apps-teams",
+      "adobe-creative-cloud-single-app-teams",
+      "adobe-photoshop-teams",
+      "adobe-indesign-teams",
+      "coreldraw-graphics-suite"
+    ]
+  },
   "aec-collection": {
     "slug": "aec-collection",
     "displayName": "AEC Collection",
@@ -827,6 +1073,735 @@ export const PRODUCT_GUIDE_DATA: Record<string, ProductGuide> = {
       "autodesk-media-entertainment-collection"
     ]
   },
+  "microsoft-365-family": {
+    "slug": "microsoft-365-family",
+    "displayName": "Microsoft 365 Family",
+    "intro": "Microsoft 365 Family is the consumer subscription for a household. One subscription can be shared with other people in the same home, up to a limit set by Microsoft, each using their own sign-in and their own storage. It carries the desktop Office apps and cloud storage, in the same way Microsoft 365 Personal does for a single person.\n\nIt is a home plan. It is not licensed for organisational use, so it is not a way to cover the staff of an office, shop, clinic or school. A business should look at [Microsoft 365 Business Basic](/products/microsoft-365-business-basic), [Business Standard](/products/microsoft-365-business-standard) or [Business Premium](/products/microsoft-365-business-premium), which are built for organisations and managed by an administrator.\n\nOur catalogue lists Family for the household buyer. The price is not shown on the site and is confirmed on a written quotation; use the [enquiry form](/enquiry) to ask.",
+    "included": "Microsoft 365 Family is a subscription, so apps and updates continue while it is active. In practical terms it gives a household:\n\n- Desktop versions of the core Office apps such as Word, Excel and PowerPoint for the people sharing it\n- Outlook for mail and calendar\n- OneDrive cloud storage, with an allowance for each person set by Microsoft\n- Sharing with other people in the household, up to Microsoft's limit\n- Updates for as long as the subscription runs\n\nIt does not give you business email on your own domain, a staff admin console, centrally enforced security policies or the controls an organisation needs to manage company data. Those belong to the Business plans.\n\nApp lists, storage amounts and the exact household limit are set by Microsoft and change, so ask us for the current description before you rely on a specific number.",
+    "whoFor": "**A good fit:**\n\n- A family where parents and children each need Word, Excel and PowerPoint for school and home use\n- A household that wants separate cloud storage for each member under one subscription\n- People who would otherwise buy several individual subscriptions for the same home\n- A family that prefers continuous updates over buying a one-time edition per computer\n\n**Probably not:**\n\n- An office, shop, clinic, firm or school, even a very small one, buying for staff\n- A group of unrelated people sharing a subscription to save money\n- A business owner who intends to cover employees under a family plan\n- One person living alone, where Personal is the plain fit\n\nIf the people using the software are doing an organisation's work, that organisation needs its own business licences, whatever the head count.",
+    "vs": {
+      "alternative": "Microsoft 365 Personal",
+      "alternativeSlug": "microsoft-365-personal",
+      "intro": "Family and Personal are consumer plans from the same product line. The difference is the number of people covered, not the capability of the apps. Neither is a business plan.\n\nIf only one person will use it, Personal is simpler and avoids paying for sharing nobody uses. If several people in the same household each need the apps, a single Family subscription normally works out tidier than several separate ones, though we confirm current terms before quoting.",
+      "rows": [
+        {
+          "label": "Intended users",
+          "thisProduct": "A household group, up to Microsoft's limit",
+          "alternative": "One individual"
+        },
+        {
+          "label": "Intended setting",
+          "thisProduct": "Home and personal use",
+          "alternative": "Home and personal use"
+        },
+        {
+          "label": "Organisational use",
+          "thisProduct": "Not licensed for it",
+          "alternative": "Not licensed for it"
+        },
+        {
+          "label": "Separate sign-ins and storage",
+          "thisProduct": "Each person has their own",
+          "alternative": "One person"
+        },
+        {
+          "label": "Admin console for staff",
+          "thisProduct": "No",
+          "alternative": "No"
+        },
+        {
+          "label": "Price",
+          "thisProduct": "Confirmed on a written quotation",
+          "alternative": "Confirmed on a written quotation"
+        }
+      ],
+      "verdict": "Choose Family when two or more people in one home need the apps, and [Microsoft 365 Personal](/products/microsoft-365-personal) when it is only one. If the use is a business's, skip both and choose a Business plan, or a perpetual edition like [Office Home & Business 2024](/products/microsoft-office-home-and-business-2024) if a one-time purchase suits and the licence terms fit your use."
+    },
+    "licensing": "Microsoft 365 Family is a consumer subscription owned by one person, who can invite other members of their household to share it. It is written for personal, non-business use in the home.\n\nA Business plan works differently. It is assigned to named users in an organisation's tenant, an administrator adds and removes people, and data stays under company control. A family subscription has no such structure, and an employer cannot treat it as a substitute.\n\nTwo cautions follow. First, sharing is meant for people in one household, not for colleagues or friends. Second, ownership belongs to a person; if that person leaves the arrangement, members lose access. For an overview of how the business range differs, read [Microsoft 365 plans, apps and price in India](/blog/what-is-microsoft-365-plans-apps-price-india) or browse the [Microsoft 365 range](/microsoft-365). If you are unsure which licence your situation needs, ask through the [enquiry form](/enquiry) before buying.",
+    "licensingHeading": "How the licence works",
+    "sysreq": "- A supported version of Windows or macOS for the desktop apps; check Microsoft's current list before buying\n- An internet connection for sign-in, activation and periodic licence checks\n- A Microsoft account for the subscription owner, and one for each person invited\n- Free disk space for the apps on each device, which is modest on current PCs\n- Mobile and web use depends on the device and browser; confirm on Microsoft's published requirements page",
+    "faqs": [
+      {
+        "question": "Can a small business use Microsoft 365 Family for its staff?",
+        "answer": "No. Family is a home plan and is not licensed for organisational use, however small the business. A business should use Microsoft 365 Business Basic, Standard or Premium, which an administrator manages. Ask us if you are unsure which fits."
+      },
+      {
+        "question": "Who counts as a household member?",
+        "answer": "Microsoft's terms define how sharing works and how many people can be added, and those details can change. In general it is meant for the people who live together. We would rather confirm the current wording with you than state a number here."
+      },
+      {
+        "question": "Is Family cheaper than buying Personal for each person?",
+        "answer": "Usually Family suits a household of several people better than separate subscriptions, but we do not publish a figure for either. Ask for a written quotation for both and compare for your actual head count."
+      },
+      {
+        "question": "Can the family plan be claimed as a business expense?",
+        "answer": "TechZoid issues a GST invoice on every order, and software carries 18% GST. Input credit is usually claimable by GST-registered buyers, but only where the purchase is a genuine business expense. A home plan used for family purposes is unlikely to qualify, so check with your accountant."
+      },
+      {
+        "question": "What if I want one-time pricing instead of a subscription?",
+        "answer": "Look at a perpetual edition. [Office Home 2024](/products/microsoft-office-home-2024) is a one-time purchase for a single PC or Mac, with no new features after purchase. It suits a single device better than a household sharing across many."
+      },
+      {
+        "question": "How do I get a price for Family?",
+        "answer": "The site shows no figure for this product. The price is fixed by a written quotation. Send your request through the [enquiry form](/enquiry) with the number of people and devices."
+      }
+    ],
+    "related": [
+      "microsoft-365-personal",
+      "microsoft-office-home-2024",
+      "microsoft-office-home-and-business-2024",
+      "microsoft-365-business-standard"
+    ]
+  },
+  "microsoft-365-personal": {
+    "slug": "microsoft-365-personal",
+    "displayName": "Microsoft 365 Personal",
+    "intro": "Microsoft 365 Personal is Microsoft's consumer subscription for one individual. It bundles the desktop Office apps with cloud storage and some extra services, and it is meant for home and personal use. It is a different product line from the Microsoft 365 Business plans that organisations buy.\n\nThat distinction matters more than it looks. Personal is a home plan for one person. It is not licensed for organisational use, so a company, firm, school or government office should not be buying it for staff. If you are buying for a business, go straight to [Microsoft 365 Business Basic](/products/microsoft-365-business-basic), [Business Standard](/products/microsoft-365-business-standard) or [Business Premium](/products/microsoft-365-business-premium).\n\nWe list Personal in our catalogue for the individual buyer, such as a freelancer's own home PC or a student's family laptop. The price is not shown on the site; it is confirmed on a written quotation, which you can request through the [enquiry form](/enquiry).",
+    "included": "Microsoft 365 Personal is a subscription, so the apps stay current for as long as it is active. In practical terms it gives one person:\n\n- The desktop versions of the core Office apps such as Word, Excel and PowerPoint\n- Outlook, for mail and calendar\n- Cloud storage through OneDrive, with an allowance set by Microsoft\n- Installation on the person's own devices, signed in with their Microsoft account\n- Ongoing updates while the subscription is active\n\nWhat it does not give you is anything an organisation depends on: no business-grade email on your own domain, no central user management, no admin console for staff, and no Microsoft Teams as a managed business service. Those come with the Business plans.\n\nExact app lists, storage allowances and bundled extras change from time to time, so ask us for the current Microsoft description before you rely on a specific item.",
+    "whoFor": "**A good fit:**\n\n- One person who wants current Word, Excel and PowerPoint for personal use at home\n- A student or job-seeker working on personal documents and CVs\n- A household member who wants their own cloud storage separate from others\n- Someone who prefers subscription updates over a one-time purchase\n\n**Probably not:**\n\n- Any company, partnership, school, trust or government office buying for staff\n- A freelancer or consultant using the software to earn income, until the licence terms are checked against that use\n- Two or more people who want to share one subscription, where the family plan is the nearer product\n- Anyone who wants to pay once and stop, where a perpetual Office 2024 edition suits better\n\nA simple test: if the person using it is doing the organisation's work, the organisation needs a business licence, not a personal one.",
+    "vs": {
+      "alternative": "Microsoft 365 Family",
+      "alternativeSlug": "microsoft-365-family",
+      "intro": "Personal and Family are sister consumer plans. The difference is who may use the subscription: Personal is for one individual, while Family is for a household group. Both are home plans and neither is a substitute for a business licence.\n\nThe choice is usually arithmetic. If only one person needs the apps, Personal is the plain fit. If several people in the same home need them, one Family subscription is normally tidier than several separate Personal ones. We confirm current terms before quoting.",
+      "rows": [
+        {
+          "label": "Intended users",
+          "thisProduct": "One individual",
+          "alternative": "A household group, up to the limit Microsoft sets"
+        },
+        {
+          "label": "Intended setting",
+          "thisProduct": "Home and personal use",
+          "alternative": "Home and personal use"
+        },
+        {
+          "label": "Organisational use",
+          "thisProduct": "Not licensed for it",
+          "alternative": "Not licensed for it"
+        },
+        {
+          "label": "Desktop Office apps",
+          "thisProduct": "Included while active",
+          "alternative": "Included while active"
+        },
+        {
+          "label": "Admin console for staff",
+          "thisProduct": "No",
+          "alternative": "No"
+        },
+        {
+          "label": "Price",
+          "thisProduct": "Confirmed on a written quotation",
+          "alternative": "Confirmed on a written quotation"
+        }
+      ],
+      "verdict": "Choose Personal when one person is the user and the use is personal. Choose [Microsoft 365 Family](/products/microsoft-365-family) when several people in one household each need the apps. Choose neither when the work belongs to an organisation: use a Business plan, or a perpetual edition such as [Office Home & Business 2024](/products/microsoft-office-home-and-business-2024) if you want to pay once and the use qualifies."
+    },
+    "licensing": "Microsoft 365 Personal is a subscription tied to one person's Microsoft account. It is a consumer licence, written for personal, non-business use by that individual.\n\nBusiness plans are different. They are assigned to named users inside an organisation's tenant and managed by an administrator, who can add and remove people, apply security settings and control data. Personal has none of that, which is why it should not be used to cover staff.\n\nIf you are unsure which side of the line your use falls on, do not guess. Describe the situation through the [enquiry form](/enquiry) and we will point you to the right plan before you pay. For an overview of how the business plans differ, read [Microsoft 365 plans, apps and price in India](/blog/what-is-microsoft-365-plans-apps-price-india), and see the wider [Microsoft 365 range](/microsoft-365).",
+    "licensingHeading": "How the licence works",
+    "sysreq": "- A supported version of Windows or macOS for the desktop apps; check Microsoft's current list before buying\n- An internet connection to sign in, activate and keep the subscription valid\n- Enough free disk space for the apps, which is modest on any current business or home PC\n- A Microsoft account for the person who will own the subscription\n- Mobile and web access depends on the device and browser; confirm on Microsoft's published requirements page",
+    "faqs": [
+      {
+        "question": "Can my company buy Microsoft 365 Personal for employees?",
+        "answer": "No. Personal is a home plan for one individual and is not licensed for organisational use. A company should use Microsoft 365 Business Basic, Standard or Premium, which are managed by an administrator and designed for staff. If you are not sure, ask us before buying."
+      },
+      {
+        "question": "I am a freelancer working from home. Is Personal acceptable?",
+        "answer": "That depends on the terms Microsoft applies to commercial use of the consumer plan, and we do not want to guess. Treat income-earning work as a business case and check the current licence wording, or choose a Business plan, which is built for it."
+      },
+      {
+        "question": "Do I get a GST invoice for Personal?",
+        "answer": "TechZoid issues a GST invoice on every order. Software is charged at 18% GST, and input credit is usually claimable by GST-registered buyers. Credit still depends on the purchase being a legitimate business expense, which brings back the question of whether Personal is the right licence."
+      },
+      {
+        "question": "What is the difference between Personal and Business Standard?",
+        "answer": "Personal is for one person at home. Business Standard is assigned to named users in an organisation, comes with administration and business email and collaboration services, and is the plan most small offices start with. See the [Business Standard page](/products/microsoft-365-business-standard) for the current details."
+      },
+      {
+        "question": "Is a perpetual Office edition cheaper than a subscription?",
+        "answer": "Not automatically. A one-time edition avoids renewals but gets no new features, and it covers one device. Over a few years the comparison depends on how long you keep the device. Compare against [Office Home 2024](/products/microsoft-office-home-2024) and ask for quotations for both."
+      },
+      {
+        "question": "How do I get a price for Personal?",
+        "answer": "The site shows no figure for this product. The price is confirmed on a written quotation, which fixes it. Send the request through the [enquiry form](/enquiry) and say who will use it and where."
+      }
+    ],
+    "related": [
+      "microsoft-365-family",
+      "microsoft-office-home-2024",
+      "microsoft-365-business-standard",
+      "microsoft-365-business-basic"
+    ]
+  },
+  "microsoft-office-home-2024": {
+    "slug": "microsoft-office-home-2024",
+    "displayName": "Microsoft Office Home 2024",
+    "intro": "Office Home 2024 is a one-time purchase of Microsoft's core Office apps for a single PC or Mac. You pay once, install the apps on that one computer, and keep using that version. There is no monthly or yearly fee, and also no stream of new features: the version you buy is the version you keep, apart from security and quality updates.\n\nIt is a home edition. The Home licence is for non-commercial use, so it is not the right product for a company, shop, clinic or any office doing paid work. A business that wants a one-time purchase should look at [Office Home & Business 2024](/products/microsoft-office-home-and-business-2024), or at a [Microsoft 365 Business](/products/microsoft-365-business-standard) plan if it wants subscription services and central administration.\n\nThe price for Office Home 2024 is not shown on our site. It is fixed on a written quotation; use the [enquiry form](/enquiry) to ask.",
+    "included": "Office Home 2024 is a perpetual edition aimed at personal use. In practical terms it gives you:\n\n- The core desktop apps Word, Excel and PowerPoint\n- Installation on one PC or Mac\n- A one-time purchase with no recurring subscription\n- Security and quality updates for the version you own, without new feature releases\n\nWhat it leaves out matters. It is not a subscription, so it does not include cloud services such as large OneDrive storage as part of a plan, and it does not carry business email, Teams administration or any central control. Outlook is not something we promise here; mail and calendar are listed under Office Home & Business 2024, so check the current edition sheet if Outlook matters.\n\nBecause apps and bundled extras differ between editions, ask us for the current Microsoft description before relying on any particular item.",
+    "whoFor": "**A good fit:**\n\n- One person who wants Word, Excel and PowerPoint on a single home computer and no ongoing fee\n- A student or family member using documents and spreadsheets for study and household tasks\n- Someone with an older PC that is unlikely to be replaced for several years\n- Anyone who dislikes subscriptions and does not need new features\n\n**Probably not:**\n\n- Any organisation, or anyone using Office to earn income, because the Home licence is for non-commercial use\n- People who need Outlook and want a one-time edition, where Home & Business is the nearer fit\n- Households that want several people covered, where [Microsoft 365 Family](/products/microsoft-365-family) may be tidier\n- Users who move between several devices and want to install on all of them\n\nThe licence is attached to a single device. If the computer is replaced, check the current terms on transferring the licence before you plan on it.",
+    "vs": {
+      "alternative": "Microsoft 365 Personal",
+      "alternativeSlug": "microsoft-365-personal",
+      "intro": "The choice is subscription against one-time purchase. Microsoft 365 Personal is a recurring subscription for one individual, with ongoing updates and cloud storage. Office Home 2024 is paid once for one device, with no new features after purchase.\n\nNeither is for business use. Both are home products. If you are buying for an organisation, the comparison to make is between Home & Business 2024 and a Microsoft 365 Business plan instead.",
+      "rows": [
+        {
+          "label": "Payment model",
+          "thisProduct": "One-time purchase",
+          "alternative": "Recurring subscription"
+        },
+        {
+          "label": "Core apps",
+          "thisProduct": "Word, Excel, PowerPoint",
+          "alternative": "Desktop Office apps while active"
+        },
+        {
+          "label": "Devices",
+          "thisProduct": "One PC or Mac",
+          "alternative": "The person's own devices, within Microsoft's limits"
+        },
+        {
+          "label": "New features",
+          "thisProduct": "None after purchase",
+          "alternative": "Continuing updates while active"
+        },
+        {
+          "label": "Commercial use",
+          "thisProduct": "Not licensed (non-commercial)",
+          "alternative": "Not licensed for organisational use"
+        },
+        {
+          "label": "Price",
+          "thisProduct": "Confirmed on a written quotation",
+          "alternative": "Confirmed on a written quotation"
+        }
+      ],
+      "verdict": "Choose Home 2024 if one device, one person and no recurring fee suit you. Choose [Microsoft 365 Personal](/products/microsoft-365-personal) if you want continuing updates, cloud storage and use across your own devices. For any business purpose, move up: [Home & Business 2024](/products/microsoft-office-home-and-business-2024) for a one-time edition, or a Business plan for subscription and administration."
+    },
+    "licensing": "Office Home 2024 is a perpetual licence for a single PC or Mac. Once activated, it stays with that device, and there is no subscription to renew.\n\nThe Home edition is licensed for non-commercial use. In plain terms, it is for personal and household tasks, not for work done for an employer, a client or a business. A business that needs Office should buy the right commercial licence: Home & Business 2024 if it wants a perpetual edition for a single device, or a Business plan if it wants subscription services and central administration.\n\nBecause the licence is bound to a device, plan for what happens when the computer is replaced. Terms on moving a licence differ by edition and change, so we confirm them before you buy. If you are comparing subscription and perpetual routes for a larger office, our post on [Office LTSC 2024 versus Microsoft 365](/blog/microsoft-office-ltsc-2024-vs-microsoft-365) sets out the trade-offs, and the [Microsoft 365 range](/microsoft-365) shows the subscription side. For a quotation, use the [enquiry form](/enquiry).",
+    "licensingHeading": "How the licence works",
+    "sysreq": "- A supported version of Windows or macOS for the 2024 edition; check Microsoft's current requirements before buying, since an older operating system may not be supported\n- A single PC or Mac to hold the licence\n- Free disk space and memory typical of a current home computer\n- An internet connection for installation and activation\n- No subscription sign-in is needed to keep using the installed apps",
+    "faqs": [
+      {
+        "question": "Can I use Office Home 2024 for my business?",
+        "answer": "No. The Home licence is for non-commercial use, so a business or anyone using it for paid work should choose a commercial licence instead. That means Office Home & Business 2024 for a one-time edition, or a Microsoft 365 Business plan for subscription and administration."
+      },
+      {
+        "question": "Does it include Outlook?",
+        "answer": "We treat Outlook as belonging to the Home & Business edition and do not promise it here. If email and calendar matter, the safer route is [Home & Business 2024](/products/microsoft-office-home-and-business-2024), whose catalogue entry includes it."
+      },
+      {
+        "question": "Can I install it on two computers?",
+        "answer": "The edition is for a single PC or Mac, so install it on one device. If you need the apps on more than one machine, a subscription such as [Microsoft 365 Family](/products/microsoft-365-family) or Personal is usually a better fit than buying the edition twice."
+      },
+      {
+        "question": "Will it get new features later?",
+        "answer": "No. A perpetual edition gets security and quality updates, not new features. That is the trade you make for paying once. If you want features as Microsoft adds them, a subscription is the product built for that."
+      },
+      {
+        "question": "Do I get a GST invoice?",
+        "answer": "TechZoid issues a GST invoice on every order, with 18% GST on software. Input credit is usually claimable by GST-registered buyers, though a home edition bought for a business purpose would raise the licensing problem above."
+      },
+      {
+        "question": "What does it cost?",
+        "answer": "The site shows no figure for this product. The price is confirmed on a written quotation. Send the request through the [enquiry form](/enquiry), saying whether you use Windows or Mac."
+      }
+    ],
+    "related": [
+      "microsoft-365-personal",
+      "microsoft-365-family",
+      "microsoft-office-home-and-business-2024",
+      "microsoft-365-business-standard"
+    ]
+  },
+  "microsoft-office-home-and-business-2024": {
+    "slug": "microsoft-office-home-and-business-2024",
+    "displayName": "Microsoft Office Home & Business 2024",
+    "intro": "Office Home & Business 2024 is a one-time purchase of Microsoft's core Office apps, plus Outlook, for a single PC or Mac. You pay once, install on that one computer and keep using that version. It is the commercial edition in the 2024 home-and-small-office line, which is why small firms and professionals choose it over the plain Home edition.\n\nIt suits a person or a very small office with a handful of computers that each need their own installed copy, no central administration and no wish to pay a monthly fee. It is not a multi-user product: each licence covers one device. The catalogue price is currently {{price:microsoft-office-home-and-business-2024}} excluding GST, or {{gst:microsoft-office-home-and-business-2024}} including 18% GST. Website prices are tentative; a written quotation fixes the figure.",
+    "included": "Our catalogue lists Office Home & Business 2024 as a perpetual edition. In practical terms it gives you:\n\n- The core desktop apps Word, Excel and PowerPoint\n- Outlook for email, calendar and contacts\n- Installation on one PC or Mac per licence\n- A one-time purchase with no recurring fee\n- Security and quality updates for the version you own, without new feature releases\n\nWhat it does not include is as important. There is no subscription cloud storage plan built in, no business email hosting on your own domain, no user management console and no Teams administration. Mail still needs a mailbox from somewhere, such as an existing hosted service.\n\nWe do not publish a feature-by-feature sheet for the 2024 edition, so ask us for Microsoft's current description if a particular app or capability decides the purchase.",
+    "whoFor": "**A good fit:**\n\n- A sole proprietor, consultant or professional who wants Word, Excel, PowerPoint and Outlook on one computer without a subscription\n- A very small office where each person's PC is bought once and not expected to change soon\n- A business with an existing mail service that only needs the desktop apps and Outlook as a client\n- Offices that have to avoid recurring fees on a fixed budget\n\n**Probably not:**\n\n- A team that wants central user management, shared mailboxes and Teams, where Business Standard suits better\n- Anyone who needs the apps on several devices per person\n- Organisations buying many seats at a time, where volume licensing may be the better route\n- People who want new features as Microsoft adds them\n\nA useful test: count how many people need mail and files shared in one place. If the answer is more than a few, a subscription tenant is usually easier to run than separate installed copies.",
+    "vs": {
+      "alternative": "Microsoft 365 Business Standard",
+      "alternativeSlug": "microsoft-365-business-standard",
+      "intro": "This is the standard perpetual-versus-subscription question, in a business setting. Home & Business 2024 is paid once and sits on one device. Microsoft 365 Business Standard is a per-user subscription that adds hosted business email, cloud storage, collaboration and an administration console.\n\nCost over time depends on how many people you have and how long you keep the computers. Ask for quotations on both; we can show them side by side on one purchase order.",
+      "rows": [
+        {
+          "label": "Payment model",
+          "thisProduct": "One-time purchase",
+          "alternative": "Per-user subscription"
+        },
+        {
+          "label": "Desktop apps",
+          "thisProduct": "Word, Excel, PowerPoint, Outlook",
+          "alternative": "Desktop Office apps while subscribed"
+        },
+        {
+          "label": "Devices",
+          "thisProduct": "One PC or Mac per licence",
+          "alternative": "Per user, across their devices within Microsoft's limits"
+        },
+        {
+          "label": "Hosted business email",
+          "thisProduct": "Not included",
+          "alternative": "Included"
+        },
+        {
+          "label": "Admin console and user management",
+          "thisProduct": "No",
+          "alternative": "Yes"
+        },
+        {
+          "label": "New features",
+          "thisProduct": "None after purchase",
+          "alternative": "Continuing updates"
+        },
+        {
+          "label": "Price (ex GST)",
+          "thisProduct": "{{price:microsoft-office-home-and-business-2024}}",
+          "alternative": "{{price:microsoft-365-business-standard}}"
+        }
+      ],
+      "verdict": "Choose Home & Business 2024 for one person or a very small office that wants installed apps and Outlook with no recurring fee. Choose [Microsoft 365 Business Standard](/products/microsoft-365-business-standard) when you want hosted email, shared storage, central administration and ongoing updates for a team. The subscription costs more over time per head, but it replaces several things the one-time edition leaves for you to arrange."
+    },
+    "licensing": "Office Home & Business 2024 is a perpetual licence for one PC or Mac. After activation it stays with that device, and there is no subscription to renew.\n\nIt is the edition intended for commercial use at small scale, in contrast with Office Home 2024, whose licence is for non-commercial use. Even so, it is a per-device licence with no central management, so a growing team can end up tracking installs by hand. Past a small number of computers, a subscription tenant or a volume agreement is easier to administer.\n\nBecause the licence is tied to a device, ask us about moving it when a computer is replaced; the rules differ by edition and we confirm them before you buy. Organisations comparing a perpetual route with subscription should read [Office LTSC 2024 versus Microsoft 365](/blog/microsoft-office-ltsc-2024-vs-microsoft-365). For a quotation, including a mixed order across brands on one purchase order, use the [enquiry form](/enquiry) or see the [Microsoft 365 range](/microsoft-365).",
+    "licensingHeading": "How the licence works",
+    "sysreq": "- A supported version of Windows or macOS for the 2024 edition; confirm against Microsoft's current requirements before buying, because older operating systems may not be supported\n- One PC or Mac per licence\n- Free disk space and memory typical of a current business desktop or laptop\n- An internet connection for installation and activation\n- An email account or mail service to connect Outlook to; the edition does not supply mailboxes",
+    "faqs": [
+      {
+        "question": "Is Home & Business 2024 allowed for commercial use?",
+        "answer": "Yes. It is the business-capable edition in the home-and-small-office line, unlike Office Home 2024, which is for non-commercial use. Check the current licence wording on Microsoft's site if your case is unusual, and we will help confirm it."
+      },
+      {
+        "question": "Does it come with an email address?",
+        "answer": "No. Outlook is the mail client, but the mailbox comes from another service. If you want hosted business email on your own domain, you need a subscription such as Microsoft 365 Business Basic or Standard, or another mail provider."
+      },
+      {
+        "question": "Can one licence cover two computers?",
+        "answer": "No. The licence is for a single PC or Mac. Plan one licence per computer, and ask about how a licence moves if the machine is replaced."
+      },
+      {
+        "question": "Can I buy a few copies for a ten-person office?",
+        "answer": "Yes, if each person needs an installed copy and you accept managing them individually. At that size compare against Business Standard, which adds shared mail, storage and administration. Ask us for both quotations side by side."
+      },
+      {
+        "question": "Will it get new features?",
+        "answer": "No. A perpetual edition receives security and quality updates, not new features. That is the trade for paying once. If new features matter, a subscription is the product designed for it."
+      },
+      {
+        "question": "Can I claim GST on it?",
+        "answer": "TechZoid issues a GST invoice on every order, with 18% GST on software. Input credit is usually claimable by GST-registered buyers for a genuine business purchase. Your accountant confirms your own position."
+      }
+    ],
+    "related": [
+      "microsoft-365-business-standard",
+      "microsoft-office-home-2024",
+      "microsoft-office-ltsc-standard-2024",
+      "microsoft-365-business-basic"
+    ]
+  },
+  "microsoft-office-ltsc-professional-plus-2024": {
+    "slug": "microsoft-office-ltsc-professional-plus-2024",
+    "displayName": "Microsoft Office LTSC Professional Plus 2024",
+    "intro": "Office LTSC Professional Plus 2024 is the larger of Microsoft's two long-term servicing channel editions of Office. Like the Standard edition, it is perpetual and volume-licensed: you buy once, run a fixed version without a subscription, and keep a stable feature set for years. It adds further applications beyond the core suite for the roles that use them.\n\nThe buyers are organisations that value a frozen version: government departments, laboratories, regulated businesses, networks with restricted internet access and desktop fleets under strict change control. The catalogue price is currently {{price:microsoft-office-ltsc-professional-plus-2024}} excluding GST, or {{gst:microsoft-office-ltsc-professional-plus-2024}} including 18% GST. Website prices are tentative; a written quotation fixes the figure and we confirm quantity-related terms there.",
+    "included": "Professional Plus 2024 is a suite of desktop apps for an organisation. In practical terms it gives you:\n\n- The core desktop apps Word, Excel, PowerPoint and Outlook\n- Further applications beyond those in the Standard edition, as listed in Microsoft's current edition description\n- A perpetual licence for the version you buy, with no subscription\n- A feature set that stays fixed between updates\n- Security and quality updates for that version\n\nWe deliberately do not list the extra applications here, because the list is Microsoft's to publish and it is the detail that should decide the purchase. Ask us for the current edition sheet and check it against what your teams actually open.\n\nLike all LTSC editions it is not a hosted service. It does not supply mailboxes, cloud storage plans, an admin console for users or new features after release.",
+    "whoFor": "**A good fit:**\n\n- An organisation that needs the extra applications in the larger edition for some roles\n- Regulated or restricted environments that must hold one version for years\n- IT teams that deploy and patch on their own schedule and want no feature churn\n- Offices on networks with limited internet access\n- Buyers who prefer a one-time purchase to a recurring subscription\n\n**Probably not:**\n\n- Offices whose users only need the core apps, where [Office LTSC Standard 2024](/products/microsoft-office-ltsc-standard-2024) may be enough\n- Teams that want hosted email, Teams, shared storage and continuing features, where Microsoft 365 is built for the job\n- A very small office, where a single-device edition may be simpler\n- Organisations that need new Office features as soon as Microsoft ships them\n\nBefore standardising on this edition, list who really needs the extra applications. The answer is often a minority of staff.",
+    "vs": {
+      "alternative": "Microsoft 365 Business Premium",
+      "alternativeSlug": "microsoft-365-business-premium",
+      "intro": "This is the perpetual-versus-subscription choice at the larger end. LTSC Professional Plus gives you a fixed set of installed apps for a one-time purchase. Microsoft 365 Business Premium is a per-user subscription that includes desktop Office apps plus hosted email, collaboration, device management and security tooling.\n\nThey solve different problems. One is a stable installed suite; the other is a managed service that keeps changing. Our post on [Office LTSC 2024 versus Microsoft 365](/blog/microsoft-office-ltsc-2024-vs-microsoft-365) covers the decision in more depth.",
+      "rows": [
+        {
+          "label": "Payment model",
+          "thisProduct": "One-time, volume-licensed",
+          "alternative": "Per-user subscription"
+        },
+        {
+          "label": "Desktop Office apps",
+          "thisProduct": "Included, fixed version",
+          "alternative": "Included while subscribed, kept current"
+        },
+        {
+          "label": "Hosted business email",
+          "thisProduct": "Not included",
+          "alternative": "Included"
+        },
+        {
+          "label": "Device and security management",
+          "thisProduct": "Not included",
+          "alternative": "Included in the plan"
+        },
+        {
+          "label": "New features",
+          "thisProduct": "None after release",
+          "alternative": "Continuing updates"
+        },
+        {
+          "label": "Price (ex GST)",
+          "thisProduct": "{{price:microsoft-office-ltsc-professional-plus-2024}}",
+          "alternative": "{{price:microsoft-365-business-premium}}"
+        }
+      ],
+      "verdict": "Buy Professional Plus when the need is a stable installed suite, including its extra applications, and you can run the surrounding services yourself. Buy [Microsoft 365 Business Premium](/products/microsoft-365-business-premium) when you want email, collaboration, device management and security in one managed plan. Many organisations compare the two on a per-head, multi-year basis; we can quote both on one purchase order."
+    },
+    "licensing": "Office LTSC Professional Plus 2024 is sold under volume licensing for organisations. It is a perpetual licence, so there is no subscription to renew, and the version you buy is the one you keep.\n\nVolume licences follow their own rules for counting, activation and deployment, which differ from a one-PC retail edition. They are normally activated through the organisation's arrangements rather than a personal Microsoft account. How many licences you must buy, and how licences may move when a computer is retired, depends on the agreement and Microsoft's current terms. We confirm those on the written quotation instead of assuming them here.\n\nAn LTSC edition does not update itself to new releases, so moving to a future version later means buying again. If you run Microsoft 365 services alongside, check support for that combination before deploying. For the licensing routes themselves, read [CSP versus Enterprise Agreement](/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model), and see our [software asset management service](/services/software-asset-management) for keeping track of what you own. Request a quotation through the [enquiry form](/enquiry).",
+    "licensingHeading": "Volume licensing and how it works",
+    "sysreq": "- A supported Windows version; check Microsoft's published requirements for LTSC 2024 before planning hardware, since older Windows releases may not be supported\n- Volume-licence activation arrangements suited to your network, including options for restricted environments\n- Free disk space and memory typical of a current business desktop\n- Deployment tooling if you roll out to many machines\n- Check Microsoft's current requirements page, as they change between releases",
+    "faqs": [
+      {
+        "question": "What does Professional Plus add over Standard?",
+        "answer": "It adds further applications beyond the core suite. Microsoft publishes the current list, and it can change between editions, so we do not recite it here. Ask us for the edition sheet and compare it with what your users open."
+      },
+      {
+        "question": "Is it a subscription?",
+        "answer": "No. It is a perpetual, volume-licensed edition. You pay for the version you buy and keep using it. The trade-off is no new features after release."
+      },
+      {
+        "question": "Can we run it alongside Microsoft 365?",
+        "answer": "It is possible to use Microsoft 365 services such as email or Teams with a fixed Office version, but not every combination is supported or fully featured. Check the current Microsoft guidance before deploying, or ask us to review your plan."
+      },
+      {
+        "question": "Is there a minimum order quantity?",
+        "answer": "Volume licensing may carry a minimum, depending on the agreement and Microsoft's current terms. We state none here and confirm it on the written quotation once we know your seat count."
+      },
+      {
+        "question": "Who is it not for?",
+        "answer": "It is not meant for individuals at home, and not for teams that want hosted services and continuous updates. Those buyers should look at [Microsoft 365 Business Standard](/products/microsoft-365-business-standard) or a consumer plan, as appropriate."
+      },
+      {
+        "question": "Do you help with activation and invoicing?",
+        "answer": "TechZoid issues a GST invoice on every order, with 18% GST on software, and input credit is usually claimable by GST-registered buyers. We also help with activation and with assigning licences to users and machines."
+      }
+    ],
+    "related": [
+      "microsoft-office-ltsc-standard-2024",
+      "microsoft-365-business-premium",
+      "microsoft-365-business-standard",
+      "microsoft-office-home-and-business-2024"
+    ]
+  },
+  "microsoft-office-ltsc-standard-2024": {
+    "slug": "microsoft-office-ltsc-standard-2024",
+    "displayName": "Microsoft Office LTSC Standard 2024",
+    "intro": "Office LTSC Standard 2024 is Microsoft's long-term servicing channel edition of Office for organisations. It is a perpetual, volume-licensed product: you buy the licences once, install the version you bought, and keep it stable without a subscription. It is aimed at businesses, government bodies and institutions rather than individuals, and it is sold under volume licensing instead of as a boxed home edition.\n\nThe usual buyers are offices that must hold a fixed version for years: air-gapped or restricted networks, regulated environments, shared kiosks, laboratories and desktop fleets where change control is slow. If you want hosted services and continuous updates, a Microsoft 365 plan is the more natural route.\n\nThe price for LTSC Standard 2024 is not shown on our site. It is confirmed on a written quotation; use the [enquiry form](/enquiry) to ask.",
+    "included": "LTSC Standard 2024 is a suite of desktop apps for an organisation. In practical terms it gives you:\n\n- The core desktop apps Word, Excel and PowerPoint, plus Outlook for email and calendar\n- A perpetual licence for the version you buy, with no subscription\n- A stable feature set that does not change between updates\n- Security and quality updates for that version\n- Deployment suited to managed fleets, as volume-licensed Office usually is\n\nWhat the Standard edition leaves out is covered by the larger edition. [Office LTSC Professional Plus 2024](/products/microsoft-office-ltsc-professional-plus-2024) adds further applications; Microsoft publishes the current list of what is in each edition, so please ask us for it before deciding.\n\nLTSC is not a hosted service either. It does not supply mailboxes, cloud storage plans or an admin console, and it does not receive new features after release.",
+    "whoFor": "**A good fit:**\n\n- A government office, laboratory, factory or institution that needs a version frozen for years\n- Organisations with networks that have limited or no internet access\n- Teams that need Word, Excel, PowerPoint and Outlook but not the extra applications in the larger edition\n- IT departments that run change control and want predictable software\n- Buyers who prefer a capital purchase to a recurring cost\n\n**Probably not:**\n\n- A small office with a handful of PCs, where Home & Business 2024 may be simpler\n- Teams that want Teams, hosted mail, shared storage and ongoing features, where a Microsoft 365 plan fits better\n- Users who must have new Office features as soon as Microsoft releases them\n- People whose roles depend on applications that only the larger edition includes\n\nThe test is whether your organisation values a fixed version more than new features. If it does, LTSC is worth quoting.",
+    "vs": {
+      "alternative": "Office LTSC Professional Plus 2024",
+      "alternativeSlug": "microsoft-office-ltsc-professional-plus-2024",
+      "intro": "The two editions share the same model: volume-licensed, perpetual, a fixed feature set. The difference is the application list. Standard is the core suite for most office users, while Professional Plus adds further applications for roles that need them.\n\nThe practical question is whether anyone in your organisation opens those extra applications. If few people do, buying Standard widely and Professional Plus for the few can be cheaper than standardising on the larger edition. We confirm the current contents of both with you before quoting.",
+      "rows": [
+        {
+          "label": "Licence model",
+          "thisProduct": "Perpetual, volume-licensed",
+          "alternative": "Perpetual, volume-licensed"
+        },
+        {
+          "label": "Core apps (Word, Excel, PowerPoint, Outlook)",
+          "thisProduct": "Included",
+          "alternative": "Included"
+        },
+        {
+          "label": "Additional applications",
+          "thisProduct": "Fewer",
+          "alternative": "More, per Microsoft's current edition list"
+        },
+        {
+          "label": "New features after release",
+          "thisProduct": "None",
+          "alternative": "None"
+        },
+        {
+          "label": "Typical buyer",
+          "thisProduct": "Organisations with general office users",
+          "alternative": "Organisations with roles needing the extra applications"
+        },
+        {
+          "label": "Price",
+          "thisProduct": "Confirmed on a written quotation",
+          "alternative": "{{price:microsoft-office-ltsc-professional-plus-2024}} ex GST, tentative"
+        }
+      ],
+      "verdict": "Buy Standard for the many users whose work is documents, spreadsheets, presentations and mail. Buy [Professional Plus](/products/microsoft-office-ltsc-professional-plus-2024) for the people who actually need what it adds. Mixing the two is allowed in principle and often sensible, but confirm how your agreement treats mixed editions. If you would rather have continuing updates and hosted services, read [Office LTSC 2024 versus Microsoft 365](/blog/microsoft-office-ltsc-2024-vs-microsoft-365) first."
+    },
+    "licensing": "Office LTSC Standard 2024 is sold under volume licensing for organisations. It is a perpetual licence, so there is no subscription to renew, and the version you buy is the version you keep.\n\nVolume licensing has its own rules about how licences are counted, activated and deployed, and those rules differ from a boxed edition for one PC. Licences are typically activated through the organisation's own activation arrangements rather than a personal Microsoft account. Whether a minimum quantity applies, and how licences may move between devices, depends on the agreement you buy under and on Microsoft's current terms. We confirm both with you in the quotation rather than assuming.\n\nBecause an LTSC edition does not auto-update to new releases, upgrading later means a fresh purchase. If you also run Microsoft 365 services alongside, check how the two interact before you deploy, since not every combination is supported. Our blog sets out [how Microsoft licensing models differ](/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model), and our [licence management service](/services/licence-management) helps with tracking what you own. Request a quotation through the [enquiry form](/enquiry).",
+    "licensingHeading": "Volume licensing and how it works",
+    "sysreq": "- A supported Windows version; LTSC 2024 editions follow Microsoft's published requirements, which should be checked before you plan hardware, as older Windows releases may not be supported\n- Volume-licence activation arrangements suited to your network, including options for restricted environments\n- Free disk space and memory typical of a current business desktop\n- Deployment tooling if you roll out to many machines\n- Check Microsoft's current requirements page, as they change between releases",
+    "faqs": [
+      {
+        "question": "What does LTSC mean?",
+        "answer": "It stands for long-term servicing channel. The edition is fixed at release and receives security and quality updates, not new features. That predictability is the reason organisations choose it over a subscription that keeps changing."
+      },
+      {
+        "question": "Is LTSC Standard sold to individuals?",
+        "answer": "It is a volume-licensed product designed for organisations, so it is not the right fit for a home user. A person at home should look at Office Home 2024 or Microsoft 365 Personal, noting that those are for personal use."
+      },
+      {
+        "question": "Is there a minimum order quantity?",
+        "answer": "Volume licensing may carry a minimum, and the figure depends on the agreement and Microsoft's current terms. We do not state one here; we confirm it on the written quotation once we know how many seats you need."
+      },
+      {
+        "question": "How is it different from Home & Business 2024?",
+        "answer": "Home & Business is a one-device retail-style edition for a small office. LTSC is volume-licensed for managed fleets with deployment and activation suited to organisations. See [Home & Business 2024](/products/microsoft-office-home-and-business-2024) if your office is very small."
+      },
+      {
+        "question": "Can we mix Standard and Professional Plus?",
+        "answer": "In principle yes, and many organisations do, giving the larger edition to the few users who need it. Confirm how your licensing agreement treats mixed editions. We check this when we prepare the quotation."
+      },
+      {
+        "question": "Do we get a GST invoice and help with activation?",
+        "answer": "TechZoid issues a GST invoice on every order, with 18% GST on software, and input credit is usually claimable by GST-registered buyers. We also help with activation and with assigning licences."
+      }
+    ],
+    "related": [
+      "microsoft-office-ltsc-professional-plus-2024",
+      "microsoft-office-home-and-business-2024",
+      "microsoft-365-business-standard",
+      "microsoft-365-business-premium"
+    ]
+  },
+  "onedrive-for-business-plan-1": {
+    "slug": "onedrive-for-business-plan-1",
+    "displayName": "Microsoft OneDrive for Business (Plan 1)",
+    "seoName": "OneDrive for Business Plan 1",
+    "licensingHeading": "How the licence works",
+    "intro": "OneDrive for Business Plan 1 is Microsoft's standalone cloud file storage for work, licensed per user. Each person gets a private work library that syncs to their PC or Mac, opens in a browser and on a phone, and can be shared with colleagues or external contacts with controls over who can edit and for how long.\n\nIt is aimed at organisations that want proper managed file storage and sharing but do not need the full Microsoft 365 suite for those users, for example a business moving off shared folders and USB drives, or a company whose email lives elsewhere.\n\nThis is a quote-only product. The price is confirmed on a written quotation; [ask for one](/enquiry). Check first whether you already own it: OneDrive is included in the Microsoft 365 business and enterprise plans.",
+    "included": "Plan 1 provides the core of managed work storage. Typically that means:\n\n- A personal cloud library for each licensed user, synchronised to their devices\n- Access from a browser, Windows, macOS and mobile apps\n- File sharing with internal and external people, with permission and link settings\n- Version history and a recycle bin for recovering earlier or deleted files\n- The ability to redirect Desktop, Documents and Pictures folders into the cloud so a laptop failure does not lose work\n\nWhat it does not include is the compliance layer. Data loss prevention policies, eDiscovery and in-place legal hold are features of [Plan 2](/products/onedrive-for-business-plan-2). The size of the storage allowance for each plan is set by Microsoft and changes from time to time, so we state the current figure in writing on the quotation, not on this page.\n\nEmail, Teams and desktop Office apps come with [Microsoft 365](/microsoft-365) plans.",
+    "whoFor": "**A good fit:**\n\n- A professional-services or trading firm replacing a file server or shared drives with per-person cloud storage\n- An organisation with email on another platform that wants Microsoft storage for selected staff\n- A team that wants folder redirection so laptop data is held in the cloud\n\n**Probably not the right buy:**\n\n- Anyone already on Microsoft 365 Business Basic, Standard or Premium, or an Office 365 or Microsoft 365 enterprise plan, which already include OneDrive\n- A regulated firm that needs legal hold, DLP or eDiscovery on stored files; look at Plan 2\n- A team that mainly needs shared department libraries, which are better served by SharePoint or Teams than by personal libraries",
+    "vs": {
+      "alternative": "OneDrive for Business Plan 2",
+      "alternativeSlug": "onedrive-for-business-plan-2",
+      "intro": "The two plans use the same OneDrive client and the same storage service. The difference is the compliance and governance layer, which matters to some organisations and is irrelevant to others.",
+      "rows": [
+        {
+          "label": "Core job",
+          "thisProduct": "Managed cloud storage and sharing",
+          "alternative": "Storage and sharing plus compliance controls"
+        },
+        {
+          "label": "Sync and web access",
+          "thisProduct": "Yes",
+          "alternative": "Yes"
+        },
+        {
+          "label": "Version history and recycle bin",
+          "thisProduct": "Yes",
+          "alternative": "Yes"
+        },
+        {
+          "label": "Data loss prevention",
+          "thisProduct": "Not in the plan",
+          "alternative": "Included"
+        },
+        {
+          "label": "eDiscovery and legal hold",
+          "thisProduct": "Not in the plan",
+          "alternative": "Included"
+        },
+        {
+          "label": "Storage allowance",
+          "thisProduct": "Confirmed on quotation",
+          "alternative": "Confirmed on quotation"
+        },
+        {
+          "label": "Price",
+          "thisProduct": "Confirmed on quotation",
+          "alternative": "{{price:onedrive-for-business-plan-2}} excl. GST"
+        }
+      ],
+      "verdict": "Choose Plan 1 where the goal is reliable storage, sync and sharing and no policy requires legal hold or data loss prevention. It is the cheaper standard choice for most small and mid-sized offices.\n\nChoose [Plan 2](/products/onedrive-for-business-plan-2) where your legal, risk or audit team needs to preserve, search or protect files in place. If your users will also need email and Office apps, compare a [Microsoft 365 plan](/blog/microsoft-365-business-basic-vs-standard-vs-premium) first, since OneDrive is already inside it."
+    },
+    "licensing": "OneDrive for Business Plan 1 is licensed **per user**. Each person who stores files needs an assigned licence, which is linked to their Microsoft Entra work account and managed in the Microsoft 365 admin centre. A seat can be removed from a leaver and reassigned.\n\nIt is bought as a subscription through Microsoft's cloud licensing programme. We confirm the term and billing option in writing on the quotation.\n\nDecide who takes ownership of a leaver's files before you remove their seat, as content is kept only for a limited period. Our article on [how to buy genuine Microsoft licences in India](/blog/how-to-buy-genuine-microsoft-licences-in-india) explains the purchase route, and a [licence-management service](/services/licence-management) can keep track of seats across products.",
+    "sysreq": "- Windows and macOS sync clients are available; confirm the currently supported versions on Microsoft's published page before rollout\n- iOS and Android apps are available, and any modern browser can use the web interface\n- Sync speed depends on your broadband, so plan the first sync of a large Documents folder out of office hours\n- Folder redirection is configured by an administrator and works best with a short pilot group first",
+    "faqs": [
+      {
+        "question": "Do we need to buy it separately if we have Microsoft 365 Business Standard?",
+        "answer": "No. OneDrive is included in the Microsoft 365 business and enterprise plans. Buy the standalone plan only for users who need storage and nothing else, or whose other tools are on a different platform."
+      },
+      {
+        "question": "What is the OneDrive for Business Plan 1 price in India?",
+        "answer": "It is per user and is confirmed on a written quotation. Tell us the number of users and the term, and we will quote it with a GST invoice, and with your other Microsoft items on one purchase order if you wish."
+      },
+      {
+        "question": "How much storage does each user get?",
+        "answer": "The allowance is set by Microsoft and changes from time to time, including the process for requesting more. We state the current figure in writing on the quotation, so you are not relying on an older number from a web page."
+      },
+      {
+        "question": "Can we move our file server into OneDrive?",
+        "answer": "Personal files can be moved, and folder redirection helps. Shared department folders usually fit SharePoint or Teams better than personal libraries. A migration plan should cover permissions, long file paths and what to do with leaver content; our [Microsoft 365 services](/services/microsoft-365) team can help plan it."
+      },
+      {
+        "question": "Does Plan 1 protect against accidental deletion?",
+        "answer": "It includes version history and a recycle bin, so many accidental changes and deletions can be reversed within the retention period. It is not a full backup in the sense of an independent copy. Organisations with strict recovery requirements should add a separate backup."
+      }
+    ],
+    "related": [
+      "onedrive-for-business-plan-2",
+      "microsoft-365-business-basic",
+      "microsoft-365-business-standard",
+      "microsoft-365-business-premium"
+    ]
+  },
+  "power-bi-premium-per-user": {
+    "slug": "power-bi-premium-per-user",
+    "displayName": "Power BI Premium Per User",
+    "licensingHeading": "How the subscription works",
+    "intro": "Power BI Premium Per User, usually shortened to PPU, gives each licensed person the premium Power BI features without buying dedicated capacity for the whole organisation. It sits above Power BI Pro: everything Pro does, plus larger models, more frequent refresh, paginated reports and other advanced capabilities.\n\nIt suits a small group of analysts whose work has outgrown Pro, for example a finance data team whose model no longer fits, or a reporting unit that must produce fixed-layout paginated statements. It is not a company-wide dashboard licence.\n\nThe price is per user and is confirmed on a written quotation rather than on this page. [Ask for one](/enquiry) with the number of premium authors and the audience that will open their content. We can quote it on one purchase order with your other Microsoft products.",
+    "included": "Power BI Premium Per User gives each licensed user access to premium capabilities in the Power BI service. In outline:\n\n- Everything in [Power BI Pro](/products/power-bi-pro), including publishing, shared workspaces and apps\n- Higher limits on data model size and on how often data can refresh\n- Paginated reports, the fixed-layout format used for invoices, statements and regulatory outputs\n- Deployment pipelines for moving a report through development, test and production\n- Advanced data preparation and AI-assisted features that are restricted on Pro\n\nThe rule that surprises buyers is about the audience. Content in a Premium Per User workspace can only be opened by people who also hold a Premium Per User licence, or by users of Premium capacity. Giving a Pro user a link is not enough.\n\nMicrosoft revises the feature list, so we check it against your report before quoting.",
+    "whoFor": "**A good fit:**\n\n- A central finance or business-intelligence team of a handful of authors working with large datasets\n- A reporting unit that must publish paginated statements, schedules or compliance outputs\n- A group that wants controlled development-to-production release of reports\n\n**Probably not the right buy:**\n\n- A department with ordinary dashboards that fit within Pro limits\n- An organisation where hundreds of staff must view the output; per-user premium for every reader is rarely sensible, and dedicated capacity should be evaluated instead\n- Individual users who will not use any premium feature, since they pay more for headroom they never touch",
+    "vs": {
+      "alternative": "Power BI Pro",
+      "alternativeSlug": "power-bi-pro",
+      "intro": "This is a step-up decision, not a rival-product decision. Both licences use the same service and the same Desktop tool, so you can begin on Pro and move particular people to Premium Per User later.\n\nThe table lists the stable differences. Specific limits are Microsoft's to set and change.",
+      "rows": [
+        {
+          "label": "Core idea",
+          "thisProduct": "Pro features plus premium features per user",
+          "alternative": "Publish and share reports per user"
+        },
+        {
+          "label": "Model size and refresh",
+          "thisProduct": "Higher limits",
+          "alternative": "Standard limits"
+        },
+        {
+          "label": "Paginated reports",
+          "thisProduct": "Available",
+          "alternative": "Not part of Pro"
+        },
+        {
+          "label": "Deployment pipelines",
+          "thisProduct": "Available",
+          "alternative": "Not part of Pro"
+        },
+        {
+          "label": "Audience for shared content",
+          "thisProduct": "Other Premium Per User users, or Premium capacity users",
+          "alternative": "Other licensed Pro users"
+        },
+        {
+          "label": "Licence model",
+          "thisProduct": "Per user",
+          "alternative": "Per user"
+        },
+        {
+          "label": "Price",
+          "thisProduct": "Confirmed on quotation",
+          "alternative": "Confirmed on quotation"
+        }
+      ],
+      "verdict": "Choose Premium Per User for the small set of people who build large or specialised reports and can name the feature they need. Keep everyone else on [Pro](/products/power-bi-pro).\n\nIf the real need is for many people to read premium content, price dedicated capacity or Microsoft's current capacity-based options rather than licensing every reader per user. We can walk through both routes before you commit."
+    },
+    "licensing": "Premium Per User is licensed **per user**. Each author and each reader of premium-workspace content needs an assigned licence in your Microsoft Entra tenant, and licences are assigned and reclaimed through the Microsoft 365 admin centre.\n\nIt is bought as a subscription through Microsoft's cloud licensing programme, normally on an annual commitment. We confirm the term in writing on the quotation.\n\nThe features sit at user level, not tenant level. A workspace set to Premium Per User behaves differently from a standard workspace, and moving content between the two has consequences for who can open it. Plan the workspace layout and the licence list together.\n\nSee the [Microsoft licensing guide](/blog/microsoft-365-licensing-guide-for-indian-businesses) and [CSP versus Enterprise Agreement](/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model) for how the buying route affects renewals.",
+    "sysreq": "- The Power BI service runs in a modern browser; Premium Per User needs no extra client software for consumers\n- Authors build in Power BI Desktop, which runs on Windows. Large models are memory-hungry, so choose workstations with generous RAM, typically more than a standard office laptop\n- Scheduled refresh from on-premises sources typically needs a gateway on a server that is always on\n- Confirm the latest requirements on Microsoft's published pages before you order hardware",
+    "faqs": [
+      {
+        "question": "Can a Pro user open reports that sit in a Premium Per User workspace?",
+        "answer": "No, not on Pro alone. Content in a Premium Per User workspace is for people who hold the same licence, or who use dedicated Premium capacity. This single rule often decides whether PPU is practical, so count your readers before you buy."
+      },
+      {
+        "question": "What is the Power BI Premium Per User price in India?",
+        "answer": "The price is per user and is confirmed on a written quotation, because it depends on term and purchase route. Give us the number of authors and readers, and we will quote it with a GST invoice and, if you wish, on one purchase order with your other Microsoft items."
+      },
+      {
+        "question": "Is Premium Per User a replacement for dedicated capacity?",
+        "answer": "Not always. It suits small teams who need premium features. If many people must read premium content, per-user licensing for all of them may cost more than capacity, and Microsoft's capacity options have been changing. We compare both before recommending one."
+      },
+      {
+        "question": "Do we need Pro as well as Premium Per User?",
+        "answer": "No. Premium Per User includes the Pro capabilities for the licensed person, so you would not buy both for the same user. Other people in your team can stay on Pro as long as they do not need to open premium-workspace content."
+      },
+      {
+        "question": "What are paginated reports used for?",
+        "answer": "They produce fixed-layout, print-style output such as invoices, statements, schedules and compliance returns, where every page must look the same regardless of the data. Standard dashboards are better for exploring data. If you do not need print-style output, you may not need this tier."
+      }
+    ],
+    "related": [
+      "power-bi-pro",
+      "microsoft-365-e5",
+      "microsoft-365-business-premium",
+      "azure-consumption-commitment"
+    ]
+  },
+  "power-bi-pro": {
+    "slug": "power-bi-pro",
+    "displayName": "Microsoft Power BI Pro",
+    "licensingHeading": "How the subscription works",
+    "intro": "Power BI Pro is Microsoft's per-user licence for building, publishing and sharing business dashboards and reports. The authoring tool, Power BI Desktop, is free to download, so the Pro licence is not what lets you draw a chart. It is what lets you publish a report to the Power BI service, collaborate in shared workspaces and share the result with colleagues.\n\nIn India the typical buyer is a finance, sales-operations or MIS team with numbers in Excel, SQL Server or a CRM. Power BI Pro is quoted per user; the price is confirmed on a written quotation, not on this page, and we can include it on one purchase order with your other Microsoft items. [Ask for a quotation](/enquiry).",
+    "included": "Power BI Pro is a per-user subscription for the Power BI service. In practical terms a licensed user can:\n\n- Publish reports and datasets from Power BI Desktop to the cloud service\n- Work in shared workspaces with colleagues, rather than emailing files around\n- Schedule data refresh so a dashboard reflects current figures\n- Share dashboards and reports with other licensed users, and view content others have shared\n\nTwo points are worth understanding before you count seats. First, the person who consumes shared content normally needs a licence of their own, unless the content sits in a workspace backed by dedicated capacity at a suitable level. Second, the amount of data a model can hold and the number of refreshes per day have limits that are lower than on the premium tier. Microsoft changes those limits, so we confirm them when we quote.\n\nPower BI Pro is also bundled into some Microsoft 365 enterprise plans. If your organisation is on one of those, check before buying separately; see the [Microsoft 365 licensing guide](/blog/microsoft-365-licensing-guide-for-indian-businesses).",
+    "whoFor": "**A good fit:**\n\n- A finance or MIS team publishing monthly management reports from Excel, SQL or an accounting export\n- Sales-operations staff who build pipeline and target-versus-actual dashboards from a CRM\n- A company with a small number of analysts and a larger number of viewers, where the analysts hold Pro and the viewing arrangement is planned deliberately\n\n**Probably not the right buy:**\n\n- Someone who only needs a chart inside Excel; Excel already does that\n- A team that needs large models, very frequent refresh or paginated pixel-perfect reports; compare [Power BI Premium Per User](/products/power-bi-premium-per-user)",
+    "vs": {
+      "alternative": "Power BI Premium Per User",
+      "alternativeSlug": "power-bi-premium-per-user",
+      "intro": "Pro and Premium Per User use the same service and the same Desktop tool. Premium Per User raises limits and adds advanced features for each licensed person. Exact limits are Microsoft's, so we quote no numbers.",
+      "rows": [
+        {
+          "label": "Core idea",
+          "thisProduct": "Publish and share reports per user",
+          "alternative": "Pro, plus premium features per user"
+        },
+        {
+          "label": "Authoring tool",
+          "thisProduct": "Power BI Desktop, free",
+          "alternative": "Power BI Desktop, free"
+        },
+        {
+          "label": "Data model size and refresh",
+          "thisProduct": "Standard limits",
+          "alternative": "Higher limits"
+        },
+        {
+          "label": "Advanced features",
+          "thisProduct": "Not the focus",
+          "alternative": "Paginated reports, deployment pipelines and similar premium capabilities"
+        },
+        {
+          "label": "Who can open shared content",
+          "thisProduct": "Other licensed users",
+          "alternative": "Other Premium Per User users for content in a Premium Per User workspace"
+        },
+        {
+          "label": "Licence model",
+          "thisProduct": "Per user",
+          "alternative": "Per user"
+        },
+        {
+          "label": "Price",
+          "thisProduct": "Confirmed on quotation",
+          "alternative": "Confirmed on quotation"
+        }
+      ],
+      "verdict": "Start with Pro unless you can name a feature or limit that Pro does not cover. Most departmental reporting, including monthly MIS packs and sales dashboards, runs comfortably on it.\n\nMove the specific people who hit a limit to [Premium Per User](/products/power-bi-premium-per-user). Mixing is possible, but the audience for premium-workspace content must be licensed to match, so decide that before building the report."
+    },
+    "licensing": "Power BI Pro is licensed **per user**. Each person who publishes, shares or collaborates in the service needs an assigned licence, which is tied to their Microsoft Entra ID work account in your tenant. Licences are assigned and removed in the Microsoft 365 admin centre, so a leaver's seat can be reclaimed and reissued.\n\nIt is bought as a subscription through the cloud licensing programme, normally with an annual commitment, although monthly billing options exist for some purchase routes. We confirm the term in writing on the quotation.\n\nIf you already hold Microsoft 365 E5, Power BI Pro is part of that plan, and a second purchase would be a duplicate. See [CSP versus Enterprise Agreement](/blog/csp-vs-enterprise-agreement-which-microsoft-licensing-model) for how the route affects billing. We help assign seats after purchase.",
+    "sysreq": "- The Power BI service runs in a modern browser; there is nothing to install for consumption\n- Power BI Desktop is a Windows application, so analysts building reports need a Windows PC. Mac users usually work through a virtual machine or the browser for editing\n- Refreshing from on-premises sources such as SQL Server normally needs a data gateway installed on a server that stays on\n- Microsoft publishes current requirements per release; confirm them before you order hardware",
+    "faqs": [
+      {
+        "question": "Do I need Power BI Pro to use Power BI Desktop?",
+        "answer": "No. Power BI Desktop is free to download and build reports in. The Pro licence is needed when you publish to the Power BI service and share with other people. Many teams pilot in Desktop first and buy Pro seats once a report is worth sharing."
+      },
+      {
+        "question": "Do the people who only view reports need Pro as well?",
+        "answer": "Usually yes, when the report is shared through a standard workspace. The exception is content hosted on dedicated capacity at a suitable level, where viewers can sometimes use a free account. Because this changes the total licence count considerably, tell us how many viewers you expect when you ask for a quotation."
+      },
+      {
+        "question": "What is the Power BI Pro price in India?",
+        "answer": "It is per user and is confirmed on a written quotation, because the figure depends on term, billing option and the purchase route. Ask us with the number of authors and viewers, and we will quote against a GST invoice on one purchase order alongside your other Microsoft items."
+      },
+      {
+        "question": "Is Power BI Pro included in Microsoft 365?",
+        "answer": "It is included in some enterprise plans, such as Microsoft 365 E5, and not in Business Basic, Standard or Premium. Check your plan before buying a duplicate seat."
+      },
+      {
+        "question": "Does Pro let us keep data on-premises?",
+        "answer": "Power BI Pro publishes to Microsoft's cloud service. Data can be refreshed from on-premises sources through a gateway, but the published dataset is held in the service. If your policy forbids that, discuss it with us before purchase."
+      }
+    ],
+    "related": [
+      "power-bi-premium-per-user",
+      "microsoft-365-e5",
+      "microsoft-365-business-premium",
+      "onedrive-for-business-plan-1"
+    ]
+  },
   "revit": {
     "slug": "revit",
     "displayName": "Revit",
@@ -908,6 +1883,83 @@ export const PRODUCT_GUIDE_DATA: Record<string, ProductGuide> = {
       "autodesk-revit-lt",
       "aec-collection",
       "autocad"
+    ]
+  },
+  "windows-11-pro-upgrade": {
+    "slug": "windows-11-pro-upgrade",
+    "displayName": "Windows 11 Pro",
+    "seoName": "Windows 11 Pro",
+    "licensingHeading": "Upgrade, full, OEM and volume licences",
+    "intro": "Windows 11 Pro is the business edition of Windows: it can join a company domain or Microsoft Entra ID, be managed with Group Policy or Intune, encrypt drives with BitLocker and accept Remote Desktop connections. New PCs often arrive with Home, which lacks those functions.\n\nWe list two ways to buy it. The **Upgrade** takes a device already running a qualifying Windows edition up to Pro, and the website price is {{price:windows-11-pro-upgrade}} excluding GST, or {{gst:windows-11-pro-upgrade}} with 18% GST. The **Full licence** is for a machine with no qualifying Windows licence and is quoted on request; [ask for a quotation](/enquiry). A written quotation fixes either price.",
+    "included": "Windows 11 Pro adds to Home the capabilities a managed office relies on:\n\n- Domain join and Microsoft Entra ID join\n- Group Policy and Windows Update for Business\n- BitLocker drive encryption with recovery keys held centrally\n- Remote Desktop host, so a PC can be reached from another\n- Hyper-V virtual machines and Windows Sandbox\n- Enrolment into Intune and similar device-management platforms\n\nIt is a perpetual, per-device licence rather than a subscription. Windows 11 Pro does not include Microsoft 365 apps, which are licensed separately; see [Microsoft 365 plans](/microsoft-365).\n\nBoth variants give the same Pro edition. For the cost view, read [Windows 11 Pro upgrade licence price in India](/blog/windows-11-pro-upgrade-licence-price-in-india).",
+    "whoFor": "**A good fit:**\n\n- A company whose new laptops shipped with Home and which now needs domain join, Intune or BitLocker\n- A small office building PCs from components that has no operating system licence\n\n**Probably not the right buy:**\n\n- Organisations already on Microsoft 365 Business Premium or an enterprise plan, which include Windows business rights through the subscription; check before paying twice\n- Fleets of several hundred seats with centralised policy needs, where Enterprise through a volume programme may fit better",
+    "vs": {
+      "alternative": "Windows 11 Enterprise and Home",
+      "alternativeSlug": "microsoft-365-e3",
+      "intro": "Home, Pro and Enterprise are three tiers of one operating system. Home is for individuals, Pro is the normal business edition, and Enterprise adds advanced security and management for large organisations. Enterprise is generally obtained through volume or subscription programmes, not bought as a single box.",
+      "rows": [
+        {
+          "label": "Intended user",
+          "thisProduct": "Small and mid-sized business",
+          "alternative": "Home: individuals. Enterprise: large organisations"
+        },
+        {
+          "label": "Domain or Entra ID join",
+          "thisProduct": "Yes",
+          "alternative": "Home: no. Enterprise: yes"
+        },
+        {
+          "label": "BitLocker and Group Policy",
+          "thisProduct": "Yes",
+          "alternative": "Home: not with these management features. Enterprise: yes"
+        },
+        {
+          "label": "Advanced enterprise security",
+          "thisProduct": "Not at Enterprise level",
+          "alternative": "Enterprise: additional security and management features"
+        },
+        {
+          "label": "How it is bought",
+          "thisProduct": "Upgrade or full licence",
+          "alternative": "Enterprise: via subscription or volume programme"
+        },
+        {
+          "label": "Upgrade price (ex GST)",
+          "thisProduct": "{{price:windows-11-pro-upgrade}}",
+          "alternative": "Confirmed on quotation"
+        }
+      ],
+      "verdict": "Pro is the right edition for most Indian offices. Choose Home only for personal machines. Look at Enterprise when you want its advanced features across hundreds of devices, usually through a Microsoft 365 enterprise plan.\n\nOur article on [Windows 11 Pro versus Enterprise for business](/blog/windows-11-pro-versus-enterprise-for-business) sets out when the larger edition earns its cost. If you also need [Microsoft 365 Business Premium](/products/microsoft-365-business-premium), it covers Windows business rights for eligible devices, so confirm before buying separately."
+    },
+    "licensing": "**Upgrade versus full.** The Upgrade licence requires an existing, genuine and qualifying Windows licence on the device, such as Windows 11 Home or Windows 10 Home. It is not a licence for a machine with no operating system. The Full licence stands on its own and suits a new build or a machine without Windows. If you are unsure which applies, send us the device list and we will say.\n\n**OEM, retail and volume, in general terms.** An OEM licence comes preinstalled by the hardware maker and is tied to that device. A retail licence is bought separately and is normally transferable between devices under Microsoft's terms. Volume licensing is a programme for organisations and often provides upgrade rights for devices that already have a qualifying edition. We confirm the terms of your channel in writing.\n\nThe product is per device and perpetual. See [how to buy genuine Microsoft licences in India](/blog/how-to-buy-genuine-microsoft-licences-in-india). Every order carries a GST invoice, and we help with activation.",
+    "sysreq": "- Processor: 1 GHz or faster with at least two cores, 64-bit, on Microsoft's list of supported processors\n- Memory and storage: at least 4 GB of RAM and 64 GB of storage\n- Firmware: UEFI with Secure Boot capability\n- Security chip: Trusted Platform Module (TPM) 2.0 is required, and many older PCs lack it or have it switched off in firmware\n- Graphics: DirectX 12 compatible\n- Run Microsoft's PC Health Check before ordering, and confirm current requirements on Microsoft's published page",
+    "faqs": [
+      {
+        "question": "Can I upgrade a Windows 10 Home machine to Windows 11 Pro?",
+        "answer": "If the hardware meets the Windows 11 requirements, including TPM 2.0 and Secure Boot, the machine can move to Windows 11 and then to Pro. Windows 10 reached end of support in October 2025, so unsupported machines are a security concern. Check each model with the PC Health Check tool."
+      },
+      {
+        "question": "What is the Windows 11 Pro upgrade price in India?",
+        "answer": "The website price of the Upgrade is {{price:windows-11-pro-upgrade}} excluding GST, or {{gst:windows-11-pro-upgrade}} with 18% GST, per device. A written quotation fixes it. The Full licence is quoted separately, because it depends on the channel and quantity."
+      },
+      {
+        "question": "Which one do I need, Upgrade or Full licence?",
+        "answer": "Buy the Upgrade if every device already runs a genuine qualifying Windows edition. Buy the Full licence if a device has no Windows, for example a self-assembled PC. Mixed estates are common, so send us the device list and we will quote each group accordingly."
+      },
+      {
+        "question": "Will TPM 2.0 be a problem on our older PCs?",
+        "answer": "It can be. Many machines from the last several years have TPM 2.0 but have it disabled, which can be switched on in firmware. Others lack it and cannot officially run Windows 11. Test a sample of each model before ordering licences for a whole fleet."
+      },
+      {
+        "question": "Do we need Enterprise instead of Pro?",
+        "answer": "Most small and mid-sized organisations do not. Enterprise suits large estates that want its additional security and management features, usually through a Microsoft 365 enterprise plan. Read the Pro versus Enterprise article linked above and ask us if you are close to the line."
+      }
+    ],
+    "related": [
+      "microsoft-365-business-premium",
+      "microsoft-365-business-standard",
+      "microsoft-365-e3",
+      "windows-server-2025-standard"
     ]
   }
 };

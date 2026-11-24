@@ -2,6 +2,181 @@
 import type { CategoryGuide } from "./guides";
 
 export const CATEGORY_GUIDE_DATA: Record<string, CategoryGuide> = {
+  "antivirus-endpoint-security": {
+    "slug": "antivirus-endpoint-security",
+    "h1": "Antivirus and Endpoint Security in India: Kaspersky and Sophos",
+    "intro": "Every laptop, desktop and server in your business is a way in. Email attachments, fake invoices, infected USB drives and compromised websites all end at an endpoint, and a single unprotected machine can become the route to your file server. Choosing endpoint security means deciding how much protection and visibility you need, how many devices you have, and who will watch the console.\n\nThis guide explains the difference between antivirus and endpoint detection and response, how to choose using a decision rule, how licensing is usually structured by device count and term, and what to check when buying in India. It is written for the IT head or admin manager who has to protect a mixed fleet of Windows PCs, laptops and a few servers without a dedicated security team.\n\nOn availability: TechZoid has no catalogue products or website prices for Kaspersky or Sophos. We quote both on request, to your device counts and feature needs, and the price is fixed only by a written quotation. Read the [Kaspersky](/brands/kaspersky) and [Sophos](/brands/sophos) pages and send your requirement through the [enquiry form](/enquiry).",
+    "sections": [
+      {
+        "heading": "Antivirus, endpoint protection and EDR: what each one means",
+        "markdown": "The terms overlap in marketing, so use these working definitions.\n\n- **Antivirus.** Traditional protection that scans files and blocks known malware, usually with some behaviour-based detection. It is the baseline.\n- **Endpoint protection.** A broader product that adds a firewall, web and device control, exploit protection, patch or vulnerability features and often a central console. Most business suites sit here.\n- **EDR (endpoint detection and response).** Records what happens on each device, so that your team or a service can investigate, see how an attack unfolded, and isolate a machine or roll back changes. It generates more data and alerts, and it needs people to look at them.\n- **Managed detection and response (MDR).** A service in which the publisher's or a partner's analysts monitor alerts for you. It is for organisations without a security team.\n\nAntivirus tells you a file was blocked. EDR helps you answer what else the attacker touched. For a small office with no one to read alerts, a good endpoint suite with a central console is usually the sensible starting point. For a business that handles sensitive data, or has already had an incident, EDR or a managed service is worth discussing."
+      },
+      {
+        "heading": "How to choose: a practical decision rule",
+        "markdown": "Answer these questions before comparing brands.\n\n1. **How many devices, and which types?** Count Windows PCs, laptops, servers, Macs and mobile phones separately, because the product and the licence may differ for each.\n2. **Who watches the console?** If the answer is nobody full-time, favour simple, well-tuned prevention and a clear weekly report. If you have a trained engineer, EDR becomes useful. If you want monitoring without hiring, ask about managed services.\n3. **How exposed are you?** Remote staff, client data, regulated information and recent incidents all justify a step up in protection.\n4. **What else do you run?** If you already have a [firewall](/firewall-security) from the same brand, check whether the two products share intelligence or a console. Do not choose a brand for that reason alone.\n5. **Do you already own protection?** Microsoft 365 Business Premium includes Microsoft Defender for Business, so check what you have before paying twice. Our article on [the security you already own in Business Premium](/blog/microsoft-365-business-premium-security-you-already-own) explains it.\n\n**The decision rule:** for fewer than about fifty devices with no security staff, a central-console endpoint suite on every device is the minimum. Add EDR for roles and servers that matter most, rather than for everyone, if budget is tight. Add managed detection where nobody can respond out of hours.\n\nOn brands: Kaspersky and Sophos are both established business security publishers, and the right choice depends on the console your team prefers, support and the features you want. Ask us for a side-by-side on one quotation. We do not recommend one over the other without knowing your fleet. Some government and public-sector buyers have policies on particular security brands; check your own procurement rules before shortlisting."
+      },
+      {
+        "heading": "How licensing, terms and consoles work",
+        "markdown": "Business endpoint products are normally sold as **subscriptions per device**, for a fixed term such as one, two or three years. A few points apply across brands:\n\n- **Count by device.** Servers are often priced or packaged differently from workstations, and mobile devices may be a separate item. List each type in your enquiry.\n- **Tiers and bundles.** Publishers sell tiers, from basic protection to fuller suites with EDR and additional modules. Tier names and contents change, so we ask you for the features you need and set out the matching options on the quotation.\n- **Central console.** Most business products are managed from a cloud console or an on-premises server. Cloud consoles are quicker to start and need no server. Check where the console data is stored and who can access it.\n- **Minimum quantities.** Business licences may have a minimum device count. Ask on the quotation.\n- **Term and renewal.** Protection stops updating when the subscription ends. Put the expiry date in your calendar, and review the count at renewal so you do not pay for retired laptops. See [what to check before a software renewal](/blog/what-to-check-before-a-software-renewal) and [the hidden cost of unused software licences](/blog/hidden-cost-of-unused-software-licences).\n- **Consumer products are not business products.** A retail licence has no central management and may not permit commercial use. Buy a business licence."
+      },
+      {
+        "heading": "Common mistakes when buying endpoint security",
+        "markdown": "- **Installing it without a console.** Without central management you do not know which devices are protected, out of date or switched off.\n- **Buying EDR with no one to read it.** Alerts nobody reviews add cost without adding protection. Pair it with a monitoring service or a trained person.\n- **Counting devices wrongly.** Forgetting servers, spare laptops and remote staff leaves gaps, and counting retired devices wastes money. Reconcile against your asset list.\n- **Running two security products at once.** Two active real-time scanners on one device often conflict and slow it down. Plan the changeover and remove the old product properly.\n- **Letting the subscription lapse.** An expired licence stops updates and may disable protection.\n- **Treating endpoint security as the whole answer.** It does not replace patching, multi-factor sign-in, a firewall or tested [backups](/backup-software). A proper layered plan is described in our [cybersecurity service](/services/cybersecurity).\n- **Using unlicensed copies.** They cannot be updated reliably and create audit exposure; read [preparing for a software licence audit](/blog/preparing-for-a-software-licence-audit)."
+      },
+      {
+        "heading": "Buying notes for India",
+        "markdown": "- **Written quotation.** We quote Kaspersky and Sophos on request, so the quotation is your price document. Send device counts by type, the term you want, whether you need EDR or managed detection, and the console type you prefer. Ask for each tier and quantity on its own line.\n- **GST invoice.** Every TechZoid order is invoiced with GST. Give us your registered entity name and GSTIN before the invoice is raised. GST-registered buyers can usually claim input credit; see [GST input credit on software purchases](/blog/gst-input-credit-on-software-purchases) and confirm with your accountant.\n- **Purchase order.** We accept orders against your purchase order and can quote security together with laptops, servers, networking and other software on one PO across brands. See [IT procurement](/services/it-procurement).\n- **Activation and setup.** We help with activation and with assigning seats. Tell us if you also want help deploying agents across devices; our [endpoint management](/services/endpoint-management) service is relevant.\n- **Procurement policies.** Government departments and some regulated sectors may have rules on which security products can be bought. Check these first and tell us when you request the quotation. See [how government departments procure genuine software](/blog/how-government-departments-procure-genuine-software).\n\nIf you also need new devices, read our [business laptops](/business-laptops) guide."
+      }
+    ],
+    "products": [],
+    "faqs": [
+      {
+        "question": "Do you list Kaspersky and Sophos products with prices?",
+        "answer": "No. TechZoid has no catalogue products or website prices for these brands. We quote them on request, to your device counts and feature needs, and a written quotation fixes the price."
+      },
+      {
+        "question": "What is the difference between antivirus and EDR?",
+        "answer": "Antivirus blocks known malware and suspicious behaviour. EDR also records what happens on devices so that someone can investigate an attack, see what it touched and isolate machines. EDR is more capable, but it needs people or a service to act on its alerts."
+      },
+      {
+        "question": "Do we need a central console?",
+        "answer": "For a business, yes. A console shows which devices are protected, which are out of date, and which have threats, and lets you set policy for everyone. Without it, each laptop is managed by whoever uses it."
+      },
+      {
+        "question": "How do we count devices for a quotation?",
+        "answer": "List Windows PCs and laptops, servers, Macs and any mobile devices separately, plus the term you want. Servers and mobile devices are often licensed differently from workstations. Include spares that will actually be used."
+      },
+      {
+        "question": "Can we use a retail antivirus licence in the office?",
+        "answer": "It is not advisable. Retail licences usually lack central management and may not permit business use. Buy a business licence so that you can manage and renew devices as a group."
+      },
+      {
+        "question": "We have Microsoft 365 Business Premium. Do we still need endpoint security?",
+        "answer": "Business Premium includes Microsoft Defender for Business, so you may already own endpoint protection. Check what is deployed first, then decide whether you need an additional product, for example for servers or a different console."
+      },
+      {
+        "question": "Can you quote Kaspersky and Sophos together for comparison?",
+        "answer": "Yes. Send your device counts and feature needs through the enquiry page and we will set out both on written quotations, with a GST invoice and acceptance of your purchase order."
+      }
+    ],
+    "related": [
+      {
+        "href": "/firewall-security",
+        "label": "Firewall security in India"
+      },
+      {
+        "href": "/backup-software",
+        "label": "Backup software in India"
+      },
+      {
+        "href": "/services/cybersecurity",
+        "label": "Cybersecurity services"
+      },
+      {
+        "href": "/blog/microsoft-365-business-premium-security-you-already-own",
+        "label": "The security you already own in Microsoft 365 Business Premium"
+      },
+      {
+        "href": "/blog/hidden-cost-of-unused-software-licences",
+        "label": "The hidden cost of unused software licences"
+      }
+    ],
+    "title": "Antivirus & Endpoint Security in India – Kaspersky & Sophos | Quote & Guide",
+    "description": "Antivirus and endpoint security for Indian businesses: Kaspersky and Sophos compared, quoted per device with a GST invoice from TechZoid. Get a quote today.",
+    "brands": [
+      "kaspersky",
+      "sophos"
+    ]
+  },
+  "backup-software": {
+    "slug": "backup-software",
+    "h1": "Backup Software in India: Acronis and Business Backup Planning",
+    "intro": "Most businesses find out whether their backup works on the worst day of the year. A server fails, ransomware encrypts a file share, or someone deletes a shared mailbox, and the question becomes how much data is gone and how long the office is down. Backup software is the tool that answers both questions, but only if it was chosen and tested against the right targets.\n\nThis guide explains what backup software does, how to choose using recovery point and recovery time objectives, how licensing is usually structured, what to check about Microsoft 365 data, and what to look at when buying in India. It is written for the IT head or owner who has a backup of some kind and is not sure it would survive a real failure.\n\nOn availability: TechZoid has no catalogue products or website prices for Acronis. We quote Acronis on request, to your configuration, and the price is confirmed by a written quotation. Read the [Acronis brand page](/brands/acronis) and send your requirement through the [enquiry form](/enquiry). TechZoid also provides a [backup and disaster recovery service](/services/backup-disaster-recovery) if you want help planning instead of just buying software.",
+    "sections": [
+      {
+        "heading": "What backup software does",
+        "markdown": "Backup software copies your data to somewhere else on a schedule, keeps several versions, and lets you restore what you need. The jobs it covers differ, so list yours:\n\n- **File and folder backup.** Copying documents and shared drives so a deleted or corrupted file can be recovered from an earlier version.\n- **Server and image backup.** Capturing a whole server or virtual machine, including the operating system and applications, so you can rebuild it quickly.\n- **Database and application backup.** Capturing databases consistently, so the copy is usable rather than half-written.\n- **Workstation and laptop backup.** Protecting data on devices that leave the office.\n- **Cloud workload and Microsoft 365 backup.** Copying cloud servers and tenant data such as mail, files and Teams content.\n- **Replication and disaster recovery.** Keeping a recoverable copy at a second location so you can restart elsewhere if your office or server room is lost.\n\nBackup is also different from sync and from high availability. A synced folder copies a deletion or an encrypted file instantly. A clustered server survives a hardware failure but not a corrupted database. Backup keeps older, separate copies you can go back to."
+      },
+      {
+        "heading": "How to choose: RPO, RTO and the 3-2-1 rule",
+        "markdown": "Start from two business numbers, not from product names.\n\n- **RPO (recovery point objective):** how much data you can afford to lose, measured in time. If you can accept losing a day of work, nightly backups meet it. If losing an hour of invoices is unacceptable, you need backups or replication every hour or more often.\n- **RTO (recovery time objective):** how long you can be without the system. If a server must be back in an hour, a restore from slow storage across the internet may not meet it. If you can wait a day, a cheaper design is fine.\n\nSet different targets per system. The accounting server, the file share and a rarely used test machine do not need the same treatment, and tiering them is how you control cost.\n\nThen apply the **3-2-1 rule** as a baseline: keep three copies of your data, on two different types of storage, with one copy offsite. Many teams now add that at least one copy should be immutable or offline, so ransomware that reaches your network cannot delete the backups. Check that the product and design you are quoted can actually deliver that.\n\n**The decision rule:** list your systems, give each an RPO and RTO, then choose the software and storage that meet the tightest targets, and test a restore before you rely on it. If a quotation does not say where the copies will live and how long a full restore takes, ask."
+      },
+      {
+        "heading": "Acronis, and how licensing is usually structured",
+        "markdown": "Acronis is a backup and cyber protection publisher that sells to businesses and service providers. We quote it on request. It is not in our catalogue, so we cannot show a price or stock here, and we do not list individual editions. Tell us your servers, workstations, cloud workloads and storage preference, and we will quote against them. See the [Acronis page](/brands/acronis) for more.\n\nBackup licensing varies between products, so ask which model applies to the quotation. The common patterns are:\n\n- **Per device or workload.** A licence for each server, virtual host, workstation or database, sometimes with different prices per type.\n- **Per user.** Common for Microsoft 365 and similar cloud services, often counted per mailbox or user.\n- **Per capacity.** Charged by the amount of data stored, which grows as your data does.\n- **Subscription or perpetual.** Many backup products are now sold as subscriptions with a fixed term, often with cloud storage included or sold separately. Our article on [perpetual versus subscription licensing](/blog/perpetual-versus-subscription-software-licensing) covers how to weigh the two.\n\nThe things to ask on any quotation: what is counted, what happens when the data grows, where backups are stored and who pays for that storage, the term and renewal method, and what support level is included. Keep the renewal date visible, as a lapsed backup subscription can leave you with no way to restore new data."
+      },
+      {
+        "heading": "Microsoft 365 and cloud data need their own backup",
+        "markdown": "A frequent assumption is that Microsoft 365 backs everything up. Microsoft keeps the service running and offers retention and recovery features, but the responsibility for your data, including protection against deletion, ransomware, a departing employee wiping their mailbox or an administrator error, sits with you. Retention policies and recycle bins help for a limited time and are not the same as an independent backup.\n\nIf your business runs on Exchange Online, SharePoint, OneDrive and Teams, ask whether the backup product covers those, how often it runs, and how granular a restore can be, for example one mailbox, one folder or one site. The same question applies to cloud servers on [Azure](/services/azure), [AWS](/services/aws) or [Google Cloud](/services/google-cloud): native snapshots are useful but may not meet your retention or separation needs.\n\nIf you are planning a move to the cloud, build backup into the plan from the start. Our article on [planning a cloud migration that does not cost more](/blog/planning-a-cloud-migration-that-does-not-cost-more) covers the costs people forget, and our [Microsoft 365 services](/services/microsoft-365) can help with the tenant side."
+      },
+      {
+        "heading": "Common mistakes when buying backup",
+        "markdown": "- **Never testing a restore.** A backup that has never been restored is a hope, not a plan. Schedule a test and record how long it took.\n- **Keeping backups on the same network share.** Ransomware that reaches the server often reaches the backup folder too. Keep an offsite and an immutable or offline copy.\n- **Choosing on capacity and forgetting growth.** Data and retention grow every year. Ask how pricing changes.\n- **One policy for everything.** Give critical systems tighter targets and low-value ones looser targets.\n- **Ignoring Microsoft 365.** See the section above.\n- **No owner and no alerts.** Someone must read failure reports. A backup that failed quietly for two months is common.\n- **Confusing backup with security.** Backup helps you recover after an attack. It does not stop one. Pair it with a [firewall](/firewall-security) and [endpoint security](/antivirus-endpoint-security)."
+      },
+      {
+        "heading": "Buying notes for India",
+        "markdown": "- **Written quotation.** Since we quote Acronis on request, the quotation is your price document. Send the number and type of workloads, the data volume, retention needs and whether you want cloud or on-premises storage. Ask for each component, licences, storage and support, on its own line.\n- **GST invoice.** Every TechZoid order is invoiced with GST; give us your registered entity name and GSTIN before the invoice is raised. GST-registered buyers can usually claim input credit; read [GST input credit on software purchases](/blog/gst-input-credit-on-software-purchases) and confirm with your accountant.\n- **Purchase order.** We accept orders against your purchase order, and can quote backup together with servers, storage and software on one PO across brands. See [IT procurement](/services/it-procurement).\n- **Data location.** If you have regulatory or contractual limits on where data is stored, say so before choosing a cloud storage target, and ask for the storage region in writing.\n- **Help with planning.** We provide a [backup and disaster recovery service](/services/backup-disaster-recovery) and [managed IT services](/managed-it-services) if you would rather have the design and monitoring handled for you."
+      }
+    ],
+    "products": [],
+    "faqs": [
+      {
+        "question": "Do you sell Acronis products?",
+        "answer": "We quote Acronis on request. There are no Acronis products or prices in our website catalogue, so send your requirement through the enquiry page and we will respond with a written quotation."
+      },
+      {
+        "question": "What are RPO and RTO in simple terms?",
+        "answer": "RPO is how much data you can afford to lose, expressed as time. RTO is how long you can be without a system before it must be running again. Setting both per system tells you how often to back up and how fast a restore must be."
+      },
+      {
+        "question": "What is the 3-2-1 backup rule?",
+        "answer": "Keep three copies of your data on two different types of storage, with one copy offsite. Many organisations add an immutable or offline copy so that ransomware cannot delete the backups."
+      },
+      {
+        "question": "Does Microsoft 365 already back up our email and files?",
+        "answer": "Microsoft runs the service and provides retention and recovery features, but those are not the same as an independent backup. Responsibility for your data stays with you, so consider a separate Microsoft 365 backup."
+      },
+      {
+        "question": "What should we send to get a backup quotation?",
+        "answer": "The number of servers, virtual machines and workstations, whether you use Microsoft 365 and how many users, total data size and expected growth, retention period, preferred storage location and your recovery targets."
+      },
+      {
+        "question": "Is backup a one-time purchase or a subscription?",
+        "answer": "It depends on the product. Many backup products are sold as term subscriptions and cloud storage may be priced separately. Ask the quotation to state the term, what is counted and how the price changes as data grows."
+      },
+      {
+        "question": "Can you help us design the backup and not just supply software?",
+        "answer": "TechZoid offers a backup and disaster recovery service and managed IT services. Tell us your systems and targets and we will explain what we can take on."
+      }
+    ],
+    "related": [
+      {
+        "href": "/services/backup-disaster-recovery",
+        "label": "Backup and disaster recovery service"
+      },
+      {
+        "href": "/firewall-security",
+        "label": "Firewall security in India"
+      },
+      {
+        "href": "/antivirus-endpoint-security",
+        "label": "Antivirus and endpoint security in India"
+      },
+      {
+        "href": "/blog/planning-a-cloud-migration-that-does-not-cost-more",
+        "label": "Planning a cloud migration that does not cost more"
+      },
+      {
+        "href": "/blog/perpetual-versus-subscription-software-licensing",
+        "label": "Perpetual versus subscription software licensing"
+      }
+    ],
+    "title": "Backup Software in India – Acronis & Microsoft 365 Backup | Quote & Guide",
+    "description": "Backup software for Indian businesses: how to choose, what to protect and how Acronis is quoted, with a GST invoice from TechZoid. Get a quote today.",
+    "brands": [
+      "acronis"
+    ]
+  },
   "bim-software": {
     "slug": "bim-software",
     "h1": "BIM Software in India: Revit, Revit LT, AEC Collection & Navisworks",
@@ -147,6 +322,118 @@ export const CATEGORY_GUIDE_DATA: Record<string, CategoryGuide> = {
     ],
     "title": "BIM Software in India – Revit, Revit LT, AEC Collection & Navisworks | Prices & Guide",
     "description": "BIM software in India: Revit, Revit LT, the AEC Collection and Navisworks compared, with prices excluding GST and how to choose. Get a quote today."
+  },
+  "business-laptops": {
+    "slug": "business-laptops",
+    "h1": "Business Laptops in India: HP, Lenovo & Acer for Offices",
+    "intro": "A business laptop is bought for three years of daily use by someone who cannot afford a morning lost to a slow or broken machine. The purchase looks simple, but the details decide whether it works out: the processor class against the actual workload, enough memory, the right storage, warranty that brings an engineer to the office, and an operating system image that your IT team can deploy without a day of manual setup per machine.\n\nThis guide explains how to specify business laptops, how to choose between HP, Lenovo and Acer, how warranty and support are structured, and what to check when buying in India. It is written for the IT head or admin manager who has to equip a team and justify the choice on paper.\n\nOn availability: TechZoid lists four HP business notebooks, shown below. Laptops are hardware, quoted to configuration, so the website carries no price for them and a written quotation fixes it. Lenovo and Acer are quoted on request and are not in our catalogue; see the [Lenovo](/brands/lenovo) and [Acer](/brands/acer) pages and use the [enquiry form](/enquiry). Specifications and availability are confirmed on the quotation.",
+    "sections": [
+      {
+        "heading": "What a business laptop is, and how it differs from a consumer one",
+        "markdown": "Consumer and business laptops can look similar on a shelf. The differences show up in management and support, not in the lid:\n\n- **Manageability.** Business ranges are designed to be deployed and administered in numbers, with firmware and driver management and tools your IT team can script.\n- **Operating system edition.** Business machines are normally supplied with Windows Pro, which supports joining a domain or Microsoft Entra ID, disk encryption management and group policy. Home editions do not. Check the edition on the quotation. Our article on [Windows 11 Pro versus Enterprise](/blog/windows-11-pro-versus-enterprise-for-business) explains the next step up.\n- **Build and service.** Business ranges are generally built for heavier daily use and offer warranty upgrades, though the specifics differ by model and are confirmed on the quotation.\n- **Consistency.** A business range is usually refreshed on a predictable cycle, which helps when you buy twenty now and ten more next year and want them to behave alike.\n\nIf your staff work mainly in email, Microsoft 365 apps, browsers, ERP and video calls, an office-class laptop is the right tool. Design, CAD and video work belong on a workstation, so read our [CAD software](/cad-software) guide before buying hardware for those roles."
+      },
+      {
+        "heading": "How to choose: processor, memory, storage and display",
+        "markdown": "Specify by role, not by one standard for everyone.\n\n- **Processor class.** For office work, a current mainstream Intel Core or AMD Ryzen processor in the mid range is usually enough. A lower tier is false economy if the laptop must last three to four years, because Microsoft 365, browsers and Teams keep growing. Choose a higher tier only for roles that run heavy spreadsheets, local databases or virtual machines.\n- **Memory.** 8 GB works for light use but is tight on a Windows machine running several apps and a browser with many tabs. 16 GB is the safer standard for a three-year life. Check whether the memory is soldered or upgradeable, because soldered memory cannot be added to later.\n- **Storage.** An SSD is the baseline. Choose capacity by what is kept locally. If files live in OneDrive or on a server, a smaller drive is fine; if staff keep large local data, size up.\n- **Display and weight.** For staff who travel, weight and battery matter more than screen size. For desk-based staff, a larger screen is a productivity gain that costs little. Check the screen resolution and whether the panel is described as matte or glossy.\n- **Ports and connectivity.** Match them to your docks, monitors and wireless standards, and confirm HDMI or USB-C video if you use external displays.\n\n**The decision rule:** pick two or three standard configurations, for example a general office build and a power-user build, rather than a different laptop per person. That keeps spares, imaging and support simple. Read each configuration out of the quotation, line by line, because model numbers alone often hide differences in processor, memory and storage."
+      },
+      {
+        "heading": "The HP notebooks we list",
+        "markdown": "TechZoid lists four HP business notebooks. They are entry-to-mainstream office machines. Each page shows the model and the configuration detail we hold. Because laptops are hardware, we do not publish prices; the price and the exact configuration are confirmed on a [written quotation](/enquiry).\n\n- **[HP 250R G10 Notebook](/products/hp-250r-g10-notebook)** and **[HP 255 G10 Notebook](/products/hp-255-g10-notebook)** are 15-inch class business notebooks for desk-based staff who want a larger screen.\n- **[HP 240R G10 Notebook](/products/hp-240r-g10-notebook)** and **[HP 245 G10 Notebook](/products/hp-245-g10-notebook)** are 14-inch class models, easier to carry for staff who move between desks and meeting rooms.\n\nOne common difference between the 250R and 240R models and the 255 and 245 models is the processor family: the numbering typically signals an Intel configuration against an AMD one, but check the product page and the quotation for the actual processor, since it varies by configuration. Open each page for the details we hold, and tell us the roles and quantities so we can recommend configurations. If you want a Lenovo or Acer notebook, we quote those on request; they are not listed in our catalogue.\n\nFor desktops and workstations, see the [HP Pro 400 G9 Small Form Factor](/products/hp-pro-400-g9-small-form-factor) and the [price list](/price-list)."
+      },
+      {
+        "heading": "Warranty, support and operating system imaging",
+        "markdown": "**Warranty.** The standard warranty on business laptops is usually a limited term, often one year, and what it covers depends on the model and the region. The practical questions are: is service carry-in, pickup-and-return or onsite; what is the response time; does it cover the battery; and is accidental damage included or an extra? Ask for the warranty type and term to be written in the quotation, and price the upgrade to three years if your laptops are meant to last that long. Do not assume onsite service. Confirm it.\n\n**Operating system.** Confirm the Windows edition, and whether the licence is a preinstalled OEM one that stays with the machine. If you plan to join laptops to your tenant, plan [Microsoft 365 Business Premium](/products/microsoft-365-business-premium) for device management and security alongside them; our guide to [what you already own in Business Premium](/blog/microsoft-365-business-premium-security-you-already-own) explains why.\n\n**Imaging and deployment.** For more than a handful of machines, decide how they will be set up. Options are a standard image deployed by your IT team, a cloud-based provisioning process through your Microsoft tenant, or manual setup. Tell us if you need machines supplied clean or with your image, so that we can raise it with the quotation. Our [endpoint management](/services/endpoint-management) service covers deployment and policy for managed fleets.\n\n**Accessories.** Bags, docks, adapters, monitors and extra chargers add up. List them in the same quotation."
+      },
+      {
+        "heading": "Common mistakes when buying business laptops",
+        "markdown": "- **Under-buying memory to hit a unit price.** Eight gigabytes saves a little now and costs productivity for years.\n- **Mixing too many models.** Every extra model means another image, another driver set and another spare.\n- **Ignoring the warranty type.** A cheap carry-in warranty on a laptop used by a travelling manager can mean weeks without a machine.\n- **Buying Home edition by accident.** It cannot be managed the way a business needs. Check the operating system line on the quotation.\n- **Forgetting the lifecycle.** Decide the replacement cycle and what happens to old devices, including secure data wiping, before you buy.\n- **Skipping protection.** A new laptop on an unmanaged network with no [endpoint security](/antivirus-endpoint-security) is only as safe as the user's next click, and without [backup](/backup-software) the data on it is only as safe as the drive."
+      },
+      {
+        "heading": "Buying notes for India",
+        "markdown": "- **Written quotation.** Ask for a written quotation that lists the model, processor, memory, storage, operating system edition, warranty type and term, and quantity. Website information is a guide, and the quotation fixes the specification and the price.\n- **GST invoice.** Every TechZoid order is invoiced with GST. Give us your registered entity name and GSTIN before the invoice is raised. GST-registered buyers can usually claim input credit on business purchases; confirm with your accountant.\n- **Purchase order.** We accept orders against your purchase order, and can quote laptops with software, security and networking on one PO across brands. See [IT procurement](/services/it-procurement) and [enterprise IT hardware](/enterprise-it-hardware).\n- **Delivery and serials.** Ask us to confirm delivery arrangements on the quotation, and keep the serial numbers against the invoice, since warranty claims and asset registers depend on them.\n- **Licences with the hardware.** If the order also includes Microsoft 365 or other software, see our guide to [buying genuine Microsoft licences in India](/blog/how-to-buy-genuine-microsoft-licences-in-india)."
+      }
+    ],
+    "products": [
+      {
+        "slug": "hp-250r-g10-notebook",
+        "use": "15-inch class business notebook for daily office work, quoted to configuration.",
+        "whoFor": "Desk-based staff in admin, accounts and operations who want a larger screen."
+      },
+      {
+        "slug": "hp-255-g10-notebook",
+        "use": "15-inch class business notebook for daily office work, quoted to configuration.",
+        "whoFor": "Teams standardising on a larger-screen office laptop."
+      },
+      {
+        "slug": "hp-240r-g10-notebook",
+        "use": "14-inch class business notebook that is easier to carry between desks and meetings.",
+        "whoFor": "Managers and staff who move around the office or travel occasionally."
+      },
+      {
+        "slug": "hp-245-g10-notebook",
+        "use": "14-inch class business notebook for general office use, quoted to configuration.",
+        "whoFor": "Mobile staff and sales or field teams wanting a compact notebook."
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Which business laptops does TechZoid list?",
+        "answer": "Four HP notebooks: the HP 250R G10, HP 255 G10, HP 240R G10 and HP 245 G10. They are hardware, so they are quoted to configuration and the price is confirmed on a written quotation. Lenovo and Acer are quoted on request."
+      },
+      {
+        "question": "Can you quote Lenovo or Acer laptops?",
+        "answer": "Yes, on request. They are not in our catalogue, so send the quantity, processor, memory, storage and warranty you want through the enquiry page and we will respond with a written quotation."
+      },
+      {
+        "question": "How much memory should a business laptop have?",
+        "answer": "For a three-year life on Windows with Microsoft 365, browsers and video calls, 16 GB is the safer standard. 8 GB can work for light use but leaves little headroom. Check whether memory can be upgraded later."
+      },
+      {
+        "question": "Is onsite warranty included?",
+        "answer": "Do not assume so. Warranty type and term vary by model. Ask for the warranty type, term and whether it is onsite, pickup or carry-in to be written in the quotation, and price an upgrade if you want longer cover."
+      },
+      {
+        "question": "Can the laptops arrive with our own OS image?",
+        "answer": "Tell us when you request the quotation. Whether imaging is possible, and on what terms, will be stated on the quotation. For larger fleets, cloud-based provisioning through your Microsoft tenant is another route to consider."
+      },
+      {
+        "question": "Can I buy laptops, software and a firewall on one purchase order?",
+        "answer": "Yes. TechZoid can quote across brands on one purchase order, with a GST invoice. Send the full list and we will return a single written quotation."
+      },
+      {
+        "question": "Should designers and CAD users get these notebooks?",
+        "answer": "Usually not. Office-class notebooks suit email, documents and web apps. CAD, rendering and video work need a workstation with a suitable graphics card and more memory, and the software publisher's system requirements should guide the specification."
+      }
+    ],
+    "related": [
+      {
+        "href": "/brands/hp",
+        "label": "HP business hardware"
+      },
+      {
+        "href": "/enterprise-it-hardware",
+        "label": "Enterprise IT hardware"
+      },
+      {
+        "href": "/services/it-procurement",
+        "label": "IT procurement"
+      },
+      {
+        "href": "/blog/windows-11-pro-versus-enterprise-for-business",
+        "label": "Windows 11 Pro versus Enterprise for business"
+      },
+      {
+        "href": "/blog/microsoft-365-business-premium-security-you-already-own",
+        "label": "The security you already own in Microsoft 365 Business Premium"
+      }
+    ],
+    "title": "Business Laptops in India – Lenovo, HP & Acer | Quote & Buying Guide",
+    "description": "Business laptops for Indian organisations: Lenovo, HP and Acer compared, quoted to your configuration and quantity with a GST invoice. Get a quote today.",
+    "brands": [
+      "lenovo",
+      "hp",
+      "acer"
+    ]
   },
   "cad-software": {
     "slug": "cad-software",
@@ -298,6 +585,98 @@ export const CATEGORY_GUIDE_DATA: Record<string, CategoryGuide> = {
     ],
     "title": "CAD Software in India – AutoCAD, Revit, Fusion & More | Price & Buying Guide",
     "description": "Compare CAD software in India: AutoCAD, AutoCAD LT, Civil 3D, Inventor and Fusion, with prices excluding GST and how to choose. Get a quote today."
+  },
+  "firewall-security": {
+    "slug": "firewall-security",
+    "h1": "Firewall Security in India: Fortinet, Sophos, SonicWall & Cisco",
+    "intro": "A firewall is the one device every office network passes through. It decides what reaches your servers, what your staff can reach on the internet, how branch offices and remote users connect back, and what you can prove afterwards if something goes wrong. Buying the wrong size, or buying the box without the subscriptions that make it useful, is the most common way a firewall project disappoints.\n\nThis guide explains what a business firewall does, how to choose between Fortinet, Sophos, SonicWall and Cisco, how the appliance, security subscriptions and support contract fit together, and what to check when buying in India. It is written for the IT head or office manager who has been asked to replace an ageing router-firewall and wants a sensible specification before asking for prices.\n\nA plain note on availability: TechZoid has no catalogue products or website prices for these four brands. We quote Fortinet, Sophos, SonicWall and Cisco firewalls on request, to your configuration, and the price is fixed only by a written quotation. Send the details through the [enquiry form](/enquiry) and read the brand pages for [Fortinet](/brands/fortinet), [Sophos](/brands/sophos), [SonicWall](/brands/sonicwall) and [Cisco](/brands/cisco). For a wider comparison, see our article on [top firewall brands in India](/blog/top-firewall-brands-india-fortinet-sophos-sonicwall-cisco).",
+    "sections": [
+      {
+        "heading": "What a business firewall actually does",
+        "markdown": "A home router blocks unsolicited inbound traffic and little else. A business firewall inspects traffic in both directions and enforces your policy. The jobs people buy it for are:\n\n- **Perimeter control.** Allowing only the services you publish, such as a web server or remote desktop gateway, and blocking the rest.\n- **Web and application control.** Filtering categories of websites and controlling applications, so that policy is written in terms of what staff are doing rather than port numbers.\n- **Threat prevention.** Intrusion prevention, anti-malware scanning of downloads and blocking of known malicious destinations.\n- **VPN.** Site-to-site tunnels between offices, and remote-access VPN for staff working from home or travelling.\n- **Link management.** Using two internet connections for failover or load sharing, which matters when one leased line or broadband link is your only dependency.\n- **Visibility and logs.** Knowing who accessed what and when, which is what you need for an incident review or an audit.\n\nA firewall is not a substitute for protecting the devices behind it. Laptops leave the office, and email attacks arrive over allowed ports. Think of the firewall and your [endpoint security](/antivirus-endpoint-security) as two layers that cover different gaps."
+      },
+      {
+        "heading": "How to choose: a practical decision rule",
+        "markdown": "Brand comparisons are less useful than answering five sizing questions first. Write the answers down before you ask anyone for a quotation.\n\n1. **How many users and devices?** Count staff, plus phones, printers, CCTV and guest devices. Concurrent sessions matter more than headcount.\n2. **What internet bandwidth do you have now, and in two years?** Throughput is the figure most buyers look at, but the figure that matters is throughput with the security features switched on, not the headline firewall number. Ask for that figure in the quotation.\n3. **How many sites?** One office is a simple purchase. Several branches need a firewall at each site and a decision about how they connect and who manages them.\n4. **What VPN do you need?** Count the site-to-site tunnels and the number of remote users who will connect at the same time. Check whether the VPN client for remote users is included or licensed separately.\n5. **Who will run it?** A firewall with a clear web console suits a small team without a network specialist. A team with trained engineers may prefer a platform they already know.\n\n**The rule of thumb:** size for the busiest realistic day with inspection enabled, add headroom for growth, and choose the brand your people can actually administer. A smaller unit that is configured properly is safer than a larger one that nobody dares to touch.\n\nThe brands differ in emphasis. Fortinet is widely used where price-to-throughput and a broad product range matter. Sophos is often chosen by small and mid-sized organisations that want a simple console and a link to its endpoint products. SonicWall has a long history in small-business and branch deployments. Cisco suits organisations already standardised on Cisco networking. Treat these as starting points to test in a conversation, not conclusions."
+      },
+      {
+        "heading": "How licensing, subscriptions and support work",
+        "markdown": "A firewall purchase has up to three parts, and the quotation should show each one separately.\n\n- **The appliance.** The hardware, bought once. Some brands also offer virtual appliances for private cloud or public cloud use.\n- **Security subscriptions.** Features such as intrusion prevention, anti-malware, web filtering and application control are usually sold as subscriptions, often grouped into bundles. Without a current subscription the box still routes traffic, but the signatures and category databases stop updating, so the protection decays.\n- **Support and hardware replacement.** A support contract covers technical help, software updates and a replacement process if the unit fails. The terms differ between brands and tiers.\n\nSubscriptions and support normally run for fixed terms, commonly one or more years, and need renewing on time. Ask for the term and the renewal approach to be written in the quotation, and diarise the expiry date. Letting a subscription lapse is a quiet way to end up with an unprotected perimeter that still looks fine on the rack.\n\nBecause bundle names and what each includes change between brands and over time, we do not list them here. Tell us the features you need and we will set out the options on the quotation. Our guide on [what to check before a software renewal](/blog/what-to-check-before-a-software-renewal) applies equally to security subscriptions."
+      },
+      {
+        "heading": "Common mistakes when buying a firewall",
+        "markdown": "- **Sizing on the headline throughput number.** That figure is measured with features off. Size on the figure with inspection turned on.\n- **Buying the box without subscriptions.** The appliance alone does not give you current threat protection.\n- **Forgetting VPN capacity.** Remote working pushes concurrent VPN users well above what a small office expected, and a unit sized for the office may struggle with them.\n- **No plan for failure.** A single firewall is a single point of failure. For offices where downtime is costly, ask about a pair in high availability or at least a cold spare, and a second internet link.\n- **Letting support lapse.** Track the support and subscription end dates, and renew before they pass.\n- **Leaving default settings and a flat network.** A firewall that allows everything between internal segments gives little protection once one laptop is compromised. Plan segments for servers, staff, guests and cameras.\n- **No one owns it.** Decide who reads the logs, who approves rule changes and who talks to the supplier. If that is nobody, consider our [managed IT services](/managed-it-services) or the [cybersecurity service](/services/cybersecurity)."
+      },
+      {
+        "heading": "Buying notes for India",
+        "markdown": "- **Quotation first.** Because we quote these brands on request, your quotation is the only price document. Send users, sites, link speeds, VPN needs and the feature list, and the quotation will state the appliance, each subscription, the support term and the quantity. Website prices elsewhere on this site are tentative and exclude GST.\n- **GST invoice.** Every TechZoid order is invoiced with GST, and the buyer's registered entity name and GSTIN should be given before the invoice is raised. GST-registered buyers can usually claim input credit on business purchases; confirm eligibility with your accountant. See [GST input credit on software purchases](/blog/gst-input-credit-on-software-purchases).\n- **Purchase order.** We accept orders against your purchase order, and we can put firewalls, laptops, backup and endpoint security on one quotation and one PO across brands. See [IT procurement](/services/it-procurement).\n- **Installation and migration.** Check whether you need configuration and rule migration from the old firewall. Ask for it to be listed as a separate line, not assumed.\n- **Public bodies and tenders.** If the purchase follows a tender or a government procurement process, tell us the specification and the evaluation requirements early. Our note on [how government departments procure genuine software](/blog/how-government-departments-procure-genuine-software) covers the documentation side.\n\nIf you also need laptops and endpoint security in the same project, look at our [business laptops](/business-laptops) and [backup software](/backup-software) guides."
+      }
+    ],
+    "products": [],
+    "faqs": [
+      {
+        "question": "Do you list Fortinet, Sophos, SonicWall or Cisco firewalls with prices?",
+        "answer": "No. TechZoid has no catalogue products or website prices for these brands. We quote them on request, to your configuration, and a written quotation fixes the price. Send your requirement through the enquiry page."
+      },
+      {
+        "question": "Which firewall brand is best for a small office?",
+        "answer": "There is no single best brand. For a small office, the better question is who will manage it. Choose the console and support model your team can handle, then size the unit for your users, bandwidth and VPN needs with inspection enabled. We can compare options on a quotation."
+      },
+      {
+        "question": "What details do you need to quote a firewall?",
+        "answer": "The number of users and devices, internet bandwidth at each site, the number of sites, site-to-site and remote VPN needs, the features you want such as intrusion prevention and web filtering, whether you need high availability, and the term for subscriptions and support."
+      },
+      {
+        "question": "Is the firewall price a one-time cost?",
+        "answer": "Not entirely. The appliance is bought once, but security subscriptions and support are normally for a fixed term and must be renewed. Ask for each part to be shown separately so you can plan the renewal cost."
+      },
+      {
+        "question": "What happens if a subscription expires?",
+        "answer": "The unit generally keeps routing traffic, but updates to threat signatures and web categories can stop, so protection weakens over time. Track the end dates and renew before they pass."
+      },
+      {
+        "question": "Do we need a firewall if we use Microsoft 365 and cloud services?",
+        "answer": "Usually yes. Cloud services reduce what you host, but your offices still need controlled internet access, VPN, link failover and logging. The firewall also protects the devices and servers that remain on your network."
+      },
+      {
+        "question": "Can you supply firewalls together with laptops and backup on one purchase order?",
+        "answer": "Yes. TechZoid can quote across brands on one purchase order. Tell us the full list and we will set it out on one written quotation, with a GST invoice."
+      },
+      {
+        "question": "Can you help with installation and configuration?",
+        "answer": "We offer managed IT and cybersecurity services. Tell us what you need configured or migrated, and we will state what is included, and what is separate, on the quotation."
+      }
+    ],
+    "related": [
+      {
+        "href": "/blog/top-firewall-brands-india-fortinet-sophos-sonicwall-cisco",
+        "label": "Top firewall brands in India: Fortinet, Sophos, SonicWall and Cisco"
+      },
+      {
+        "href": "/antivirus-endpoint-security",
+        "label": "Antivirus and endpoint security in India"
+      },
+      {
+        "href": "/backup-software",
+        "label": "Backup software in India"
+      },
+      {
+        "href": "/services/cybersecurity",
+        "label": "Cybersecurity services"
+      },
+      {
+        "href": "/blog/what-to-check-before-a-software-renewal",
+        "label": "What to check before a software renewal"
+      }
+    ],
+    "title": "Firewall Security in India – Fortinet, Sophos, SonicWall & Cisco | Quote & Guide",
+    "description": "Firewall security for Indian businesses: Fortinet, Sophos, SonicWall and Cisco compared, quoted on one purchase order with a GST invoice. Get a quote today.",
+    "brands": [
+      "fortinet",
+      "sophos",
+      "sonicwall",
+      "cisco"
+    ]
   },
   "pdf-software": {
     "slug": "pdf-software",

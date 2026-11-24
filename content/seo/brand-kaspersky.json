@@ -1,0 +1,83 @@
+{
+ "slug": "kaspersky",
+ "displayName": "Kaspersky",
+ "description": "Kaspersky reseller in India for business endpoint, server and mail security, with a GST invoice. Share your user and device counts to get a written quote.",
+ "intro": "Kaspersky is a long-established antivirus and endpoint security brand. In business IT it is known for endpoint protection that covers Windows, Mac and Linux machines and servers, managed from a central console, as well as products for virtual servers, mail servers and small offices. Many Indian offices already know the name from consumer antivirus, and the business range is the version that adds central management, policies and reporting.\n\nThe usual buyers are small and mid-sized organisations that need to cover somewhere between ten and a few hundred devices: accounting and legal practices, schools and colleges, clinics, travel and logistics firms, and manufacturers with office networks. They typically want a console where one person can see which machines are protected, push updates and set rules for USB drives or websites, rather than relying on each user to manage their own antivirus.\n\nTechZoid is a Kaspersky reseller. Kaspersky products are not listed with prices on this site and we do not hold them as catalogue items; each requirement is quoted on request. Because some organisations, particularly in government and regulated sectors, have their own rules on which security software they may buy, please check your internal policy before you ask us for a quotation. We then send a written quotation that fixes the price, and orders carry a GST invoice. For other options see [antivirus and endpoint security](/antivirus-endpoint-security) or send an [enquiry](/enquiry).",
+ "lines": [
+  {
+   "name": "Kaspersky Endpoint Security for Business",
+   "use": "The main business endpoint product, offered in tiers, protecting workstations and file servers with central policy control."
+  },
+  {
+   "name": "Kaspersky Next",
+   "use": "A newer line of endpoint tiers that adds detection and response capabilities, for organisations that want more visibility than antivirus alone."
+  },
+  {
+   "name": "Kaspersky Small Office Security",
+   "use": "A simpler product for very small offices with a handful of devices and no dedicated IT person."
+  },
+  {
+   "name": "Kaspersky Security for Mail Server",
+   "use": "Scanning for spam, phishing and malware on corporate mail servers."
+  },
+  {
+   "name": "Kaspersky Hybrid Cloud Security",
+   "use": "Protection for servers and virtual machines running on-premises or in public cloud."
+  },
+  {
+   "name": "Kaspersky Security Center",
+   "use": "The central console used to deploy agents, apply policies and view the protection status of devices."
+  }
+ ],
+ "choose": "Begin with a head count, but count the right things. Separate laptops and desktops from servers, and note whether your servers are physical, virtual or in the cloud, because server protection is often a different product from workstation protection. An office with fewer than about ten devices and no IT staff may be well served by the small-office product, but once you want a central console, policies and a report for management, go to the business range.\n\nThen decide how much visibility you want. If your need is to stop common malware and control USB and web use, a standard business tier will do. If you have had incidents or must investigate what happened on a machine, ask about the tiers that include detection and response, and ask whether you have the staff to act on those alerts. Mixed fleets are also worth flagging: tell us if you have Linux servers or Mac users so that the quotation covers them. Compare options with the [Sophos hub](/brands/sophos), and see how our [endpoint management service](/services/endpoint-management) can help roll out agents across a fleet.",
+ "buying": "Kaspersky business products are sold as subscription licences for a set term, typically one, two or three years, counted by the number of devices or users covered. Licences are normally bought in bands, so a licence for 25 devices may cost differently from a licence for 24, and adding a few devices mid-term means buying a top-up. Ask us how a quote bands its counts so there is no surprise on renewal.\n\nBusiness tiers differ in what they include. Higher tiers usually add things such as encryption, patch management or detection tools on top of core protection, so compare the feature list of each tier against your actual requirement rather than buying the top tier by default. Renewal licences are often quoted differently from new ones, so state whether you are an existing customer, and provide the key or licence number if you hold one.\n\nFor an accurate quotation, send:\n\n- Total devices, split into workstations, laptops and servers\n- Operating systems, including Linux and macOS\n- Server types: physical, virtual or cloud\n- Whether you need mail server protection\n- Existing antivirus and whether any Kaspersky licence is expiring\n- Required term\n- Any internal procurement policy that applies\n\nWe supply a written quotation that fixes the price, and we invoice with GST, which GST-registered buyers can usually claim as input credit. We can work to your purchase order, and combine Kaspersky with other items in one order. After purchase we help with activation and assigning licences, and rolling out agents can be arranged as a scoped job with our [endpoint management](/services/endpoint-management) team. Our [software asset management](/services/software-asset-management) service can keep your renewal dates in view.",
+ "faqs": [
+  {
+   "question": "What does Kaspersky business security cost in India?",
+   "answer": "The cost varies by tier, device count and term, and TechZoid does not publish Kaspersky prices. Send the number of workstations and servers, your operating systems and the term you want. We will send a written quotation, and that document fixes the price. The invoice carries GST."
+  },
+  {
+   "question": "How do Kaspersky licences and renewals work?",
+   "answer": "Business licences are sold for a fixed term and a number of devices. At expiry you renew to keep updates and support. Counts are often banded, so adding devices part-way may need a top-up licence. We can quote renewals early and keep your dates on file if you ask."
+  },
+  {
+   "question": "Does TechZoid help with installation and activation?",
+   "answer": "We help with activation and with assigning licences. Rolling the agent out across a fleet, setting policies and removing the old antivirus can be scoped separately with our endpoint management team. Product-level support comes through the support entitlement that accompanies your subscription."
+  },
+  {
+   "question": "What details do you need for a quotation?",
+   "answer": "Give us the number of workstations, laptops and servers, the operating systems, whether servers are physical, virtual or cloud, any mail server to protect, your current antivirus, the term wanted and any renewal key. If your organisation has a security software policy, mention it as well."
+  },
+  {
+   "question": "Can we move from another antivirus to Kaspersky?",
+   "answer": "Yes. The old product normally has to be removed before the new agent goes on, and this is easier when done in small groups, starting with a pilot. Check for password-protected uninstalls on the old software. Tell us what you use now and we will include it in the plan."
+  },
+  {
+   "question": "Will you provide a GST invoice and accept purchase orders?",
+   "answer": "Yes. Every order is invoiced with GST, and we work to purchase orders, including a single order covering Kaspersky and other brands. GST-registered buyers can usually claim input credit. Please send your GSTIN and billing address with your request so the invoice matches your records."
+  }
+ ],
+ "related": [
+  {
+   "href": "/antivirus-endpoint-security",
+   "label": "Antivirus and endpoint security"
+  },
+  {
+   "href": "/brands/sophos",
+   "label": "Sophos reseller hub"
+  },
+  {
+   "href": "/services/endpoint-management",
+   "label": "Endpoint management services"
+  },
+  {
+   "href": "/services/cybersecurity",
+   "label": "Cybersecurity services"
+  }
+ ],
+ "needsVerification": [
+  "Confirm TechZoid quotes each listed product line",
+  "Confirm Kaspersky Next naming and tiers, and current Endpoint Security for Business tier names",
+  "Confirm licence banding and 1/2/3-year terms, and any sector or government restrictions on Kaspersky purchase in India that should be stated on the page"
+ ]
+}

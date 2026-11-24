@@ -20,6 +20,9 @@ import { FAMILY_LABELS } from "@/lib/catalogue/hardware";
 import { getSiteConfig } from "@/lib/site-config";
 import { productListSelect } from "@/lib/queries/catalogue";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
+import { BrandGuideSections } from "@/components/marketing/brand-guide";
+import { currentCertifications } from "@/lib/queries/certifications";
+import { BRAND_GUIDES } from "@/lib/content/guides";
 import { metaDescription } from "@/lib/seo-description";
 import { testimonialsForBrand } from "@/lib/queries/reviews";
 import { Testimonials } from "@/components/reviews/testimonials";
@@ -92,6 +95,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           ? `${brand.name} Hardware Price in India`
           : `${brand.name} — Products & Procurement`;
 
+  const guide = BRAND_GUIDES[brand.slug];
+  if (guide) {
+    return buildMetadata({
+      title: `${brand.name} Reseller in India – Price & Buy | TechZoid`,
+      absoluteTitle: true,
+      description: guide.description,
+      path: `/brands/${brand.slug}`,
+      keywords: [`${brand.name} reseller India`, `${brand.name} price India`, `buy ${brand.name}`, brand.name],
+    });
+  }
+
   return buildMetadata({
     /*
      * A brand with nothing behind it is a page, not an index entry.
@@ -110,7 +124,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
      * two cannot disagree, and the day a brand gets its first product both
      * reverse themselves with nothing to remember.
      */
-    noIndex: shape.licences + shape.hardware === 0 && "thin",
+    noIndex: shape.licences + shape.hardware === 0 && !BRAND_GUIDES[brand.slug] && "thin",
     title,
     /*
      * A brand summary is a line under a heading — forty characters for Acer.
@@ -177,8 +191,10 @@ export default async function BrandPage({ params }: PageProps) {
    * them and says nothing about what they sell — the mistake the comment
    * further down records.
    */
-  const heading =
-    shape.licences > 0 && shape.hardware > 0
+  const guide = BRAND_GUIDES[brand.slug];
+  const heading = guide
+    ? `${brand.name} reseller in India`
+    : shape.licences > 0 && shape.hardware > 0
       ? `${brand.name} licensing & hardware`
       : shape.licences > 0
         ? `${brand.name} licensing & solutions`
@@ -208,6 +224,20 @@ export default async function BrandPage({ params }: PageProps) {
    * disagree with what the page goes on to render.
    */
   const hasCatalogue = featured.length > 0 || hardware.length > 0;
+  const certifications = guide ? (await currentCertifications()).map((row) => row.standard) : [];
+  const offices = [
+    config.address.city,
+    config.secondaryEntity && /ajman/i.test(config.secondaryEntity.address) ? "Ajman" : null,
+  ].filter((office): office is string => Boolean(office));
+  // The hub's own six questions first; the brand record's questions follow unless they repeat one.
+  const faqItems = guide
+    ? [
+        ...guide.faqs,
+        ...brand.faqs.filter(
+          (faq) => !guide.faqs.some((own) => own.question.trim().toLowerCase() === faq.question.trim().toLowerCase()),
+        ),
+      ]
+    : brand.faqs;
 
   /*
    * The copy below deliberately names no category of goods.
@@ -306,13 +336,23 @@ export default async function BrandPage({ params }: PageProps) {
       </section>
 
       <div className="container-page">
-        <section className="py-14">
-          <div className="prose-content max-w-3xl text-[15px]">
-            {brand.description.split("\n\n").map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
-          </div>
-        </section>
+        {guide ? (
+          <BrandGuideSections
+            guide={guide}
+            certifications={certifications}
+            offices={offices}
+            hasCatalogue={hasCatalogue}
+            brandSlug={brand.slug}
+          />
+        ) : (
+          <section className="py-14">
+            <div className="prose-content max-w-3xl text-[15px]">
+              {brand.description.split("\n\n").map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/*
           The manufacturer's commercial range, grouped the way it is chosen.
@@ -486,7 +526,7 @@ export default async function BrandPage({ params }: PageProps) {
           </section>
         ) : null}
 
-        {brand.faqs.length > 0 ? (
+        {faqItems.length > 0 ? (
           <section id="faq" className="max-w-3xl scroll-mt-32 border-t border-line py-14">
             {/*
               Third instance of the same wrong claim, found after the title and
@@ -496,7 +536,7 @@ export default async function BrandPage({ params }: PageProps) {
               claim. Neutral wording, so it cannot be wrong for any brand.
             */}
             <SectionHeader title={`${brand.name} questions`} as="h2" className="mb-6" />
-            <FaqList items={brand.faqs.map((faq) => ({ question: faq.question, answer: faq.answer }))} />
+            <FaqList url={absoluteUrl(`/brands/${brand.slug}`)} items={faqItems.map((faq) => ({ question: faq.question, answer: faq.answer }))} />
           </section>
         ) : null}
 

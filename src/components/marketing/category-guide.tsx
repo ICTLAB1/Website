@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { prisma } from "@/lib/db";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { FaqList } from "@/components/ui/accordion";
 import { Markdown } from "@/components/markdown";
@@ -29,6 +30,14 @@ export async function CategoryGuidePage({ guide }: { guide: CategoryGuide }) {
   const sections = guide.sections.map((section, index) => ({ ...section, markdown: resolved[index + 1]! }));
   const faqs = guide.faqs.map((faq, index) => ({ ...faq, answer: resolved[1 + guide.sections.length + index]! }));
 
+  const brandRows = guide.brands && guide.brands.length > 0
+    ? await prisma.brand.findMany({
+        where: { slug: { in: guide.brands }, deletedAt: null },
+        select: { slug: true, name: true, summary: true },
+      })
+    : [];
+  const brandCards = (guide.brands ?? []).flatMap((slug) => brandRows.filter((row) => row.slug === slug));
+
   const url = absoluteUrl(`/${guide.slug}`);
   const itemList = {
     "@context": "https://schema.org",
@@ -54,12 +63,18 @@ export async function CategoryGuidePage({ guide }: { guide: CategoryGuide }) {
         <Markdown body={intro} className="prose-content mt-5 text-[17px]" />
       </header>
 
+      {guide.products.length > 0 ? (
       <section aria-labelledby="compare" className="mt-12">
         <h2 id="compare" className="text-[1.6rem] font-bold text-graphite-900">
           Compare the products
         </h2>
         <p className="mt-2 max-w-3xl text-[15px] text-ink-600">
-          Annual price per user, excluding 18% GST. Prices are tentative and confirmed on a written quotation.
+          {guide.products.some((entry) => {
+            const product = bySlug.get(entry.slug);
+            return product ? product.variants.some((variant) => effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) > 0) : false;
+          })
+            ? "Prices exclude 18% GST. Prices are tentative and confirmed on a written quotation."
+            : "Hardware is quoted to your configuration and quantity, with a GST invoice. Ask for today's price on a written quotation."}
         </p>
         <TableWrap className="mt-5">
           <Table className="min-w-[44rem]">
@@ -107,6 +122,7 @@ export async function CategoryGuidePage({ guide }: { guide: CategoryGuide }) {
           </Table>
         </TableWrap>
       </section>
+      ) : null}
 
       <div className="mt-6 max-w-3xl">
         {sections.map((section) => (
@@ -117,12 +133,40 @@ export async function CategoryGuidePage({ guide }: { guide: CategoryGuide }) {
         ))}
       </div>
 
-      <section className="mt-16" aria-labelledby="products-grid">
-        <h2 id="products-grid" className="mb-6 text-[1.6rem] font-bold text-graphite-900">
-          Buy {guide.h1.split(":")[0]?.replace(/ in India$/i, "")} from TechZoid
-        </h2>
-        <ProductGrid products={products} />
-      </section>
+      {products.length > 0 ? (
+        <section className="mt-16" aria-labelledby="products-grid">
+          <h2 id="products-grid" className="mb-6 text-[1.6rem] font-bold text-graphite-900">
+            Buy {guide.h1.split(":")[0]?.replace(/ in India$/i, "")} from TechZoid
+          </h2>
+          <ProductGrid products={products} />
+        </section>
+      ) : null}
+
+      {brandCards.length > 0 ? (
+        <section className="mt-16" aria-labelledby="brands-we-quote">
+          <h2 id="brands-we-quote" className="text-[1.6rem] font-bold text-graphite-900">
+            Brands we quote
+          </h2>
+          <p className="mt-2 max-w-3xl text-[15px] text-ink-600">
+            {products.length > 0
+              ? "More brands are quoted on request, on the same purchase order."
+              : "These brands are quoted on request rather than listed with prices. Tell us what you need and we return a written quotation with a GST invoice."}
+          </p>
+          <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {brandCards.map((brand) => (
+              <li key={brand.slug}>
+                <Link
+                  href={`/brands/${brand.slug}`}
+                  className="flex h-full flex-col rounded-(--radius-lg) border border-line bg-white p-5 transition-colors hover:border-graphite-300"
+                >
+                  <span className="text-[15px] font-semibold text-graphite-900">{brand.name} reseller in India</span>
+                  <span className="mt-1.5 text-[13px] leading-relaxed text-ink-600">{brand.summary}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section id="faq" className="mt-16 max-w-3xl scroll-mt-32">
         <h2 className="mb-6 text-[1.6rem] font-bold text-graphite-900">Frequently asked questions</h2>
@@ -147,7 +191,7 @@ export async function CategoryGuidePage({ guide }: { guide: CategoryGuide }) {
 
       <QuickEnquiry contained={false} subject={guide.h1} source="category_page" heading="Get a quotation" />
 
-      <JsonLd data={itemList} />
+      {products.length > 0 ? <JsonLd data={itemList} /> : null}
       <JsonLd
         data={{
           "@context": "https://schema.org",
