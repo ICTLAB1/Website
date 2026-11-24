@@ -13,6 +13,8 @@ import { suppliedBrandArtwork } from "./2026-08-supplied-brand-artwork";
 import { brandSegmentsMigration } from "./2026-08-brand-segments";
 import { homepageTitle } from "./2026-08-homepage-title";
 import { microsoftChannelPricelist } from "./2026-11-microsoft-channel-pricelist";
+import { landingTitlesSayIndia } from "./2026-11-landing-titles-say-india";
+import { blogPriceFaqs } from "./2026-11-blog-price-faqs";
 import { microsoft365Logo } from "./2026-11-microsoft-365-logo";
 import { supportEmail } from "./2026-11-support-email";
 import { hpBusinessPartner } from "./2026-11-hp-business-partner";
@@ -215,6 +217,10 @@ export const contentMigrations: ContentMigration[] = [
   microsoft365Logo,
   /* After the earlier Microsoft price migrations, whose results it replaces. */
   microsoftChannelPricelist,
+  /* Titles only; after the earlier title migrations, whose results it matches exactly. */
+  landingTitlesSayIndia,
+  /* Bodies, FAQs and one link; after the pricing and Microsoft price migrations whose figures it matches. */
+  blogPriceFaqs,
 ];
 
 export type { ContentMigration };

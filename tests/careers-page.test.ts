@@ -94,9 +94,13 @@ describe("the careers page's search metadata", () => {
     expect(metadata.title).toEqual({
       absolute: "Careers at TechZoid Technologies | Jobs in New Delhi",
     });
+    // The page's own sentence comes first and is kept whole; `buildMetadata` then
+    // makes sure the description says India (see `lib/seo-copy`).
     expect(metadata.description).toBe(
-      "Join TechZoid Technologies, a Microsoft, Adobe and Autodesk partner in New Delhi. See open jobs in sales, pre-sales and operations and apply online.",
+      "Join TechZoid Technologies, a Microsoft, Adobe and Autodesk partner in New Delhi, India. See open jobs in sales, pre-sales and operations and apply online.",
     );
+    expect(metadata.description).toMatch(/india/i);
+    expect(String(metadata.description).length).toBeLessThanOrEqual(160);
   });
 
   it("carries Open Graph title, description and the site's default share image", () => {

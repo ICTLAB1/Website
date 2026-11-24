@@ -178,7 +178,7 @@ export default async function HardwarePage({ searchParams }: PageProps) {
                         /* eslint-disable-next-line @next/next/no-img-element */
                         <img
                           src={logo}
-                          alt=""
+                          alt={`${brand.name} logo`}
                           className="h-5 w-auto max-w-[4.5rem] shrink-0 object-contain object-left"
                         />
                       ) : null}

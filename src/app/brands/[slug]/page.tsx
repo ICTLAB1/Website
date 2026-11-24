@@ -85,11 +85,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const shape = await getBrandCatalogueShape(brand.id);
   const title =
     shape.licences > 0 && shape.hardware > 0
-      ? `${brand.name} Catalogue — Licences & Hardware`
+      ? `${brand.name} Licences & Hardware in India`
       : shape.licences > 0
-        ? `${brand.name} Catalogue — Licences & Subscriptions`
+        ? `${brand.name} Licences Price in India`
         : shape.hardware > 0
-          ? `${brand.name} Catalogue — Business Hardware`
+          ? `${brand.name} Hardware Price in India`
           : `${brand.name} — Products & Procurement`;
 
   return buildMetadata({

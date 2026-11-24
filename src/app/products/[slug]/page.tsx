@@ -28,7 +28,8 @@ import { resolveProductPhoto } from "@/lib/representative-image";
 import { getProductBySlug, getRelatedProducts } from "@/lib/queries/catalogue";
 import { effectivePriceMinor } from "@/lib/money";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
-import { metaDescription } from "@/lib/seo-description";
+import { productDescription, productTitle } from "@/lib/seo-copy";
+import { safeProductImage } from "@/lib/product-image";
 import { productRating, productReviews } from "@/lib/queries/reviews";
 import {
   mayPublishAggregateRating,
@@ -72,59 +73,31 @@ export async function generateMetadata({
     });
   }
 
-  const seoTitle = product.seoTitle?.trim();
+  const kind = product.formFactor ? "hardware" : "software";
+  const name = product.formFactor ? hardwareTitle(product.name, product.formFactor) : product.name;
 
   return buildMetadata({
-    // An authored title is the whole string; the layout's `%s | TechZoid`
-    // template must not append to something already composed to fit.
-    absoluteTitle: Boolean(seoTitle),
-    // Just the product name. It used to append "— {Brand} Licensing", which
-    // repeated a word already inside almost every name ("Adobe Acrobat Pro for
-    // Teams") and pushed the title past what a search result will show.
-    //
-    // Hardware gets one qualifier, because the name alone does not say what the
-    // thing is: "HP EliteBook 840" means nothing to a search engine, and
-    // "Commercial laptop" is what somebody typed into it.
-    //
-    // Unless the name has already said it. "HP Z8 Fury G5 Tower Workstation —
-    // Desktop workstation" and "HP ProOne 440 G9 All-in-One — Commercial
-    // all-in-one" repeat the noun back at the reader inside sixty characters of
-    // a search result, which is the one place there is no room to.
     /*
-     * The override first, where somebody has written one.
+     * One pattern for every product: "<Name> Price in India – Buy Licence |
+     * TechZoid" (hardware: "… Price in India – Get Quote"), under sixty
+     * characters wherever the name allows — see `lib/seo-copy`. It is the whole
+     * string, so the layout's `%s | TechZoid` template must not append to it.
      *
-     * A name is what the product is called and belongs in the heading and on
-     * the card. A title is what a search result shows, and the two are not the
-     * same job: "Autodesk Civil 3D" tells a person searching "civil 3d licence
-     * price" nothing about why this result rather than the next one. Null on
-     * almost every row, which keeps the derived title below.
+     * It supersedes the hand-written `seoTitle` on the five products that had
+     * one. Those said the same thing in five different shapes, and the decision
+     * was one pattern for the catalogue.
      */
-    title: seoTitle
-      ? seoTitle
-      : product.formFactor
-        ? hardwareTitle(product.name, product.formFactor)
-        : product.name,
+    absoluteTitle: true,
+    title: productTitle(name, kind),
     /*
-     * A short description reads well under a heading and badly in a search
-     * result, where a third of a line looks like a page with nothing on it.
-     * Where the record's own sentence is under seventy characters this adds a
-     * second one about how the business sells — the same on every page, stated
-     * across the site already, and never anything specific to the product that
-     * the record does not itself say.
+     * An authored `seoDescription` stays (and `buildMetadata` makes sure it says
+     * India, GST invoice and the call to action). Without one the description is
+     * composed from the product's name and its own sentence — see
+     * `productDescription`. It never states a feature the record does not.
      */
     description: product.seoDescription?.trim()
       ? product.seoDescription.trim()
-      : metaDescription(
-          product.shortDescription,
-          `Supplied by TechZoid on a single quotation with GST invoicing, alongside your other ${product.brand.name} purchasing.`,
-          "Supplied by TechZoid on a single quotation, with GST invoicing and one purchase order across brands.",
-          "Quoted by TechZoid with GST invoicing, on one purchase order with the rest of your software.",
-          // Short enough to fit behind a long description. Without it the three
-          // above are all too long for a base in the nineties, and the page keeps
-          // a stub — which is how `adobe-acrobat-standard-teams` sat at 68
-          // characters while a rule designed to lengthen it ran on every request.
-          `Quoted by TechZoid with GST invoicing on one purchase order.`,
-        ),
+      : productDescription({ name: product.name, shortDescription: product.shortDescription, kind }),
     path: `/products/${product.slug}`,
     keywords: [...product.keywords, product.brand.name, product.name],
   });
@@ -287,6 +260,20 @@ export default async function ProductDetailPage({ params }: PageProps) {
      */
     ...(photo.src && !photo.representative && hardware
       ? { image: absoluteUrl(photo.src) }
+      : {}),
+    /*
+     * Software: the product's own mark (its application icon or logo), added at
+     * the business's request so a product carries an `image`. Only where the page
+     * itself shows that mark — `verify:seo` holds the markup and the page to the
+     * same statement — so a product with no mark of its own declares none rather
+     * than borrowing the publisher's logo for it. Never for hardware that has
+     * only an illustration.
+     */
+    ...(!hardware
+      ? (() => {
+          const mark = safeProductImage(product.imageUrl);
+          return mark ? { image: absoluteUrl(mark) } : {};
+        })()
       : {}),
     /*
      * The manufacturer's own part number, where the catalogue holds one.
@@ -512,7 +499,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={product.imageUrl}
-                alt=""
+                alt={`${product.name} logo`}
                 className="mt-1.5 h-8 w-8 shrink-0 rounded-md object-contain sm:mt-2"
                 loading="eager"
                 decoding="async"
@@ -590,7 +577,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={product.imageUrl ?? ""}
-                    alt=""
+                    alt={`${product.name} logo`}
                     className="mx-auto h-32 w-auto max-w-[18rem] object-contain"
                     decoding="async"
                   />

@@ -12,7 +12,7 @@ import { EmptyState } from "@/components/ui/states";
 import { BlockHeading, BlockSection } from "@/components/blocks/primitives";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
-import { certificationLogo } from "@/lib/certification-logo";
+import { certificationLogo, certificationSealAlt } from "@/lib/certification-logo";
 import { effectivePriceMinor, formatTerm } from "@/lib/money";
 import { showPrice, statesTaxSeparately } from "@/lib/price-display";
 import { getDisplayCurrency } from "@/lib/display-currency";
@@ -303,8 +303,7 @@ function CertificationCard({ certification }: { certification: CertificationRow 
            420 pixels because the quotation PDF embeds it. */
         <Image
           src={seal}
-          alt=""
-          aria-hidden="true"
+          alt={certificationSealAlt(certification.standard)}
           className="mb-3 h-11 w-11 object-contain"
           sizes="88px"
           width={420}

@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ContactForm } from "@/components/marketing/contact-form";
-import { JsonLd, buildMetadata, localBusinessSchema } from "@/lib/seo";
+import { buildMetadata } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
 import { socialLinks } from "@/lib/social";
 
@@ -20,7 +20,6 @@ export const metadata: Metadata = buildMetadata({
 export default async function ContactPage() {
   const config = await getSiteConfig();
   const social = socialLinks(config.profileUrls);
-  const localBusiness = await localBusinessSchema();
 
   /**
    * Sales only. Support used to be a third card here, which meant a customer
@@ -52,7 +51,6 @@ export default async function ContactPage() {
   return (
     <>
       <div className="container-page">
-        {localBusiness ? <JsonLd data={localBusiness} /> : null}
         <Breadcrumb
           items={[{ label: "Home", href: "/" }, { label: "Contact" }]}
         />

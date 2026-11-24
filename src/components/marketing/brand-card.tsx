@@ -51,14 +51,13 @@ function BrandMark({ brand, size }: { brand: BrandArtwork; size: "sm" | "md" }) 
       <img
         src={logo}
         /*
-         * Empty, deliberately. Both places that render a mark print the brand's
-         * name in text right beside it, so `alt="Microsoft"` makes a screen
-         * reader say "Microsoft Microsoft" — which axe-core reports as
-         * `image-redundant-alt` and a person using one hears as noise. The mark
-         * carries no information the sighted reader does not also get from the
-         * word; that is the definition of decorative.
+         * "<Brand> logo", never the bare name. The brand's name is printed in
+         * text right beside the mark, and `alt="Microsoft"` would make a screen
+         * reader say "Microsoft Microsoft" (axe-core: `image-redundant-alt`).
+         * Saying what the image is — a logo — gives search engines the alt text
+         * they index without repeating the neighbouring word.
          */
-        alt=""
+        alt={`${brand.name} logo`}
         className={`${mark} shrink-0 object-contain object-left`}
         loading="lazy"
         decoding="async"

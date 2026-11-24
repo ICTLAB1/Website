@@ -1,3 +1,4 @@
+import { fitDescription } from "@/lib/seo-copy";
 import type { Metadata } from "next";
 import { appUrl } from "@/lib/env";
 import { getSiteConfig, getSiteIdentity } from "@/lib/site-config";
@@ -101,10 +102,14 @@ export function buildMetadata(input: {
   const config = getSiteIdentity();
   const url = absoluteUrl(input.path);
   const siteName = config.tradingName;
+  // An indexable page's description is brought to 140–160 characters, saying India
+  // (and, on a commercial page, GST invoice and a call to action). A private page
+  // keeps whatever it was given: nobody searches for it.
+  const description = input.noIndex ? input.description : fitDescription(input.description, input.path);
 
   return {
     title: input.absoluteTitle ? { absolute: input.title } : input.title,
-    description: input.description,
+    description,
     ...(input.keywords?.length ? { keywords: input.keywords } : {}),
     alternates: { canonical: url },
     // See `noIndex` above: `true` is a private page and takes nofollow with it;
@@ -120,7 +125,7 @@ export function buildMetadata(input: {
     openGraph: {
       type: input.type ?? "website",
       title: input.title,
-      description: input.description,
+      description,
       url,
       siteName,
       locale: "en_IN",
@@ -141,7 +146,7 @@ export function buildMetadata(input: {
     twitter: {
       card: "summary_large_image",
       title: input.title,
-      description: input.description,
+      description,
       images: [{ url: absoluteUrl(SOCIAL_CARD.path), alt: SOCIAL_CARD.alt }],
     },
   };
@@ -349,6 +354,24 @@ export async function localBusinessSchema() {
     // profiles an administrator has actually entered, never inferred.
     ...(config.profileUrls.length > 0 ? { sameAs: config.profileUrls } : {}),
     ...(config.gstin ? { taxID: config.gstin } : {}),
+    areaServed: config.address.country,
+    // The second office, as on the Organization block: a place the business
+    // operates from, with its address left as the one free-text line it is.
+    ...(config.secondaryEntity
+      ? {
+          location: [
+            {
+              "@type": "Place",
+              name: config.secondaryEntity.name,
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: config.secondaryEntity.address.replace(/\s*\n\s*/g, ", "),
+              },
+              ...(config.secondaryEntity.phone ? { telephone: config.secondaryEntity.phone } : {}),
+            },
+          ],
+        }
+      : {}),
     /*
      * `priceRange` and structured `openingHoursSpecification` are deliberately
      * absent. Both are real schema.org properties Google's LocalBusiness

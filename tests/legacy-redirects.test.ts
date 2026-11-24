@@ -182,3 +182,31 @@ describe("what is deliberately not redirected", () => {
     expect(await firstMatch("/products/autocad")).toBeUndefined();
   });
 });
+
+/**
+ * Old Wix URLs Search Console still listed on 24 November 2026 that answered 410
+ * because no rule matched. The biggest, the CorelDRAW 2021 page, had 3,822
+ * impressions in sixteen months. Each now goes to the product that replaces it,
+ * in one hop, never to a brand hub.
+ */
+const FOUND_IN_SEARCH_CONSOLE = [
+  ["/product-page/coreldraw-graphics-suite-2021-annual-license", "/products/coreldraw-graphics-suite"],
+  ["/product-page/microsoft-wimdows-10-pro-key", "/products/windows-11-pro-upgrade"],
+  ["/product-page/windows-10-pro-activation-key", "/products/windows-11-pro-upgrade"],
+  ["/product-page/windows-10-11-pro-oem-keys-only", "/products/windows-11-pro-upgrade"],
+  ["/product-page/server-2022-standard-oem-english-dvd-64-bit-16-core", "/products/windows-server-2025-standard"],
+  [
+    "/product-page/microsoft-office-professional-2019-one-time-purchase-lifetime-validity-1-per",
+    "/products/microsoft-office-ltsc-professional-plus-2024",
+  ],
+  ["/post/what-is-a-digital-license--how-does-it-work", "/blog/how-to-buy-genuine-microsoft-licences-in-india"],
+  ["/post/microsoft-365-business-premium", "/products/microsoft-365-business-premium"],
+] as const;
+
+describe("old URLs found in Search Console on 24 November 2026", () => {
+  it.each(FOUND_IN_SEARCH_CONSOLE)("%s goes to %s in one hop", async (from, to) => {
+    expect(await answer(from)).toEqual({ status: 301, to });
+    // And the destination answers for itself rather than being redirected on.
+    expect(await firstMatch(to)).toBeUndefined();
+  });
+});

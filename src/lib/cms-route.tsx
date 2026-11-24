@@ -10,6 +10,7 @@ import { LandingEnquiry } from "@/components/enquiry/landing-enquiry";
 import { leadPageFor } from "@/lib/lead-pages";
 import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
 import { PartnerShowcase } from "@/components/marketing/partner-showcase";
+import { HubIndex } from "@/components/marketing/hub-index";
 import { DocumentDates } from "@/components/marketing/document-dates";
 import { getPage } from "@/lib/queries/pages";
 import { resolveBlocks } from "@/lib/blocks/resolve";
@@ -136,6 +137,9 @@ export async function CmsPage({ slug }: { slug: string }) {
 
       {/* The company pages that say who the business is and what it is accredited for. */}
       {slug === "about" || slug === "enterprise" ? <PartnerShowcase /> : null}
+
+      {/* The three hubs link every product under them and the articles about the same subject. */}
+      <HubIndex slug={slug} />
 
       {/*
         The consent control belongs on the cookie policy and nowhere else.

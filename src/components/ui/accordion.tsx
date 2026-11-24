@@ -18,16 +18,19 @@ export type FaqEntry = { question: string; answer: string };
 export function FaqList({
   items,
   includeSchema = true,
+  url,
 }: {
   items: FaqEntry[];
   includeSchema?: boolean;
+  /** The page these questions are on. Defaults to the site root, as it always has. */
+  url?: string;
 }) {
   if (items.length === 0) return null;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    url: appUrl(),
+    url: url ?? appUrl(),
     mainEntity: items.map((item) => ({
       "@type": "Question",
       name: item.question,

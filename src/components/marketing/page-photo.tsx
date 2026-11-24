@@ -12,9 +12,8 @@ import type { SitePhoto } from "@/lib/page-photos";
  * below the content in the stacking order, so the content needs nothing extra.
  *
  * The photograph is cropped to fill, never stretched out of shape, and the
- * files are 1600 pixels wide so a full-width band stays sharp. Its alt text is
- * kept for the record but it is decorative here: the page's own heading says
- * what the page is about.
+ * files are 1600 pixels wide so a full-width band stays sharp. It carries its
+ * own plain-words alt text (see `lib/page-photos`).
  */
 export function PhotoBackdrop({
   photo,
@@ -27,7 +26,7 @@ export function PhotoBackdrop({
     <>
       <Image
         src={photo.src}
-        alt=""
+        alt={photo.alt}
         fill
         priority={priority}
         sizes="100vw"
