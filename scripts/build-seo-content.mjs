@@ -65,12 +65,13 @@ const CATEGORY_BRANDS = {
   "antivirus-endpoint-security": ["kaspersky", "sophos"],
 };
 const replaces = JSON.parse(readFileSync(join(dir, "_replaces.json"), "utf8"));
-const products = {}, categories = {}, posts = {}, refreshes = {}, brands = {};
+const products = {}, categories = {}, posts = {}, refreshes = {}, brands = {}, services = {};
 for (const f of files) {
   const data = load(f);
   if (f.startsWith("product-")) products[data.slug] = strip(data);
   else if (f.startsWith("category-")) categories[data.slug] = { ...strip(data), ...(CATEGORY_META[data.slug] ?? {}), ...(CATEGORY_BRANDS[data.slug] ? { brands: CATEGORY_BRANDS[data.slug] } : {}) };
   else if (f.startsWith("brand-")) brands[data.slug] = strip(data);
+  else if (f.startsWith("service-")) services[data.slug] = strip(data);
   else if (f.startsWith("blog-")) posts[data.slug] = { ...strip(data), ...(replaces[data.slug] ? { replaces: replaces[data.slug] } : {}) };
   else if (f.startsWith("refresh-")) refreshes[data.slug] = strip(data);
 }
@@ -81,6 +82,8 @@ writeFileSync(join(root, "src/lib/content/category-guides.generated.ts"),
   `${banner}import type { CategoryGuide } from "./guides";\n\nexport const CATEGORY_GUIDE_DATA: Record<string, CategoryGuide> = ${JSON.stringify(categories, null, 2)};\n`);
 writeFileSync(join(root, "src/lib/content/brand-guides.generated.ts"),
   `${banner}import type { BrandGuide } from "./guides";\n\nexport const BRAND_GUIDE_DATA: Record<string, BrandGuide> = ${JSON.stringify(brands, null, 2)};\n`);
+writeFileSync(join(root, "prisma/content-migrations/services.generated.ts"),
+  `${banner}export type GeneratedService = { slug: string; name: string; category: string; summary: string; heroHeadline: string; problem: string; solution: string; benefits: string[]; process: Array<{ step: number; title: string; description: string }>; technologies: string[]; displayOrder: number; featured: boolean; faqs: Array<{ question: string; answer: string }> };\n\nexport const GENERATED_SERVICES: GeneratedService[] = ${JSON.stringify(Object.values(services), null, 2)};\n`);
 writeFileSync(join(root, "prisma/content-migrations/seo-posts.generated.ts"),
   `${banner}export type SeoPost = { replaces?: { bodySha: string; faqSha: string }; slug: string; title: string; excerpt: string; category: string; tags: string[]; readMinutes: number; body: string; faqs: Array<{ question: string; answer: string }> };\nexport type SeoRefresh = { slug: string; newTitle: string; newExcerpt: string; appendBody: string; faqs: Array<{ question: string; answer: string }> };\n\nexport const SEO_POSTS: SeoPost[] = ${JSON.stringify(Object.values(posts), null, 2)};\n\nexport const SEO_REFRESHES: SeoRefresh[] = ${JSON.stringify(Object.values(refreshes), null, 2)};\n`);
 console.log(`${Object.keys(products).length} product guides, ${Object.keys(categories).length} category pages, ${Object.keys(brands).length} brand hubs, ${Object.keys(posts).length} posts, ${Object.keys(refreshes).length} refreshes`);

@@ -221,3 +221,17 @@ Third-party product facts and TechZoid claims the writers were not certain of. C
 - Microsoft 365 Business Premium including Windows business rights (general knowledge; confirm eligibility conditions)
 - Hardware requirements (4 GB RAM, 64 GB storage, TPM 2.0, Secure Boot, DirectX 12) as of the last confirmed Microsoft list
 - The comparison alternative slug points at Microsoft 365 E3 (which carries Windows Enterprise rights) as there is no Windows 11 Enterprise product page; confirm alternative linking
+
+## brand-dell.json
+- Confirm TechZoid quotes each listed PowerEdge, PowerStore and Precision product
+- Confirm the generation ordering of the PowerEdge model numbers (newer models listed as the better long-term buy) matches the current Dell range
+- Confirm which ProSupport levels Dell currently offers in India and that TechZoid can quote them
+- Confirm staged delivery and onsite coverage are offered by TechZoid for Dell
+- Confirm the Windows Server Standard versus Datacenter positioning wording suits the owner
+
+## service-managed-firewall-services.json
+- Owner must confirm TechZoid can deliver each listed activity: policy review, rule management, firmware and signature updates, subscription and licence renewal tracking, configuration backups, log and alert review, change requests, periodic review, and help with VPN and remote access.
+- Owner must confirm the support hours and any commitments before they are quoted to buyers; none are stated on the page.
+- Owner must confirm which firewall brands and models TechZoid will actually manage (the page names Fortinet/FortiGate, Sophos Firewall, SonicWall and Cisco).
+- Confirm how configuration backups and log access are obtained (remote access, on-site visits, or customer-provided exports) and whether any tooling is used.
+- Confirm whether hardware replacement logistics and incident response are offered as quoted add-ons.

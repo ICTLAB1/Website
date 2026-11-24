@@ -1,0 +1,81 @@
+{
+ "slug": "dell",
+ "displayName": "Dell",
+ "description": "Dell PowerEdge servers, PowerStore storage and Precision workstations for Indian offices from a Dell reseller. GST invoice on every order. Request a quote.",
+ "intro": "Dell is the name most Indian IT heads reach for first when a server room needs new hardware. Its enterprise range is built around PowerEdge servers in rack and tower form, PowerStore for shared storage, and Precision workstations for design and engineering. Between them they cover the file server in a branch office, the virtualisation cluster in a head office and the workstation under an engineer's desk.\n\nThe TechZoid catalogue carries real Dell listings: eight PowerEdge rack models, three PowerEdge tower models, PowerStore storage and the Precision workstation. We do not list Dell laptops, desktops or monitors, so this page is about data-centre and workstation hardware only. None of it carries a price on the website. A server is quoted to configuration and quantity, because processors, memory, drive bays, network cards, power supplies and support term all change the figure, and a single displayed number would only mislead.\n\nIn practice the catalogue pages work as a shortlist. Pick the models that fit, note what you want changed, and send it to us. We come back with a written quotation, and that document fixes the price. Every order carries a GST invoice, which GST-registered buyers can usually claim as input credit.\n\nTechZoid is a Dell reseller, and that is all we claim. We quote and supply, we help you put the specification together, and we can include the operating system, virtualisation licensing, database licences and backup on the same quotation, so the purchase order is raised once. If you are comparing Dell against another server maker for the same project, the [HP](/brands/hp) and [HPE](/brands/hpe) hubs and our [IT procurement service](/services/it-procurement) page cover the alternatives and how multi-line purchases are handled.",
+ "lines": [
+  {
+   "name": "PowerEdge rack servers",
+   "use": "Rack-mounted servers for server rooms and data centres where space is shared and density matters. Models in the catalogue include the [R260](/products/dell-poweredge-r260), [R470](/products/dell-poweredge-r470), [R570](/products/dell-poweredge-r570), [R660xs](/products/dell-poweredge-r660xs), [R670](/products/dell-poweredge-r670), [R760](/products/dell-poweredge-r760), [R760xs](/products/dell-poweredge-r760xs) and [R770](/products/dell-poweredge-r770)."
+  },
+  {
+   "name": "PowerEdge tower servers",
+   "use": "Free-standing servers for offices without a rack, such as branches, schools and small companies. See the [T160](/products/dell-poweredge-t160), [T360](/products/dell-poweredge-t360) and [T560](/products/dell-poweredge-t560) listings."
+  },
+  {
+   "name": "PowerStore storage",
+   "use": "Shared storage for organisations that want virtual machines, databases and file data on a common array rather than inside each server. See the [PowerStore listing](/products/dell-powerstore-storage)."
+  },
+  {
+   "name": "Precision workstations",
+   "use": "Workstation-class desktops for CAD, rendering, simulation and data work. See the [Precision workstation](/products/dell-precision-workstation) listing, and check the software publisher's hardware guidance before choosing a configuration."
+  }
+ ],
+ "choose": "Start with where the server will live and what it will run, then use the catalogue pages to confirm the model.\n\nChoose a tower when the server sits in an ordinary office or branch with no rack and a handful of users depending on it. Choose a rack server when you already have a rack, expect to add more servers, or are consolidating several workloads onto virtualisation hosts. The model number generally rises with capability, so the smaller models suit file, print and light application duties, while the larger ones suit heavier virtualisation and database work. Within a family, newer models are usually the better long-term buy if the project must last several years, though availability changes, so ask us what can be quoted today.\n\nWhen you write to us, give the following so every quotation is comparable:\n\n- **Workload.** File server, virtualisation host, database, backup target or application server.\n- **Users and growth.** Roughly how many people depend on it now and in three years.\n- **Capacity.** Storage you need, and whether it should be internal drives or shared storage such as PowerStore.\n- **Resilience.** Whether you need redundant power, drive protection or a second server for failover.\n- **Support term.** The warranty or ProSupport level you want, and the locations that need onsite cover.\n\nIf the machine is a workstation, name the application and the publisher's recommended graphics and memory, and we will quote to match.",
+ "buying": "Dell hardware on TechZoid is quoted, never priced on the page. The listings tell you what the server is; the quotation tells you what it costs for your configuration and quantity.\n\n### From catalogue page to quotation\n\n1. Open the listings you are considering, for instance the [PowerEdge R760](/products/dell-poweredge-r760) or the [PowerEdge T360](/products/dell-poweredge-t360).\n2. Send us the models, quantities and any changes to memory, drives, network or support term through the [enquiry form](/enquiry).\n3. We reply with a written quotation. That is the price; nothing on the website is.\n4. You raise a purchase order against the quotation and we invoice with GST.\n\n### Warranty and ProSupport\n\nServers normally come with a manufacturer warranty, and Dell offers higher service levels, including its ProSupport range, as upgrades. The exact term, response commitment and onsite coverage depend on the model, the level chosen at the time of order and the location. Tell us the cities where the hardware will sit, and we will state the support terms in the quotation so they are on record before you commit.\n\n### Operating system, virtualisation and database on one quotation\n\nA server is rarely useful until it is licensed. TechZoid supplies Microsoft licensing, so you can ask for [Windows Server 2025 Standard](/products/windows-server-2025-standard) for physical or lightly virtualised hosts, [Windows Server 2025 Datacenter](/products/windows-server-2025-datacenter) for heavily virtualised hosts, [user CALs](/products/windows-server-cal-user) for the people who connect, and [SQL Server 2022 Standard](/products/sql-server-2022-standard) where a database is needed. Licensing rules depend on core counts, so give us the processor configuration and we will size the licences to the hardware.\n\n### Backup and recovery\n\nA new server needs a recovery plan from day one. Add [backup software](/backup-software) to the same quotation, or read about our [backup and disaster recovery service](/services/backup-disaster-recovery) if you want help designing it.\n\n### Tenders and purchase orders\n\nFor government, university and public-sector tenders, send the specification and the delivery and warranty clauses. We quote against a written specification and issue a GST invoice, so the quotation and invoice can go into your PO file. Staged delivery across locations can be discussed and recorded in the quotation.\n\n### Information that speeds up the quote\n\n- Models from the catalogue, with quantities.\n- Workload, memory, drive capacity and network needs.\n- Operating system, virtualisation and database licences required.\n- Support term and onsite requirements.\n- Delivery locations, and your GST number for the invoice.",
+ "faqs": [
+  {
+   "question": "Do you list Dell laptops, desktops or monitors?",
+   "answer": "No. The Dell listings on this website are PowerEdge rack and tower servers, PowerStore storage and the Precision workstation. For laptops see our business laptops page, or send an enquiry for anything else and we will say whether we can quote it."
+  },
+  {
+   "question": "Why is there no price on the Dell product pages?",
+   "answer": "Server price depends on processors, memory, drives, network, power and support term, as well as quantity. A single figure would mislead, so every Dell order is quoted in writing and that quotation fixes the price."
+  },
+  {
+   "question": "Should I buy a rack server or a tower server?",
+   "answer": "Buy a tower where there is no rack and the server serves one office. Buy a rack server where you have a server room, expect to add machines or plan to consolidate workloads on virtualisation hosts. Tell us the location and workload and we will suggest a shortlist."
+  },
+  {
+   "question": "Can Windows Server and SQL Server be quoted with the hardware?",
+   "answer": "Yes. TechZoid supplies Microsoft licensing, so Windows Server, client access licences and SQL Server can sit on the same quotation as the server, which keeps the purchase order to one supplier."
+  },
+  {
+   "question": "Does the invoice include GST?",
+   "answer": "Yes. Every TechZoid order carries a GST invoice. GST-registered buyers can usually claim input credit; check your own treatment with your accountant."
+  },
+  {
+   "question": "Can you quote Dell for a tender or institutional purchase?",
+   "answer": "Yes, we quote against a stated specification and issue a GST invoice. Send the specification, quantities, warranty clauses and delivery locations with your enquiry."
+  }
+ ],
+ "related": [
+  {
+   "href": "/brands/hp",
+   "label": "HP hardware"
+  },
+  {
+   "href": "/brands/hpe",
+   "label": "HPE servers"
+  },
+  {
+   "href": "/services/it-procurement",
+   "label": "IT procurement service"
+  },
+  {
+   "href": "/products/windows-server-2025-standard",
+   "label": "Windows Server 2025 Standard"
+  },
+  {
+   "href": "/backup-software",
+   "label": "Backup software"
+  }
+ ],
+ "needsVerification": [
+  "Confirm TechZoid quotes each listed PowerEdge, PowerStore and Precision product",
+  "Confirm the generation ordering of the PowerEdge model numbers (newer models listed as the better long-term buy) matches the current Dell range",
+  "Confirm which ProSupport levels Dell currently offers in India and that TechZoid can quote them",
+  "Confirm staged delivery and onsite coverage are offered by TechZoid for Dell",
+  "Confirm the Windows Server Standard versus Datacenter positioning wording suits the owner"
+ ]
+}
