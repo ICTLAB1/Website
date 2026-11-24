@@ -1,3 +1,4 @@
+import { formFactorLabel, parseFormFactor } from "@/lib/catalogue/hardware";
 import type { CatalogueFilters, SortOption } from "@/lib/queries/catalogue";
 import type { HardwareFamily } from "@/lib/catalogue/hardware";
 
@@ -163,8 +164,13 @@ export function activeFilterChips(
     });
   }
   for (const value of toArray(current.form)) {
+    // The label the product-type facet itself uses ("Small form factor"), not the
+    // slug title-cased ("Desktop Sff").
+    const factor = parseFormFactor(value);
     chips.push({
-      label: value.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()),
+      label: factor
+        ? formFactorLabel(factor)
+        : value.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()),
       removeHref: toggleFacetHref(current, "form", value, base),
     });
   }
@@ -184,4 +190,16 @@ export function activeFilterChips(
   }
 
   return chips;
+}
+
+
+/** The query string of a catalogue link, back as the params object a page receives. */
+export function paramsFromHref(href: string): RawSearchParams {
+  const query = new URLSearchParams(href.includes("?") ? href.slice(href.indexOf("?") + 1) : "");
+  const out: RawSearchParams = {};
+  for (const key of new Set(query.keys())) {
+    const values = query.getAll(key);
+    out[key] = values.length > 1 ? values : values[0];
+  }
+  return out;
 }
