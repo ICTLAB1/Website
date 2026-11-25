@@ -235,3 +235,8 @@ Third-party product facts and TechZoid claims the writers were not certain of. C
 - Owner must confirm which firewall brands and models TechZoid will actually manage (the page names Fortinet/FortiGate, Sophos Firewall, SonicWall and Cisco).
 - Confirm how configuration backups and log access are obtained (remote access, on-site visits, or customer-provided exports) and whether any tooling is used.
 - Confirm whether hardware replacement logistics and incident response are offered as quoted add-ons.
+
+## cisco hardware series (2026-11-cisco-hardware migration)
+- 99 quote-only Cisco hardware product pages, one per series on Cisco's A-Z index (https://www.cisco.com/c/en/us/products/a-to-z-series-index.html, saved in scripts/data/cisco-a-to-z-series.json). Series names are Cisco's; the descriptions are generic by product type (switch, router, firewall, access point, phone, UCS server, SAN) and state no specifications. Confirm TechZoid quotes these, and delete any it does not from the admin panel.
+- Left out as not hardware or not for this catalogue: Integrated Management Controller, Expressway Series, Prime Network Control System Series Appliances, ASR 5000 Series, and the six optical-transport series (NCS 1000/2000/4000/4200, ONS 15454, ONS 15200).
+- Statements that Cisco hardware is bought with a software licence and support contract are general; confirm against Cisco's current licensing.
