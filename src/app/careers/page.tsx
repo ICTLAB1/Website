@@ -4,6 +4,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import Image from "next/image";
 import { Suspense } from "react";
 
+import { ScreeningForm } from "@/components/careers/screening-form";
 import { CareerLink } from "@/components/careers/career-button";
 import { CategoryCard } from "@/components/careers/category-card";
 import { Reveal } from "@/components/careers/reveal";
@@ -404,6 +405,23 @@ export default function CareersPage() {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      {/* 6b. First-round screening questions */}
+      <section id="screening" className="container-page scroll-mt-40 pt-24" aria-labelledby="screening-heading">
+        <Reveal>
+          <h2 id="screening-heading" className="text-[clamp(1.75rem,1.3rem+1.6vw,2.5rem)] font-bold leading-tight text-career-navy">
+            Initial screening questions
+          </h2>
+          <Rule />
+          <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-ink-600">
+            Answer a few short questions so our HR team can get to know you before a first conversation. This is not
+            an application: apply to a listed role above.
+          </p>
+        </Reveal>
+        <div className="mt-10 max-w-3xl">
+          <ScreeningForm />
         </div>
       </section>
 
