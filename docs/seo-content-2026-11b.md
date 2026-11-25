@@ -235,3 +235,7 @@ Third-party product facts and TechZoid claims the writers were not certain of. C
 - Owner must confirm which firewall brands and models TechZoid will actually manage (the page names Fortinet/FortiGate, Sophos Firewall, SonicWall and Cisco).
 - Confirm how configuration backups and log access are obtained (remote access, on-site visits, or customer-provided exports) and whether any tooling is used.
 - Confirm whether hardware replacement logistics and incident response are offered as quoted add-ons.
+
+## cisco hardware families (2026-11-cisco-hardware migration)
+- Eleven quote-only Cisco hardware family pages were written from general knowledge of Cisco's range, not from a TechZoid line card or a Cisco price list. Confirm which families TechZoid quotes, and delete any it does not from the admin panel: Catalyst 1000, 9100 (access points), 9200, 9300, 9500, 8000 (edge), Meraki MX, MS, MR, Secure Firewall, Nexus 9000.
+- Statements that Meraki hardware runs under a per-device Meraki licence and that Catalyst 9000 switches are sold with a network licence and support contract need confirming against Cisco's current licensing.

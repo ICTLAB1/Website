@@ -77,7 +77,12 @@ export async function generateMetadata({
     });
   }
 
-  const kind = product.formFactor ? "hardware" : "software";
+  // Networking, server and storage products are hardware even without a form factor: no "Buy Licence".
+  const hardwareCategories = new Set(["networking", "servers", "storage", "workstations", "infrastructure-hardware"]);
+  const kind =
+    product.formFactor || hardwareCategories.has(product.category.slug) || (product.category.parent && hardwareCategories.has(product.category.parent.slug))
+      ? "hardware"
+      : "software";
   const name = product.formFactor ? hardwareTitle(product.name, product.formFactor) : product.name;
 
   return buildMetadata({

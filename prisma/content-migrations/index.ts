@@ -17,6 +17,7 @@ import { landingTitlesSayIndia } from "./2026-11-landing-titles-say-india";
 import { blogPriceFaqs } from "./2026-11-blog-price-faqs";
 import { adobeAppsFaqAndGuides } from "./2026-11-adobe-apps-faq-and-guides";
 import { seoPostsAndLinks } from "./2026-11-seo-posts-and-links";
+import { ciscoHardware } from "./2026-11-cisco-hardware";
 import { managedFirewallAndAutocadTerms } from "./2026-11-managed-firewall-and-autocad-terms";
 import { brandHubsProductsAndPosts } from "./2026-11-brand-hubs-products-and-posts";
 import { microsoft365Logo } from "./2026-11-microsoft-365-logo";
@@ -231,6 +232,7 @@ export const contentMigrations: ContentMigration[] = [
   seoPostsAndLinks,
   brandHubsProductsAndPosts,
   managedFirewallAndAutocadTerms,
+  ciscoHardware,
 ];
 
 export type { ContentMigration };
