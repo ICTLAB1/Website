@@ -17,6 +17,7 @@ import { landingTitlesSayIndia } from "./2026-11-landing-titles-say-india";
 import { blogPriceFaqs } from "./2026-11-blog-price-faqs";
 import { adobeAppsFaqAndGuides } from "./2026-11-adobe-apps-faq-and-guides";
 import { seoPostsAndLinks } from "./2026-11-seo-posts-and-links";
+import { adobeAutodeskProductGrids } from "./2026-11-adobe-autodesk-product-grids";
 import { plansPagesLinks } from "./2026-11-plans-pages-links";
 import { microsoftHubProductGrids } from "./2026-11-microsoft-hub-product-grids";
 import { microsoftProducts } from "./2026-11-microsoft-products";
@@ -243,6 +244,7 @@ export const contentMigrations: ContentMigration[] = [
   microsoftProducts,
   microsoftHubProductGrids,
   plansPagesLinks,
+  adobeAutodeskProductGrids,
 ];
 
 export type { ContentMigration };
