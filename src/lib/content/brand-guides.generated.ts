@@ -141,10 +141,6 @@ export const BRAND_GUIDE_DATA: Record<string, BrandGuide> = {
         "label": "Backup and disaster recovery service"
       },
       {
-        "href": "/brands/veeam",
-        "label": "Veeam backup"
-      },
-      {
         "href": "/microsoft-365",
         "label": "Microsoft 365"
       },

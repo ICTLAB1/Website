@@ -132,6 +132,7 @@ export function HardwareQuotePanel({
         />
         <Link
           href={`/enquiry?product=${encodeURIComponent(productSlug)}`}
+          rel="nofollow"
           className="inline-flex h-11 w-full items-center justify-center rounded-(--radius-md) border border-line-strong text-meta font-medium text-graphite-900 hover:border-graphite-400 hover:bg-graphite-50"
         >
           Request enterprise quote

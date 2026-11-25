@@ -4,6 +4,7 @@ import { hit, LIMITS } from "@/lib/auth/rate-limit";
 import { ipFromRequest } from "@/lib/auth/request";
 import { normaliseQuery, searchProducts } from "@/lib/queries/search";
 import { prisma } from "@/lib/db";
+import { getLiveBrandSlugs } from "@/lib/queries/live-brands";
 
 /**
  * Autocomplete suggestions.
@@ -28,7 +29,7 @@ export const GET = withErrorHandling("search.suggest", async (request: Request) 
     prisma.brand.findMany({
       where: { deletedAt: null, name: { contains: term, mode: "insensitive" } },
       select: { slug: true, name: true, tagline: true },
-      take: 2,
+      take: 10,
     }),
     prisma.service.findMany({
       where: {
@@ -44,6 +45,7 @@ export const GET = withErrorHandling("search.suggest", async (request: Request) 
     }),
   ]);
 
+  const liveBrands = new Set(await getLiveBrandSlugs());
   const results = [
     ...products.map((product) => ({
       title: product.name,
@@ -51,7 +53,7 @@ export const GET = withErrorHandling("search.suggest", async (request: Request) 
       href: `/products/${product.slug}`,
       badge: product.brand.name,
     })),
-    ...brands.map((brand) => ({
+    ...brands.filter((brand) => liveBrands.has(brand.slug)).slice(0, 2).map((brand) => ({
       title: brand.name,
       subtitle: brand.tagline ?? "Brand",
       href: `/brands/${brand.slug}`,

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ProductGrid } from "@/components/marketing/product-card";
 import { BrandCard, BrandStrip } from "@/components/marketing/brand-card";
 import { LogoBelt, LogoWall, type BeltItem } from "@/components/marketing/logo-belt";
+import { getLiveBrandSlugs } from "@/lib/queries/live-brands";
 import { safeBrandLogo } from "@/lib/brand-logo";
 import { safeClientLogo } from "@/lib/client-logo";
 import { CategoryCard } from "@/components/marketing/category-card";
@@ -232,6 +233,8 @@ type BeltBrandRow = {
   name: string;
   accentColor: string;
   logoUrl: string | null;
+  /** Whether the brand has a page to link to. Absent means it does not. */
+  live?: boolean;
 };
 
 /** What `publishedClientLogos` returns, of which the belt uses three fields. */
@@ -383,7 +386,7 @@ export function LogoMarqueeBlock({
           key: brand.slug,
           name: brand.name,
           logo: safeBrandLogo(brand.logoUrl),
-          href: `/brands/${brand.slug}`,
+          href: brand.live ? `/brands/${brand.slug}` : null,
           accentColor: brand.accentColor,
         }));
 
@@ -448,7 +451,7 @@ export function LogoMarqueeBlock({
   );
 }
 
-export function CollectionGridBlock({
+export async function CollectionGridBlock({
   data,
   rows,
   tone,
@@ -458,6 +461,9 @@ export function CollectionGridBlock({
   tone?: "plain" | "muted";
 }) {
   if (rows.length === 0) return null;
+
+  // Brands without a catalogue or hub page have no page to link to (it is a 404).
+  const liveBrands = new Set(data.kind === "brands" ? await getLiveBrandSlugs() : []);
 
   // A brand strip's heading is a caption for the logos beneath it, not a
   // section title, so it is set small and centred rather than as a display
@@ -510,7 +516,7 @@ export function CollectionGridBlock({
         </Reveal>
       ) : data.kind === "brands" && data.layout === "strip" ? (
         <Reveal>
-          <BrandStrip brands={rows as BrandRow[]} />
+          <BrandStrip brands={(rows as BrandRow[]).map((brand) => ({ ...brand, live: liveBrands.has(brand.slug) }))} />
         </Reveal>
       ) : data.kind === "brands" ? (
         <Reveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -526,6 +532,7 @@ export function CollectionGridBlock({
              */
             <BrandCard
               key={brand.slug}
+              live={liveBrands.has(brand.slug)}
               brand={{
                 ...brand,
                 productCount: brand._count.products > 0 ? brand._count.products : undefined,

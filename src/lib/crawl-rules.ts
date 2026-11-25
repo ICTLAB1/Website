@@ -73,3 +73,12 @@ export function robotsPatternMatches(pattern: string, target: string): boolean {
 export function isFacetBlocked(target: string): boolean {
   return FACET_DISALLOW.some((pattern) => robotsPatternMatches(pattern, target));
 }
+
+/**
+ * The `rel` for a link to a catalogue URL: "nofollow" when the URL is one robots.txt asks a
+ * crawler to skip, so a menu or card that links to a filtered view does not hand a crawler a
+ * link it has been told not to follow. Undefined for every other link.
+ */
+export function facetRel(href: string): "nofollow" | undefined {
+  return isFacetBlocked(href) ? "nofollow" : undefined;
+}

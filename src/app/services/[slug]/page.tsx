@@ -11,6 +11,7 @@ import { FaqList } from "@/components/ui/accordion";
 import { ButtonLink } from "@/components/ui/button";
 import { getServiceBySlug, parseProcess } from "@/lib/queries/content";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
+import { SERVICE_DESCRIPTIONS } from "@/lib/content/service-meta";
 import { getSiteConfig } from "@/lib/site-config";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -50,7 +51,7 @@ export async function generateMetadata({
     // actually get exploited"); in a search result it is a long sentence with
     // the subject buried in the middle, and it was being truncated.
     title: service.name,
-    description: service.summary,
+    description: SERVICE_DESCRIPTIONS[service.slug] ?? service.summary,
     path: `/services/${service.slug}`,
   });
 }

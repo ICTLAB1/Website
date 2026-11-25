@@ -172,6 +172,7 @@ export default async function HardwarePage({ searchParams }: PageProps) {
                   <li key={brand.slug}>
                     <Link
                       href={`/hardware?brand=${brand.slug}`}
+                      rel="nofollow"
                       className="inline-flex items-center gap-3 rounded-(--radius-md) border border-line bg-white px-4 py-3 lift hover:border-graphite-300"
                     >
                       {logo ? (
@@ -206,6 +207,7 @@ export default async function HardwarePage({ searchParams }: PageProps) {
                 <li key={formFactor.value}>
                   <Link
                     href={`/hardware?form=${formFactor.value}`}
+                    rel="nofollow"
                     className="inline-flex items-center gap-2 rounded-(--radius-md) border border-line bg-white px-4 py-2.5 text-meta font-medium text-graphite-900 lift hover:border-graphite-300"
                   >
                     {formFactor.label}

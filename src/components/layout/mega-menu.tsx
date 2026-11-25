@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+
+import { facetRel } from "@/lib/crawl-rules";
 import { useEffect, useRef, useState } from "react";
 import type { PrimaryNavItem } from "@/lib/queries/navigation";
 import { cn } from "@/lib/utils";
@@ -201,7 +203,7 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
               >
                 <div className="flex items-center">
                   <Link
-                    href={item.href}
+                    href={item.href} rel={facetRel(item.href)}
                     className={cn(
                       "px-3 py-4 text-sm font-medium transition-colors",
                       isOpen ? "text-accent-700" : "text-graphite-900 hover:text-accent-700",
@@ -324,7 +326,7 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                           {item.megaMenu.map((column) => (
                             <div key={column.heading}>
                               <Link
-                                href={column.href}
+                                href={column.href} rel={facetRel(column.href)}
                                 onClick={closeNow}
                                 className="mb-3 block text-label font-semibold uppercase tracking-[0.1em] text-accent-700 hover:underline"
                               >
@@ -334,7 +336,7 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                                 {column.links.map((link) => (
                                   <li key={link.href}>
                                     <Link
-                                      href={link.href}
+                                      href={link.href} rel={facetRel(link.href)}
                                       onClick={closeNow}
                                       className="block text-meta leading-snug text-ink-700 hover:text-accent-700 hover:underline"
                                     >
@@ -364,7 +366,7 @@ export function MegaMenu({ nav }: { nav: PrimaryNavItem[] }) {
                         {item.simpleMenu?.map((link) => (
                           <li key={link.href}>
                             <Link
-                              href={link.href}
+                              href={link.href} rel={facetRel(link.href)}
                               onClick={closeNow}
                               className="block rounded-(--radius-sm) px-3 py-2 hover:bg-surface-muted"
                             >

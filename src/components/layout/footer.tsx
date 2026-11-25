@@ -1,4 +1,6 @@
 import Link from "next/link";
+
+import { facetRel } from "@/lib/crawl-rules";
 import { Logo } from "@/components/layout/logo";
 import { getNavigation } from "@/lib/queries/navigation";
 import { publishedClientLogos } from "@/lib/queries/client-logos";
@@ -169,7 +171,7 @@ export async function Footer() {
               <ul className="mt-4 space-y-2.5">
                 {column.links.filter((link) => link.href !== "/clients" || hasClientLogos).map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-meta text-graphite-300 hover:text-white hover:underline">
+                    <Link href={link.href} rel={facetRel(link.href)} className="text-meta text-graphite-300 hover:text-white hover:underline">
                       {link.label}
                     </Link>
                   </li>

@@ -50,7 +50,7 @@ export function BrandGuideSections({
             {guide.displayName} is quoted on request rather than listed with a price. Send us the product, quantity and
             term and we return a written quotation with a GST invoice.
           </p>
-          <ButtonLink href={`/enquiry?brand=${brandSlug}`} className="mt-4">
+          <ButtonLink href={`/enquiry?brand=${brandSlug}`} rel="nofollow" className="mt-4">
             Get a quote for {guide.displayName}
           </ButtonLink>
         </div>

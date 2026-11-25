@@ -20,6 +20,7 @@ import { FAMILY_LABELS } from "@/lib/catalogue/hardware";
 import { getSiteConfig } from "@/lib/site-config";
 import { productListSelect } from "@/lib/queries/catalogue";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
+import { getLiveBrandSlugs } from "@/lib/queries/live-brands";
 import { BrandShelf } from "@/components/marketing/brand-shelf";
 import { BrandGuideSections } from "@/components/marketing/brand-guide";
 import { currentCertifications } from "@/lib/queries/certifications";
@@ -86,6 +87,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
    * to name, and "Products & Procurement" is the honest offer on a page whose
    * own copy says the catalogue is empty.
    */
+  if (!(await getLiveBrandSlugs()).includes(brand.slug)) {
+    return buildMetadata({
+      title: "Brand not found",
+      description: "This brand page is no longer available.",
+      path: `/brands/${slug}`,
+      noIndex: true,
+    });
+  }
+
   const shape = await getBrandCatalogueShape(brand.id);
   const title =
     shape.licences > 0 && shape.hardware > 0
@@ -166,6 +176,8 @@ export default async function BrandPage({ params }: PageProps) {
   const { slug } = await params;
   const brand = await getBrandBySlug(slug);
   if (!brand) notFound();
+  // A brand with no product and no hub page has nothing to show: 404 rather than a noindexed page that stays linked.
+  if (!(await getLiveBrandSlugs()).includes(brand.slug)) notFound();
 
   const [categories, featured, allServices, hardware, config, shape, quotes] = await Promise.all([
     getBrandCategories(brand.id),
@@ -319,7 +331,7 @@ export default async function BrandPage({ params }: PageProps) {
                   </ButtonLink>
                 </>
               ) : (
-                <ButtonLink href={`/enquiry?brand=${brand.slug}`}>
+                <ButtonLink href={`/enquiry?brand=${brand.slug}`} rel="nofollow">
                   Get a quote for {brand.name}
                 </ButtonLink>
               )}
@@ -375,7 +387,7 @@ export default async function BrandPage({ params }: PageProps) {
               description={`${brand.name} commercial models supplied by ${config.entityName}. Quoted to your configuration and quantity — hardware is not listed at a price.`}
               as="h2"
               action={
-                <ButtonLink href={`/hardware?brand=${brand.slug}`} variant="outline" size="sm">
+                <ButtonLink href={`/hardware?brand=${brand.slug}`} rel="nofollow" variant="outline" size="sm">
                   All {brand.name} hardware
                 </ButtonLink>
               }

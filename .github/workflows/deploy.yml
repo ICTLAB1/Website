@@ -208,3 +208,22 @@ jobs:
              if [ "$expect_meta" = 1 ] && [ "$rc" -eq 4 ]; then echo "::warning::META_CAPI_TOKEN is present in the container but Meta did not confirm it (exit 4); send a test event from Events Manager to verify"; rc=0; fi
              if [ "$expect_meta" = 1 ] && [ "$rc" -ne 0 ]; then echo "::error::could not confirm the app container has a working META_CAPI_TOKEN (exit $rc)"; exit 1; fi
              if [ "$rc" -eq 3 ]; then echo "META_CAPI_TOKEN is not configured (no secret supplied)"; fi'
+
+  # Tells Bing (which feeds Copilot and ChatGPT search) that the site has changed, so the new pages
+  # are fetched now rather than at the next crawl. It runs only after a successful deploy, and it
+  # can never fail one: an IndexNow outage is not a reason to call a release broken. The key is
+  # public by design (it is published at /<key>.txt); see docs/seo-india-2026-11.md.
+  indexnow:
+    name: Notify IndexNow
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run indexnow
+        env:
+          SITE: https://techzoidtechnologies.com

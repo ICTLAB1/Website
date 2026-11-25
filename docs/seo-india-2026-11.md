@@ -150,3 +150,41 @@ certification or discount figure of theirs is claimed.
   `/services/it-helpdesk` and `/sql-server`); a second Microsoft 365 Business page
   (`/microsoft-365` and its plan pages already answer that search); pages for
   Audition, Animate, Stock and Frame.io (reached from `/adobe`).
+
+## November 2026 round 3: near-page-1 posts, answer blocks, IndexNow, crawl waste
+
+### Near page 1 price articles
+`/blog/autocad-subscription-price-in-india`, `/blog/windows-11-pro-upgrade-licence-price-in-india` and
+`/blog/zoho-pricing-in-india-how-it-works` now open with a direct answer, an "Updated November 2026" line and a
+price table (prices come from the catalogue through `{{price:slug}}` tokens, never typed), carry six search-style
+FAQs (FAQPage schema), and link to the matching product page. The product pages and `/price-list` link back.
+Done by `prisma/content-migrations/2026-11-near-page-one-price-posts.ts`. It prepends only when the table is
+absent, adds only FAQs not already present, and does nothing if the post does not exist. URLs are unchanged.
+
+### Plain answers on the money pages
+`src/lib/content/answers.ts` holds the answer, the question headings and the schema flag for each page;
+`src/components/marketing/answer-block.tsx` renders them. Product + AggregateOffer JSON-LD (INR, from the
+catalogue's public variants) is emitted only on `/autocad`, `/products/autocad`, `/products/autocad-lt`, `/revit`
+and `/products/revit` and on the product pages' own schema. The "authorised" wording comes only from
+`currentPartnerBadges()`; where the site claims no level the text says "reseller".
+
+### Service page meta descriptions
+`src/lib/content/service-meta.ts`: 150–160 characters each, with India, GST invoice and a call to action.
+
+### IndexNow
+- Key: `376db28d2d32461d696447b385927d46`, served at `/376db28d2d32461d696447b385927d46.txt` (the file holds the key).
+  The key is public by design; it only proves we own the host.
+- `npm run indexnow` reads `https://techzoidtechnologies.com/sitemap.xml` and POSTs every URL to
+  `https://api.indexnow.org/indexnow` in batches. `DRY_RUN=1` prints without sending; `STRICT=1` exits non-zero on failure;
+  `SITE=` overrides the origin.
+- It runs after every successful deploy as the `indexnow` job in `.github/workflows/deploy.yml`
+  (`continue-on-error`, so an IndexNow outage never marks a release failed).
+
+### Crawl waste
+- `robots.txt` still blocks the facet URLs (unchanged).
+- Facet links in the mega menu, mobile nav, footer, `/hardware`, search and enquiry links carry `rel="nofollow"`
+  (`facetRel()` in `src/lib/crawl-rules.ts`).
+- Brands with no active product and no hub guide (e.g. jetbrains, atlassian, ibm, google-workspace, oracle, veeam)
+  now return 404 and are no longer linked from the brand index, home page, logo belts, industry pages, search,
+  suggestions or the cloud services post (`getLiveBrandSlugs()` in `src/lib/queries/live-brands.ts`). They appear
+  as plain names under "Available on request" on `/brands`. They drop out of the sitemap with the same list.
