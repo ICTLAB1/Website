@@ -17,13 +17,18 @@ import { lowestPriceMinor, productListSelect, type ProductListItem } from "@/lib
  * catalogue has one and "Get today's price" where it does not. It reads the catalogue as it
  * stands, so a product added tomorrow appears tomorrow with nothing to edit.
  */
-const BRANDS: Record<string, { brand: string; name: string }> = {
-  microsoft: { brand: "microsoft", name: "Microsoft" },
-  "microsoft-licensing": { brand: "microsoft", name: "Microsoft" },
-  adobe: { brand: "adobe", name: "Adobe" },
-  "adobe-licensing": { brand: "adobe", name: "Adobe" },
-  autodesk: { brand: "autodesk", name: "Autodesk" },
-  "autodesk-licensing": { brand: "autodesk", name: "Autodesk" },
+type PlansLink = { href: string; label: string };
+const MS_PLANS: PlansLink[] = [
+  { href: "/microsoft-365-business-plans-and-pricing", label: "Microsoft 365 business plans and pricing" },
+  { href: "/microsoft-365-enterprise-plans-and-pricing", label: "Microsoft 365 enterprise plans and pricing" },
+];
+const BRANDS: Record<string, { brand: string; name: string; plans: PlansLink[] }> = {
+  microsoft: { brand: "microsoft", name: "Microsoft", plans: MS_PLANS },
+  "microsoft-licensing": { brand: "microsoft", name: "Microsoft", plans: MS_PLANS },
+  adobe: { brand: "adobe", name: "Adobe", plans: [{ href: "/adobe-plans-and-pricing", label: "Adobe plans and pricing" }] },
+  "adobe-licensing": { brand: "adobe", name: "Adobe", plans: [{ href: "/adobe-plans-and-pricing", label: "Adobe plans and pricing" }] },
+  autodesk: { brand: "autodesk", name: "Autodesk", plans: [{ href: "/autodesk-plans-and-pricing", label: "Autodesk plans and pricing" }] },
+  "autodesk-licensing": { brand: "autodesk", name: "Autodesk", plans: [{ href: "/autodesk-plans-and-pricing", label: "Autodesk plans and pricing" }] },
 };
 
 export function hasBrandShelf(slug: string): boolean {
@@ -74,12 +79,23 @@ export async function BrandShelf({ slug }: { slug: string }) {
               price, ask for today&apos;s price on a written quotation.
             </p>
           </div>
+          <div className="flex flex-wrap gap-2">
+          {hub.plans.map((plan) => (
+            <Link
+              key={plan.href}
+              href={plan.href}
+              className="inline-flex min-h-11 items-center rounded-(--radius-md) bg-accent-700 px-4 text-[14px] font-medium text-white hover:bg-accent-800"
+            >
+              {plan.label}
+            </Link>
+          ))}
           <Link
             href={`/products?brand=${hub.brand}`}
             className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-line bg-white px-4 text-[14px] font-medium text-graphite-900 hover:border-graphite-300"
           >
             Search and filter all {hub.name} products
           </Link>
+          </div>
         </div>
 
         <nav aria-label={`${hub.name} product families`} className="mt-5 flex flex-wrap gap-2">
