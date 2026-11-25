@@ -17,6 +17,7 @@ describe("the careers page", () => {
       "Good work starts with good people",
       "More than a job",
       "Find your next opportunity",
+      "Initial screening questions",
       "Your next chapter starts here",
     ]);
   });
@@ -80,9 +81,10 @@ describe("the careers page", () => {
     expect(html).not.toMatch(/target=/);
   });
 
-  it("has no form, takes no applicant data, and carries no JobPosting markup", () => {
-    expect(html).not.toMatch(/<form[\s>]/);
-    expect(html).not.toMatch(/<input[\s>]/);
+  it("has only the screening form, and carries no JobPosting markup", () => {
+    // One form: the first-round screening questions. Applications still happen on the HR portal.
+    expect(html.match(/<form[\s>]/g)).toHaveLength(1);
+    expect(html).toMatch(/id="screening"/);
     // Only the breadcrumb's structured data is allowed here. The HR portal's own
     // job pages carry JobPosting, and a second copy would duplicate it.
     expect(html).not.toMatch(/JobPosting/);
