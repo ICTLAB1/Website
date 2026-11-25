@@ -20,6 +20,7 @@ import { FAMILY_LABELS } from "@/lib/catalogue/hardware";
 import { getSiteConfig } from "@/lib/site-config";
 import { productListSelect } from "@/lib/queries/catalogue";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
+import { BrandShelf } from "@/components/marketing/brand-shelf";
 import { BrandGuideSections } from "@/components/marketing/brand-guide";
 import { currentCertifications } from "@/lib/queries/certifications";
 import { BRAND_GUIDES } from "@/lib/content/guides";
@@ -334,6 +335,9 @@ export default async function BrandPage({ params }: PageProps) {
           </div>
         </div>
       </section>
+
+      {/* Microsoft, Adobe and Autodesk: every product with its price, right under the opening banner. */}
+      <BrandShelf slug={brand.slug} />
 
       <div className="container-page">
         {guide ? (

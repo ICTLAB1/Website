@@ -1,11 +1,14 @@
 import Link from "next/link";
 
+import { BrandShelfClient, type ShelfGroup, type ShelfProduct } from "@/components/marketing/brand-shelf-client";
+import { DIRECT_PURCHASE_ENABLED } from "@/lib/catalogue/quote-only";
+import { isDirectlyPurchasable } from "@/lib/catalogue/audience";
 import { prisma } from "@/lib/db";
 import { tags } from "@/lib/cache";
 import { isQuoteOnly } from "@/lib/catalogue/quote-only";
-import { formatMoney } from "@/lib/money";
+import { effectivePriceMinor, formatMoney, gstAmountMinor } from "@/lib/money";
 import { cached } from "@/lib/queries/cached";
-import { lowestPriceMinor, productListSelect, type ProductListItem } from "@/lib/queries/catalogue";
+import { productListSelect, type ProductListItem } from "@/lib/queries/catalogue";
 
 /**
  * Every product of a brand, on the brand's own page, grouped by family and visible at once.
@@ -18,17 +21,18 @@ import { lowestPriceMinor, productListSelect, type ProductListItem } from "@/lib
  * stands, so a product added tomorrow appears tomorrow with nothing to edit.
  */
 type PlansLink = { href: string; label: string };
+const ACCENT = { microsoft: "#0f6cbd", adobe: "#c8102e", autodesk: "#0696d7" };
 const MS_PLANS: PlansLink[] = [
   { href: "/microsoft-365-business-plans-and-pricing", label: "Microsoft 365 business plans and pricing" },
   { href: "/microsoft-365-enterprise-plans-and-pricing", label: "Microsoft 365 enterprise plans and pricing" },
 ];
-const BRANDS: Record<string, { brand: string; name: string; plans: PlansLink[] }> = {
-  microsoft: { brand: "microsoft", name: "Microsoft", plans: MS_PLANS },
-  "microsoft-licensing": { brand: "microsoft", name: "Microsoft", plans: MS_PLANS },
-  adobe: { brand: "adobe", name: "Adobe", plans: [{ href: "/adobe-plans-and-pricing", label: "Adobe plans and pricing" }] },
-  "adobe-licensing": { brand: "adobe", name: "Adobe", plans: [{ href: "/adobe-plans-and-pricing", label: "Adobe plans and pricing" }] },
-  autodesk: { brand: "autodesk", name: "Autodesk", plans: [{ href: "/autodesk-plans-and-pricing", label: "Autodesk plans and pricing" }] },
-  "autodesk-licensing": { brand: "autodesk", name: "Autodesk", plans: [{ href: "/autodesk-plans-and-pricing", label: "Autodesk plans and pricing" }] },
+const BRANDS: Record<string, { brand: string; name: string; plans: PlansLink[]; accent: string }> = {
+  microsoft: { brand: "microsoft", name: "Microsoft", plans: MS_PLANS, accent: ACCENT.microsoft },
+  "microsoft-licensing": { brand: "microsoft", name: "Microsoft", plans: MS_PLANS, accent: ACCENT.microsoft },
+  adobe: { brand: "adobe", name: "Adobe", plans: [{ href: "/adobe-plans-and-pricing", label: "Adobe plans and pricing" }], accent: ACCENT.adobe },
+  "adobe-licensing": { brand: "adobe", name: "Adobe", plans: [{ href: "/adobe-plans-and-pricing", label: "Adobe plans and pricing" }], accent: ACCENT.adobe },
+  autodesk: { brand: "autodesk", name: "Autodesk", plans: [{ href: "/autodesk-plans-and-pricing", label: "Autodesk plans and pricing" }], accent: ACCENT.autodesk },
+  "autodesk-licensing": { brand: "autodesk", name: "Autodesk", plans: [{ href: "/autodesk-plans-and-pricing", label: "Autodesk plans and pricing" }], accent: ACCENT.autodesk },
 };
 
 export function hasBrandShelf(slug: string): boolean {
@@ -42,106 +46,142 @@ const load = cached(
       select: productListSelect,
       orderBy: [{ featured: "desc" }, { popularity: "desc" }, { name: "asc" }],
     }),
-  ["brand-shelf-products-v1"],
+  ["brand-shelf-products-v2"],
   [tags.catalogue],
 );
 
-type Family = { slug: string; name: string; items: ProductListItem[]; weight: number };
+/** Microsoft's range in the families a buyer thinks in, rather than the catalogue's fourteen categories. */
+const MS_GROUPS: ShelfGroup[] = [
+  { key: "m365", name: "Microsoft 365", blurb: "Plans for email, Office apps, Teams and security, from small business to enterprise." },
+  { key: "office", name: "Office, Project & Visio", blurb: "Office editions, Project and Visio, bought once or by subscription." },
+  { key: "teams", name: "Teams, email & collaboration", blurb: "Exchange, SharePoint, OneDrive and Teams, standalone or as add-ons." },
+  { key: "windows", name: "Windows & Windows Server", blurb: "Windows 11, Windows 365 Cloud PCs, Windows Server and its client access licences." },
+  { key: "data", name: "Data, developer & Power Platform", blurb: "SQL Server and its CALs, Visual Studio, Power BI, Power Apps, Power Automate and Copilot Studio." },
+  { key: "dynamics", name: "Dynamics 365", blurb: "Sales, customer service, finance and supply chain business applications." },
+  { key: "security", name: "Security & identity", blurb: "Defender, Entra ID and Intune for protecting people, devices and data." },
+  { key: "azure", name: "Azure", blurb: "Microsoft cloud consumption, quoted to your commitment." },
+];
 
-function group(products: ProductListItem[]): Family[] {
-  const families = new Map<string, Family>();
-  for (const product of products) {
-    const entry = families.get(product.category.slug) ?? { slug: product.category.slug, name: product.category.name, items: [], weight: 0 };
-    entry.items.push(product);
-    entry.weight += product.popularity + (product.featured ? 50 : 0);
-    families.set(product.category.slug, entry);
+function microsoftGroup(product: ProductListItem): string {
+  const category = product.category.slug;
+  if (/(^|-)(project|visio)(-|$)/.test(product.slug) && !category.startsWith("crm")) return "office";
+  switch (category) {
+    case "microsoft-365-plans":
+      return "m365";
+    case "office-suites":
+      return "office";
+    case "email-collaboration":
+    case "productivity-collaboration":
+      return "teams";
+    case "desktop-os":
+    case "server-os":
+      return "windows";
+    case "database-servers":
+    case "analytics-bi":
+    case "business-applications":
+      return "data";
+    case "crm-sales":
+    case "finance-accounting":
+    case "business-suites":
+      return "dynamics";
+    case "security-endpoint":
+    case "endpoint-protection":
+    case "identity-access":
+      return "security";
+    case "cloud-subscriptions":
+      return "azure";
+    default:
+      return "data";
   }
-  return [...families.values()].sort((a, b) => b.weight - a.weight || a.name.localeCompare(b.name));
+}
+
+function termLabel(months: number | null): string {
+  if (months == null) return "one-time";
+  if (months === 1) return "per month";
+  if (months === 12) return "per user / year";
+  if (months % 12 === 0) return `for ${months / 12} years`;
+  return `for ${months} months`;
+}
+
+function toShelfProduct(product: ProductListItem, group: string): ShelfProduct {
+  const quoteOnly = isQuoteOnly(product);
+  const best = quoteOnly
+    ? undefined
+    : product.variants
+        .map((variant) => ({ variant, price: effectivePriceMinor(variant.listPriceMinor, variant.salePriceMinor) }))
+        .filter((entry) => entry.price > 0)
+        .sort((a, b) => a.price - b.price)[0];
+  const canBuy =
+    DIRECT_PURCHASE_ENABLED && best != null && product.purchaseMode !== "ENQUIRY" && isDirectlyPurchasable(best.variant.audience);
+  return {
+    slug: product.slug,
+    name: product.name,
+    description: product.shortDescription,
+    group,
+    price: best ? formatMoney(best.price) : null,
+    term: best ? termLabel(best.variant.termMonths) : null,
+    gstIncl: best ? formatMoney(best.price + gstAmountMinor(best.price, best.variant.gstRatePercent)) : null,
+    buyHref: canBuy ? `/buy?sku=${encodeURIComponent(best!.variant.sku)}` : null,
+  };
 }
 
 export async function BrandShelf({ slug }: { slug: string }) {
   const hub = BRANDS[slug];
   if (!hub) return null;
-  const products = await load(hub.brand);
-  if (products.length === 0) return null;
-  const families = group(products);
+  const rows = await load(hub.brand);
+  if (rows.length === 0) return null;
+
+  let groups: ShelfGroup[];
+  let items: ShelfProduct[];
+  if (hub.brand === "microsoft") {
+    groups = MS_GROUPS;
+    items = rows.map((row) => toShelfProduct(row, microsoftGroup(row)));
+  } else {
+    const seen = new Map<string, ShelfGroup & { weight: number }>();
+    for (const row of rows) {
+      const entry = seen.get(row.category.slug) ?? { key: row.category.slug, name: row.category.name, blurb: "", weight: 0 };
+      entry.weight += row.popularity + (row.featured ? 50 : 0);
+      seen.set(row.category.slug, entry);
+    }
+    groups = [...seen.values()].sort((a, b) => b.weight - a.weight || a.name.localeCompare(b.name));
+    items = rows.map((row) => toShelfProduct(row, row.category.slug));
+  }
+  // Priced products first within a family, then by the catalogue's own order.
+  items.sort((a, b) => Number(b.price != null) - Number(a.price != null));
 
   return (
-    <section aria-labelledby="brand-shelf" className="border-b border-line bg-surface-muted py-10">
+    <section aria-labelledby="brand-shelf" className="border-b border-line bg-surface-muted py-12">
       <div className="container-page">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h2 id="brand-shelf" className="text-[1.7rem] font-bold text-career-navy">
-              All {hub.name} products
+          <div className="max-w-3xl">
+            <h2 id="brand-shelf" className="text-[1.9rem] font-bold text-career-navy">
+              All {hub.name} products and prices
             </h2>
             <p className="mt-1 text-[15px] text-ink-600">
-              {products.length} products in {families.length} families. Prices are tentative and exclude GST; where there is no
-              price, ask for today&apos;s price on a written quotation.
+              Every {hub.name} product we supply, with its price from our catalogue. Where there is no price, ask for today&apos;s
+              price on a written quotation with a GST invoice.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-          {hub.plans.map((plan) => (
-            <Link
-              key={plan.href}
-              href={plan.href}
-              className="inline-flex min-h-11 items-center rounded-(--radius-md) bg-accent-700 px-4 text-[14px] font-medium text-white hover:bg-accent-800"
-            >
-              {plan.label}
-            </Link>
-          ))}
-          <Link
-            href={`/products?brand=${hub.brand}`}
-            className="inline-flex min-h-11 items-center rounded-(--radius-md) border border-line bg-white px-4 text-[14px] font-medium text-graphite-900 hover:border-graphite-300"
-          >
-            Search and filter all {hub.name} products
-          </Link>
+            {hub.plans.map((plan) => (
+              <Link
+                key={plan.href}
+                href={plan.href}
+                className="inline-flex min-h-11 items-center rounded-(--radius-md) bg-accent-700 px-4 text-[14px] font-medium text-white hover:bg-accent-800"
+              >
+                {plan.label}
+              </Link>
+            ))}
           </div>
         </div>
-
-        <nav aria-label={`${hub.name} product families`} className="mt-5 flex flex-wrap gap-2">
-          {families.map((family) => (
-            <a
-              key={family.slug}
-              href={`#shelf-${family.slug}`}
-              className="inline-flex min-h-11 items-center rounded-full border border-line bg-white px-4 text-[14px] font-medium text-graphite-900 hover:border-accent-700 hover:text-accent-700"
-            >
-              {family.name} <span className="ml-1.5 text-ink-500">{family.items.length}</span>
-            </a>
-          ))}
-        </nav>
-
-        <div className="mt-8 space-y-10">
-          {families.map((family) => (
-            <div key={family.slug} id={`shelf-${family.slug}`} className="scroll-mt-32">
-              <h3 className="text-[1.15rem] font-semibold text-graphite-900">{family.name}</h3>
-              <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {family.items.map((product) => {
-                  const price = isQuoteOnly(product) ? null : lowestPriceMinor(product);
-                  return (
-                    <li key={product.slug}>
-                      <Link
-                        href={`/products/${product.slug}`}
-                        className="flex h-full flex-col rounded-(--radius-lg) border border-line bg-white p-4 transition-colors hover:border-graphite-300"
-                      >
-                        <span className="text-[15px] font-semibold text-graphite-900">{product.name}</span>
-                        <span className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-ink-600">{product.shortDescription}</span>
-                        <span className="mt-auto pt-3 text-[14px]">
-                          {price != null && price > 0 ? (
-                            <>
-                              <span className="font-semibold text-graphite-900">from {formatMoney(price)}</span>
-                              <span className="text-ink-500"> excl. GST</span>
-                            </>
-                          ) : (
-                            <span className="font-medium text-accent-700">Get today&apos;s price</span>
-                          )}
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
+        <div className="mt-6">
+          <BrandShelfClient
+            brandName={hub.name}
+            accent={hub.accent}
+            groups={groups}
+            products={items}
+            catalogueHref={`/products?brand=${hub.brand}`}
+          />
         </div>
       </div>
     </section>
