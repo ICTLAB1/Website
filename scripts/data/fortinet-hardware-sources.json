@@ -1,0 +1,25 @@
+{
+  "source": "Fortinet's own pages: https://www.fortinet.com/products/next-generation-firewall (FortiGate models by tier), https://www.fortinet.com/products/rugged, https://www.fortinet.com/products/extender, https://www.fortinet.com/products (product index). Read 2026-11-25.",
+  "fortigate": {
+    "entry": ["30G", "40F", "50G", "60F", "70F", "70G", "80F", "90G", "91G"],
+    "mid": ["120G", "200G", "400F", "400G", "700G", "900G", "901G"],
+    "high": ["1000F", "1200G", "1800F", "2600F", "3000F", "3000G", "3200F", "3500F", "3500G", "3501F", "3700F", "3800G", "4200F", "4400F", "4800F", "7081F", "7121F"]
+  },
+  "fortigateRugged": ["50G", "60F", "60G", "70F", "70G"],
+  "fortiswitchRugged": ["108F", "112F", "216F", "424F"],
+  "fortiextender": ["101G", "211G", "511F", "511F-5G", "511G"],
+  "families": [
+    ["FortiSwitch", "Secure Ethernet Switches", "switch"],
+    ["FortiAP", "Secure Wireless LAN access points", "ap"],
+    ["FortiAnalyzer", "centralised logging, analytics and reporting", "mgmt"],
+    ["FortiManager", "centralised management of Fortinet devices", "mgmt"],
+    ["FortiMail", "email security", "sec"],
+    ["FortiWeb", "web application firewall", "sec"],
+    ["FortiADC", "application delivery and server load balancing", "sec"],
+    ["FortiSandbox", "sandbox analysis of suspicious files", "sec"],
+    ["FortiDDoS", "DDoS protection", "sec"],
+    ["FortiAuthenticator", "identity and access management and authentication", "sec"],
+    ["FortiVoice", "business phone systems and unified communications", "voice"],
+    ["FortiCam / FortiRecorder", "network-based video security", "video"]
+  ]
+}
