@@ -154,3 +154,14 @@ export function parseFormFactor(slug: string): FormFactor | null {
 export function isHardware(product: { formFactor?: FormFactor | null }): boolean {
   return product.formFactor != null;
 }
+
+/**
+ * Categories whose products are goods, not licences, whether or not they carry a
+ * form factor. Network gear has none — there is no "switch" among the computer form
+ * factors — but it is still bought by configuration and never "Buy Licence".
+ */
+const HARDWARE_CATEGORY_SLUGS = new Set(["networking", "servers", "storage", "workstations", "infrastructure-hardware"]);
+
+export function isHardwareCategory(slug: string | null | undefined): boolean {
+  return slug != null && HARDWARE_CATEGORY_SLUGS.has(slug);
+}

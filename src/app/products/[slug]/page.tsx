@@ -22,6 +22,7 @@ import {
   hardwareClassLabel,
   hardwareTitle,
   isHardware,
+  isHardwareCategory,
 } from "@/lib/catalogue/hardware";
 import { isQuoteOnly } from "@/lib/catalogue/quote-only";
 import { resolveProductPhoto } from "@/lib/representative-image";
@@ -78,9 +79,8 @@ export async function generateMetadata({
   }
 
   // Networking, server and storage products are hardware even without a form factor: no "Buy Licence".
-  const hardwareCategories = new Set(["networking", "servers", "storage", "workstations", "infrastructure-hardware"]);
   const kind =
-    product.formFactor || hardwareCategories.has(product.category.slug) || (product.category.parent && hardwareCategories.has(product.category.parent.slug))
+    product.formFactor || isHardwareCategory(product.category.slug) || isHardwareCategory(product.category.parent?.slug)
       ? "hardware"
       : "software";
   const name = product.formFactor ? hardwareTitle(product.name, product.formFactor) : product.name;
@@ -623,6 +623,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
           ) : (
             /* Visual identity without reproducing brand artwork: the product's
                own initial on the brand's accent colour. */
+            isHardwareCategory(product.category.slug) && !isWideLogo(product.imageUrl) ? (
+              <div className="mt-8 rounded-(--radius-lg) border border-line p-6">
+                <BrandLogoFrame brandName={product.brand.name} logoUrl={product.brand.logoUrl} ratio="16/10" />
+              </div>
+            ) :
             <div
               className="mt-8 flex aspect-[16/7] items-center justify-center rounded-(--radius-lg) border border-line"
               style={{ backgroundColor: `${product.brand.accentColor}0d` }}

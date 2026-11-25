@@ -14,7 +14,7 @@ import {
 } from "@/lib/price-display";
 import { getDisplayCurrency } from "@/lib/display-currency";
 import { humanise } from "@/lib/utils";
-import { hardwareClassLabel, isHardware } from "@/lib/catalogue/hardware";
+import { hardwareClassLabel, isHardware, isHardwareCategory } from "@/lib/catalogue/hardware";
 import {
   DIRECT_PURCHASE_ENABLED,
   isQuoteOnly,
@@ -113,6 +113,11 @@ export function ProductCard({
             loading="lazy"
             decoding="async"
           />
+        </div>
+      ) : null}
+      {!hardware && isHardwareCategory(product.category?.slug) && !isWideLogo(product.imageUrl) ? (
+        <div className="border-b border-line p-4">
+          <BrandLogoFrame brandName={product.brand.name} logoUrl={product.brand.logoUrl} />
         </div>
       ) : null}
       {hardware && !hardwarePhoto.src ? (

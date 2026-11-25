@@ -198,9 +198,9 @@ export const ciscoHardware: ContentMigration = {
           variants: {
             create: [
               {
-                sku: `${family.slug.toUpperCase().replace(/-/g, "_")}_CFG`.slice(0, 60),
+                sku: `CSC-${family.slug.replace(/^cisco-/, "").toUpperCase().replace(/-(SERIES|SWITCHES|ACCESS|POINTS|SECURITY|APPLIANCES|EDGE|PLATFORMS)/g, "")}-CFG`,
                 name: "Configured to requirement",
-                licenceType: "PERPETUAL",
+                licenceType: "HARDWARE",
                 audience: "COMMERCIAL",
                 termMonths: null,
                 seats: 1,
