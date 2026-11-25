@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/db";
+import { getLiveBrandSlugs } from "@/lib/queries/live-brands";
 import { publicVariantWhere } from "@/lib/catalogue/audience";
 
 /**
@@ -84,7 +85,7 @@ export async function searchAll(term: string): Promise<{
         OR: [{ name: { contains: term, mode: "insensitive" } }, { summary: { contains: term, mode: "insensitive" } }],
       },
       select: { slug: true, name: true, tagline: true },
-      take: 6,
+      take: 30,
     }),
     prisma.service.findMany({
       where: {
@@ -141,7 +142,9 @@ export async function searchAll(term: string): Promise<{
     badge: product.brand.name,
   }));
 
-  const brandResults: SearchResult[] = brands.map((brand) => ({
+  // Brands without a catalogue or hub page have no page (404): leave them out.
+  const live = new Set(await getLiveBrandSlugs());
+  const brandResults: SearchResult[] = brands.filter((brand) => live.has(brand.slug)).slice(0, 6).map((brand) => ({
     type: "brand",
     title: brand.name,
     subtitle: brand.tagline ?? "",
@@ -171,7 +174,7 @@ export async function searchAll(term: string): Promise<{
     subtitle: faq.answer.slice(0, 160),
     href: faq.product
       ? `/products/${faq.product.slug}#faq`
-      : faq.brand
+      : faq.brand && live.has(faq.brand.slug)
         ? `/brands/${faq.brand.slug}#faq`
         : faq.service
           ? `/services/${faq.service.slug}#faq`

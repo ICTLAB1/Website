@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { AnswerBlock } from "@/components/marketing/answer-block";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Table, TableWrap, Td, Th, Tr } from "@/components/ui/table";
 import { prisma } from "@/lib/db";
@@ -9,6 +10,12 @@ import { GUIDES_UPDATED } from "@/lib/content/guides";
 import { effectivePriceMinor, formatMoney } from "@/lib/money";
 import { buildMetadata } from "@/lib/seo";
 import { formatDate } from "@/lib/utils";
+
+const PRICE_GUIDES = [
+  { slug: "autocad-subscription-price-in-india", label: "AutoCAD price in India" },
+  { slug: "zoho-pricing-in-india-how-it-works", label: "Zoho pricing in India: how it works" },
+  { slug: "windows-11-pro-upgrade-licence-price-in-india", label: "Windows licence cost in India" },
+];
 
 export const metadata: Metadata = buildMetadata({
   title: "Software Price List India — Microsoft, Adobe, Autodesk and More",
@@ -37,6 +44,13 @@ export default async function PriceListPage() {
       variants: { where: publicVariantWhere, select: { listPriceMinor: true, salePriceMinor: true, gstRatePercent: true } },
     },
   });
+
+  // The price articles, linked from here when they are published.
+  const guideRows = await prisma.blogPost.findMany({
+    where: { slug: { in: PRICE_GUIDES.map((guide) => guide.slug) }, status: "PUBLISHED", deletedAt: null },
+    select: { slug: true },
+  });
+  const guides = PRICE_GUIDES.filter((guide) => guideRows.some((row) => row.slug === guide.slug));
 
   const groups = new Map<string, { name: string; items: typeof products }>();
   for (const product of products) {
@@ -86,6 +100,20 @@ export default async function PriceListPage() {
           ))}
         </nav>
       </header>
+      <AnswerBlock path="/price-list" inline />
+
+      {guides.length > 0 ? (
+        <nav aria-label="Price guides" className="mt-6 max-w-3xl">
+          <h2 className="text-[1.25rem] font-bold text-graphite-900">Price guides</h2>
+          <ul className="prose-content mt-2 text-[16px]">
+            {guides.map((guide) => (
+              <li key={guide.slug}>
+                <Link href={`/blog/${guide.slug}`}>{guide.label}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ) : null}
 
       {ordered.map(([slug, group]) => (
         <section key={slug} id={slug} className="mt-12 scroll-mt-32">

@@ -97,7 +97,10 @@ function BrandMark({ brand, size }: { brand: BrandArtwork; size: "sm" | "md" }) 
 
 export function BrandCard({
   brand,
+  live = true,
 }: {
+  /** False for a brand with no catalogue and no hub page: shown, but not linked (its page is a 404). */
+  live?: boolean;
   brand: {
     slug: string;
     name: string;
@@ -110,11 +113,9 @@ export function BrandCard({
     partnerPublic?: boolean | null;
   };
 }) {
-  return (
-    <Link
-      href={`/brands/${brand.slug}`}
-      className="group flex flex-col rounded-(--radius-lg) border border-line bg-white p-5 lift hover:border-graphite-300"
-    >
+  const cls = "group flex flex-col rounded-(--radius-lg) border border-line bg-white p-5";
+  const inner = (
+    <>
       <span className="mb-4 inline-flex">
         <BrandMark brand={brand} size="md" />
       </span>
@@ -139,7 +140,14 @@ export function BrandCard({
           {brand.productCount} {brand.productCount === 1 ? "product" : "products"}
         </span>
       ) : null}
+    </>
+  );
+  return live ? (
+    <Link href={`/brands/${brand.slug}`} className={`${cls} lift hover:border-graphite-300`}>
+      {inner}
     </Link>
+  ) : (
+    <div className={cls}>{inner}</div>
   );
 }
 
@@ -147,19 +155,26 @@ export function BrandCard({
 export function BrandStrip({
   brands,
 }: {
-  brands: Array<{ slug: string; name: string; accentColor: string; logoUrl?: string | null }>;
+  brands: Array<{ slug: string; name: string; accentColor: string; logoUrl?: string | null; live?: boolean }>;
 }) {
   return (
     <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-3 sm:gap-x-4">
       {brands.map((brand) => (
         <li key={brand.slug}>
-          <Link
-            href={`/brands/${brand.slug}`}
-            className="inline-flex items-center gap-2 rounded-(--radius-md) border border-line bg-white px-3.5 py-2 text-meta font-medium text-ink-700 lift hover:border-graphite-300 hover:text-graphite-900"
-          >
-            <BrandMark brand={brand} size="sm" />
-            {brand.name}
-          </Link>
+          {brand.live === false ? (
+            <span className="inline-flex items-center gap-2 rounded-(--radius-md) border border-line bg-white px-3.5 py-2 text-meta font-medium text-ink-700">
+              <BrandMark brand={brand} size="sm" />
+              {brand.name}
+            </span>
+          ) : (
+            <Link
+              href={`/brands/${brand.slug}`}
+              className="inline-flex items-center gap-2 rounded-(--radius-md) border border-line bg-white px-3.5 py-2 text-meta font-medium text-ink-700 lift hover:border-graphite-300 hover:text-graphite-900"
+            >
+              <BrandMark brand={brand} size="sm" />
+              {brand.name}
+            </Link>
+          )}
         </li>
       ))}
     </ul>

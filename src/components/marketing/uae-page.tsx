@@ -37,7 +37,7 @@ export async function UaePage({ copy, showOffice = false }: { copy: UaePageCopy;
           <Markdown key={paragraph.slice(0, 40)} body={paragraph} className="prose-content mt-5 text-[17px]" />
         ))}
         <div className="mt-6 flex flex-wrap gap-3">
-          <ButtonLink href="/enquiry?market=ae">Request a quotation</ButtonLink>
+          <ButtonLink href="/enquiry?market=ae" rel="nofollow">Request a quotation</ButtonLink>
           <ButtonLink href={copy.indiaPath} variant="outline">
             India site
           </ButtonLink>

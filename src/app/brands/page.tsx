@@ -1,7 +1,6 @@
 import { PhotoHeader } from "@/components/marketing/page-photo";
 import { photoForPath } from "@/lib/page-photos";
 import type { Metadata } from "next";
-import Link from "next/link";
 import type { BrandSegment } from "@prisma/client";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -9,6 +8,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { BrandCard } from "@/components/marketing/brand-card";
 import { ButtonLink } from "@/components/ui/button";
 import { getBrands } from "@/lib/queries/content";
+import { getLiveBrandSlugs } from "@/lib/queries/live-brands";
 import { buildMetadata } from "@/lib/seo";
 import {
   SEGMENT_DESCRIPTIONS,
@@ -47,10 +47,11 @@ type BrandRow = Awaited<ReturnType<typeof getBrands>>[number];
  */
 export default async function BrandsPage() {
   const brands = await getBrands();
+  const live = new Set(await getLiveBrandSlugs());
 
-  const withCatalogue = brands.filter((brand) => brand._count.products > 0);
+  const withCatalogue = brands.filter((brand) => live.has(brand.slug));
   const onRequest = brands
-    .filter((brand) => brand._count.products === 0)
+    .filter((brand) => !live.has(brand.slug))
     .sort((a, b) => a.name.localeCompare(b.name));
 
   const bySegment = new Map<BrandSegment | "OTHER", BrandRow[]>();
@@ -148,12 +149,10 @@ export default async function BrandsPage() {
             <ul className="flex flex-wrap gap-x-3 gap-y-2">
               {onRequest.map((brand) => (
                 <li key={brand.slug}>
-                  <Link
-                    href={`/brands/${brand.slug}`}
-                    className="block rounded-(--radius-md) border border-line bg-white px-3 py-1.5 text-meta text-ink-700 transition-colors hover:border-graphite-400 hover:text-graphite-900"
-                  >
+                  {/* Not a link: a brand with no product and no hub page has no page. */}
+                  <span className="block rounded-(--radius-md) border border-line bg-white px-3 py-1.5 text-meta text-ink-700">
                     {brand.name}
-                  </Link>
+                  </span>
                 </li>
               ))}
             </ul>

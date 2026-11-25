@@ -277,6 +277,7 @@ export function HeroBlock({
                         ) : null}
                         <Link
                           href={`/search?q=${encodeURIComponent(term)}`}
+                          rel="nofollow"
                           className={cn(
                             "underline-offset-2 hover:underline",
                             dark

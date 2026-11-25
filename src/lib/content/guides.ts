@@ -1,4 +1,5 @@
 import { BRAND_GUIDE_DATA } from "./brand-guides.generated";
+import { PLANS_ROUTES } from "./plans";
 import { CATEGORY_GUIDE_DATA } from "./category-guides.generated";
 import { PRODUCT_GUIDE_DATA } from "./product-guides.generated";
 
@@ -82,4 +83,4 @@ export function categoryPageFor(productSlug: string): { href: string; label: str
 }
 
 /** Every route the guides add, for the sitemap. */
-export const GUIDE_ROUTES = [...Object.keys(CATEGORY_GUIDES).map((slug) => `/${slug}`), "/price-list", "/ae", "/ae/microsoft-365", "/ae/autodesk", "/ae/adobe"];
+export const GUIDE_ROUTES = [...Object.keys(CATEGORY_GUIDES).map((slug) => `/${slug}`), ...PLANS_ROUTES, "/price-list", "/ae", "/ae/microsoft-365", "/ae/autodesk", "/ae/adobe"];

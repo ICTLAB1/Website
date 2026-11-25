@@ -41,6 +41,7 @@ import {
   MIN_RATING,
 } from "@/lib/reviews";
 import { ReviewList } from "@/components/reviews/review-list";
+import { AnswerBlock } from "@/components/marketing/answer-block";
 import { CustomerSay } from "@/components/reviews/customer-say";
 import { getSiteConfig } from "@/lib/site-config";
 import { QuickEnquiry } from "@/components/enquiry/quick-enquiry";
@@ -560,6 +561,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-ink-600">
             {product.shortDescription}
           </p>
+
+          <AnswerBlock path={`/products/${product.slug}`} inline />
 
           {guide && !hardware ? (
             <>

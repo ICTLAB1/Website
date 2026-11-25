@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+
+import { facetRel } from "@/lib/crawl-rules";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import type { NavColumn, NavLink, PrimaryNavItem } from "@/lib/queries/navigation";
@@ -157,7 +159,7 @@ export function MobileNav({
                           </svg>
                         </button>
                       ) : (
-                        <Link href={item.href} className="block px-4 py-3.5 text-body font-medium text-graphite-900">
+                        <Link href={item.href} rel={facetRel(item.href)} className="block px-4 py-3.5 text-body font-medium text-graphite-900">
                           {item.label}
                           {item.badge ? (
                             <>
@@ -185,7 +187,7 @@ export function MobileNav({
                     <ul className="py-1">
                       {utility.map((link) => (
                         <li key={link.href}>
-                          <Link href={link.href} className="block px-4 py-2.5 text-sm text-ink-600">
+                          <Link href={link.href} rel={facetRel(link.href)} className="block px-4 py-2.5 text-sm text-ink-600">
                             {link.label}
                           </Link>
                         </li>
@@ -230,7 +232,7 @@ export function MobileNav({
                     ))}
                     {current.links?.map((link) => (
                       <li key={link.href}>
-                        <Link href={link.href} className="block px-4 py-3.5">
+                        <Link href={link.href} rel={facetRel(link.href)} className="block px-4 py-3.5">
                           <span className="block text-body font-medium text-graphite-900">{link.label}</span>
                           {link.description ? (
                             <span className="mt-0.5 block text-meta text-ink-500">{link.description}</span>
@@ -248,7 +250,7 @@ export function MobileNav({
                   <ul className="divide-y divide-line">
                     {current.links.map((link) => (
                       <li key={link.href}>
-                        <Link href={link.href} className="block px-4 py-3.5 text-body text-graphite-900">
+                        <Link href={link.href} rel={facetRel(link.href)} className="block px-4 py-3.5 text-body text-graphite-900">
                           {link.label}
                         </Link>
                       </li>

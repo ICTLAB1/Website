@@ -19,7 +19,7 @@ type Hub = {
   heading: string;
   brands: string[];
   /** Which of the brand's products belong to this hub. Omitted: all of them. */
-  product?: RegExp;
+  product?: (product: { slug: string; name: string; category: string }) => boolean;
   /** Which published articles belong to it, matched on the article's address. */
   article: RegExp;
 };
@@ -28,8 +28,17 @@ const HUBS: Record<string, Hub> = {
   "microsoft-365": {
     heading: "Microsoft 365",
     brands: ["microsoft"],
-    product: /365/i,
+    // By category, not by the digits "365": Dynamics 365, Windows 365 and Defender for
+    // Office 365 are Microsoft products too, but they are not Microsoft 365 plans.
+    product: (product) =>
+      ["microsoft-365-plans", "email-collaboration", "productivity-collaboration", "security-endpoint"].includes(product.category),
     article: /microsoft-365|office-365|office|m365|windows-11|microsoft/i,
+  },
+  "microsoft-office": {
+    heading: "Office",
+    brands: ["microsoft"],
+    product: (product) => product.category === "office-suites" || /^(microsoft-)?(project|visio)-(professional|standard)-2024$/.test(product.slug),
+    article: /office/i,
   },
   "adobe-licensing": {
     heading: "Adobe",
@@ -48,9 +57,9 @@ const loadProducts = cached(
     prisma.product.findMany({
       where: { status: "ACTIVE", deletedAt: null, brand: { slug: { in: brands } } },
       orderBy: { name: "asc" },
-      select: { slug: true, name: true },
-    }),
-  ["hub-index-products"],
+      select: { slug: true, name: true, category: { select: { slug: true } } },
+    }).then((rows) => rows.map((row) => ({ slug: row.slug, name: row.name, category: row.category.slug }))),
+  ["hub-index-products-v2"],
   [tags.catalogue],
 );
 
@@ -74,7 +83,7 @@ export async function HubIndex({ slug }: { slug: string }) {
   if (!hub) return null;
 
   const [products, articles] = await Promise.all([loadProducts(hub.brands), loadArticles()]);
-  const shown = hub.product ? products.filter((product) => hub.product!.test(`${product.slug} ${product.name}`)) : products;
+  const shown = hub.product ? products.filter((product) => hub.product!(product)) : products;
   const related = articles.filter((post) => hub.article.test(post.slug)).slice(0, 12);
   if (shown.length === 0 && related.length === 0) return null;
 

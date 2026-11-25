@@ -1,3 +1,4 @@
+import { getLiveBrandSlugs } from "@/lib/queries/live-brands";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -242,6 +243,17 @@ export type HomeSlots = Partial<
   >
 >;
 
+/** A brand's logo, linked to its page only when it has one; otherwise shown as the same tile, unlinked. */
+function BrandLogoLink({ live, href, className, children }: { live: boolean; href: string; className: string; children: React.ReactNode }) {
+  return live ? (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
+  ) : (
+    <span className={className}>{children}</span>
+  );
+}
+
 export async function HomePage({
   copy,
   slots,
@@ -251,6 +263,7 @@ export async function HomePage({
 }) {
   const data = await getHomeData();
   const partners = await currentPartnerBadges();
+  const liveBrands = new Set(await getLiveBrandSlugs());
   const team = PHOTOS.team;
   const { hero } = copy;
 
@@ -323,6 +336,7 @@ export async function HomePage({
                       ) : null}
                       <Link
                         href={`/search?q=${encodeURIComponent(term)}`}
+                        rel="nofollow"
                         className="text-white underline-offset-2 hover:underline"
                       >
                         {term}
@@ -372,7 +386,8 @@ export async function HomePage({
             >
               {data.brands.map((brand) => (
                 <li key={brand.slug}>
-                  <Link
+                  <BrandLogoLink
+                    live={liveBrands.has(brand.slug)}
                     href={`/brands/${brand.slug}`}
                     className="flex h-14 min-w-24 items-center justify-center rounded-(--radius-md) bg-white px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
@@ -383,7 +398,7 @@ export async function HomePage({
                       loading="eager"
                       className="h-7 w-auto max-w-[7rem] object-contain"
                     />
-                  </Link>
+                  </BrandLogoLink>
                 </li>
               ))}
             </ul>

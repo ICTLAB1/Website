@@ -112,6 +112,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               <li key={tag}>
                 <Link
                   href={`/search?q=${encodeURIComponent(tag)}`}
+                  rel="nofollow"
                   className="inline-block rounded-(--radius-sm) bg-surface-sunken px-2.5 py-1 text-[12px] text-ink-600 hover:bg-graphite-100 hover:text-graphite-800"
                 >
                   {tag}

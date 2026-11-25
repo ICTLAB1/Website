@@ -14,6 +14,7 @@ import { CategoryCard } from "@/components/marketing/category-card";
 import { glyph } from "@/lib/glyphs";
 import { prisma } from "@/lib/db";
 import { industryBySlug, publishedIndustries } from "@/lib/queries/industries";
+import { getLiveBrandSlugs } from "@/lib/queries/live-brands";
 import { buildMetadata } from "@/lib/seo";
 
 /**
@@ -152,6 +153,7 @@ export default async function IndustryPage({
       .map((wanted) => rows.find((row) => row.slug === wanted))
       .filter((row): row is T => row !== undefined);
 
+  const liveBrands = new Set(await getLiveBrandSlugs());
   const brandRows = inOrder(industry.brandSlugs, brands);
   const serviceRows = inOrder(industry.serviceSlugs, services);
   const categoryRows = inOrder(industry.categorySlugs, categories);
@@ -293,6 +295,7 @@ export default async function IndustryPage({
             {brandRows.map((brand, index) => (
               <Reveal key={brand.slug} delay={Math.min(index * 45, 180)}>
                 <BrandCard
+                  live={liveBrands.has(brand.slug)}
                   brand={{
                     ...brand,
                     productCount: brand._count.products || undefined,

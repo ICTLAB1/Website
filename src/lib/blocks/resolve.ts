@@ -1,3 +1,4 @@
+import { getLiveBrandSlugs } from "@/lib/queries/live-brands";
 import "server-only";
 import { prisma } from "@/lib/db";
 import { cached } from "@/lib/queries/cached";
@@ -287,7 +288,18 @@ async function collectionFor(
  * may be *called* publicly is decided in `lib/brand-partner`, not by which
  * brands happen to have a PNG.
  */
-async function marqueeFor(
+/**
+ * The marquee's rows. A brand row says whether it has a page to link to: a brand with no
+ * product and no hub page has none, so its logo is shown without a link.
+ */
+async function marqueeFor(block: Extract<ParsedBlock, { type: "LOGO_MARQUEE" }>): Promise<unknown[]> {
+  const rows = await marqueeRows(block);
+  if (block.data.source === "clients") return rows;
+  const live = new Set(await getLiveBrandSlugs());
+  return (rows as Array<{ slug: string }>).map((row) => ({ ...row, live: live.has(row.slug) }));
+}
+
+async function marqueeRows(
   block: Extract<ParsedBlock, { type: "LOGO_MARQUEE" }>,
 ): Promise<unknown[]> {
   /*

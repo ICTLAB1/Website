@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { prisma } from "@/lib/db";
+import { AnswerBlock } from "@/components/marketing/answer-block";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { FaqList } from "@/components/ui/accordion";
 import { Markdown } from "@/components/markdown";
@@ -62,6 +63,8 @@ export async function CategoryGuidePage({ guide }: { guide: CategoryGuide }) {
         </p>
         <Markdown body={intro} className="prose-content mt-5 text-[17px]" />
       </header>
+
+      <AnswerBlock path={`/${guide.slug}`} inline />
 
       {guide.products.length > 0 ? (
       <section aria-labelledby="compare" className="mt-12">
