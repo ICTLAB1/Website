@@ -96,7 +96,13 @@ const COMMERCIAL_FILLERS = [
   "Priced in INR.",
   "Renewals handled by TechZoid.",
 ];
-const HARDWARE_FILLERS = ["Quoted to your specification and quantity.", "Quoted alongside the licensing that goes on it.", "One purchase order across brands."];
+const HARDWARE_FILLERS = [
+  "Quoted to your specification and quantity.",
+  "Quoted alongside the licensing that goes on it.",
+  "One purchase order across brands.",
+  "Hardware, licence and support on one quotation.",
+  "Supplied against your purchase order.",
+];
 const GENERAL_FILLERS = [
   "Software licensing, IT hardware and managed IT services for businesses across India.",
   "Enterprise software, hardware and cloud from one supplier.",
@@ -196,7 +202,9 @@ export function fitDescription(description: string, path: string): string {
 
   // Too short: add whole factual sentences that fit, before the call to action.
   if (result.length < DESCRIPTION_MIN) {
-    const fillers = commercial ? COMMERCIAL_FILLERS : GENERAL_FILLERS;
+    // A hardware product page says so; "Genuine licences" would be wrong for a switch.
+    const isHardwareCopy = /quoted to your configuration/i.test(lead);
+    const fillers = commercial ? (isHardwareCopy ? HARDWARE_FILLERS : COMMERCIAL_FILLERS) : GENERAL_FILLERS;
     for (const filler of fillers) {
       if (result.includes(filler)) continue;
       const withFiller = clean(`${lead} ${filler} ${tail}`);

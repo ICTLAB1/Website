@@ -236,6 +236,7 @@ Third-party product facts and TechZoid claims the writers were not certain of. C
 - Confirm how configuration backups and log access are obtained (remote access, on-site visits, or customer-provided exports) and whether any tooling is used.
 - Confirm whether hardware replacement logistics and incident response are offered as quoted add-ons.
 
-## cisco hardware families (2026-11-cisco-hardware migration)
-- Eleven quote-only Cisco hardware family pages were written from general knowledge of Cisco's range, not from a TechZoid line card or a Cisco price list. Confirm which families TechZoid quotes, and delete any it does not from the admin panel: Catalyst 1000, 9100 (access points), 9200, 9300, 9500, 8000 (edge), Meraki MX, MS, MR, Secure Firewall, Nexus 9000.
-- Statements that Meraki hardware runs under a per-device Meraki licence and that Catalyst 9000 switches are sold with a network licence and support contract need confirming against Cisco's current licensing.
+## cisco hardware series (2026-11-cisco-hardware migration)
+- 99 quote-only Cisco hardware product pages, one per series on Cisco's A-Z index (https://www.cisco.com/c/en/us/products/a-to-z-series-index.html, saved in scripts/data/cisco-a-to-z-series.json). Series names are Cisco's; the descriptions are generic by product type (switch, router, firewall, access point, phone, UCS server, SAN) and state no specifications. Confirm TechZoid quotes these, and delete any it does not from the admin panel.
+- Left out as not hardware or not for this catalogue: Integrated Management Controller, Expressway Series, Prime Network Control System Series Appliances, ASR 5000 Series, and the six optical-transport series (NCS 1000/2000/4000/4200, ONS 15454, ONS 15200).
+- Statements that Cisco hardware is bought with a software licence and support contract are general; confirm against Cisco's current licensing.
