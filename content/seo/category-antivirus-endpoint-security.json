@@ -1,7 +1,7 @@
 {
  "slug": "antivirus-endpoint-security",
  "h1": "Antivirus and Endpoint Security in India: Kaspersky and Sophos",
- "intro": "Every laptop, desktop and server in your business is a way in. Email attachments, fake invoices, infected USB drives and compromised websites all end at an endpoint, and a single unprotected machine can become the route to your file server. Choosing endpoint security means deciding how much protection and visibility you need, how many devices you have, and who will watch the console.\n\nThis guide explains the difference between antivirus and endpoint detection and response, how to choose using a decision rule, how licensing is usually structured by device count and term, and what to check when buying in India. It is written for the IT head or admin manager who has to protect a mixed fleet of Windows PCs, laptops and a few servers without a dedicated security team.\n\nOn availability: TechZoid has no catalogue products or website prices for Kaspersky or Sophos. We quote both on request, to your device counts and feature needs, and the price is fixed only by a written quotation. Read the [Kaspersky](/brands/kaspersky) and [Sophos](/brands/sophos) pages and send your requirement through the [enquiry form](/enquiry).",
+ "intro": "Every laptop, desktop and server in your business is a way in. Email attachments, fake invoices, infected USB drives and compromised websites all end at an endpoint, and a single unprotected machine can become the route to your file server. Choosing endpoint security means deciding how much protection and visibility you need, how many devices you have, and who will watch the console.\n\nThis guide explains the difference between antivirus and endpoint detection and response, how to choose using a decision rule, how licensing is usually structured by device count and term, and what to check when buying in India. It is written for the IT head or admin manager who has to protect a mixed fleet of Windows PCs, laptops and a few servers without a dedicated security team.\n\nOn availability: Kaspersky and Sophos endpoint security carry no website price. Sophos hardware, such as its firewalls, is listed separately on the firewall page. We quote both on request, to your device counts and feature needs, and the price is fixed only by a written quotation. Read the [Kaspersky](/brands/kaspersky) and [Sophos](/brands/sophos) pages and send your requirement through the [enquiry form](/enquiry).",
  "sections": [
   {
    "heading": "Antivirus, endpoint protection and EDR: what each one means",
@@ -28,7 +28,7 @@
  "faqs": [
   {
    "question": "Do you list Kaspersky and Sophos products with prices?",
-   "answer": "No. TechZoid has no catalogue products or website prices for these brands. We quote them on request, to your device counts and feature needs, and a written quotation fixes the price."
+   "answer": "No. Kaspersky and Sophos endpoint security carry no website price. We quote them on request, to your device counts and feature needs, and a written quotation fixes the price."
   },
   {
    "question": "What is the difference between antivirus and EDR?",
