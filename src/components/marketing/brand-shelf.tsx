@@ -26,7 +26,10 @@ const MS_PLANS: PlansLink[] = [
   { href: "/microsoft-365-business-plans-and-pricing", label: "Microsoft 365 business plans and pricing" },
   { href: "/microsoft-365-enterprise-plans-and-pricing", label: "Microsoft 365 enterprise plans and pricing" },
 ];
-const BRANDS: Record<string, { brand: string; name: string; plans: PlansLink[]; accent: string }> = {
+/** `only`: show just these families, under `title` (for the product-line pages, not the whole-brand hubs). */
+const BRANDS: Record<string, { brand: string; name: string; plans: PlansLink[]; accent: string; only?: string[]; title?: string }> = {
+  "microsoft-365": { brand: "microsoft", name: "Microsoft", plans: MS_PLANS, accent: ACCENT.microsoft, only: ["m365"], title: "Microsoft 365 plans and prices" },
+  "microsoft-office": { brand: "microsoft", name: "Microsoft", plans: MS_PLANS, accent: ACCENT.microsoft, only: ["office"], title: "Microsoft Office, Project and Visio: products and prices" },
   microsoft: { brand: "microsoft", name: "Microsoft", plans: MS_PLANS, accent: ACCENT.microsoft },
   "microsoft-licensing": { brand: "microsoft", name: "Microsoft", plans: MS_PLANS, accent: ACCENT.microsoft },
   adobe: { brand: "adobe", name: "Adobe", plans: [{ href: "/adobe-plans-and-pricing", label: "Adobe plans and pricing" }], accent: ACCENT.adobe },
@@ -146,6 +149,12 @@ export async function BrandShelf({ slug }: { slug: string }) {
     groups = [...seen.values()].sort((a, b) => b.weight - a.weight || a.name.localeCompare(b.name));
     items = rows.map((row) => toShelfProduct(row, row.category.slug));
   }
+  if (hub.only) {
+    const keep = new Set(hub.only);
+    groups = groups.filter((group) => keep.has(group.key));
+    items = items.filter((item) => keep.has(item.group));
+    if (items.length === 0) return null;
+  }
   // Priced products first within a family, then by the catalogue's own order.
   items.sort((a, b) => Number(b.price != null) - Number(a.price != null));
 
@@ -155,10 +164,10 @@ export async function BrandShelf({ slug }: { slug: string }) {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="max-w-3xl">
             <h2 id="brand-shelf" className="text-[1.9rem] font-bold text-career-navy">
-              All {hub.name} products and prices
+              {hub.title ?? `All ${hub.name} products and prices`}
             </h2>
             <p className="mt-1 text-[15px] text-ink-600">
-              Every {hub.name} product we supply, with its price from our catalogue. Where there is no price, ask for today&apos;s
+              {hub.only ? `The ${hub.name} products we supply in this range, with` : `Every ${hub.name} product we supply, with`} their price from our catalogue. Where there is no price, ask for today&apos;s
               price on a written quotation with a GST invoice.
             </p>
           </div>
