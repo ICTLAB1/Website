@@ -176,6 +176,26 @@ export const contactSchema = z.object({
   attribution: attributionSchema.optional(),
 });
 
+/** First-round screening answers from /careers. Stored as a support ticket for HR; nothing here is a hiring decision. */
+export const SCREENING_EXPERIENCE = ["Fresher", "Under 1 year", "1 to 3 years", "3 to 5 years", "5 to 10 years", "10+ years"] as const;
+export const SCREENING_NOTICE = ["Immediately", "Up to 15 days", "30 days", "60 days", "90 days"] as const;
+
+export const careerScreeningSchema = z.object({
+  name: trimmed(120).min(2, "Enter your full name."),
+  email: emailSchema,
+  phone: phoneSchema,
+  roleInterest: trimmed(160).min(2, "Tell us which role or area interests you."),
+  experience: z.enum(SCREENING_EXPERIENCE, { message: "Choose your total experience." }),
+  currentLocation: trimmed(120).min(2, "Enter your current city."),
+  noticePeriod: z.enum(SCREENING_NOTICE, { message: "Choose your notice period." }),
+  currentCtc: trimmed(80).optional().or(z.literal("")),
+  expectedCtc: trimmed(80).optional().or(z.literal("")),
+  relevantExperience: trimmed(1500).min(20, "Describe your relevant work in a few sentences (at least 20 characters)."),
+  whyTechzoid: trimmed(1000).min(20, "Tell us why you want to join (at least 20 characters)."),
+  profileUrl: trimmed(300).optional().or(z.literal("")),
+  website: z.string().max(0).optional(),
+});
+
 export const profileSchema = z.object({
   name: trimmed(120).min(2, "Enter your full name."),
   phone: phoneSchema.optional().or(z.literal("")),

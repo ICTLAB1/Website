@@ -78,3 +78,11 @@ SCENARIO=jobs  BASE=http://localhost:3101 npm run verify:careers
 Run it once per scenario (`jobs`, `empty`, `down`) against a server started with
 the matching URL. It checks the page at 375, 768 and 1440px, the filters,
 "View details", the badge, the strip, the redirects and the sitemap.
+
+## Initial screening questions
+
+`/careers#screening` has a short first-round questionnaire (name, contact, role of interest, experience, city, notice
+period, optional CTC, two written answers, optional profile link). It is **not** an application: those still happen on
+the HR portal. Answers post to `/api/careers/screening` (CSRF, honeypot, same rate limit as the contact form), are stored
+as a support ticket in the `CAREERS` category with no new table, and are emailed to the internal notification address;
+the candidate gets an acknowledgement. This is the one place the site keeps anything about a candidate.
