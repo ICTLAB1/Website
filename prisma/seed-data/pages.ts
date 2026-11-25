@@ -165,7 +165,7 @@ export const pageSeeds: PageSeed[] = [
           "limit": 6,
           "slugs": [],
           "action": {
-            "href": "/products?sort=popular",
+            "href": "/products",
             "label": "See all popular"
           },
           "source": "popular",
