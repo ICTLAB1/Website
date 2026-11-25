@@ -124,8 +124,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // navigation entry alone. Listing it here would advertise a 404.
   const unserved = new Set(unservedPages.map((slug) => `/${slug}`));
 
+  const hasClientLogos = (await publishedClientLogos()).some((logo) => safeClientLogo(logo.logoUrl));
+
   for (const route of navPaths) {
     if (EXCLUDED.has(route) || unserved.has(route)) continue;
+    if (route === "/clients" && !hasClientLogos) continue;
     add({
       url: canonical(route),
       lastModified: now,
@@ -158,7 +161,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // /clients exists only while at least one customer logo is published.
-  if ((await publishedClientLogos()).some((logo) => safeClientLogo(logo.logoUrl))) {
+  if (hasClientLogos) {
     add({ url: canonical("/clients"), lastModified: new Date(GUIDES_UPDATED), changeFrequency: "monthly", priority: 0.6 });
   }
 

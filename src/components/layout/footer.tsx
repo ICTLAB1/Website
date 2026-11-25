@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Logo } from "@/components/layout/logo";
 import { getNavigation } from "@/lib/queries/navigation";
+import { publishedClientLogos } from "@/lib/queries/client-logos";
+import { safeClientLogo } from "@/lib/client-logo";
 import { getSiteConfig } from "@/lib/site-config";
 import { socialLinks } from "@/lib/social";
 import { CertificationStrip } from "@/components/layout/certification-strip";
@@ -9,6 +11,8 @@ export async function Footer() {
   const config = await getSiteConfig();
   const social = socialLinks(config.profileUrls);
   const navigation = await getNavigation();
+  // /clients exists only while a customer logo is published; until then its link is left out.
+  const hasClientLogos = (await publishedClientLogos()).some((logo) => safeClientLogo(logo.logoUrl));
   const year = new Date().getFullYear();
 
   return (
@@ -163,7 +167,7 @@ export async function Footer() {
                 {column.heading}
               </h2>
               <ul className="mt-4 space-y-2.5">
-                {column.links.map((link) => (
+                {column.links.filter((link) => link.href !== "/clients" || hasClientLogos).map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className="text-meta text-graphite-300 hover:text-white hover:underline">
                       {link.label}
