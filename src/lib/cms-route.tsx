@@ -12,6 +12,7 @@ import { leadPageFor } from "@/lib/lead-pages";
 import { currentPartnerBadges } from "@/components/layout/accreditation-strip";
 import { PartnerShowcase } from "@/components/marketing/partner-showcase";
 import { HubIndex } from "@/components/marketing/hub-index";
+import { BrandShelf } from "@/components/marketing/brand-shelf";
 import { DocumentDates } from "@/components/marketing/document-dates";
 import { getPage } from "@/lib/queries/pages";
 import { resolveBlocks } from "@/lib/blocks/resolve";
@@ -132,6 +133,7 @@ export async function CmsPage({ slug }: { slug: string }) {
         afterHero={
           <>
             <DocumentDates page={page} />
+            <BrandShelf slug={slug} />
             {opensWithForm ? <LandingEnquiry slug={slug} /> : null}
           </>
         }

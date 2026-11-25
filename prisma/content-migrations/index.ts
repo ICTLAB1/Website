@@ -17,6 +17,7 @@ import { landingTitlesSayIndia } from "./2026-11-landing-titles-say-india";
 import { blogPriceFaqs } from "./2026-11-blog-price-faqs";
 import { adobeAppsFaqAndGuides } from "./2026-11-adobe-apps-faq-and-guides";
 import { seoPostsAndLinks } from "./2026-11-seo-posts-and-links";
+import { microsoftHubProductGrids } from "./2026-11-microsoft-hub-product-grids";
 import { microsoftProducts } from "./2026-11-microsoft-products";
 import { sophosSonicwallHardware } from "./2026-11-sophos-sonicwall-hardware";
 import { fortinetHardware } from "./2026-11-fortinet-hardware";
@@ -239,6 +240,7 @@ export const contentMigrations: ContentMigration[] = [
   fortinetHardware,
   sophosSonicwallHardware,
   microsoftProducts,
+  microsoftHubProductGrids,
 ];
 
 export type { ContentMigration };
