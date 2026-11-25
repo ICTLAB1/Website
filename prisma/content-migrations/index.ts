@@ -17,6 +17,7 @@ import { landingTitlesSayIndia } from "./2026-11-landing-titles-say-india";
 import { blogPriceFaqs } from "./2026-11-blog-price-faqs";
 import { adobeAppsFaqAndGuides } from "./2026-11-adobe-apps-faq-and-guides";
 import { seoPostsAndLinks } from "./2026-11-seo-posts-and-links";
+import { sophosSonicwallHardware } from "./2026-11-sophos-sonicwall-hardware";
 import { fortinetHardware } from "./2026-11-fortinet-hardware";
 import { ciscoHardware } from "./2026-11-cisco-hardware";
 import { managedFirewallAndAutocadTerms } from "./2026-11-managed-firewall-and-autocad-terms";
@@ -235,6 +236,7 @@ export const contentMigrations: ContentMigration[] = [
   managedFirewallAndAutocadTerms,
   ciscoHardware,
   fortinetHardware,
+  sophosSonicwallHardware,
 ];
 
 export type { ContentMigration };

@@ -5,7 +5,7 @@ export const CATEGORY_GUIDE_DATA: Record<string, CategoryGuide> = {
   "antivirus-endpoint-security": {
     "slug": "antivirus-endpoint-security",
     "h1": "Antivirus and Endpoint Security in India: Kaspersky and Sophos",
-    "intro": "Every laptop, desktop and server in your business is a way in. Email attachments, fake invoices, infected USB drives and compromised websites all end at an endpoint, and a single unprotected machine can become the route to your file server. Choosing endpoint security means deciding how much protection and visibility you need, how many devices you have, and who will watch the console.\n\nThis guide explains the difference between antivirus and endpoint detection and response, how to choose using a decision rule, how licensing is usually structured by device count and term, and what to check when buying in India. It is written for the IT head or admin manager who has to protect a mixed fleet of Windows PCs, laptops and a few servers without a dedicated security team.\n\nOn availability: TechZoid has no catalogue products or website prices for Kaspersky or Sophos. We quote both on request, to your device counts and feature needs, and the price is fixed only by a written quotation. Read the [Kaspersky](/brands/kaspersky) and [Sophos](/brands/sophos) pages and send your requirement through the [enquiry form](/enquiry).",
+    "intro": "Every laptop, desktop and server in your business is a way in. Email attachments, fake invoices, infected USB drives and compromised websites all end at an endpoint, and a single unprotected machine can become the route to your file server. Choosing endpoint security means deciding how much protection and visibility you need, how many devices you have, and who will watch the console.\n\nThis guide explains the difference between antivirus and endpoint detection and response, how to choose using a decision rule, how licensing is usually structured by device count and term, and what to check when buying in India. It is written for the IT head or admin manager who has to protect a mixed fleet of Windows PCs, laptops and a few servers without a dedicated security team.\n\nOn availability: Kaspersky and Sophos endpoint security carry no website price. Sophos hardware, such as its firewalls, is listed separately on the firewall page. We quote both on request, to your device counts and feature needs, and the price is fixed only by a written quotation. Read the [Kaspersky](/brands/kaspersky) and [Sophos](/brands/sophos) pages and send your requirement through the [enquiry form](/enquiry).",
     "sections": [
       {
         "heading": "Antivirus, endpoint protection and EDR: what each one means",
@@ -32,7 +32,7 @@ export const CATEGORY_GUIDE_DATA: Record<string, CategoryGuide> = {
     "faqs": [
       {
         "question": "Do you list Kaspersky and Sophos products with prices?",
-        "answer": "No. TechZoid has no catalogue products or website prices for these brands. We quote them on request, to your device counts and feature needs, and a written quotation fixes the price."
+        "answer": "No. Kaspersky and Sophos endpoint security carry no website price. We quote them on request, to your device counts and feature needs, and a written quotation fixes the price."
       },
       {
         "question": "What is the difference between antivirus and EDR?",
@@ -589,7 +589,7 @@ export const CATEGORY_GUIDE_DATA: Record<string, CategoryGuide> = {
   "firewall-security": {
     "slug": "firewall-security",
     "h1": "Firewall Security in India: Fortinet, Sophos, SonicWall & Cisco",
-    "intro": "A firewall is the one device every office network passes through. It decides what reaches your servers, what your staff can reach on the internet, how branch offices and remote users connect back, and what you can prove afterwards if something goes wrong. Buying the wrong size, or buying the box without the subscriptions that make it useful, is the most common way a firewall project disappoints.\n\nThis guide explains what a business firewall does, how to choose between Fortinet, Sophos, SonicWall and Cisco, how the appliance, security subscriptions and support contract fit together, and what to check when buying in India. It is written for the IT head or office manager who has been asked to replace an ageing router-firewall and wants a sensible specification before asking for prices.\n\nA plain note on availability: the Cisco Secure Firewall series and the Fortinet FortiGate models are listed on this site without prices, and Sophos and SonicWall are quoted on request. No brand here has a website price. We quote all four to your configuration, and the price is fixed only by a written quotation. Send the details through the [enquiry form](/enquiry) and read the brand pages for [Fortinet](/brands/fortinet), [Sophos](/brands/sophos), [SonicWall](/brands/sonicwall) and [Cisco](/brands/cisco). For a wider comparison, see our article on [top firewall brands in India](/blog/top-firewall-brands-india-fortinet-sophos-sonicwall-cisco).",
+    "intro": "A firewall is the one device every office network passes through. It decides what reaches your servers, what your staff can reach on the internet, how branch offices and remote users connect back, and what you can prove afterwards if something goes wrong. Buying the wrong size, or buying the box without the subscriptions that make it useful, is the most common way a firewall project disappoints.\n\nThis guide explains what a business firewall does, how to choose between Fortinet, Sophos, SonicWall and Cisco, how the appliance, security subscriptions and support contract fit together, and what to check when buying in India. It is written for the IT head or office manager who has been asked to replace an ageing router-firewall and wants a sensible specification before asking for prices.\n\nA plain note on availability: the Cisco Secure Firewall series, the Fortinet FortiGate models, the Sophos XGS firewalls and the SonicWall TZ, NSa and NSsp firewalls are all listed on this site without prices. No brand here has a website price. We quote all four to your configuration, and the price is fixed only by a written quotation. Send the details through the [enquiry form](/enquiry) and read the brand pages for [Fortinet](/brands/fortinet), [Sophos](/brands/sophos), [SonicWall](/brands/sonicwall) and [Cisco](/brands/cisco). For a wider comparison, see our article on [top firewall brands in India](/blog/top-firewall-brands-india-fortinet-sophos-sonicwall-cisco).",
     "sections": [
       {
         "heading": "What a business firewall actually does",
@@ -642,12 +642,27 @@ export const CATEGORY_GUIDE_DATA: Record<string, CategoryGuide> = {
         "slug": "fortinet-fortigate-1000f",
         "use": "FortiGate next-generation firewall in Fortinet's high-end (data centre) tier.",
         "whoFor": "Data-centre and large-network deployments."
+      },
+      {
+        "slug": "sophos-xgs-series-firewalls",
+        "use": "Sophos next-generation firewall appliances, managed locally or from Sophos Central.",
+        "whoFor": "Small to mid-sized organisations that want one console for network security."
+      },
+      {
+        "slug": "sonicwall-tz-series-firewalls",
+        "use": "SonicWall desktop next-generation firewalls with VPN and subscription security services.",
+        "whoFor": "Small businesses, branch offices and retail sites."
+      },
+      {
+        "slug": "sonicwall-nsa-series-firewalls",
+        "use": "SonicWall next-generation firewalls with higher capacity than the TZ Series.",
+        "whoFor": "Mid-sized organisations and campus networks."
       }
     ],
     "faqs": [
       {
         "question": "Do you list Fortinet, Sophos, SonicWall or Cisco firewalls with prices?",
-        "answer": "No. No brand here has a website price: the Cisco Secure Firewall series and the Fortinet FortiGate models are listed without prices, and Sophos and SonicWall are quoted on request. We quote them to your configuration, and a written quotation fixes the price. Send your requirement through the enquiry page."
+        "answer": "No. No brand here has a website price: the Cisco Secure Firewall series, the Fortinet FortiGate models, the Sophos XGS firewalls and the SonicWall TZ, NSa and NSsp firewalls are all listed without prices. We quote them to your configuration, and a written quotation fixes the price. Send your requirement through the enquiry page."
       },
       {
         "question": "Which firewall brand is best for a small office?",
