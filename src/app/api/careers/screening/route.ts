@@ -58,6 +58,14 @@ export const POST = withErrorHandling("careers.screening", async (request: Reque
     `Phone: ${input.phone}`,
     `Role or area of interest: ${input.roleInterest}`,
     `Total experience: ${input.experience}`,
+    `Highest qualification: ${input.qualification}`,
+    input.currentEmployer ? `Current employer: ${input.currentEmployer}` : null,
+    `Can work from the New Delhi office: ${input.officeBased}`,
+    `Willing to relocate: ${input.willingToRelocate}`,
+    `Skills and tools: ${input.skills}`,
+    `Languages: ${input.languages}`,
+    input.availableForInterview ? `Available for an interview: ${input.availableForInterview}` : null,
+    input.heardFrom ? `Heard about us from: ${input.heardFrom}` : null,
     `Current city: ${input.currentLocation}`,
     `Notice period: ${input.noticePeriod}`,
     input.currentCtc ? `Current CTC: ${input.currentCtc}` : null,
@@ -69,6 +77,7 @@ export const POST = withErrorHandling("careers.screening", async (request: Reque
     "",
     "Why TechZoid:",
     input.whyTechzoid,
+    ...(input.reasonForChange ? ["", "Reason for looking for a change:", input.reasonForChange] : []),
   ].filter((line): line is string => line !== null);
 
   await prisma.supportTicket.create({

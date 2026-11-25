@@ -15,7 +15,13 @@ import {
   Textarea,
 } from "@/components/ui/form";
 import { postJson } from "@/lib/csrf-client";
-import { SCREENING_EXPERIENCE, SCREENING_NOTICE } from "@/lib/validation";
+import {
+  SCREENING_EXPERIENCE,
+  SCREENING_NOTICE,
+  SCREENING_QUALIFICATION,
+  SCREENING_SOURCE,
+  SCREENING_YES_NO,
+} from "@/lib/validation";
 
 /** The short first-round questionnaire on /careers. Answers go to HR as a message; it is not an application. */
 export function ScreeningForm() {
@@ -41,6 +47,15 @@ export function ScreeningForm() {
       noticePeriod: get("noticePeriod"),
       currentCtc: get("currentCtc"),
       expectedCtc: get("expectedCtc"),
+      qualification: get("qualification"),
+      currentEmployer: get("currentEmployer"),
+      officeBased: get("officeBased"),
+      willingToRelocate: get("willingToRelocate"),
+      skills: get("skills"),
+      languages: get("languages"),
+      reasonForChange: get("reasonForChange"),
+      availableForInterview: get("availableForInterview"),
+      heardFrom: get("heardFrom"),
       relevantExperience: get("relevantExperience"),
       whyTechzoid: get("whyTechzoid"),
       profileUrl: get("profileUrl"),
@@ -109,6 +124,66 @@ export function ScreeningForm() {
               ))}
             </Select>
           </Field>
+          <Field name="qualification" label="Highest qualification" required>
+            <Select name="qualification" defaultValue="">
+              <option value="" disabled>
+                Choose one
+              </option>
+              {SCREENING_QUALIFICATION.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field name="currentEmployer" label="Current or last employer" hint="Optional.">
+            <Input name="currentEmployer" autoComplete="organization" />
+          </Field>
+          <Field name="officeBased" label="Can you work from our New Delhi office?" required>
+            <Select name="officeBased" defaultValue="">
+              <option value="" disabled>
+                Choose one
+              </option>
+              {SCREENING_YES_NO.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field name="willingToRelocate" label="Are you willing to relocate?" required>
+            <Select name="willingToRelocate" defaultValue="">
+              <option value="" disabled>
+                Choose one
+              </option>
+              {SCREENING_YES_NO.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field name="skills" label="Tools and skills you use" required hint="For example Excel, Microsoft 365, a CRM, cold calling.">
+            <Input name="skills" required />
+          </Field>
+          <Field name="languages" label="Languages you can work in" required>
+            <Input name="languages" placeholder="e.g. English, Hindi" required />
+          </Field>
+          <Field name="availableForInterview" label="When can you take an interview call?" hint="Optional. Days and times.">
+            <Input name="availableForInterview" />
+          </Field>
+          <Field name="heardFrom" label="How did you hear about us?">
+            <Select name="heardFrom" defaultValue="">
+              <option value="" >
+                Prefer not to say
+              </option>
+              {SCREENING_SOURCE.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </Select>
+          </Field>
           <Field name="profileUrl" label="LinkedIn or resume link" hint="Optional.">
             <Input name="profileUrl" type="url" autoComplete="url" />
           </Field>
@@ -128,6 +203,9 @@ export function ScreeningForm() {
         </Field>
         <Field name="whyTechzoid" label="Why do you want to work at TechZoid?" required>
           <Textarea name="whyTechzoid" rows={4} maxLength={1000} required />
+        </Field>
+        <Field name="reasonForChange" label="Why are you looking for a change?" hint="Optional.">
+          <Textarea name="reasonForChange" rows={3} maxLength={600} />
         </Field>
         <Honeypot />
         <div className="flex flex-wrap items-center gap-4 border-t border-line pt-5">

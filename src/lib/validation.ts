@@ -180,6 +180,10 @@ export const contactSchema = z.object({
 export const SCREENING_EXPERIENCE = ["Fresher", "Under 1 year", "1 to 3 years", "3 to 5 years", "5 to 10 years", "10+ years"] as const;
 export const SCREENING_NOTICE = ["Immediately", "Up to 15 days", "30 days", "60 days", "90 days"] as const;
 
+export const SCREENING_QUALIFICATION = ["12th pass", "Diploma", "Graduate", "Postgraduate", "Other"] as const;
+export const SCREENING_YES_NO = ["Yes", "No"] as const;
+export const SCREENING_SOURCE = ["Careers page", "LinkedIn", "Job portal", "Referral", "Search engine", "Other"] as const;
+
 export const careerScreeningSchema = z.object({
   name: trimmed(120).min(2, "Enter your full name."),
   email: emailSchema,
@@ -190,6 +194,15 @@ export const careerScreeningSchema = z.object({
   noticePeriod: z.enum(SCREENING_NOTICE, { message: "Choose your notice period." }),
   currentCtc: trimmed(80).optional().or(z.literal("")),
   expectedCtc: trimmed(80).optional().or(z.literal("")),
+  qualification: z.enum(SCREENING_QUALIFICATION, { message: "Choose your highest qualification." }),
+  currentEmployer: trimmed(160).optional().or(z.literal("")),
+  officeBased: z.enum(SCREENING_YES_NO, { message: "Tell us if you can work from our New Delhi office." }),
+  willingToRelocate: z.enum(SCREENING_YES_NO, { message: "Tell us if you can relocate." }),
+  skills: trimmed(300).min(2, "List the tools or skills you use (for example Excel, Microsoft 365, CRM)."),
+  languages: trimmed(160).min(2, "List the languages you can work in."),
+  reasonForChange: trimmed(600).optional().or(z.literal("")),
+  availableForInterview: trimmed(200).optional().or(z.literal("")),
+  heardFrom: z.enum(SCREENING_SOURCE).optional().or(z.literal("")),
   relevantExperience: trimmed(1500).min(20, "Describe your relevant work in a few sentences (at least 20 characters)."),
   whyTechzoid: trimmed(1000).min(20, "Tell us why you want to join (at least 20 characters)."),
   profileUrl: trimmed(300).optional().or(z.literal("")),
