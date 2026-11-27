@@ -1,5 +1,6 @@
 "use client";
 
+import { trackGenerateLead } from "@/lib/analytics-events";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -198,7 +199,11 @@ export function ChatWidget({
 
     setMessages([...next, { role: "assistant", content: result.data.reply }]);
     if (result.data.conversationId) setConversationId(result.data.conversationId);
-    if (result.data.leadCaptured) setLeadCaptured(true);
+    if (result.data.leadCaptured) {
+      setLeadCaptured(true);
+      // The server confirmed a lead from this conversation. Once per conversation.
+      trackGenerateLead(result.data.conversationId ?? "chat", "chat_assistant");
+    }
   }
 
   return (

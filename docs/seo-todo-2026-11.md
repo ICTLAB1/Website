@@ -17,3 +17,10 @@ Things the brief asked for that need a fact or a decision from the business. Not
 8. Search Console: request indexing for the URLs listed in the hand-off, then watch "Crawled, not indexed" for the old facet URLs.
 9. **Home page "popular" button** links to `/products?sort=popular` from CMS data (`prisma/seed-data/pages.ts`); the link block has no `rel` field, so it
    is still a followable link to a robots-blocked URL (the page canonicalises to `/products`). Point the button at `/products` in the admin.
+10. **GA4 generate_lead added.** In GA4 Admin > Events mark `generate_lead` as a key event, then in Google Ads > Goals > Conversions import it
+   (or point the existing "Request quote" action at `generate_lead`). It fires once per accepted enquiry from the enquiry basket, the contact
+   form (sales and enterprise topics only, as before), the landing and quick enquiry forms, the BOQ upload and the chat assistant's captured lead,
+   with `form_name`, `page_path`, `value: 1`, `currency: INR`. `click_to_call` and `click_whatsapp` fire on tel: and WhatsApp link clicks.
+   The site configures two GA4 properties (`G-P0H1WJDZ7Y` and `G-2CEL7BH689`), so the event reaches both; mark the key event in whichever one
+   Google Ads is linked to. Not tracked on purpose: the careers screening form (a candidate, not a lead) and the support and general topics of the
+   contact form.
