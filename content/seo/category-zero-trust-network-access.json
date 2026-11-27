@@ -1,0 +1,125 @@
+{
+ "slug": "zero-trust-network-access",
+ "h1": "Zero Trust Network Access (ZTNA) in India: Identity, Devices and Secure Remote Access",
+ "intro": "For years, remote access meant a VPN: connect to the office network and you were treated as if you were in the office, able to reach almost everything. That worked when staff sat at their desks. It works badly now, when people work from home, from client sites and from personal phones, and when applications live in the cloud as well as in the office. One stolen password on a VPN can open the whole network.\n\nZero trust network access, usually shortened to ZTNA, starts from the opposite assumption: no user or device is trusted just because it is connecting, and each request to reach an application is checked against who the person is, the state of the device and what they are allowed to use. Access is given to the one application, not the whole network.\n\nThis guide explains what ZTNA is made of, why it is a set of controls and not one product, which parts we list from Microsoft, Fortinet and SonicWall, and what to decide before asking for a quotation. It is written for the IT head who has been asked to improve remote access and wants a sensible plan before looking at products.\n\nA plain note on availability: the Microsoft Entra ID, Intune, Fortinet FortiAuthenticator and SonicWall Secure Mobile Access products are listed on this site without a website price. We quote them to your number of users and your licence term, and a written quotation fixes the price. Send your requirement through the [enquiry form](/enquiry).",
+ "sections": [
+  {
+   "heading": "What zero trust network access means",
+   "markdown": "Three ideas sit behind the name.\n\n- **Verify explicitly.** Each request to reach an application is checked: who is the user, have they proved it with more than a password, and is the device they are using in a safe state.\n- **Give the least access needed.** A person in accounts can reach the accounts system, not the engineering file server. Access is per application and per role.\n- **Assume something will be compromised.** Design so that if one account or one laptop is taken over, the damage is limited, and so that you can see what happened afterwards.\n\nZTNA is the part of this that controls access to applications from outside the office. It replaces or reduces reliance on the broad, network-wide access that a traditional VPN gives."
+  },
+  {
+   "heading": "ZTNA is a set of controls, not one product",
+   "markdown": "Several brands sell products with ZTNA in the name, and some organisations buy one and expect the problem solved. In practice the result is made of several parts working together.\n\n1. **Identity.** A directory of users with strong sign-in: multi-factor authentication, and rules such as blocking sign-in from unexpected places. Microsoft Entra ID is Microsoft's identity service, and Fortinet's FortiAuthenticator provides identity and multi-factor authentication for organisations that use Fortinet equipment.\n2. **Device health.** Knowing whether a laptop or phone is managed, encrypted and up to date before it is allowed in. Microsoft Intune manages devices and reports on their state, and Entra ID can use that state to decide whether to allow access.\n3. **Access gateway.** The point that actually connects a verified user to an application. This can be a firewall with remote-access features, a dedicated secure access appliance such as SonicWall Secure Mobile Access, or a cloud service.\n4. **Visibility.** Logs of who reached what, which you need for an incident review and for audits.\n5. **Protection behind it.** The [firewall](/firewall-security) and [endpoint security](/antivirus-endpoint-security) that still matter on every device and at the edge.\n\nYou do not have to build all of this at once. Most organisations start with identity and multi-factor authentication, which gives the largest reduction in risk for the smallest effort."
+  },
+  {
+   "heading": "What we list for each part",
+   "markdown": "- **Microsoft Entra ID P1 and P2.** The paid tiers of Microsoft's identity service. P1 adds conditional access, which lets you write rules such as requiring multi-factor authentication or a managed device for particular applications. P2 adds risk-based features that respond to sign-ins that look suspicious.\n- **Microsoft Intune Plan 1.** Device management for laptops, desktops and phones, including setting and checking security requirements.\n- **Fortinet FortiAuthenticator.** An identity and authentication server that works with Fortinet firewalls and other systems, for multi-factor authentication and single sign-on.\n- **SonicWall Secure Mobile Access.** A secure remote-access appliance range for giving remote staff access to applications.\n\nIf you want a dedicated ZTNA subscription tied to a particular firewall brand, say so in your enquiry and we will quote to what you name. For the firewalls themselves, see our [firewall security guide](/firewall-security) and the brand pages for [Fortinet](/brands/fortinet) and [SonicWall](/brands/sonicwall)."
+  },
+  {
+   "heading": "Where Microsoft 365 already helps",
+   "markdown": "Many organisations already own part of this without knowing it. Microsoft 365 Business Premium includes Entra ID P1 and Intune, so conditional access and device management are available once they are switched on and configured. Larger Microsoft 365 plans include more. Check what your current licences contain before buying separate products. See [Microsoft 365 Business Premium](/microsoft-365/business-premium) and our overview of [Microsoft 365 plans and prices](/microsoft-365)."
+  },
+  {
+   "heading": "A sensible order to do it in",
+   "markdown": "1. **Turn on multi-factor authentication for everyone,** starting with administrators and anybody who can reach money or customer data.\n2. **Stop using the same account for everything.** Give administrators a separate account for admin tasks.\n3. **Manage the devices.** Know which laptops and phones access company data, and require encryption and updates.\n4. **Write access rules by application.** Begin with the most sensitive applications and widen from there.\n5. **Replace or narrow the VPN.** Move applications to per-application access as they are ready, rather than all at once.\n6. **Review the logs.** Decide who looks at sign-in alerts and how quickly they respond.\n\nThe first two steps cost little and prevent a large share of account takeovers. They are worth doing this week, whatever else you decide."
+  },
+  {
+   "heading": "What to decide before asking for a quotation",
+   "markdown": "1. **How many users, and how many of them work remotely?**\n2. **Which applications must be reachable?** Cloud applications, applications in your office, or both.\n3. **Whose devices?** Company-owned laptops, personal phones, or both.\n4. **What identity service do you use today?** Microsoft 365 and its directory, another service, or a local directory.\n5. **What do you already own?** Your current Microsoft 365 plan may include part of this.\n6. **Who will run it?** Conditional access rules need maintenance, and a rule that is too strict will lock out genuine staff.\n\nWrite the answers down and send them with your enquiry."
+  },
+  {
+   "heading": "Common mistakes",
+   "markdown": "- **Buying a ZTNA product without sorting out identity first.** The best access gateway does not help if accounts have only passwords.\n- **Switching everything on at once.** A sudden strict policy locks out staff and gets switched off. Roll out in stages.\n- **No plan for devices you do not manage.** Decide whether personal phones may reach company data, and under what conditions.\n- **Leaving the old VPN open alongside.** A forgotten VPN with weak access undoes the new controls.\n- **Forgetting the break-glass account.** Keep an emergency administrator account, stored safely, so that a configuration mistake does not lock everyone out."
+  },
+  {
+   "heading": "Buying notes for India",
+   "markdown": "Prices are in rupees and GST is charged on the invoice. Microsoft licences are bought per user with a term. We quote identity, device management, remote access and firewalls together on one purchase order; see [cybersecurity services](/services/cybersecurity), [endpoint management](/services/endpoint-management) and [security and compliance solutions](/solutions/security-compliance)."
+  }
+ ],
+ "products": [
+  {
+   "slug": "microsoft-entra-id-p1",
+   "use": "Microsoft's identity service with conditional access.",
+   "whoFor": "Organisations that want rules such as requiring multi-factor authentication or a managed device."
+  },
+  {
+   "slug": "microsoft-entra-id-p2",
+   "use": "Entra ID P1 plus risk-based protection for suspicious sign-ins.",
+   "whoFor": "Organisations with more sensitive data or a team that will act on risk alerts."
+  },
+  {
+   "slug": "microsoft-intune-plan-1",
+   "use": "Microsoft's device management for laptops, desktops and phones.",
+   "whoFor": "Organisations that want to require encryption and updates on devices that reach company data."
+  },
+  {
+   "slug": "fortinet-fortiauthenticator",
+   "use": "Fortinet's identity and multi-factor authentication server.",
+   "whoFor": "Organisations that use Fortinet firewalls and want multi-factor authentication for remote access."
+  },
+  {
+   "slug": "sonicwall-sma-series-secure-mobile-access",
+   "use": "SonicWall's secure remote-access appliance range.",
+   "whoFor": "Organisations that need a dedicated gateway for remote staff to reach applications."
+  }
+ ],
+ "faqs": [
+  {
+   "question": "Do you list ZTNA products with prices?",
+   "answer": "No. The Entra ID, Intune, FortiAuthenticator and SonicWall Secure Mobile Access products are listed without a website price and are quoted to your number of users and licence term. A written quotation fixes the price. Send your requirement through the enquiry page."
+  },
+  {
+   "question": "What is the difference between ZTNA and a VPN?",
+   "answer": "A traditional VPN connects a user to the network and treats them as inside it. ZTNA checks the user and the device for each request and gives access to the specific application, not the whole network."
+  },
+  {
+   "question": "Is ZTNA one product I can buy?",
+   "answer": "Not really. It is a set of controls: identity with multi-factor authentication, device health, an access gateway and logging. Products with ZTNA in the name cover some of these, and the result depends on how they are combined."
+  },
+  {
+   "question": "Where should we start?",
+   "answer": "With multi-factor authentication for everyone, starting with administrators and anyone who can reach money or customer data. It gives the largest reduction in risk for the smallest effort."
+  },
+  {
+   "question": "Does Microsoft 365 include any of this?",
+   "answer": "Microsoft 365 Business Premium includes Entra ID P1 and Intune, so conditional access and device management are available once configured. Check your current plan before buying separate products."
+  },
+  {
+   "question": "Can staff use personal phones?",
+   "answer": "That is a policy decision. Many organisations allow it with conditions, such as a passcode and a managed work profile, and block access from devices that do not meet them."
+  },
+  {
+   "question": "Can you quote this together with firewalls and licences?",
+   "answer": "Yes. We quote identity, device management, remote access and firewalls together on one purchase order, with a GST invoice."
+  }
+ ],
+ "related": [
+  {
+   "href": "/firewall-security",
+   "label": "Firewall security in India"
+  },
+  {
+   "href": "/microsoft-365/business-premium",
+   "label": "Microsoft 365 Business Premium"
+  },
+  {
+   "href": "/services/endpoint-management",
+   "label": "Endpoint management service"
+  },
+  {
+   "href": "/services/cybersecurity",
+   "label": "Cybersecurity services"
+  },
+  {
+   "href": "/data-loss-prevention",
+   "label": "Data loss prevention"
+  }
+ ],
+ "needsVerification": [
+  "Statement that Microsoft 365 Business Premium includes Entra ID P1 and Intune: confirm against Microsoft's current plan comparison.",
+  "Descriptions of what Entra ID P1 and P2 each add are summaries; check against Microsoft's current documentation.",
+  "SonicWall Secure Mobile Access is described as a remote-access appliance range; confirm which SMA models and any ZTNA features TechZoid quotes.",
+  "The offer to quote a dedicated ZTNA subscription from a firewall brand on request: confirm which brands TechZoid can actually supply this for.",
+  "Whether TechZoid configures conditional access, device management or remote access for customers."
+ ]
+}

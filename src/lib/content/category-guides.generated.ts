@@ -79,6 +79,14 @@ export const CATEGORY_GUIDE_DATA: Record<string, CategoryGuide> = {
       {
         "href": "/blog/hidden-cost-of-unused-software-licences",
         "label": "The hidden cost of unused software licences"
+      },
+      {
+        "href": "/email-security",
+        "label": "Email security in India"
+      },
+      {
+        "href": "/data-loss-prevention",
+        "label": "Data loss prevention in India"
       }
     ],
     "title": "Antivirus & Endpoint Security in India – Kaspersky & Sophos | Quote & Guide",
@@ -586,6 +594,388 @@ export const CATEGORY_GUIDE_DATA: Record<string, CategoryGuide> = {
     "title": "CAD Software in India – AutoCAD, Revit, Fusion & More | Price & Buying Guide",
     "description": "Compare CAD software in India: AutoCAD, AutoCAD LT, Civil 3D, Inventor and Fusion, with prices excluding GST and how to choose. Get a quote today."
   },
+  "data-centre-solutions": {
+    "slug": "data-centre-solutions",
+    "h1": "Data Centre Solutions in India: Servers, Storage and Networking",
+    "intro": "A data centre, whether it is a purpose-built hall or a single rack in an office cupboard, is made of the same few parts: servers that run the workloads, storage that keeps the data, a network that connects them, and the licences, backup and security around all of it. Most projects go wrong not because one part is poor but because the parts were chosen separately and do not fit together: a server with too little memory for the virtual machines planned, storage sized for today's data and not next year's, or a network that becomes the bottleneck.\n\nThis guide sets out how to think about each layer, what we list on this site from HPE, Dell Technologies and Cisco, and what to decide before asking for a quotation. It is written for the IT head or procurement manager who has been asked to refresh servers, add storage or build a small private cloud, and wants a sensible specification first.\n\nA plain note on pricing: server, storage and networking prices depend on the processor, memory, drives, support term and licences you choose, so this page shows \"Get today's price\" and not a fixed figure. The price that counts is the one on a written quotation. Send your requirement through the [enquiry form](/enquiry) and we respond with an itemised quotation and a GST invoice. For the wider range see [enterprise IT hardware](/enterprise-it-hardware) and the brand pages for [HPE](/brands/hpe), [Dell Technologies](/brands/dell) and [Cisco](/brands/cisco).",
+    "sections": [
+      {
+        "heading": "The four layers of a data centre",
+        "markdown": "It helps to name the layers, because each is bought differently and each has its own failure mode.\n\n- **Compute.** The servers. A rack server such as an HPE ProLiant DL380 or a Dell PowerEdge R760 is the common choice when you will run many virtual machines. A tower server such as an HPE ProLiant ML110 or a Dell PowerEdge T360 suits a small office with a handful of workloads and no rack.\n- **Storage.** Where the data lives. Options range from drives inside the server to a shared storage array such as the HPE MSA or Dell PowerStore that several servers can use at once.\n- **Network.** The switches that connect servers to each other and to storage, and to the rest of the company. In larger sites this includes storage networking, such as Cisco MDS switches for Fibre Channel, and data-centre switching such as Cisco Nexus.\n- **Software and protection.** The operating system and hypervisor licences, database licences, backup and the firewall in front of it all. These are easy to leave out of a hardware quotation and expensive to discover later.\n\nA useful habit is to write the requirement as a list of workloads first (file server, ERP, a database, twenty virtual machines for development) and only then pick hardware. Hardware chosen first tends to be either oversized or short of memory."
+      },
+      {
+        "heading": "Choosing servers: rack, tower or blade",
+        "markdown": "**Rack servers** are the standard answer for anything beyond a small office. They are mounted in a rack, share power and cooling arrangements with other equipment, and are sold in one-unit and two-unit heights. A one-unit server such as an HPE ProLiant DL360 or a Dell PowerEdge R660xs fits more machines in a rack; a two-unit server such as an HPE ProLiant DL380 or a Dell PowerEdge R760 has room for more drives and expansion cards.\n\n**Tower servers** suit a branch office or a small business without a rack. The HPE ProLiant ML30 and ML110, and the Dell PowerEdge T160, T360 and T560 are the models we list. They are quieter and easier to place, and they scale less well.\n\n**Modular and integrated systems** such as the Cisco UCS series pool compute, networking and management for larger deployments where many servers are managed together.\n\nWhatever form you choose, check four things before comparing price: the number and generation of processors, the amount and speed of memory, the drive bays and the type of drives (SSD or hard disk), and the support term. A cheaper server with a three-year parts-only warranty and a dearer one with next-business-day onsite support are not the same product."
+      },
+      {
+        "heading": "Storage: inside the server or a shared array",
+        "markdown": "Drives inside the server are the simplest option and are often right for a single workload. A shared storage array earns its place when several servers need the same data, when you want to move virtual machines between servers, or when you need to expand storage without replacing the server.\n\nThe questions that decide it are practical:\n\n1. **How much usable capacity do you need now, and in three years?** Usable capacity is less than the sum of the drives, because of redundancy.\n2. **What mix of speed and capacity?** Databases and virtual desktops want flash drives. Archives and backups are cheaper on large hard disks.\n3. **How will it connect?** Ethernet-based storage (iSCSI or file shares) is simpler; Fibre Channel is faster and costs more, and needs the matching switches and host adapters.\n4. **What happens when something fails?** Ask what is redundant: controllers, power supplies, network paths.\n\nThe HPE MSA is an entry-level shared array. The Dell PowerStore is a larger, more capable platform. Cisco's MDS switches connect servers to Fibre Channel storage in bigger environments. Which suits you depends on the answers above, not on the brand."
+      },
+      {
+        "heading": "Networking inside the data centre",
+        "markdown": "The network is the part buyers most often under-specify. Servers that are fast on paper are held back by switches that cannot carry the traffic between them, and a single switch is a single point of failure.\n\nFor a small site, a pair of managed switches with the servers connected to both gives resilience cheaply. For a larger site, data-centre switches such as the Cisco Nexus family are built for the heavy east-west traffic between servers and for higher port speeds. Cisco UCS fabric interconnects join the UCS servers into one managed system. Ask for the number of ports, the speed per port (10, 25 or 100 gigabit are common today), and whether you need to add ports later.\n\nPlan the connection to the outside world at the same time. The firewall that protects the data centre should be sized for the traffic it will inspect; see our guide to [firewall security](/firewall-security)."
+      },
+      {
+        "heading": "Licences, backup and protection: the costs that get missed",
+        "markdown": "A server quotation that lists only hardware is incomplete. Three things belong in every data-centre budget.\n\n- **Operating system and database licences.** Windows Server is licensed by processor cores and by the people or devices that connect to it, and SQL Server has its own rules. Our guides to [Windows Server](/windows-server) and [SQL Server](/sql-server) explain how each is counted. Licensing is the most common reason a project goes over budget.\n- **Backup.** A copy on the same server is not a backup. Plan a second copy on separate storage and, ideally, a third copy off the site. See [backup software](/backup-software) and our [backup and disaster recovery service](/services/backup-disaster-recovery).\n- **Security.** Servers need a firewall in front and protection on the servers themselves. See [firewall security](/firewall-security) and [antivirus and endpoint security](/antivirus-endpoint-security).\n\nAsk for all of these on one quotation. We quote hardware and licences together, on one purchase order, with a GST invoice."
+      },
+      {
+        "heading": "Common mistakes when buying data-centre equipment",
+        "markdown": "- **Sizing for today.** Servers and storage are used for years. Ask what the platform can grow to, such as extra memory slots, drive bays and expansion cards, before buying one that is full on day one.\n- **Ignoring the support term.** Hardware fails eventually. A one-year warranty on equipment you plan to run for five years leaves you buying support at renewal, often at a higher price.\n- **Mixing generations.** A new server in an older cluster can restrict what the cluster can do. Check compatibility with what you already run.\n- **Forgetting power and cooling.** More powerful servers draw more power and give off more heat. Confirm that the room and the electrical supply can cope.\n- **Buying hardware before the software plan.** The licence model, such as per-core or per-user, can change which server is the cheaper choice.\n- **No spare plan.** Decide what happens when a server is down: a spare, a support contract that replaces parts quickly, or a cluster that carries on without it."
+      },
+      {
+        "heading": "Buying notes for India",
+        "markdown": "Prices are in rupees and GST is charged on the invoice, so it is worth comparing quotations on the amount before GST and on what is included. Check the warranty is valid in India and ask who performs onsite service in your city. Delivery times for some server and storage models depend on stock and configuration, so ask for a date in writing. For public-sector and larger enterprise buyers, we can quote on one purchase order that covers hardware, licences and support; see [enterprise procurement](/enterprise)."
+      }
+    ],
+    "products": [
+      {
+        "slug": "hpe-proliant-dl380-gen11",
+        "use": "A two-unit HPE rack server with room for drives and expansion cards.",
+        "whoFor": "Organisations running several virtual machines or a database that need headroom to grow."
+      },
+      {
+        "slug": "hpe-proliant-dl360-gen11",
+        "use": "A one-unit HPE rack server for dense racks.",
+        "whoFor": "Sites that want more servers in the same rack space."
+      },
+      {
+        "slug": "hpe-proliant-ml110-gen11",
+        "use": "An HPE tower server for offices without a rack.",
+        "whoFor": "Small offices and branches with a few workloads."
+      },
+      {
+        "slug": "dell-poweredge-r760",
+        "use": "A two-unit Dell rack server for virtualisation and databases.",
+        "whoFor": "Organisations that need drive capacity and expansion in one server."
+      },
+      {
+        "slug": "dell-poweredge-r660xs",
+        "use": "A one-unit Dell rack server for general workloads.",
+        "whoFor": "Sites that want a compact rack server."
+      },
+      {
+        "slug": "dell-poweredge-t360",
+        "use": "A Dell tower server for small offices.",
+        "whoFor": "Small businesses that need a quiet server without a rack."
+      },
+      {
+        "slug": "dell-powerstore-storage",
+        "use": "Dell's PowerStore shared storage platform.",
+        "whoFor": "Organisations that want shared storage for several servers."
+      },
+      {
+        "slug": "hpe-msa-storage-array",
+        "use": "An entry-level HPE shared storage array.",
+        "whoFor": "Small and mid-sized sites moving from server drives to shared storage."
+      },
+      {
+        "slug": "cisco-ucs-c-series-rack-servers",
+        "use": "Cisco UCS C-Series rack servers.",
+        "whoFor": "Organisations that already run Cisco networking or UCS management."
+      },
+      {
+        "slug": "cisco-nexus-9000-series-switches",
+        "use": "Cisco Nexus data-centre switches.",
+        "whoFor": "Sites that need high-speed switching between servers."
+      },
+      {
+        "slug": "cisco-mds-9100-series-multilayer-fabric-switches",
+        "use": "Cisco MDS switches for Fibre Channel storage networks.",
+        "whoFor": "Environments with Fibre Channel storage that need the matching switches."
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Do you list server and storage prices?",
+        "answer": "No. Hardware prices depend on the processor, memory, drives, support term and licences, so models are quoted to your configuration and the price on a written quotation is the one that counts. Send your requirement through the enquiry page."
+      },
+      {
+        "question": "Should I buy a rack server or a tower server?",
+        "answer": "A rack server suits anything beyond a small office, because it is mounted in a rack and is built for several workloads. A tower server suits a small office or branch with a few workloads and no rack. The decision depends on where it will sit and how many servers you expect to run."
+      },
+      {
+        "question": "Do I need shared storage, or are server drives enough?",
+        "answer": "Drives inside the server are enough for a single workload. Shared storage becomes worth it when several servers need the same data, when you want to move virtual machines between servers, or when you need to grow storage without replacing a server."
+      },
+      {
+        "question": "Can you quote the operating system and database licences with the hardware?",
+        "answer": "Yes. We quote hardware, Windows Server and SQL Server licences, backup and security together on one purchase order, with a GST invoice. Licences are the cost most often left out of a hardware-only quotation."
+      },
+      {
+        "question": "Which brand is best: HPE, Dell or Cisco?",
+        "answer": "There is no single best brand. The better question is which platform your team already manages, what support is available in your city and what the support term and price are. We list HPE and Dell servers and storage and Cisco servers and networking, and we help you compare them on the same requirement."
+      },
+      {
+        "question": "How long does delivery take?",
+        "answer": "It depends on the model, the configuration and stock. Ask for a delivery date in writing on the quotation, particularly for configured servers and storage."
+      },
+      {
+        "question": "Does a data-centre project include backup and security?",
+        "answer": "It should. A copy on the same server is not a backup, and servers need a firewall in front of them. We can include backup software and firewall security on the same quotation."
+      }
+    ],
+    "related": [
+      {
+        "href": "/enterprise-it-hardware",
+        "label": "Enterprise IT hardware"
+      },
+      {
+        "href": "/firewall-security",
+        "label": "Firewall security in India"
+      },
+      {
+        "href": "/backup-software",
+        "label": "Backup software in India"
+      },
+      {
+        "href": "/windows-server",
+        "label": "Windows Server licensing"
+      },
+      {
+        "href": "/services/backup-disaster-recovery",
+        "label": "Backup and disaster recovery service"
+      }
+    ],
+    "title": "Data Centre Solutions in India – HPE, Dell & Cisco Servers, Storage | Quote & Guide",
+    "description": "Data centre solutions for Indian businesses: HPE, Dell and Cisco servers, storage and networking, quoted with licences on one GST invoice. Get a quote today.",
+    "brands": [
+      "hpe",
+      "dell",
+      "cisco"
+    ]
+  },
+  "data-loss-prevention": {
+    "slug": "data-loss-prevention",
+    "h1": "Data Loss Prevention (DLP) in India: Protecting Sensitive Data in Microsoft 365 and Email",
+    "intro": "Most data leaks are not dramatic break-ins. They are ordinary: a spreadsheet of customer details sent to the wrong person, a price list shared with a link anyone can open, a file copied to a personal drive on the last day of a job. Data loss prevention, usually shortened to DLP, is the set of rules and tools that spot sensitive information and stop it leaving in ways you have not approved.\n\nThis guide explains what DLP does, what it needs before it works, where it already exists in the Microsoft 365 licences many organisations hold, and what to decide before asking for a quotation. It is written for the IT head, compliance owner or business owner who has been asked how the company stops confidential information leaving.\n\nA plain note on availability: the Microsoft 365 plans listed here are quoted per user for the term you choose, and the DLP capabilities each plan includes differ. We help you work out what you already have before you buy more. Send the details through the [enquiry form](/enquiry), and read our overview of [Microsoft 365 plans and prices](/microsoft-365).",
+    "sections": [
+      {
+        "heading": "What data loss prevention does",
+        "markdown": "A DLP system looks for sensitive content and applies a rule to it. The rule might warn the sender, block the action, encrypt the file or alert a manager. It can act in three places:\n\n- **Data in motion.** Information being sent: an email, a message, a file shared by link.\n- **Data at rest.** Information stored in mailboxes, document libraries and drives.\n- **Data in use.** Information on a laptop being copied to a USB drive, printed or pasted into a website.\n\nIt recognises sensitive content in several ways: patterns such as card numbers and national identification numbers, keywords, labels that people or software have applied to documents, and fingerprints of specific files. A document marked confidential can be given rules that follow it."
+      },
+      {
+        "heading": "DLP needs a decision before it needs a product",
+        "markdown": "The tools are the easy part. A DLP rollout that goes well starts with answers to questions only the business can give.\n\n1. **What is sensitive here?** Customer personal data, financial records, designs, contracts, source code, price lists. Name the categories.\n2. **Where does it live?** Mailboxes, SharePoint and OneDrive, file servers, laptops, cloud applications.\n3. **Who may share what, and with whom?** A sales team may send quotations to customers; it may not send the whole customer list.\n4. **What should happen when a rule is hit?** A warning teaches people; a block stops work. Starting with warnings and moving to blocks as you learn what is normal avoids stopping the business.\n5. **Who reviews the alerts?** Rules that nobody looks at only generate noise.\n\nIf the answers are unclear, begin with classification: agree three or four labels, such as public, internal and confidential, and apply them. DLP rules are much simpler once documents carry labels."
+      },
+      {
+        "heading": "Where DLP already exists in Microsoft 365",
+        "markdown": "Microsoft 365 includes data loss prevention through its compliance tools, and the capability depends on the plan. In general terms:\n\n- **Microsoft 365 Business Premium** includes DLP for email and for documents stored in Microsoft's cloud services, together with the device management and identity controls that support it.\n- **Microsoft 365 E3** includes DLP across those services, with more compliance tools than the business plans, and no limit on the number of users.\n- **Microsoft 365 E5** adds more, including DLP on endpoints, so that rules can apply to what is done on a laptop, as well as more advanced compliance and insider-risk tools.\n\nThe exact list changes, so check Microsoft's current plan comparison for the capability you need. We can compare your current licences against your requirement before you buy anything extra. See [Microsoft 365 Business Premium](/microsoft-365/business-premium) for the plan most small and mid-sized organisations compare first."
+      },
+      {
+        "heading": "DLP in email security and on firewalls",
+        "markdown": "DLP is not only a Microsoft feature. Secure email gateways and firewalls can also inspect content leaving the network. Fortinet's [FortiMail](/email-security), for example, is an email security gateway that organisations use for filtering mail, and Fortinet's firewalls and other brands' firewalls offer content inspection as a licensed feature. These suit organisations that want a control at the network edge, or whose data is not mainly in Microsoft 365.\n\nThe difference to understand is where the control sits. A rule in Microsoft 365 knows about a document's label and its owner. A rule on a gateway sees the content of the message leaving. Many organisations use the first and rely on the second for what the first cannot see. See [firewall security](/firewall-security) and [email security](/email-security)."
+      },
+      {
+        "heading": "A sensible order to roll it out",
+        "markdown": "1. **Decide the categories of sensitive data** and who owns each.\n2. **Label documents.** Start with the highest-risk areas, not everything.\n3. **Turn rules on in monitor-only mode.** Watch what would have been blocked for a few weeks.\n4. **Tune.** Fix the rules that would have stopped normal work.\n5. **Move to warnings, then blocks,** for the cases that matter.\n6. **Train staff,** and tell them what the rules are and why.\n7. **Review regularly.** New projects and new tools create new routes for data to leave.\n\nExpect the tuning to take longer than the set-up. That is normal and is the reason to start in monitor-only mode."
+      },
+      {
+        "heading": "Common mistakes with DLP",
+        "markdown": "- **Buying a product before deciding what is sensitive.** The tool cannot decide that for you.\n- **Switching on blocking immediately.** Genuine work is stopped, and the rules are turned off in frustration.\n- **Ignoring the devices.** Rules in the cloud do not control a file copied to a USB drive unless endpoint controls are in place.\n- **Forgetting people who leave.** A leaver's last weeks are a common time for data to be copied.\n- **Treating it as a one-off project.** Rules need review as the business changes.\n- **Paying for a higher plan when a lower one is enough.** Check what your current licences already include."
+      },
+      {
+        "heading": "Buying notes for India",
+        "markdown": "Prices are in rupees and GST is charged on the invoice. Organisations that handle personal data should also consider their obligations under India's data protection law; ask your legal or compliance adviser what applies to you, because DLP is a control that helps and not a guarantee of compliance. We quote Microsoft licences with the rest of your requirement on one purchase order; see [cybersecurity services](/services/cybersecurity), [security and compliance solutions](/solutions/security-compliance) and [enterprise procurement](/enterprise)."
+      }
+    ],
+    "products": [
+      {
+        "slug": "microsoft-365-business-premium",
+        "use": "Microsoft 365 for businesses, with device management, identity and information protection.",
+        "whoFor": "Small and mid-sized organisations with fewer than 300 users that want DLP together with security."
+      },
+      {
+        "slug": "microsoft-365-e3",
+        "use": "Microsoft 365 for larger organisations, with more compliance tools and no user limit.",
+        "whoFor": "Larger organisations that need compliance capabilities beyond the business plans."
+      },
+      {
+        "slug": "microsoft-365-e5",
+        "use": "Microsoft 365 with advanced security and compliance, including endpoint controls.",
+        "whoFor": "Organisations that need DLP on laptops, and insider-risk and advanced compliance tools."
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Do you list DLP products with prices?",
+        "answer": "The Microsoft 365 plans that include DLP are listed with their per-user pricing where the catalogue has it, and larger plans are quoted to your number of users and term. Which DLP capabilities a plan includes differs, so we compare your requirement with what you already hold before quoting more."
+      },
+      {
+        "question": "What is data loss prevention?",
+        "answer": "It is a set of rules and tools that recognise sensitive information and stop it leaving in ways you have not approved, whether by email, by a shared link or by copying to a device."
+      },
+      {
+        "question": "Does Microsoft 365 include DLP?",
+        "answer": "Yes, through its compliance tools, and the capability depends on the plan. Business Premium and E3 cover email and documents in Microsoft's cloud services, and E5 adds more, including controls on laptops. Check Microsoft's current plan comparison for the capability you need."
+      },
+      {
+        "question": "Where should we start?",
+        "answer": "With the business questions: what data is sensitive, where it lives and who may share it. Then label documents, run the rules in monitor-only mode, tune them and move to warnings and blocks."
+      },
+      {
+        "question": "Will DLP make us compliant with data protection law?",
+        "answer": "No. It is a control that helps you protect personal and confidential data, not a guarantee of compliance. Ask your legal or compliance adviser what applies to you."
+      },
+      {
+        "question": "Can DLP stop a file being copied to a USB drive?",
+        "answer": "Only with controls on the device. Rules in the cloud do not see what is copied on a laptop unless endpoint controls are in place, which in Microsoft 365 are part of the higher plans."
+      },
+      {
+        "question": "Can you quote it together with email security and firewalls?",
+        "answer": "Yes. We quote Microsoft licences, email security and firewalls together on one purchase order, with a GST invoice."
+      }
+    ],
+    "related": [
+      {
+        "href": "/email-security",
+        "label": "Email security in India"
+      },
+      {
+        "href": "/zero-trust-network-access",
+        "label": "Zero trust network access"
+      },
+      {
+        "href": "/microsoft-365",
+        "label": "Microsoft 365 plans and prices"
+      },
+      {
+        "href": "/solutions/security-compliance",
+        "label": "Security and compliance solutions"
+      },
+      {
+        "href": "/services/cybersecurity",
+        "label": "Cybersecurity services"
+      }
+    ],
+    "title": "Data Loss Prevention (DLP) in India – Microsoft 365 & Email | Quote & Guide",
+    "description": "Data loss prevention for Indian businesses: what DLP does, what Microsoft 365 plans include and how to roll it out, with a GST invoice. Get a quote today.",
+    "brands": [
+      "microsoft",
+      "fortinet"
+    ]
+  },
+  "email-security": {
+    "slug": "email-security",
+    "h1": "Email Security in India: Fortinet FortiMail and Microsoft Defender for Office 365",
+    "intro": "Email is still the way most attacks begin. A message that looks like it came from a supplier, a bank or a colleague asks for a payment, a password or a click, and one person acting on it can cost a company far more than the price of the security that would have stopped it. Basic spam filtering catches the obvious junk. Business email security is about the messages that are written to get past it.\n\nThis guide explains the layers of email protection, how the built-in filtering in your email service differs from an added security product, what we list from Fortinet and Microsoft, and what to decide before asking for a quotation. It is written for the IT head or business owner who has had a phishing scare, or who is choosing email protection for the first time.\n\nA plain note on availability: Fortinet FortiMail and the Microsoft Defender for Office 365 plans are listed on this site without a website price, and are quoted to your number of mailboxes and your licence term. A written quotation fixes the price. Send the details through the [enquiry form](/enquiry). If you are still choosing where your email is hosted, read our article on [secure business email providers in India](/blog/secure-business-email-providers-india).",
+    "sections": [
+      {
+        "heading": "What email security protects against",
+        "markdown": "The threats are different from one another and they need different defences.\n\n- **Spam and bulk mail.** Unwanted but usually harmless; filtering keeps the inbox usable.\n- **Malware in attachments and links.** A document or a web link that installs something harmful when opened or clicked.\n- **Phishing.** A message that imitates a trusted sender to get a password or a payment.\n- **Business email compromise.** A message, often with no link or attachment at all, that appears to come from a manager or supplier and asks for money or details. Software finds these hard to spot, which is why people and process matter as much as tools.\n- **Impersonation of your own domain.** Somebody sending mail that appears to come from your company to your customers.\n\nNo product stops everything. The aim is to stop the great majority automatically, flag the rest, and make it easy for staff to report anything suspicious."
+      },
+      {
+        "heading": "The layers of email protection",
+        "markdown": "Think of email protection as layers, each catching what the one before it missed.\n\n1. **Sender authentication.** Records on your domain called SPF, DKIM and DMARC tell other mail systems which servers may send as you and what to do with mail that fails. These cost nothing to set up and reduce the chance of your domain being faked. Your IT team or hosting provider can set them.\n2. **Filtering at the gateway or in the service.** Spam, malware and known bad senders are blocked before they reach a mailbox.\n3. **Advanced protection.** Scanning of attachments in a sandbox, checking of links at the moment they are clicked, and detection of impersonation.\n4. **Training and reporting.** Staff who recognise a suspicious message, and a simple way to report it.\n5. **Backup and recovery.** If a mailbox is compromised or deleted, you can restore it. See [backup software](/backup-software).\n\nWhich layers you need depends on how much risk the business carries and how much of this your email service already includes."
+      },
+      {
+        "heading": "Built-in filtering or an added product",
+        "markdown": "Hosted email services include filtering. Microsoft Exchange Online, which is the email in Microsoft 365, filters incoming mail for spam and malware as part of the service. That is a sound baseline. Defender for Office 365 adds protection on top of it.\n\nThe two Defender for Office 365 plans differ in how much they add:\n\n- **Plan 1** adds protection for attachments and links, and for impersonation, to the baseline filtering. Plan 1 is included in Microsoft 365 Business Premium.\n- **Plan 2** adds more investigation and response tools, and training that simulates attacks, for organisations with a security team that will use them. Plan 2 is included in Microsoft 365 E5.\n\nFortinet's FortiMail is a secure email gateway. It sits in front of a mail service, which can be Microsoft's, a mail server of your own or another provider's, and filters mail before it arrives. It suits organisations that want a separate layer from the mail service, that run their own mail server, or that already use Fortinet equipment.\n\nWhich of these is right depends on where your email is hosted and what is already included in the licences you hold. Check your current plan before buying a second product that duplicates it."
+      },
+      {
+        "heading": "What to decide before asking for a quotation",
+        "markdown": "Write these down, and the quotation follows quickly.\n\n1. **Where is your email hosted?** Microsoft 365, another hosted service or your own server.\n2. **How many mailboxes?** Per-user licences are counted this way.\n3. **What do you already have?** Some Microsoft 365 plans already include part of this protection.\n4. **Have you had a phishing or payment-fraud incident?** It changes the priority.\n5. **Who will watch the alerts and review quarantined mail?** Protection that nobody looks at gives less than it appears to.\n6. **Is there a compliance requirement?** Some sectors expect specific controls and records.\n\nIf you are moving email at the same time, see our [email migration service](/services/email-migration)."
+      },
+      {
+        "heading": "Common mistakes in email security",
+        "markdown": "- **Assuming the email service is enough.** Baseline filtering is useful, but targeted attacks are written to get past it.\n- **Buying a second product that duplicates the first.** Check what your Microsoft 365 plan already includes.\n- **Skipping SPF, DKIM and DMARC.** They are free and they protect your customers from messages that pretend to be you.\n- **No process for payment requests.** Any change of bank details by email should be confirmed by a phone call to a known number. This stops more fraud than any filter.\n- **Never testing staff.** Simulated phishing and short training reduce the number of people who click.\n- **No backup of mailboxes.** A compromised account can lose or delete mail. See [backup software](/backup-software)."
+      },
+      {
+        "heading": "Buying notes for India",
+        "markdown": "Prices are in rupees and GST is charged on the invoice. Microsoft licences are bought per user, with terms that depend on the plan. If you also need to protect the laptops and desktops that read the mail, see [antivirus and endpoint security](/antivirus-endpoint-security). We quote email security with the rest of your Microsoft or security requirement on one purchase order; see [Microsoft 365](/microsoft-365) and [cybersecurity services](/services/cybersecurity)."
+      }
+    ],
+    "products": [
+      {
+        "slug": "fortinet-fortimail",
+        "use": "Fortinet's secure email gateway that filters mail before it reaches your mail service.",
+        "whoFor": "Organisations that want a separate email security layer, run their own mail server or already use Fortinet."
+      },
+      {
+        "slug": "microsoft-defender-for-office-365-plan-1",
+        "use": "Microsoft's protection for email attachments, links and impersonation in Microsoft 365.",
+        "whoFor": "Organisations on Exchange Online that want protection beyond the built-in filtering."
+      },
+      {
+        "slug": "microsoft-defender-for-office-365-plan-2",
+        "use": "Plan 1 plus investigation, response and attack-simulation training.",
+        "whoFor": "Organisations with a security team that will use the extra tools."
+      },
+      {
+        "slug": "exchange-online-plan-1",
+        "use": "Microsoft's hosted business email, with built-in filtering.",
+        "whoFor": "Organisations that want hosted email as a standalone service."
+      },
+      {
+        "slug": "exchange-online-plan-2",
+        "use": "Exchange Online with a larger mailbox and extra compliance features.",
+        "whoFor": "Organisations that need larger mailboxes or more retention options."
+      },
+      {
+        "slug": "zoho-mail",
+        "use": "Zoho's hosted business email.",
+        "whoFor": "Organisations that want hosted email from Zoho; this is an email service, not a security gateway."
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Do you list FortiMail and Defender for Office 365 with prices?",
+        "answer": "No. They are listed without a website price and are quoted to your number of mailboxes and your licence term. A written quotation fixes the price. Send your requirement through the enquiry page."
+      },
+      {
+        "question": "Does Microsoft 365 already include email security?",
+        "answer": "Exchange Online filters incoming mail for spam and malware as part of the service. Defender for Office 365 adds stronger protection: Plan 1 is included in Microsoft 365 Business Premium and Plan 2 in Microsoft 365 E5. Check your current plan before buying a second product."
+      },
+      {
+        "question": "What is the difference between Defender for Office 365 Plan 1 and Plan 2?",
+        "answer": "Plan 1 protects attachments and links and detects impersonation. Plan 2 adds more investigation and response tools and attack-simulation training, and suits organisations with a security team that will use them."
+      },
+      {
+        "question": "When would I choose FortiMail instead?",
+        "answer": "FortiMail is a secure email gateway that sits in front of a mail service. It suits organisations that want a separate layer from the mail service, that run their own mail server, or that already use Fortinet equipment."
+      },
+      {
+        "question": "What are SPF, DKIM and DMARC?",
+        "answer": "They are records on your domain that tell other mail systems which servers may send mail as you and what to do with mail that fails the checks. They reduce the chance of your domain being faked, and your IT team or hosting provider can set them."
+      },
+      {
+        "question": "How do we stop payment fraud by email?",
+        "answer": "Filtering helps, but process matters more: confirm any change of bank details with a phone call to a number you already hold, and require a second person to approve unusual payments."
+      },
+      {
+        "question": "Can you quote it with Microsoft 365 licences?",
+        "answer": "Yes. We quote email security together with Microsoft 365 licences and the rest of your requirement on one purchase order, with a GST invoice."
+      }
+    ],
+    "related": [
+      {
+        "href": "/blog/secure-business-email-providers-india",
+        "label": "Secure business email providers in India"
+      },
+      {
+        "href": "/services/email-migration",
+        "label": "Email migration service"
+      },
+      {
+        "href": "/microsoft-365",
+        "label": "Microsoft 365 plans and prices"
+      },
+      {
+        "href": "/antivirus-endpoint-security",
+        "label": "Antivirus and endpoint security in India"
+      },
+      {
+        "href": "/web-application-firewall",
+        "label": "Web application firewall"
+      }
+    ],
+    "title": "Email Security in India – FortiMail & Defender for Office 365 | Quote & Guide",
+    "description": "Email security for Indian businesses: Fortinet FortiMail and Microsoft Defender for Office 365 compared, quoted per mailbox with a GST invoice. Get a quote today.",
+    "brands": [
+      "fortinet",
+      "microsoft"
+    ]
+  },
   "firewall-security": {
     "slug": "firewall-security",
     "h1": "Firewall Security in India: Fortinet, Sophos, SonicWall & Cisco",
@@ -713,6 +1103,22 @@ export const CATEGORY_GUIDE_DATA: Record<string, CategoryGuide> = {
       {
         "href": "/blog/what-to-check-before-a-software-renewal",
         "label": "What to check before a software renewal"
+      },
+      {
+        "href": "/data-centre-solutions",
+        "label": "Data centre solutions in India"
+      },
+      {
+        "href": "/web-application-firewall",
+        "label": "Web application firewall in India"
+      },
+      {
+        "href": "/email-security",
+        "label": "Email security in India"
+      },
+      {
+        "href": "/zero-trust-network-access",
+        "label": "Zero trust network access"
       }
     ],
     "title": "Firewall Security in India – Fortinet, Sophos, SonicWall & Cisco | Quote & Guide",
@@ -964,5 +1370,239 @@ export const CATEGORY_GUIDE_DATA: Record<string, CategoryGuide> = {
     ],
     "title": "Video Editing Software in India – Premiere Pro, After Effects & Creative Cloud | Prices",
     "description": "Video editing software in India: Premiere Pro, After Effects and Creative Cloud compared, with prices excluding GST. Get a quote today."
+  },
+  "web-application-firewall": {
+    "slug": "web-application-firewall",
+    "h1": "Web Application Firewall (WAF) in India: Fortinet FortiWeb and Related Protection",
+    "intro": "A website, customer portal or web application is open to the whole internet by design, which is exactly why it is attacked. A network firewall decides which connections reach your servers, but it cannot tell whether the request arriving on an allowed port is a customer placing an order or an attacker injecting commands into a form. That is the job of a web application firewall, usually shortened to WAF.\n\nThis guide explains what a WAF does and does not do, how it is deployed, how it differs from the firewall you already have, and what to settle before asking for a quotation. It is written for the IT head, developer or compliance owner who runs a public web application and has been asked how it is protected.\n\nA plain note on availability: the Fortinet FortiWeb web application firewall, and the related FortiADC and FortiDDoS products, are listed on this site without a website price. We quote them to your configuration and traffic, and a written quotation fixes the price. Send the details through the [enquiry form](/enquiry) and read the [Fortinet brand page](/brands/fortinet).",
+    "sections": [
+      {
+        "heading": "What a web application firewall does",
+        "markdown": "A WAF sits in front of a web application and inspects the web traffic going to it, the requests and the responses, and blocks the ones that look like attacks. It understands web requests, which a conventional firewall does not.\n\nThe attacks it is typically used against include:\n\n- **Injection attacks,** where text typed into a field or sent in a link is meant to run as a command on your database or server.\n- **Cross-site scripting,** where an attacker gets a script to run in another visitor's browser through your site.\n- **Automated abuse,** such as bots that scrape prices, guess passwords or fill forms.\n- **Attacks on APIs,** where an application programming interface is called in ways its designers did not intend.\n\nA WAF can also be used to patch a gap quickly. If a flaw is found in an application that cannot be fixed this week, a rule at the WAF can block the known attack while the fix is prepared. That is a stopgap and not a replacement for fixing the code."
+      },
+      {
+        "heading": "WAF or network firewall: what is the difference",
+        "markdown": "The two protect different layers, and most organisations need both.\n\n| | Network firewall | Web application firewall |\n| --- | --- | --- |\n| Looks at | Addresses, ports and protocols | The content of web requests and responses |\n| Typical question | May this address connect to this port? | Is this request an attack on the application? |\n| Sits | At the edge of the network | In front of the web application |\n| Protects against | Unwanted connections and network-level threats | Attacks on the application itself |\n\nNext-generation firewalls add application awareness and some web filtering, and that is useful, but a dedicated WAF is built for the detail of web applications. If you are choosing a network firewall, see our [firewall security guide](/firewall-security)."
+      },
+      {
+        "heading": "How a WAF is deployed",
+        "markdown": "There are three common arrangements, and the right one depends on where your application runs.\n\n1. **An appliance or virtual appliance in your network.** Traffic to the application passes through it. This suits applications hosted in your own data centre.\n2. **A virtual appliance in a cloud environment.** The same product runs next to an application hosted in a public cloud.\n3. **A cloud-delivered service.** Traffic is directed through the provider's service before it reaches you. This needs little equipment on your side.\n\nAsk which of these the quoted product supports, and whether the licence is per application, per throughput or per appliance. Throughput matters: a WAF that cannot keep up with peak traffic becomes the slowest part of your site."
+      },
+      {
+        "heading": "Related products: application delivery and DDoS protection",
+        "markdown": "Two other products often come up in the same conversation.\n\n- **Application delivery controllers.** Fortinet's FortiADC is an application delivery controller, which spreads traffic across several servers and keeps an application available if one fails. It can sit alongside a WAF, and some organisations choose it where load balancing is the main need.\n- **DDoS protection.** A distributed denial-of-service attack tries to overwhelm a site with traffic so genuine visitors cannot get in. Fortinet's FortiDDoS is a product aimed at that problem. A WAF handles malicious requests; DDoS protection handles floods of traffic. They are not the same control.\n\nWhether you need one, two or all three depends on the application, the traffic it receives and how much downtime you can tolerate."
+      },
+      {
+        "heading": "What to decide before asking for a quotation",
+        "markdown": "Write the answers down first. They determine the product and the price.\n\n1. **How many web applications and how many domains?** Licensing is often counted this way.\n2. **Where do they run?** Your data centre, a cloud provider or a mix.\n3. **What traffic do they carry at peak?** Requests per second and bandwidth, not average.\n4. **Do you also need load balancing or DDoS protection?**\n5. **Who will tune the rules?** A WAF needs attention in its first weeks, because rules that are too strict block genuine customers and rules that are too loose let attacks through.\n6. **Is there a compliance requirement?** Some standards for organisations that handle card payments expect public web applications to be protected by a WAF or reviewed in another defined way. Check the current wording of the standard that applies to you.\n\nSend the answers through the enquiry form and we quote to them."
+      },
+      {
+        "heading": "Common mistakes when buying a WAF",
+        "markdown": "- **Treating it as set and forget.** A WAF has to be tuned and its logs have to be read. Switched on in blocking mode without testing, it can stop genuine orders.\n- **Relying on it instead of fixing the application.** It reduces risk; it does not remove the flaw.\n- **Protecting only the main site.** Forgotten test sites and old subdomains are attacked too.\n- **Ignoring throughput.** Size for peak traffic, not the average day.\n- **Forgetting support and updates.** Attack signatures need to be updated, and the subscription that provides them is usually sold for a term.\n- **Buying a WAF when the first need is a firewall.** If you have no network firewall, start with [firewall security](/firewall-security)."
+      },
+      {
+        "heading": "Buying notes for India",
+        "markdown": "Prices are in rupees and GST is charged on the invoice. If your organisation is regulated, or handles card payments, ask your compliance team what is expected of public web applications before you choose a product. We quote security products together with the rest of your requirement on one purchase order; see [cybersecurity services](/services/cybersecurity) and [enterprise procurement](/enterprise)."
+      }
+    ],
+    "products": [
+      {
+        "slug": "fortinet-fortiweb",
+        "use": "Fortinet's web application firewall for protecting websites, portals and APIs.",
+        "whoFor": "Organisations that run public web applications and need protection at the application layer."
+      },
+      {
+        "slug": "fortinet-fortiadc",
+        "use": "Fortinet's application delivery controller for load balancing and keeping applications available.",
+        "whoFor": "Organisations with several application servers that need traffic spread across them."
+      },
+      {
+        "slug": "fortinet-fortiddos",
+        "use": "Fortinet's product for protecting against denial-of-service floods.",
+        "whoFor": "Organisations whose websites or services cannot afford to be knocked offline by traffic floods."
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Do you list FortiWeb with a price?",
+        "answer": "No. FortiWeb, FortiADC and FortiDDoS are listed without a website price. We quote them to your applications, traffic and licence term, and a written quotation fixes the price. Send your requirement through the enquiry page."
+      },
+      {
+        "question": "What is the difference between a firewall and a web application firewall?",
+        "answer": "A network firewall controls which connections can reach your servers, based on addresses, ports and protocols. A web application firewall looks inside the web requests themselves and blocks attacks on the application. Most organisations with a public web application need both."
+      },
+      {
+        "question": "Does a WAF stop all attacks on a website?",
+        "answer": "No. It blocks many common attacks and can cover a known flaw while a fix is prepared, but it does not remove the flaw. Keep the application updated and tested."
+      },
+      {
+        "question": "Can a WAF run in the cloud?",
+        "answer": "Yes. A WAF can run as an appliance in your network, as a virtual appliance next to an application in a cloud environment, or as a cloud-delivered service. Ask which of these the quoted product supports."
+      },
+      {
+        "question": "Do I need a WAF for PCI DSS?",
+        "answer": "Some standards for organisations that handle card payments expect public web applications to be protected by a WAF or reviewed in another defined way. Check the current wording of the standard with your compliance team or assessor."
+      },
+      {
+        "question": "How is a WAF licensed?",
+        "answer": "It depends on the product. Licences are commonly counted by throughput, by appliance or by number of applications, with a subscription for attack signature updates. The quotation states what is included and for how long."
+      },
+      {
+        "question": "Can you quote it together with a firewall and backup?",
+        "answer": "Yes. We quote security products with the rest of your requirement on one purchase order, with a GST invoice."
+      }
+    ],
+    "related": [
+      {
+        "href": "/firewall-security",
+        "label": "Firewall security in India"
+      },
+      {
+        "href": "/email-security",
+        "label": "Email security in India"
+      },
+      {
+        "href": "/zero-trust-network-access",
+        "label": "Zero trust network access"
+      },
+      {
+        "href": "/services/cybersecurity",
+        "label": "Cybersecurity services"
+      },
+      {
+        "href": "/brands/fortinet",
+        "label": "Fortinet products"
+      }
+    ],
+    "title": "Web Application Firewall (WAF) in India – Fortinet FortiWeb | Quote & Guide",
+    "description": "Web application firewall for Indian businesses: how a WAF works, WAF vs network firewall, and Fortinet FortiWeb quoted with a GST invoice. Get a quote today.",
+    "brands": [
+      "fortinet"
+    ]
+  },
+  "zero-trust-network-access": {
+    "slug": "zero-trust-network-access",
+    "h1": "Zero Trust Network Access (ZTNA) in India: Identity, Devices and Secure Remote Access",
+    "intro": "For years, remote access meant a VPN: connect to the office network and you were treated as if you were in the office, able to reach almost everything. That worked when staff sat at their desks. It works badly now, when people work from home, from client sites and from personal phones, and when applications live in the cloud as well as in the office. One stolen password on a VPN can open the whole network.\n\nZero trust network access, usually shortened to ZTNA, starts from the opposite assumption: no user or device is trusted just because it is connecting, and each request to reach an application is checked against who the person is, the state of the device and what they are allowed to use. Access is given to the one application, not the whole network.\n\nThis guide explains what ZTNA is made of, why it is a set of controls and not one product, which parts we list from Microsoft, Fortinet and SonicWall, and what to decide before asking for a quotation. It is written for the IT head who has been asked to improve remote access and wants a sensible plan before looking at products.\n\nA plain note on availability: the Microsoft Entra ID, Intune, Fortinet FortiAuthenticator and SonicWall Secure Mobile Access products are listed on this site without a website price. We quote them to your number of users and your licence term, and a written quotation fixes the price. Send your requirement through the [enquiry form](/enquiry).",
+    "sections": [
+      {
+        "heading": "What zero trust network access means",
+        "markdown": "Three ideas sit behind the name.\n\n- **Verify explicitly.** Each request to reach an application is checked: who is the user, have they proved it with more than a password, and is the device they are using in a safe state.\n- **Give the least access needed.** A person in accounts can reach the accounts system, not the engineering file server. Access is per application and per role.\n- **Assume something will be compromised.** Design so that if one account or one laptop is taken over, the damage is limited, and so that you can see what happened afterwards.\n\nZTNA is the part of this that controls access to applications from outside the office. It replaces or reduces reliance on the broad, network-wide access that a traditional VPN gives."
+      },
+      {
+        "heading": "ZTNA is a set of controls, not one product",
+        "markdown": "Several brands sell products with ZTNA in the name, and some organisations buy one and expect the problem solved. In practice the result is made of several parts working together.\n\n1. **Identity.** A directory of users with strong sign-in: multi-factor authentication, and rules such as blocking sign-in from unexpected places. Microsoft Entra ID is Microsoft's identity service, and Fortinet's FortiAuthenticator provides identity and multi-factor authentication for organisations that use Fortinet equipment.\n2. **Device health.** Knowing whether a laptop or phone is managed, encrypted and up to date before it is allowed in. Microsoft Intune manages devices and reports on their state, and Entra ID can use that state to decide whether to allow access.\n3. **Access gateway.** The point that actually connects a verified user to an application. This can be a firewall with remote-access features, a dedicated secure access appliance such as SonicWall Secure Mobile Access, or a cloud service.\n4. **Visibility.** Logs of who reached what, which you need for an incident review and for audits.\n5. **Protection behind it.** The [firewall](/firewall-security) and [endpoint security](/antivirus-endpoint-security) that still matter on every device and at the edge.\n\nYou do not have to build all of this at once. Most organisations start with identity and multi-factor authentication, which gives the largest reduction in risk for the smallest effort."
+      },
+      {
+        "heading": "What we list for each part",
+        "markdown": "- **Microsoft Entra ID P1 and P2.** The paid tiers of Microsoft's identity service. P1 adds conditional access, which lets you write rules such as requiring multi-factor authentication or a managed device for particular applications. P2 adds risk-based features that respond to sign-ins that look suspicious.\n- **Microsoft Intune Plan 1.** Device management for laptops, desktops and phones, including setting and checking security requirements.\n- **Fortinet FortiAuthenticator.** An identity and authentication server that works with Fortinet firewalls and other systems, for multi-factor authentication and single sign-on.\n- **SonicWall Secure Mobile Access.** A secure remote-access appliance range for giving remote staff access to applications.\n\nIf you want a dedicated ZTNA subscription tied to a particular firewall brand, say so in your enquiry and we will quote to what you name. For the firewalls themselves, see our [firewall security guide](/firewall-security) and the brand pages for [Fortinet](/brands/fortinet) and [SonicWall](/brands/sonicwall)."
+      },
+      {
+        "heading": "Where Microsoft 365 already helps",
+        "markdown": "Many organisations already own part of this without knowing it. Microsoft 365 Business Premium includes Entra ID P1 and Intune, so conditional access and device management are available once they are switched on and configured. Larger Microsoft 365 plans include more. Check what your current licences contain before buying separate products. See [Microsoft 365 Business Premium](/microsoft-365/business-premium) and our overview of [Microsoft 365 plans and prices](/microsoft-365)."
+      },
+      {
+        "heading": "A sensible order to do it in",
+        "markdown": "1. **Turn on multi-factor authentication for everyone,** starting with administrators and anybody who can reach money or customer data.\n2. **Stop using the same account for everything.** Give administrators a separate account for admin tasks.\n3. **Manage the devices.** Know which laptops and phones access company data, and require encryption and updates.\n4. **Write access rules by application.** Begin with the most sensitive applications and widen from there.\n5. **Replace or narrow the VPN.** Move applications to per-application access as they are ready, rather than all at once.\n6. **Review the logs.** Decide who looks at sign-in alerts and how quickly they respond.\n\nThe first two steps cost little and prevent a large share of account takeovers. They are worth doing this week, whatever else you decide."
+      },
+      {
+        "heading": "What to decide before asking for a quotation",
+        "markdown": "1. **How many users, and how many of them work remotely?**\n2. **Which applications must be reachable?** Cloud applications, applications in your office, or both.\n3. **Whose devices?** Company-owned laptops, personal phones, or both.\n4. **What identity service do you use today?** Microsoft 365 and its directory, another service, or a local directory.\n5. **What do you already own?** Your current Microsoft 365 plan may include part of this.\n6. **Who will run it?** Conditional access rules need maintenance, and a rule that is too strict will lock out genuine staff.\n\nWrite the answers down and send them with your enquiry."
+      },
+      {
+        "heading": "Common mistakes",
+        "markdown": "- **Buying a ZTNA product without sorting out identity first.** The best access gateway does not help if accounts have only passwords.\n- **Switching everything on at once.** A sudden strict policy locks out staff and gets switched off. Roll out in stages.\n- **No plan for devices you do not manage.** Decide whether personal phones may reach company data, and under what conditions.\n- **Leaving the old VPN open alongside.** A forgotten VPN with weak access undoes the new controls.\n- **Forgetting the break-glass account.** Keep an emergency administrator account, stored safely, so that a configuration mistake does not lock everyone out."
+      },
+      {
+        "heading": "Buying notes for India",
+        "markdown": "Prices are in rupees and GST is charged on the invoice. Microsoft licences are bought per user with a term. We quote identity, device management, remote access and firewalls together on one purchase order; see [cybersecurity services](/services/cybersecurity), [endpoint management](/services/endpoint-management) and [security and compliance solutions](/solutions/security-compliance)."
+      }
+    ],
+    "products": [
+      {
+        "slug": "microsoft-entra-id-p1",
+        "use": "Microsoft's identity service with conditional access.",
+        "whoFor": "Organisations that want rules such as requiring multi-factor authentication or a managed device."
+      },
+      {
+        "slug": "microsoft-entra-id-p2",
+        "use": "Entra ID P1 plus risk-based protection for suspicious sign-ins.",
+        "whoFor": "Organisations with more sensitive data or a team that will act on risk alerts."
+      },
+      {
+        "slug": "microsoft-intune-plan-1",
+        "use": "Microsoft's device management for laptops, desktops and phones.",
+        "whoFor": "Organisations that want to require encryption and updates on devices that reach company data."
+      },
+      {
+        "slug": "fortinet-fortiauthenticator",
+        "use": "Fortinet's identity and multi-factor authentication server.",
+        "whoFor": "Organisations that use Fortinet firewalls and want multi-factor authentication for remote access."
+      },
+      {
+        "slug": "sonicwall-sma-series-secure-mobile-access",
+        "use": "SonicWall's secure remote-access appliance range.",
+        "whoFor": "Organisations that need a dedicated gateway for remote staff to reach applications."
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Do you list ZTNA products with prices?",
+        "answer": "No. The Entra ID, Intune, FortiAuthenticator and SonicWall Secure Mobile Access products are listed without a website price and are quoted to your number of users and licence term. A written quotation fixes the price. Send your requirement through the enquiry page."
+      },
+      {
+        "question": "What is the difference between ZTNA and a VPN?",
+        "answer": "A traditional VPN connects a user to the network and treats them as inside it. ZTNA checks the user and the device for each request and gives access to the specific application, not the whole network."
+      },
+      {
+        "question": "Is ZTNA one product I can buy?",
+        "answer": "Not really. It is a set of controls: identity with multi-factor authentication, device health, an access gateway and logging. Products with ZTNA in the name cover some of these, and the result depends on how they are combined."
+      },
+      {
+        "question": "Where should we start?",
+        "answer": "With multi-factor authentication for everyone, starting with administrators and anyone who can reach money or customer data. It gives the largest reduction in risk for the smallest effort."
+      },
+      {
+        "question": "Does Microsoft 365 include any of this?",
+        "answer": "Microsoft 365 Business Premium includes Entra ID P1 and Intune, so conditional access and device management are available once configured. Check your current plan before buying separate products."
+      },
+      {
+        "question": "Can staff use personal phones?",
+        "answer": "That is a policy decision. Many organisations allow it with conditions, such as a passcode and a managed work profile, and block access from devices that do not meet them."
+      },
+      {
+        "question": "Can you quote this together with firewalls and licences?",
+        "answer": "Yes. We quote identity, device management, remote access and firewalls together on one purchase order, with a GST invoice."
+      }
+    ],
+    "related": [
+      {
+        "href": "/firewall-security",
+        "label": "Firewall security in India"
+      },
+      {
+        "href": "/microsoft-365/business-premium",
+        "label": "Microsoft 365 Business Premium"
+      },
+      {
+        "href": "/services/endpoint-management",
+        "label": "Endpoint management service"
+      },
+      {
+        "href": "/services/cybersecurity",
+        "label": "Cybersecurity services"
+      },
+      {
+        "href": "/data-loss-prevention",
+        "label": "Data loss prevention"
+      }
+    ],
+    "title": "Zero Trust Network Access (ZTNA) in India – Identity & Secure Remote Access | Guide",
+    "description": "ZTNA for Indian businesses: identity, device health and secure remote access with Microsoft, Fortinet and SonicWall, quoted with a GST invoice. Get a quote today.",
+    "brands": [
+      "microsoft",
+      "fortinet",
+      "sonicwall"
+    ]
   }
 };

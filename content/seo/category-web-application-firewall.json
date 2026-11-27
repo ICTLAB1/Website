@@ -1,0 +1,110 @@
+{
+ "slug": "web-application-firewall",
+ "h1": "Web Application Firewall (WAF) in India: Fortinet FortiWeb and Related Protection",
+ "intro": "A website, customer portal or web application is open to the whole internet by design, which is exactly why it is attacked. A network firewall decides which connections reach your servers, but it cannot tell whether the request arriving on an allowed port is a customer placing an order or an attacker injecting commands into a form. That is the job of a web application firewall, usually shortened to WAF.\n\nThis guide explains what a WAF does and does not do, how it is deployed, how it differs from the firewall you already have, and what to settle before asking for a quotation. It is written for the IT head, developer or compliance owner who runs a public web application and has been asked how it is protected.\n\nA plain note on availability: the Fortinet FortiWeb web application firewall, and the related FortiADC and FortiDDoS products, are listed on this site without a website price. We quote them to your configuration and traffic, and a written quotation fixes the price. Send the details through the [enquiry form](/enquiry) and read the [Fortinet brand page](/brands/fortinet).",
+ "sections": [
+  {
+   "heading": "What a web application firewall does",
+   "markdown": "A WAF sits in front of a web application and inspects the web traffic going to it, the requests and the responses, and blocks the ones that look like attacks. It understands web requests, which a conventional firewall does not.\n\nThe attacks it is typically used against include:\n\n- **Injection attacks,** where text typed into a field or sent in a link is meant to run as a command on your database or server.\n- **Cross-site scripting,** where an attacker gets a script to run in another visitor's browser through your site.\n- **Automated abuse,** such as bots that scrape prices, guess passwords or fill forms.\n- **Attacks on APIs,** where an application programming interface is called in ways its designers did not intend.\n\nA WAF can also be used to patch a gap quickly. If a flaw is found in an application that cannot be fixed this week, a rule at the WAF can block the known attack while the fix is prepared. That is a stopgap and not a replacement for fixing the code."
+  },
+  {
+   "heading": "WAF or network firewall: what is the difference",
+   "markdown": "The two protect different layers, and most organisations need both.\n\n| | Network firewall | Web application firewall |\n| --- | --- | --- |\n| Looks at | Addresses, ports and protocols | The content of web requests and responses |\n| Typical question | May this address connect to this port? | Is this request an attack on the application? |\n| Sits | At the edge of the network | In front of the web application |\n| Protects against | Unwanted connections and network-level threats | Attacks on the application itself |\n\nNext-generation firewalls add application awareness and some web filtering, and that is useful, but a dedicated WAF is built for the detail of web applications. If you are choosing a network firewall, see our [firewall security guide](/firewall-security)."
+  },
+  {
+   "heading": "How a WAF is deployed",
+   "markdown": "There are three common arrangements, and the right one depends on where your application runs.\n\n1. **An appliance or virtual appliance in your network.** Traffic to the application passes through it. This suits applications hosted in your own data centre.\n2. **A virtual appliance in a cloud environment.** The same product runs next to an application hosted in a public cloud.\n3. **A cloud-delivered service.** Traffic is directed through the provider's service before it reaches you. This needs little equipment on your side.\n\nAsk which of these the quoted product supports, and whether the licence is per application, per throughput or per appliance. Throughput matters: a WAF that cannot keep up with peak traffic becomes the slowest part of your site."
+  },
+  {
+   "heading": "Related products: application delivery and DDoS protection",
+   "markdown": "Two other products often come up in the same conversation.\n\n- **Application delivery controllers.** Fortinet's FortiADC is an application delivery controller, which spreads traffic across several servers and keeps an application available if one fails. It can sit alongside a WAF, and some organisations choose it where load balancing is the main need.\n- **DDoS protection.** A distributed denial-of-service attack tries to overwhelm a site with traffic so genuine visitors cannot get in. Fortinet's FortiDDoS is a product aimed at that problem. A WAF handles malicious requests; DDoS protection handles floods of traffic. They are not the same control.\n\nWhether you need one, two or all three depends on the application, the traffic it receives and how much downtime you can tolerate."
+  },
+  {
+   "heading": "What to decide before asking for a quotation",
+   "markdown": "Write the answers down first. They determine the product and the price.\n\n1. **How many web applications and how many domains?** Licensing is often counted this way.\n2. **Where do they run?** Your data centre, a cloud provider or a mix.\n3. **What traffic do they carry at peak?** Requests per second and bandwidth, not average.\n4. **Do you also need load balancing or DDoS protection?**\n5. **Who will tune the rules?** A WAF needs attention in its first weeks, because rules that are too strict block genuine customers and rules that are too loose let attacks through.\n6. **Is there a compliance requirement?** Some standards for organisations that handle card payments expect public web applications to be protected by a WAF or reviewed in another defined way. Check the current wording of the standard that applies to you.\n\nSend the answers through the enquiry form and we quote to them."
+  },
+  {
+   "heading": "Common mistakes when buying a WAF",
+   "markdown": "- **Treating it as set and forget.** A WAF has to be tuned and its logs have to be read. Switched on in blocking mode without testing, it can stop genuine orders.\n- **Relying on it instead of fixing the application.** It reduces risk; it does not remove the flaw.\n- **Protecting only the main site.** Forgotten test sites and old subdomains are attacked too.\n- **Ignoring throughput.** Size for peak traffic, not the average day.\n- **Forgetting support and updates.** Attack signatures need to be updated, and the subscription that provides them is usually sold for a term.\n- **Buying a WAF when the first need is a firewall.** If you have no network firewall, start with [firewall security](/firewall-security)."
+  },
+  {
+   "heading": "Buying notes for India",
+   "markdown": "Prices are in rupees and GST is charged on the invoice. If your organisation is regulated, or handles card payments, ask your compliance team what is expected of public web applications before you choose a product. We quote security products together with the rest of your requirement on one purchase order; see [cybersecurity services](/services/cybersecurity) and [enterprise procurement](/enterprise)."
+  }
+ ],
+ "products": [
+  {
+   "slug": "fortinet-fortiweb",
+   "use": "Fortinet's web application firewall for protecting websites, portals and APIs.",
+   "whoFor": "Organisations that run public web applications and need protection at the application layer."
+  },
+  {
+   "slug": "fortinet-fortiadc",
+   "use": "Fortinet's application delivery controller for load balancing and keeping applications available.",
+   "whoFor": "Organisations with several application servers that need traffic spread across them."
+  },
+  {
+   "slug": "fortinet-fortiddos",
+   "use": "Fortinet's product for protecting against denial-of-service floods.",
+   "whoFor": "Organisations whose websites or services cannot afford to be knocked offline by traffic floods."
+  }
+ ],
+ "faqs": [
+  {
+   "question": "Do you list FortiWeb with a price?",
+   "answer": "No. FortiWeb, FortiADC and FortiDDoS are listed without a website price. We quote them to your applications, traffic and licence term, and a written quotation fixes the price. Send your requirement through the enquiry page."
+  },
+  {
+   "question": "What is the difference between a firewall and a web application firewall?",
+   "answer": "A network firewall controls which connections can reach your servers, based on addresses, ports and protocols. A web application firewall looks inside the web requests themselves and blocks attacks on the application. Most organisations with a public web application need both."
+  },
+  {
+   "question": "Does a WAF stop all attacks on a website?",
+   "answer": "No. It blocks many common attacks and can cover a known flaw while a fix is prepared, but it does not remove the flaw. Keep the application updated and tested."
+  },
+  {
+   "question": "Can a WAF run in the cloud?",
+   "answer": "Yes. A WAF can run as an appliance in your network, as a virtual appliance next to an application in a cloud environment, or as a cloud-delivered service. Ask which of these the quoted product supports."
+  },
+  {
+   "question": "Do I need a WAF for PCI DSS?",
+   "answer": "Some standards for organisations that handle card payments expect public web applications to be protected by a WAF or reviewed in another defined way. Check the current wording of the standard with your compliance team or assessor."
+  },
+  {
+   "question": "How is a WAF licensed?",
+   "answer": "It depends on the product. Licences are commonly counted by throughput, by appliance or by number of applications, with a subscription for attack signature updates. The quotation states what is included and for how long."
+  },
+  {
+   "question": "Can you quote it together with a firewall and backup?",
+   "answer": "Yes. We quote security products with the rest of your requirement on one purchase order, with a GST invoice."
+  }
+ ],
+ "related": [
+  {
+   "href": "/firewall-security",
+   "label": "Firewall security in India"
+  },
+  {
+   "href": "/email-security",
+   "label": "Email security in India"
+  },
+  {
+   "href": "/zero-trust-network-access",
+   "label": "Zero trust network access"
+  },
+  {
+   "href": "/services/cybersecurity",
+   "label": "Cybersecurity services"
+  },
+  {
+   "href": "/brands/fortinet",
+   "label": "Fortinet products"
+  }
+ ],
+ "needsVerification": [
+  "Descriptions of FortiADC as an application delivery controller and FortiDDoS as DDoS protection are general product descriptions; the owner should confirm the exact models TechZoid quotes.",
+  "The PCI DSS statement is worded generally and deliberately points the reader to the current text of the standard.",
+  "Licensing models (per throughput, appliance or application) vary by product and are stated as things to ask about, not as Fortinet's terms.",
+  "Whether TechZoid offers installation and tuning of web application firewalls."
+ ]
+}

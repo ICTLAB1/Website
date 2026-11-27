@@ -1,0 +1,121 @@
+{
+ "slug": "email-security",
+ "h1": "Email Security in India: Fortinet FortiMail and Microsoft Defender for Office 365",
+ "intro": "Email is still the way most attacks begin. A message that looks like it came from a supplier, a bank or a colleague asks for a payment, a password or a click, and one person acting on it can cost a company far more than the price of the security that would have stopped it. Basic spam filtering catches the obvious junk. Business email security is about the messages that are written to get past it.\n\nThis guide explains the layers of email protection, how the built-in filtering in your email service differs from an added security product, what we list from Fortinet and Microsoft, and what to decide before asking for a quotation. It is written for the IT head or business owner who has had a phishing scare, or who is choosing email protection for the first time.\n\nA plain note on availability: Fortinet FortiMail and the Microsoft Defender for Office 365 plans are listed on this site without a website price, and are quoted to your number of mailboxes and your licence term. A written quotation fixes the price. Send the details through the [enquiry form](/enquiry). If you are still choosing where your email is hosted, read our article on [secure business email providers in India](/blog/secure-business-email-providers-india).",
+ "sections": [
+  {
+   "heading": "What email security protects against",
+   "markdown": "The threats are different from one another and they need different defences.\n\n- **Spam and bulk mail.** Unwanted but usually harmless; filtering keeps the inbox usable.\n- **Malware in attachments and links.** A document or a web link that installs something harmful when opened or clicked.\n- **Phishing.** A message that imitates a trusted sender to get a password or a payment.\n- **Business email compromise.** A message, often with no link or attachment at all, that appears to come from a manager or supplier and asks for money or details. Software finds these hard to spot, which is why people and process matter as much as tools.\n- **Impersonation of your own domain.** Somebody sending mail that appears to come from your company to your customers.\n\nNo product stops everything. The aim is to stop the great majority automatically, flag the rest, and make it easy for staff to report anything suspicious."
+  },
+  {
+   "heading": "The layers of email protection",
+   "markdown": "Think of email protection as layers, each catching what the one before it missed.\n\n1. **Sender authentication.** Records on your domain called SPF, DKIM and DMARC tell other mail systems which servers may send as you and what to do with mail that fails. These cost nothing to set up and reduce the chance of your domain being faked. Your IT team or hosting provider can set them.\n2. **Filtering at the gateway or in the service.** Spam, malware and known bad senders are blocked before they reach a mailbox.\n3. **Advanced protection.** Scanning of attachments in a sandbox, checking of links at the moment they are clicked, and detection of impersonation.\n4. **Training and reporting.** Staff who recognise a suspicious message, and a simple way to report it.\n5. **Backup and recovery.** If a mailbox is compromised or deleted, you can restore it. See [backup software](/backup-software).\n\nWhich layers you need depends on how much risk the business carries and how much of this your email service already includes."
+  },
+  {
+   "heading": "Built-in filtering or an added product",
+   "markdown": "Hosted email services include filtering. Microsoft Exchange Online, which is the email in Microsoft 365, filters incoming mail for spam and malware as part of the service. That is a sound baseline. Defender for Office 365 adds protection on top of it.\n\nThe two Defender for Office 365 plans differ in how much they add:\n\n- **Plan 1** adds protection for attachments and links, and for impersonation, to the baseline filtering. Plan 1 is included in Microsoft 365 Business Premium.\n- **Plan 2** adds more investigation and response tools, and training that simulates attacks, for organisations with a security team that will use them. Plan 2 is included in Microsoft 365 E5.\n\nFortinet's FortiMail is a secure email gateway. It sits in front of a mail service, which can be Microsoft's, a mail server of your own or another provider's, and filters mail before it arrives. It suits organisations that want a separate layer from the mail service, that run their own mail server, or that already use Fortinet equipment.\n\nWhich of these is right depends on where your email is hosted and what is already included in the licences you hold. Check your current plan before buying a second product that duplicates it."
+  },
+  {
+   "heading": "What to decide before asking for a quotation",
+   "markdown": "Write these down, and the quotation follows quickly.\n\n1. **Where is your email hosted?** Microsoft 365, another hosted service or your own server.\n2. **How many mailboxes?** Per-user licences are counted this way.\n3. **What do you already have?** Some Microsoft 365 plans already include part of this protection.\n4. **Have you had a phishing or payment-fraud incident?** It changes the priority.\n5. **Who will watch the alerts and review quarantined mail?** Protection that nobody looks at gives less than it appears to.\n6. **Is there a compliance requirement?** Some sectors expect specific controls and records.\n\nIf you are moving email at the same time, see our [email migration service](/services/email-migration)."
+  },
+  {
+   "heading": "Common mistakes in email security",
+   "markdown": "- **Assuming the email service is enough.** Baseline filtering is useful, but targeted attacks are written to get past it.\n- **Buying a second product that duplicates the first.** Check what your Microsoft 365 plan already includes.\n- **Skipping SPF, DKIM and DMARC.** They are free and they protect your customers from messages that pretend to be you.\n- **No process for payment requests.** Any change of bank details by email should be confirmed by a phone call to a known number. This stops more fraud than any filter.\n- **Never testing staff.** Simulated phishing and short training reduce the number of people who click.\n- **No backup of mailboxes.** A compromised account can lose or delete mail. See [backup software](/backup-software)."
+  },
+  {
+   "heading": "Buying notes for India",
+   "markdown": "Prices are in rupees and GST is charged on the invoice. Microsoft licences are bought per user, with terms that depend on the plan. If you also need to protect the laptops and desktops that read the mail, see [antivirus and endpoint security](/antivirus-endpoint-security). We quote email security with the rest of your Microsoft or security requirement on one purchase order; see [Microsoft 365](/microsoft-365) and [cybersecurity services](/services/cybersecurity)."
+  }
+ ],
+ "products": [
+  {
+   "slug": "fortinet-fortimail",
+   "use": "Fortinet's secure email gateway that filters mail before it reaches your mail service.",
+   "whoFor": "Organisations that want a separate email security layer, run their own mail server or already use Fortinet."
+  },
+  {
+   "slug": "microsoft-defender-for-office-365-plan-1",
+   "use": "Microsoft's protection for email attachments, links and impersonation in Microsoft 365.",
+   "whoFor": "Organisations on Exchange Online that want protection beyond the built-in filtering."
+  },
+  {
+   "slug": "microsoft-defender-for-office-365-plan-2",
+   "use": "Plan 1 plus investigation, response and attack-simulation training.",
+   "whoFor": "Organisations with a security team that will use the extra tools."
+  },
+  {
+   "slug": "exchange-online-plan-1",
+   "use": "Microsoft's hosted business email, with built-in filtering.",
+   "whoFor": "Organisations that want hosted email as a standalone service."
+  },
+  {
+   "slug": "exchange-online-plan-2",
+   "use": "Exchange Online with a larger mailbox and extra compliance features.",
+   "whoFor": "Organisations that need larger mailboxes or more retention options."
+  },
+  {
+   "slug": "zoho-mail",
+   "use": "Zoho's hosted business email.",
+   "whoFor": "Organisations that want hosted email from Zoho; this is an email service, not a security gateway."
+  }
+ ],
+ "faqs": [
+  {
+   "question": "Do you list FortiMail and Defender for Office 365 with prices?",
+   "answer": "No. They are listed without a website price and are quoted to your number of mailboxes and your licence term. A written quotation fixes the price. Send your requirement through the enquiry page."
+  },
+  {
+   "question": "Does Microsoft 365 already include email security?",
+   "answer": "Exchange Online filters incoming mail for spam and malware as part of the service. Defender for Office 365 adds stronger protection: Plan 1 is included in Microsoft 365 Business Premium and Plan 2 in Microsoft 365 E5. Check your current plan before buying a second product."
+  },
+  {
+   "question": "What is the difference between Defender for Office 365 Plan 1 and Plan 2?",
+   "answer": "Plan 1 protects attachments and links and detects impersonation. Plan 2 adds more investigation and response tools and attack-simulation training, and suits organisations with a security team that will use them."
+  },
+  {
+   "question": "When would I choose FortiMail instead?",
+   "answer": "FortiMail is a secure email gateway that sits in front of a mail service. It suits organisations that want a separate layer from the mail service, that run their own mail server, or that already use Fortinet equipment."
+  },
+  {
+   "question": "What are SPF, DKIM and DMARC?",
+   "answer": "They are records on your domain that tell other mail systems which servers may send mail as you and what to do with mail that fails the checks. They reduce the chance of your domain being faked, and your IT team or hosting provider can set them."
+  },
+  {
+   "question": "How do we stop payment fraud by email?",
+   "answer": "Filtering helps, but process matters more: confirm any change of bank details with a phone call to a number you already hold, and require a second person to approve unusual payments."
+  },
+  {
+   "question": "Can you quote it with Microsoft 365 licences?",
+   "answer": "Yes. We quote email security together with Microsoft 365 licences and the rest of your requirement on one purchase order, with a GST invoice."
+  }
+ ],
+ "related": [
+  {
+   "href": "/blog/secure-business-email-providers-india",
+   "label": "Secure business email providers in India"
+  },
+  {
+   "href": "/services/email-migration",
+   "label": "Email migration service"
+  },
+  {
+   "href": "/microsoft-365",
+   "label": "Microsoft 365 plans and prices"
+  },
+  {
+   "href": "/antivirus-endpoint-security",
+   "label": "Antivirus and endpoint security in India"
+  },
+  {
+   "href": "/web-application-firewall",
+   "label": "Web application firewall"
+  }
+ ],
+ "needsVerification": [
+  "Statement that Defender for Office 365 Plan 1 is included in Microsoft 365 Business Premium and Plan 2 in Microsoft 365 E5: confirm against Microsoft's current plan comparison before publishing.",
+  "Description of what Plan 1 and Plan 2 each add is a summary and should be checked against Microsoft's current documentation.",
+  "FortiMail positioning as a secure email gateway is a general product description; confirm the models TechZoid quotes.",
+  "Whether TechZoid configures SPF, DKIM and DMARC or implements these products for customers."
+ ]
+}

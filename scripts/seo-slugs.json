@@ -452,7 +452,23 @@
   "microsoft-office-ltsc-standard-2024",
   "power-bi-pro",
   "power-bi-premium-per-user",
-  "onedrive-for-business-plan-1"
+  "onedrive-for-business-plan-1",
+  "fortinet-fortimail",
+  "fortinet-fortiweb",
+  "fortinet-fortiadc",
+  "fortinet-fortiddos",
+  "fortinet-fortiauthenticator",
+  "exchange-online-plan-1",
+  "exchange-online-plan-2",
+  "microsoft-defender-for-office-365-plan-1",
+  "microsoft-defender-for-office-365-plan-2",
+  "microsoft-entra-id-p1",
+  "microsoft-entra-id-p2",
+  "microsoft-intune-plan-1",
+  "sonicwall-sma-series-secure-mobile-access",
+  "cisco-ucs-c-series-rack-servers",
+  "cisco-nexus-9000-series-switches",
+  "cisco-mds-9100-series-multilayer-fabric-switches"
  ],
  "newPosts": [
   "top-10-cloud-computing-services-india",
@@ -484,6 +500,11 @@
   "/brands",
   "/products",
   "/blog",
-  "/services"
+  "/services",
+  "/data-centre-solutions",
+  "/web-application-firewall",
+  "/email-security",
+  "/zero-trust-network-access",
+  "/data-loss-prevention"
  ]
 }

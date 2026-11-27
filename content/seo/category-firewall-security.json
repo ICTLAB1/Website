@@ -125,6 +125,22 @@
   {
    "href": "/blog/what-to-check-before-a-software-renewal",
    "label": "What to check before a software renewal"
+  },
+  {
+   "href": "/data-centre-solutions",
+   "label": "Data centre solutions in India"
+  },
+  {
+   "href": "/web-application-firewall",
+   "label": "Web application firewall in India"
+  },
+  {
+   "href": "/email-security",
+   "label": "Email security in India"
+  },
+  {
+   "href": "/zero-trust-network-access",
+   "label": "Zero trust network access"
   }
  ],
  "needsVerification": [

@@ -257,3 +257,40 @@ Third-party product facts and TechZoid claims the writers were not certain of. C
 ## plans-and-pricing pages
 - Four pages in the format of Microsoft's own "plans and pricing" pages: /microsoft-365-business-plans-and-pricing, /microsoft-365-enterprise-plans-and-pricing, /adobe-plans-and-pricing, /autodesk-plans-and-pricing. Prices and "what it includes" come from the catalogue at render time; the grouping, short guidance and FAQs are in src/lib/content/plans.ts. Microsoft's own pages could not be read from the build environment, so the layout follows their known format, not their copy.
 - The statement that Microsoft 365 plans add the Windows and security components that Office 365 plans lack is general knowledge; confirm it.
+
+
+## Round 4: data-centre and security solution pages (27 Nov 2026)
+
+New pages: /data-centre-solutions, /web-application-firewall, /email-security, /zero-trust-network-access, /data-loss-prevention. Built only from catalogue products; no prices typed (the product cards read them from the catalogue). Please confirm the following before relying on them:
+
+**/data-centre-solutions**
+- Whether TechZoid supplies and supports each listed HPE, Dell and Cisco model, and the warranty and onsite service available in each city.
+- General statements about drive types, port speeds and Fibre Channel versus Ethernet storage are general market descriptions; the owner should confirm the tone and any specific recommendation.
+- The description of Cisco UCS, Nexus and MDS roles is general and should be checked against what TechZoid actually quotes.
+- Delivery times are stated as dependent on stock and configuration, with no figure given.
+
+**/web-application-firewall**
+- Descriptions of FortiADC as an application delivery controller and FortiDDoS as DDoS protection are general product descriptions; the owner should confirm the exact models TechZoid quotes.
+- The PCI DSS statement is worded generally and deliberately points the reader to the current text of the standard.
+- Licensing models (per throughput, appliance or application) vary by product and are stated as things to ask about, not as Fortinet's terms.
+- Whether TechZoid offers installation and tuning of web application firewalls.
+
+**/email-security**
+- Statement that Defender for Office 365 Plan 1 is included in Microsoft 365 Business Premium and Plan 2 in Microsoft 365 E5: confirm against Microsoft's current plan comparison before publishing.
+- Description of what Plan 1 and Plan 2 each add is a summary and should be checked against Microsoft's current documentation.
+- FortiMail positioning as a secure email gateway is a general product description; confirm the models TechZoid quotes.
+- Whether TechZoid configures SPF, DKIM and DMARC or implements these products for customers.
+
+**/zero-trust-network-access**
+- Statement that Microsoft 365 Business Premium includes Entra ID P1 and Intune: confirm against Microsoft's current plan comparison.
+- Descriptions of what Entra ID P1 and P2 each add are summaries; check against Microsoft's current documentation.
+- SonicWall Secure Mobile Access is described as a remote-access appliance range; confirm which SMA models and any ZTNA features TechZoid quotes.
+- The offer to quote a dedicated ZTNA subscription from a firewall brand on request: confirm which brands TechZoid can actually supply this for.
+- Whether TechZoid configures conditional access, device management or remote access for customers.
+
+**/data-loss-prevention**
+- Which DLP capabilities each Microsoft 365 plan includes (Business Premium, E3, E5, and endpoint DLP in E5): confirm against Microsoft's current plan comparison before publishing.
+- Statement that Business Premium covers users up to 300 and E3 has no user limit is consistent with the plans pages; confirm it is still current.
+- The description of content inspection on firewalls and secure email gateways is general; confirm which products TechZoid quotes with this feature.
+- Mention of India's data protection law is deliberately general and points the reader to their adviser.
+- Whether TechZoid configures DLP policies or delivers labelling projects for customers.

@@ -39,6 +39,26 @@ const CATEGORY_META = {
     title: "Firewall Security in India – Fortinet, Sophos, SonicWall & Cisco | Quote & Guide",
     description: "Firewall security for Indian businesses: Fortinet, Sophos, SonicWall and Cisco compared, quoted on one purchase order with a GST invoice. Get a quote today.",
   },
+  "data-centre-solutions": {
+    title: "Data Centre Solutions in India – HPE, Dell & Cisco Servers, Storage | Quote & Guide",
+    description: "Data centre solutions for Indian businesses: HPE, Dell and Cisco servers, storage and networking, quoted with licences on one GST invoice. Get a quote today.",
+  },
+  "web-application-firewall": {
+    title: "Web Application Firewall (WAF) in India – Fortinet FortiWeb | Quote & Guide",
+    description: "Web application firewall for Indian businesses: how a WAF works, WAF vs network firewall, and Fortinet FortiWeb quoted with a GST invoice. Get a quote today.",
+  },
+  "email-security": {
+    title: "Email Security in India – FortiMail & Defender for Office 365 | Quote & Guide",
+    description: "Email security for Indian businesses: Fortinet FortiMail and Microsoft Defender for Office 365 compared, quoted per mailbox with a GST invoice. Get a quote today.",
+  },
+  "zero-trust-network-access": {
+    title: "Zero Trust Network Access (ZTNA) in India – Identity & Secure Remote Access | Guide",
+    description: "ZTNA for Indian businesses: identity, device health and secure remote access with Microsoft, Fortinet and SonicWall, quoted with a GST invoice. Get a quote today.",
+  },
+  "data-loss-prevention": {
+    title: "Data Loss Prevention (DLP) in India – Microsoft 365 & Email | Quote & Guide",
+    description: "Data loss prevention for Indian businesses: what DLP does, what Microsoft 365 plans include and how to roll it out, with a GST invoice. Get a quote today.",
+  },
   "business-laptops": {
     title: "Business Laptops in India – Lenovo, HP & Acer | Quote & Buying Guide",
     description: "Business laptops for Indian organisations: Lenovo, HP and Acer compared, quoted to your configuration and quantity with a GST invoice. Get a quote today.",
@@ -59,6 +79,11 @@ const CATEGORY_META = {
 
 // Which brand hubs each category page links to.
 const CATEGORY_BRANDS = {
+  "data-centre-solutions": ["hpe", "dell", "cisco"],
+  "web-application-firewall": ["fortinet"],
+  "email-security": ["fortinet", "microsoft"],
+  "zero-trust-network-access": ["microsoft", "fortinet", "sonicwall"],
+  "data-loss-prevention": ["microsoft", "fortinet"],
   "firewall-security": ["fortinet", "sophos", "sonicwall", "cisco"],
   "business-laptops": ["lenovo", "hp", "acer"],
   "backup-software": ["acronis"],

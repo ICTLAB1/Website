@@ -1,0 +1,150 @@
+{
+ "slug": "data-centre-solutions",
+ "h1": "Data Centre Solutions in India: Servers, Storage and Networking",
+ "intro": "A data centre, whether it is a purpose-built hall or a single rack in an office cupboard, is made of the same few parts: servers that run the workloads, storage that keeps the data, a network that connects them, and the licences, backup and security around all of it. Most projects go wrong not because one part is poor but because the parts were chosen separately and do not fit together: a server with too little memory for the virtual machines planned, storage sized for today's data and not next year's, or a network that becomes the bottleneck.\n\nThis guide sets out how to think about each layer, what we list on this site from HPE, Dell Technologies and Cisco, and what to decide before asking for a quotation. It is written for the IT head or procurement manager who has been asked to refresh servers, add storage or build a small private cloud, and wants a sensible specification first.\n\nA plain note on pricing: server, storage and networking prices depend on the processor, memory, drives, support term and licences you choose, so this page shows \"Get today's price\" and not a fixed figure. The price that counts is the one on a written quotation. Send your requirement through the [enquiry form](/enquiry) and we respond with an itemised quotation and a GST invoice. For the wider range see [enterprise IT hardware](/enterprise-it-hardware) and the brand pages for [HPE](/brands/hpe), [Dell Technologies](/brands/dell) and [Cisco](/brands/cisco).",
+ "sections": [
+  {
+   "heading": "The four layers of a data centre",
+   "markdown": "It helps to name the layers, because each is bought differently and each has its own failure mode.\n\n- **Compute.** The servers. A rack server such as an HPE ProLiant DL380 or a Dell PowerEdge R760 is the common choice when you will run many virtual machines. A tower server such as an HPE ProLiant ML110 or a Dell PowerEdge T360 suits a small office with a handful of workloads and no rack.\n- **Storage.** Where the data lives. Options range from drives inside the server to a shared storage array such as the HPE MSA or Dell PowerStore that several servers can use at once.\n- **Network.** The switches that connect servers to each other and to storage, and to the rest of the company. In larger sites this includes storage networking, such as Cisco MDS switches for Fibre Channel, and data-centre switching such as Cisco Nexus.\n- **Software and protection.** The operating system and hypervisor licences, database licences, backup and the firewall in front of it all. These are easy to leave out of a hardware quotation and expensive to discover later.\n\nA useful habit is to write the requirement as a list of workloads first (file server, ERP, a database, twenty virtual machines for development) and only then pick hardware. Hardware chosen first tends to be either oversized or short of memory."
+  },
+  {
+   "heading": "Choosing servers: rack, tower or blade",
+   "markdown": "**Rack servers** are the standard answer for anything beyond a small office. They are mounted in a rack, share power and cooling arrangements with other equipment, and are sold in one-unit and two-unit heights. A one-unit server such as an HPE ProLiant DL360 or a Dell PowerEdge R660xs fits more machines in a rack; a two-unit server such as an HPE ProLiant DL380 or a Dell PowerEdge R760 has room for more drives and expansion cards.\n\n**Tower servers** suit a branch office or a small business without a rack. The HPE ProLiant ML30 and ML110, and the Dell PowerEdge T160, T360 and T560 are the models we list. They are quieter and easier to place, and they scale less well.\n\n**Modular and integrated systems** such as the Cisco UCS series pool compute, networking and management for larger deployments where many servers are managed together.\n\nWhatever form you choose, check four things before comparing price: the number and generation of processors, the amount and speed of memory, the drive bays and the type of drives (SSD or hard disk), and the support term. A cheaper server with a three-year parts-only warranty and a dearer one with next-business-day onsite support are not the same product."
+  },
+  {
+   "heading": "Storage: inside the server or a shared array",
+   "markdown": "Drives inside the server are the simplest option and are often right for a single workload. A shared storage array earns its place when several servers need the same data, when you want to move virtual machines between servers, or when you need to expand storage without replacing the server.\n\nThe questions that decide it are practical:\n\n1. **How much usable capacity do you need now, and in three years?** Usable capacity is less than the sum of the drives, because of redundancy.\n2. **What mix of speed and capacity?** Databases and virtual desktops want flash drives. Archives and backups are cheaper on large hard disks.\n3. **How will it connect?** Ethernet-based storage (iSCSI or file shares) is simpler; Fibre Channel is faster and costs more, and needs the matching switches and host adapters.\n4. **What happens when something fails?** Ask what is redundant: controllers, power supplies, network paths.\n\nThe HPE MSA is an entry-level shared array. The Dell PowerStore is a larger, more capable platform. Cisco's MDS switches connect servers to Fibre Channel storage in bigger environments. Which suits you depends on the answers above, not on the brand."
+  },
+  {
+   "heading": "Networking inside the data centre",
+   "markdown": "The network is the part buyers most often under-specify. Servers that are fast on paper are held back by switches that cannot carry the traffic between them, and a single switch is a single point of failure.\n\nFor a small site, a pair of managed switches with the servers connected to both gives resilience cheaply. For a larger site, data-centre switches such as the Cisco Nexus family are built for the heavy east-west traffic between servers and for higher port speeds. Cisco UCS fabric interconnects join the UCS servers into one managed system. Ask for the number of ports, the speed per port (10, 25 or 100 gigabit are common today), and whether you need to add ports later.\n\nPlan the connection to the outside world at the same time. The firewall that protects the data centre should be sized for the traffic it will inspect; see our guide to [firewall security](/firewall-security)."
+  },
+  {
+   "heading": "Licences, backup and protection: the costs that get missed",
+   "markdown": "A server quotation that lists only hardware is incomplete. Three things belong in every data-centre budget.\n\n- **Operating system and database licences.** Windows Server is licensed by processor cores and by the people or devices that connect to it, and SQL Server has its own rules. Our guides to [Windows Server](/windows-server) and [SQL Server](/sql-server) explain how each is counted. Licensing is the most common reason a project goes over budget.\n- **Backup.** A copy on the same server is not a backup. Plan a second copy on separate storage and, ideally, a third copy off the site. See [backup software](/backup-software) and our [backup and disaster recovery service](/services/backup-disaster-recovery).\n- **Security.** Servers need a firewall in front and protection on the servers themselves. See [firewall security](/firewall-security) and [antivirus and endpoint security](/antivirus-endpoint-security).\n\nAsk for all of these on one quotation. We quote hardware and licences together, on one purchase order, with a GST invoice."
+  },
+  {
+   "heading": "Common mistakes when buying data-centre equipment",
+   "markdown": "- **Sizing for today.** Servers and storage are used for years. Ask what the platform can grow to, such as extra memory slots, drive bays and expansion cards, before buying one that is full on day one.\n- **Ignoring the support term.** Hardware fails eventually. A one-year warranty on equipment you plan to run for five years leaves you buying support at renewal, often at a higher price.\n- **Mixing generations.** A new server in an older cluster can restrict what the cluster can do. Check compatibility with what you already run.\n- **Forgetting power and cooling.** More powerful servers draw more power and give off more heat. Confirm that the room and the electrical supply can cope.\n- **Buying hardware before the software plan.** The licence model, such as per-core or per-user, can change which server is the cheaper choice.\n- **No spare plan.** Decide what happens when a server is down: a spare, a support contract that replaces parts quickly, or a cluster that carries on without it."
+  },
+  {
+   "heading": "Buying notes for India",
+   "markdown": "Prices are in rupees and GST is charged on the invoice, so it is worth comparing quotations on the amount before GST and on what is included. Check the warranty is valid in India and ask who performs onsite service in your city. Delivery times for some server and storage models depend on stock and configuration, so ask for a date in writing. For public-sector and larger enterprise buyers, we can quote on one purchase order that covers hardware, licences and support; see [enterprise procurement](/enterprise)."
+  }
+ ],
+ "products": [
+  {
+   "slug": "hpe-proliant-dl380-gen11",
+   "use": "A two-unit HPE rack server with room for drives and expansion cards.",
+   "whoFor": "Organisations running several virtual machines or a database that need headroom to grow."
+  },
+  {
+   "slug": "hpe-proliant-dl360-gen11",
+   "use": "A one-unit HPE rack server for dense racks.",
+   "whoFor": "Sites that want more servers in the same rack space."
+  },
+  {
+   "slug": "hpe-proliant-ml110-gen11",
+   "use": "An HPE tower server for offices without a rack.",
+   "whoFor": "Small offices and branches with a few workloads."
+  },
+  {
+   "slug": "dell-poweredge-r760",
+   "use": "A two-unit Dell rack server for virtualisation and databases.",
+   "whoFor": "Organisations that need drive capacity and expansion in one server."
+  },
+  {
+   "slug": "dell-poweredge-r660xs",
+   "use": "A one-unit Dell rack server for general workloads.",
+   "whoFor": "Sites that want a compact rack server."
+  },
+  {
+   "slug": "dell-poweredge-t360",
+   "use": "A Dell tower server for small offices.",
+   "whoFor": "Small businesses that need a quiet server without a rack."
+  },
+  {
+   "slug": "dell-powerstore-storage",
+   "use": "Dell's PowerStore shared storage platform.",
+   "whoFor": "Organisations that want shared storage for several servers."
+  },
+  {
+   "slug": "hpe-msa-storage-array",
+   "use": "An entry-level HPE shared storage array.",
+   "whoFor": "Small and mid-sized sites moving from server drives to shared storage."
+  },
+  {
+   "slug": "cisco-ucs-c-series-rack-servers",
+   "use": "Cisco UCS C-Series rack servers.",
+   "whoFor": "Organisations that already run Cisco networking or UCS management."
+  },
+  {
+   "slug": "cisco-nexus-9000-series-switches",
+   "use": "Cisco Nexus data-centre switches.",
+   "whoFor": "Sites that need high-speed switching between servers."
+  },
+  {
+   "slug": "cisco-mds-9100-series-multilayer-fabric-switches",
+   "use": "Cisco MDS switches for Fibre Channel storage networks.",
+   "whoFor": "Environments with Fibre Channel storage that need the matching switches."
+  }
+ ],
+ "faqs": [
+  {
+   "question": "Do you list server and storage prices?",
+   "answer": "No. Hardware prices depend on the processor, memory, drives, support term and licences, so models are quoted to your configuration and the price on a written quotation is the one that counts. Send your requirement through the enquiry page."
+  },
+  {
+   "question": "Should I buy a rack server or a tower server?",
+   "answer": "A rack server suits anything beyond a small office, because it is mounted in a rack and is built for several workloads. A tower server suits a small office or branch with a few workloads and no rack. The decision depends on where it will sit and how many servers you expect to run."
+  },
+  {
+   "question": "Do I need shared storage, or are server drives enough?",
+   "answer": "Drives inside the server are enough for a single workload. Shared storage becomes worth it when several servers need the same data, when you want to move virtual machines between servers, or when you need to grow storage without replacing a server."
+  },
+  {
+   "question": "Can you quote the operating system and database licences with the hardware?",
+   "answer": "Yes. We quote hardware, Windows Server and SQL Server licences, backup and security together on one purchase order, with a GST invoice. Licences are the cost most often left out of a hardware-only quotation."
+  },
+  {
+   "question": "Which brand is best: HPE, Dell or Cisco?",
+   "answer": "There is no single best brand. The better question is which platform your team already manages, what support is available in your city and what the support term and price are. We list HPE and Dell servers and storage and Cisco servers and networking, and we help you compare them on the same requirement."
+  },
+  {
+   "question": "How long does delivery take?",
+   "answer": "It depends on the model, the configuration and stock. Ask for a delivery date in writing on the quotation, particularly for configured servers and storage."
+  },
+  {
+   "question": "Does a data-centre project include backup and security?",
+   "answer": "It should. A copy on the same server is not a backup, and servers need a firewall in front of them. We can include backup software and firewall security on the same quotation."
+  }
+ ],
+ "related": [
+  {
+   "href": "/enterprise-it-hardware",
+   "label": "Enterprise IT hardware"
+  },
+  {
+   "href": "/firewall-security",
+   "label": "Firewall security in India"
+  },
+  {
+   "href": "/backup-software",
+   "label": "Backup software in India"
+  },
+  {
+   "href": "/windows-server",
+   "label": "Windows Server licensing"
+  },
+  {
+   "href": "/services/backup-disaster-recovery",
+   "label": "Backup and disaster recovery service"
+  }
+ ],
+ "needsVerification": [
+  "Whether TechZoid supplies and supports each listed HPE, Dell and Cisco model, and the warranty and onsite service available in each city.",
+  "General statements about drive types, port speeds and Fibre Channel versus Ethernet storage are general market descriptions; the owner should confirm the tone and any specific recommendation.",
+  "The description of Cisco UCS, Nexus and MDS roles is general and should be checked against what TechZoid actually quotes.",
+  "Delivery times are stated as dependent on stock and configuration, with no figure given."
+ ]
+}
