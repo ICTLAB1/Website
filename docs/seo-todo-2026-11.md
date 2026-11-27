@@ -24,3 +24,7 @@ Things the brief asked for that need a fact or a decision from the business. Not
    The site configures two GA4 properties (`G-P0H1WJDZ7Y` and `G-2CEL7BH689`), so the event reaches both; mark the key event in whichever one
    Google Ads is linked to. Not tracked on purpose: the careers screening form (a candidate, not a lead) and the support and general topics of the
    contact form.
+11. **Solution pages added (27 Nov).** `/data-centre-solutions`, `/web-application-firewall`, `/email-security`, `/zero-trust-network-access`, `/data-loss-prevention`.
+   Owner to confirm the items listed under "Round 4" in `docs/seo-content-2026-11b.md` (Microsoft plan contents, which models TechZoid quotes, and whether
+   TechZoid installs and configures these products). The guides' "last updated" date (`GUIDES_UPDATED`) still reads 24 Nov and is shared by every guide.
+   Not built from the gap report: AI services, cloud migration and cost optimisation, Device as a Service, AV, Apple (need business confirmation).

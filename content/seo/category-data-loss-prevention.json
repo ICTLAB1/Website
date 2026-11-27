@@ -1,0 +1,111 @@
+{
+ "slug": "data-loss-prevention",
+ "h1": "Data Loss Prevention (DLP) in India: Protecting Sensitive Data in Microsoft 365 and Email",
+ "intro": "Most data leaks are not dramatic break-ins. They are ordinary: a spreadsheet of customer details sent to the wrong person, a price list shared with a link anyone can open, a file copied to a personal drive on the last day of a job. Data loss prevention, usually shortened to DLP, is the set of rules and tools that spot sensitive information and stop it leaving in ways you have not approved.\n\nThis guide explains what DLP does, what it needs before it works, where it already exists in the Microsoft 365 licences many organisations hold, and what to decide before asking for a quotation. It is written for the IT head, compliance owner or business owner who has been asked how the company stops confidential information leaving.\n\nA plain note on availability: the Microsoft 365 plans listed here are quoted per user for the term you choose, and the DLP capabilities each plan includes differ. We help you work out what you already have before you buy more. Send the details through the [enquiry form](/enquiry), and read our overview of [Microsoft 365 plans and prices](/microsoft-365).",
+ "sections": [
+  {
+   "heading": "What data loss prevention does",
+   "markdown": "A DLP system looks for sensitive content and applies a rule to it. The rule might warn the sender, block the action, encrypt the file or alert a manager. It can act in three places:\n\n- **Data in motion.** Information being sent: an email, a message, a file shared by link.\n- **Data at rest.** Information stored in mailboxes, document libraries and drives.\n- **Data in use.** Information on a laptop being copied to a USB drive, printed or pasted into a website.\n\nIt recognises sensitive content in several ways: patterns such as card numbers and national identification numbers, keywords, labels that people or software have applied to documents, and fingerprints of specific files. A document marked confidential can be given rules that follow it."
+  },
+  {
+   "heading": "DLP needs a decision before it needs a product",
+   "markdown": "The tools are the easy part. A DLP rollout that goes well starts with answers to questions only the business can give.\n\n1. **What is sensitive here?** Customer personal data, financial records, designs, contracts, source code, price lists. Name the categories.\n2. **Where does it live?** Mailboxes, SharePoint and OneDrive, file servers, laptops, cloud applications.\n3. **Who may share what, and with whom?** A sales team may send quotations to customers; it may not send the whole customer list.\n4. **What should happen when a rule is hit?** A warning teaches people; a block stops work. Starting with warnings and moving to blocks as you learn what is normal avoids stopping the business.\n5. **Who reviews the alerts?** Rules that nobody looks at only generate noise.\n\nIf the answers are unclear, begin with classification: agree three or four labels, such as public, internal and confidential, and apply them. DLP rules are much simpler once documents carry labels."
+  },
+  {
+   "heading": "Where DLP already exists in Microsoft 365",
+   "markdown": "Microsoft 365 includes data loss prevention through its compliance tools, and the capability depends on the plan. In general terms:\n\n- **Microsoft 365 Business Premium** includes DLP for email and for documents stored in Microsoft's cloud services, together with the device management and identity controls that support it.\n- **Microsoft 365 E3** includes DLP across those services, with more compliance tools than the business plans, and no limit on the number of users.\n- **Microsoft 365 E5** adds more, including DLP on endpoints, so that rules can apply to what is done on a laptop, as well as more advanced compliance and insider-risk tools.\n\nThe exact list changes, so check Microsoft's current plan comparison for the capability you need. We can compare your current licences against your requirement before you buy anything extra. See [Microsoft 365 Business Premium](/microsoft-365/business-premium) for the plan most small and mid-sized organisations compare first."
+  },
+  {
+   "heading": "DLP in email security and on firewalls",
+   "markdown": "DLP is not only a Microsoft feature. Secure email gateways and firewalls can also inspect content leaving the network. Fortinet's [FortiMail](/email-security), for example, is an email security gateway that organisations use for filtering mail, and Fortinet's firewalls and other brands' firewalls offer content inspection as a licensed feature. These suit organisations that want a control at the network edge, or whose data is not mainly in Microsoft 365.\n\nThe difference to understand is where the control sits. A rule in Microsoft 365 knows about a document's label and its owner. A rule on a gateway sees the content of the message leaving. Many organisations use the first and rely on the second for what the first cannot see. See [firewall security](/firewall-security) and [email security](/email-security)."
+  },
+  {
+   "heading": "A sensible order to roll it out",
+   "markdown": "1. **Decide the categories of sensitive data** and who owns each.\n2. **Label documents.** Start with the highest-risk areas, not everything.\n3. **Turn rules on in monitor-only mode.** Watch what would have been blocked for a few weeks.\n4. **Tune.** Fix the rules that would have stopped normal work.\n5. **Move to warnings, then blocks,** for the cases that matter.\n6. **Train staff,** and tell them what the rules are and why.\n7. **Review regularly.** New projects and new tools create new routes for data to leave.\n\nExpect the tuning to take longer than the set-up. That is normal and is the reason to start in monitor-only mode."
+  },
+  {
+   "heading": "Common mistakes with DLP",
+   "markdown": "- **Buying a product before deciding what is sensitive.** The tool cannot decide that for you.\n- **Switching on blocking immediately.** Genuine work is stopped, and the rules are turned off in frustration.\n- **Ignoring the devices.** Rules in the cloud do not control a file copied to a USB drive unless endpoint controls are in place.\n- **Forgetting people who leave.** A leaver's last weeks are a common time for data to be copied.\n- **Treating it as a one-off project.** Rules need review as the business changes.\n- **Paying for a higher plan when a lower one is enough.** Check what your current licences already include."
+  },
+  {
+   "heading": "Buying notes for India",
+   "markdown": "Prices are in rupees and GST is charged on the invoice. Organisations that handle personal data should also consider their obligations under India's data protection law; ask your legal or compliance adviser what applies to you, because DLP is a control that helps and not a guarantee of compliance. We quote Microsoft licences with the rest of your requirement on one purchase order; see [cybersecurity services](/services/cybersecurity), [security and compliance solutions](/solutions/security-compliance) and [enterprise procurement](/enterprise)."
+  }
+ ],
+ "products": [
+  {
+   "slug": "microsoft-365-business-premium",
+   "use": "Microsoft 365 for businesses, with device management, identity and information protection.",
+   "whoFor": "Small and mid-sized organisations with fewer than 300 users that want DLP together with security."
+  },
+  {
+   "slug": "microsoft-365-e3",
+   "use": "Microsoft 365 for larger organisations, with more compliance tools and no user limit.",
+   "whoFor": "Larger organisations that need compliance capabilities beyond the business plans."
+  },
+  {
+   "slug": "microsoft-365-e5",
+   "use": "Microsoft 365 with advanced security and compliance, including endpoint controls.",
+   "whoFor": "Organisations that need DLP on laptops, and insider-risk and advanced compliance tools."
+  }
+ ],
+ "faqs": [
+  {
+   "question": "Do you list DLP products with prices?",
+   "answer": "The Microsoft 365 plans that include DLP are listed with their per-user pricing where the catalogue has it, and larger plans are quoted to your number of users and term. Which DLP capabilities a plan includes differs, so we compare your requirement with what you already hold before quoting more."
+  },
+  {
+   "question": "What is data loss prevention?",
+   "answer": "It is a set of rules and tools that recognise sensitive information and stop it leaving in ways you have not approved, whether by email, by a shared link or by copying to a device."
+  },
+  {
+   "question": "Does Microsoft 365 include DLP?",
+   "answer": "Yes, through its compliance tools, and the capability depends on the plan. Business Premium and E3 cover email and documents in Microsoft's cloud services, and E5 adds more, including controls on laptops. Check Microsoft's current plan comparison for the capability you need."
+  },
+  {
+   "question": "Where should we start?",
+   "answer": "With the business questions: what data is sensitive, where it lives and who may share it. Then label documents, run the rules in monitor-only mode, tune them and move to warnings and blocks."
+  },
+  {
+   "question": "Will DLP make us compliant with data protection law?",
+   "answer": "No. It is a control that helps you protect personal and confidential data, not a guarantee of compliance. Ask your legal or compliance adviser what applies to you."
+  },
+  {
+   "question": "Can DLP stop a file being copied to a USB drive?",
+   "answer": "Only with controls on the device. Rules in the cloud do not see what is copied on a laptop unless endpoint controls are in place, which in Microsoft 365 are part of the higher plans."
+  },
+  {
+   "question": "Can you quote it together with email security and firewalls?",
+   "answer": "Yes. We quote Microsoft licences, email security and firewalls together on one purchase order, with a GST invoice."
+  }
+ ],
+ "related": [
+  {
+   "href": "/email-security",
+   "label": "Email security in India"
+  },
+  {
+   "href": "/zero-trust-network-access",
+   "label": "Zero trust network access"
+  },
+  {
+   "href": "/microsoft-365",
+   "label": "Microsoft 365 plans and prices"
+  },
+  {
+   "href": "/solutions/security-compliance",
+   "label": "Security and compliance solutions"
+  },
+  {
+   "href": "/services/cybersecurity",
+   "label": "Cybersecurity services"
+  }
+ ],
+ "needsVerification": [
+  "Which DLP capabilities each Microsoft 365 plan includes (Business Premium, E3, E5, and endpoint DLP in E5): confirm against Microsoft's current plan comparison before publishing.",
+  "Statement that Business Premium covers users up to 300 and E3 has no user limit is consistent with the plans pages; confirm it is still current.",
+  "The description of content inspection on firewalls and secure email gateways is general; confirm which products TechZoid quotes with this feature.",
+  "Mention of India's data protection law is deliberately general and points the reader to their adviser.",
+  "Whether TechZoid configures DLP policies or delivers labelling projects for customers."
+ ]
+}
