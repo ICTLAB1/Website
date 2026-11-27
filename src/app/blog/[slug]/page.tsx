@@ -1,3 +1,4 @@
+import { BLOG_SEE_ALSO, RelatedGuides } from "@/components/marketing/related-guides";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -105,6 +106,8 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
           </section>
         ) : null}
+
+        {BLOG_SEE_ALSO[post.slug] ? <RelatedGuides inline slugs={BLOG_SEE_ALSO[post.slug]} heading="Read next" /> : null}
 
         {post.tags.length > 0 ? (
           <ul className="mt-10 flex flex-wrap gap-2 border-t border-line pt-6">

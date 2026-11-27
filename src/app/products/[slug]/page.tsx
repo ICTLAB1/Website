@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+import { RelatedGuides } from "@/components/marketing/related-guides";
 import { BrandLogoFrame } from "@/components/catalogue/brand-logo-frame";
 import { isWideLogo } from "@/lib/product-logos";
 import type { Metadata } from "next";
@@ -119,6 +121,31 @@ export async function generateMetadata({
     path: `/products/${product.slug}`,
     keywords: [...product.keywords, product.brand.name, product.name],
   });
+}
+
+/**
+ * Turns `[label](/path)` in a product description into a link, and nothing else.
+ *
+ * Descriptions are plain paragraphs, but the ones that say how a model compares
+ * with its siblings need to point at them. Only site-relative addresses are
+ * accepted, so a description can never carry an outside link or markup.
+ */
+function withInternalLinks(text: string): ReactNode[] {
+  const parts: ReactNode[] = [];
+  const pattern = /\[([^\]]+)\]\((\/[^)\s]*)\)/g;
+  let last = 0;
+  for (const match of text.matchAll(pattern)) {
+    const at = match.index ?? 0;
+    if (at > last) parts.push(text.slice(last, at));
+    parts.push(
+      <Link key={`${at}-${match[2]}`} href={match[2]!}>
+        {match[1]}
+      </Link>,
+    );
+    last = at + match[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts;
 }
 
 export default async function ProductDetailPage({ params }: PageProps) {
@@ -675,9 +702,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     <div className="prose-content max-w-3xl text-[15px]">
                       {product.description
                         .split("\n\n")
-                        .map((paragraph, index) => (
-                          <p key={index}>{paragraph}</p>
-                        ))}
+                        .map((paragraph, index) =>
+                          paragraph.startsWith("## ") ? (
+                            <h3 key={index}>{paragraph.slice(3)}</h3>
+                          ) : (
+                            <p key={index}>{withInternalLinks(paragraph)}</p>
+                          ),
+                        )}
                     </div>
                   ),
                 },
@@ -734,6 +765,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
                           />
                         ),
                       },
+                      {
+                        id: "specifications",
+                        label: "Specifications",
+                        content: <SpecTable specs={product.specs} />,
+                      },
+                    ]
+                  : []),
+                // Software with specification rows (licence type, the options sold) shows them too.
+                ...(!hardware && product.specs.length > 0
+                  ? [
                       {
                         id: "specifications",
                         label: "Specifications",
@@ -1010,6 +1051,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
           />
         </section>
       ) : null}
+
+      <RelatedGuides inline path={`/products/${product.slug}`} />
 
       {/*
         Above related products, below the FAQs. A reader who has got this far

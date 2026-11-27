@@ -1,3 +1,4 @@
+import { BrandProductIndex } from "@/components/marketing/brand-product-index";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -21,7 +22,7 @@ import { getSiteConfig } from "@/lib/site-config";
 import { productListSelect } from "@/lib/queries/catalogue";
 import { absoluteUrl, buildMetadata, JsonLd } from "@/lib/seo";
 import { getLiveBrandSlugs } from "@/lib/queries/live-brands";
-import { BrandShelf } from "@/components/marketing/brand-shelf";
+import { BrandShelf, hasBrandShelf } from "@/components/marketing/brand-shelf";
 import { BrandGuideSections } from "@/components/marketing/brand-guide";
 import { currentCertifications } from "@/lib/queries/certifications";
 import { BRAND_GUIDES } from "@/lib/content/guides";
@@ -476,6 +477,9 @@ export default async function BrandPage({ params }: PageProps) {
             <ProductGrid products={featured} />
           </section>
         ) : null}
+
+        {/* The shelf brands (Microsoft, Adobe, Autodesk) already list every product above. */}
+        {hasBrandShelf(brand.slug) ? null : <BrandProductIndex brandId={brand.id} brandName={brand.name} />}
 
         <section className="border-t border-line py-14">
           <SectionHeader

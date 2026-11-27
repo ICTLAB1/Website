@@ -1,3 +1,4 @@
+import { RelatedGuides } from "@/components/marketing/related-guides";
 import Link from "next/link";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -192,6 +193,7 @@ export async function PlansPricingPage({ page }: { page: PlansPage }) {
           })),
         }}
       />
+      <RelatedGuides inline path={`/${page.slug}`} />
       <JsonLd
         data={{
           "@context": "https://schema.org",

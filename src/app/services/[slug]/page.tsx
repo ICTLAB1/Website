@@ -1,3 +1,4 @@
+import { RelatedGuides } from "@/components/marketing/related-guides";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -238,6 +239,8 @@ export default async function ServicePage({ params }: PageProps) {
             />
           </section>
         ) : null}
+
+        <RelatedGuides inline path={`/services/${service.slug}`} />
 
         {/* CTA */}
         <section className="mt-14 rounded-(--radius-lg) bg-graphite-900 p-8 sm:p-10">

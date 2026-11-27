@@ -26,16 +26,45 @@ const MS_PLANS: PlansLink[] = [
   { href: "/microsoft-365-business-plans-and-pricing", label: "Microsoft 365 business plans and pricing" },
   { href: "/microsoft-365-enterprise-plans-and-pricing", label: "Microsoft 365 enterprise plans and pricing" },
 ];
+const ADOBE_LINES: PlansLink[] = [
+  { href: "/adobe-creative-cloud", label: "Creative Cloud" },
+  { href: "/adobe-acrobat", label: "Acrobat" },
+  { href: "/adobe-acrobat-pro", label: "Acrobat Pro" },
+  { href: "/adobe-photoshop", label: "Photoshop" },
+  { href: "/adobe-illustrator", label: "Illustrator" },
+  { href: "/adobe-indesign", label: "InDesign" },
+  { href: "/adobe-lightroom", label: "Lightroom" },
+  { href: "/adobe-premiere-pro", label: "Premiere Pro" },
+  { href: "/adobe-after-effects", label: "After Effects" },
+  { href: "/adobe-express", label: "Express" },
+  { href: "/adobe-firefly", label: "Firefly" },
+];
+const AUTODESK_LINES: PlansLink[] = [
+  { href: "/autocad", label: "AutoCAD" },
+  { href: "/revit", label: "Revit" },
+  { href: "/aec-collection", label: "AEC Collection" },
+  { href: "/fusion-360", label: "Fusion" },
+  { href: "/maya", label: "Maya" },
+  { href: "/autodesk-construction-cloud", label: "Construction Cloud" },
+];
+const MS_LINES: PlansLink[] = [
+  { href: "/microsoft-365", label: "Microsoft 365" },
+  { href: "/microsoft-office", label: "Office" },
+  { href: "/microsoft-office-ltsc", label: "Office LTSC" },
+  { href: "/windows-server", label: "Windows Server" },
+  { href: "/sql-server", label: "SQL Server" },
+  { href: "/microsoft-csp", label: "Microsoft CSP" },
+];
 /** `only`: show just these families, under `title` (for the product-line pages, not the whole-brand hubs). */
-const BRANDS: Record<string, { brand: string; name: string; plans: PlansLink[]; accent: string; only?: string[]; title?: string }> = {
+const BRANDS: Record<string, { brand: string; name: string; plans: PlansLink[]; accent: string; only?: string[]; title?: string; lines?: PlansLink[] }> = {
   "microsoft-365": { brand: "microsoft", name: "Microsoft", plans: MS_PLANS, accent: ACCENT.microsoft, only: ["m365"], title: "Microsoft 365 plans and prices" },
   "microsoft-office": { brand: "microsoft", name: "Microsoft", plans: MS_PLANS, accent: ACCENT.microsoft, only: ["office"], title: "Microsoft Office, Project and Visio: products and prices" },
-  microsoft: { brand: "microsoft", name: "Microsoft", plans: MS_PLANS, accent: ACCENT.microsoft },
-  "microsoft-licensing": { brand: "microsoft", name: "Microsoft", plans: MS_PLANS, accent: ACCENT.microsoft },
-  adobe: { brand: "adobe", name: "Adobe", plans: [{ href: "/adobe-plans-and-pricing", label: "Adobe plans and pricing" }], accent: ACCENT.adobe },
-  "adobe-licensing": { brand: "adobe", name: "Adobe", plans: [{ href: "/adobe-plans-and-pricing", label: "Adobe plans and pricing" }], accent: ACCENT.adobe },
-  autodesk: { brand: "autodesk", name: "Autodesk", plans: [{ href: "/autodesk-plans-and-pricing", label: "Autodesk plans and pricing" }], accent: ACCENT.autodesk },
-  "autodesk-licensing": { brand: "autodesk", name: "Autodesk", plans: [{ href: "/autodesk-plans-and-pricing", label: "Autodesk plans and pricing" }], accent: ACCENT.autodesk },
+  microsoft: { brand: "microsoft", name: "Microsoft", plans: MS_PLANS, accent: ACCENT.microsoft, lines: MS_LINES },
+  "microsoft-licensing": { brand: "microsoft", name: "Microsoft", plans: MS_PLANS, accent: ACCENT.microsoft, lines: MS_LINES },
+  adobe: { brand: "adobe", name: "Adobe", plans: [{ href: "/adobe-plans-and-pricing", label: "Adobe plans and pricing" }], accent: ACCENT.adobe, lines: ADOBE_LINES },
+  "adobe-licensing": { brand: "adobe", name: "Adobe", plans: [{ href: "/adobe-plans-and-pricing", label: "Adobe plans and pricing" }], accent: ACCENT.adobe, lines: ADOBE_LINES },
+  autodesk: { brand: "autodesk", name: "Autodesk", plans: [{ href: "/autodesk-plans-and-pricing", label: "Autodesk plans and pricing" }], accent: ACCENT.autodesk, lines: AUTODESK_LINES },
+  "autodesk-licensing": { brand: "autodesk", name: "Autodesk", plans: [{ href: "/autodesk-plans-and-pricing", label: "Autodesk plans and pricing" }], accent: ACCENT.autodesk, lines: AUTODESK_LINES },
 };
 
 export function hasBrandShelf(slug: string): boolean {
@@ -170,6 +199,19 @@ export async function BrandShelf({ slug }: { slug: string }) {
               {hub.only ? `The ${hub.name} products we supply in this range, with` : `Every ${hub.name} product we supply, with`} their price from our catalogue. Where there is no price, ask for today&apos;s
               price on a written quotation with a GST invoice.
             </p>
+            {hub.lines && !hub.only ? (
+              <p className="mt-3 text-[14px] text-ink-600">
+                Product guides:{" "}
+                {hub.lines.map((line, index) => (
+                  <span key={line.href}>
+                    {index > 0 ? " · " : ""}
+                    <Link href={line.href} className="text-accent-700 underline underline-offset-2 hover:text-accent-800">
+                      {line.label}
+                    </Link>
+                  </span>
+                ))}
+              </p>
+            ) : null}
           </div>
           <div className="flex flex-wrap gap-2">
             {hub.plans.map((plan) => (

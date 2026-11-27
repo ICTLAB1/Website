@@ -1,3 +1,4 @@
+import { RelatedGuides } from "@/components/marketing/related-guides";
 import Link from "next/link";
 
 import { prisma } from "@/lib/db";
@@ -194,6 +195,7 @@ export async function CategoryGuidePage({ guide }: { guide: CategoryGuide }) {
 
       <QuickEnquiry contained={false} subject={guide.h1} source="category_page" heading="Get a quotation" />
 
+      <RelatedGuides inline path={`/${guide.slug}`} />
       {products.length > 0 ? <JsonLd data={itemList} /> : null}
       <JsonLd
         data={{

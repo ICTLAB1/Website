@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { RelatedGuides } from "@/components/marketing/related-guides";
 import { hreflangFor } from "@/lib/hreflang";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { notFound } from "next/navigation";
@@ -18,6 +20,13 @@ import { DocumentDates } from "@/components/marketing/document-dates";
 import { getPage } from "@/lib/queries/pages";
 import { resolveBlocks } from "@/lib/blocks/resolve";
 import { buildMetadata } from "@/lib/seo";
+
+/** The UAE page that counterparts an India hub, so each is linked in both directions. */
+const UAE_COUNTERPART: Record<string, { href: string; label: string }> = {
+  "microsoft-365": { href: "/ae/microsoft-365", label: "See Microsoft 365 for the UAE" },
+  adobe: { href: "/ae/adobe", label: "See Adobe for the UAE" },
+  autodesk: { href: "/ae/autodesk", label: "See Autodesk for the UAE" },
+};
 
 /**
  * Renders a CMS page at a fixed route.
@@ -146,6 +155,18 @@ export async function CmsPage({ slug }: { slug: string }) {
 
       {/* The three hubs link every product under them and the articles about the same subject. */}
       <HubIndex slug={slug} />
+      <RelatedGuides path={`/${slug}`} />
+      {UAE_COUNTERPART[slug] ? (
+        <section className="container-page border-t border-line py-8">
+          <p className="text-[15px] text-ink-600">
+            Buying for a UAE office?{" "}
+            <Link href={UAE_COUNTERPART[slug]!.href} className="text-accent-700 underline underline-offset-2 hover:text-accent-800">
+              {UAE_COUNTERPART[slug]!.label}
+            </Link>
+            .
+          </p>
+        </section>
+      ) : null}
 
       {/*
         The consent control belongs on the cookie policy and nowhere else.

@@ -154,6 +154,7 @@ export default async function IndustryPage({
       .filter((row): row is T => row !== undefined);
 
   const liveBrands = new Set(await getLiveBrandSlugs());
+  const otherIndustries = (await publishedIndustries()).filter((entry) => entry.slug !== industry.slug);
   const brandRows = inOrder(industry.brandSlugs, brands);
   const serviceRows = inOrder(industry.serviceSlugs, services);
   const categoryRows = inOrder(industry.categorySlugs, categories);
@@ -335,6 +336,23 @@ export default async function IndustryPage({
               </Reveal>
             ))}
           </div>
+        </section>
+      ) : null}
+
+      {otherIndustries.length > 0 ? (
+        <section aria-labelledby="other-industries" className="container-page pt-14">
+          <h2 id="other-industries" className="text-section">
+            Other sectors we supply
+          </h2>
+          <ul className="mt-4 grid gap-x-8 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
+            {otherIndustries.map((entry) => (
+              <li key={entry.slug}>
+                <Link href={`/industries/${entry.slug}`} className="inline-block py-1 text-[15px] text-accent-700 underline underline-offset-2 hover:text-accent-800">
+                  {entry.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       ) : null}
 
