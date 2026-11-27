@@ -1,3 +1,4 @@
+import { ClickTracker } from "@/components/analytics/click-tracker";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
@@ -200,6 +201,7 @@ export default async function RootLayout({
           waits for a measurement.
         */}
         <GoogleTag />
+        <ClickTracker />
 
         {/* Meta's pixel: defined here, run only once the visitor has accepted. */}
         <MetaPixel />

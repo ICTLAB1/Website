@@ -51,6 +51,37 @@ function remember(key: string): void {
   }
 }
 
+/**
+ * GA4's `generate_lead`, once per lead.
+ *
+ * The event Google Ads imports as a key event for the quote conversion. Sent
+ * with `gtag('event', …)` and no `send_to`, so it goes to the properties the
+ * page was configured with (see `GA_MEASUREMENT_IDS`) and obeys Consent Mode
+ * like every other measurement.
+ *
+ * Carries which form and which path, a flat value and a currency. Never a name,
+ * an email, a phone number, the reference or a query string: only the form's
+ * own id and `location.pathname`.
+ *
+ * Does nothing where the tag is not loaded — a developer's machine, a signed-in
+ * path — because loading it there would override the policy that keeps
+ * analytics off those pages. Called only after the server accepted the
+ * submission, and de-duplicated on `once` so a retry or a refresh counts once.
+ */
+export function trackGenerateLead(once: string, form?: string): void {
+  if (typeof window === "undefined") return;
+  const key = keyFor("generate_lead", once);
+  if (alreadyCounted(key)) return;
+  remember(key);
+  if (typeof window.gtag !== "function") return;
+  window.gtag("event", "generate_lead", {
+    form_name: form ?? "unknown",
+    page_path: window.location?.pathname ?? "",
+    value: 1,
+    currency: "INR",
+  });
+}
+
 declare global {
   interface Window {
     dataLayer?: unknown[];
@@ -146,6 +177,7 @@ export function pushConversion(
    * visitor accepted analytics.
    */
   if (event === CONVERSION_EVENTS.quoteFormSubmit) {
+    trackGenerateLead(once, details?.form);
     rememberLead(once);
     trackLead(once, details?.form);
   }
