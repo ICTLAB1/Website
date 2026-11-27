@@ -18,6 +18,9 @@ import { blogPriceFaqs } from "./2026-11-blog-price-faqs";
 import { adobeAppsFaqAndGuides } from "./2026-11-adobe-apps-faq-and-guides";
 import { seoPostsAndLinks } from "./2026-11-seo-posts-and-links";
 import { nearPageOnePricePosts } from "./2026-11-near-page-one-price-posts";
+import { thinProductPages } from "./2026-11-thin-product-pages";
+import { rejectedBlogPosts } from "./2026-11-rejected-blog-posts";
+import { footerQuoteAndSolutionLinks } from "./2026-11-footer-quote-and-solution-links";
 import { popularLinkCleanUrl } from "./2026-11-popular-link-clean-url";
 import { unlinkUnsoldBrands } from "./2026-11-unlink-unsold-brands";
 import { adobeAutodeskProductGrids } from "./2026-11-adobe-autodesk-product-grids";
@@ -251,6 +254,9 @@ export const contentMigrations: ContentMigration[] = [
   nearPageOnePricePosts,
   unlinkUnsoldBrands,
   popularLinkCleanUrl,
+  footerQuoteAndSolutionLinks,
+  rejectedBlogPosts,
+  thinProductPages,
 ];
 
 export type { ContentMigration };

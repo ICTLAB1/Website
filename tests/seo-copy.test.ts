@@ -72,3 +72,30 @@ describe("descriptions", () => {
     expect(d).toMatch(/india/i);
   });
 });
+
+import { fitTitle } from "@/lib/seo-copy";
+
+describe("fitTitle", () => {
+  const cases: Array<[string, string]> = [
+    ["Zero Trust Network Access (ZTNA) in India – Identity & Secure Remote Access | Guide", "Zero Trust Network Access (ZTNA) in India | TechZoid"],
+    ["Firewall Security in India – Fortinet, Sophos, SonicWall & Cisco | Quote & Guide", "Firewall Security in India | TechZoid"],
+    ["Cisco ASR 900 Series Aggregation Services Routers Price in India | TechZoid", "Cisco ASR 900 Series Aggregation Services Routers | TechZoid"],
+    ["AutoCAD Price in India – Buy Licence | TechZoid", "AutoCAD Price in India – Buy Licence | TechZoid"],
+  ];
+  it.each(cases)("%s", (input, expected) => {
+    expect(fitTitle(input)).toBe(expected);
+  });
+
+  it("never exceeds sixty characters and keeps the opening words", () => {
+    const long = "Most Secure Business Email Providers in India (2026): Microsoft 365 vs Google Workspace vs Zoho vs Proton | TechZoid";
+    const out = fitTitle(long);
+    expect(out.length).toBeLessThanOrEqual(60);
+    expect(out.startsWith("Most Secure Business Email Providers in India")).toBe(true);
+  });
+
+  it("does not cut mid-word when there is no separator", () => {
+    const out = fitTitle("Autodesk Product Design and Manufacturing Collection Subscription for Teams Price");
+    expect(out.length).toBeLessThanOrEqual(60);
+    expect(out).not.toMatch(/\s\S$/);
+  });
+});

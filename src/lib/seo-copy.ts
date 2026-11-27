@@ -84,6 +84,72 @@ export function productTitle(
   return patterns[patterns.length - 1]!(shortened);
 }
 
+/**
+ * A search-result title of at most sixty characters, keyword first.
+ *
+ * `core` is the page's own title with or without the trailing "| TechZoid". The
+ * site name is kept only where it fits. The ladder, stopping at the first rung
+ * that fits:
+ *
+ * 1. the title with the site name;
+ * 2. endings that sell rather than name, dropped one by one: "– Buy Licence",
+ *    "– Get Quote", "Price in India", "| Guide", "| Quote & Guide", "| Prices & Guide";
+ * 3. everything after the first dash, colon, bar or bracket, so the keyword
+ *    phrase that opens the title survives and the explanation does not;
+ * 4. a cut at a word boundary, never mid-word.
+ *
+ * Nothing is added and nothing is reworded, so a fitted title never says more
+ * than the page's own title did.
+ */
+export function fitTitle(core: string): string {
+  const stripped = clean(core).replace(/\s*\|\s*TechZoid$/i, "");
+  const withSite = (value: string) => `${value} ${SUFFIX}`;
+  const tryFit = (value: string): string | null => {
+    const v = clean(value);
+    if (!v) return null;
+    if (withSite(v).length <= TITLE_LIMIT) return withSite(v);
+    if (v.length <= TITLE_LIMIT) return v;
+    return null;
+  };
+
+  const whole = tryFit(stripped);
+  if (whole) return whole;
+
+  const endings: RegExp[] = [
+    /\s*\|\s*(Quote & Guide|Prices? & Guide|Price & Buying Guide|Guide|Prices?)$/i,
+    /\s+[–-]\s+(Buy Licence|Get Quote)$/i,
+    /\s+Price in India$/i,
+  ];
+  let working = stripped;
+  for (const ending of endings) {
+    const next = clean(working.replace(ending, ""));
+    if (next === working) continue;
+    working = next;
+    const fit = tryFit(working);
+    if (fit) return fit;
+  }
+
+  // Keep the phrase the title opens with: everything before the first separator.
+  let lead = clean(working.split(/\s+[–—|-]\s+|:\s+/)[0] ?? working);
+  if (lead && lead !== working) {
+    const fit = tryFit(lead);
+    if (fit) return fit;
+  }
+  // Still long: drop a trailing bracket, then the words after it.
+  const beforeBracket = clean(lead.split(/\s+\(/)[0] ?? lead);
+  if (beforeBracket && beforeBracket !== lead) {
+    const fit = tryFit(beforeBracket);
+    if (fit) return fit;
+    lead = beforeBracket;
+  }
+
+  // Last resort: a whole-word cut of the lead.
+  const words = (lead || working).split(" ");
+  while (words.length > 2 && words.join(" ").length > TITLE_LIMIT) words.pop();
+  const cut = words.join(" ").replace(/[\s,:;–—-]+$/, "").replace(/\s+(and|or|for|of|in|the|a|an|to|with|vs|&)$/i, "");
+  return cut.length + SUFFIX.length + 1 <= TITLE_LIMIT ? withSite(cut) : cut;
+}
+
 /** The pattern without the site suffix, for `buildMetadata`'s `absoluteTitle`. */
 export const productTitleHasSuffix = (title: string) => title.endsWith(SUFFIX);
 

@@ -1,4 +1,4 @@
-import { fitDescription } from "@/lib/seo-copy";
+import { fitDescription, fitTitle } from "@/lib/seo-copy";
 import type { Metadata } from "next";
 import { appUrl } from "@/lib/env";
 import { getSiteConfig, getSiteIdentity } from "@/lib/site-config";
@@ -112,8 +112,12 @@ export function buildMetadata(input: {
   // keeps whatever it was given: nobody searches for it.
   const description = input.noIndex ? input.description : fitDescription(input.description, input.path);
 
+  // Sixty characters at most, keyword first, with the site name only where it fits.
+  // Always absolute: the fitting decides whether the name is there, so the layout
+  // must not append it a second time.
+  const shownTitle = fitTitle(input.title);
   return {
-    title: input.absoluteTitle ? { absolute: input.title } : input.title,
+    title: { absolute: shownTitle },
     description,
     ...(input.keywords?.length ? { keywords: input.keywords } : {}),
     alternates: {
@@ -134,7 +138,7 @@ export function buildMetadata(input: {
         },
     openGraph: {
       type: input.type ?? "website",
-      title: input.title,
+      title: shownTitle,
       description,
       url,
       siteName,
@@ -155,7 +159,7 @@ export function buildMetadata(input: {
     },
     twitter: {
       card: "summary_large_image",
-      title: input.title,
+      title: shownTitle,
       description,
       images: [{ url: absoluteUrl(SOCIAL_CARD.path), alt: SOCIAL_CARD.alt }],
     },

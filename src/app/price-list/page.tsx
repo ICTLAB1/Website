@@ -1,3 +1,4 @@
+import { RelatedGuides } from "@/components/marketing/related-guides";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -61,6 +62,7 @@ export default async function PriceListPage() {
   const ordered = [...groups.entries()].sort((a, b) => a[1].name.localeCompare(b[1].name));
 
   return (
+    <>
     <div className="container-page pb-16">
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Price list" }]} />
       <header className="max-w-3xl">
@@ -164,5 +166,7 @@ export default async function PriceListPage() {
         </section>
       ))}
     </div>
+    <RelatedGuides path="/price-list" />
+    </>
   );
 }

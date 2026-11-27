@@ -28,3 +28,19 @@ Things the brief asked for that need a fact or a decision from the business. Not
    Owner to confirm the items listed under "Round 4" in `docs/seo-content-2026-11b.md` (Microsoft plan contents, which models TechZoid quotes, and whether
    TechZoid installs and configures these products). The guides' "last updated" date (`GUIDES_UPDATED`) still reads 24 Nov and is shared by every guide.
    Not built from the gap report: AI services, cloud migration and cost optimisation, Device as a Service, AV, Apple (need business confirmation).
+12. **Unindexed pages round (27 Nov): please verify these statements before they are relied on.**
+   - Five articles (`/blog/microsoft-office-ltsc-2024-vs-microsoft-365`, `how-to-buy-genuine-microsoft-licences-in-india`,
+     `how-government-departments-procure-genuine-software`, `windows-server-2025-licensing-explained`, `preparing-for-a-software-licence-audit`)
+     now carry general statements that the owner should check against current public rules: Windows Server core minimums (8 per processor, 16 per
+     server) and the two-virtual-machine allowance of Standard; GST at 18% on software; the Copyright Act, 1957 point on knowing use of an infringing
+     copy; GST and company-law record-keeping periods (the text tells the reader to ask their accountant); and the general GeM / GFR description
+     (thresholds are deliberately not stated).
+   - 48 product pages gained "who it is for" and comparison text, built only from each record's own description and features. Items to confirm with
+     the publishers' current documentation: whether Navisworks Simulate itself includes clash detection (the catalogue record says it does; the text
+     tells the reader to confirm the edition), what Microsoft 365 E7 contains, and any Autodesk or Adobe product described only in general terms.
+   - Hardware spec rows that held the field name ("Processor: processor") on 24 HP and HPE products were replaced with the values the builds carry.
+   - **No technical figures were invented.** Where a record has no spec the page says specifications are confirmed on the quotation.
+   - Brand pages without a catalogue (Cisco, Fortinet) now list every product by name so each model has a link from its brand hub.
+13. **Titles.** Every title is now 60 characters or fewer: `fitTitle` in `src/lib/seo-copy.ts` keeps the opening keyword phrase and drops endings such as
+   "| Quote & Guide", "Price in India" and long sub-titles, and keeps "| TechZoid" only if it fits. If a particular page needs a hand-written title,
+   set it in that page's metadata; it will be kept if it already fits.
